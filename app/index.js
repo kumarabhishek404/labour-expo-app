@@ -33,7 +33,7 @@ const index = () => {
   } else {
     return (
       <>
-        <Redirect href="/(authenticate)/login" />
+        <Redirect href="/(employer)/profile" />
       </>
     );
   }
