@@ -4,13 +4,14 @@ import { Tabs } from "expo-router";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Login from "../auth/login";
+import Register from "../auth/register";
 import { useStateContext } from "../context/context";
 
 export default function Layout() {
-  const {state}:any = useStateContext();
+  const { state }: any = useStateContext();
 
   if (!state?.isAuth) {
-    return <Login />;
+    return <Register />;
   }
 
   return (
@@ -37,7 +38,7 @@ export default function Layout() {
       <Tabs.Screen
         name="category"
         options={{
-          title: 'My Services',
+          title: "My Services",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="space-dashboard" size={28} color={color} />
           ),
@@ -46,11 +47,16 @@ export default function Layout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Add Service',
+          title: "Add Service",
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <View>
-              <Ionicons name="add-outline" size={60} color={color} style={styles.addIcon} />
+              <Ionicons
+                name="add-outline"
+                size={60}
+                color={color}
+                style={styles.addIcon}
+              />
             </View>
           ),
         }}
@@ -58,7 +64,7 @@ export default function Layout() {
       <Tabs.Screen
         name="workers"
         options={{
-          title: 'Workers',
+          title: "Workers",
           tabBarIcon: ({ color }) => (
             <Ionicons name="bookmark" size={28} color={color} />
           ),
@@ -67,7 +73,7 @@ export default function Layout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'My Profile',
+          title: "My Profile",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="user" size={28} color={color} />
           ),
@@ -82,8 +88,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
     borderRadius: 50,
     color: Colors.white,
-    position: 'absolute',
+    position: "absolute",
     right: -32,
-    top: -50
-  }
+    top: -50,
+  },
 });
