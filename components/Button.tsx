@@ -1,19 +1,27 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
+import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
 
-export default function Button({bgColor, btnLabel, textColor, Press}:any) {
+export default function Button({
+  style,
+  bgColor,
+  btnLabel,
+  textColor,
+  Press,
+}: any) {
   return (
     <TouchableOpacity
-    onPress={Press}
+      onPress={Press}
       style={{
         backgroundColor: bgColor,
         borderRadius: 100,
-        alignItems: 'center',
+        alignItems: "center",
         width: 350,
         paddingVertical: 5,
-        marginVertical: 10
-      }}>
-      <Text style={{color: textColor, fontSize: 25, fontWeight: 'bold'}}>
+        marginVertical: 10,
+        ...style,
+      }}
+    >
+      <Text style={{ color: textColor, fontSize: 25, fontWeight: "bold" }}>
         {btnLabel}
       </Text>
     </TouchableOpacity>

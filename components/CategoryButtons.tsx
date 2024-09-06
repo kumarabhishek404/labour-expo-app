@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   categoryBtnActive: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,

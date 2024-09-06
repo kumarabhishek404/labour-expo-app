@@ -1,17 +1,17 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import workers from "@/data/workers.json";
+import services from "@/data/services.json";
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import ListingsVertical from "@/components/ListingVertical";
 
 const Services = () => {
-  const [filteredData, setFilteredData] = useState(workers);
+  const [filteredData, setFilteredData] = useState(services);
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = (text: any) => {
     setSearchText(text);
-    const filtered: any = workers.filter(
+    const filtered: any = services.filter(
       (item: any) =>
         item.name.toLowerCase().includes(text.toLowerCase()) ||
         item.description.toLowerCase().includes(text.toLowerCase()) ||
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filterBtn: {
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,

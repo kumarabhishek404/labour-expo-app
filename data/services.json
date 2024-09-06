@@ -7,8 +7,14 @@
     "rating": 4.8,
     "price": "150",
     "duration": "3",
-    "location": "Pacific Ocean",
-    "category": "Beaches"
+    "location": "Agra",
+    "category": "Beaches",
+    "cordinates": {
+      "latitude": 27.1767,
+      "longitude": 78.0081,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "2",
@@ -18,8 +24,14 @@
     "rating": 4.5,
     "price": "120",
     "duration": "4",
-    "location": "Switzerland",
-    "category": "Mountains"
+    "location": "Aligarh",
+    "category": "Mountains",
+    "cordinates": {
+      "latitude": 27.8974,
+      "longitude": 78.0880,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "3",
@@ -30,7 +42,13 @@
     "price": "140",
     "duration": "2",
     "location": "USA",
-    "category": "Cities"
+    "category": "Cities",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "4",
@@ -41,7 +59,13 @@
     "price": "180",
     "duration": "5",
     "location": "USA",
-    "category": "Forests"
+    "category": "Forests",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "5",
@@ -52,7 +76,13 @@
     "price": "120",
     "duration": "3",
     "location": "England",
-    "category": "Lakes"
+    "category": "Lakes",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "6",
@@ -63,7 +93,13 @@
     "price": "140",
     "duration": "2",
     "location": "Maldives",
-    "category": "Beaches"
+    "category": "Beaches",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "7",
@@ -74,7 +110,13 @@
     "price": "100",
     "duration": "7",
     "location": "Canada",
-    "category": "Mountains"
+    "category": "Mountains",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "8",
@@ -85,7 +127,13 @@
     "price": "170",
     "duration": "3",
     "location": "Japan",
-    "category": "Cities"
+    "category": "Cities",
+    "cordinates": {
+      "latitude": 28.6448,
+      "longitude": 77.216721,
+      "latitudeDelta": 2,
+      "longitudeDelta": 2
+    }
   },
   {
     "id": "9",

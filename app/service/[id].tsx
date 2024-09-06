@@ -26,6 +26,7 @@ import Animated, {
   useScrollViewOffset,
 } from "react-native-reanimated";
 import ViewMap from "@/components/ViewMap";
+import Map from "@/components/ViewMap";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -109,7 +110,7 @@ const ListingDetails = () => {
           ),
         }}
       />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
@@ -124,15 +125,15 @@ const ListingDetails = () => {
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
-                color={Colors.primaryColor}
+                color={Colors.primary}
               />
               <Text style={styles.listingLocationTxt}>{service.location}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", maxWidth: '30%' }}>
                 <View style={styles.highlightIcon}>
-                  <Ionicons name="time" size={18} color={Colors.primaryColor} />
+                  <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Duration</Text>
@@ -141,27 +142,27 @@ const ListingDetails = () => {
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row",  maxWidth: '30%' }}>
                 <View style={styles.highlightIcon}>
                   <FontAwesome
                     name="users"
                     size={18}
-                    color={Colors.primaryColor}
+                    color={Colors.primary}
                   />
                 </View>
                 <View>
-                  <Text style={styles.highlightTxt}>Person</Text>
-                  <Text style={styles.highlightTxtVal}>{service.duration}</Text>
+                  <Text style={styles.highlightTxt}>Need</Text>
+                  <Text style={styles.highlightTxtVal}>2 Mistri</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", maxWidth: '30%' }}>
                 <View style={styles.highlightIcon}>
-                  <Ionicons name="star" size={18} color={Colors.primaryColor} />
+                  <FontAwesome5 name="rupee-sign" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <Text style={styles.highlightTxt}>Rating</Text>
+                  <Text style={styles.highlightTxt}>Price</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {service.rating} 
+                    1200
                   </Text>
                 </View>
               </View>
@@ -169,10 +170,9 @@ const ListingDetails = () => {
 
             <Text style={styles.listingDetails}>{service.description}</Text>
           </View>
-          
-          {/* <ViewMap /> */}
+          <Map data={service} />
         </Animated.ScrollView>
-      </View>
+      </ScrollView>
 
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
@@ -234,6 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 5,
     alignItems: "center",
+    height: 30
   },
   highlightTxt: {
     fontSize: 12,
@@ -242,6 +243,7 @@ const styles = StyleSheet.create({
   highlightTxtVal: {
     fontSize: 14,
     fontWeight: "600",
+    marginRight: 10
   },
   listingDetails: {
     fontSize: 16,
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
   },
   footerBookBtn: {
     flex: 2,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     marginRight: 20,
   },
   footerBtnTxt: {

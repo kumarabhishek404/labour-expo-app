@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   filterBtn: {
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,

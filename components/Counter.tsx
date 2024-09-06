@@ -46,7 +46,7 @@ const Counter = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "50%",
+    // width: "50%",
     height: 56,
     // borderColor: 'red',
     // borderWidth: 1
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   counterValue: {
     fontSize: 26,
     fontWeight: "bold",
-    color: Colors.primaryColor,
+    color: Colors.primary,
   },
   counterIcon: {
     fontWeight: 900,
@@ -70,8 +70,12 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 12,
-    borderRadius: 4,
-    backgroundColor: "rgb(220,220, 220)",
+    height: 53,
+    justifyContent: 'center',
+    borderRadius: 8,
+    backgroundColor: Colors.white,
+    borderColor: Colors.secondary,
+    borderWidth: 1
   },
 });
 

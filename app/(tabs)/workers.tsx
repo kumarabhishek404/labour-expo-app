@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filterBtn: {
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,

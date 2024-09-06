@@ -1,443 +1,308 @@
-// // import Header from '@/components/common/Header';
-// import { Link } from 'expo-router';
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-// // import {Picker} from '@react-native-picker/picker';
-// // import DropDownPicker from 'react-native-dropdown-picker';
-
-// const RegisterScreen = ({navigation}: any) => {
-//   const [firstName, setFirstName] = useState('');
-//   const [lastName, setLastName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [mobile, setMobile] = useState('');
-//   const [role, setRole] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [address, setAddress] = useState('');
-//   const [state, setState] = useState('');
-//   const [country, setCountry] = useState('');
-//   const [pincode, setPincode] = useState('');
-//   const [selectedValue, setSelectedValue] = useState(null);
-
-//   const items = [
-//     {label: 'Option 1', value: 'option1'},
-//     {label: 'Option 2', value: 'option2'},
-//     {label: 'Option 3', value: 'option3'},
-//   ];
-
-//   const validateEmail = (email: any) => {
-//     // Basic email validation
-//     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-//   };
-
-//   const validateMobile = (mobile: any) => {
-//     // Basic mobile number validation
-//     return /^[0-9]{10}$/.test(mobile);
-//   };
-
-//   const validatePassword = (password: any) => {
-//     // Password should be at least 6 characters
-//     return password.length >= 6;
-//   };
-
-//   const handleRegister = () => {
-//     // Perform validation before registration
-//     if (
-//       !firstName ||
-//       !lastName ||
-//       !validateEmail(email) ||
-//       !validateMobile(mobile) ||
-//       !validatePassword(password) ||
-//       !address ||
-//       !state ||
-//       !country ||
-//       !pincode
-//     ) {
-//       alert('Please fill in all fields with valid information');
-//       return;
-//     }
-
-//     // Implement your registration logic here
-//     console.log('Register button pressed');
-//   };
-
-//   const navigateToLogin = () => {
-//     // Navigate to the login screen
-//     navigation.navigate('logIn');
-//   };
-
-//   return (
-//     <View style={{flex: 1}}>
-//       {/* <Header navigation={navigation} /> */}
-//       <ScrollView>
-//         <View style={styles.container}>
-//           <Text style={styles.heading}>Register</Text>
-
-//           {/* Input fields for First Name, Last Name, Email, Mobile, Password, Address, State, Country, Pincode */}
-//           <TextInput
-//             style={styles.input}
-//             placeholder="First Name"
-//             value={firstName}
-//             onChangeText={text => setFirstName(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Last Name"
-//             value={lastName}
-//             onChangeText={text => setLastName(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Email"
-//             keyboardType="email-address"
-//             value={email}
-//             onChangeText={text => setEmail(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Mobile Number"
-//             keyboardType="phone-pad"
-//             value={mobile}
-//             onChangeText={text => setMobile(text)}
-//           />
-//           {/* <View style={styles.container}>
-//             <Text style={styles.label}>Choose an option:</Text>
-//             <DropDownPicker
-//               items={items}
-//               defaultValue={selectedValue}
-//               containerStyle={styles.dropdownContainer}
-//               style={styles.dropdown}
-//               itemStyle={styles.dropdownItem}
-//               labelStyle={styles.dropdownLabel}
-//               dropDownStyle={styles.dropdownMenu}
-//               onChangeItem={(item: {value: React.SetStateAction<null>}) =>
-//                 setSelectedValue(item.value)
-//               }
-//             />
-//             <Text style={styles.selectedValue}>
-//               Selected Value: {selectedValue}
-//             </Text>
-//           </View> */}
-//           {/* <View style={{borderColor: '#FF9933'}}>
-//             <Text>Select your role:</Text>
-//             <Picker
-//               style={{borderColor: '#FF9933', borderWidth: 2, marginBottom: 20, height: 55}}
-//               selectedValue={role}
-//               onValueChange={(itemValue: any) => setRole(itemValue)}>
-//               <Picker.Item style={{borderWidth: 2}} label="Worker" value="worker" />
-//               <Picker.Item style={{backgroundColor: 'blue'}} label="Employer" value="employer" />
-//             </Picker>
-//           </View> */}
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Password"
-//             secureTextEntry
-//             value={password}
-//             onChangeText={text => setPassword(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Full Address"
-//             value={address}
-//             onChangeText={text => setAddress(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="State"
-//             value={state}
-//             onChangeText={text => setState(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Country"
-//             value={country}
-//             onChangeText={text => setCountry(text)}
-//           />
-//           <TextInput
-//             style={styles.input}
-//             placeholder="Pincode"
-//             keyboardType="numeric"
-//             value={pincode}
-//             onChangeText={text => setPincode(text)}
-//           />
-
-//           {/* Register button */}
-//           <TouchableOpacity
-//             style={styles.registerButton}
-//             onPress={handleRegister}>
-//             <Text style={styles.registerButtonText}>Register</Text>
-//           </TouchableOpacity>
-
-//           {/* Line to redirect to the login screen */}
-//           <Link href="/auth/login" asChild>
-//           <TouchableOpacity>
-//             <Text style={styles.loginRedirect}>
-//               Already have an account? Log in here
-//             </Text>
-//           </TouchableOpacity>
-//           </Link>
-//         </View>
-//       </ScrollView>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//     justifyContent: 'center',
-//   },
-//   heading: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     marginBottom: 30,
-//     textAlign: 'center',
-//   },
-//   input: {
-//     height: 40,
-//     borderColor: '#FF9933',
-//     borderWidth: 1,
-//     marginBottom: 20,
-//     padding: 10,
-//     // borderRadius: 5,
-//   },
-//   registerButton: {
-//     backgroundColor: '#FF9933',
-//     padding: 15,
-//     // borderRadius: 5,
-//     alignItems: 'center',
-//   },
-//   registerButtonText: {
-//     color: 'white',
-//     fontWeight: 'bold',
-//   },
-//   loginRedirect: {
-//     marginTop: 20,
-//     textAlign: 'center',
-//     color: 'black',
-//   },
-//   // container: {
-//   //   flex: 1,
-//   //   justifyContent: 'center',
-//   //   alignItems: 'center',
-//   //   backgroundColor: '#ecf0f1',
-//   // },
-//   label: {
-//     fontSize: 16,
-//     marginBottom: 10,
-//     color: '#2c3e50',
-//   },
-//   dropdownContainer: {
-//     height: 40,
-//     width: 200,
-//   },
-//   dropdown: {
-//     backgroundColor: '#3498db',
-//   },
-//   dropdownItem: {
-//     justifyContent: 'flex-start',
-//     backgroundColor: '#2980b9',
-//   },
-//   dropdownLabel: {
-//     color: '#fff',
-//   },
-//   dropdownMenu: {
-//     backgroundColor: '#3498db',
-//   },
-//   selectedValue: {
-//     marginTop: 20,
-//     fontSize: 18,
-//     color: '#2c3e50',
-//   },
-// });
-
-// export default RegisterScreen;
-
-import Background from "@/components/Background";
-import Button from "@/components/Button";
-import Field from "@/components/Field";
-import { darkGreen } from "@/constants/Colors";
-import axios from "axios";
-import { Link } from "expo-router";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
-import { View, Text, Touchable, TouchableOpacity, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons, Octicons, SimpleLineIcons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
+import { Link, router, Stack } from "expo-router";
+import axios from "axios";
+import { useStateContext } from "../context/context";
+import UsersClient from "../api/user";
+import Toast from "react-native-root-toast";
+import Loader from "@/components/Loader";
 
-const Signup = (props: any) => {
+const SignupScreen = () => {
+  const navigation = useNavigation();
+  const [secureEntery, setSecureEntery] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  const handleLogin = () => {
+    // navigation.navigate("LOGIN");
+  };
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const { state, dispatch }: any = useStateContext();
 
   const handleSignup = async () => {
+    console.log("Signup button pressed");
+    const service = new UsersClient();
     if (
       !firstName ||
-      !lastName ||
       !email ||
-      !mobile ||
-      !password ||
-      !confirmPassword
+      // !mobile ||
+      !password
+      // !confirmPassword
     ) {
-      Alert.alert("Error", "Please fill in all fields.");
+      Toast.show("Please fill all fields.", {
+        position: Toast.positions.BOTTOM,
+        backgroundColor: "white",
+        opacity: 1,
+        textColor: "red",
+      });
       return;
     }
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
-      return;
-    }
-    console.log(firstName, lastName, email, mobile, password);
+    // if (password !== confirmPassword) {
+    //   Alert.alert("Error", "Passwords do not match.");
+    //   return;
+    // }
+    const payload = {
+      firstName: firstName,
+      lastName: lastName,
+      mobileNumber: mobile,
+      email: email,
+      password: password,
+    };
+    setIsLoading(true);
+    // console.log(firstName, lastName, email, mobile, password);
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/auth/register",
-        {
-          firstName,
-          lastName,
-          email,
-          mobileNumber: mobile,
-          password,
-        }
-      );
+      const response = await service.addNewUser(payload);
       console.log(response.data.message);
-      Alert.alert("Success", "Account created successfully");
+      setIsLoading(false);
+      // dispatch({ type: "REGISTER", payload: { userData: response?.data } });
+      // Alert.alert("Success", "Account created successfully");
+      router.push("/auth/login");
     } catch (error) {
-      Alert.alert("Error", "Registration failed. Please try again.");
+      setIsLoading(false);
+      // Alert.alert("Error", "Registration failed. Please try again.");
       console.error(error);
     }
   };
 
   return (
-    <Background>
-      <View style={{ alignItems: "center", width: 460 }}>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 64,
-            fontWeight: "bold",
-            marginTop: 20,
-          }}
-        >
-          Register
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 19,
-            fontWeight: "bold",
-            marginBottom: 20,
-          }}
-        >
-          Create a new account
-        </Text>
-        <View
-          style={{
-            backgroundColor: "white",
-            height: 700,
-            width: 460,
-            borderTopLeftRadius: 130,
-            paddingTop: 50,
-            alignItems: "center",
-          }}
-        >
-          <Field
-            placeholder="First Name"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-          <Field
-            placeholder="Last Name"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-          <Field
-            placeholder="Email / Username"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <Field
-            placeholder="Contact Number"
-            keyboardType="number"
-            value={mobile}
-            onChangeText={setMobile}
-          />
-          <Field
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Field
-            placeholder="Confirm Password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              width: "78%",
-              paddingRight: 16,
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 16 }}>
-              By signing in, you agree to our{" "}
-            </Text>
-            <Text
-              style={{ color: darkGreen, fontWeight: "bold", fontSize: 16 }}
-            >
-              Terms & Conditions
-            </Text>
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Loader loading={isLoading} />
+      <View style={styles.container}>
+        <View style={styles.textContainer}>
+          <Text style={styles.headingText}>Let's get</Text>
+          <Text style={styles.headingText}>started</Text>
+        </View>
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Octicons name={"person"} size={30} color={Colors.secondary} />
+            <TextInput
+              value={firstName}
+              style={styles.textInput}
+              placeholder="Enter your first name"
+              placeholderTextColor={Colors.secondary}
+              // secureTextEntry={secureEntery}
+              // keyboardType="phone-pad"
+              onChangeText={setFirstName}
+            />
           </View>
-
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              width: "78%",
-              paddingRight: 16,
-              marginBottom: 10,
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 16 }}>and </Text>
-            <Text
-              style={{ color: darkGreen, fontWeight: "bold", fontSize: 16 }}
-            >
-              Privacy Policy
-            </Text>
+          <View style={styles.inputContainer}>
+            <Octicons name={"person"} size={30} color={Colors.secondary} />
+            <TextInput
+              value={lastName}
+              style={styles.textInput}
+              placeholder="Enter your last name"
+              placeholderTextColor={Colors.secondary}
+              // secureTextEntry={secureEntery}
+              // keyboardType="phone-pad"
+              onChangeText={setLastName}
+            />
           </View>
-          <Button
-            textColor="white"
-            bgColor={darkGreen}
-            btnLabel="Signup"
-            Press={handleSignup}
-          />
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
+          <View style={styles.inputContainer}>
+            <SimpleLineIcons
+              name={"screen-smartphone"}
+              size={30}
+              color={Colors.secondary}
+            />
+            <TextInput
+              value={mobile}
+              style={styles.textInput}
+              placeholder="Enter your mobile"
+              placeholderTextColor={Colors.secondary}
+              keyboardType="phone-pad"
+              onChangeText={setMobile}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons
+              name={"mail-outline"}
+              size={30}
+              color={Colors.secondary}
+            />
+            <TextInput
+              value={email}
+              style={styles.textInput}
+              placeholder="Enter your email"
+              placeholderTextColor={Colors.secondary}
+              keyboardType="email-address"
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <SimpleLineIcons name={"lock"} size={30} color={Colors.secondary} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your password"
+              placeholderTextColor={Colors.secondary}
+              secureTextEntry={secureEntery}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setSecureEntery((prev) => !prev);
+              }}
+            >
+              <SimpleLineIcons
+                name={"eye"}
+                size={20}
+                color={Colors.secondary}
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            onPress={handleSignup}
+            style={styles.loginButtonWrapper}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              Already have an accounwdwt ?{" "}
-            </Text>
+            <Text style={styles.loginText}>Sign up</Text>
+          </TouchableOpacity>
+          <Text style={styles.continueText}>or continue with</Text>
+          <TouchableOpacity style={styles.googleButtonContainer}>
+            <Image
+              source={require("../../assets/images/google.png")}
+              style={styles.googleImage}
+            />
+            <Text style={styles.googleText}>Google</Text>
+          </TouchableOpacity>
+          <View style={styles.footerContainer}>
+            <Text style={styles.accountText}>Already have an account!</Text>
             <Link href="/auth/login" asChild>
               <TouchableOpacity>
-                <Text
-                  style={{ color: darkGreen, fontWeight: "bold", fontSize: 16 }}
-                >
-                  Login
-                </Text>
+                <Text style={styles.signupText}>Login</Text>
               </TouchableOpacity>
             </Link>
           </View>
         </View>
       </View>
-    </Background>
+    </>
   );
 };
 
-export default Signup;
+export default SignupScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    padding: 20,
+  },
+  backButtonWrapper: {
+    height: 40,
+    width: 40,
+    backgroundColor: Colors.gray,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textContainer: {
+    marginVertical: 20,
+  },
+  headingText: {
+    fontSize: 32,
+    color: Colors.primary,
+    // fontFamily: fonts.SemiBold,
+  },
+  formContainer: {
+    marginTop: 20,
+  },
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    borderRadius: 10,
+    // paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    marginBottom: 20,
+  },
+  textInput: {
+    flex: 1,
+    paddingHorizontal: 10,
+    // fontFamily: fonts.Light,
+  },
+  forgotPasswordText: {
+    textAlign: "right",
+    color: Colors.primary,
+    // fontFamily: fonts.SemiBold,
+    marginVertical: 10,
+  },
+  loginButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 100,
+    marginTop: 20,
+  },
+  loginText: {
+    color: Colors.white,
+    fontSize: 20,
+    // fontFamily: fonts.SemiBold,
+    textAlign: "center",
+    padding: 10,
+  },
+  signupButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 100,
+    // marginTop: 20,
+  },
+  continueText: {
+    textAlign: "center",
+    marginVertical: 20,
+    fontSize: 14,
+    // fontFamily: fonts.Regular,
+    color: Colors.primary,
+  },
+  googleButtonContainer: {
+    flexDirection: "row",
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    gap: 10,
+  },
+  googleImage: {
+    height: 20,
+    width: 20,
+  },
+  googleText: {
+    fontSize: 20,
+    // fontFamily: fonts.SemiBold,
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+    gap: 5,
+  },
+  accountText: {
+    color: Colors.primary,
+    // fontFamily: fonts.Regular,
+  },
+  signupText: {
+    color: Colors.black,
+    textDecorationLine: "underline",
+  },
+});

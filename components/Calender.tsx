@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
-import { darkGreen } from "@/constants/Colors";
+import Colors, { darkGreen } from "@/constants/Colors";
 
 const DateField = () => {
   const [startDate, setStartDate]: any = useState();
@@ -30,57 +30,12 @@ const DateField = () => {
   };
 
   return (
-    // <View
-    //   style={{
-    //     width: '78%',
-    //     display: "flex",
-    //     flexDirection: "row",
-    //     justifyContent: "space-between",
-    //     borderColor: 'red',
-    //     borderWidth: 1
-    //   }}
-    // >
-    //   <View style={{ marginBottom: 20 }}>
-    //     <Text style={styles.dateTitle}>Start Date</Text>
-    //     {/* <Button
-    //       title="Select Start Date"
-    //       onPress={() => setShowStartDatePicker(true)}
-    //     /> */}
-    //     {showStartDatePicker && (
-    //       <DateTimePicker
-    //         testID="startDatePicker"
-    //         value={startDate}
-    //         mode="date"
-    //         is24Hour={true}
-    //         display="default"
-    //         onChange={onStartDateChange}
-    //       />
-    //     )}
-    //     <Text>{`Start Date: ${startDate.toLocaleDateString()}`}</Text>
-    //   </View>
-    //   <View>
-    //     <Text style={styles.dateTitle}>End Date</Text>
-    //     {/* <Button
-    //     //   title="Select End Date"
-    //     //   onPress={() => setShowEndDatePicker(true)}
-    //     >
-    //        Select End Date </Button> */}
-
-    //     {showEndDatePicker && (
-    //       <DateTimePicker
-    //         testID="endDatePicker"
-    //         value={endDate}
-    //         mode="date"
-    //         is24Hour={true}
-    //         display="default"
-    //         onChange={onEndDateChange}
-    //       />
-    //     )}
-    //     <Text>{`End Date: ${endDate.toLocaleDateString()}`}</Text>
-    //   </View>
-    // </View>
     <View style={styles.container}>
-      <AntDesign style={styles.calenderIcon} name="calendar" size={18} />
+      <AntDesign 
+        name="calendar" 
+        size={30} 
+        color={Colors.secondary}
+      />
       <View style={styles.dateWrapper}>
         <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
           <View style={styles.dateItem}>
@@ -131,27 +86,24 @@ export default DateField;
 
 const styles = StyleSheet.create({
   container: {
-    width: "78%",
-    display: "flex",
+    // height: 53,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    borderRadius: 10,
     flexDirection: "row",
-    alignItems: "center",
-    // justifyContent: "space-between",
+    alignItems: 'flex-start',
     padding: 10,
-    backgroundColor: "rgb(220,220, 220)",
-    borderRadius: 4,
-    marginVertical: 10,
+    marginBottom: 20,
   },
   dateWrapper: {
     flex: 1,
     display: "flex",
     flexDirection: "row",
+    flexWrap: 'wrap',
+    gap: 10,
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  calenderIcon: {
-    width: 30,
-    // borderColor: "red",
-    // borderWidth: 1,
+    paddingHorizontal: 10,
   },
   dateItem: {
     width: 140,

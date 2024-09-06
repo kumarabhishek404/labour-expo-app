@@ -19,7 +19,7 @@ const GroupListings = ({ listings }: { listings: GroupType[] }) => {
         <View>
           <Text style={styles.itemTxt}>{item.name}</Text>
           <View style={{flexDirection:'row',alignItems:'center'}}>
-            <Ionicons name="star" size={20} color={Colors.primaryColor} />
+            <Ionicons name="star" size={20} color={Colors.primary} />
             <Text style={styles.itemRating}>{item.rating}</Text>
             <Text style={styles.itemReviews}>({item.reviews})</Text>
           </View>

@@ -1,9 +1,21 @@
+// import { View, Text } from 'react-native'
+// import React from 'react'
+
+// export default function LocationField() {
+//   return (
+//     <View>
+//       <Text>LocationField</Text>
+//     </View>
+//   )
+// }
+
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "@/constants/Colors";
-import { Fontisto, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 const data = [
   { label: "Item 1", value: "1" },
@@ -14,14 +26,23 @@ const data = [
   { label: "Item 6", value: "6" },
   { label: "Item 7", value: "7" },
   { label: "Item 8", value: "8" },
+  { label: "Add New Address", value: "addAddress" },
 ];
 
-const DropdownComponent = () => {
+const LocationField = () => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <View style={styles.container}>
+      <Text
+        style={{
+          fontWeight: "bold",
+          marginBottom: 4,
+        }}
+      >
+        Address
+      </Text>
       <Dropdown
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
@@ -29,46 +50,60 @@ const DropdownComponent = () => {
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
         data={data}
-        search
-        maxHeight={300}
+        // maxHeight={300}
         labelField="label"
         valueField="value"
         placeholder="Select item"
-        searchPlaceholder="Search..."
+        // searchPlaceholder="Search..."
         value={value}
         onChange={(item: any) => {
           setValue(item.value);
         }}
+        renderItem={(item: any) => {
+          if (item?.value === "addAddress") {
+            return (
+              <Link href="/location/addAddress" asChild>
+                <TouchableOpacity style={styles.actionItemWrapper}>
+                  <Text style={[styles.menuItem, styles.actionItem]}>{item.label}</Text>
+                  <Entypo
+                    name="link"
+                    size={20}
+                    color='blue'
+                    // style={styles.cancelImage}
+                    />
+                </TouchableOpacity>
+              </Link>
+            );
+          } else {
+            return <Text style={styles.menuItem}>{item.label}</Text>;
+          }
+        }}
         renderLeftIcon={() => (
-          <Ionicons
+          <FontAwesome6
             style={styles.icon}
             color="black"
-            name="person"
+            name="location-dot"
             size={20}
           />
         )}
-        // renderItem={(item: any, selected: any) => {
-
-        // }}
       />
     </View>
   );
 };
 
-export default DropdownComponent;
+export default LocationField;
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
-    // padding: 16,
   },
   dropdown: {
     height: 53,
     borderColor: Colors.secondary,
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
   },
   icon: {
     marginRight: 10,
@@ -90,4 +125,17 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
+  actionItemWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuItem: {
+    padding: 8,
+    fontSize: 16,
+    color: "black",
+  },
+  actionItem: {
+    color: 'blue'
+  }
 });

@@ -53,7 +53,7 @@ const Listings = ({ listings, category }: Props) => {
                 <FontAwesome5
                   name="map-marker-alt"
                   size={18}
-                  color={Colors.primaryColor}
+                  color={Colors.primary}
                 />
                 <Text style={styles.itemLocationTxt}>{item.location}</Text>
               </View>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 185,
     right: 30,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 30,
     borderWidth: 2,
@@ -116,6 +116,6 @@ const styles = StyleSheet.create({
   itemPriceTxt: {
     fontSize: 12,
     fontWeight: "600",
-    color: Colors.primaryColor,
+    color: Colors.primary,
   },
 });

@@ -6,12 +6,18 @@ import Colors from "@/constants/Colors";
 import Login from "../auth/login";
 import Register from "../auth/register";
 import { useStateContext } from "../context/context";
+import { getAllKeys, getItem } from "@/utils/AsyncStorage";
+import * as SecureStore from 'expo-secure-store';
 
 export default function Layout() {
-  const { state }: any = useStateContext();
+  const { state, dispatch }: any = useStateContext();
+
+  // if (state?.isLoading) {
+  //   return <Text>Loading...</Text>;
+  // }
 
   if (!state?.isAuth) {
-    return <Register />;
+    return <Login />;
   }
 
   return (
@@ -85,7 +91,7 @@ export default function Layout() {
 
 const styles = StyleSheet.create({
   addIcon: {
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     borderRadius: 50,
     color: Colors.white,
     position: "absolute",

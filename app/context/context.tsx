@@ -1,9 +1,13 @@
 import React, { createContext, useContext, useReducer } from "react";
+import UsersClient from "../api/user";
+import { clear, getItem, removeItem, setItem } from "@/utils/AsyncStorage";
+import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 const StateContext: any = createContext({});
 
 const initialState = {
-  isAuth: false,
+  isAuth: SecureStore.getItem("user") && JSON.parse(SecureStore.getItem("user") || "")?.isAuth || false,
   userType: "guest",
   mobile: "12345",
   email: "",
@@ -11,42 +15,43 @@ const initialState = {
 };
 
 const stateReducer = (state: any, action: any) => {
+
   switch (action.type) {
     case "LOGIN":
-      // if (
-      //   state.mobile === action?.payload?.mobile &&
-      //   state.password === action?.payload?.password
-      // ) {
-        return {
-          ...state,
-          isAuth: true
-        };
-      // } else {
-      //   return {
-      //     ...state,
-      //     isAuth: false
-      //   };
-      // }
-    case "LOGOUT":
-      if (state.isAuth) {
-        return {
-          ...state,
-          isAuth: false,
-          userType: "guest",
-          mobile: "",
-          email: "",
-          password: "",
-        };
-      }
-
-    case "REGISTER":
+      SecureStore.setItem(
+        "user",
+        JSON.stringify({
+          isAuth: true,
+        })
+      );
       return {
         ...state,
-        userType: action.role,
-        mobile: action.mobile,
-        email: action.email,
-        password: action.password,
+        isAuth: true,
       };
+
+    case "LOGOUT":
+      SecureStore.setItem(
+        "user",
+        JSON.stringify({
+          isAuth: false,
+        })
+      );
+      return {
+        ...state,
+        isAuth: false,
+      };
+
+    // case "REGISTER":
+    //   SecureStore.setItem(
+    //     "user",
+    //     JSON.stringify({
+    //       isAuth: true,
+    //     })
+    //   );
+    //   return {
+    //     ...state,
+    //     isAuth: true,
+    //   };
 
     default:
       return state;

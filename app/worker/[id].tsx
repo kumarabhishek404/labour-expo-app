@@ -131,7 +131,7 @@ const ListingDetails = () => {
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
-                color={Colors.primaryColor}
+                color={Colors.primary}
               />
               <Text style={styles.listingLocationTxt}>{worker.location}</Text>
             </View>
@@ -139,7 +139,7 @@ const ListingDetails = () => {
             <View style={styles.highlightWrapper}>
               <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
-                  <Ionicons name="time" size={18} color={Colors.primaryColor} />
+                  <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Price</Text>
@@ -153,7 +153,7 @@ const ListingDetails = () => {
                   <FontAwesome
                     name="users"
                     size={18}
-                    color={Colors.primaryColor}
+                    color={Colors.primary}
                   />
                 </View>
                 <View>
@@ -163,7 +163,7 @@ const ListingDetails = () => {
               </View>
               <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
-                  <Ionicons name="star" size={18} color={Colors.primaryColor} />
+                  <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Rating</Text>
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   image: {
     width: width,
     height: IMG_HEIGHT,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
   },
   contentWrapper: {
     padding: 20,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   footerBookBtn: {
     flex: 2,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     marginRight: 20,
   },
   footerBtnTxt: {

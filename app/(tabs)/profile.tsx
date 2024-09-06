@@ -9,6 +9,8 @@ import {
 } from "react-native-paper";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import { Link } from "expo-router";
+import { useStateContext } from "../context/context";
 
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -17,6 +19,7 @@ import Colors from "@/constants/Colors";
 // import files from '../assets/filesBase64';
 
 const ProfileScreen = () => {
+  const { state, dispatch }: any = useStateContext();
   const myCustomShare = async () => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
@@ -30,6 +33,11 @@ const ProfileScreen = () => {
     //   console.log('Error => ', error);
     // }
   };
+
+  const handleLogout = () => {
+    console.log("Logout button pressed");
+    dispatch({ type: "LOGOUT"});
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -57,22 +65,19 @@ const ProfileScreen = () => {
           </View>
         </View>
       </View>
-
-      <View style={styles.userInfoSection}>
-        <View style={styles.row}>
-          <Text style={{ color: "#777777", marginLeft: 20 }}>
-            Balipur Shakarauli Etah Uttar Predesh, India
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={{ color: "#777777", marginLeft: 20 }}>
-            +91-6397308499
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={{ color: "#777777", marginLeft: 20 }}>
-            abhishek@kaamdekho.com
-          </Text>
+      <View style={styles.userInfoTextWrapper}>
+        <View style={styles.userInfoText}>
+          <View style={[styles.row, styles.firstBox]}>
+            <Text style={{ color: "#777777" }}>
+              Balipur Shakarauli Etah Uttar Predesh, India
+            </Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={{ color: "#777777" }}>+91-6397308499</Text>
+          </View>
+          <View style={[styles.row, styles.lastBox]}>
+            <Text style={{ color: "#777777" }}>abhishek@kaamdekho.com</Text>
+          </View>
         </View>
       </View>
 
@@ -129,29 +134,31 @@ const ProfileScreen = () => {
       </View>
 
       <View style={styles.menuWrapper}>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <MaterialIcons
-              name="space-dashboard"
-              size={28}
-              color={Colors.primaryColor}
-            />
-            <Text style={styles.menuItemText}>Your Favorites</Text>
-          </View>
-        </TouchableRipple>
+        <Link href="/favourite" asChild>
+          <TouchableRipple>
+            <View style={styles.menuItem}>
+              <MaterialIcons
+                name="space-dashboard"
+                size={28}
+                color={Colors.primary}
+              />
+              <Text style={styles.menuItemText}>Your Favorites</Text>
+            </View>
+          </TouchableRipple>
+        </Link>
         <TouchableRipple onPress={() => {}}>
           <View style={styles.menuItem}>
             <MaterialIcons
               name="payment"
               size={28}
-              color={Colors.primaryColor}
+              color={Colors.primary}
             />
             <Text style={styles.menuItemText}>Payment</Text>
           </View>
         </TouchableRipple>
         <TouchableRipple onPress={myCustomShare}>
           <View style={styles.menuItem}>
-            <MaterialIcons name="share" size={28} color={Colors.primaryColor} />
+            <MaterialIcons name="share" size={28} color={Colors.primary} />
             <Text style={styles.menuItemText}>Tell Your Friends</Text>
           </View>
         </TouchableRipple>
@@ -160,17 +167,25 @@ const ProfileScreen = () => {
             <MaterialIcons
               name="support-agent"
               size={28}
-              color={Colors.primaryColor}
+              color={Colors.primary}
             />
             <Text style={styles.menuItemText}>Support</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Ionicons name="settings" size={28} color={Colors.primaryColor} />
-            <Text style={styles.menuItemText}>Settings</Text>
-          </View>
-        </TouchableRipple>
+        <Link href="/settings" asChild>
+          <TouchableRipple>
+            <View style={styles.menuItem}>
+              <Ionicons name="settings" size={28} color={Colors.primary} />
+              <Text style={styles.menuItemText}>Settings</Text>
+            </View>
+          </TouchableRipple>
+        </Link>
+        <TouchableRipple onPress={handleLogout}>
+            <View style={styles.menuItem}>
+              <Ionicons name="settings" size={28} color={Colors.primary} />
+              <Text style={styles.menuItemText}>Log Out</Text>
+            </View>
+          </TouchableRipple>
       </View>
     </ScrollView>
   );
@@ -186,6 +201,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     marginBottom: 25,
   },
+  userInfoTextWrapper: {
+    // width: '100%',
+    paddingHorizontal: 30,
+    marginBottom: 25,
+  },
+  userInfoText: {
+    // width: '90%',
+    // borderRadius: 16,
+    padding: 15,
+    marginLeft: -20,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -196,8 +222,18 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   row: {
+    padding: 12,
+    backgroundColor: Colors.white,
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+  firstBox: {
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
+  },
+  lastBox: {
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 16,
   },
   infoBoxWrapper: {
     marginTop: 10,
@@ -206,7 +242,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     height: 100,
   },
@@ -216,7 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   workInfoHeading: {
-    color: Colors.primaryColor,
+    color: Colors.primary,
     marginLeft: 30,
     fontWeight: "700",
     fontSize: 16,
@@ -227,7 +263,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#dddddd",
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderTopWidth: 1,
     height: 100,
     display: "flex",

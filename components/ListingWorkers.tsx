@@ -56,7 +56,7 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                   <FontAwesome5
                     name="hammer"
                     size={18}
-                    color={Colors.primaryColor}
+                    color={Colors.primary}
                   />
                   <Text style={styles.itemLocationTxt}>{item.skills}</Text>
                   </View>
@@ -64,12 +64,12 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                   <FontAwesome5
                     name="map-marker-alt"
                     size={18}
-                    color={Colors.primaryColor}
+                    color={Colors.primary}
                   />
                   <Text style={styles.itemLocationTxt}>{item.location}</Text>
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Ionicons name="star" size={20} color={Colors.primaryColor} />
+                    <Ionicons name="star" size={20} color={Colors.primary} />
                     <Text style={styles.itemRating}>{item.rating}</Text>
                     <Text style={styles.itemReviews}>({item.reviews})</Text>
                 </View>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 140,
     left: 130,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 30,
     borderWidth: 2,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   itemPriceTxt: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.primaryColor,
+    color: Colors.primary,
   },
   itemRating: {
     fontSize: 14,
