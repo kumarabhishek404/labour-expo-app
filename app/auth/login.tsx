@@ -37,10 +37,10 @@ const LoginScreen = () => {
       };
       try {
         const response: any = await service.signIn(payload);
-        console.log("response from login - ", response);
+        console.log("response from login - ", response?.user);
         dispatch({
           type: "LOGIN",
-          payload: { isAuth: true },
+          payload: { isAuth: true, ...response?.user },
         });
         setIsLoading(false);
       } catch (err) {

@@ -27,8 +27,14 @@ export default function Layout() {
           backgroundColor: Colors.bgColor,
           borderTopWidth: 0,
           padding: 0,
+          height: 66,
+          paddingTop: 6,
+          paddingBottom: 6
         },
-        tabBarShowLabel: false,
+        tabBarLabelStyle: {
+          fontSize: 12
+        },
+        tabBarShowLabel: true,
         tabBarActiveTintColor: Colors.black,
         tabBarInactiveTintColor: "#999",
       }}
@@ -36,25 +42,25 @@ export default function Layout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: 'Home',
           tabBarIcon: ({ color }) => (
-            <Ionicons name="compass" size={28} color={color} />
+            <Ionicons name="home" size={30} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="category"
+        name="bookings"
         options={{
-          title: "My Services",
+          title: "My Bookings",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="space-dashboard" size={28} color={color} />
+            <MaterialIcons name="calendar-month" size={30} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          title: "Add Service",
-          headerShown: false,
+          title: state?.userDetails?.role === "Employer" ? "Add Service" : "Add Availability",
           tabBarIcon: ({ color }) => (
             <View>
               <Ionicons
@@ -70,9 +76,9 @@ export default function Layout() {
       <Tabs.Screen
         name="workers"
         options={{
-          title: "Workers",
+          title: state?.userDetails?.role === "Employer" ? "Workers" : "Services",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="bookmark" size={28} color={color} />
+            <FontAwesome name="search" size={30} color={color} />
           ),
         }}
       />
@@ -81,7 +87,7 @@ export default function Layout() {
         options={{
           title: "My Profile",
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="user" size={28} color={color} />
+            <FontAwesome name="user" size={30} color={color} />
           ),
         }}
       />

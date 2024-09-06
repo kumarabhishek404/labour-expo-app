@@ -20,6 +20,8 @@ import { useStateContext } from "../context/context";
 
 const ProfileScreen = () => {
   const { state, dispatch }: any = useStateContext();
+  console.log("state - ", state);
+  
   const myCustomShare = async () => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
@@ -45,7 +47,7 @@ const ProfileScreen = () => {
         <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Avatar.Image
             source={{
-              uri: "https://xsgames.co/randomusers/avatar.php?g=female",
+              uri: state?.userDetails?.profile,
             }}
             size={80}
           />
@@ -59,9 +61,9 @@ const ProfileScreen = () => {
                 },
               ]}
             >
-              Joe Jane
+              {state?.firstName || 'Name'} {state?.lastName || 'Name'}
             </Title>
-            <Caption style={styles.caption}>@joe_jane</Caption>
+            <Caption style={styles.caption}>{state?.role || 'User'}</Caption>
           </View>
         </View>
       </View>
@@ -69,14 +71,14 @@ const ProfileScreen = () => {
         <View style={styles.userInfoText}>
           <View style={[styles.row, styles.firstBox]}>
             <Text style={{ color: "#777777" }}>
-              Balipur Shakarauli Etah Uttar Predesh, India
+              {state?.userDetails?.address || 'Balipur Shakarauli Etah Uttar Predesh, India'}
             </Text>
           </View>
           <View style={styles.row}>
-            <Text style={{ color: "#777777" }}>+91-6397308499</Text>
+            <Text style={{ color: "#777777" }}>{state?.mobileNumber || '1234567890'}</Text>
           </View>
           <View style={[styles.row, styles.lastBox]}>
-            <Text style={{ color: "#777777" }}>abhishek@kaamdekho.com</Text>
+            <Text style={{ color: "#777777" }}>{state?.email || "dummy@gmail.com"}</Text>
           </View>
         </View>
       </View>
@@ -182,7 +184,7 @@ const ProfileScreen = () => {
         </Link>
         <TouchableRipple onPress={handleLogout}>
             <View style={styles.menuItem}>
-              <Ionicons name="settings" size={28} color={Colors.primary} />
+              <MaterialIcons name="logout" size={28} color={Colors.primary} />
               <Text style={styles.menuItemText}>Log Out</Text>
             </View>
           </TouchableRipple>

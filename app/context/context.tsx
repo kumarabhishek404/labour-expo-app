@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
 import UsersClient from "../api/user";
 import { clear, getItem, removeItem, setItem } from "@/utils/AsyncStorage";
 import { router } from "expo-router";
@@ -6,27 +6,73 @@ import * as SecureStore from "expo-secure-store";
 
 const StateContext: any = createContext({});
 
+console.log(
+  "SecureStore.getItem() - ",
+  JSON.parse(SecureStore.getItem("user") || "")?.userDetails?.role
+);
+
 const initialState = {
-  isAuth: SecureStore.getItem("user") && JSON.parse(SecureStore.getItem("user") || "")?.isAuth || false,
-  userType: "guest",
-  mobile: "12345",
-  email: "",
-  password: "123",
+  isAuth:
+    (SecureStore.getItem("user") &&
+      JSON.parse(SecureStore.getItem("user") || "")?.isAuth) ||
+    false,
+  // userDetails: {...(SecureStore.getItem("user") &&
+  //   JSON.parse(SecureStore.getItem("user") || "")?.userDetails)},
+  userDetails: {
+    _id: JSON.parse(SecureStore.getItem("user") || "")?.userDetails?._id,
+    firstName: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.firstName,
+    lastName: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.lastName,
+    role: JSON.parse(SecureStore.getItem("user") || "")?.userDetails?.role,
+    mobileNumber: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.mobileNumber,
+    email: JSON.parse(SecureStore.getItem("user") || "")?.userDetails?.email,
+    likedJobs: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.likedJobs,
+    likedEmployees: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.likedEmployees,
+    profile: JSON.parse(SecureStore.getItem("user") || "")?.userDetails
+      ?.profile,
+  },
+  workDetails: {
+    total: 0,
+    completed: 0,
+    upcoming: 0,
+    cancelled: 0,
+  },
+  serviceDetails: {
+    total: 0,
+    completed: 0,
+    upcoming: 0,
+    cancelled: 0,
+  },
+  earnings: {
+    work: 0,
+    rewards: 0,
+  },
+  spent: {
+    work: 0,
+    tip: 0,
+  },
 };
 
 const stateReducer = (state: any, action: any) => {
-
   switch (action.type) {
     case "LOGIN":
+      console.log("Action - ", action.payload);
+
       SecureStore.setItem(
         "user",
         JSON.stringify({
           isAuth: true,
+          userDetails: { ...action?.payload },
         })
       );
       return {
         ...state,
         isAuth: true,
+        userDetails: { ...action?.payload },
       };
 
     case "LOGOUT":
@@ -54,7 +100,12 @@ const stateReducer = (state: any, action: any) => {
     //   };
 
     default:
-      return state;
+      return {
+        ...state,
+        userDetails:
+          SecureStore.getItem("user") &&
+          JSON.parse(SecureStore.getItem("user") || "")?.userDetails,
+      };
   }
 };
 

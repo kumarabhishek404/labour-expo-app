@@ -1,12 +1,16 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import workers from "@/data/workers.json";
+import services from "@/data/services.json";
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import ListingsWorkers from "@/components/ListingWorkers";
+import { useStateContext } from "../context/context";
+import ListingsVertical from "@/components/ListingVertical";
 
 const Workers = () => {
-  const [filteredData, setFilteredData] = useState(workers);
+  const { state, dispatch }: any = useStateContext();
+  const [filteredData, setFilteredData] = useState(state?.userDetails?.role === "Employer" ? workers : services);
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = (text: any) => {
@@ -46,7 +50,11 @@ const Workers = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <ListingsWorkers listings={filteredData} category="workers" />
+        {state?.userDetails?.role === "Employer" ? (
+          <ListingsWorkers listings={filteredData} category="services" />
+        ) : (
+          <ListingsVertical listings={filteredData} category="workers" />
+        )}
       </View>
     </View>
   );
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingLeft: 16,
-    paddingRight: 16
+    paddingRight: 16,
   },
   searchBox: {
     color: "#000000",
