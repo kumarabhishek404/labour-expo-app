@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
@@ -7,58 +7,76 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Fonts from "@/constants/Fonts";
-import { Link, router, Stack } from "expo-router";
-import { useStateContext } from "../context/context";
-import UsersClient from "../api/user";
-import { getItem } from "@/utils/AsyncStorage";
+import { Link, Stack } from "expo-router";
 import Loader from "@/components/Loader";
+import { useAtom } from "jotai";
+import { UserAtom } from "../AtomStore/user";
+import { signIn } from "../api/user";
+import { useQuery } from "@tanstack/react-query";
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
-  const service = new UsersClient();
+  const [_, setUserDetails] = useAtom(UserAtom);
   const [secureEntery, setSecureEntery] = useState(true);
-  const { state, dispatch }: any = useStateContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
-  const handleLogin = async () => {
-    console.log("Login button pressed");
-    if (email && password) {
-      setIsLoading(true);
-      let payload = {
-        email: email,
-        password: password,
-      };
-      try {
-        const response: any = await service.signIn(payload);
-        console.log("response from login - ", response?.user);
-        dispatch({
-          type: "LOGIN",
-          payload: { isAuth: true, ...response?.user },
-        });
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        return {
-          ...state,
-          isAuth: false,
-        };
-      }
+  let payload = {
+    email: email,
+    password: password,
+  };
+
+  const { isLoading, data: response } = useQuery({
+    queryKey: ["login", payload],
+    queryFn: async () => await signIn(payload),
+    retry: 3,
+    enabled: !!email && !!password && !!enabled,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (response?.user) {
+      setUserDetails({
+        isAuth: true,
+        _id: response?.user?._id,
+        firstName: response?.user?.firstName,
+        middleName: response?.user?.middleName,
+        lastName: response?.user?.lastName,
+        mobileNumber: response?.user?.mobileNumber,
+        likedJobs: response?.user?.likedJobs,
+        likedEmployees: response?.user?.likedEmployees,
+        email: response?.user?.email,
+        address: response?.user?.address,
+        profilePic: response?.user?.avatar,
+        role: response?.user?.role,
+        token: response?.token,
+      });
+      // setWorkDetails({
+      //   workDetails: {
+      //     total: 0,
+      //     completed: 0,
+      //     upcoming: 0,
+      //     cancelled: 0,
+      //   },
+      //   serviceDetails: {
+      //     total: 0,
+      //     completed: 0,
+      //     upcoming: 0,
+      //     cancelled: 0,
+      //   },
+      //   earnings: {
+      //     work: 0,
+      //     rewards: 0,
+      //   },
+      //   spent: {
+      //     work: 0,
+      //     tip: 0,
+      //   },
+      // });
     }
-  };
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-  const handleSignup = () => {
-    // navigation.navigate("SIGNUP");
-  };
+  }, [response]);
 
   return (
     <>
@@ -116,7 +134,7 @@ const LoginScreen = () => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handleLogin}
+            onPress={() => setEnabled(true)}
             style={styles.loginButtonWrapper}
           >
             <Text style={styles.loginText}>Login</Text>

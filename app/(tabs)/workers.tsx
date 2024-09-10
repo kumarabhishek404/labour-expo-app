@@ -2,16 +2,53 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import workers from "@/data/workers.json";
 import services from "@/data/services.json";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import ListingsWorkers from "@/components/ListingWorkers";
-import { useStateContext } from "../context/context";
 import ListingsVertical from "@/components/ListingVertical";
+import { useAtomValue } from "jotai";
+import { useQuery } from "@tanstack/react-query";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
+import { UserAtom } from "../AtomStore/user";
+import Loader from "@/components/Loader";
+import { fetchAllServices } from "../api/services";
 
 const Workers = () => {
-  const { state, dispatch }: any = useStateContext();
-  const [filteredData, setFilteredData] = useState(state?.userDetails?.role === "Employer" ? workers : services);
+  const userDetails = useAtomValue(UserAtom);
+  const [workers, setWorkers] = useState([]);
+  // const [services, setServices] = useState([]);
+  const [filteredData, setFilteredData] = useState(
+    []
+    // userDetails?.role === "Employer" ? workers : services
+  );
   const [searchText, setSearchText] = useState("");
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
+
+  const {
+    isLoading,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () =>
+      (await userDetails?.role) === "Employer"
+        ? fetchAllServices()
+        : fetchAllServices(),
+    retry: 3,
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setFilteredData(response?.data);
+      return () => unsubscribe;
+    }, [response])
+  );
 
   const handleSearch = (text: any) => {
     setSearchText(text);
@@ -27,6 +64,7 @@ const Workers = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <Loader loading={isLoading} />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.searchSectionWrapper}>
@@ -50,10 +88,10 @@ const Workers = () => {
             </TouchableOpacity>
           </View>
         </View>
-        {state?.userDetails?.role === "Employer" ? (
-          <ListingsWorkers listings={filteredData} category="services" />
+        {userDetails?.role === "Employer" ? (
+          <ListingsWorkers listings={filteredData} category="workers" />
         ) : (
-          <ListingsVertical listings={filteredData} category="workers" />
+          <ListingsVertical listings={filteredData} category="services" />
         )}
       </View>
     </View>

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ListingType } from "@/types/listingType";
 import services from "@/data/services.json";
@@ -27,20 +27,44 @@ import Animated, {
 } from "react-native-reanimated";
 import ViewMap from "@/components/ViewMap";
 import Map from "@/components/ViewMap";
+import { getServiceById } from "../api/services";
+import Loader from "@/components/Loader";
+import { useQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
 const ListingDetails = () => {
   const { id } = useLocalSearchParams();
-  const service: any = (services as ListingType[]).find(
-    (item) => item.id === id
-  );
-
+  const [service, setService]: any = useState({});
   const router = useRouter();
-
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+  // const [isLoading, setIsLoading] = useState(false);
+
+  console.log("Iddd---", id, useLocalSearchParams());
+
+  const {
+    isLoading,
+    isError,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["serviceDetails"],
+    queryFn: async () => await getServiceById(id),
+    retry: 3,
+    enabled: !!id,
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setService(response?.data);
+      return () => unsubscribe;
+    }, [response])
+  );
+
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -110,70 +134,69 @@ const ListingDetails = () => {
           ),
         }}
       />
+      <Loader loading={isLoading} />
+
       <ScrollView style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={{ uri: service.image }}
+            source={{ uri: service?.image }}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Text style={styles.listingName}>{service.name}</Text>
+            <Text style={styles.listingName}>{service?.name}</Text>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{service.location}</Text>
+              <Text style={styles.listingLocationTxt}>{service?.location}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row", maxWidth: '30%' }}>
+              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Duration</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {service.duration} Days
+                    {service?.duration} Days
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row",  maxWidth: '30%' }}>
+              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
                 <View style={styles.highlightIcon}>
-                  <FontAwesome
-                    name="users"
-                    size={18}
-                    color={Colors.primary}
-                  />
+                  <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Need</Text>
                   <Text style={styles.highlightTxtVal}>2 Mistri</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", maxWidth: '30%' }}>
+              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
                 <View style={styles.highlightIcon}>
-                  <FontAwesome5 name="rupee-sign" size={18} color={Colors.primary} />
+                  <FontAwesome5
+                    name="rupee-sign"
+                    size={18}
+                    color={Colors.primary}
+                  />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Price</Text>
-                  <Text style={styles.highlightTxtVal}>
-                    1200
-                  </Text>
+                  <Text style={styles.highlightTxtVal}>1200</Text>
                 </View>
               </View>
             </View>
 
-            <Text style={styles.listingDetails}>{service.description}</Text>
+            <Text style={styles.listingDetails}>{service?.description}</Text>
           </View>
-          <Map data={service} />
+          {/* <Map data={service} /> */}
         </Animated.ScrollView>
       </ScrollView>
-
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         <TouchableOpacity
@@ -183,7 +206,7 @@ const ListingDetails = () => {
           <Text style={styles.footerBtnTxt}>Book Now</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-          <Text style={styles.footerBtnTxt}>${service.price}</Text>
+          <Text style={styles.footerBtnTxt}>${service?.price}</Text>
         </TouchableOpacity>
       </Animated.View>
     </>
@@ -234,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 5,
     alignItems: "center",
-    height: 30
+    height: 30,
   },
   highlightTxt: {
     fontSize: 12,
@@ -243,7 +266,7 @@ const styles = StyleSheet.create({
   highlightTxtVal: {
     fontSize: 14,
     fontWeight: "600",
-    marginRight: 10
+    marginRight: 10,
   },
   listingDetails: {
     fontSize: 16,

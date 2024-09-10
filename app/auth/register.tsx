@@ -13,8 +13,8 @@ import { Ionicons, Octicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
 import axios from "axios";
-import { useStateContext } from "../context/context";
-import UsersClient from "../api/user";
+// import { useStateContext } from "../context/context";
+// import UsersClient from "../api/user";
 import Toast from "react-native-root-toast";
 import Loader from "@/components/Loader";
 
@@ -36,11 +36,11 @@ const SignupScreen = () => {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { state, dispatch }: any = useStateContext();
+  // const { state, dispatch }: any = useStateContext();
 
   const handleSignup = async () => {
     console.log("Signup button pressed");
-    const service = new UsersClient();
+    // const service = new UsersClient();
     if (
       !firstName ||
       !email ||
@@ -70,8 +70,8 @@ const SignupScreen = () => {
     setIsLoading(true);
     // console.log(firstName, lastName, email, mobile, password);
     try {
-      const response = await service.addNewUser(payload);
-      console.log(response.data.message);
+      // const response = await service.addNewUser(payload);
+      // console.log(response.data.message);
       setIsLoading(false);
       // dispatch({ type: "REGISTER", payload: { userData: response?.data } });
       // Alert.alert("Success", "Account created successfully");

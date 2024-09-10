@@ -33,7 +33,7 @@ const ListingsVertical = ({ listings, category }: Props) => {
   const renderItems: ListRenderItem<ListingType> = ({ item }) => {
     return (
       <View style={styles.container}>
-        <Link href={`/service/${item.id}`} asChild>
+        <Link href={`/service/${item._id}`} asChild>
           <TouchableOpacity>
             <View style={styles.item}>
               <Image source={{ uri: item.image }} style={styles.image} />

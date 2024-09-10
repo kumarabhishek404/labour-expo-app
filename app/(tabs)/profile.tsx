@@ -10,18 +10,11 @@ import {
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link } from "expo-router";
-import { useStateContext } from "../context/context";
-
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-// import Share from 'react-native-share';
-
-// import files from '../assets/filesBase64';
+import { UserAtom } from "../AtomStore/user";
+import { useAtom, useAtomValue } from "jotai";
 
 const ProfileScreen = () => {
-  const { state, dispatch }: any = useStateContext();
-  console.log("state - ", state);
-  
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
   const myCustomShare = async () => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
@@ -38,7 +31,9 @@ const ProfileScreen = () => {
 
   const handleLogout = () => {
     console.log("Logout button pressed");
-    dispatch({ type: "LOGOUT"});
+    setUserDetails({
+      isAuth: false
+    })
   }
 
   return (
@@ -47,7 +42,7 @@ const ProfileScreen = () => {
         <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Avatar.Image
             source={{
-              uri: state?.userDetails?.profile,
+              uri: userDetails?.profile,
             }}
             size={80}
           />
@@ -61,9 +56,9 @@ const ProfileScreen = () => {
                 },
               ]}
             >
-              {state?.firstName || 'Name'} {state?.lastName || 'Name'}
+              {userDetails?.firstName || 'Name'} {userDetails?.lastName || 'Name'}
             </Title>
-            <Caption style={styles.caption}>{state?.role || 'User'}</Caption>
+            <Caption style={styles.caption}>{userDetails?.role || 'User'}</Caption>
           </View>
         </View>
       </View>
@@ -71,14 +66,14 @@ const ProfileScreen = () => {
         <View style={styles.userInfoText}>
           <View style={[styles.row, styles.firstBox]}>
             <Text style={{ color: "#777777" }}>
-              {state?.userDetails?.address || 'Balipur Shakarauli Etah Uttar Predesh, India'}
+              {userDetails?.address || 'Balipur Shakarauli Etah Uttar Predesh, India'}
             </Text>
           </View>
           <View style={styles.row}>
-            <Text style={{ color: "#777777" }}>{state?.mobileNumber || '1234567890'}</Text>
+            <Text style={{ color: "#777777" }}>{userDetails?.mobileNumber || '1234567890'}</Text>
           </View>
           <View style={[styles.row, styles.lastBox]}>
-            <Text style={{ color: "#777777" }}>{state?.email || "dummy@gmail.com"}</Text>
+            <Text style={{ color: "#777777" }}>{userDetails?.email || "dummy@gmail.com"}</Text>
           </View>
         </View>
       </View>

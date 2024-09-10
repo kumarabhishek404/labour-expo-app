@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ListingType } from "@/types/listingType";
 import workers from "@/data/workers.json";
@@ -34,11 +34,28 @@ const IMG_HEIGHT = 300;
 const ListingDetails = () => {
   const { id } = useLocalSearchParams();
   const worker: any = (workers as ListingType[]).find((item) => item.id === id);
-
   const router = useRouter();
-
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+
+  // useEffect(() => {
+  //     fetchAllServicesFunc();
+  // }, [worker?.id]);
+
+  // const fetchAllServicesFunc = async () => {
+  //   console.log("fetching all services");
+  //   setIsLoading(true);
+  //   try {
+  //     const response: any = await fetchAllServices();
+  //     // console.log("response while fetching workers - ", response);
+  //     setServices(response?.data);
+  //     setIsLoading(false);
+  //   } catch (err) {
+  //     setIsLoading(false);
+  //     console.log("error while fetching all services ", err);
+  //   }
+  // };
+
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [

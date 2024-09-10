@@ -2,21 +2,22 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useAtom, useAtomValue } from "jotai";
+import { UserAtom } from "../AtomStore/user";
 import Colors from "@/constants/Colors";
 import Login from "../auth/login";
 import Register from "../auth/register";
-import { useStateContext } from "../context/context";
-import { getAllKeys, getItem } from "@/utils/AsyncStorage";
-import * as SecureStore from 'expo-secure-store';
 
 export default function Layout() {
-  const { state, dispatch }: any = useStateContext();
+  const userDetails = useAtomValue(UserAtom)
 
   // if (state?.isLoading) {
   //   return <Text>Loading...</Text>;
   // }
+  console.log("userDetails---", userDetails?.isAuth);
+  
 
-  if (!state?.isAuth) {
+  if (!userDetails?.isAuth) {
     return <Login />;
   }
 
@@ -32,7 +33,7 @@ export default function Layout() {
           paddingBottom: 6
         },
         tabBarLabelStyle: {
-          fontSize: 12
+          fontSize: 10
         },
         tabBarShowLabel: true,
         tabBarActiveTintColor: Colors.black,
@@ -60,7 +61,7 @@ export default function Layout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: state?.userDetails?.role === "Employer" ? "Add Service" : "Add Availability",
+          title: userDetails?.role === "Employer" ? "Add Service" : "Add Availability",
           tabBarIcon: ({ color }) => (
             <View>
               <Ionicons
@@ -76,7 +77,7 @@ export default function Layout() {
       <Tabs.Screen
         name="workers"
         options={{
-          title: state?.userDetails?.role === "Employer" ? "Workers" : "Services",
+          title: userDetails?.role === "Employer" ? "Workers" : "Services",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="search" size={30} color={color} />
           ),

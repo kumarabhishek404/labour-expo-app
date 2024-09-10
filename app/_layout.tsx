@@ -4,8 +4,9 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { StateProvider } from "./context/context";
+// import { StateProvider } from "./context/context";
 import { RootSiblingParent } from "react-native-root-siblings";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,13 +46,15 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const queryClient = new QueryClient();
+
   return (
-    <StateProvider>
+    <QueryClientProvider client={queryClient}>
       <RootSiblingParent>
         <Stack screenOptions={{ headerShown: true }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </RootSiblingParent>
-    </StateProvider>
+    </QueryClientProvider>
   );
 }

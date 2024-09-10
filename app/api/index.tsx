@@ -1,102 +1,172 @@
-import { getItem } from '@/utils/AsyncStorage';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+// import axios, { AxiosInstance, AxiosError, AxiosResponse } from "axios";
+// import { useAtomValue } from "jotai";
+// interface User {
+//   token?: string;
+//   // Add other user properties if needed
+// }
 
-export default class ApiClient {
-  private api: AxiosInstance;
+// const api: AxiosInstance = axios.create({
+//   baseURL: "https://labour-app-backend.onrender.com/api/v1",
+//   headers: {
+//     Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4NzA2NzQsImV4cCI6MTcyNTg3NDI3NH0.OI2EuZA7YIJqseHzY3QEE4neVQQJgBntaJSfCzfdAeU`,
+//   },
+// });
 
-  constructor() {
-    this.api = axios.create({
-      baseURL: this.getBaseUrl(),
-      headers: this.getTokenHeader(),
-    });
+// api.interceptors.response.use(
+//   (response: AxiosResponse) => response,
+//   (error: any) => {
+//     if (error.response) {
+//       if (
+//         (error.response.data.statusCode === 401 &&
+//           error.response.data.message === "TokenExpiredError") ||
+//         error.response.data.errorCode === "TokenExpiredError"
+//       ) {
+//         const myValue = localStorage.getItem("user") ?? "";
+//         let parseValue: any = JSON.parse(myValue);
+//         parseValue.token = null;
+//         localStorage.setItem("user", JSON.stringify(parseValue));
+//         window.location.href = "/auth/login";
+//       }
+//     } else if (error.request) {
+//       console.error("No response received:", error.request);
+//     } else {
+//       console.error("Request error:", error.message);
+//     }
+//     throw error;
+//   }
+// );
 
-    this.api.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        if (error.response) {
-          if (
-            (error?.response?.data?.statusCode === 401 &&
-              error?.response?.data?.message === 'TokenExpiredError') ||
-            error?.response?.data?.errorCode === 'TokenExpiredError'
-          ) {
-            // const myValue = localStorage.getItem('user') ?? '';
-            // let parseValue = JSON.parse(myValue);
-            // parseValue.token = null;
-            // localStorage.setItem('user', JSON.stringify(parseValue));
-            window.location.href = '/auth/login';
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request);
-        } else {
-          console.error('Request error:', error.message);
-        }
-        throw error;
-      },
-    );
-  }
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios, { AxiosResponse } from "axios";
 
-  getBaseUrl(): string {
-    return 'https://labour-app-backend.onrender.com/api/v1';
-  }
+const getHeaders = async () => {
+  try {
+    const user: any = await AsyncStorage.getItem("user");
+    const parsedUser = user ? JSON.parse(user) : null;
+    console.log("TOKEN---", parsedUser?.token);
 
-  getTokenHeader(): any {
-    const myValue: any = '';
-    if (myValue) {
-      const parseValue = JSON.parse(myValue);
-      if (parseValue?.token)
-        return { Authorization: `Bearer ${parseValue?.token}` };
+    if (parsedUser?.token) {
+      return {
+        Authorization: `Bearer ${parsedUser?.token}`,
+      };
     }
-    return {Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmQ2YjY4MDkwMWI5ZDgzODQwMDYwOGUiLCJpYXQiOjE3MjU1NDc3OTIsImV4cCI6MTcyNTU1MTM5Mn0.ePuD9lNrKWMeqDsCvaVFk1DLVQBWdy0EZzIHYjEnSSc`}
+    return {};
+  } catch (error) {
+    console.error("Error retrieving token from AsyncStorage:", error);
+    return {};
   }
+};
 
-  async makeGetRequest(
-    url: string,
-    headers?: { [key: string]: string },
-    responseType?:
-      | 'arraybuffer'
-      | 'blob'
-      | 'document'
-      | 'json'
-      | 'text'
-      | 'stream',
-  ) {
-    const response = await this.api.get(url, {
-      headers: headers,
-      responseType: responseType || 'json',
-    });
-    return response;
-  }
+const api = axios.create({
+  baseURL: "https://labour-app-backend.onrender.com/api/v1",
+  // headers: async () => {
+  //   try {
+  //     const user:any = await AsyncStorage.getItem("user");
+  //     // const parsedUser = user ? JSON.parse(user) : null;
 
-  async makePostRequest(
-    url: string,
-    body: object,
-    headers?: { [key: string]: string }
-  ) {
-    console.log("Inside make post request - ", url, body, headers);
-    
-    const response = await this.api.post(url, body, {
-      headers: headers ?? {},
-    });
-    return response;
-  }
+  //     if (user?.token) {
+  //       return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
+  //     }
+  //     return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
+  //   } catch (error) {
+  //     console.error("Error retrieving token from AsyncStorage:", error);
+  //     return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
+  //   }
+  // },
+});
 
-  async makePutRequest(
-    url: string,
-    body: object,
-    headers?: { [key: string]: string },
-  ) {
-    const response = await this.api.put(url, body, {
-      headers: headers ?? {},
-    });
-    return response;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      if (
+        (error.response.data.statusCode === 401 &&
+          error.response.data.message === "TokenExpiredError") ||
+        error.response.data.errorCode === "TokenExpiredError"
+      ) {
+        AsyncStorage.removeItem("user");
+        window.location.href = "/auth/login"; // Replace with appropriate navigation logic for React Native
+      }
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Request error:", error.message);
+    }
+    throw error;
   }
+);
 
-  async makeDeleteRequest(url: string, headers?: { [key: string]: string }) {
-    const response = await this.api.delete(url, {
-      headers: headers,
-    });
-    return response;
-  }
-}
+export const makeGetRequest = async (
+  url: string,
+  headers?: { [key: string]: string },
+  responseType:
+    | "arraybuffer"
+    | "blob"
+    | "document"
+    | "json"
+    | "text"
+    | "stream" = "json"
+): Promise<any> => {
+  console.log(
+    "Data inside get - ",
+    url,
+    headers,
+    responseType,
+    await getHeaders()
+  );
+
+  const response = await api.get(url, {
+    headers: {
+      ...(await getHeaders()),
+      ...headers,
+    },
+    responseType,
+  });
+  return response;
+};
+
+export const makePostRequest = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  console.log("Inside make post request - ", url, body, headers);
+  const response = await api.post(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      "Content-Type": "application/json",
+      ...headers,
+    },
+  });
+  return response;
+};
+
+export const makePutRequest = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  const response = await api.put(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      ...headers,
+    },
+  });
+  return response;
+};
+
+export const makeDeleteRequest = async (
+  url: string,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  const response = await api.delete(url, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      ...headers,
+    },
+  });
+  return response;
+};

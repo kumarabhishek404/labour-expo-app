@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useStateContext } from "../context/context";
+// import { useStateContext } from "../context/context";
 import { router, Stack } from "expo-router";
 import Colors from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Favourite = (props: any) => {
-  const { state, dispatch }: any = useStateContext();
+  // const { state, dispatch }: any = useStateContext();
 
   return (
     <>
