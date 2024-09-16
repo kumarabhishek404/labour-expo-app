@@ -22,7 +22,6 @@ const ListingsWorkers = ({ listings, category }: Props) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Update Listing");
     setLoading(true);
 
     setTimeout(() => {
@@ -30,13 +29,15 @@ const ListingsWorkers = ({ listings, category }: Props) => {
     }, 200);
   }, [category]);
 
-  const renderItems: ListRenderItem<ListingType> = ({ item }) => {
+  const renderItems: ListRenderItem<any> = ({ item }) => {
+    console.log("listings---", item);
+    
     return (
       <View style={styles.container}>
-        <Link href={`/worker/${item.id}`} asChild>
+        <Link href={`/worker/${item?._id}`} asChild>
           <TouchableOpacity>
             <View style={styles.item}>
-              <Image source={{ uri: item.image }} style={styles.image} />
+              <Image source={{ uri: item?.image }} style={styles.image} />
               <View style={styles.bookmark}>
                   <Ionicons
                     name="heart-outline"
@@ -50,7 +51,7 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {item.name}
+                  {item?.firstName} {item?.lastName}
                 </Text>
                 <View style={styles.locationBox}>
                   <FontAwesome5
@@ -58,7 +59,7 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                     size={18}
                     color={Colors.primary}
                   />
-                  <Text style={styles.itemLocationTxt}>{item.skills}</Text>
+                  <Text style={styles.itemLocationTxt}>{item?.skills}</Text>
                   </View>
                 <View style={styles.locationBox}>
                   <FontAwesome5
@@ -66,15 +67,15 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                     size={18}
                     color={Colors.primary}
                   />
-                  <Text style={styles.itemLocationTxt}>{item.location}</Text>
+                  <Text style={styles.itemLocationTxt}>{item?.location}</Text>
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
                     <Ionicons name="star" size={20} color={Colors.primary} />
-                    <Text style={styles.itemRating}>{item.rating}</Text>
-                    <Text style={styles.itemReviews}>({item.reviews})</Text>
+                    <Text style={styles.itemRating}>{item?.rating}</Text>
+                    <Text style={styles.itemReviews}>({item?.reviews})</Text>
                 </View>
                 <View>
-                  <Text style={styles.itemPriceTxt}>${item.price}/Day</Text>
+                  <Text style={styles.itemPriceTxt}>${item?.price}/Day</Text>
                 </View>
               </View>
             </View>

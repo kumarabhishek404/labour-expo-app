@@ -9,8 +9,8 @@ import {
   StyleSheet,
 } from "react-native";
 
-const Counter = () => {
-  const [counter, setCounter] = useState(0);
+const Counter = ({counter, setCounter}:any) => {
+  // const [counter, setCounter] = useState(0);
   const [initialCount, setInitialCount] = useState(0);
 
   const handleInitialCountChange = (value: any) => {

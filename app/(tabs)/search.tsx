@@ -9,7 +9,12 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Feather, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
 import DateField from "@/components/Calender";
@@ -18,17 +23,61 @@ import PriceField from "@/components/PriceField";
 import LocationField from "@/components/LocationField";
 import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImagePicker";
+import { addNewService } from "../api/services";
+import Loader from "@/components/Loader";
 
 const SignupScreen = () => {
   const navigation = useNavigation();
   const [secureEntery, setSecureEntery] = useState(true);
+  const [isLoading, setIsLoading] = useState(false)
+  const [workTitle, setWorkTitle] = useState("");
+  const [workDescription, setWorkDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [images, setImages] = useState([]);
+  const [address, setAddress] = useState("");
+  const [requirements, setRequirements]: any = useState([
+    {
+      type: "",
+      count: 0,
+      price: "",
+    },
+  ]);
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  const handleAddService = async () => {
+    setIsLoading(true);
+    // let payload:any = {
+    //   name: workTitle,
+    //   description: workDescription,
+    //   location: address,
+    //   address: address,
+    //   startDate: startDate,
+    //   endDate: endDate,
+    //   jobs: JSON.stringify(requirements),
+    //   coverImage: images[0]
+    // }
 
-  const handleLogin = () => {
-    // navigation.navigate("LOGIN");
+    
+    try {
+      const formData:any = new FormData();
+      formData.append("name", workTitle);
+      formData.append("description", workDescription);
+      formData.append("location", address);
+      formData.append("startDate", startDate);
+      formData.append("endDate", endDate);
+      // formData.append("address", address);
+      // formData.append("jobs", JSON.stringify(requirements));
+      // formData.append("coverImage", images[0]);
+
+      console.log("Post service button pressed", formData);
+
+      let response = await addNewService(formData);
+      setIsLoading(false);
+      console.log("Response while adding new service ", response);
+    } catch (err:any) {
+      setIsLoading(false);
+      console.log("Error while adding new service ", err);
+    }
   };
 
   return (
@@ -77,6 +126,7 @@ const SignupScreen = () => {
           ),
         }}
       />
+      <Loader loading={isLoading} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Let's create</Text>
@@ -90,25 +140,40 @@ const SignupScreen = () => {
               color={Colors.secondary}
             />
             <TextInput
+              value={workTitle}
               style={styles.textInput}
               placeholder="Work Title"
               placeholderTextColor={Colors.secondary}
+              onChangeText={setWorkTitle}
             />
           </View>
           <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name={"shovel"} size={30} color={Colors.secondary} />
+            <MaterialCommunityIcons
+              name={"shovel"}
+              size={30}
+              color={Colors.secondary}
+            />
             <TextInput
+              value={workDescription}
               style={styles.textInput}
               placeholder="Work Description"
               placeholderTextColor={Colors.secondary}
+              onChangeText={setWorkDescription}
             />
           </View>
-          <DateField />
-          <WorkRequirment />
-          {/* <PriceField /> */}
-          <ImageUpload />
+          <DateField
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+          <WorkRequirment
+            requirements={requirements}
+            setRequirements={setRequirements}
+          />
+          <ImageUpload images={images} setImages={setImages} />
           {/* <Modal /> */}
-          <LocationField />
+          <LocationField address={address} setAddress={setAddress} />
           {/* <View style={styles.inputContainer}>
             <SimpleLineIcons
               name={"screen-smartphone"}
@@ -124,7 +189,10 @@ const SignupScreen = () => {
             />
           </View> */}
 
-          <TouchableOpacity style={styles.loginButtonWrapper}>
+          <TouchableOpacity
+            onPress={handleAddService}
+            style={styles.loginButtonWrapper}
+          >
             <Text style={styles.loginText}>Post</Text>
           </TouchableOpacity>
         </View>

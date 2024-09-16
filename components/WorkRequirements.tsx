@@ -15,58 +15,50 @@ import {
   TextInput,
 } from "react-native";
 
-const WorkRequirment = (props: any) => {
-  const [requirements, setRequirements]: any = useState([]);
-
-  const requirementField = (index:number) => (
-    <View style={styles.addRequirment}>
-      <Dropdown />
-      <View style={styles.counterContainer}>
-        <Counter />
-        <View style={styles.priceField}>
-          <MaterialIcons
-            name={"currency-rupee"}
-            size={30}
-            color={Colors.secondary}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Rate per day"
-            placeholderTextColor={Colors.secondary}
-          />
-        </View>
-        <MaterialCommunityIcons
-          style={styles.deleteIcon}
-          name="delete"
-          size={40}
-          onPress={() => removeRequirment(index)}
-        />
-      </View>
-    </View>
-  );
-
-  useEffect(() => {
-    setRequirements([requirementField(0)]);
-  }, []);
+const WorkRequirment = ({ requirements, setRequirements }: any) => {
+  const data = [
+    { label: "Labour", value: "labour" },
+    { label: "Mistri", value: "mistri" },
+    { label: "Electrician", value: "electrician" },
+  ];
 
   const addRequirments = () => {
-    let allRequirements = [...requirements, requirementField(requirements?.length + 1)];
-    setRequirements(allRequirements);
+    let tempRequirements = [...requirements];
+    tempRequirements[requirements?.length] = {
+      type: "",
+      count: 0,
+      price: "",
+    };
+    setRequirements(tempRequirements);
   };
 
   const removeRequirment = (indexParam: number) => {
-    console.log("requirements?.length---", requirements);
-    console.log("requirements?.length--2-", requirements?.length);
-    
     let allRequirements = [...requirements];
-    if(requirements?.length > 1) {
-
-      // allRequirements = requirements?.filter((image: any, index: number) => {
-      //   if (index === indexParam) return;
-      //   else return image;
-      // });
+    if (allRequirements && allRequirements?.length > 1) {
+      allRequirements.splice(indexParam, 1);
     }
-    // setRequirements(allRequirements);
+    setRequirements(allRequirements);
+  };
+
+  const handleRequirementTypeChange = (index: number, type: string) => {
+    console.log("Item ---", index, type);
+    let tempRequirments = [...requirements];
+    tempRequirments[index].type = type;
+    setRequirements(tempRequirments);
+  };
+
+  const handleRequirementCountChange = (index: number, count: string) => {
+    console.log("Item ---", index, count);
+    let tempRequirments = [...requirements];
+    tempRequirments[index].count = count;
+    setRequirements(tempRequirments);
+  };
+
+  const handleRequirementPriceChange = (index: number, price: string) => {
+    console.log("Item ---", index, price);
+    let tempRequirments = [...requirements];
+    tempRequirments[index].price = price;
+    setRequirements(tempRequirments);
   };
 
   return (
@@ -80,11 +72,60 @@ const WorkRequirment = (props: any) => {
         Work Requirments
       </Text>
       {requirements &&
+        requirements.length > 0 &&
+        requirements?.map((requirement: any, index: number) => {
+          return (
+            <View style={{ width: "100%" }} key={index}>
+              <View style={styles.addRequirment}>
+                <Dropdown
+                  value={requirement?.type}
+                  setValue={(type: any) =>
+                    handleRequirementTypeChange(index, type)
+                  }
+                  options={data}
+                />
+                <View style={styles.counterContainer}>
+                  <Counter
+                    counter={requirement?.count}
+                    setCounter={(count: any) =>
+                      handleRequirementCountChange(index, count)
+                    }
+                  />
+                  <View style={styles.priceField}>
+                    <MaterialIcons
+                      name={"currency-rupee"}
+                      size={30}
+                      color={Colors.secondary}
+                    />
+                    <TextInput
+                      value={requirement?.price}
+                      style={styles.textInput}
+                      placeholder="Rate per day"
+                      placeholderTextColor={Colors.secondary}
+                      onChangeText={(price: string) =>
+                        handleRequirementPriceChange(index, price)
+                      }
+                    />
+                  </View>
+                  {requirements && requirements?.length > 1 && (
+                    <MaterialCommunityIcons
+                      style={styles.deleteIcon}
+                      name="delete"
+                      size={40}
+                      onPress={() => removeRequirment(index)}
+                    />
+                  )}
+                </View>
+              </View>
+            </View>
+          );
+        })}
+      {/* {requirements &&
         requirements?.map((requirment: any, index: number) => (
           <View style={{ width: "100%" }} key={index}>
             {requirment}
           </View>
-        ))}
+        ))} */}
       <TouchableOpacity onPress={addRequirments} style={styles.addMoreWrapper}>
         <View style={styles.addMoreBox}>
           <Entypo style={styles.plusIcon} name="plus" size={18} />
@@ -116,13 +157,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
-    marginTop: 15
+    marginTop: 15,
   },
   addMoreWrapper: {
-    padding: 4,
+    // padding: 4,
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "flex-end",
+    alignSelf: "flex-end",
+    width: "26%",
+    borderRadius: 4,
   },
   addMoreBox: {
     padding: 6,

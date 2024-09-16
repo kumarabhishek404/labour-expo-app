@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAtom } from "jotai";
+import { useQuery } from "@tanstack/react-query";
+import { Link, Stack } from "expo-router";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { Link, Stack } from "expo-router";
 import Loader from "@/components/Loader";
-import { useAtom } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { signIn } from "../api/user";
-import { useQuery } from "@tanstack/react-query";
 
 const LoginScreen = () => {
   const [_, setUserDetails] = useAtom(UserAtom);
@@ -28,10 +28,10 @@ const LoginScreen = () => {
     password: password,
   };
 
-  const { isLoading, data: response } = useQuery({
+  const { isLoading, data: response, } = useQuery({
     queryKey: ["login", payload],
-    queryFn: async () => await signIn(payload),
-    retry: 3,
+    queryFn: () => signIn(payload),
+    retry: false,
     enabled: !!email && !!password && !!enabled,
     refetchOnWindowFocus: false,
   });
@@ -52,6 +52,7 @@ const LoginScreen = () => {
         profilePic: response?.user?.avatar,
         role: response?.user?.role,
         token: response?.token,
+        serviceAddress: ["Balipur, post - Shakrauli, Etah Uttar Predesh"],
       });
       // setWorkDetails({
       //   workDetails: {
@@ -77,6 +78,8 @@ const LoginScreen = () => {
       // });
     }
   }, [response]);
+
+  const handleForgotPassword = () => {};
 
   return (
     <>
@@ -105,7 +108,10 @@ const LoginScreen = () => {
               placeholder="Enter your email"
               placeholderTextColor={Colors.secondary}
               keyboardType="email-address"
-              onChangeText={setEmail}
+              onChangeText={(email) => {
+                setEnabled(false);
+                setEmail(email);
+              }}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -116,7 +122,10 @@ const LoginScreen = () => {
               placeholder="Enter your password"
               placeholderTextColor={Colors.secondary}
               secureTextEntry={secureEntery}
-              onChangeText={setPassword}
+              onChangeText={(password) => {
+                setEnabled(false);
+                setPassword(password);
+              }}
             />
             <TouchableOpacity
               onPress={() => {
@@ -130,7 +139,7 @@ const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleForgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -192,7 +201,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.secondary,
     borderRadius: 10,
-    // paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
@@ -201,12 +209,13 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
-    // fontFamily: Fonts.Light,
+    marginLeft: 10
   },
   forgotPasswordText: {
+    width: 117,
     textAlign: "right",
+    alignSelf: "flex-end",
     color: Colors.primary,
-    // fontFamily: Fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {

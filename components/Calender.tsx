@@ -11,9 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
 import Colors, { darkGreen } from "@/constants/Colors";
 
-const DateField = () => {
-  const [startDate, setStartDate]: any = useState();
-  const [endDate, setEndDate]: any = useState();
+const DateField = ({startDate, setStartDate, endDate, setEndDate}:any) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
@@ -101,6 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: 'wrap',
     gap: 10,
+    marginVertical: 'auto',
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,

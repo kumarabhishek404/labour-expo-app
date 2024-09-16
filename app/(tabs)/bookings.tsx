@@ -4,10 +4,38 @@ import services from "@/data/services.json";
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import ListingsVertical from "@/components/ListingVertical";
+import { useQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "expo-router";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "../AtomStore/user";
+import { fetchMyServices } from "../api/services";
 
 const Services = () => {
+  const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData] = useState(services);
   const [searchText, setSearchText] = useState("");
+
+
+  const {
+    isLoading,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["myServices"],
+    queryFn: async () =>
+      (await userDetails?.role) === "Employer"
+        ? fetchMyServices()
+        : fetchMyServices(),
+    retry: 3,
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setFilteredData(response?.data);
+      return () => unsubscribe;
+    }, [response])
+  );
 
   const handleSearch = (text: any) => {
     setSearchText(text);

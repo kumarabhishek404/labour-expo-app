@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-travel-app",
-    "slug": "expo-travel-app",
+    "name": "labour-app",
+    "slug": "labour-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kumarabhishek404.labourapp"
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "49b06be6-7168-40be-a304-b01ba2f626eb"
+      }
+    },
+    "owner": "kumarabhishek404"
   }
 }

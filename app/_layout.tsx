@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -7,6 +7,12 @@ import { useEffect } from "react";
 // import { StateProvider } from "./context/context";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import * as Location from 'expo-location'
+import { useAtom } from "jotai";
+import { LocationAtom } from "./AtomStore/user";
+import { showToast } from "./hooks/toast";
+import Toast from "react-native-toast-message";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -22,6 +28,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  // const setLocationAt
+  const [location, setLocation] = useAtom(LocationAtom);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -37,6 +45,29 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    const getPermission = async () => {
+      let {status} = await Location.requestForegroundPermissionsAsync();
+      if(status !== "granted") {
+        console.log("Please grant location permission");
+        return;
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation)
+      console.log("Current Location - ", currentLocation);
+
+      let response = await Location.reverseGeocodeAsync({
+        latitude: currentLocation?.coords?.latitude,
+        longitude: currentLocation?.coords?.longitude,
+      });
+
+      console.log("Address---", response);
+      
+    }
+    getPermission()
+  }, [])
 
   if (!loaded) {
     return null;
@@ -54,6 +85,7 @@ function RootLayoutNav() {
         <Stack screenOptions={{ headerShown: true }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
+        <Toast />
       </RootSiblingParent>
     </QueryClientProvider>
   );

@@ -1,50 +1,13 @@
-// import axios, { AxiosInstance, AxiosError, AxiosResponse } from "axios";
-// import { useAtomValue } from "jotai";
-// interface User {
-//   token?: string;
-//   // Add other user properties if needed
-// }
-
-// const api: AxiosInstance = axios.create({
-//   baseURL: "https://labour-app-backend.onrender.com/api/v1",
-//   headers: {
-//     Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4NzA2NzQsImV4cCI6MTcyNTg3NDI3NH0.OI2EuZA7YIJqseHzY3QEE4neVQQJgBntaJSfCzfdAeU`,
-//   },
-// });
-
-// api.interceptors.response.use(
-//   (response: AxiosResponse) => response,
-//   (error: any) => {
-//     if (error.response) {
-//       if (
-//         (error.response.data.statusCode === 401 &&
-//           error.response.data.message === "TokenExpiredError") ||
-//         error.response.data.errorCode === "TokenExpiredError"
-//       ) {
-//         const myValue = localStorage.getItem("user") ?? "";
-//         let parseValue: any = JSON.parse(myValue);
-//         parseValue.token = null;
-//         localStorage.setItem("user", JSON.stringify(parseValue));
-//         window.location.href = "/auth/login";
-//       }
-//     } else if (error.request) {
-//       console.error("No response received:", error.request);
-//     } else {
-//       console.error("Request error:", error.message);
-//     }
-//     throw error;
-//   }
-// );
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
+import { router } from "expo-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { UserAtom } from "../AtomStore/user";
 
 const getHeaders = async () => {
   try {
     const user: any = await AsyncStorage.getItem("user");
     const parsedUser = user ? JSON.parse(user) : null;
-    console.log("TOKEN---", parsedUser?.token);
-
     if (parsedUser?.token) {
       return {
         Authorization: `Bearer ${parsedUser?.token}`,
@@ -58,7 +21,7 @@ const getHeaders = async () => {
 };
 
 const api = axios.create({
-  baseURL: "https://labour-app-backend.onrender.com/api/v1",
+  baseURL: process.env.EXPO_PUBLIC_BASE_URL,
   // headers: async () => {
   //   try {
   //     const user:any = await AsyncStorage.getItem("user");
@@ -78,14 +41,19 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // console.log("Error in interceptors - ", error.response.data);
+    // const setUserDetails = useSetAtom(UserAtom);
     if (error.response) {
+      // console.log("Error in interceptors resposne - ", error.response);
       if (
-        (error.response.data.statusCode === 401 &&
-          error.response.data.message === "TokenExpiredError") ||
-        error.response.data.errorCode === "TokenExpiredError"
+        (error.response.status === 400 &&
+          error.response.data.message === "jwt expired") ||
+        error.response.statusText === "TokenExpiredError"
       ) {
         AsyncStorage.removeItem("user");
-        window.location.href = "/auth/login"; // Replace with appropriate navigation logic for React Native
+        // setUserDetails({});
+        // window.location.href = "/auth/login";
+        router.push("/auth/login");
       }
     } else if (error.request) {
       console.error("No response received:", error.request);
@@ -139,7 +107,28 @@ export const makePostRequest = async (
       ...headers,
     },
   });
+  console.log("Ressssssssss----", response);
+  
   return response;
+};
+
+export const makePostRequestFormData = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  console.log("Inside make post request - ", url, body, headers);
+  const response: any = await api.post(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      "Content-Type": "multipart/form-data",
+      "Accept": "*/*",
+      ...headers,
+    },
+  });
+  console.log("Ressssspooosss---", response);
+  return response.json();
 };
 
 export const makePutRequest = async (

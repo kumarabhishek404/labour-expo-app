@@ -22,7 +22,6 @@ const ListingsVertical = ({ listings, category }: Props) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Update Listing");
     setLoading(true);
 
     setTimeout(() => {

@@ -16,15 +16,12 @@ import {
 import { UserAtom } from "../AtomStore/user";
 import Loader from "@/components/Loader";
 import { fetchAllServices } from "../api/services";
+import { fetchAllWorkers } from "../api/workers";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
   const [workers, setWorkers] = useState([]);
-  // const [services, setServices] = useState([]);
-  const [filteredData, setFilteredData] = useState(
-    []
-    // userDetails?.role === "Employer" ? workers : services
-  );
+  const [filteredData, setFilteredData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -38,7 +35,7 @@ const Workers = () => {
     queryKey: ["services"],
     queryFn: async () =>
       (await userDetails?.role) === "Employer"
-        ? fetchAllServices()
+        ? fetchAllWorkers()
         : fetchAllServices(),
     retry: 3,
   });

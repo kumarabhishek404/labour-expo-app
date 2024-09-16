@@ -7,8 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import { ListingType } from "@/types/listingType";
 import workers from "@/data/workers.json";
 import {
@@ -27,34 +32,52 @@ import Animated, {
 } from "react-native-reanimated";
 import ViewMap from "@/components/ViewMap";
 import { Avatar } from "react-native-paper";
+import { getWorkerById, likeWorker } from "../api/workers";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Loader from "@/components/Loader";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
 const ListingDetails = () => {
   const { id } = useLocalSearchParams();
-  const worker: any = (workers as ListingType[]).find((item) => item.id === id);
+  const [worker, setWorker]: any = useState({});
+  // const worker: any = (workers as ListingType[]).find((item) => item._id === id);
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
 
-  // useEffect(() => {
-  //     fetchAllServicesFunc();
-  // }, [worker?.id]);
+  const {
+    isLoading,
+    isError,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["workerDetails"],
+    queryFn: async () => await getWorkerById(id),
+    retry: 3,
+    enabled: !!id,
+    // refetchOnWindowFocus: true
+  });
 
-  // const fetchAllServicesFunc = async () => {
-  //   console.log("fetching all services");
-  //   setIsLoading(true);
-  //   try {
-  //     const response: any = await fetchAllServices();
-  //     // console.log("response while fetching workers - ", response);
-  //     setServices(response?.data);
-  //     setIsLoading(false);
-  //   } catch (err) {
-  //     setIsLoading(false);
-  //     console.log("error while fetching all services ", err);
-  //   }
-  // };
+  const mutation = useMutation({
+    mutationKey: ["likeWorker", { id }],
+    mutationFn: () => likeWorker({ workerID: id }),
+    onSuccess: (response) => {
+      console.log("Response while liking a worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while liking the worker ", err);
+    },
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setWorker(response?.data);
+      return () => unsubscribe;
+    }, [response])
+  );
 
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -125,6 +148,8 @@ const ListingDetails = () => {
           ),
         }}
       />
+      <Loader loading={isLoading || isRefetching || mutation?.isPending} />
+
       <View style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
@@ -135,7 +160,7 @@ const ListingDetails = () => {
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Image source={{ uri: worker.image }} style={styles.workerImage} />
+            <Image source={{ uri: worker?.image }} style={styles.workerImage} />
             {/* <Avatar.Image
               style={styles.workerImage}
               source={{
@@ -143,14 +168,16 @@ const ListingDetails = () => {
               }}
               size={150}
             /> */}
-            <Text style={styles.listingName}>{worker.name}</Text>
+            <Text style={styles.listingName}>
+              {worker?.firstName} {worker?.lastName}
+            </Text>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{worker.location}</Text>
+              <Text style={styles.listingLocationTxt}>{worker?.location}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>
@@ -161,21 +188,17 @@ const ListingDetails = () => {
                 <View>
                   <Text style={styles.highlightTxt}>Price</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {worker.duration} Rs / Day
+                    {worker?.duration} Rs / Day
                   </Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
-                  <FontAwesome
-                    name="users"
-                    size={18}
-                    color={Colors.primary}
-                  />
+                  <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>{worker.skills}</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.skills}</Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row" }}>
@@ -184,12 +207,12 @@ const ListingDetails = () => {
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Rating</Text>
-                  <Text style={styles.highlightTxtVal}>{worker.rating}</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.rating}</Text>
                 </View>
               </View>
             </View>
 
-            <Text style={styles.listingDetails}>{worker.description}</Text>
+            <Text style={styles.listingDetails}>{worker?.description}</Text>
           </View>
         </Animated.ScrollView>
       </View>
@@ -201,9 +224,15 @@ const ListingDetails = () => {
         >
           <Text style={styles.footerBtnTxt}>Book Now</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-          <Text style={styles.footerBtnTxt}>${worker.price}</Text>
+        <TouchableOpacity
+          onPress={() => mutation?.mutate()}
+          style={styles.footerBtn}
+        >
+          <Text style={styles.footerBtnTxt}>Like</Text>
         </TouchableOpacity>
+        {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
+          <Text style={styles.footerBtnTxt}>${worker?.price}</Text>
+        </TouchableOpacity> */}
       </Animated.View>
     </>
   );

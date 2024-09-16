@@ -14,8 +14,6 @@ export default function Layout() {
   // if (state?.isLoading) {
   //   return <Text>Loading...</Text>;
   // }
-  console.log("userDetails---", userDetails?.isAuth);
-  
 
   if (!userDetails?.isAuth) {
     return <Login />;
@@ -52,7 +50,7 @@ export default function Layout() {
       <Tabs.Screen
         name="bookings"
         options={{
-          title: "My Bookings",
+          title: userDetails?.role === "Employer" ? "My Services" : "My Bookings",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="calendar-month" size={30} color={color} />
           ),

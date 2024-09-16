@@ -9,30 +9,37 @@
 //   )
 // }
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "@/constants/Colors";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
-const data = [
-  { label: "Item 1", value: "1" },
-  { label: "Item 2", value: "2" },
-  { label: "Item 3", value: "3" },
-  { label: "Item 4", value: "4" },
-  { label: "Item 5", value: "5" },
-  { label: "Item 6", value: "6" },
-  { label: "Item 7", value: "7" },
-  { label: "Item 8", value: "8" },
-  { label: "Add New Address", value: "addAddress" },
-];
 
-const LocationField = () => {
-  const [value, setValue] = useState(null);
+const LocationField = ({ address, setAddress }: any) => {
   const [isFocus, setIsFocus] = useState(false);
+  const userDetails = useAtomValue(UserAtom)
+  const [serviceAddress, setServiceAddress] = useState([])
+  
+  useEffect(() => {
+    let addresses = userDetails?.serviceAddress && userDetails?.serviceAddress?.map((address:any) => {
+      return {
+        label: address,
+        value: address
+      }
+    })
+    setServiceAddress(addresses)
+  }, [userDetails])
 
+  const data = [
+    ...serviceAddress,
+    { label: "Add New Address", value: "addAddress" },
+  ];
+  
   return (
     <View style={styles.container}>
       <Text
@@ -50,27 +57,27 @@ const LocationField = () => {
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
         data={data}
-        // maxHeight={300}
         labelField="label"
         valueField="value"
         placeholder="Select item"
-        // searchPlaceholder="Search..."
-        value={value}
+        value={address}
         onChange={(item: any) => {
-          setValue(item.value);
+          setAddress(item.value);
         }}
         renderItem={(item: any) => {
           if (item?.value === "addAddress") {
             return (
               <Link href="/location/addAddress" asChild>
                 <TouchableOpacity style={styles.actionItemWrapper}>
-                  <Text style={[styles.menuItem, styles.actionItem]}>{item.label}</Text>
+                  <Text style={[styles.menuItem, styles.actionItem]}>
+                    {item.label}
+                  </Text>
                   <Entypo
                     name="link"
                     size={20}
-                    color='blue'
+                    color="blue"
                     // style={styles.cancelImage}
-                    />
+                  />
                 </TouchableOpacity>
               </Link>
             );
@@ -127,8 +134,8 @@ const styles = StyleSheet.create({
   },
   actionItemWrapper: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   menuItem: {
     padding: 8,
@@ -136,6 +143,6 @@ const styles = StyleSheet.create({
     color: "black",
   },
   actionItem: {
-    color: 'blue'
-  }
+    color: "blue",
+  },
 });

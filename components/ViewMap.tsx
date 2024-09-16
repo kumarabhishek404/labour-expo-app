@@ -20,16 +20,18 @@ const Map = ({ data }: any) => {
   const mapRef: any = useRef();
   const navigation = useNavigation();
 
-  // const focus = () => {
-  //   const Cordinates = {
-  //     latitude: 48.8575,
-  //     longitude: 2.3514,
-  //     latitudeDelta: 2,
-  //     longitudeDelta: 2,
-  //   }
+  console.log("Map Data--", data);
+  
+  const focus = () => {
+    const Cordinates = {
+      latitude: 48.8575,
+      longitude: 2.3514,
+      latitudeDelta: 2,
+      longitudeDelta: 2,
+    }
 
-  //   mapRef.current?.animateCamera({center: Cordinates, zoom: 10}, {duration: 3000})
-  // }
+    mapRef.current?.animateCamera({center: Cordinates, zoom: 10}, {duration: 3000})
+  }
 
   const onRegionChange = (region: Region) => {};
 
@@ -56,11 +58,11 @@ const Map = ({ data }: any) => {
         showsMyLocationButton
         zoomControlEnabled={true}
         loadingEnabled={true}
-        // userLocationCalloutEnabled={true}
+        userLocationCalloutEnabled={true}
         onRegionChangeComplete={onRegionChange}
         ref={mapRef}
       >
-        <Marker coordinate={data.cordinates}>
+        <Marker coordinate={data?.cordinates || initialRegion}>
           <Callout onPress={onCalloutPresses}>
             <View style={{ padding: 4 }}>
               <Text style={{ fontSize: 24 }}>{data.location}</Text>

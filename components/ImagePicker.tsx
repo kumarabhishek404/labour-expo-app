@@ -18,13 +18,13 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
-export default function ImageUpload() {
+export default function ImageUpload({images, setImages}:any) {
   const [showAppOptions, setShowAppOptions] = useState(false);
-  const [selectedImages, setSelectedImages]: any = useState([
-    // "https://images.unsplash.com/photo-1599719574316-e32146edacb1?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    // "https://images.unsplash.com/photo-1623211269755-569fec0536d2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    // "https://images.unsplash.com/photo-1575091317298-83c5351a79f2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  ]);
+  // const [images, setImages]: any = useState([
+  //   // "https://images.unsplash.com/photo-1599719574316-e32146edacb1?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //   // "https://images.unsplash.com/photo-1623211269755-569fec0536d2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //   // "https://images.unsplash.com/photo-1575091317298-83c5351a79f2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  // ]);
 
   const pickImageAsync = async () => {
     let result:any = await ImagePicker.launchImageLibraryAsync({
@@ -33,8 +33,8 @@ export default function ImageUpload() {
     });
 
     if(result) {
-      let allImages = [...selectedImages, result?.assets[0]?.uri];
-      setSelectedImages(allImages);
+      let allImages = [...images, result?.assets[0]?.uri];
+      setImages(allImages);
     }
     if (!result.canceled) {
       //   setSelectedImage(result.assets[0].uri);
@@ -47,12 +47,12 @@ export default function ImageUpload() {
   const removeSingleImage = (indexParam: number) => {
     console.log("Indes--", indexParam);
 
-    let allImages = selectedImages?.filter((image: any, index: number) => {
+    let allImages = images?.filter((image: any, index: number) => {
       if (index === indexParam) return;
       else return image;
     });
 
-    setSelectedImages(allImages);
+    setImages(allImages);
   };
 
   const onSaveImageAsync = async () => {
@@ -80,9 +80,9 @@ export default function ImageUpload() {
           </TouchableOpacity>
         </View>
         <View style={styles.selectedImageContainer}>
-          {selectedImages && selectedImages?.length > 0 ? (
-            selectedImages.map((image: any, index: number) => (
-              <View style={styles.imagesContainer}>
+          {images && images?.length > 0 ? (
+            images.map((image: any, index: number) => (
+              <View key={index} style={styles.imagesContainer}>
                 <Entypo
                   name="cross"
                   size={30}
@@ -110,7 +110,7 @@ export default function ImageUpload() {
             </View>
           )}
         </View>
-        {selectedImages && selectedImages.length > 0 && (
+        {images && images.length > 0 && (
           <View>
             <TouchableOpacity
               style={styles.imageUploadButton}

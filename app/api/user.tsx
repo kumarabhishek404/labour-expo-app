@@ -1,6 +1,7 @@
 // // import { toast } from 'react-toastify';
 // // import ApiClient from './ApiClient';
 
+import { router } from "expo-router";
 import { makeGetRequest, makePostRequest } from ".";
 
 // import axios from "axios";
@@ -100,18 +101,17 @@ export const signIn = async (payload: any) => {
       `[Sign In] [userService] Signing in the user with API /auth/login and payload `,
       payload
     );
-    // const data = await axios.get('https://reqres.in/api/users/1');
-
     const data = await makePostRequest("/auth/login", payload);
     console.log(
       `[Sign In] [userService] User signed in with the response `,
       data.data
     );
+    // router.push('/(tabs)')
     return data.data;
   } catch (error: any) {
     console.log(
       `[Sign In] [userService] An error occurred while signing the user `,
-      error?.response?.data?.message
+      error
     );
     //   toast.error(
     //     error?.response?.data?.message || 'An error occurred while login user',

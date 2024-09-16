@@ -27,23 +27,45 @@ import Animated, {
 } from "react-native-reanimated";
 import ViewMap from "@/components/ViewMap";
 import Map from "@/components/ViewMap";
-import { getServiceById } from "../api/services";
+import {
+  applyService,
+  getServiceById,
+  likeService,
+  unLikeService,
+} from "../api/services";
 import Loader from "@/components/Loader";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAtom, useAtomValue } from "jotai";
+import { LocationAtom, UserAtom } from "../AtomStore/user";
+import { showToast } from "../hooks/toast";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
 const ListingDetails = () => {
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [location, setLocation] = useAtom(LocationAtom);
+  console.log("location----", location);
+  
+  const [mapLocation, setMapLocation]:any = useState({
+    cordinates: {
+      latitude: location?.coords?.latitude,
+      longitude: location?.coords?.longitude,
+      latitudeDelta: 2,
+      longitudeDelta: 2,
+    }
+  });
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+  const [isServiceLiked, setIsServiceLiked] = useState(userDetails?.likedJobs.includes(id));
+  const [isServiceApplied, setIsServiceApplied] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Iddd---", id, useLocalSearchParams());
+  console.log("Location---", location);
 
   const {
     isLoading,
@@ -56,6 +78,58 @@ const ListingDetails = () => {
     queryFn: async () => await getServiceById(id),
     retry: 3,
     enabled: !!id,
+    // refetchOnWindowFocus: true
+  });
+
+  const mutationLikeService = useMutation({
+    mutationKey: ["likeService", { id }],
+    mutationFn: () => likeService({ serviceID: id }),
+    onSuccess: (response) => {
+      showToast('success', "this is success message")
+      console.log("Response while liking a service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while liking the service ", err);
+    },
+  });
+
+  const mutationUnLikeService = useMutation({
+    mutationKey: ["unlikeService", { id }],
+    mutationFn: () => unLikeService({ serviceID: id }),
+    onSuccess: (response) => {
+      showToast('error', "this is success message")
+      // showToast('info', "this is success message")
+      // console.log("Response while unliking a service - ", response);
+      let likedService = [...userDetails?.likedJobs]
+      console.log("Response while unliking a service - ", likedService);
+
+      // likeService?.filter((serviceId:any) => serviceId !== id)
+    },
+    onError: (err) => {
+      console.error("error while unliking the service ", err);
+    },
+  });
+
+  const mutationApplyService = useMutation({
+    mutationKey: ["applyService", { id }],
+    mutationFn: () => applyService({ serviceID: id }),
+    onSuccess: (response) => {
+      console.log("Response while applying in the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while applying in the service ", err);
+    },
+  });
+
+  const mutationUnApplyService = useMutation({
+    mutationKey: ["unapplyService", { id }],
+    mutationFn: () => unLikeService({ serviceID: id }),
+    onSuccess: (response) => {
+      console.log("Response while unapplying the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while unapplying the service ", err);
+    },
   });
 
   useFocusEffect(
@@ -63,6 +137,20 @@ const ListingDetails = () => {
       const unsubscribe = setService(response?.data);
       return () => unsubscribe;
     }, [response])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const locationObject = {
+        cordinates: {
+          latitude: location?.coords?.latitude,
+          longitude: location?.coords?.longitude,
+          latitudeDelta: 2,
+          longitudeDelta: 2,
+        }
+      }
+      return () => setMapLocation(locationObject);
+    }, [location])
   );
 
   const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -134,7 +222,15 @@ const ListingDetails = () => {
           ),
         }}
       />
-      <Loader loading={isLoading} />
+      <Loader
+        loading={
+          isLoading ||
+          isRefetching ||
+          mutationLikeService?.isPending ||
+          mutationUnLikeService?.isPending ||
+          mutationApplyService?.isPending
+        }
+      />
 
       <ScrollView style={styles.container}>
         <Animated.ScrollView
@@ -194,20 +290,32 @@ const ListingDetails = () => {
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
           </View>
-          {/* <Map data={service} /> */}
+          <Map data={mapLocation} />
         </Animated.ScrollView>
       </ScrollView>
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => mutationApplyService.mutate()}
           style={[styles.footerBtn, styles.footerBookBtn]}
         >
-          <Text style={styles.footerBtnTxt}>Book Now</Text>
+          <Text style={styles.footerBtnTxt}>Apply Now</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
+        <TouchableOpacity
+          onPress={() =>
+            isServiceLiked
+              ? mutationUnLikeService.mutate()
+              : mutationLikeService.mutate()
+          }
+          style={[styles.footerBtn]}
+        >
+          <Text style={styles.footerBtnTxt}>
+            {isServiceLiked ? "Unlike" : "Like"}
+          </Text>
+        </TouchableOpacity>
+        {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
           <Text style={styles.footerBtnTxt}>${service?.price}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </Animated.View>
     </>
   );
@@ -294,6 +402,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     marginRight: 20,
   },
+  // footerLikeBtn: {
+  //   backgroundColor: "gray",
+  // },
   footerBtnTxt: {
     color: Colors.white,
     fontSize: 16,
