@@ -13,10 +13,14 @@ const getHeaders = async () => {
         Authorization: `Bearer ${parsedUser?.token}`,
       };
     }
-    return {};
+    return {
+      Authorization: "Bearer Invalid",
+    };
   } catch (error) {
     console.error("Error retrieving token from AsyncStorage:", error);
-    return {};
+    return {
+      Authorization: "",
+    };
   }
 };
 
@@ -48,6 +52,7 @@ api.interceptors.response.use(
       if (
         (error.response.status === 400 &&
           error.response.data.message === "jwt expired") ||
+        error.response.data.message === "jwt malformed" ||
         error.response.statusText === "TokenExpiredError"
       ) {
         AsyncStorage.removeItem("user");
@@ -108,7 +113,7 @@ export const makePostRequest = async (
     },
   });
   console.log("Ressssssssss----", response);
-  
+
   return response;
 };
 
@@ -123,7 +128,7 @@ export const makePostRequestFormData = async (
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      "Accept": "*/*",
+      Accept: "*/*",
       ...headers,
     },
   });

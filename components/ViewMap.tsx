@@ -23,14 +23,14 @@ const Map = ({ data }: any) => {
   console.log("Map Data--", data);
   
   const focus = () => {
-    const Cordinates = {
-      latitude: 48.8575,
-      longitude: 2.3514,
-      latitudeDelta: 2,
-      longitudeDelta: 2,
-    }
+    // const Cordinates = {
+    //   latitude: 48.8575,
+    //   longitude: 2.3514,
+    //   latitudeDelta: 2,
+    //   longitudeDelta: 2,
+    // }
 
-    mapRef.current?.animateCamera({center: Cordinates, zoom: 10}, {duration: 3000})
+    mapRef.current?.animateCamera({center: data?.region, zoom: 10}, {duration: 3000})
   }
 
   const onRegionChange = (region: Region) => {};
@@ -47,25 +47,28 @@ const Map = ({ data }: any) => {
   };
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity onPress={focus}>
-        <Text>Focus</Text>
-      </TouchableOpacity> */}
+      <TouchableOpacity onPress={focus}>
+        <Text>Focus on service location</Text>
+      </TouchableOpacity>
       <MapView
         style={{ height: 400, width: 370 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={data?.cordinates || initialRegion}
+        initialRegion={data?.region || initialRegion}
         showsUserLocation={true}
         showsMyLocationButton
         zoomControlEnabled={true}
         loadingEnabled={true}
         userLocationCalloutEnabled={true}
-        onRegionChangeComplete={onRegionChange}
+        // onRegionChangeComplete={onRegionChange}
+        onRegionChange={onRegionChange}
         ref={mapRef}
+        // onCalloutPress={() => mapRef.current?.animateCamera({center: data?.cordinates, zoom: 10}, {duration: 3000})}
+        // onUserLocationChange={(location) => mapRef.current?.animateCamera({center: data?.cordinates, zoom: 10}, {duration: 3000})}
       >
-        <Marker coordinate={data?.cordinates || initialRegion}>
+        <Marker coordinate={data?.region || initialRegion}>
           <Callout onPress={onCalloutPresses}>
             <View style={{ padding: 4 }}>
-              <Text style={{ fontSize: 24 }}>{data.location}</Text>
+              <Text style={{ fontSize: 20 }}>{JSON.stringify(data.cordinates)}</Text>
             </View>
           </Callout>
         </Marker>

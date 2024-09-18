@@ -8,76 +8,57 @@ import {
   View,
 } from "react-native";
 import { useAtom } from "jotai";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link, Stack } from "expo-router";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/Loader";
 import { UserAtom } from "../AtomStore/user";
 import { signIn } from "../api/user";
+import { showToast } from "../hooks/toast";
 
 const LoginScreen = () => {
   const [_, setUserDetails] = useAtom(UserAtom);
   const [secureEntery, setSecureEntery] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [enabled, setEnabled] = useState(false);
 
-  let payload = {
-    email: email,
-    password: password,
-  };
-
-  const { isLoading, data: response, } = useQuery({
-    queryKey: ["login", payload],
-    queryFn: () => signIn(payload),
-    retry: false,
-    enabled: !!email && !!password && !!enabled,
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    if (response?.user) {
+  const mutationSignIn = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => {
+      let payload = {
+        email: email,
+        password: password,
+      };
+      return signIn(payload);
+    },
+    onSuccess: (response) => {
+      // setUser(response?.user)
+      // setToken(response?.token)
+      let user = response?.user;
       setUserDetails({
         isAuth: true,
-        _id: response?.user?._id,
-        firstName: response?.user?.firstName,
-        middleName: response?.user?.middleName,
-        lastName: response?.user?.lastName,
-        mobileNumber: response?.user?.mobileNumber,
-        likedJobs: response?.user?.likedJobs,
-        likedEmployees: response?.user?.likedEmployees,
-        email: response?.user?.email,
-        address: response?.user?.address,
-        profilePic: response?.user?.avatar,
-        role: response?.user?.role,
+        _id: user?._id,
+        firstName: user?.firstName,
+        middleName: user?.middleName,
+        lastName: user?.lastName,
+        mobileNumber: user?.mobileNumber,
+        likedJobs: user?.likedJobs,
+        likedEmployees: user?.likedEmployees,
+        email: user?.email,
+        address: user?.address,
+        profilePic: user?.avatar,
+        role: user?.role,
         token: response?.token,
         serviceAddress: ["Balipur, post - Shakrauli, Etah Uttar Predesh"],
       });
-      // setWorkDetails({
-      //   workDetails: {
-      //     total: 0,
-      //     completed: 0,
-      //     upcoming: 0,
-      //     cancelled: 0,
-      //   },
-      //   serviceDetails: {
-      //     total: 0,
-      //     completed: 0,
-      //     upcoming: 0,
-      //     cancelled: 0,
-      //   },
-      //   earnings: {
-      //     work: 0,
-      //     rewards: 0,
-      //   },
-      //   spent: {
-      //     work: 0,
-      //     tip: 0,
-      //   },
-      // });
-    }
-  }, [response]);
+      showToast("success", "Logged in successfully!");
+      console.log("Response while loging a user - ", response);
+    },
+    onError: (err) => {
+      console.error("error while loging a user - ", err);
+    },
+  });
 
   const handleForgotPassword = () => {};
 
@@ -88,7 +69,7 @@ const LoginScreen = () => {
           headerShown: false,
         }}
       />
-      <Loader loading={isLoading} />
+      <Loader loading={mutationSignIn?.isPending} />
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Hey,</Text>
@@ -109,7 +90,6 @@ const LoginScreen = () => {
               placeholderTextColor={Colors.secondary}
               keyboardType="email-address"
               onChangeText={(email) => {
-                setEnabled(false);
                 setEmail(email);
               }}
             />
@@ -123,7 +103,6 @@ const LoginScreen = () => {
               placeholderTextColor={Colors.secondary}
               secureTextEntry={secureEntery}
               onChangeText={(password) => {
-                setEnabled(false);
                 setPassword(password);
               }}
             />
@@ -143,7 +122,7 @@ const LoginScreen = () => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setEnabled(true)}
+            onPress={() => mutationSignIn.mutate()}
             style={styles.loginButtonWrapper}
           >
             <Text style={styles.loginText}>Login</Text>
@@ -209,7 +188,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
-    marginLeft: 10
+    marginLeft: 10,
   },
   forgotPasswordText: {
     width: 117,

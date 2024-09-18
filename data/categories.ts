@@ -4,39 +4,39 @@ const destinationCategories = [
     iconName: "hiking"
   },
   {
-    title: "Beaches",
+    title: "Labour",
     iconName: "beach"
   },
   {
-    title: "Mountains",
+    title: "Eletrician",
     iconName: "terrain"
   },
   {
-    title: "Cities",
+    title: "Plumber",
     iconName: "city"
   },
   {
-    title: "Forests",
+    title: "Mistri",
     iconName: "tree"
   },
   {
-    title: "Lakes",
+    title: "Tractor Driver",
     iconName: "swim"
   },
   {
-    title: "Historical Sites",
+    title: "Car Driver",
     iconName: "castle"
   },
   {
-    title: "National Parks",
+    title: "Farming Helper",
     iconName: "pine-tree"
   },
   {
-    title: "Islands",
+    title: "Sichai",
     iconName: "island"
   },
   {
-    title: "Deserts",
+    title: "Katai",
     iconName: "weather-sunny"
   }
 ];

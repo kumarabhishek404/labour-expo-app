@@ -2,6 +2,7 @@
 // // import ApiClient from './ApiClient';
 
 import { makeGetRequest, makePostRequest, makePostRequestFormData } from ".";
+import { showToast } from "../hooks/toast";
 
 // import axios from "axios";
 // import ApiClient from ".";
@@ -55,6 +56,7 @@ export const addNewService = async (payload: any) => {
 //   }
 
 export const getServiceById = async (id: any) => {
+  showToast("success", "Service Details screen")
   try {
     const { data } = await makeGetRequest(`/service/service-info/${id}`);
     return data;

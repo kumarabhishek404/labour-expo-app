@@ -48,7 +48,21 @@ const ProfileScreen = () => {
     console.log("Logout button pressed");
     setUserDetails({
       isAuth: false,
+      _id: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      mobileNumber: '',
+      likedJobs: '',
+      likedEmployees: '',
+      email: '',
+      address: '',
+      profilePic: '',
+      role: '',
+      token: '',
+      serviceAddress: [],
     });
+    router.navigate('/auth/login')
   };
 
   const handleEditProfile = () => {

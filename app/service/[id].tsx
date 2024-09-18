@@ -1,16 +1,13 @@
 import {
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ListingType } from "@/types/listingType";
-import services from "@/data/services.json";
 import {
   Feather,
   FontAwesome,
@@ -25,7 +22,6 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import ViewMap from "@/components/ViewMap";
 import Map from "@/components/ViewMap";
 import {
   applyService,
@@ -36,7 +32,7 @@ import {
 import Loader from "@/components/Loader";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { LocationAtom, UserAtom } from "../AtomStore/user";
 import { showToast } from "../hooks/toast";
 
@@ -47,25 +43,27 @@ const ListingDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [location, setLocation] = useAtom(LocationAtom);
   console.log("location----", location);
-  
-  const [mapLocation, setMapLocation]:any = useState({
-    cordinates: {
+
+  const [mapLocation, setMapLocation]: any = useState({
+    region: {
       latitude: location?.coords?.latitude,
       longitude: location?.coords?.longitude,
       latitudeDelta: 2,
       longitudeDelta: 2,
-    }
+    },
   });
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
-  const [isServiceLiked, setIsServiceLiked] = useState(userDetails?.likedJobs.includes(id));
+  const [isServiceLiked, setIsServiceLiked] = useState(
+    userDetails?.likedJobs.includes(id)
+  );
   const [isServiceApplied, setIsServiceApplied] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Location---", location);
+  console.log("Location---", useLocalSearchParams());
 
   const {
     isLoading,
@@ -85,7 +83,7 @@ const ListingDetails = () => {
     mutationKey: ["likeService", { id }],
     mutationFn: () => likeService({ serviceID: id }),
     onSuccess: (response) => {
-      showToast('success', "this is success message")
+      showToast("success", "this is success message");
       console.log("Response while liking a service - ", response);
     },
     onError: (err) => {
@@ -97,10 +95,10 @@ const ListingDetails = () => {
     mutationKey: ["unlikeService", { id }],
     mutationFn: () => unLikeService({ serviceID: id }),
     onSuccess: (response) => {
-      showToast('error', "this is success message")
+      showToast("error", "this is success message");
       // showToast('info', "this is success message")
       // console.log("Response while unliking a service - ", response);
-      let likedService = [...userDetails?.likedJobs]
+      let likedService = [...userDetails?.likedJobs];
       console.log("Response while unliking a service - ", likedService);
 
       // likeService?.filter((serviceId:any) => serviceId !== id)
@@ -147,8 +145,8 @@ const ListingDetails = () => {
           longitude: location?.coords?.longitude,
           latitudeDelta: 2,
           longitudeDelta: 2,
-        }
-      }
+        },
+      };
       return () => setMapLocation(locationObject);
     }, [location])
   );
@@ -290,7 +288,7 @@ const ListingDetails = () => {
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
           </View>
-          <Map data={mapLocation} />
+          <Map data={mapLocation && mapLocation} />
         </Animated.ScrollView>
       </ScrollView>
 

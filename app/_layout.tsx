@@ -5,10 +5,9 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 // import { StateProvider } from "./context/context";
-import { RootSiblingParent } from "react-native-root-siblings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import * as Location from 'expo-location'
+import * as Location from "expo-location";
 import { useAtom } from "jotai";
 import { LocationAtom } from "./AtomStore/user";
 import { showToast } from "./hooks/toast";
@@ -48,14 +47,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     const getPermission = async () => {
-      let {status} = await Location.requestForegroundPermissionsAsync();
-      if(status !== "granted") {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
         console.log("Please grant location permission");
         return;
       }
 
       let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation)
+      setLocation(currentLocation);
       console.log("Current Location - ", currentLocation);
 
       let response = await Location.reverseGeocodeAsync({
@@ -64,10 +63,9 @@ export default function RootLayout() {
       });
 
       console.log("Address---", response);
-      
-    }
-    getPermission()
-  }, [])
+    };
+    getPermission();
+  }, []);
 
   if (!loaded) {
     return null;
@@ -81,12 +79,10 @@ function RootLayoutNav() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RootSiblingParent>
-        <Stack screenOptions={{ headerShown: true }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <Toast />
-      </RootSiblingParent>
+      <Stack screenOptions={{ headerShown: true }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+      <Toast />
     </QueryClientProvider>
   );
 }

@@ -106,7 +106,7 @@ export const signIn = async (payload: any) => {
       `[Sign In] [userService] User signed in with the response `,
       data.data
     );
-    // router.push('/(tabs)')
+    router.push('/(tabs)')
     return data.data;
   } catch (error: any) {
     console.log(

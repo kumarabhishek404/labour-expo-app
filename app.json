@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "labour-app",
+    "name": "Labour App",
     "slug": "labour-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,14 +16,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
+      "package": "com.kumarabhishek404.labourapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.kumarabhishek404.labourapp"
+      }
     },
     "web": {
       "bundler": "metro",

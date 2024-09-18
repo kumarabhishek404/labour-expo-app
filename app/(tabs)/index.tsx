@@ -17,10 +17,31 @@ import Listings from "@/components/Listings";
 import services from "@/data/services.json";
 import GroupListings from "@/components/GroupListings";
 import groupData from "@/data/groups.json";
+import { useQuery } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "../AtomStore/user";
+import { fetchAllWorkers } from "../api/workers";
+import { fetchAllServices } from "../api/services";
+import Loader from "@/components/Loader";
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
+  const userDetails = useAtomValue(UserAtom);
   const [category, setCategory] = useState("All");
+
+  const {
+    isLoading,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () =>
+      (await userDetails?.role) === "Employer"
+        ? fetchAllWorkers()
+        : fetchAllServices(),
+    retry: 3,
+  });
 
   const onCatChanged = (category: string) => {
     console.log("Categpry: ", category);
@@ -34,7 +55,10 @@ const Page = () => {
           headerTransparent: true,
           headerTitle: "",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={{ marginLeft: 20 }}>
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/profile")}
+              style={{ marginLeft: 20 }}
+            >
               <Image
                 source={{
                   uri: "https://xsgames.co/randomusers/avatar.php?g=female",
@@ -62,6 +86,8 @@ const Page = () => {
           ),
         }}
       />
+      <Loader loading={isLoading} />
+
       <View style={[styles.container, { paddingTop: headerHeight }]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={styles.headingTxt}>Work Is Worship!</Text>
@@ -69,18 +95,18 @@ const Page = () => {
           <View style={styles.searchSectionWrapper}>
             <View style={styles.searchBar}>
               <Ionicons
-                  name="search"
-                  size={18}
-                  style={{ marginRight: 5 }}
-                  color={Colors.black}
-                />
-                <TextInput
-                  style={styles.searchBox}
-                  placeholder="Search..."
-                  // value={searchText}
-                  // onChangeText={handleSearch}
-                  placeholderTextColor="black"
-                />
+                name="search"
+                size={18}
+                style={{ marginRight: 5 }}
+                color={Colors.black}
+              />
+              <TextInput
+                style={styles.searchBox}
+                placeholder="Search..."
+                // value={searchText}
+                // onChangeText={handleSearch}
+                placeholderTextColor="black"
+              />
             </View>
             <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
               <Ionicons name="options" size={28} color={Colors.white} />
@@ -89,7 +115,7 @@ const Page = () => {
 
           <CategoryButtons onCagtegoryChanged={onCatChanged} />
 
-          <Listings listings={services} category={category} />
+          <Listings listings={response?.data} category={category} />
 
           <GroupListings listings={groupData} />
         </ScrollView>

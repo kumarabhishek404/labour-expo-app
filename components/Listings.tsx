@@ -31,10 +31,10 @@ const Listings = ({ listings, category }: Props) => {
 
   const renderItems: ListRenderItem<ListingType> = ({ item }) => {
     return (
-      <Link href={`/service/${item.id}`} asChild>
+      <Link href={`/service/${item?._id}`} asChild>
         <TouchableOpacity>
           <View style={styles.item}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+            <Image source={{ uri: item?.image }} style={styles.image} />
             <View style={styles.bookmark}>
               <Ionicons
                 name="bookmark-outline"
@@ -43,7 +43,7 @@ const Listings = ({ listings, category }: Props) => {
               />
             </View>
             <Text style={styles.itemTxt} numberOfLines={1} ellipsizeMode="tail">
-              {item.name}
+              {item?.name}
             </Text>
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -54,9 +54,9 @@ const Listings = ({ listings, category }: Props) => {
                   size={18}
                   color={Colors.primary}
                 />
-                <Text style={styles.itemLocationTxt}>{item.location}</Text>
+                <Text style={styles.itemLocationTxt}>{item?.location}</Text>
               </View>
-              <Text style={styles.itemPriceTxt}>${item.price}</Text>
+              <Text style={styles.itemPriceTxt}>${item?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>

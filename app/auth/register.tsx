@@ -15,7 +15,6 @@ import { Link, router, Stack } from "expo-router";
 import axios from "axios";
 // import { useStateContext } from "../context/context";
 // import UsersClient from "../api/user";
-import Toast from "react-native-root-toast";
 import Loader from "@/components/Loader";
 
 const SignupScreen = () => {
@@ -48,12 +47,12 @@ const SignupScreen = () => {
       !password
       // !confirmPassword
     ) {
-      Toast.show("Please fill all fields.", {
-        position: Toast.positions.BOTTOM,
-        backgroundColor: "white",
-        opacity: 1,
-        textColor: "red",
-      });
+      // Toast.show("Please fill all fields.", {
+      //   position: Toast.positions.BOTTOM,
+      //   backgroundColor: "white",
+      //   opacity: 1,
+      //   textColor: "red",
+      // });
       return;
     }
     // if (password !== confirmPassword) {
