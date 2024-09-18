@@ -288,7 +288,8 @@ const ListingDetails = () => {
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
           </View>
-          <Map data={mapLocation && mapLocation} />
+          {/* First Make Google Maps API Key Then Uncomment It */}
+          {/* <Map data={mapLocation && mapLocation} /> */}
         </Animated.ScrollView>
       </ScrollView>
 
