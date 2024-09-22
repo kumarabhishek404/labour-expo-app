@@ -14,7 +14,7 @@ const getHeaders = async () => {
       };
     }
     return {
-      Authorization: "Bearer Invalid",
+      Authorization: "",
     };
   } catch (error) {
     console.error("Error retrieving token from AsyncStorage:", error);
@@ -58,7 +58,7 @@ api.interceptors.response.use(
         AsyncStorage.removeItem("user");
         // setUserDetails({});
         // window.location.href = "/auth/login";
-        router.push("/auth/login");
+        router.push("/screens/auth/login");
       }
     } else if (error.request) {
       console.error("No response received:", error.request);
@@ -80,14 +80,6 @@ export const makeGetRequest = async (
     | "text"
     | "stream" = "json"
 ): Promise<any> => {
-  console.log(
-    "Data inside get - ",
-    url,
-    headers,
-    responseType,
-    await getHeaders()
-  );
-
   const response = await api.get(url, {
     headers: {
       ...(await getHeaders()),
@@ -103,7 +95,6 @@ export const makePostRequest = async (
   body: object,
   headers?: { [key: string]: string }
 ): Promise<AxiosResponse> => {
-  console.log("Inside make post request - ", url, body, headers);
   const response = await api.post(url, body, {
     headers: {
       // ...api.defaults.headers.common,
@@ -112,8 +103,6 @@ export const makePostRequest = async (
       ...headers,
     },
   });
-  console.log("Ressssssssss----", response);
-
   return response;
 };
 
@@ -122,18 +111,15 @@ export const makePostRequestFormData = async (
   body: object,
   headers?: { [key: string]: string }
 ): Promise<AxiosResponse> => {
-  console.log("Inside make post request - ", url, body, headers);
   const response: any = await api.post(url, body, {
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      Accept: "*/*",
       ...headers,
     },
   });
-  console.log("Ressssspooosss---", response);
-  return response.json();
+  return response;
 };
 
 export const makePutRequest = async (
@@ -145,6 +131,37 @@ export const makePutRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
+      ...headers,
+    },
+  });
+  return response;
+};
+
+export const makePatchRequest = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  const response = await api.patch(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      ...headers,
+    },
+  });
+  return response;
+};
+
+export const makePatchRequestFormData = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  const response: any = await api.patch(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
+      ...(await getHeaders()),
+      "Content-Type": "multipart/form-data",
       ...headers,
     },
   });

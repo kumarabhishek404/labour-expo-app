@@ -37,7 +37,7 @@ const Workers = () => {
       (await userDetails?.role) === "Employer"
         ? fetchAllWorkers()
         : fetchAllServices(),
-    retry: 3,
+    retry: 0,
   });
 
   useFocusEffect(

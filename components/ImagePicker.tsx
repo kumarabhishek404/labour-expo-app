@@ -27,20 +27,35 @@ export default function ImageUpload({images, setImages}:any) {
   // ]);
 
   const pickImageAsync = async () => {
-    let result:any = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
+    // let result:any = await ImagePicker.launchImageLibraryAsync({
+    //   allowsEditing: true,
+    //   quality: 1,
+    // });
 
-    if(result) {
-      let allImages = [...images, result?.assets[0]?.uri];
-      setImages(allImages);
-    }
-    if (!result.canceled) {
-      //   setSelectedImage(result.assets[0].uri);
-      setShowAppOptions(true);
-    } else {
-      alert("You did not select any image.");
+    // console.log("result00000", result);
+    
+    // if(result) {
+    //   let allImages = [...images, result?.assets[0]?.uri];
+    //   setImages(allImages);
+    // }
+    // if (!result.canceled) {
+    //   setImages(result.assets[0].uri);
+    //   setShowAppOptions(true);
+    // } else {
+    //   alert("You did not select any image.");
+    // }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        setImages(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -79,7 +94,7 @@ export default function ImageUpload({images, setImages}:any) {
             <Text style={styles.imageUploadButtonText}>Choose a photo</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.selectedImageContainer}>
+        {/* <View style={styles.selectedImageContainer}>
           {images && images?.length > 0 ? (
             images.map((image: any, index: number) => (
               <View key={index} style={styles.imagesContainer}>
@@ -109,7 +124,7 @@ export default function ImageUpload({images, setImages}:any) {
               <Text>Not uploaded any image</Text>
             </View>
           )}
-        </View>
+        </View> */}
         {images && images.length > 0 && (
           <View>
             <TouchableOpacity

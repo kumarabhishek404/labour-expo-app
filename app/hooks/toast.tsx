@@ -1,35 +1,35 @@
 import Toast from "react-native-toast-message";
+import { ToastType } from "react-native-toast-message";
 
-export const showToast = (
-  type: string,
-  message: string,
-  description?: string
-) => {
-  console.log("Typs---", type, message);
+const toastConfig = {
+  type: "info" as ToastType,
+  text1: "",
+  text2: "",
+};
 
-  switch (type) {
-    case "success":
-      return Toast.show({
-        type: "success",
-        text1: message || "",
-        text2: description,
-      });
-
-    case "error":
-      return Toast.show({
-        type: "error",
-        text1: message || "",
-        text2: description,
-      });
-
-    case "info":
-      return Toast.show({
-        type: "info",
-        text1: message || "",
-        text2: description,
-      });
-
-    default:
-      break;
-  }
+export const toast = {
+  success: (message: string, description?: string) => {
+    Toast.show({
+      ...toastConfig,
+      type: "success",
+      text1: message,
+      text2: description,
+    });
+  },
+  error: (message: string, description?: string) => {
+    Toast.show({
+      ...toastConfig,
+      type: "error",
+      text1: message,
+      text2: description,
+    });
+  },
+  info: (message: string, description?: string) => {
+    Toast.show({
+      ...toastConfig,
+      type: "info",
+      text1: message,
+      text2: description,
+    });
+  },
 };

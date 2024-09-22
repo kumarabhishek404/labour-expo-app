@@ -1,44 +1,62 @@
-const destinationCategories = [
+const services = [
   {
     title: "All",
-    iconName: "hiking"
+    iconName: "hiking",
+  },
+  {
+    title: "Upcoming",
+    iconName: "beach",
+  },
+  {
+    title: "Active",
+    iconName: "terrain",
+  },
+];
+
+const workers = [
+  {
+    title: "All",
+    iconName: "hiking",
   },
   {
     title: "Labour",
-    iconName: "beach"
+    iconName: "beach",
   },
   {
     title: "Eletrician",
-    iconName: "terrain"
+    iconName: "terrain",
   },
   {
     title: "Plumber",
-    iconName: "city"
+    iconName: "city",
   },
   {
     title: "Mistri",
-    iconName: "tree"
+    iconName: "tree",
   },
   {
     title: "Tractor Driver",
-    iconName: "swim"
+    iconName: "swim",
   },
   {
     title: "Car Driver",
-    iconName: "castle"
+    iconName: "castle",
   },
   {
     title: "Farming Helper",
-    iconName: "pine-tree"
+    iconName: "pine-tree",
   },
   {
     title: "Sichai",
-    iconName: "island"
+    iconName: "island",
   },
   {
     title: "Katai",
-    iconName: "weather-sunny"
-  }
+    iconName: "weather-sunny",
+  },
 ];
 
-export default destinationCategories;
+export default {
+  services,
+  workers,
+};

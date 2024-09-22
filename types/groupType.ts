@@ -1,7 +1,8 @@
 export interface GroupType {
-  id: string;
-  name: string;
-  image: string;
+  _id: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
   rating: number;
   reviews: number;
 }

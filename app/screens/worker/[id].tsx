@@ -1,13 +1,21 @@
 import {
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import { ListingType } from "@/types/listingType";
+import workers from "@/data/workers.json";
 import {
   Feather,
   FontAwesome,
@@ -22,49 +30,25 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import Map from "@/components/ViewMap";
-import {
-  applyService,
-  getServiceById,
-  likeService,
-  unLikeService,
-} from "../api/services";
-import Loader from "@/components/Loader";
+import ViewMap from "@/components/ViewMap";
+import { Avatar } from "react-native-paper";
+import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
-import { useAtom } from "jotai";
-import { LocationAtom, UserAtom } from "../AtomStore/user";
-import { showToast } from "../hooks/toast";
+import Loader from "@/components/Loader";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-const ListingDetails = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const [location, setLocation] = useAtom(LocationAtom);
-  console.log("location----", location);
-
-  const [mapLocation, setMapLocation]: any = useState({
-    region: {
-      latitude: location?.coords?.latitude,
-      longitude: location?.coords?.longitude,
-      latitudeDelta: 2,
-      longitudeDelta: 2,
-    },
-  });
+const Worker = () => {
   const { id } = useLocalSearchParams();
-  const [service, setService]: any = useState({});
+  const [worker, setWorker]: any = useState({});
+  // const worker: any = (workers as ListingType[]).find((item) => item._id === id);
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
-  const [isServiceLiked, setIsServiceLiked] = useState(
-    userDetails?.likedJobs.includes(id)
-  );
-  const [isServiceApplied, setIsServiceApplied] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Location---", useLocalSearchParams());
-
+  console.log("Idd---", id);
+  
   const {
     isLoading,
     isError,
@@ -72,83 +56,42 @@ const ListingDetails = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["serviceDetails"],
-    queryFn: async () => await getServiceById(id),
-    retry: 3,
+    queryKey: ["workerDetails"],
+    queryFn: () => getWorkerDetailsById(id),
+    retry: 0,
     enabled: !!id,
     // refetchOnWindowFocus: true
   });
 
-  const mutationLikeService = useMutation({
-    mutationKey: ["likeService", { id }],
-    mutationFn: () => likeService({ serviceID: id }),
+  const getWorkerDetailsById = async (id:any) => {
+    try{
+      const response = await getWorkerById(id);
+      console.log("REEEEEE---", response);
+      
+      return response;
+    }
+    catch(err) {
+      router.back()
+      console.log("error while getting details of worker");
+    }
+  }
+
+  const mutation = useMutation({
+    mutationKey: ["likeWorker", { id }],
+    mutationFn: () => likeWorker({ workerID: id }),
     onSuccess: (response) => {
-      showToast("success", "this is success message");
-      console.log("Response while liking a service - ", response);
+      console.log("Response while liking a worker - ", response);
     },
     onError: (err) => {
-      console.error("error while liking the service ", err);
-    },
-  });
-
-  const mutationUnLikeService = useMutation({
-    mutationKey: ["unlikeService", { id }],
-    mutationFn: () => unLikeService({ serviceID: id }),
-    onSuccess: (response) => {
-      showToast("error", "this is success message");
-      // showToast('info', "this is success message")
-      // console.log("Response while unliking a service - ", response);
-      let likedService = [...userDetails?.likedJobs];
-      console.log("Response while unliking a service - ", likedService);
-
-      // likeService?.filter((serviceId:any) => serviceId !== id)
-    },
-    onError: (err) => {
-      console.error("error while unliking the service ", err);
-    },
-  });
-
-  const mutationApplyService = useMutation({
-    mutationKey: ["applyService", { id }],
-    mutationFn: () => applyService({ serviceID: id }),
-    onSuccess: (response) => {
-      console.log("Response while applying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationUnApplyService = useMutation({
-    mutationKey: ["unapplyService", { id }],
-    mutationFn: () => unLikeService({ serviceID: id }),
-    onSuccess: (response) => {
-      console.log("Response while unapplying the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while unapplying the service ", err);
+      console.error("error while liking the worker ", err);
     },
   });
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setService(response?.data);
+      const unsubscribe = setWorker(response?.data);
       return () => unsubscribe;
     }, [response])
-  );
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const locationObject = {
-        cordinates: {
-          latitude: location?.coords?.latitude,
-          longitude: location?.coords?.longitude,
-          latitudeDelta: 2,
-          longitudeDelta: 2,
-        },
-      };
-      return () => setMapLocation(locationObject);
-    }, [location])
   );
 
   const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -220,107 +163,97 @@ const ListingDetails = () => {
           ),
         }}
       />
-      <Loader
-        loading={
-          isLoading ||
-          isRefetching ||
-          mutationLikeService?.isPending ||
-          mutationUnLikeService?.isPending ||
-          mutationApplyService?.isPending
-        }
-      />
+      <Loader loading={isLoading || isRefetching || mutation?.isPending} />
 
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={{ uri: service?.image }}
+            // source={{ uri: worker.image }}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Text style={styles.listingName}>{service?.name}</Text>
+            <Image source={{ uri: worker?.image }} style={styles.workerImage} />
+            {/* <Avatar.Image
+              style={styles.workerImage}
+              source={{
+                uri: "https://xsgames.co/randomusers/avatar.php?g=female",
+              }}
+              size={150}
+            /> */}
+            <Text style={styles.listingName}>
+              {worker?.firstName} {worker?.lastName}
+            </Text>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{service?.location}</Text>
+              <Text style={styles.listingLocationTxt}>{worker?.location}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
+              <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <Text style={styles.highlightTxt}>Duration</Text>
+                  <Text style={styles.highlightTxt}>Price</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {service?.duration} Days
+                    {worker?.duration} Rs / Day
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
+              <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
                   <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <Text style={styles.highlightTxt}>Need</Text>
-                  <Text style={styles.highlightTxtVal}>2 Mistri</Text>
+                  <Text style={styles.highlightTxt}>Skill</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.skills}</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
+              <View style={{ flexDirection: "row" }}>
                 <View style={styles.highlightIcon}>
-                  <FontAwesome5
-                    name="rupee-sign"
-                    size={18}
-                    color={Colors.primary}
-                  />
+                  <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <Text style={styles.highlightTxt}>Price</Text>
-                  <Text style={styles.highlightTxtVal}>1200</Text>
+                  <Text style={styles.highlightTxt}>Rating</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.rating}</Text>
                 </View>
               </View>
             </View>
 
-            <Text style={styles.listingDetails}>{service?.description}</Text>
+            <Text style={styles.listingDetails}>{worker?.description}</Text>
           </View>
-          {/* First Make Google Maps API Key Then Uncomment It */}
-          {/* <Map data={mapLocation && mapLocation} /> */}
         </Animated.ScrollView>
-      </ScrollView>
+      </View>
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         <TouchableOpacity
-          onPress={() => mutationApplyService.mutate()}
+          onPress={() => {}}
           style={[styles.footerBtn, styles.footerBookBtn]}
         >
-          <Text style={styles.footerBtnTxt}>Apply Now</Text>
+          <Text style={styles.footerBtnTxt}>Book Now</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            isServiceLiked
-              ? mutationUnLikeService.mutate()
-              : mutationLikeService.mutate()
-          }
-          style={[styles.footerBtn]}
+          onPress={() => mutation?.mutate()}
+          style={styles.footerBtn}
         >
-          <Text style={styles.footerBtnTxt}>
-            {isServiceLiked ? "Unlike" : "Like"}
-          </Text>
+          <Text style={styles.footerBtnTxt}>Like</Text>
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-          <Text style={styles.footerBtnTxt}>${service?.price}</Text>
+          <Text style={styles.footerBtnTxt}>${worker?.price}</Text>
         </TouchableOpacity> */}
       </Animated.View>
     </>
   );
 };
 
-export default ListingDetails;
+export default Worker;
 
 const styles = StyleSheet.create({
   container: {
@@ -330,10 +263,25 @@ const styles = StyleSheet.create({
   image: {
     width: width,
     height: IMG_HEIGHT,
+    backgroundColor: Colors.primary,
   },
   contentWrapper: {
     padding: 20,
     backgroundColor: Colors.white,
+  },
+  //   workerImage: {
+  //     position: 'absolute',
+  //     right: 20,
+  //     top: -100,
+  //   },
+  workerImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 20,
+    position: "absolute",
+    right: 22,
+    top: -130,
   },
   listingName: {
     fontSize: 24,
@@ -364,7 +312,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 5,
     alignItems: "center",
-    height: 30,
   },
   highlightTxt: {
     fontSize: 12,
@@ -373,7 +320,6 @@ const styles = StyleSheet.create({
   highlightTxtVal: {
     fontSize: 14,
     fontWeight: "600",
-    marginRight: 10,
   },
   listingDetails: {
     fontSize: 16,
@@ -401,9 +347,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     marginRight: 20,
   },
-  // footerLikeBtn: {
-  //   backgroundColor: "gray",
-  // },
   footerBtnTxt: {
     color: Colors.white,
     fontSize: 16,

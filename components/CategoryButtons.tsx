@@ -5,34 +5,55 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Colors from "@/constants/Colors";
-import destinationCategories from "@/data/categories";
+import allCategories from "@/data/categories";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 type Props = {
   onCagtegoryChanged: (category: string) => void;
-}
+};
 
-const CategoryButtons = ({onCagtegoryChanged}: Props) => {
+const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
+  const userDetails = useAtomValue(UserAtom);
+  const [categories, setCategories] = useState(
+    userDetails?.role === "Labour"
+      ? allCategories?.services
+      : allCategories?.workers
+  );
   const scrollRef = useRef<ScrollView>(null);
   const itemRef = useRef<TouchableOpacity[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    setCategories(
+      userDetails?.role === "Labour"
+        ? allCategories?.services
+        : allCategories?.workers
+    );
+  }, [userDetails]);
 
   const handleSelectCategory = (index: number) => {
     const selected = itemRef.current[index];
     setActiveIndex(index);
 
+    // console.log("selected---", selected?.measure);
+
     selected?.measure((x) => {
+      console.log("selected---", scrollRef.current?.scrollTo, x);
       scrollRef.current?.scrollTo({ x: x, y: 0, animated: true });
     });
 
-    onCagtegoryChanged(destinationCategories[index].title);
+    onCagtegoryChanged(categories[index].title);
   };
 
   return (
     <View>
-      <Text style={styles.title}>Categories</Text>
+      <Text style={styles.title}>
+        {userDetails?.role === "Employer" ? "Workers" : "Services"}
+      </Text>
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -43,10 +64,10 @@ const CategoryButtons = ({onCagtegoryChanged}: Props) => {
           marginBottom: 10,
         }}
       >
-        {destinationCategories.map((item, index) => (
+        {categories.map((item, index) => (
           <TouchableOpacity
             key={index}
-            ref={(el) => itemRef.current[index] = el}
+            ref={(el) => (itemRef.current[index] = el)}
             onPress={() => handleSelectCategory(index)}
             style={
               activeIndex === index

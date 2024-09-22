@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -15,21 +15,42 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import {
+  Entypo,
   Feather,
   FontAwesome,
   Ionicons,
+  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
-import { Link, router, Stack } from "expo-router";
-import { UserAtom } from "../AtomStore/user";
+import { Link, router, Stack, useFocusEffect } from "expo-router";
+import { EarningAtom, UserAtom, WorkAtom } from "../AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
+import ModalComponent from "@/components/Modal";
+import { updateUserById, uploadFile } from "../api/user";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [workDetails, setWorkDetails] = useAtom(WorkAtom);
+  const [earnings, setEarnings] = useAtom(EarningAtom);
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [email, setEmail] = useState(userDetails?.email);
+
+  const [avatar, setAvatar] = useState(userDetails?.avatar);
+  const [firstName, setFirstName] = useState(userDetails?.firstName);
+  const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
+  const [numberValue, setNumberValue] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [dropdownValue, setDropdownValue] = useState("");
+
+  useEffect(() => {
+    setFirstName(userDetails?.firstName);
+    setLastName(userDetails?.lastName);
+    setAddress(userDetails?.address);
+  }, [isEditProfile]);
+
   const myCustomShare = async () => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
@@ -48,21 +69,31 @@ const ProfileScreen = () => {
     console.log("Logout button pressed");
     setUserDetails({
       isAuth: false,
-      _id: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      mobileNumber: '',
-      likedJobs: '',
-      likedEmployees: '',
-      email: '',
-      address: '',
-      profilePic: '',
-      role: '',
-      token: '',
+      _id: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      mobileNumber: "",
+      likedJobs: "",
+      likedEmployees: "",
+      email: "",
+      address: "",
+      avatar: "",
+      role: "",
+      token: "",
       serviceAddress: [],
     });
-    router.navigate('/auth/login')
+    setWorkDetails({
+      total: "",
+      completed: "",
+      cancelled: "",
+      upcoming: "",
+    });
+    setEarnings({
+      work: "",
+      rewards: "",
+    });
+    router.navigate("/screens/auth/login");
   };
 
   const handleEditProfile = () => {
@@ -70,8 +101,118 @@ const ProfileScreen = () => {
     setIsEditProfile(true);
   };
 
-  const handleSaveProfile = () => {
-    setIsEditProfile(false);
+  const handleSaveProfile = async () => {
+    console.log("Input Value:", firstName, lastName, address);
+    let payload = {
+      firstName: firstName,
+      middleName: "Amruta",
+      lastName: lastName,
+      address: address,
+      mobileNumber: "1234567890",
+      alternateMobileNumber: "1223456",
+      email: "abhishek@gmail.com",
+      alternateEmail: "officialsujitmemane@gmail.com",
+      role: "User",
+    };
+    try {
+      await handleUploadAvatar();
+      const response = await updateUserById(payload);
+      console.log("response after user update  ---", response?.data);
+      let user = response?.data;
+      setIsEditProfile(false);
+      setUserDetails({
+        ...userDetails,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+      });
+    } catch (err) {
+      setIsEditProfile(false);
+      console.log("error while updating user info ", err);
+    }
+  };
+
+  const handleChooseAvatar = async () => {
+    console.log("Handling Image upload");
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setAvatar(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUploadAvatar = async () => {
+    try {
+      const formData: any = new FormData();
+      // const imageUri: any = images;
+    console.log("avatar", avatar);
+
+      const avatarFile = avatar.split("/").pop();
+      formData.append("avatar", {
+        uri: avatar,
+        type: "image/jpeg",
+        name: avatarFile,
+      });
+      const response = await uploadFile(formData);
+      console.log("Response from avatar image uploading - ", response);
+    } catch (err: any) {
+      console.log("Error while uploading avatar image - ", err);
+    }
+  };
+
+  const modalContent = () => {
+    return (
+      <View style={styles.formContainer}>
+        <View style={styles.avatarContainer}>
+          {/* <Ionicons name="person" size={30} color={Colors.secondary} /> */}
+          <Avatar.Image
+            source={{
+              uri: avatar,
+            }}
+            size={80}
+          />
+          <TouchableOpacity onPress={handleChooseAvatar}>
+            <Text style={styles?.avatarText}>Choose Profile Image</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.inputContainer}>
+          <Ionicons name="person" size={30} color={Colors.secondary} />
+          <TextInput
+            value={firstName}
+            style={styles.textInput2}
+            placeholder="First Name"
+            placeholderTextColor={Colors.secondary}
+            onChangeText={setFirstName}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Ionicons name="person" size={30} color={Colors.secondary} />
+          <TextInput
+            value={lastName}
+            style={styles.textInput2}
+            placeholder="Last Name"
+            placeholderTextColor={Colors.secondary}
+            onChangeText={setLastName}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Entypo name={"home"} size={30} color={Colors.secondary} />
+          <TextInput
+            value={address}
+            style={styles.textInput2}
+            placeholder="Address"
+            placeholderTextColor={Colors.secondary}
+            onChangeText={setAddress}
+          />
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -80,31 +221,10 @@ const ProfileScreen = () => {
         options={{
           headerTransparent: false,
           headerTitle: "Profile",
-          // headerTintColor: Colors.white,
-          // headerStyle: {
-          //   backgroundColor: Colors.primary,
-          // },
-          // headerLeft: () => (
-          //   <TouchableOpacity
-          //     onPress={() => router.back()}
-          //     style={{
-          //       marginLeft: 20,
-          //       backgroundColor: Colors.white,
-          //       padding: 6,
-          //       borderRadius: 6,
-          //       shadowColor: "#171717",
-          //       shadowOffset: { width: 2, height: 4 },
-          //       shadowOpacity: 0.2,
-          //       shadowRadius: 3,
-          //     }}
-          //   >
-          //     <Feather name="arrow-left" size={20} />
-          //   </TouchableOpacity>
-          // ),
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {
-                isEditProfile ? handleSaveProfile() : handleEditProfile();
+                !isEditProfile && handleEditProfile();
               }}
               style={{
                 marginRight: 20,
@@ -123,7 +243,14 @@ const ProfileScreen = () => {
                   fontSize: 16,
                 }}
               >
-                {isEditProfile ? "Save" : "Edit Profile"}
+                Edit Profile
+                <ModalComponent
+                  visible={isEditProfile}
+                  onClose={() => setIsEditProfile(false)}
+                  content={modalContent}
+                  primaryAction={handleUploadAvatar}
+                  // buttonText={"Edit Profile"}
+                />
               </Text>
             </TouchableOpacity>
           ),
@@ -134,7 +261,7 @@ const ProfileScreen = () => {
           <View style={{ flexDirection: "row", marginTop: 15 }}>
             <Avatar.Image
               source={{
-                uri: userDetails?.profile,
+                uri: userDetails?.avatar,
               }}
               size={80}
             />
@@ -146,27 +273,11 @@ const ProfileScreen = () => {
                     width: "100%",
                     marginTop: 15,
                     marginBottom: 5,
-                    borderColor: "blue",
-                    borderWidth: 1,
                   },
                 ]}
               >
-                {isEditProfile ? (
-                  <View style={{}}>
-                    <TextInput
-                      // value={email || ""}
-                      style={styles.textInput1}
-                      placeholder="Email"
-                      placeholderTextColor={Colors.secondary}
-                      // onChangeText={setEmail}
-                    />
-                  </View>
-                ) : (
-                  <>
-                    {userDetails?.firstName || "Name"}{" "}
-                    {userDetails?.lastName || "Name"}
-                  </>
-                )}
+                {userDetails?.firstName || "Name"}{" "}
+                {userDetails?.lastName || "Name"}
               </Title>
               <Caption style={styles.caption}>
                 {userDetails?.role || "User"}
@@ -175,41 +286,19 @@ const ProfileScreen = () => {
           </View>
         </View>
         <View style={styles.userInfoTextWrapper}>
-          <View style={styles.userInfoText}>
+          <View style={styles.userInfoBox}>
             <View style={[styles.row, styles.firstBox]}>
-              {isEditProfile ? (
-                <TextInput
-                  value={address || ""}
-                  style={styles.textInput}
-                  placeholder="Address"
-                  placeholderTextColor={Colors.secondary}
-                  onChangeText={setAddress}
-                />
-              ) : (
-                <Text style={{ color: "#777777", padding: 12 }}>
-                  {userDetails?.address || ""}
-                </Text>
-              )}
+              <Text style={styles.userInfoText}>
+                {userDetails?.address || ""}
+              </Text>
             </View>
             <View style={styles.row}>
-              <Text style={{ color: "#777777", padding: 12 }}>
+              <Text style={styles.userInfoText}>
                 {userDetails?.mobileNumber || "1234567890"}
               </Text>
             </View>
             <View style={[styles.row, styles.lastBox]}>
-              {isEditProfile ? (
-                <TextInput
-                  value={email || ""}
-                  style={styles.textInput}
-                  placeholder="Email"
-                  placeholderTextColor={Colors.secondary}
-                  onChangeText={setEmail}
-                />
-              ) : (
-                <Text style={{ color: "#777777", padding: 12 }}>
-                  {userDetails?.email || "dummy@gmail.com"}
-                </Text>
-              )}
+              <Text style={styles.userInfoText}>{userDetails?.email}</Text>
             </View>
           </View>
         </View>
@@ -225,11 +314,11 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>₹140.50</Title>
+            <Title>₹ {earnings?.work}</Title>
             <Caption>Earnings</Caption>
           </View>
           <View style={styles.infoBox}>
-            <Title>₹50.50</Title>
+            <Title>₹ {earnings?.rewards}</Title>
             <Caption>Rewards</Caption>
           </View>
         </View>
@@ -245,8 +334,8 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>20</Title>
-            <Caption>Tasks</Caption>
+            <Title>{workDetails?.total}</Title>
+            <Caption>Total Tasks</Caption>
           </View>
           <View
             style={[
@@ -257,11 +346,11 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>12</Title>
+            <Title>{workDetails?.completed}</Title>
             <Caption>Completed</Caption>
           </View>
           <View style={styles.workInfoBox}>
-            <Title>8</Title>
+            <Title>{workDetails?.upcoming}</Title>
             <Caption>Pending</Caption>
           </View>
         </View>
@@ -336,11 +425,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     marginBottom: 25,
   },
-  userInfoText: {
+  userInfoBox: {
     // width: '90%',
     // borderRadius: 16,
     padding: 15,
     marginLeft: -20,
+  },
+  userInfoText: {
+    color: "#777777",
+    padding: 12,
   },
   textInput: {
     flex: 1,
@@ -357,9 +450,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     padding: 6,
     borderRadius: 8,
-    borderColor: "red",
-    borderWidth: 1,
-    marginBottom: 6
+    marginBottom: 6,
     // fontFamily: fonts.Light,
   },
   title: {
@@ -438,5 +529,44 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 26,
+  },
+
+  formContainer: {
+    marginTop: 20,
+    padding: 10,
+  },
+  avatarContainer: {
+    // height: 53,
+    // borderWidth: 1,
+    // borderColor: Colors.secondary,
+    // borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 8,
+    // padding: 10,
+    marginBottom: 20,
+  },
+  avatarText: {
+    color: Colors?.primary,
+    marginLeft: 20,
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: 26,
+  },
+  inputContainer: {
+    height: 53,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    marginBottom: 20,
+  },
+  textInput2: {
+    flex: 1,
+    paddingHorizontal: 10,
+    // fontFamily: fonts.Light,
   },
 });

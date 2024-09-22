@@ -1,108 +1,172 @@
-import { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+// import React, {useState} from 'react';
+// import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 
-// import Button from './components/Button';
-// import ImageViewer from './components/ImageViewer';
-// import CircleButton from './components/CircleButton';
-// import IconButton from './components/IconButton';
-// import EmojiPicker from './components/EmojiPicker';
-// import EmojiList from './components/EmojiList';
-// import EmojiSticker from './components/EmojiSticker';
-import React from 'react';
+// const ModalComponent = ({modalVisible, setModalVisible, buttonText}:any) => {
+//   return (
+//     <View style={styles.centeredView}>
+//       <Modal
+//         animationType="slide"
+//         transparent={true}
+//         visible={modalVisible}
+//         onRequestClose={() => {
+//           Alert.alert('Modal has been closed.');
+//           setModalVisible(!modalVisible);
+//         }}>
+//         <View style={styles.centeredView}>
+//           <View style={styles.modalView}>
+//             <Text style={styles.modalText}>Hello World!</Text>
+//             <Pressable
+//               style={[styles.button, styles.buttonClose]}
+//               onPress={() => setModalVisible(!modalVisible)}>
+//               <Text style={styles.textStyle}>Hide Modal</Text>
+//             </Pressable>
+//           </View>
+//         </View>
+//       </Modal>
+//       <Pressable
+//         style={[styles.button, styles.buttonOpen]}
+//         onPress={() => setModalVisible(true)}>
+//         <Text style={styles.textStyle}>{buttonText}</Text>
+//       </Pressable>
+//     </View>
+//   );
+// };
 
-// const PlaceholderImage = require('./assets/images/background-image.png');
+// const styles = StyleSheet.create({
+//   centeredView: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginTop: 22,
+//   },
+//   modalView: {
+//     margin: 20,
+//     backgroundColor: 'white',
+//     borderRadius: 20,
+//     padding: 35,
+//     alignItems: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 4,
+//     elevation: 5,
+//   },
+//   button: {
+//     // borderRadius: 20,
+//     // padding: 10,
+//     // elevation: 2,
+//   },
+//   buttonOpen: {
+//     // backgroundColor: '#F194FF',
+//   },
+//   buttonClose: {
+//     // backgroundColor: '#2196F3',
+//   },
+//   textStyle: {
+//     // color: 'white',
+//     fontWeight: 'bold',
+//     textAlign: 'right',
+//   },
+//   modalText: {
+//     marginBottom: 15,
+//     textAlign: 'center',
+//   },
+// });
 
-export default function Modal() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showAppOptions, setShowAppOptions] = useState(false);
-  const [pickedEmoji, setPickedEmoji] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+// export default ModalComponent;
 
-  const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,      
-      quality: 1,
-    });
+import Colors from "@/constants/Colors";
+import { Entypo } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+// import { tailwind } from 'tailwind-rn';
+import { useTailwind } from "tailwind-rn";
 
-    if (!result.canceled) {
-    //   setSelectedImage(result.assets[0].uri);
-      setShowAppOptions(true);
-    } else {
-      alert('You did not select any image.');
-    }
-  };
-
-  const onReset = () => {
-    setShowAppOptions(false);
-  };
-
-
-  const onAddSticker = () => {
-    setIsModalVisible(true);
-  };
-
-  const onModalClose = () => {
-    setIsModalVisible(false);
-  };
-
-  const onSaveImageAsync = async () => {
-    // we will implement this later
-  };
+const ModalComponent = ({ visible, onClose, primaryAction, content }: any) => {
+  const tailwind = useTailwind();
 
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
-        {pickedEmoji !== null ? <EmojiSticker imageSize={40} stickerSource={pickedEmoji} /> : null}
-      </View>       */}
-      {showAppOptions ? (
-        <View style={styles.optionsContainer}>
-          <View style={styles.optionsRow}>
-            {/* <IconButton icon="refresh" label="Reset" onPress={onReset} /> */}
-            {/* <CircleButton onPress={onAddSticker} /> */}
-            {/* <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} /> */}
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles?.container}>
+          <View style={styles?.header}>
+            <Text style={styles?.headerText}>Edit Profile</Text>
+            <TouchableOpacity onPress={onClose} style={styles?.headerButton}>
+              <Entypo name="cross" size={30} color={Colors.primary} />
+            </TouchableOpacity>
+          </View>
+          {content()}
+          <View style={styles?.buttomWrapper}>
+            <TouchableOpacity onPress={onClose} style={styles?.button}>
+              <Text style={styles?.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={primaryAction} style={styles?.button}>
+              <Text style={styles?.buttonText}>Save</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      ) : (
-        <View style={styles.footerContainer}>
-          <Button title="Choose a photo" onPress={pickImageAsync} />
-          {/* <Button
-            label="Use this photo"            
-            onPress={() => setShowAppOptions(true)}
-          /> */}
-        </View>
-      )}
-      {/* <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
-      </EmojiPicker> */}
-      {/* <StatusBar style="auto" /> */}
-    </View>
+      </View>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
-    backgroundColor: '#25292e',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    padding: 20,
   },
-  imageContainer: {
-    flex:1, 
-    paddingTop: 58
+  container: {
+    backgroundColor: "white",
+    width: "100%",
+    padding: 10,
+    borderRadius: 4,
   },
-  footerContainer: {
-    flex: 1 / 3,
-    alignItems: 'center',
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  optionsContainer: {
-    position: 'absolute',
-    bottom: 80,
+  headerText: {
+    fontWeight: "700",
+    fontSize: 18,
   },
-  optionsRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+  headerButton: {},
+  buttomWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 14,
+  },
+  button: {
+    backgroundColor: Colors.primary,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
 });
+
+export default ModalComponent;

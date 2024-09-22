@@ -16,6 +16,7 @@ import axios from "axios";
 // import { useStateContext } from "../context/context";
 // import UsersClient from "../api/user";
 import Loader from "@/components/Loader";
+import { toast } from "../../hooks/toast";
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -47,18 +48,13 @@ const SignupScreen = () => {
       !password
       // !confirmPassword
     ) {
-      // Toast.show("Please fill all fields.", {
-      //   position: Toast.positions.BOTTOM,
-      //   backgroundColor: "white",
-      //   opacity: 1,
-      //   textColor: "red",
-      // });
+      toast.error("Please fill all fields.");
       return;
     }
-    // if (password !== confirmPassword) {
-    //   Alert.alert("Error", "Passwords do not match.");
-    //   return;
-    // }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
     const payload = {
       firstName: firstName,
       lastName: lastName,
@@ -73,11 +69,11 @@ const SignupScreen = () => {
       // console.log(response.data.message);
       setIsLoading(false);
       // dispatch({ type: "REGISTER", payload: { userData: response?.data } });
-      // Alert.alert("Success", "Account created successfully");
+      toast.success("Account created successfully");
       router.push("/auth/login");
     } catch (error) {
       setIsLoading(false);
-      // Alert.alert("Error", "Registration failed. Please try again.");
+      toast.error("Registration failed. Please try again.");
       console.error(error);
     }
   };
@@ -180,7 +176,7 @@ const SignupScreen = () => {
           <Text style={styles.continueText}>or continue with</Text>
           <TouchableOpacity style={styles.googleButtonContainer}>
             <Image
-              source={require("../../assets/images/google.png")}
+              source={require("../../../assets/images/google.png")}
               style={styles.googleImage}
             />
             <Text style={styles.googleText}>Google</Text>

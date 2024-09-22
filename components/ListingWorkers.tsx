@@ -12,6 +12,7 @@ import { ListingType } from "@/types/listingType";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import coverImage from "../assets/images/placeholder-cover.jpg";
 
 type Props = {
   listings: any[];
@@ -30,21 +31,20 @@ const ListingsWorkers = ({ listings, category }: Props) => {
   }, [category]);
 
   const renderItems: ListRenderItem<any> = ({ item }) => {
-    console.log("listings---", item);
-    
     return (
       <View style={styles.container}>
-        <Link href={`/worker/${item?._id}`} asChild>
+        <Link href={`/screens/worker/${item?._id}`} asChild>
           <TouchableOpacity>
             <View style={styles.item}>
-              <Image source={{ uri: item?.image }} style={styles.image} />
+              <Image
+                source={
+                  item?.coverImage ? { uri: item?.coverImage } : coverImage
+                }
+                style={styles.image}
+              />
               <View style={styles.bookmark}>
-                  <Ionicons
-                    name="heart-outline"
-                    size={20}
-                    color={Colors.white}
-                  />
-                </View>
+                <Ionicons name="heart-outline" size={20} color={Colors.white} />
+              </View>
               <View style={styles.itemInfo}>
                 <Text
                   style={styles.itemTxt}
@@ -60,7 +60,7 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                     color={Colors.primary}
                   />
                   <Text style={styles.itemLocationTxt}>{item?.skills}</Text>
-                  </View>
+                </View>
                 <View style={styles.locationBox}>
                   <FontAwesome5
                     name="map-marker-alt"
@@ -69,10 +69,10 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                   />
                   <Text style={styles.itemLocationTxt}>{item?.location}</Text>
                 </View>
-                <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Ionicons name="star" size={20} color={Colors.primary} />
-                    <Text style={styles.itemRating}>{item?.rating}</Text>
-                    <Text style={styles.itemReviews}>({item?.reviews})</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons name="star" size={20} color={Colors.primary} />
+                  <Text style={styles.itemRating}>{item?.rating}</Text>
+                  <Text style={styles.itemReviews}>({item?.reviews})</Text>
                 </View>
                 <View>
                   <Text style={styles.itemPriceTxt}>${item?.price}/Day</Text>
@@ -111,10 +111,10 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-start",
-    position:'relative'
+    position: "relative",
   },
   itemInfo: {
-    width: '100%',
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     gap: 5,
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
   },
   itemRating: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: Colors.black,
     marginLeft: 5,
   },
   itemReviews: {
     fontSize: 14,
-    color: '#999'
-  }
+    color: "#999",
+  },
 });

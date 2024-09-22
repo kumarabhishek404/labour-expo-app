@@ -13,16 +13,17 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import CategoryButtons from "@/components/CategoryButtons";
-import Listings from "@/components/Listings";
-import services from "@/data/services.json";
-import GroupListings from "@/components/GroupListings";
-import groupData from "@/data/groups.json";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { fetchAllWorkers } from "../api/workers";
 import { fetchAllServices } from "../api/services";
 import Loader from "@/components/Loader";
+import { fetchAllEmployers } from "../api/employer";
+import ListingWorkersHorizontal from "@/components/ListingWorkersHorizontal";
+import ListingServicesHorizontal from "@/components/ListingServicesHorizontal";
+import GroupWorkersListing from "@/components/GroupWorkersListing";
+import GroupEmployersListing from "@/components/GroupEmployersListing";
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
@@ -32,7 +33,6 @@ const Page = () => {
   const {
     isLoading,
     data: response,
-    refetch,
     isRefetching,
   } = useQuery({
     queryKey: ["services"],
@@ -40,7 +40,20 @@ const Page = () => {
       (await userDetails?.role) === "Employer"
         ? fetchAllWorkers()
         : fetchAllServices(),
-    retry: 3,
+    retry: 0,
+  });
+
+  const {
+    isLoading: isSecondLoading,
+    data: secondResponse,
+    isRefetching: isSecondRefetching,
+  } = useQuery({
+    queryKey: ["employers"],
+    queryFn: async () =>
+      (await userDetails?.role) === "Employer"
+        ? fetchAllWorkers()
+        : fetchAllEmployers(),
+    retry: 0,
   });
 
   const onCatChanged = (category: string) => {
@@ -86,7 +99,11 @@ const Page = () => {
           ),
         }}
       />
-      <Loader loading={isLoading} />
+      <Loader
+        loading={
+          isLoading || isSecondLoading || isRefetching || isSecondRefetching
+        }
+      />
 
       <View style={[styles.container, { paddingTop: headerHeight }]}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -114,10 +131,29 @@ const Page = () => {
           </View>
 
           <CategoryButtons onCagtegoryChanged={onCatChanged} />
+          {userDetails?.role === "Employer" ? (
+            <ListingWorkersHorizontal
+              listings={response?.data}
+              category={category}
+            />
+          ) : (
+            <ListingServicesHorizontal
+              listings={response?.data}
+              category={category}
+            />
+          )}
 
-          <Listings listings={response?.data} category={category} />
-
-          <GroupListings listings={groupData} />
+          {userDetails?.role === "Employer" ? (
+            <GroupWorkersListing
+              listings={secondResponse?.data}
+              category={category}
+            />
+          ) : (
+            <GroupEmployersListing
+              listings={secondResponse?.data}
+              category={category}
+            />
+          )}
         </ScrollView>
       </View>
     </>

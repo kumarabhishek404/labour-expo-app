@@ -25,11 +25,13 @@ import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImagePicker";
 import { addNewService } from "../api/services";
 import Loader from "@/components/Loader";
+import axios from "axios";
+import { makePostRequestFormData } from "../api";
 
 const SignupScreen = () => {
   const navigation = useNavigation();
   const [secureEntery, setSecureEntery] = useState(true);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [workTitle, setWorkTitle] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -44,39 +46,83 @@ const SignupScreen = () => {
     },
   ]);
 
-  const handleAddService = async () => {
-    setIsLoading(true);
-    // let payload:any = {
-    //   name: workTitle,
-    //   description: workDescription,
-    //   location: address,
-    //   address: address,
-    //   startDate: startDate,
-    //   endDate: endDate,
-    //   jobs: JSON.stringify(requirements),
-    //   coverImage: images[0]
-    // }
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
 
-    
+    if (!images) {
+      alert("Please select a file first!");
+      return;
+    }
+    console.log(images);
+    const formData: any = new FormData();
+    const imageUri: any = images;
+    const imageName = imageUri.split("/").pop();
+    formData.append("coverImage", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: imageName,
+    });
+
+    const jobData = {
+      // jobID: "job12345",
+      employer: "64e7dd4b9e9f1d23e6a8b8b4",
+      // name: "New Work In Balipur 4",
+      // description: "We need skilled laborers for a large construction project.",
+      location: "Central City",
+      // startDate: "2024-09-15",
+      // endDate: "2024-12-30",
+      city: "New York",
+      state: "NY",
+      pinCode: "10001",
+      // address: "1234 Main St, New York, NY 10001",
+      jobs: [
+        {
+          name: "Mason",
+          totalRequired: 10,
+          foodProvided: false,
+          shelterProvider: false,
+          payPerDay: 100,
+        },
+        {
+          name: "Carpenter",
+          totalRequired: 5,
+          foodProvided: false,
+          shelterProvider: false,
+          payPerDay: 120,
+        },
+        {
+          name: "Electrician",
+          totalRequired: 3,
+          foodProvided: false,
+          shelterProvider: false,
+          payPerDay: 150,
+        },
+      ],
+    };
+
+    formData.append("name", workTitle);
+    formData.append("description", workDescription);
+    formData.append("location", jobData.location);
+    formData.append("startDate", startDate);
+    formData.append("endDate", endDate);
+    formData.append("city", jobData.city);
+    formData.append("state", jobData.state);
+    formData.append("pinCode", jobData.pinCode);
+    formData.append("address", address);
+    formData.append("jobs", JSON.stringify(jobData.jobs));
+
+    console.log("payloadddd---", formData);
+
     try {
-      const formData:any = new FormData();
-      formData.append("name", workTitle);
-      formData.append("description", workDescription);
-      formData.append("location", address);
-      formData.append("startDate", startDate);
-      formData.append("endDate", endDate);
-      // formData.append("address", address);
-      // formData.append("jobs", JSON.stringify(requirements));
-      // formData.append("coverImage", images[0]);
-
-      console.log("Post service button pressed", formData);
-
-      let response = await addNewService(formData);
-      setIsLoading(false);
-      console.log("Response while adding new service ", response);
-    } catch (err:any) {
-      setIsLoading(false);
-      console.log("Error while adding new service ", err);
+      const response: any = await addNewService(formData);
+      console.log("Response Data ---", response?.data);
+      if (response?.success) {
+        alert("Form submitted successfully!");
+      } else {
+        alert("Failed to submit form.");
+      }
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -190,7 +236,7 @@ const SignupScreen = () => {
           </View> */}
 
           <TouchableOpacity
-            onPress={handleAddService}
+            onPress={handleSubmit}
             style={styles.loginButtonWrapper}
           >
             <Text style={styles.loginText}>Post</Text>

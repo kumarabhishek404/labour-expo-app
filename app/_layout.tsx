@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { TailwindProvider } from "tailwind-rn";
+import utilities from "../tailwind.json";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -10,7 +12,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Location from "expo-location";
 import { useAtom } from "jotai";
 import { LocationAtom } from "./AtomStore/user";
-import { showToast } from "./hooks/toast";
 import Toast from "react-native-toast-message";
 
 export {
@@ -55,14 +56,10 @@ export default function RootLayout() {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
-      console.log("Current Location - ", currentLocation);
-
       let response = await Location.reverseGeocodeAsync({
         latitude: currentLocation?.coords?.latitude,
         longitude: currentLocation?.coords?.longitude,
       });
-
-      console.log("Address---", response);
     };
     getPermission();
   }, []);
@@ -79,6 +76,7 @@ function RootLayoutNav() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* <TailwindProvider utilities={utilities}></TailwindProvider> */}
       <Stack screenOptions={{ headerShown: true }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

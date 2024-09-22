@@ -7,18 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, Stack } from "expo-router";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/Loader";
-import { UserAtom } from "../AtomStore/user";
-import { signIn } from "../api/user";
-import { showToast } from "../hooks/toast";
+import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
+import { signIn } from "../../api/user";
+import { toast } from "../../hooks/toast";
 
 const LoginScreen = () => {
-  const [_, setUserDetails] = useAtom(UserAtom);
+  const setUserDetails = useSetAtom(UserAtom);
+  const setWorkDetails = useSetAtom(WorkAtom);
+  const setEarnings = useSetAtom(EarningAtom);
   const [secureEntery, setSecureEntery] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +38,10 @@ const LoginScreen = () => {
       // setUser(response?.user)
       // setToken(response?.token)
       let user = response?.user;
+      let work = user?.workDetails;
+      let earnings = user?.earnings;
+      console.log("Workrrrrrr---", user?.earnings);
+      
       setUserDetails({
         isAuth: true,
         _id: user?._id,
@@ -47,12 +53,22 @@ const LoginScreen = () => {
         likedEmployees: user?.likedEmployees,
         email: user?.email,
         address: user?.address,
-        profilePic: user?.avatar,
+        avatar: user?.avatar,
         role: user?.role,
         token: response?.token,
         serviceAddress: ["Balipur, post - Shakrauli, Etah Uttar Predesh"],
       });
-      showToast("success", "Logged in successfully!");
+      setWorkDetails({
+        total: work?.total,
+        completed: work?.completed,
+        cancelled: work?.cancelled,
+        upcoming: work?.upcoming,
+      })
+      setEarnings({
+        work: earnings?.work,
+        rewards: earnings?.rewards
+      })
+      toast.success("Logged in successfully!");
       console.log("Response while loging a user - ", response);
     },
     onError: (err) => {
@@ -130,14 +146,14 @@ const LoginScreen = () => {
           <Text style={styles.continueText}>or continue with</Text>
           <TouchableOpacity style={styles.googleButtonContainer}>
             <Image
-              source={require("../../assets/images/google.png")}
+              source={require("../../../assets/images/google.png")}
               style={styles.googleImage}
             />
             <Text style={styles.googleText}>Google</Text>
           </TouchableOpacity>
           <View style={styles.footerContainer}>
             <Text style={styles.accountText}>Already have an account!</Text>
-            <Link href="/auth/register" asChild>
+            <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
                 <Text style={styles.signupText}>Sign Up</Text>
               </TouchableOpacity>

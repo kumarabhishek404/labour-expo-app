@@ -2,11 +2,10 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import Colors from "@/constants/Colors";
-import Login from "../auth/login";
-import Register from "../auth/register";
+import Login from "../screens/auth/login";
 
 export default function Layout() {
   const userDetails = useAtomValue(UserAtom)

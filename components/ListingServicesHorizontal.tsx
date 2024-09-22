@@ -12,29 +12,34 @@ import { ListingType } from "@/types/listingType";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import coverImage from "../assets/images/placeholder-cover.jpg";
 
 type Props = {
   listings: any[];
   category: string;
 };
 
-const Listings = ({ listings, category }: Props) => {
+const ListingServicesHorizontal = ({ listings, category }: Props) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 200);
   }, [category]);
 
   const renderItems: ListRenderItem<ListingType> = ({ item }) => {
     return (
-      <Link href={`/service/${item?._id}`} asChild>
+      <Link href={`/screens/service/${item?._id}`} asChild>
         <TouchableOpacity>
           <View style={styles.item}>
-            <Image source={{ uri: item?.image }} style={styles.image} />
+            {/* <Image source={{ uri: item?.coverImage }} style={styles.image} /> */}
+            <Image
+              source={item?.coverImage ? { uri: item?.coverImage } : coverImage}
+              style={styles.image}
+            />
             <View style={styles.bookmark}>
               <Ionicons
                 name="bookmark-outline"
@@ -76,7 +81,7 @@ const Listings = ({ listings, category }: Props) => {
   );
 };
 
-export default Listings;
+export default ListingServicesHorizontal;
 
 const styles = StyleSheet.create({
   item: {

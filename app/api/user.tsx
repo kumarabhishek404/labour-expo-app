@@ -2,7 +2,15 @@
 // // import ApiClient from './ApiClient';
 
 import { router } from "expo-router";
-import { makeGetRequest, makePostRequest } from ".";
+import {
+  makeGetRequest,
+  makePatchRequest,
+  makePatchRequestFormData,
+  makePostRequest,
+  makePostRequestFormData,
+  makePutRequest,
+} from ".";
+import { toast } from "../hooks/toast";
 
 // import axios from "axios";
 // import ApiClient from ".";
@@ -106,16 +114,16 @@ export const signIn = async (payload: any) => {
       `[Sign In] [userService] User signed in with the response `,
       data.data
     );
-    router.push('/(tabs)')
+    router.push("/(tabs)");
     return data.data;
   } catch (error: any) {
     console.log(
       `[Sign In] [userService] An error occurred while signing the user `,
       error
     );
-    //   toast.error(
-    //     error?.response?.data?.message || 'An error occurred while login user',
-    //   );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while login user"
+    );
     throw error;
   }
 };
@@ -139,26 +147,22 @@ export const signIn = async (payload: any) => {
 //     }
 //   }
 
-//   async updateUserById(payload: any, id: any) {
-//     try {
-//       const data = await this.apiClient.makePutRequest(
-//         `/users/${id}/edit`,
-//         payload,
-//       );
-//     //   toast.success('User updated successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[userService] An error occurred while updating user : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while updating user',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const updateUserById = async (payload: any) => {
+  try {
+    const data = await makePatchRequest(`/user/info`, payload);
+    toast.success("User updated successfully");
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while updating user : `,
+      error?.response?.data
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while updating user"
+    );
+    throw error;
+  }
+};
 
 //   async addNewUser(payload: any) {
 //     try {
@@ -197,29 +201,28 @@ export const signIn = async (payload: any) => {
 //     }
 //   }
 
-//   async uploadFile(file: any, screen: string) {
-//     console.log(
-//       `[${screen}] [userService] Uploading file with API /upload/file and file payload  : `,
-//       file,
-//     );
-//     try {
-//       const data = await this.apiClient.makePostRequest('/upload/file', file);
-//     //   toast.success('File uploaded successfully');
-//       console.log(
-//         `[${screen}] [userService] File uploaded successfully with file location : `,
-//         data?.data?.Location,
-//       );
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[${screen}] [userService] An error occurred while uploading file : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while uploading file',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const uploadFile = async (file: any) => {
+  console.log(
+    "[userService] Uploading file with API /upload/file and file payload  : ",
+    file
+  );
+  try {
+    const data = await makePatchRequestFormData("/user/upload", file);
+    toast.success("File uploaded successfully");
+    console.log(
+      "[userService] File uploaded successfully with file location",
+      data?.data?.Location
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      "[userService] An error occurred while uploading file",
+      error?.response?.data
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while uploading file"
+    );
+    throw error;
+  }
+};
 // }

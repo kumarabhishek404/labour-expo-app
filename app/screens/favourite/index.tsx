@@ -13,12 +13,12 @@ import Colors from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import ListingsWorkers from "@/components/ListingWorkers";
 import ListingsVertical from "@/components/ListingVertical";
-import { UserAtom } from "../AtomStore/user";
+import { UserAtom } from "../../AtomStore/user";
 import { useAtomValue } from "jotai";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllLikedServices } from "../api/services";
+import { fetchAllLikedServices } from "../../api/services";
 import Loader from "@/components/Loader";
-import { fetchAllLikedWorkers } from "../api/workers";
+import { fetchAllLikedWorkers } from "../../api/workers";
 
 const Favourite = (props: any) => {
   const userDetails = useAtomValue(UserAtom);
@@ -38,7 +38,7 @@ const Favourite = (props: any) => {
       (await userDetails?.role) === "Employer"
         ? fetchAllLikedWorkers()
         : fetchAllLikedServices(),
-    retry: 3,
+    retry: 0,
   });
 
   useFocusEffect(
