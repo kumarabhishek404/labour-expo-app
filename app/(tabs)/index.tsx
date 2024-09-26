@@ -1,4 +1,5 @@
 import {
+  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -24,12 +25,19 @@ import ListingWorkersHorizontal from "@/components/ListingWorkersHorizontal";
 import ListingServicesHorizontal from "@/components/ListingServicesHorizontal";
 import GroupWorkersListing from "@/components/GroupWorkersListing";
 import GroupEmployersListing from "@/components/GroupEmployersListing";
+import profileImage from "../../assets/images/placeholder-person.jpg";
+import i18n from "@/utils/i18n";
+import { useLocale } from "../context/locale";
+// import { useLocale } from "../context/locale";
 
 const Page = () => {
-  const headerHeight = useHeaderHeight();
+  useLocale()
   const userDetails = useAtomValue(UserAtom);
+  const headerHeight = useHeaderHeight();
   const [category, setCategory] = useState("All");
 
+  console.log("i18n--", i18n);
+  
   const {
     isLoading,
     data: response,
@@ -57,7 +65,6 @@ const Page = () => {
   });
 
   const onCatChanged = (category: string) => {
-    console.log("Categpry: ", category);
     setCategory(category);
   };
 
@@ -73,9 +80,13 @@ const Page = () => {
               style={{ marginLeft: 20 }}
             >
               <Image
-                source={{
-                  uri: "https://xsgames.co/randomusers/avatar.php?g=female",
-                }}
+                source={
+                  userDetails?.avatar
+                    ? {
+                        uri: userDetails?.avatar,
+                      }
+                    : profileImage
+                }
                 style={{ width: 40, height: 40, borderRadius: 10 }}
               />
             </TouchableOpacity>
@@ -106,9 +117,9 @@ const Page = () => {
       />
 
       <View style={[styles.container, { paddingTop: headerHeight }]}>
+        
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={styles.headingTxt}>Work Is Worship!</Text>
-
+          <Text style={styles.headingTxt}>{i18n.t('welcome')} {userDetails?.firstName}</Text>
           <View style={styles.searchSectionWrapper}>
             <View style={styles.searchBar}>
               <Ionicons

@@ -1,20 +1,26 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
+import { usePushNotifications } from "../hooks/usePushNotification";
+import { useLocale } from "../context/locale";
 
 export default function Layout() {
+  const {locale} = useLocale();
   const userDetails = useAtomValue(UserAtom)
+  const { expoPushToken, sendPushNotification } = usePushNotifications(userDetails?._id);
 
+  useEffect(() => {}, [locale])
   // if (state?.isLoading) {
   //   return <Text>Loading...</Text>;
   // }
 
   if (!userDetails?.isAuth) {
+    expoPushToken && sendPushNotification(expoPushToken)
     return <Login />;
   }
 

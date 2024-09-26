@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ListingType } from "@/types/listingType";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
@@ -31,6 +30,8 @@ const ListingsWorkers = ({ listings, category }: Props) => {
   }, [category]);
 
   const renderItems: ListRenderItem<any> = ({ item }) => {
+    console.log("Itemmmss----", item);
+
     return (
       <View style={styles.container}>
         <Link href={`/screens/worker/${item?._id}`} asChild>
@@ -38,7 +39,9 @@ const ListingsWorkers = ({ listings, category }: Props) => {
             <View style={styles.item}>
               <Image
                 source={
-                  item?.coverImage ? { uri: item?.coverImage } : coverImage
+                  item?.coverImage || item?.avatar
+                    ? { uri: item?.coverImage || item?.avatar }
+                    : coverImage
                 }
                 style={styles.image}
               />

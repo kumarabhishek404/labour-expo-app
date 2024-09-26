@@ -8,6 +8,8 @@ const getHeaders = async () => {
   try {
     const user: any = await AsyncStorage.getItem("user");
     const parsedUser = user ? JSON.parse(user) : null;
+    console.log("Token---", user, parsedUser);
+
     if (parsedUser?.token) {
       return {
         Authorization: `Bearer ${parsedUser?.token}`,
@@ -45,10 +47,7 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // console.log("Error in interceptors - ", error.response.data);
-    // const setUserDetails = useSetAtom(UserAtom);
     if (error.response) {
-      // console.log("Error in interceptors resposne - ", error.response);
       if (
         (error.response.status === 400 &&
           error.response.data.message === "jwt expired") ||
@@ -56,8 +55,6 @@ api.interceptors.response.use(
         error.response.statusText === "TokenExpiredError"
       ) {
         AsyncStorage.removeItem("user");
-        // setUserDetails({});
-        // window.location.href = "/auth/login";
         router.push("/screens/auth/login");
       }
     } else if (error.request) {
@@ -99,7 +96,6 @@ export const makePostRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      "Content-Type": "application/json",
       ...headers,
     },
   });

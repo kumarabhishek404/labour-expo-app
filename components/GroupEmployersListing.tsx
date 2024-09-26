@@ -26,7 +26,6 @@ const GroupEmployersListing = ({
   
   const userDetails = useAtomValue(UserAtom);
   const renderItem: ListRenderItem<GroupType> = ({ item }) => {
-    console.log("itemitemitemitem--", item);
     return (
       <Link href={`/screens/employer/${item?._id}`} asChild>
         <TouchableOpacity>

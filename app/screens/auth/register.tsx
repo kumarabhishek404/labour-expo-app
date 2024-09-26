@@ -70,7 +70,7 @@ const SignupScreen = () => {
       setIsLoading(false);
       // dispatch({ type: "REGISTER", payload: { userData: response?.data } });
       toast.success("Account created successfully");
-      router.push("/auth/login");
+      router.push("/screens/auth/login");
     } catch (error) {
       setIsLoading(false);
       toast.error("Registration failed. Please try again.");
@@ -183,7 +183,7 @@ const SignupScreen = () => {
           </TouchableOpacity>
           <View style={styles.footerContainer}>
             <Text style={styles.accountText}>Already have an account!</Text>
-            <Link href="/auth/login" asChild>
+            <Link href="/screens/auth/login" asChild>
               <TouchableOpacity>
                 <Text style={styles.signupText}>Login</Text>
               </TouchableOpacity>

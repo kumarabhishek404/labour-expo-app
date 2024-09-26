@@ -16,6 +16,7 @@ import Loader from "@/components/Loader";
 import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
 import { signIn } from "../../api/user";
 import { toast } from "../../hooks/toast";
+import i18n from "@/utils/i18n";
 
 const LoginScreen = () => {
   const setUserDetails = useSetAtom(UserAtom);
@@ -89,7 +90,7 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Hey,</Text>
-          <Text style={styles.headingText}>Welcome</Text>
+          <Text style={styles.headingText}>{i18n.t('welcome')}</Text>
           <Text style={styles.headingText}>Back</Text>
         </View>
         <View style={styles.formContainer}>

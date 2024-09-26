@@ -14,8 +14,6 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import { ListingType } from "@/types/listingType";
-import workers from "@/data/workers.json";
 import {
   Feather,
   FontAwesome,
@@ -35,6 +33,8 @@ import { Avatar } from "react-native-paper";
 import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
+import profileImage from "../../../assets/images/placeholder-person.jpg";
+
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -47,8 +47,6 @@ const Worker = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
 
-  console.log("Idd---", id);
-  
   const {
     isLoading,
     isError,
@@ -63,18 +61,15 @@ const Worker = () => {
     // refetchOnWindowFocus: true
   });
 
-  const getWorkerDetailsById = async (id:any) => {
-    try{
+  const getWorkerDetailsById = async (id: any) => {
+    try {
       const response = await getWorkerById(id);
-      console.log("REEEEEE---", response);
-      
       return response;
-    }
-    catch(err) {
-      router.back()
+    } catch (err) {
+      router.back();
       console.log("error while getting details of worker");
     }
-  }
+  };
 
   const mutation = useMutation({
     mutationKey: ["likeWorker", { id }],
@@ -115,6 +110,8 @@ const Worker = () => {
     };
   });
 
+  console.log("worker--", worker);
+  
   return (
     <>
       <Stack.Screen
@@ -176,13 +173,11 @@ const Worker = () => {
           />
           <View style={styles.contentWrapper}>
             <Image source={{ uri: worker?.image }} style={styles.workerImage} />
-            {/* <Avatar.Image
+            <Image
               style={styles.workerImage}
-              source={{
-                uri: "https://xsgames.co/randomusers/avatar.php?g=female",
-              }}
-              size={150}
-            /> */}
+              source={worker?.avatar ? {uri: worker?.avatar} : profileImage}
+              // size={150}
+            />
             <Text style={styles.listingName}>
               {worker?.firstName} {worker?.lastName}
             </Text>
@@ -192,7 +187,7 @@ const Worker = () => {
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{worker?.location}</Text>
+              <Text style={styles.listingLocationTxt}>{worker?.address}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>
@@ -203,7 +198,7 @@ const Worker = () => {
                 <View>
                   <Text style={styles.highlightTxt}>Price</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {worker?.duration} Rs / Day
+                    {worker?.duration || 0} Rs / Day
                   </Text>
                 </View>
               </View>
@@ -213,7 +208,7 @@ const Worker = () => {
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.skills}</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.skills?.join(', ')}</Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row" }}>
@@ -222,7 +217,7 @@ const Worker = () => {
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Rating</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.rating}</Text>
+                  <Text style={styles.highlightTxtVal}>{worker?.rating || 0}</Text>
                 </View>
               </View>
             </View>
@@ -277,7 +272,7 @@ const styles = StyleSheet.create({
   workerImage: {
     width: 150,
     height: 150,
-    borderRadius: 10,
+    borderRadius: 100,
     marginBottom: 20,
     position: "absolute",
     right: 22,

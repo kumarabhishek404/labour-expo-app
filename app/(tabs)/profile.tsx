@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Switch,
 } from "react-native";
 import {
   Avatar,
@@ -18,6 +19,7 @@ import {
   Entypo,
   Feather,
   FontAwesome,
+  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
@@ -35,6 +37,8 @@ const ProfileScreen = () => {
   const [workDetails, setWorkDetails] = useAtom(WorkAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);
   const [isEditProfile, setIsEditProfile] = useState(false);
+  const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
   const [email, setEmail] = useState(userDetails?.email);
 
   const [avatar, setAvatar] = useState(userDetails?.avatar);
@@ -64,6 +68,11 @@ const ProfileScreen = () => {
     //   console.log('Error => ', error);
     // }
   };
+
+  const toggleNotificationSwitch = () =>
+    setNotificationsEnabled((prevState) => !prevState);
+  const toggleDarkModeSwitch = () =>
+    setDarkModeEnabled((prevState) => !prevState);
 
   const handleLogout = () => {
     console.log("Logout button pressed");
@@ -115,7 +124,7 @@ const ProfileScreen = () => {
       role: "User",
     };
     try {
-      await handleUploadAvatar();
+      const responseNew = await handleUploadAvatar();
       const response = await updateUserById(payload);
       console.log("response after user update  ---", response?.data);
       let user = response?.data;
@@ -151,7 +160,7 @@ const ProfileScreen = () => {
     try {
       const formData: any = new FormData();
       // const imageUri: any = images;
-    console.log("avatar", avatar);
+      console.log("avatar", avatar);
 
       const avatarFile = avatar.split("/").pop();
       formData.append("avatar", {
@@ -248,7 +257,7 @@ const ProfileScreen = () => {
                   visible={isEditProfile}
                   onClose={() => setIsEditProfile(false)}
                   content={modalContent}
-                  primaryAction={handleUploadAvatar}
+                  primaryAction={handleSaveProfile}
                   // buttonText={"Edit Profile"}
                 />
               </Text>
@@ -356,7 +365,7 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.menuWrapper}>
-          <Link href="/favourite" asChild>
+          <Link href="/screens/favourite" asChild>
             <TouchableRipple>
               <View style={styles.menuItem}>
                 <MaterialIcons
@@ -380,17 +389,21 @@ const ProfileScreen = () => {
               <Text style={styles.menuItemText}>Tell Your Friends</Text>
             </View>
           </TouchableRipple>
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.menuItem}>
-              <MaterialIcons
-                name="support-agent"
-                size={28}
-                color={Colors.primary}
-              />
-              <Text style={styles.menuItemText}>Support</Text>
-            </View>
-          </TouchableRipple>
-          <Link href="/settings" asChild>
+
+          <Link href="/screens/support" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <MaterialIcons
+                  name="support-agent"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Support</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
+
+          <Link href="/screens/settings" asChild>
             <TouchableRipple>
               <View style={styles.menuItem}>
                 <Ionicons name="settings" size={28} color={Colors.primary} />
@@ -398,6 +411,81 @@ const ProfileScreen = () => {
               </View>
             </TouchableRipple>
           </Link>
+          <Link href="/screens/settings/changeLanguage" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <Entypo name="language" size={28} color={Colors.primary} />
+                <Text style={styles.menuItemText}>Change Language</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
+          <TouchableOpacity>
+            <View style={styles.settingsItem}>
+              <View style={styles.menuItem}>
+                <Ionicons
+                  name="notifications"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Notification</Text>
+              </View>
+              <Switch
+                thumbColor={Colors?.primary}
+                trackColor={{
+                  false: Colors?.secondary,
+                  true: Colors?.secondary,
+                }}
+                value={isNotificationsEnabled}
+                onValueChange={toggleNotificationSwitch}
+                style={styles.switch}
+              />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <View style={styles.settingsItem}>
+              <View style={styles.menuItem}>
+                <MaterialIcons
+                  name="dark-mode"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Dark Mode</Text>
+              </View>
+              <Switch
+                thumbColor={Colors?.primary}
+                trackColor={{
+                  false: Colors?.secondary,
+                  true: Colors?.secondary,
+                }}
+                value={isDarkModeEnabled}
+                onValueChange={toggleDarkModeSwitch}
+                style={styles.switch}
+              />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableRipple onPress={handleLogout}>
+            <View style={styles.menuItem}>
+              <MaterialIcons name="chat-bubble" size={28} color={Colors.primary} />
+              <Text style={styles.menuItemText}>Feedback</Text>
+            </View>
+          </TouchableRipple>
+
+          <TouchableRipple onPress={handleLogout}>
+            <View style={styles.menuItem}>
+              <FontAwesome6 name="lock" size={28} color={Colors.primary} />
+              <Text style={styles.menuItemText}>Privacy Policy</Text>
+            </View>
+          </TouchableRipple>
+
+          <TouchableRipple onPress={handleLogout}>
+            <View style={styles.menuItem}>
+              <FontAwesome6 name="file-contract" size={28} color={Colors.primary} />
+              <Text style={styles.menuItemText}>Terms and Conditions</Text>
+            </View>
+          </TouchableRipple>
+
           <TouchableRipple onPress={handleLogout}>
             <View style={styles.menuItem}>
               <MaterialIcons name="logout" size={28} color={Colors.primary} />
@@ -568,5 +656,21 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     // fontFamily: fonts.Light,
+  },
+  settingsItem: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    // paddingVertical: 15,
+    paddingRight: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  switch: {
+    color: Colors?.primary,
+    tintColor: Colors?.primary,
+    transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
   },
 });

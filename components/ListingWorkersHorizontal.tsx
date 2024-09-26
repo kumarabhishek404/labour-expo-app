@@ -8,11 +8,11 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ListingType } from "@/types/listingType";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
+import { WorkerType } from "@/types/type";
 
 type Props = {
   listings: any[];
@@ -30,25 +30,25 @@ const ListingWorkersHorizontal = ({ listings, category }: Props) => {
     }, 200);
   }, [category]);
 
-  const renderItems: ListRenderItem<ListingType> = ({ item }) => {
+  const renderItems: ListRenderItem<WorkerType> = ({ item }) => {
     return (
       <Link href={`/screens/worker/${item?._id}`} asChild>
         <TouchableOpacity>
           <View style={styles.item}>
             {/* <Image source={{ uri: item?.coverImage }} style={styles.image} /> */}
             <Image
-              source={item?.coverImage ? { uri: item?.coverImage } : coverImage}
+              source={item?.avatar ? { uri: item?.avatar } : coverImage}
               style={styles.image}
             />
-            <View style={styles.bookmark}>
+            {item?.isBookmarked && <View style={styles.bookmark}>
               <Ionicons
-                name="bookmark-outline"
-                size={20}
+                name="heart"
+                size={30}
                 color={Colors.white}
               />
-            </View>
+            </View>}
             <Text style={styles.itemTxt} numberOfLines={1} ellipsizeMode="tail">
-              {item?.name}
+              {item?.firstName} {item?.middleName} {item?.lastName}
             </Text>
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     top: 185,
     right: 30,
     backgroundColor: Colors.primary,
-    padding: 10,
+    padding: 8,
     borderRadius: 30,
     borderWidth: 2,
     borderColor: Colors.white,

@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Entypo,
   Feather,
   FontAwesome,
   FontAwesome5,
@@ -174,6 +175,8 @@ const ListingDetails = () => {
     };
   });
 
+  console.log("Service----", service);
+  
   return (
     <>
       <Stack.Screen
@@ -249,7 +252,16 @@ const ListingDetails = () => {
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{service?.location}</Text>
+              <Text style={styles.listingLocationTxt}>{service?.address}</Text>
+            </View>
+
+            <View style={styles.listingLocationWrapper}>
+              <Entypo
+                name="calendar"
+                size={18}
+                color={Colors.primary}
+              />
+              <Text style={styles.listingLocationTxt}>Start {service?.startDate} - End {service?.endDate}</Text>
             </View>
 
             <View style={styles.highlightWrapper}>

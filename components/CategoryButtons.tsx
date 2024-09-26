@@ -23,7 +23,7 @@ const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
       ? allCategories?.services
       : allCategories?.workers
   );
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef: any = useRef<ScrollView>(null);
   const itemRef = useRef<TouchableOpacity[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -38,12 +38,11 @@ const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
   const handleSelectCategory = (index: number) => {
     const selected = itemRef.current[index];
     setActiveIndex(index);
-
-    // console.log("selected---", selected?.measure);
-
-    selected?.measure((x) => {
-      console.log("selected---", scrollRef.current?.scrollTo, x);
-      scrollRef.current?.scrollTo({ x: x, y: 0, animated: true });
+    selected?.measureLayout(scrollRef?.current?.getInnerViewRef(), (x, y) => {
+      scrollRef.current.scrollTo({
+        x,
+        animated: true,
+      });
     });
 
     onCagtegoryChanged(categories[index].title);

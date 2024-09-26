@@ -89,11 +89,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-// import { tailwind } from 'tailwind-rn';
-import { useTailwind } from "tailwind-rn";
-
 const ModalComponent = ({ visible, onClose, primaryAction, content }: any) => {
-  const tailwind = useTailwind();
 
   return (
     <Modal

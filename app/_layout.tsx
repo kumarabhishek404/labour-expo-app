@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { TailwindProvider } from "tailwind-rn";
-import utilities from "../tailwind.json";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -13,6 +11,8 @@ import * as Location from "expo-location";
 import { useAtom } from "jotai";
 import { LocationAtom } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
+import { getLocales } from "expo-localization";
+import { LocaleProvider } from "./context/locale";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -29,11 +29,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   // const setLocationAt
+  const deviceLanguage = getLocales()[0].languageCode;
   const [location, setLocation] = useAtom(LocationAtom);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
+
+  console.log("deviceLanguage---", deviceLanguage);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -75,12 +78,13 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* <TailwindProvider utilities={utilities}></TailwindProvider> */}
-      <Stack screenOptions={{ headerShown: true }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <Toast />
-    </QueryClientProvider>
+    <LocaleProvider>
+      <QueryClientProvider client={queryClient}>
+        <Stack screenOptions={{ headerShown: true }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <Toast />
+      </QueryClientProvider>
+    </LocaleProvider>
   );
 }

@@ -14,8 +14,6 @@ import {
     useLocalSearchParams,
     useRouter,
   } from "expo-router";
-  import { ListingType } from "@/types/listingType";
-  import workers from "@/data/workers.json";
   import {
     Feather,
     FontAwesome,

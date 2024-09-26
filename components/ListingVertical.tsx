@@ -8,11 +8,11 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ListingType } from "@/types/listingType";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from '../assets/images/placeholder-cover.jpg'
+import { ServiceType } from "@/types/type";
 
 type Props = {
   listings: any[];
@@ -30,7 +30,7 @@ const ListingsVertical = ({ listings, category }: Props) => {
     }, 200);
   }, [category]);
 
-  const renderItems: ListRenderItem<ListingType> = ({ item }) => {
+  const renderItems: ListRenderItem<ServiceType> = ({ item }) => {
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
