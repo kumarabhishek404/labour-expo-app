@@ -13,6 +13,7 @@ import { LocationAtom } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
 import { getLocales } from "expo-localization";
 import { LocaleProvider } from "./context/locale";
+// import { NativeModules } from "react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,7 +37,13 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  console.log("deviceLanguage---", deviceLanguage);
+  // if (__DEV__) {
+  //   // Set the debugger host
+  //   // const { NativeModules } = require("react-native");
+  //   const { DevSettings } = NativeModules;
+  //   DevSettings.setIsDebuggingRemotely(true);
+  //   DevSettings.setDebugHost("localhost:8081");
+  // }
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {

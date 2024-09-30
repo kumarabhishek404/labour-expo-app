@@ -57,6 +57,6 @@ const workers = [
 ];
 
 export default {
-  services,
-  workers,
+  'services': services,
+  'workers': workers,
 };

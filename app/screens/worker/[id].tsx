@@ -35,7 +35,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
 import profileImage from "../../../assets/images/placeholder-person.jpg";
 
-
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
@@ -46,6 +45,10 @@ const Worker = () => {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+  const [isWorkerBooked, setIsWorkerBooked] = useState(
+    worker?.isBooked || false
+  );
+  const [isWorkerLiked, setIsWorkerLiked] = useState(worker?.isLiked || false);
 
   const {
     isLoading,
@@ -111,7 +114,7 @@ const Worker = () => {
   });
 
   console.log("worker--", worker);
-  
+
   return (
     <>
       <Stack.Screen
@@ -175,7 +178,7 @@ const Worker = () => {
             <Image source={{ uri: worker?.image }} style={styles.workerImage} />
             <Image
               style={styles.workerImage}
-              source={worker?.avatar ? {uri: worker?.avatar} : profileImage}
+              source={worker?.avatar ? { uri: worker?.avatar } : profileImage}
               // size={150}
             />
             <Text style={styles.listingName}>
@@ -208,7 +211,9 @@ const Worker = () => {
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.skills?.join(', ')}</Text>
+                  <Text style={styles.highlightTxtVal}>
+                    {worker?.skills?.join(", ")}
+                  </Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row" }}>
@@ -217,7 +222,9 @@ const Worker = () => {
                 </View>
                 <View>
                   <Text style={styles.highlightTxt}>Rating</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.rating || 0}</Text>
+                  <Text style={styles.highlightTxtVal}>
+                    {worker?.rating || 0}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -232,13 +239,17 @@ const Worker = () => {
           onPress={() => {}}
           style={[styles.footerBtn, styles.footerBookBtn]}
         >
-          <Text style={styles.footerBtnTxt}>Book Now</Text>
+          <Text style={styles.footerBtnTxt}>
+            {isWorkerBooked ? "Already Book" : "Book Now"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => mutation?.mutate()}
           style={styles.footerBtn}
         >
-          <Text style={styles.footerBtnTxt}>Like</Text>
+          <Text style={styles.footerBtnTxt}>
+            {isWorkerLiked ? "Unlike" : "Like"}
+          </Text>
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
           <Text style={styles.footerBtnTxt}>${worker?.price}</Text>

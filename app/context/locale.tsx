@@ -14,18 +14,11 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocaleState] = useState<string>(i18n.locale);
   const [language, setLanguage] = useAtom(LanguageAtom);
 
-  console.log("language----", language);
-  
-
   useEffect(() => {
     // Load the saved locale when the app starts
     const loadLocale = async () => {
       const savedLocale = await language;
-  console.log("language----111", language);
-
-  
       if (savedLocale) {
-  console.log("language----222", language);
         setI18nLocale(savedLocale);
         setLocaleState(savedLocale);
       }

@@ -1,52 +1,78 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import services from "@/data/services.json";
-import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import ListingsVertical from "@/components/ListingVertical";
-import { useQuery } from "@tanstack/react-query";
+import React, { useMemo, useState } from "react";
+import { View, TextInput, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
-import { fetchMyServices } from "../api/services";
+import { fetchMyAppliedServices, fetchMyServices } from "../api/services";
+import CategoryButtons from "@/components/CategoryButtons";
+import ListingsVerticalServices from "@/components/ListingsVerticalServices";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
-  const [filteredData, setFilteredData] = useState(services);
+  const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
-
+  const [category, setCategory] = useState("All");
 
   const {
-    isLoading,
     data: response,
-    refetch,
-    isRefetching,
-  } = useQuery({
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["myServices"],
-    queryFn: async () =>
-      (await userDetails?.role) === "Employer"
-        ? fetchMyServices()
-        : fetchMyServices(),
-    retry: 0,
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "Employer"
+        ? fetchMyServices({ pageParam })
+        : fetchMyAppliedServices({ pageParam });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
   });
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setFilteredData(response?.data);
+      const unsubscribe = setFilteredData(
+        response?.pages.flatMap((page: any) => page.data || [])
+      );
       return () => unsubscribe;
     }, [response])
   );
 
   const handleSearch = (text: any) => {
     setSearchText(text);
-    const filtered: any = services.filter(
+    let workers = response?.pages.flatMap((page: any) => page.data || []);
+    const filtered: any = workers?.filter(
       (item: any) =>
         item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase()) ||
-        item.location.toLowerCase().includes(text.toLowerCase()) ||
-        item.category.toLowerCase().includes(text.toLowerCase())
+        item.description.toLowerCase().includes(text.toLowerCase())
+      // item.location.toLowerCase().includes(text.toLowerCase()) ||
+      // item.category.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
+  };
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const memoizedData = useMemo(
+    () => filteredData?.flatMap((data: any) => data),
+    [filteredData]
+  );
+
+  const onCatChanged = (category: string) => {
+    setCategory(category);
   };
 
   return (
@@ -74,7 +100,20 @@ const Services = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <ListingsVertical listings={filteredData} category="workers" />
+
+        <CategoryButtons type={userDetails?.role === 'Employer' ? 'services' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+
+        <View style={styles.totalData}>
+          <Text style={styles.totalItemTxt}>
+            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
+          </Text>
+        </View>
+        <ListingsVerticalServices
+          listings={memoizedData || []}
+          category="workers"
+          loadMore={loadMore}
+          isFetchingNextPage={isFetchingNextPage}
+        />
       </View>
     </View>
   );
@@ -112,6 +151,16 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  categoryContainer: {
+    paddingHorizontal: 20
+  },
+  totalData: {
+    paddingHorizontal: 20,
+    paddingBottom: 6,
+  },
+  totalItemTxt: {
+    fontSize: 12,
   },
 });
 

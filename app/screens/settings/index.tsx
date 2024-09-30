@@ -100,119 +100,119 @@
 // export default Settings;
 
 
-import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather'; // You can use different icons from the Feather, FontAwesome, etc.
+// import React, { useState } from 'react';
+// import { View, Text, Switch, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+// import Icon from 'react-native-vector-icons/Feather'; // You can use different icons from the Feather, FontAwesome, etc.
 
-export default function SettingsScreen() {
-  const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
+// export default function SettingsScreen() {
+//   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
+//   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
 
-  const toggleNotificationSwitch = () => setNotificationsEnabled((prevState) => !prevState);
-  const toggleDarkModeSwitch = () => setDarkModeEnabled((prevState) => !prevState);
+//   const toggleNotificationSwitch = () => setNotificationsEnabled((prevState) => !prevState);
+//   const toggleDarkModeSwitch = () => setDarkModeEnabled((prevState) => !prevState);
 
-  return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>Settings</Text>
-        </View>
+//   return (
+//     <View style={styles.container}>
+//       <ScrollView>
+//         <View style={styles.headerContainer}>
+//           <Text style={styles.headerTitle}>Settings</Text>
+//         </View>
 
-        <View style={styles.settingsItem}>
-          <Icon name="bell" size={22} color="#000" />
-          <Text style={styles.itemText}>Notification</Text>
-          <Switch
-            value={isNotificationsEnabled}
-            onValueChange={toggleNotificationSwitch}
-            style={styles.switch}
-          />
-        </View>
+//         <View style={styles.settingsItem}>
+//           <Icon name="bell" size={22} color="#000" />
+//           <Text style={styles.itemText}>Notification</Text>
+//           <Switch
+//             value={isNotificationsEnabled}
+//             onValueChange={toggleNotificationSwitch}
+//             style={styles.switch}
+//           />
+//         </View>
 
-        <View style={styles.settingsItem}>
-          <Icon name="sun" size={22} color="#000" />
-          <Text style={styles.itemText}>Dark Mode</Text>
-          <Switch
-            value={isDarkModeEnabled}
-            onValueChange={toggleDarkModeSwitch}
-            style={styles.switch}
-          />
-        </View>
+//         <View style={styles.settingsItem}>
+//           <Icon name="sun" size={22} color="#000" />
+//           <Text style={styles.itemText}>Dark Mode</Text>
+//           <Switch
+//             value={isDarkModeEnabled}
+//             onValueChange={toggleDarkModeSwitch}
+//             style={styles.switch}
+//           />
+//         </View>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="star" size={22} color="#000" />
-          <Text style={styles.itemText}>Rate App</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="star" size={22} color="#000" />
+//           <Text style={styles.itemText}>Rate App</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="share-2" size={22} color="#000" />
-          <Text style={styles.itemText}>Share App</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="share-2" size={22} color="#000" />
+//           <Text style={styles.itemText}>Share App</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="lock" size={22} color="#000" />
-          <Text style={styles.itemText}>Privacy Policy</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="lock" size={22} color="#000" />
+//           <Text style={styles.itemText}>Privacy Policy</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="file-text" size={22} color="#000" />
-          <Text style={styles.itemText}>Terms and Conditions</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="file-text" size={22} color="#000" />
+//           <Text style={styles.itemText}>Terms and Conditions</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="clipboard" size={22} color="#000" />
-          <Text style={styles.itemText}>Cookies Policy</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="clipboard" size={22} color="#000" />
+//           <Text style={styles.itemText}>Cookies Policy</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="mail" size={22} color="#000" />
-          <Text style={styles.itemText}>Contact</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="mail" size={22} color="#000" />
+//           <Text style={styles.itemText}>Contact</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="message-square" size={22} color="#000" />
-          <Text style={styles.itemText}>Feedback</Text>
-        </TouchableOpacity>
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="message-square" size={22} color="#000" />
+//           <Text style={styles.itemText}>Feedback</Text>
+//         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsItem}>
-          <Icon name="log-out" size={22} color="#000" />
-          <Text style={styles.itemText}>Logout</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
-  );
-}
+//         <TouchableOpacity style={styles.settingsItem}>
+//           <Icon name="log-out" size={22} color="#000" />
+//           <Text style={styles.itemText}>Logout</Text>
+//         </TouchableOpacity>
+//       </ScrollView>
+//     </View>
+//   );
+// }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  headerContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  settingsItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  itemText: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 10,
-    color: '#333',
-  },
-  switch: {
-    transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+//   headerContainer: {
+//     paddingVertical: 20,
+//     paddingHorizontal: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#eee',
+//   },
+//   headerTitle: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//     color: '#333',
+//   },
+//   settingsItem: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     paddingVertical: 15,
+//     paddingHorizontal: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#eee',
+//   },
+//   itemText: {
+//     flex: 1,
+//     fontSize: 16,
+//     marginLeft: 10,
+//     color: '#333',
+//   },
+//   switch: {
+//     transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
+//   },
+// });

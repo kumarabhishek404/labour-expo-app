@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -7,36 +8,55 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, {
+  MemoExoticComponent,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import debounce from "lodash/debounce";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import coverImage from '../assets/images/placeholder-cover.jpg'
+import coverImage from "../assets/images/placeholder-cover.jpg";
 import { ServiceType } from "@/types/type";
 
 type Props = {
   listings: any[];
   category: string;
+  isFetchingNextPage: boolean;
+  loadMore: any;
 };
 
-const ListingsVertical = ({ listings, category }: Props) => {
-  const [loading, setLoading] = useState(false);
+type RenderItemTypes = {
+  item: {
+    _id: string;
+    coverImage: string;
+    name: string;
+    location: any;
+    price: string;
+  };
+};
 
-  useEffect(() => {
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 200);
-  }, [category]);
-
-  const renderItems: ListRenderItem<ServiceType> = ({ item }) => {
+const ListingsVerticalServices = ({
+  listings,
+  category,
+  loadMore,
+  isFetchingNextPage,
+}: Props) => {
+  const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
           <TouchableOpacity>
             <View style={styles.item}>
-              <Image source={item?.coverImage ? { uri: item?.coverImage } : coverImage} style={styles.image} />
+              <Image
+                source={
+                  item?.coverImage ? { uri: item?.coverImage } : coverImage
+                }
+                style={styles.image}
+              />
               <View style={styles.bookmark}>
                 <Ionicons
                   name="bookmark-outline"
@@ -63,7 +83,9 @@ const ListingsVertical = ({ listings, category }: Props) => {
                     size={18}
                     color={Colors.primary}
                   />
-                  <Text style={styles.itemLocationTxt}>{item.location}</Text>
+                  <Text style={styles.itemLocationTxt}>
+                    {item.location?.latitude}
+                  </Text>
                 </View>
                 <Text style={styles.itemPriceTxt}>${item.price}</Text>
               </View>
@@ -72,31 +94,54 @@ const ListingsVertical = ({ listings, category }: Props) => {
         </Link>
       </View>
     );
-  };
+  });
+
+  const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
     <View>
       <FlatList
-        data={loading ? [] : listings}
-        renderItem={renderItems}
-        showsVerticalScrollIndicator={false}
+        data={listings ?? []}
+        renderItem={renderItem}
+        keyExtractor={(item) => item?._id?.toString()}
+        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.9}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <ActivityIndicator
+              size="large"
+              color={Colors?.primary}
+              style={styles.loaderStyle}
+            />
+          ) : null
+        }
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={true}
+        contentContainerStyle={{ paddingBottom: 180 }}
       />
     </View>
   );
 };
 
-export default ListingsVertical;
+export default ListingsVerticalServices;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15
+    padding: 15,
   },
   item: {
     backgroundColor: Colors.white,
     padding: 10,
     borderRadius: 10,
-    width: '100%',
+    width: "100%",
   },
   image: {
     width: "100%",
@@ -128,5 +173,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: Colors.primary,
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });

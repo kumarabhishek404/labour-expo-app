@@ -1,5 +1,8 @@
 import {
+  ActivityIndicator,
   Dimensions,
+  FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,12 +29,13 @@ import Animated, {
 import Map from "@/components/ViewMap";
 import {
   applyService,
+  fetchMyApplicants,
   getServiceById,
   likeService,
   unLikeService,
 } from "../../api/services";
 import Loader from "@/components/Loader";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtom } from "jotai";
 import { LocationAtom, UserAtom } from "../../AtomStore/user";
@@ -57,9 +61,11 @@ const ListingDetails = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isServiceLiked, setIsServiceLiked] = useState(
-    userDetails?.likedJobs.includes(id)
+    service?.isLiked || false
   );
-  const [isServiceApplied, setIsServiceApplied] = useState(false);
+  const [isServiceApplied, setIsServiceApplied] = useState(
+    service?.isApplied || false
+  );
   const {
     isLoading,
     isError,
@@ -73,6 +79,28 @@ const ListingDetails = () => {
     enabled: !!id,
     // refetchOnWindowFocus: true
   });
+
+  const {
+    data: applicants,
+    isLoading: isApplicantLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["applicants"],
+    queryFn: ({ pageParam }) => {
+      return fetchMyApplicants({ pageParam, id });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+
+  console.log("applicants---", applicants?.pages[0]?.data);
 
   const getServiceDetailsById = async (id: any) => {
     try {
@@ -175,8 +203,31 @@ const ListingDetails = () => {
     };
   });
 
+  const renderApplicant = ({ item, index }: any) => {
+    console.log("Item---", item);
+
+    return (
+      <View style={styles.productCard}>
+        <Image source={{ uri: item.avatar }} style={styles.productImage} />
+        <View style={styles.productInfo}>
+          <Text style={styles.productTitle}>
+            {item.firstName} {item.lastName}
+          </Text>
+          <Text style={styles.productPrice}>
+            {item.skills.join(", ") || "Labour, Mistri, Plumber"}
+          </Text>
+          <View style={styles.recommendationContainer}>
+            <FontAwesome name="user-circle" size={16} color="gray" />
+            <Text style={styles.recommendationText}>
+              {item.address || "Balipur, Shakarauli, Jalesar Etah"}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   console.log("Service----", service);
-  
   return (
     <>
       <Stack.Screen
@@ -256,12 +307,10 @@ const ListingDetails = () => {
             </View>
 
             <View style={styles.listingLocationWrapper}>
-              <Entypo
-                name="calendar"
-                size={18}
-                color={Colors.primary}
-              />
-              <Text style={styles.listingLocationTxt}>Start {service?.startDate} - End {service?.endDate}</Text>
+              <Entypo name="calendar" size={18} color={Colors.primary} />
+              <Text style={styles.listingLocationTxt}>
+                Start {service?.startDate} - End {service?.endDate}
+              </Text>
             </View>
 
             <View style={styles.highlightWrapper}>
@@ -304,6 +353,20 @@ const ListingDetails = () => {
           </View>
           {/* First Make Google Maps API Key Then Uncomment It */}
           {/* <Map data={mapLocation && mapLocation} /> */}
+
+          <View style={styles.applicantContainer}>
+            <Text style={styles.applicantHeader}>Applicants</Text>
+            {isApplicantLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <FlatList
+                data={applicants?.pages[0]?.data ?? []}
+                renderItem={renderApplicant}
+                keyExtractor={(item) => item._id.toString()} // Assuming each applicant has a unique ID
+                contentContainerStyle={styles.applicantList}
+              />
+            )}
+          </View>
         </Animated.ScrollView>
       </ScrollView>
 
@@ -312,7 +375,9 @@ const ListingDetails = () => {
           onPress={() => mutationApplyService.mutate()}
           style={[styles.footerBtn, styles.footerBookBtn]}
         >
-          <Text style={styles.footerBtnTxt}>Apply Now</Text>
+          <Text style={styles.footerBtnTxt}>
+            {isServiceApplied ? "Already Applied" : "Apply Now"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
@@ -394,6 +459,61 @@ const styles = StyleSheet.create({
     color: Colors.black,
     lineHeight: 25,
     letterSpacing: 0.5,
+  },
+  applicantList: {
+    display: "flex",
+  },
+  applicantContainer: {
+    padding: 20,
+    backgroundColor: Colors.white,
+  },
+  applicantHeader: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  productCard: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: "center",
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 5,
+    // elevation: 2,
+    borderColor: "gray",
+    borderWidth: 1,
+  },
+  productImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 4,
+    marginRight: 15,
+  },
+  productInfo: {
+    flex: 1,
+  },
+  productTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  productPrice: {
+    fontSize: 14,
+    color: "#888",
+    marginVertical: 5,
+  },
+  recommendationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  recommendationText: {
+    marginLeft: 5,
+    fontSize: 12,
+    color: "gray",
   },
   footer: {
     flexDirection: "row",

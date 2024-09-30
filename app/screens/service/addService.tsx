@@ -10,36 +10,29 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import {
-  Feather,
   Ionicons,
   MaterialCommunityIcons,
-  SimpleLineIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { Link, router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import DateField from "@/components/Calender";
 import WorkRequirment from "@/components/WorkRequirements";
-import PriceField from "@/components/PriceField";
 import LocationField from "@/components/LocationField";
-import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImagePicker";
-import { addNewService } from "../api/services";
 import Loader from "@/components/Loader";
-import axios from "axios";
-import { makePostRequestFormData } from "../api";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "../AtomStore/user";
-import AddService from "../screens/service/addService";
-import Helps from "../screens/helps";
+import { addNewService } from "@/app/api/services";
 
-const MiddleOption = () => {
-  const userDetails = useAtomValue(UserAtom);
-  const navigation = useNavigation();
-  const [secureEntery, setSecureEntery] = useState(true);
+// Enable LayoutAnimation on Android (it's automatically enabled on iOS)
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const AddService = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [openSections, setOpenSections]: any = useState({});
   const [workTitle, setWorkTitle] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -134,75 +127,16 @@ const MiddleOption = () => {
     }
   };
 
-  // Simplified questions and respective content for rural audiences
-  const questions = [
-    {
-      id: 1,
-      question: "How to stop scooter for some time?",
-      answer: "Tap the pause button on the screen.",
-    },
-    {
-      id: 2,
-      question: "Where can I leave the scooter?",
-      answer: "Park it at a safe place, away from traffic.",
-    },
-    {
-      id: 3,
-      question: "How to stop using the scooter?",
-      answer: "Tap on 'End Ride' when you're done.",
-    },
-    {
-      id: 4,
-      question: "Where is my scooter?",
-      answer: "Check the map in the app for the location.",
-    },
-    {
-      id: 5,
-      question: "I got hurt or damaged the scooter",
-      answer: "Call support immediately or use the app to report.",
-    },
-    {
-      id: 6,
-      question: "Something else",
-      answer: "Contact our support for other issues.",
-    },
-  ];
-
-  const toggleSection = (id: any) => {
-    setOpenSections((prevSections: any) => ({
-      ...prevSections,
-      [id]: !prevSections[id],
-    }));
-  };
-
   return (
     <>
       <Stack.Screen
         options={{
           headerTransparent: false,
-          headerTitle:
-            userDetails?.role === "Employer" ? "Add Service" : "Help",
+          headerTitle: "Add Service",
           headerTintColor: Colors.white,
           headerStyle: {
             backgroundColor: Colors.primary,
           },
-          // headerLeft: () => (
-          //   <TouchableOpacity
-          //     onPress={() => router.back()}
-          //     style={{
-          //       marginLeft: 20,
-          //       backgroundColor: Colors.white,
-          //       padding: 6,
-          //       borderRadius: 6,
-          //       shadowColor: "#171717",
-          //       shadowOffset: { width: 2, height: 4 },
-          //       shadowOpacity: 0.2,
-          //       shadowRadius: 3,
-          //     }}
-          //   >
-          //     <Feather name="arrow-left" size={20} />
-          //   </TouchableOpacity>
-          // ),
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {}}
@@ -223,12 +157,66 @@ const MiddleOption = () => {
         }}
       />
       <Loader loading={isLoading} />
-      {userDetails?.role === "Employer" ? <AddService /> : <Helps />}
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        <View style={styles.textContainer}>
+          <Text style={styles.headingText}>Let's create</Text>
+          <Text style={styles.headingText}>your work</Text>
+        </View>
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <MaterialCommunityIcons
+              name="sickle"
+              size={30}
+              color={Colors.secondary}
+            />
+            <TextInput
+              value={workTitle}
+              style={styles.textInput}
+              placeholder="Work Title"
+              placeholderTextColor={Colors.secondary}
+              onChangeText={setWorkTitle}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <MaterialCommunityIcons
+              name={"shovel"}
+              size={30}
+              color={Colors.secondary}
+            />
+            <TextInput
+              value={workDescription}
+              style={styles.textInput}
+              placeholder="Work Description"
+              placeholderTextColor={Colors.secondary}
+              onChangeText={setWorkDescription}
+            />
+          </View>
+          <DateField
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+          <WorkRequirment
+            requirements={requirements}
+            setRequirements={setRequirements}
+          />
+          <ImageUpload images={images} setImages={setImages} />
+          <LocationField address={address} setAddress={setAddress} />
+
+          <TouchableOpacity
+            onPress={handleSubmit}
+            style={styles.loginButtonWrapper}
+          >
+            <Text style={styles.loginText}>Post</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </>
   );
 };
 
-export default MiddleOption;
+export default AddService;
 
 const styles = StyleSheet.create({
   container: {
@@ -357,53 +345,5 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: Colors.primary,
-  },
-
-  //   container: {
-  //     flex: 1,
-  //     backgroundColor: '#f9f9f9',
-  //     padding: 20,
-  // },
-  header: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
-  },
-  subHeader: {
-    fontSize: 22,
-    fontWeight: "600",
-    marginBottom: 10,
-    color: "#000",
-  },
-  description: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
-  questionContainer: {
-    marginBottom: 10,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  questionButton: {
-    padding: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  questionText: {
-    fontSize: 18,
-    color: "#333",
-  },
-  answerContainer: {
-    padding: 15,
-    backgroundColor: "#f0f0f0",
-  },
-  answerText: {
-    fontSize: 16,
-    color: "#555",
   },
 });

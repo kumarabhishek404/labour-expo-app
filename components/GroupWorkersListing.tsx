@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -15,14 +16,44 @@ import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import profileImage from "../assets/images/placeholder-person.jpg";
 import { Link } from "expo-router";
+import { debounce } from "lodash";
 
-const GroupWorkersListing = ({ listings, category }: { listings: GroupType[], category: string }) => {
-  const userDetails = useAtomValue(UserAtom);
-  const renderItem: ListRenderItem<GroupType> = ({ item }) => {
+type RenderItemTypes = {
+  item: {
+    _id: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    coverImage: string;
+    location: any;
+    profileImage: string;
+    skills: string[];
+    rating: string;
+    reviews: string;
+    price: string;
+    isBookmarked: boolean;
+  };
+  index: number;
+};
+
+const GroupWorkersListing = ({
+  listings,
+  category,
+  loadMore,
+  isFetchingNextPage,
+}: {
+  listings: any[];
+  category: string;
+  loadMore: any;
+  isFetchingNextPage: boolean;
+}) => {
+  const RenderItem: any = React.memo(({ item, index }: RenderItemTypes) => {
+    const isLastItem = index === listings.length - 1;
+
     return (
       <Link href={`/screens/worker/${item?._id}`} asChild>
         <TouchableOpacity>
-          <View style={styles.item}>
+          <View style={[styles.item, isLastItem && styles.lastElement]}>
             <Image
               source={
                 item?.profileImage ? { uri: item?.profileImage } : profileImage
@@ -45,20 +76,43 @@ const GroupWorkersListing = ({ listings, category }: { listings: GroupType[], ca
         </TouchableOpacity>
       </Link>
     );
-  };
+  });
+
+  const renderItem = ({ item, index }: RenderItemTypes) => (
+    <RenderItem item={item} index={index} />
+  );
 
   return (
     <View style={{ marginVertical: 20 }}>
-      <Text style={styles.title}>
-        {userDetails?.role === "Labour"
-          ? "Top Rated Employers"
-          : "Top Rated Workers"}
-      </Text>
+      <Text style={styles.title}>Top Rated Workers</Text>
       <FlatList
-        data={listings}
+        data={listings ?? []}
         renderItem={renderItem}
+        keyExtractor={(item) => item?._id?.toString()}
+        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.9}
         horizontal
         showsHorizontalScrollIndicator={false}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator
+                size="large"
+                style={styles.loaderStyle}
+                color={Colors?.primary}
+              />
+            </View>
+          ) : null
+        }
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={3}
+        removeClippedSubviews={true}
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
       />
     </View>
   );
@@ -81,6 +135,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  lastElement: {
+    marginRight: 0,
+  },
   image: {
     width: 80,
     height: 80,
@@ -102,5 +159,16 @@ const styles = StyleSheet.create({
   itemReviews: {
     fontSize: 14,
     color: "#999",
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
+  },
+  footerLoader: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 50,
+    // height: 250, // Adjust to match the size of your list items
   },
 });

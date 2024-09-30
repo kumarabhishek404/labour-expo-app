@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -12,26 +13,37 @@ import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
+import { debounce } from "lodash";
 
 type Props = {
   listings: any[];
   category: string;
+  loadMore: any;
+  isFetchingNextPage: boolean;
 };
 
-const ListingsWorkers = ({ listings, category }: Props) => {
-  const [loading, setLoading] = useState(false);
+type RenderItemTypes = {
+  item: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    coverImage: string;
+    location: any;
+    avatar: string;
+    skills: string[];
+    rating: string;
+    reviews: string;
+    price: string;
+  };
+};
 
-  useEffect(() => {
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 200);
-  }, [category]);
-
-  const renderItems: ListRenderItem<any> = ({ item }) => {
-    console.log("Itemmmss----", item);
-
+const ListingsVerticalWorkers = ({
+  listings,
+  category,
+  loadMore,
+  isFetchingNextPage,
+}: Props) => {
+  const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <View style={styles.container}>
         <Link href={`/screens/worker/${item?._id}`} asChild>
@@ -70,7 +82,9 @@ const ListingsWorkers = ({ listings, category }: Props) => {
                     size={18}
                     color={Colors.primary}
                   />
-                  <Text style={styles.itemLocationTxt}>{item?.location}</Text>
+                  <Text style={styles.itemLocationTxt}>
+                    {item?.location?.latitude}
+                  </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="star" size={20} color={Colors.primary} />
@@ -86,20 +100,43 @@ const ListingsWorkers = ({ listings, category }: Props) => {
         </Link>
       </View>
     );
-  };
+  });
+
+  const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
     <View>
       <FlatList
-        data={loading ? [] : listings}
-        renderItem={renderItems}
-        showsVerticalScrollIndicator={false}
+        data={listings ?? []}
+        renderItem={renderItem}
+        keyExtractor={(item) => item?._id?.toString()}
+        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.9}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <ActivityIndicator
+              size="large"
+              color={Colors?.primary}
+              style={styles.loaderStyle}
+            />
+          ) : null
+        }
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={3}
+        removeClippedSubviews={true}
+        contentContainerStyle={{ paddingBottom: 110 }}
       />
     </View>
   );
 };
 
-export default ListingsWorkers;
+export default ListingsVerticalWorkers;
 
 const styles = StyleSheet.create({
   container: {
@@ -167,5 +204,10 @@ const styles = StyleSheet.create({
   itemReviews: {
     fontSize: 14,
     color: "#999",
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });

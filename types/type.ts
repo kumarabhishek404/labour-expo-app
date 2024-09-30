@@ -8,7 +8,10 @@ export interface ServiceType {
   reviews: number;
   price: string;
   duration: string;
-  location: string;
+  location: {
+    latitude: string,
+    longitude: string
+  };
   category: string;
 }
 

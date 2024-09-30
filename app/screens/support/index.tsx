@@ -7,11 +7,14 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import Collapsible from "react-native-collapsible";
-import { Foundation, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  Foundation,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 
 const SupportScreen = () => {
   const [activeSections, setActiveSections] = useState<number[]>([]);
@@ -28,8 +31,27 @@ const SupportScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
           headerTitle: "Contact Support",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 10,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 10,
+                }}
+              >
+                <Feather name="arrow-left" size={20} />
+              </View>
+            </TouchableOpacity>
+          ),
         }}
       />
       <ScrollView style={styles.container}>
@@ -76,7 +98,7 @@ const SupportScreen = () => {
               onPress={() => toggleSection(index)}
             >
               <Text style={styles.faqQuestion}>{item.question}</Text>
-              <Icon
+              <Feather
                 name={
                   activeSections.includes(index) ? "chevron-up" : "chevron-down"
                 }

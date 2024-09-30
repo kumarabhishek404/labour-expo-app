@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -13,28 +14,40 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
 import { ServiceType } from "@/types/type";
+import { debounce } from "lodash";
 
 type Props = {
   listings: any[];
   category: string;
+  isFetchingNextPage: boolean;
+  loadMore: any;
 };
 
-const ListingServicesHorizontal = ({ listings, category }: Props) => {
-  const [loading, setLoading] = useState(false);
+type RenderItemTypes = {
+  item: {
+    _id: string;
+    coverImage: string;
+    name: string;
+    location: any;
+    price: string;
+    address: string;
+  };
+  index: number
+};
 
-  useEffect(() => {
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 200);
-  }, [category]);
-
-  const renderItems: ListRenderItem<ServiceType> = ({ item }) => {
+const ListingHorizontalServices = ({
+  listings,
+  category,
+  isFetchingNextPage,
+  loadMore,
+}: Props) => {
+  const RenderItem: any = React.memo(({ item, index }: RenderItemTypes) => {
+    const isLastItem = index === listings.length - 1;
+    
     return (
       <Link href={`/screens/service/${item?._id}`} asChild>
         <TouchableOpacity>
-          <View style={styles.item}>
+          <View style={[styles.item, isLastItem && styles.lastElement]}>
             {/* <Image source={{ uri: item?.coverImage }} style={styles.image} /> */}
             <Image
               source={item?.coverImage ? { uri: item?.coverImage } : coverImage}
@@ -59,7 +72,9 @@ const ListingServicesHorizontal = ({ listings, category }: Props) => {
                   size={18}
                   color={Colors.primary}
                 />
-                <Text style={styles.itemLocationTxt}>{item?.location}</Text>
+                <Text style={styles.itemLocationTxt}>
+                  {item?.address}
+                </Text>
               </View>
               <Text style={styles.itemPriceTxt}>${item?.price}</Text>
             </View>
@@ -67,21 +82,42 @@ const ListingServicesHorizontal = ({ listings, category }: Props) => {
         </TouchableOpacity>
       </Link>
     );
-  };
+  });
+
+  const renderItem = ({ item, index }: RenderItemTypes) => <RenderItem item={item} index={index} />;
 
   return (
     <View>
       <FlatList
-        data={loading ? [] : listings}
-        renderItem={renderItems}
+        data={listings ?? []}
+        renderItem={renderItem}
+        keyExtractor={(item) => item?._id?.toString()}
+        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.9}
         horizontal
         showsHorizontalScrollIndicator={false}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator size="large" style={styles.loaderStyle} color={Colors?.primary} />
+            </View>
+          ) : null
+        }
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={3}
+        removeClippedSubviews={true}
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
       />
     </View>
   );
 };
 
-export default ListingServicesHorizontal;
+export default ListingHorizontalServices;
 
 const styles = StyleSheet.create({
   item: {
@@ -90,6 +126,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 20,
     width: 220,
+  },
+  lastElement: {
+    marginRight: 0,
   },
   image: {
     width: 200,
@@ -114,12 +153,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemLocationTxt: {
+    width: "70%",
     fontSize: 12,
     marginLeft: 5,
   },
   itemPriceTxt: {
+    width: "20%",
     fontSize: 12,
     fontWeight: "600",
     color: Colors.primary,
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
+  },
+  footerLoader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    // height: 250, // Adjust to match the size of your list items
   },
 });

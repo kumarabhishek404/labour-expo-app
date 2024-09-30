@@ -1,63 +1,86 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import workers from "@/data/workers.json";
-import services from "@/data/services.json";
-import React, { useEffect, useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import ListingsWorkers from "@/components/ListingWorkers";
-import ListingsVertical from "@/components/ListingVertical";
-import { useAtomValue } from "jotai";
-import { useQuery } from "@tanstack/react-query";
+import React, { useMemo, useState } from "react";
 import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+} from "react-native";
+import { useAtomValue } from "jotai";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "@react-navigation/native";
 import { UserAtom } from "../AtomStore/user";
 import Loader from "@/components/Loader";
 import { fetchAllServices } from "../api/services";
 import { fetchAllWorkers } from "../api/workers";
+import CategoryButtons from "@/components/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
+import ListingsVerticalServices from "@/components/ListingsVerticalServices";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
-  const [workers, setWorkers] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
-  const isFocused = useIsFocused();
-  const navigation = useNavigation();
+  const [category, setCategory] = useState("All");
 
   const {
-    isLoading,
     data: response,
-    refetch,
-    isRefetching,
-  } = useQuery({
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["services"],
-    queryFn: async () =>
-      (await userDetails?.role) === "Employer"
-        ? fetchAllWorkers()
-        : fetchAllServices(),
-    retry: 0,
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "Employer"
+        ? fetchAllWorkers({ pageParam })
+        : fetchAllServices({ pageParam });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
   });
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setFilteredData(response?.data);
+      const unsubscribe = setFilteredData(
+        response?.pages.flatMap((page: any) => page.data || [])
+      );
       return () => unsubscribe;
     }, [response])
   );
 
   const handleSearch = (text: any) => {
     setSearchText(text);
-    const filtered: any = workers.filter(
+    let workers = response?.pages.flatMap((page: any) => page.data || []);
+    const filtered: any = workers?.filter(
       (item: any) =>
         item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase()) ||
-        item.location.toLowerCase().includes(text.toLowerCase()) ||
-        item.category.toLowerCase().includes(text.toLowerCase())
+        item.description.toLowerCase().includes(text.toLowerCase())
+      // item.location.toLowerCase().includes(text.toLowerCase()) ||
+      // item.category.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
   };
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const memoizedData = useMemo(() => filteredData?.flatMap((data:any) => data), [filteredData]);
+
+  const onCatChanged = (category: string) => {
+    setCategory(category);
+  };
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -85,10 +108,28 @@ const Workers = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <CategoryButtons type={userDetails?.role === 'Employer' ? 'workers' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+
+        <View style={styles.totalData}>
+          <Text style={styles.totalItemTxt}>
+            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
+          </Text>
+        </View>
         {userDetails?.role === "Employer" ? (
-          <ListingsWorkers listings={filteredData} category="workers" />
+          <ListingsVerticalWorkers
+            listings={memoizedData || []}
+            category="workers"
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         ) : (
-          <ListingsVertical listings={filteredData} category="services" />
+          <ListingsVerticalServices
+            listings={memoizedData || []}
+            category="services"
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         )}
       </View>
     </View>
@@ -127,6 +168,16 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  categoryContainer: {
+    paddingHorizontal: 20
+  },
+  totalData: {
+    paddingHorizontal: 20,
+    paddingBottom: 6,
+  },
+  totalItemTxt: {
+    fontSize: 12,
   },
 });
 

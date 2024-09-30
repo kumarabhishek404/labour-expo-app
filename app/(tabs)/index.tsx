@@ -8,65 +8,122 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { router, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import CategoryButtons from "@/components/CategoryButtons";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { fetchAllWorkers } from "../api/workers";
 import { fetchAllServices } from "../api/services";
 import Loader from "@/components/Loader";
 import { fetchAllEmployers } from "../api/employer";
-import ListingWorkersHorizontal from "@/components/ListingWorkersHorizontal";
-import ListingServicesHorizontal from "@/components/ListingServicesHorizontal";
 import GroupWorkersListing from "@/components/GroupWorkersListing";
 import GroupEmployersListing from "@/components/GroupEmployersListing";
 import profileImage from "../../assets/images/placeholder-person.jpg";
 import i18n from "@/utils/i18n";
 import { useLocale } from "../context/locale";
+import ListingHorizontalServices from "@/components/ListingHorizontalServices";
+import ListingHorizontalWorkers from "@/components/ListingHorizontalWorkers";
 // import { useLocale } from "../context/locale";
 
 const Page = () => {
-  useLocale()
+  useLocale();
   const userDetails = useAtomValue(UserAtom);
   const headerHeight = useHeaderHeight();
   const [category, setCategory] = useState("All");
 
-  console.log("i18n--", i18n);
-  
+  // const {
+  //   isLoading,
+  //   data: response,
+  //   isRefetching,
+  // } = useQuery({
+  //   queryKey: ["services"],
+  //   queryFn: async () =>
+  //     (await userDetails?.role) === "Employer"
+  //       ? fetchAllWorkers()
+  //       : fetchAllServices(),
+  //   retry: 0,
+  // });
+
   const {
-    isLoading,
     data: response,
-    isRefetching,
-  } = useQuery({
-    queryKey: ["services"],
-    queryFn: async () =>
-      (await userDetails?.role) === "Employer"
-        ? fetchAllWorkers()
-        : fetchAllServices(),
-    retry: 0,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["homepage"],
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "Employer"
+        ? fetchAllWorkers({ pageParam })
+        : fetchAllServices({ pageParam });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
   });
 
   const {
-    isLoading: isSecondLoading,
     data: secondResponse,
-    isRefetching: isSecondRefetching,
-  } = useQuery({
-    queryKey: ["employers"],
-    queryFn: async () =>
-      (await userDetails?.role) === "Employer"
-        ? fetchAllWorkers()
-        : fetchAllEmployers(),
-    retry: 0,
+    isLoading: isSecondLoading,
+    isFetchingNextPage: isSecondFetchingNextPage,
+    fetchNextPage: fetchSecondNextPage,
+    hasNextPage: hasSecondsNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["tops"],
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "Employer"
+        ? fetchAllWorkers({ pageParam })
+        : fetchAllEmployers({ pageParam });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
   });
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const loadSecondMore = () => {
+    if (hasSecondsNextPage && !isSecondFetchingNextPage) {
+      fetchSecondNextPage();
+    }
+  };
 
   const onCatChanged = (category: string) => {
     setCategory(category);
   };
+
+  const memoizedData = useMemo(
+    () =>
+      response?.pages
+        .flatMap((page: any) => page.data || [])
+        ?.flatMap((data: any) => data),
+    [response]
+  );
+
+  const secondMemoizedData = useMemo(
+    () =>
+      secondResponse?.pages
+        .flatMap((page: any) => page.data || [])
+        ?.flatMap((data: any) => data),
+    [secondResponse]
+  );
 
   return (
     <>
@@ -110,16 +167,13 @@ const Page = () => {
           ),
         }}
       />
-      <Loader
-        loading={
-          isLoading || isSecondLoading || isRefetching || isSecondRefetching
-        }
-      />
+      <Loader loading={isLoading || isSecondLoading} />
 
       <View style={[styles.container, { paddingTop: headerHeight }]}>
-        
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={styles.headingTxt}>{i18n.t('welcome')} {userDetails?.firstName}</Text>
+          <Text style={styles.headingTxt}>
+            {i18n.t("welcome")} {userDetails?.firstName}
+          </Text>
           <View style={styles.searchSectionWrapper}>
             <View style={styles.searchBar}>
               <Ionicons
@@ -141,28 +195,48 @@ const Page = () => {
             </TouchableOpacity>
           </View>
 
-          <CategoryButtons onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons
+            type={userDetails?.role === "Employer" ? "workers" : "services"}
+            onCagtegoryChanged={onCatChanged}
+            stylesProp={styles.categoryContainer}
+          />
+
+          <View style={styles.totalData}>
+            <Text style={styles.totalItemTxt}>
+              {isLoading
+                ? "Loading..."
+                : `${memoizedData?.length || 0} Results`}
+            </Text>
+          </View>
           {userDetails?.role === "Employer" ? (
-            <ListingWorkersHorizontal
-              listings={response?.data}
+            <ListingHorizontalWorkers
               category={category}
+              listings={memoizedData || []}
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
             />
           ) : (
-            <ListingServicesHorizontal
-              listings={response?.data}
+            <ListingHorizontalServices
               category={category}
+              listings={memoizedData || []}
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
             />
           )}
 
           {userDetails?.role === "Employer" ? (
             <GroupWorkersListing
-              listings={secondResponse?.data}
               category={category}
+              listings={secondMemoizedData || []}
+              loadMore={loadSecondMore}
+              isFetchingNextPage={isSecondFetchingNextPage}
             />
           ) : (
             <GroupEmployersListing
-              listings={secondResponse?.data}
               category={category}
+              listings={secondMemoizedData || []}
+              loadMore={loadSecondMore}
+              isFetchingNextPage={isSecondFetchingNextPage}
             />
           )}
         </ScrollView>
@@ -208,5 +282,15 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  categoryContainer: {
+    // paddingHorizontal: 20,
+  },
+  totalData: {
+    // paddingHorizontal: 20,
+    paddingBottom: 6,
+  },
+  totalItemTxt: {
+    fontSize: 12,
   },
 });

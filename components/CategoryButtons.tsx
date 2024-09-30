@@ -13,26 +13,20 @@ import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 
 type Props = {
+  type: string;
   onCagtegoryChanged: (category: string) => void;
+  stylesProp: object
 };
 
-const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
+const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
   const userDetails = useAtomValue(UserAtom);
-  const [categories, setCategories] = useState(
-    userDetails?.role === "Labour"
-      ? allCategories?.services
-      : allCategories?.workers
-  );
+  const [categories, setCategories] = useState(allCategories[type]);
   const scrollRef: any = useRef<ScrollView>(null);
   const itemRef = useRef<TouchableOpacity[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    setCategories(
-      userDetails?.role === "Labour"
-        ? allCategories?.services
-        : allCategories?.workers
-    );
+    setCategories(allCategories[type]);
   }, [userDetails]);
 
   const handleSelectCategory = (index: number) => {
@@ -49,10 +43,10 @@ const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
   };
 
   return (
-    <View>
-      <Text style={styles.title}>
+    <View style={stylesProp}>
+      {/* <Text style={styles.title}>
         {userDetails?.role === "Employer" ? "Workers" : "Services"}
-      </Text>
+      </Text> */}
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -63,7 +57,7 @@ const CategoryButtons = ({ onCagtegoryChanged }: Props) => {
           marginBottom: 10,
         }}
       >
-        {categories.map((item, index) => (
+        {categories.map((item:any, index:number) => (
           <TouchableOpacity
             key={index}
             ref={(el) => (itemRef.current[index] = el)}

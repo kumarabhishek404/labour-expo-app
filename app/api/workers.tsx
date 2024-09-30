@@ -138,9 +138,9 @@ export const getWorkerById = async (id: any) => {
 //   }
 // }
 
-export const fetchAllWorkers = async () => {
+export const fetchAllWorkers = async ({pageParam}:any) => {
   try {
-    const data = await makeGetRequest("/worker/all");
+    const data = await makeGetRequest(`/worker/all?page=${pageParam}&limit=3`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -155,9 +155,9 @@ export const fetchAllWorkers = async () => {
   }
 };
 
-export const fetchAllLikedWorkers = async () => {
+export const fetchAllLikedWorkers = async ({pageParam}:any) => {
   try {
-    const data = await makeGetRequest("/worker/my-bookmarks");
+    const data = await makeGetRequest(`/worker/my-bookmarks?page=${pageParam}&limit=5`);
     return data.data;
   } catch (error: any) {
     console.error(

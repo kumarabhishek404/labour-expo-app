@@ -140,9 +140,13 @@ export const getServiceById = async (id: any) => {
 //   }
 // }
 
-export const fetchAllServices = async () => {
+export const fetchAllServices = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest("/service/all");
+    const data = await makeGetRequest(
+      `/service/all?page=${pageParam}&limit=10`
+    );
+    // console.log("Data---", data?.data);
+
     return data.data;
   } catch (error: any) {
     console.error(
@@ -157,9 +161,11 @@ export const fetchAllServices = async () => {
   }
 };
 
-export const fetchAllLikedServices = async () => {
+export const fetchAllLikedServices = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest("/service/liked-services");
+    const data = await makeGetRequest(
+      `/service/liked-services?page${pageParam}&limit=5`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -208,6 +214,46 @@ export const unLikeService = async (payload: any) => {
   }
 };
 
+// My Services
+export const fetchMyServices = async ({ pageParam }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/service/my-services?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching my services : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching services"
+    );
+    throw error;
+  }
+};
+
+// Apply
+export const fetchMyAppliedServices = async ({ pageParam }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/service/my-apply?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching my applied services : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching my applied services"
+    );
+    throw error;
+  }
+};
+
 export const applyService = async (payload: any) => {
   try {
     const data = await makePostRequest("/service/apply", payload);
@@ -225,18 +271,21 @@ export const applyService = async (payload: any) => {
   }
 };
 
-export const fetchMyServices = async () => {
+// Applicants
+export const fetchMyApplicants = async ({ pageParam, id }: any) => {
   try {
-    const data = await makeGetRequest("/service/my-services");
+    const data = await makeGetRequest(
+      `/service/applied/${id}?page=${pageParam}&limit=5`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching my services : `,
+      `[userService] An error occurred while fetching all applicants : `,
       error?.response?.data?.message
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching services"
+        "An error occurred while fetching all applicants"
     );
     throw error;
   }

@@ -6,9 +6,10 @@ import { UserAtom } from "../AtomStore/user";
 
 const getHeaders = async () => {
   try {
+    // console.log("Token--- 00", AsyncStorage.getItem("user"));
     const user: any = await AsyncStorage.getItem("user");
     const parsedUser = user ? JSON.parse(user) : null;
-    console.log("Token---", user, parsedUser);
+    // console.log("Token---", user, parsedUser);
 
     if (parsedUser?.token) {
       return {

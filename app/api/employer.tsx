@@ -138,9 +138,9 @@ export const getEmployerById = async (id: any) => {
 //   }
 // }
 
-export const fetchAllEmployers = async () => {
+export const fetchAllEmployers = async ({pageParam}:any) => {
   try {
-    const data = await makeGetRequest("/employer/all");
+    const data = await makeGetRequest(`/employer/all?page=${pageParam}&limit=5`);
     return data.data;
   } catch (error: any) {
     console.error(

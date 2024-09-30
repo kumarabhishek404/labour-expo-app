@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -48,6 +48,13 @@ const ProfileScreen = () => {
   const [numberValue, setNumberValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [dropdownValue, setDropdownValue] = useState("");
+
+  // Create a reference to the ScrollView
+  const scrollViewRef:any = useRef(null);
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+  }, []);
 
   useEffect(() => {
     setFirstName(userDetails?.firstName);
@@ -177,7 +184,7 @@ const ProfileScreen = () => {
 
   const modalContent = () => {
     return (
-      <View style={styles.formContainer}>
+      <View ref={scrollViewRef} style={styles.formContainer}>
         <View style={styles.avatarContainer}>
           {/* <Ionicons name="person" size={30} color={Colors.secondary} /> */}
           <Avatar.Image
@@ -377,18 +384,28 @@ const ProfileScreen = () => {
               </View>
             </TouchableRipple>
           </Link>
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.menuItem}>
-              <MaterialIcons name="payment" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Payment</Text>
-            </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={myCustomShare}>
-            <View style={styles.menuItem}>
-              <MaterialIcons name="share" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Tell Your Friends</Text>
-            </View>
-          </TouchableRipple>
+
+          <Link href="/screens/payments" asChild>
+            <TouchableRipple onPress={() => {}}>
+              <View style={styles.menuItem}>
+                <MaterialIcons
+                  name="payment"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Payment</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
+
+          <Link href="/screens/shareApp" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <MaterialIcons name="share" size={28} color={Colors.primary} />
+                <Text style={styles.menuItemText}>Tell Your Friends</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
 
           <Link href="/screens/support" asChild>
             <TouchableRipple>
@@ -403,14 +420,14 @@ const ProfileScreen = () => {
             </TouchableRipple>
           </Link>
 
-          <Link href="/screens/settings" asChild>
+          {/* <Link href="/screens/settings" asChild>
             <TouchableRipple>
               <View style={styles.menuItem}>
                 <Ionicons name="settings" size={28} color={Colors.primary} />
                 <Text style={styles.menuItemText}>Settings</Text>
               </View>
             </TouchableRipple>
-          </Link>
+          </Link> */}
           <Link href="/screens/settings/changeLanguage" asChild>
             <TouchableRipple>
               <View style={styles.menuItem}>
@@ -465,26 +482,40 @@ const ProfileScreen = () => {
             </View>
           </TouchableOpacity>
 
-          <TouchableRipple onPress={handleLogout}>
-            <View style={styles.menuItem}>
-              <MaterialIcons name="chat-bubble" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Feedback</Text>
-            </View>
-          </TouchableRipple>
+          <Link href="/screens/feedback" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <MaterialIcons
+                  name="chat-bubble"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Feedback</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
 
-          <TouchableRipple onPress={handleLogout}>
-            <View style={styles.menuItem}>
-              <FontAwesome6 name="lock" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Privacy Policy</Text>
-            </View>
-          </TouchableRipple>
+          <Link href="/screens/privacyPolicy" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <FontAwesome6 name="lock" size={28} color={Colors.primary} />
+                <Text style={styles.menuItemText}>Privacy Policy</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
 
-          <TouchableRipple onPress={handleLogout}>
-            <View style={styles.menuItem}>
-              <FontAwesome6 name="file-contract" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Terms and Conditions</Text>
-            </View>
-          </TouchableRipple>
+          <Link href="/screens/terms&Conditions" asChild>
+            <TouchableRipple>
+              <View style={styles.menuItem}>
+                <FontAwesome6
+                  name="file-contract"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Terms and Conditions</Text>
+              </View>
+            </TouchableRipple>
+          </Link>
 
           <TouchableRipple onPress={handleLogout}>
             <View style={styles.menuItem}>

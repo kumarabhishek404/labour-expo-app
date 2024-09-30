@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -11,53 +11,96 @@ import {
 import { router, Stack, useFocusEffect } from "expo-router";
 import Colors from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import ListingsWorkers from "@/components/ListingWorkers";
-import ListingsVertical from "@/components/ListingVertical";
 import { UserAtom } from "../../AtomStore/user";
 import { useAtomValue } from "jotai";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { fetchAllLikedServices } from "../../api/services";
 import Loader from "@/components/Loader";
 import { fetchAllLikedWorkers } from "../../api/workers";
+import CategoryButtons from "@/components/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
+import ListingsVerticalServices from "@/components/ListingsVerticalServices";
 
 const Favourite = (props: any) => {
   const userDetails = useAtomValue(UserAtom);
   const [searchText, setSearchText] = useState("");
   const [workers, setWorkers] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData]: any = useState([]);
+  const [category, setCategory] = useState("All");
+
   // const { state, dispatch }: any = useStateContext();
 
+  // const {
+  //   isLoading,
+  //   data: response,
+  //   refetch,
+  //   isRefetching,
+  // } = useQuery({
+  //   queryKey: ["services"],
+  //   queryFn: async () =>
+  //     (await userDetails?.role) === "Employer"
+  //       ? fetchAllLikedWorkers()
+  //       : fetchAllLikedServices(),
+  //   retry: 0,
+  // });
+
   const {
-    isLoading,
     data: response,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ["services"],
-    queryFn: async () =>
-      (await userDetails?.role) === "Employer"
-        ? fetchAllLikedWorkers()
-        : fetchAllLikedServices(),
-    retry: 0,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["favourites"],
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "Employer"
+        ? fetchAllLikedWorkers({ pageParam })
+        : fetchAllLikedServices({ pageParam });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
   });
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setFilteredData(response?.data);
+      const unsubscribe = setFilteredData(
+        response?.pages.flatMap((page: any) => page.data || [])
+      );
       return () => unsubscribe;
     }, [response])
   );
 
   const handleSearch = (text: any) => {
     setSearchText(text);
-    const filtered: any = workers.filter(
+    let workers = response?.pages.flatMap((page: any) => page.data || []);
+    const filtered: any = workers?.filter(
       (item: any) =>
         item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase()) ||
-        item.location.toLowerCase().includes(text.toLowerCase()) ||
-        item.category.toLowerCase().includes(text.toLowerCase())
+        item.description.toLowerCase().includes(text.toLowerCase())
+      // item.location.toLowerCase().includes(text.toLowerCase()) ||
+      // item.category.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
+  };
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const memoizedData = useMemo(
+    () => filteredData?.flatMap((data: any) => data),
+    [filteredData]
+  );
+
+  const onCatChanged = (category: string) => {
+    setCategory(category);
   };
 
   return (
@@ -131,10 +174,28 @@ const Favourite = (props: any) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <CategoryButtons type={userDetails?.role === 'Employer' ? 'workers' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+
+        <View style={styles.totalData}>
+          <Text style={styles.totalItemTxt}>
+            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
+          </Text>
+        </View>
         {userDetails?.role === "Employer" ? (
-          <ListingsWorkers listings={filteredData} category="workers" />
+          <ListingsVerticalWorkers
+            listings={memoizedData || []}
+            category="workers"
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         ) : (
-          <ListingsVertical listings={filteredData} category="services" />
+          <ListingsVerticalServices
+            listings={memoizedData || []}
+            category="services"
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         )}
       </View>
     </>
@@ -173,6 +234,15 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  categoryContainer: {
+    paddingHorizontal: 20
+  },
+  totalData: {
+    paddingHorizontal: 20,
+  },
+  totalItemTxt: {
+    fontSize: 12,
   },
 });
 

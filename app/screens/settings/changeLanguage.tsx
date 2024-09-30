@@ -10,7 +10,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocale } from "@/app/context/locale";
 import Colors from "@/constants/Colors";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 interface Language {
   code: string;
@@ -51,10 +52,29 @@ export default function LanguageSelectionScreen() {
 
   return (
     <>
-    <Stack.Screen
+      <Stack.Screen
         options={{
-          headerTransparent: false,
           headerTitle: "Change Language",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 10,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 10,
+                }}
+              >
+                <Feather name="arrow-left" size={20} />
+              </View>
+            </TouchableOpacity>
+          ),
         }}
       />
       <View style={styles.container}>
@@ -79,7 +99,7 @@ export default function LanguageSelectionScreen() {
 
         <Text style={styles.sectionTitle}>Available Languages</Text>
         <FlatList
-          data={languages}
+          data={availableLanguages}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.languageItem}

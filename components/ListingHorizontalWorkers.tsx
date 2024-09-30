@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -13,24 +14,39 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
 import { WorkerType } from "@/types/type";
+import { debounce } from "lodash";
 
 type Props = {
   listings: any[];
   category: string;
+  isFetchingNextPage: boolean;
+  loadMore: any;
 };
 
-const ListingWorkersHorizontal = ({ listings, category }: Props) => {
-  const [loading, setLoading] = useState(false);
+type RenderItemTypes = {
+  item: {
+    _id: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    coverImage: string;
+    location: any;
+    avatar: string;
+    skills: string[];
+    rating: string;
+    reviews: string;
+    price: string;
+    isBookmarked: boolean;
+  };
+};
 
-  useEffect(() => {
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 200);
-  }, [category]);
-
-  const renderItems: ListRenderItem<WorkerType> = ({ item }) => {
+const ListingHorizontalWorkers = ({
+  listings,
+  category,
+  loadMore,
+  isFetchingNextPage,
+}: Props) => {
+  const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <Link href={`/screens/worker/${item?._id}`} asChild>
         <TouchableOpacity>
@@ -40,13 +56,11 @@ const ListingWorkersHorizontal = ({ listings, category }: Props) => {
               source={item?.avatar ? { uri: item?.avatar } : coverImage}
               style={styles.image}
             />
-            {item?.isBookmarked && <View style={styles.bookmark}>
-              <Ionicons
-                name="heart"
-                size={30}
-                color={Colors.white}
-              />
-            </View>}
+            {item?.isBookmarked && (
+              <View style={styles.bookmark}>
+                <Ionicons name="heart" size={30} color={Colors.white} />
+              </View>
+            )}
             <Text style={styles.itemTxt} numberOfLines={1} ellipsizeMode="tail">
               {item?.firstName} {item?.middleName} {item?.lastName}
             </Text>
@@ -67,21 +81,44 @@ const ListingWorkersHorizontal = ({ listings, category }: Props) => {
         </TouchableOpacity>
       </Link>
     );
-  };
+  });
+
+  const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
     <View>
       <FlatList
-        data={loading ? [] : listings}
-        renderItem={renderItems}
+        data={listings ?? []}
+        renderItem={renderItem}
+        keyExtractor={(item) => item?._id?.toString()}
+        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.9}
         horizontal
         showsHorizontalScrollIndicator={false}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <ActivityIndicator
+              size="large"
+              color={Colors?.primary}
+              style={styles.loaderStyle}
+            />
+          ) : null
+        }
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={3}
+        removeClippedSubviews={true}
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
       />
     </View>
   );
 };
 
-export default ListingWorkersHorizontal;
+export default ListingHorizontalWorkers;
 
 const styles = StyleSheet.create({
   item: {
@@ -121,5 +158,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: Colors.primary,
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });
