@@ -39,7 +39,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
       });
     });
 
-    onCagtegoryChanged(categories[index].title);
+    onCagtegoryChanged(categories[index].value);
   };
 
   return (

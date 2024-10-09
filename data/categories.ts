@@ -13,6 +13,25 @@ const services = [
   },
 ];
 
+const members = [
+  {
+    title: "All",
+    iconName: "hiking",
+  },
+  {
+    title: "Construction",
+    iconName: "beach",
+  },
+  {
+    title: "Farming",
+    iconName: "city",
+  },
+  {
+    title: "Electric",
+    iconName: "city",
+  },
+];
+
 const workers = [
   {
     title: "All",
@@ -56,7 +75,36 @@ const workers = [
   },
 ];
 
+const requests = [
+  {
+    title: "Recieved Requests",
+    value: 'recievedRequests',
+    iconName: "beach",
+  },
+  {
+    title: "Sent Requests",
+    value: 'sentRequests',
+    iconName: "city",
+  },
+];
+
+const mediators = [
+  {
+    title: "All",
+    value: 'all',
+    iconName: "beach",
+  },
+  {
+    title: "Hirings",
+    value: 'hirings',
+    iconName: "city",
+  },
+];
+
 export default {
-  'services': services,
-  'workers': workers,
+  services: services,
+  workers: workers,
+  members: members,
+  requests: requests,
+  mediators: mediators
 };

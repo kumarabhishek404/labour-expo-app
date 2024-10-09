@@ -1,21 +1,31 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Text } from "react-native";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+} from "react-native";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
-import { fetchMyAppliedServices, fetchMyServices } from "../api/services";
+import {
+  deleteServiceById,
+  fetchMyAppliedServices,
+  fetchMyServices,
+} from "../api/services";
 import CategoryButtons from "@/components/CategoryButtons";
 import ListingsVerticalServices from "@/components/ListingsVerticalServices";
+import Loader from "@/components/Loader";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("All");
-
   const {
     data: response,
     isLoading,
@@ -35,6 +45,17 @@ const Services = () => {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
+    },
+  });
+
+  const mutationDeleteService = useMutation({
+    mutationKey: ["deleteService"],
+    mutationFn: (id) => deleteServiceById(id),
+    onSuccess: (response) => {
+      console.log("Response while liking a service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while liking the service ", err);
     },
   });
 
@@ -77,6 +98,7 @@ const Services = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <Loader loading={isLoading || mutationDeleteService?.isPending} />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.searchSectionWrapper}>
@@ -101,7 +123,11 @@ const Services = () => {
           </View>
         </View>
 
-        <CategoryButtons type={userDetails?.role === 'Employer' ? 'services' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+        <CategoryButtons
+          type={userDetails?.role === "Employer" ? "services" : "services"}
+          onCagtegoryChanged={onCatChanged}
+          stylesProp={styles.categoryContainer}
+        />
 
         <View style={styles.totalData}>
           <Text style={styles.totalItemTxt}>
@@ -111,8 +137,12 @@ const Services = () => {
         <ListingsVerticalServices
           listings={memoizedData || []}
           category="workers"
-          loadMore={loadMore}
           isFetchingNextPage={isFetchingNextPage}
+          isMyService={userDetails?.role === "Employer"}
+          loadMore={loadMore}
+          onDelete={(id: any) => {
+            mutationDeleteService?.mutate(id);
+          }}
         />
       </View>
     </View>
@@ -153,7 +183,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   totalData: {
     paddingHorizontal: 20,

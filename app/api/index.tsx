@@ -4,21 +4,34 @@ import { router } from "expo-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 
-const getHeaders = async () => {
+const getHeaders = async (retries = 3, delay = 500) => {
   try {
     // console.log("Token--- 00", AsyncStorage.getItem("user"));
     const user: any = await AsyncStorage.getItem("user");
     const parsedUser = user ? JSON.parse(user) : null;
     // console.log("Token---", user, parsedUser);
 
+    // if (parsedUser?.token) {
+    //   return {
+    //     Authorization: `Bearer ${parsedUser?.token}`,
+    //   };
+    // }
+    // return {
+    //   Authorization: "",
+    // };
+
     if (parsedUser?.token) {
       return {
-        Authorization: `Bearer ${parsedUser?.token}`,
+        Authorization: `Bearer ${parsedUser.token}`,
+      };
+    } else if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay)); // Wait before retrying
+      return getHeaders(retries - 1, delay); // Retry after delay
+    } else {
+      return {
+        Authorization: "",
       };
     }
-    return {
-      Authorization: "",
-    };
   } catch (error) {
     console.error("Error retrieving token from AsyncStorage:", error);
     return {
@@ -44,10 +57,11 @@ const api = axios.create({
   //   }
   // },
 });
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log("errorerrorerror---", error);
+    
     if (error.response) {
       if (
         (error.response.status === 400 &&
@@ -81,7 +95,7 @@ export const makeGetRequest = async (
   const response = await api.get(url, {
     headers: {
       ...(await getHeaders()),
-      ...headers,
+      // ...headers,
     },
     responseType,
   });
@@ -97,7 +111,7 @@ export const makePostRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      ...headers,
+      // ...headers,
     },
   });
   return response;
@@ -113,7 +127,7 @@ export const makePostRequestFormData = async (
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      ...headers,
+      // ...headers,
     },
   });
   return response;
@@ -128,7 +142,7 @@ export const makePutRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      ...headers,
+      // ...headers,
     },
   });
   return response;
@@ -143,7 +157,7 @@ export const makePatchRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      ...headers,
+      // ...headers,
     },
   });
   return response;
@@ -159,7 +173,7 @@ export const makePatchRequestFormData = async (
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      ...headers,
+      // ...headers,
     },
   });
   return response;
@@ -173,7 +187,7 @@ export const makeDeleteRequest = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      ...headers,
+      // ...headers,
     },
   });
   return response;

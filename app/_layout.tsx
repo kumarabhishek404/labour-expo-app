@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import * as Location from "expo-location";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { LocationAtom } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
 import { getLocales } from "expo-localization";
@@ -31,7 +31,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   // const setLocationAt
   const deviceLanguage = getLocales()[0].languageCode;
-  const [location, setLocation] = useAtom(LocationAtom);
+  const setLocation = useSetAtom(LocationAtom);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -56,23 +56,26 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  useEffect(() => {
-    const getPermission = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Please grant location permission");
-        return;
-      }
+  // useEffect(() => {
+  //   const getPermission = async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       console.log("Please grant location permission");
+  //       return;
+  //     }
 
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation);
-      let response = await Location.reverseGeocodeAsync({
-        latitude: currentLocation?.coords?.latitude,
-        longitude: currentLocation?.coords?.longitude,
-      });
-    };
-    getPermission();
-  }, []);
+  //     let currentLocation = await Location.getCurrentPositionAsync({});
+  //     setLocation(currentLocation);
+  //     let response = await Location.reverseGeocodeAsync({
+  //       latitude: currentLocation?.coords?.latitude,
+  //       longitude: currentLocation?.coords?.longitude,
+  //     });
+
+  //     console.log("response of Expo Location ---", response);
+      
+  //   };
+  //   getPermission();
+  // }, []);
 
   if (!loaded) {
     return null;

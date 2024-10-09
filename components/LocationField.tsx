@@ -37,19 +37,18 @@ const LocationField = ({ address, setAddress }: any) => {
 
   const data = [
     ...serviceAddress,
-    { label: "Add New Address", value: "addAddress" },
+    { label: "Add New Address", value: "addAddress" }
   ];
   
   return (
     <View style={styles.container}>
-      <Text
+      {/* <Text
         style={{
-          fontWeight: "bold",
-          marginBottom: 4,
+          marginVertical: 10,
         }}
       >
         Address
-      </Text>
+      </Text> */}
       <Dropdown
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
@@ -67,7 +66,7 @@ const LocationField = ({ address, setAddress }: any) => {
         renderItem={(item: any) => {
           if (item?.value === "addAddress") {
             return (
-              <Link href="/location/addAddress" asChild>
+              <Link href="/screens/location/addAddress" asChild>
                 <TouchableOpacity style={styles.actionItemWrapper}>
                   <Text style={[styles.menuItem, styles.actionItem]}>
                     {item.label}
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
+    marginBottom: 16
   },
   dropdown: {
     height: 53,

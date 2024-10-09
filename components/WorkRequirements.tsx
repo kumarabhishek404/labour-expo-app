@@ -18,6 +18,8 @@ import {
 const WorkRequirment = ({ requirements, setRequirements }: any) => {
   const data = [
     { label: "Labour", value: "labour" },
+    { label: "Bricklayer", value: "Bricklayer" },
+    { label: "Stone Mason", value: "Stone Mason" },
     { label: "Mistri", value: "mistri" },
     { label: "Electrician", value: "electrician" },
   ];
@@ -25,9 +27,11 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
   const addRequirments = () => {
     let tempRequirements = [...requirements];
     tempRequirements[requirements?.length] = {
-      type: "",
-      count: 0,
-      price: "",
+      name: "",
+      totalRequired: 0,
+      payPerDay: 0,
+      foodProvided: false,
+      shelterProvider: false,
     };
     setRequirements(tempRequirements);
   };
@@ -40,23 +44,26 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
     setRequirements(allRequirements);
   };
 
-  const handleRequirementTypeChange = (index: number, type: string) => {
+  const handleRequirementTypeChange = (index: number, name: string) => {
     let tempRequirments = [...requirements];
-    tempRequirments[index].type = type;
+    tempRequirments[index].name = name;
     setRequirements(tempRequirments);
   };
 
-  const handleRequirementCountChange = (index: number, count: string) => {
-    console.log("Item ---", index, count);
+  const handleRequirementCountChange = (
+    index: number,
+    totalRequired: string
+  ) => {
+    console.log("Item ---", index, totalRequired);
     let tempRequirments = [...requirements];
-    tempRequirments[index].count = count;
+    tempRequirments[index].totalRequired = totalRequired;
     setRequirements(tempRequirments);
   };
 
-  const handleRequirementPriceChange = (index: number, price: string) => {
-    console.log("Item ---", index, price);
+  const handleRequirementPriceChange = (index: number, payPerDay: number) => {
+    console.log("Item ---", index, payPerDay);
     let tempRequirments = [...requirements];
-    tempRequirments[index].price = price;
+    tempRequirments[index].payPerDay = payPerDay;
     setRequirements(tempRequirments);
   };
 
@@ -77,17 +84,17 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
             <View style={{ width: "100%" }} key={index}>
               <View style={styles.addRequirment}>
                 <Dropdown
-                  value={requirement?.type}
-                  setValue={(type: any) =>
-                    handleRequirementTypeChange(index, type)
+                  value={requirement?.name}
+                  setValue={(name: any) =>
+                    handleRequirementTypeChange(index, name)
                   }
                   options={data}
                 />
                 <View style={styles.counterContainer}>
                   <Counter
-                    counter={requirement?.count}
-                    setCounter={(count: any) =>
-                      handleRequirementCountChange(index, count)
+                    counter={requirement?.totalRequired}
+                    setCounter={(totalRequired: any) =>
+                      handleRequirementCountChange(index, totalRequired)
                     }
                   />
                   <View style={styles.priceField}>
@@ -97,13 +104,14 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
                       color={Colors.secondary}
                     />
                     <TextInput
-                      value={requirement?.price}
+                      value={requirement?.payPerDay.toString()}
                       style={styles.textInput}
                       placeholder="Rate per day"
                       placeholderTextColor={Colors.secondary}
-                      onChangeText={(price: string) =>
-                        handleRequirementPriceChange(index, price)
-                      }
+                      onChangeText={(payPerDay: string) => {
+                        const tempPayPerDay = parseInt(payPerDay);
+                        handleRequirementPriceChange(index, tempPayPerDay);
+                      }}
                     />
                   </View>
                   {requirements && requirements?.length > 1 && (

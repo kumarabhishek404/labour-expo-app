@@ -175,7 +175,11 @@ const Favourite = (props: any) => {
           </View>
         </View>
 
-        <CategoryButtons type={userDetails?.role === 'Employer' ? 'workers' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+        <CategoryButtons
+          type={userDetails?.role === "Employer" ? "workers" : "services"}
+          onCagtegoryChanged={onCatChanged}
+          stylesProp={styles.categoryContainer}
+        />
 
         <View style={styles.totalData}>
           <Text style={styles.totalItemTxt}>
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   totalData: {
     paddingHorizontal: 20,

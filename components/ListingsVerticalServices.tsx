@@ -17,34 +17,47 @@ import React, {
 } from "react";
 import debounce from "lodash/debounce";
 import Colors from "@/constants/Colors";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Link, router } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
 import { ServiceType } from "@/types/type";
+import { dateDifference } from "@/constants/functions";
+import { AddServiceAtom } from "@/app/AtomStore/user";
+import { useSetAtom } from "jotai";
 
 type Props = {
   listings: any[];
   category: string;
   isFetchingNextPage: boolean;
-  loadMore: any;
+  isMyService?: boolean;
+  loadMore: () => void;
+  onDelete?: any;
 };
 
 type RenderItemTypes = {
   item: {
     _id: string;
     coverImage: string;
+    duration: string;
     name: string;
     location: any;
     price: string;
+    address: string;
+    startDate: Date;
+    endDate: Date;
   };
 };
 
 const ListingsVerticalServices = ({
   listings,
   category,
-  loadMore,
   isFetchingNextPage,
+  isMyService,
+  loadMore,
+  onDelete,
 }: Props) => {
+  const setAddService = useSetAtom(AddServiceAtom);
+
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <View style={styles.container}>
@@ -77,17 +90,58 @@ const ListingsVerticalServices = ({
                   justifyContent: "space-between",
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesome5
-                    name="map-marker-alt"
-                    size={18}
-                    color={Colors.primary}
-                  />
-                  <Text style={styles.itemLocationTxt}>
-                    {item.location?.latitude}
-                  </Text>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 5,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: "80%",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <FontAwesome5
+                      name="map-marker-alt"
+                      size={18}
+                      color={Colors.primary}
+                    />
+                    <Text style={styles.itemLocationTxt}>{item?.address}</Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Entypo name="calendar" size={18} color={Colors.primary} />
+                    <Text style={styles.itemLocationTxt}>12 July, 2024</Text>
+                  </View>
                 </View>
-                <Text style={styles.itemPriceTxt}>${item.price}</Text>
+
+                <View style={styles?.actionContainer}>
+                  <Text style={styles.itemPriceTxt}>
+                    {item?.duration ||
+                      dateDifference(item?.startDate, item?.endDate)}
+                  </Text>
+                  {isMyService ? (
+                    <></>
+                    // <TouchableOpacity
+                    //   onPress={() => {
+                    //     let URL = `/screens/service/${[item._id]}`
+                    //     router?.push({
+                    //       pathname: JSON?.stringify(URL),
+                    //     });
+                    //     // setAddService(item);
+                    //   }}
+                    //   style={styles?.deleteButton}
+                    // >
+                    //   <Text style={styles?.deleteText}>Edit</Text>
+                    // </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles?.deleteButton}>
+                      <Text style={styles?.deleteText}>Apply</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           </TouchableOpacity>
@@ -99,7 +153,7 @@ const ListingsVerticalServices = ({
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
-    <View>
+    <View style={{ marginBottom: 90 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -178,5 +232,21 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingLeft: 20,
     paddingBottom: 10,
+  },
+  actionContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  deleteButton: {
+    backgroundColor: Colors?.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 4,
+    marginTop: 10,
+  },
+  deleteText: {
+    color: Colors?.white,
+    textAlign: "center",
+    fontWeight: "600",
   },
 });

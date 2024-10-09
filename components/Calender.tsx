@@ -11,7 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
 import Colors, { darkGreen } from "@/constants/Colors";
 
-const DateField = ({startDate, setStartDate, endDate, setEndDate}:any) => {
+const DateField = ({ startDate, setStartDate, endDate, setEndDate }: any) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
@@ -29,13 +29,9 @@ const DateField = ({startDate, setStartDate, endDate, setEndDate}:any) => {
 
   return (
     <View style={styles.container}>
-      <AntDesign 
-        name="calendar" 
-        size={30} 
-        color={Colors.secondary}
-      />
       <View style={styles.dateWrapper}>
-        <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+        <TouchableOpacity style={styles?.dateField} onPress={() => setShowStartDatePicker(true)}>
+          <AntDesign name="calendar" size={30} color={Colors.secondary} />
           <View style={styles.dateItem}>
             <Text style={styles.itemText}>Start Date</Text>
             {startDate ? (
@@ -56,6 +52,7 @@ const DateField = ({startDate, setStartDate, endDate, setEndDate}:any) => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+          <AntDesign name="calendar" size={30} color={Colors.secondary} />
           <View style={styles.dateItem}>
             <Text style={styles.itemText}>End Date</Text>
             {endDate ? (
@@ -85,24 +82,30 @@ export default DateField;
 const styles = StyleSheet.create({
   container: {
     // height: 53,
-    borderWidth: 1,
-    borderColor: Colors.secondary,
+    // borderWidth: 1,
+    // borderColor: Colors.secondary,
     borderRadius: 10,
     flexDirection: "row",
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     padding: 10,
     marginBottom: 20,
   },
   dateWrapper: {
     flex: 1,
     display: "flex",
-    flexDirection: "row",
-    flexWrap: 'wrap',
+    flexDirection: "column",
+    flexWrap: "wrap",
     gap: 10,
-    marginVertical: 'auto',
+    marginVertical: "auto",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
+  },
+  dateField: {
+    display: 'flex',
+    flexDirection: "row",
+    gap: 10,
+    alignItems: 'center',
   },
   dateItem: {
     width: 140,

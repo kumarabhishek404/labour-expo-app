@@ -29,16 +29,19 @@ import Animated, {
   useScrollViewOffset,
 } from "react-native-reanimated";
 import ViewMap from "@/components/ViewMap";
-import { Avatar } from "react-native-paper";
 import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
 import profileImage from "../../../assets/images/placeholder-person.jpg";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
+import { sendJoiningRequest } from "@/app/api/requests";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
 const Worker = () => {
+  const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
   const [worker, setWorker]: any = useState({});
   // const worker: any = (workers as ListingType[]).find((item) => item._id === id);
@@ -82,6 +85,17 @@ const Worker = () => {
     },
     onError: (err) => {
       console.error("error while liking the worker ", err);
+    },
+  });
+
+  const mutationSendRequest = useMutation({
+    mutationKey: ["sendRequest", { id }],
+    mutationFn: () => sendJoiningRequest({ userId: id }),
+    onSuccess: (response) => {
+      console.log("Response while sending a request to worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while sending request to worker ", err);
     },
   });
 
@@ -163,7 +177,7 @@ const Worker = () => {
           ),
         }}
       />
-      <Loader loading={isLoading || isRefetching || mutation?.isPending} />
+      <Loader loading={isLoading || isRefetching || mutation?.isPending || mutationSendRequest?.isPending} />
 
       <View style={styles.container}>
         <Animated.ScrollView
@@ -184,43 +198,52 @@ const Worker = () => {
             <Text style={styles.listingName}>
               {worker?.firstName} {worker?.lastName}
             </Text>
+
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{worker?.address}</Text>
+              <Text style={styles.listingLocationTxt}>
+                {worker?.address || "Address not found"}
+              </Text>
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={styles?.highlightBox}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
-                <View>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: 90,
+                  }}
+                >
                   <Text style={styles.highlightTxt}>Price</Text>
                   <Text style={styles.highlightTxtVal}>
                     {worker?.duration || 0} Rs / Day
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row" }}>
+              <View style={styles?.highlightBox}>
                 <View style={styles.highlightIcon}>
                   <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
-                <View>
+                <View style={{ width: 100 }}>
                   <Text style={styles.highlightTxt}>Skill</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {worker?.skills?.join(", ")}
+                    {["Labour", "Mistri", "Beldaar", "Plumber"]?.join(", ")}
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row" }}>
+              <View style={styles?.highlightBox}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
-                <View>
+                <View style={{ width: 90 }}>
                   <Text style={styles.highlightTxt}>Rating</Text>
                   <Text style={styles.highlightTxtVal}>
                     {worker?.rating || 0}
@@ -230,19 +253,101 @@ const Worker = () => {
             </View>
 
             <Text style={styles.listingDetails}>{worker?.description}</Text>
+
+            <View style={styles.userInfoTextWrapper}>
+              <View style={styles.userInfoBox}>
+                <View style={[styles.row, styles.firstBox]}>
+                  <Text style={styles.userInfoText}>
+                    {worker?.address || "Address not found"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.userInfoText}>
+                    {worker?.mobileNumber || "Mobile not found"}
+                  </Text>
+                </View>
+                <View style={[styles.row, styles.lastBox]}>
+                  <Text style={styles.userInfoText}>{worker?.email}</Text>
+                </View>
+              </View>
+            </View>
+
+            <Text style={styles.workInfoHeading}>Wallet</Text>
+            <View style={styles.infoBoxWrapper}>
+              <View
+                style={[
+                  styles.infoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>₹ {worker?.earnings?.work}</Text>
+                <Text>Earnings</Text>
+              </View>
+              <View style={styles.infoBox}>
+                <Text>₹ {worker?.earnings?.rewards}</Text>
+                <Text>Rewards</Text>
+              </View>
+            </View>
+
+            <Text style={styles.workInfoHeading}>Work Information</Text>
+            <View style={styles.workInfoWrapper}>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{worker?.workDetails?.total}</Text>
+                <Text>Total Tasks</Text>
+              </View>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{worker?.workDetails?.completed}</Text>
+                <Text>Completed</Text>
+              </View>
+              <View style={styles.workInfoBox}>
+                <Text>{worker?.workDetails?.upcoming}</Text>
+                <Text>Pending</Text>
+              </View>
+            </View>
           </View>
         </Animated.ScrollView>
       </View>
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={[styles.footerBtn, styles.footerBookBtn]}
-        >
-          <Text style={styles.footerBtnTxt}>
-            {isWorkerBooked ? "Already Book" : "Book Now"}
-          </Text>
-        </TouchableOpacity>
+        {userDetails?.role === "Employer" && (
+          <TouchableOpacity
+            onPress={() => {}}
+            style={[styles.footerBtn, styles.footerBookBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>
+              {isWorkerBooked ? "Already Booked" : "Book Now"}
+            </Text>
+          </TouchableOpacity>
+        )}
+        {userDetails?.role === "WORKER" && userDetails?.roleType === "ORG" && (
+          <TouchableOpacity
+            onPress={() => mutationSendRequest?.mutate()}
+            style={[styles.footerBtn, styles.footerBookBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>
+              {isWorkerBooked ? "Already Added" : "Add In Your Team"}
+            </Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           onPress={() => mutation?.mutate()}
           style={styles.footerBtn}
@@ -308,15 +413,26 @@ const styles = StyleSheet.create({
   },
   highlightWrapper: {
     flexDirection: "row",
-    marginVertical: 20,
+    marginVertical: 10,
     justifyContent: "space-between",
+    columnGap: 2,
+  },
+  highlightBox: {
+    width: "30%",
+    display: "flex",
+    flexDirection: "row",
+    gap: 4,
+    // borderColor: "red",
+    // borderWidth: 2,
+    // margin: 4,
   },
   highlightIcon: {
+    width: 30,
+    height: 30,
+    display: "flex",
+    justifyContent: "center",
     backgroundColor: "#F4F4F4",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
     borderRadius: 8,
-    marginRight: 5,
     alignItems: "center",
   },
   highlightTxt: {
@@ -332,6 +448,75 @@ const styles = StyleSheet.create({
     color: Colors.black,
     lineHeight: 25,
     letterSpacing: 0.5,
+  },
+  row: {
+    paddingTop: 0,
+    // backgroundColor: Colors.white,
+    flexDirection: "row",
+    marginBottom: 5,
+    backgroundColor: "#d4d4d4",
+  },
+  userInfoTextWrapper: {
+    // width: '100%',
+    // paddingHorizontal: 10,
+    marginBottom: 25,
+  },
+  userInfoBox: {
+    // padding: 10,
+  },
+  userInfoText: {
+    color: "#777777",
+    padding: 12,
+  },
+  firstBox: {
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+  },
+  lastBox: {
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  infoBoxWrapper: {
+    marginTop: 10,
+    marginBottom: 20,
+    borderBottomColor: "#dddddd",
+    borderBottomWidth: 1,
+    borderTopColor: "#dddddd",
+    borderTopWidth: 1,
+    backgroundColor: "#ffffff",
+    flexDirection: "row",
+    height: 100,
+  },
+  infoBox: {
+    width: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  workInfoHeading: {
+    color: Colors.primary,
+    // marginLeft: 30,
+    fontWeight: "700",
+    fontSize: 16,
+    lineHeight: 26,
+  },
+  workInfoWrapper: {
+    marginTop: 10,
+    borderBottomColor: "#dddddd",
+    borderBottomWidth: 1,
+    borderTopColor: "#dddddd",
+    backgroundColor: "#ffffff",
+    borderTopWidth: 1,
+    height: 100,
+    display: "flex",
+    flexDirection: "row",
+  },
+  workInfoBox: {
+    width: "33%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  menuWrapper: {
+    marginTop: 10,
   },
   footer: {
     flexDirection: "row",

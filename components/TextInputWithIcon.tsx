@@ -1,39 +1,48 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import {
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+import React from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
-const SignupScreen = () => {
+type TextInputProps = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChangeText: any;
+  icon?: any;
+};
+
+const TextInputComponent = ({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  icon,
+}: TextInputProps) => {
   return (
-    <View style={styles.inputContainer}>
-      <MaterialCommunityIcons
-        name="sickle"
-        size={30}
-        color={Colors.secondary}
-      />
-      <TextInput
-        style={styles.textInput}
-        placeholder="Work Title"
-        placeholderTextColor={Colors.secondary}
-      />
+    <View>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.inputContainer}>
+        {icon && (
+          <MaterialCommunityIcons
+            name="sickle"
+            size={30}
+            color={Colors.secondary}
+            style={styles?.icon}
+          />
+        )}
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          style={styles.textInput}
+          placeholder={placeholder ?? "Work Title"}
+          placeholderTextColor={Colors.secondary}
+        />
+      </View>
     </View>
   );
 };
 
-export default SignupScreen;
+export default TextInputComponent;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -48,6 +57,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 10,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  label: {
+    marginVertical: 10,
   },
 });

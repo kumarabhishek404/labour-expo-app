@@ -1,8 +1,6 @@
-// // import { toast } from 'react-toastify';
-// // import ApiClient from './ApiClient';
-
 import { router } from "expo-router";
 import {
+  makeDeleteRequest,
   makeGetRequest,
   makePatchRequest,
   makePatchRequestFormData,
@@ -11,96 +9,48 @@ import {
   makePutRequest,
 } from ".";
 import { toast } from "../hooks/toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// import axios from "axios";
-// import ApiClient from ".";
+export const forgotPassword = async (payload: any) => {
+  console.log("Paylaod----", payload);
 
-// export default class UsersClient {
-//   private apiClient: ApiClient;
-//   state: { userDetails: any };
-//   userDetails: any;
+  try {
+    const response: any = await makePostRequest(
+      `/auth/forgot-password-code`,
+      payload
+    );
+    toast.success("Password reset code is sent to your email successfully");
+    return response;
+  } catch (error: any) {
+    console.log(
+      `[Forget Password] [userService] An error occured while sending reset password code to your email : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occured while sending reset password code to your email"
+    );
+    throw error;
+  }
+};
 
-//   constructor() {
-//     this.apiClient = new ApiClient();
-//     this.state = {
-//       userDetails: '',
-//     };
-//   }
-
-//   async fetchUsers(payload: any) {
-//     try {
-//       const data = await this.apiClient.makePostRequest('/users/all', payload);
-//       return data.data;
-//     } catch (error: any) {
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while fetching users',
-//     //   );
-//       throw error;
-//     }
-//   }
-
-//   async createUser(payload: any) {
-//     try {
-//       console.log(
-//         `[SignUp] [userService] Creating the new user with API /users/add and payload : `,
-//         payload,
-//       );
-//       const data = await this.apiClient.makePostRequest('/users/add', payload);
-//       console.log(
-//         `[SignUp] [userService] User created successfully with response : `,
-//         data?.data,
-//       );
-//       return data.data;
-//     } catch (error: any) {
-//       console.log(
-//         `[SignUp] [userService] An error occurred while adding new user : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message || 'An error occurred while adding user',
-//     //   );
-//       throw error;
-//     }
-//   }
-
-//   async resetPassword(payload: any) {
-//     try {
-//       const data = await this.apiClient.makePostRequest(
-//         `/users/new-password`,
-//         payload,
-//       );
-//     //   toast.success('Password Reset successfully');
-//       return data.data;
-//     } catch (error: any) {
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while creating password',
-//     //   );
-//       throw error;
-//     }
-//   }
-
-//   async forgotPassword(payload: any) {
-//     try {
-//       const data = await this.apiClient.makePostRequest(
-//         `/users/reset-password`,
-//         payload,
-//       );
-//       //toast.success('Password Reset successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.log(
-//         `[Forget Password] [userService] An error occured while resetting the password : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while creating password',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const resetPassword = async (payload: any) => {
+  try {
+    const data = await makePatchRequest(`/auth/set-forgot-password`, payload);
+    toast.success("Password Reset successfully");
+    return data;
+  } catch (error: any) {
+    console.log(
+      `[Forget Password] [userService] An error occured while reseting password : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while reseting password"
+    );
+    throw error;
+  }
+};
 
 export const signIn = async (payload: any) => {
   console.log("Payloadddd---", payload);
@@ -128,30 +78,11 @@ export const signIn = async (payload: any) => {
   }
 };
 
-//   async getUserById(id: any) {
-//     try {
-//       const { data } = await this.apiClient.makeGetRequest(
-//         `/users/${id}/details`,
-//       );
-//       return data;
-//     } catch (error: any) {
-//       console.error(
-//         `[Users] [userService] An error occurred while fetching user details : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while getting user by id',
-//     //   );
-//       throw error;
-//     }
-//   }
-
 export const updateUserById = async (payload: any) => {
   try {
-    const data = await makePatchRequest(`/user/info`, payload);
+    const resposne = await makePatchRequest(`/user/info`, payload);
     toast.success("User updated successfully");
-    return data.data;
+    return resposne;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while updating user : `,
@@ -164,42 +95,42 @@ export const updateUserById = async (payload: any) => {
   }
 };
 
-//   async addNewUser(payload: any) {
-//     try {
-//       const data = await this.apiClient.makePostRequest('/auth/register', payload);
-//     //   toast.success('User added successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[userService] An error occurred while adding new user : `,
-//         error?.response?.data?.message,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message || 'An error occurred while adding user',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const updateUserRoleById = async (payload: any) => {
+  try {
+    const resposne = await makePatchRequest(`/auth/set-role`, payload);
+    toast.success("Role updated successfully");
+    return resposne;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while updating role of user : `,
+      error?.response?.data
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while updating role of user"
+    );
+    throw error;
+  }
+};
 
-//   async deleteUserById(id: any) {
-//     try {
-//       const data = await this.apiClient.makeDeleteRequest(
-//         `/users/${id}/delete`,
-//       );
-//     //   toast.success('User deleted successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[Users] [userService] An error occurred while deleting user : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while deleting user',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const deleteUserById = () => {
+  try {
+    const data = makeDeleteRequest(`/user/delete`);
+    toast.success("User deleted successfully");
+    AsyncStorage.removeItem("user");
+    router.push("/screens/auth/login");
+    return data;
+  } catch (error: any) {
+    console.error(
+      `[Users] [userService] An error occurred while deleting user : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while deleting user"
+    );
+    throw error;
+  }
+};
 
 export const uploadFile = async (file: any) => {
   console.log(
@@ -225,4 +156,3 @@ export const uploadFile = async (file: any) => {
     throw error;
   }
 };
-// }

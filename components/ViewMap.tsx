@@ -30,7 +30,7 @@ const Map = ({ data }: any) => {
     //   longitudeDelta: 2,
     // }
 
-    mapRef.current?.animateCamera({center: data?.region, zoom: 10}, {duration: 3000})
+    mapRef.current?.animateCamera({center: data, zoom: 10}, {duration: 3000})
   }
 
   const onRegionChange = (region: Region) => {};
@@ -53,7 +53,7 @@ const Map = ({ data }: any) => {
       <MapView
         style={{ height: 400, width: 370 }}
         provider={PROVIDER_GOOGLE}
-        initialRegion={data?.region || initialRegion}
+        initialRegion={data || initialRegion}
         showsUserLocation={true}
         showsMyLocationButton
         zoomControlEnabled={true}
@@ -62,13 +62,13 @@ const Map = ({ data }: any) => {
         // onRegionChangeComplete={onRegionChange}
         onRegionChange={onRegionChange}
         ref={mapRef}
-        // onCalloutPress={() => mapRef.current?.animateCamera({center: data?.cordinates, zoom: 10}, {duration: 3000})}
-        // onUserLocationChange={(location) => mapRef.current?.animateCamera({center: data?.cordinates, zoom: 10}, {duration: 3000})}
+        // onCalloutPress={() => mapRef.current?.animateCamera({center: data, zoom: 10}, {duration: 3000})}
+        // onUserLocationChange={(location) => mapRef.current?.animateCamera({center: data, zoom: 10}, {duration: 3000})}
       >
-        <Marker coordinate={data?.region || initialRegion}>
+        <Marker coordinate={data || initialRegion}>
           <Callout onPress={onCalloutPresses}>
             <View style={{ padding: 4 }}>
-              <Text style={{ fontSize: 20 }}>{JSON.stringify(data.cordinates)}</Text>
+              <Text style={{ fontSize: 20 }}>{JSON.stringify(data)}</Text>
             </View>
           </Callout>
         </Marker>

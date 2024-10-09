@@ -89,8 +89,14 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-const ModalComponent = ({ visible, onClose, primaryAction, content }: any) => {
-
+const ModalComponent = ({
+  title,
+  visible,
+  onClose,
+  content,
+  primaryButton,
+  secondaryButton,
+}: any) => {
   return (
     <Modal
       visible={visible}
@@ -101,18 +107,28 @@ const ModalComponent = ({ visible, onClose, primaryAction, content }: any) => {
       <View style={styles.modalContainer}>
         <View style={styles?.container}>
           <View style={styles?.header}>
-            <Text style={styles?.headerText}>Edit Profile</Text>
+            <Text style={styles?.headerText}>{title ? title : "Edit Profile"}</Text>
             <TouchableOpacity onPress={onClose} style={styles?.headerButton}>
               <Entypo name="cross" size={30} color={Colors.primary} />
             </TouchableOpacity>
           </View>
           {content()}
           <View style={styles?.buttomWrapper}>
-            <TouchableOpacity onPress={onClose} style={styles?.button}>
-              <Text style={styles?.buttonText}>Cancel</Text>
+            <TouchableOpacity
+              onPress={secondaryButton?.action}
+              style={[styles?.button, secondaryButton?.styles]}
+            >
+              <Text style={styles?.buttonText}>
+                {secondaryButton?.title ? secondaryButton?.title : "Cancel"}
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={primaryAction} style={styles?.button}>
-              <Text style={styles?.buttonText}>Save</Text>
+            <TouchableOpacity
+              onPress={primaryButton?.action}
+              style={[styles?.button, primaryButton?.styles]}
+            >
+              <Text style={styles?.buttonText}>
+                {primaryButton?.title ? primaryButton?.title : "Save"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -127,12 +143,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.8)",
-    padding: 20,
+    paddingHorizontal: 20,
+    height: 500
   },
   container: {
     backgroundColor: "white",
     width: "100%",
-    padding: 10,
+    padding: 20,
     borderRadius: 4,
   },
   header: {

@@ -1,30 +1,16 @@
-// // import { toast } from 'react-toastify';
-// // import ApiClient from './ApiClient';
-
-import { makeGetRequest, makePostRequest, makePostRequestFormData } from ".";
+import {
+  makeDeleteRequest,
+  makeGetRequest,
+  makePostRequest,
+  makePostRequestFormData,
+  makePutRequest,
+} from ".";
 import { toast } from "../hooks/toast";
 
-// import axios from "axios";
-// import ApiClient from ".";
-
-// export default class ServicesClient {
-//   private apiClient: ApiClient;
-//   state: { serviceDetails: any };
-//   serviceDetails: any;
-
-//   constructor() {
-//     // this.apiClient = new ApiClient();
-//     this.state = {
-//       serviceDetails: '',
-//     };
-//   }
-
 export const addNewService = async (payload: any) => {
-  console.log("Payload inside api - ", payload);
-
   try {
     const data = await makePostRequestFormData("/service/add", payload);
-    toast.success("User added successfully");
+    toast.success("Service added successfully");
     return data?.data;
   } catch (error: any) {
     console.error(
@@ -38,22 +24,24 @@ export const addNewService = async (payload: any) => {
   }
 };
 
-//   async fetchAllServices() {
-//     try {
-//       const data = await this.apiClient.makeGetRequest('/job/all');
-//       return data.data;
-//     } catch (error: any) {
-//         console.error(
-//             `[userService] An error occurred while fetching services : `,
-//             error?.response?.data?.message,
-//           );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while fetching services',
-//     //   );
-//       throw error;
-//     }
-//   }
+export const editService = async (payload: any) => {
+  console.log("Payload inside api - ", payload);
+
+  try {
+    const data = await makePutRequest("/service/update-service", payload);
+    toast.success("Service updated successfully");
+    return data?.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while updating service : `,
+      error?.response?.data
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while updating service"
+    );
+    throw error;
+  }
+};
 
 export const getServiceById = async (id: any) => {
   try {
@@ -64,89 +52,38 @@ export const getServiceById = async (id: any) => {
       `[Users] [userService] An error occurred while fetching service details : `,
       error
     );
-    //   toast.error(
-    //     error?.response?.data?.message ||
-    //       'An error occurred while getting service by id',
-    //   );
+      toast.error(
+        error?.response?.data?.message ||
+          'An error occurred while fetching service details',
+      );
     throw error;
   }
 };
 
-//   async updateServiceById(payload: any, id: any) {
-//     try {
-//       const data = await this.apiClient.makePutRequest(
-//         `/services/${id}/edit`,
-//         payload,
-//       );
-//     //   toast.success('User updated successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[userService] An error occurred while updating service : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while updating service',
-//     //   );
-//       throw error;
-//     }
-//   }
-
-//   async deleteServiceById(id: any) {
-//     try {
-//       const data = await this.apiClient.makeDeleteRequest(
-//         `/services/${id}/delete`,
-//       );
-//     //   toast.success('User deleted successfully');
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[Users] [userService] An error occurred while deleting service : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while deleting service',
-//     //   );
-//       throw error;
-//     }
-//   }
-
-//   async uploadFile(file: any, screen: string) {
-//     console.log(
-//       `[${screen}] [userService] Uploading file with API /upload/file and file payload  : `,
-//       file,
-//     );
-//     try {
-//       const data = await this.apiClient.makePostRequest('/upload/file', file);
-//     //   toast.success('File uploaded successfully');
-//       console.log(
-//         `[${screen}] [userService] File uploaded successfully with file location : `,
-//         data?.data?.Location,
-//       );
-//       return data.data;
-//     } catch (error: any) {
-//       console.error(
-//         `[${screen}] [userService] An error occurred while uploading file : `,
-//         error,
-//       );
-//     //   toast.error(
-//     //     error?.response?.data?.message ||
-//     //       'An error occurred while uploading file',
-//     //   );
-//       throw error;
-//     }
-//   }
-// }
+export const deleteServiceById = async (id: any) => {
+  console.log("Click delete ---", id);
+  try {
+    const data = await makeDeleteRequest(`/service/delete/${id}`);
+    toast.success("Service deleted successfully");
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[Users] [userService] An error occurred while deleting service : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while deleting service"
+    );
+    throw error;
+  }
+};
 
 export const fetchAllServices = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
       `/service/all?page=${pageParam}&limit=10`
     );
-    // console.log("Data---", data?.data);
-
     return data.data;
   } catch (error: any) {
     console.error(
@@ -181,6 +118,8 @@ export const fetchAllLikedServices = async ({ pageParam }: any) => {
 };
 
 export const likeService = async (payload: any) => {
+  console.log("Payload --", payload);
+
   try {
     const data = await makePostRequest("/service/like-service", payload);
     return data.data;
@@ -265,7 +204,24 @@ export const applyService = async (payload: any) => {
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching services"
+        "An error occurred while applying in service"
+    );
+    throw error;
+  }
+};
+
+export const unApplyService = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/service/cancel-apply", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while cancel applying the service : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while cancel apply service"
     );
     throw error;
   }

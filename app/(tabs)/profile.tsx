@@ -7,14 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   Switch,
-} from "react-native";
-import {
-  Avatar,
-  Title,
-  Caption,
   Text,
-  TouchableRipple,
-} from "react-native-paper";
+} from "react-native";
 import {
   Entypo,
   Feather,
@@ -30,7 +24,11 @@ import { Link, router, Stack, useFocusEffect } from "expo-router";
 import { EarningAtom, UserAtom, WorkAtom } from "../AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/Modal";
-import { updateUserById, uploadFile } from "../api/user";
+import { updateUserById, updateUserRoleById, uploadFile } from "../api/user";
+import { useMutation } from "@tanstack/react-query";
+import Loader from "@/components/Loader";
+import AvatarComponent from "@/components/Avatar";
+import Button from "@/components/Button";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -40,7 +38,6 @@ const ProfileScreen = () => {
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
   const [email, setEmail] = useState(userDetails?.email);
-
   const [avatar, setAvatar] = useState(userDetails?.avatar);
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
@@ -50,11 +47,11 @@ const ProfileScreen = () => {
   const [dropdownValue, setDropdownValue] = useState("");
 
   // Create a reference to the ScrollView
-  const scrollViewRef:any = useRef(null);
+  // const scrollViewRef: any = useRef(null);
 
-  useEffect(() => {
-    scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
-  }, []);
+  // useEffect(() => {
+  //   scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+  // }, []);
 
   useEffect(() => {
     setFirstName(userDetails?.firstName);
@@ -62,19 +59,30 @@ const ProfileScreen = () => {
     setAddress(userDetails?.address);
   }, [isEditProfile]);
 
-  const myCustomShare = async () => {
-    // const shareOptions = {
-    //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
-    //   url: files.appLogo,
-    //   // urls: [files.image1, files.image2]
-    // }
-    // try {
-    //   const ShareResponse = await Share.open(shareOptions);
-    //   console.log(JSON.stringify(ShareResponse));
-    // } catch(error) {
-    //   console.log('Error => ', error);
-    // }
-  };
+  const mutationUpdateProfileInfo = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: () =>
+      updateUserById({
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+      }),
+    onSuccess: (response) => {
+      console.log("Response while updating the profile - ", response);
+      let user = response?.data;
+      setIsEditProfile(false);
+      setUserDetails({
+        ...userDetails,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        address: user?.address,
+      });
+    },
+    onError: (err) => {
+      console.error("error while updating the profile ", err);
+      setIsEditProfile(false);
+    },
+  });
 
   const toggleNotificationSwitch = () =>
     setNotificationsEnabled((prevState) => !prevState);
@@ -117,35 +125,29 @@ const ProfileScreen = () => {
     setIsEditProfile(true);
   };
 
-  const handleSaveProfile = async () => {
-    console.log("Input Value:", firstName, lastName, address);
-    let payload = {
-      firstName: firstName,
-      middleName: "Amruta",
-      lastName: lastName,
-      address: address,
-      mobileNumber: "1234567890",
-      alternateMobileNumber: "1223456",
-      email: "abhishek@gmail.com",
-      alternateEmail: "officialsujitmemane@gmail.com",
-      role: "User",
-    };
-    try {
-      const responseNew = await handleUploadAvatar();
-      const response = await updateUserById(payload);
-      console.log("response after user update  ---", response?.data);
-      let user = response?.data;
-      setIsEditProfile(false);
-      setUserDetails({
-        ...userDetails,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-      });
-    } catch (err) {
-      setIsEditProfile(false);
-      console.log("error while updating user info ", err);
-    }
-  };
+  // const handleSaveProfile = async () => {
+  //   console.log("Input Value:", firstName, lastName, address);
+  //   let payload = {
+  //     firstName: firstName,
+  //     lastName: lastName,
+  //     address: address,
+  //   };
+  //   try {
+  //     const response = await updateUserById(payload);
+  //     console.log("response after user update  ---", response?.data);
+  //     let user = response?.data;
+  //     setIsEditProfile(false);
+  //     setUserDetails({
+  //       ...userDetails,
+  //       firstName: user?.firstName,
+  //       lastName: user?.lastName,
+  //       address: user?.address,
+  //     });
+  //   } catch (err) {
+  //     setIsEditProfile(false);
+  //     console.log("error while updating user info ", err);
+  //   }
+  // };
 
   const handleChooseAvatar = async () => {
     console.log("Handling Image upload");
@@ -184,19 +186,7 @@ const ProfileScreen = () => {
 
   const modalContent = () => {
     return (
-      <View ref={scrollViewRef} style={styles.formContainer}>
-        <View style={styles.avatarContainer}>
-          {/* <Ionicons name="person" size={30} color={Colors.secondary} /> */}
-          <Avatar.Image
-            source={{
-              uri: avatar,
-            }}
-            size={80}
-          />
-          <TouchableOpacity onPress={handleChooseAvatar}>
-            <Text style={styles?.avatarText}>Choose Profile Image</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Ionicons name="person" size={30} color={Colors.secondary} />
           <TextInput
@@ -264,25 +254,30 @@ const ProfileScreen = () => {
                   visible={isEditProfile}
                   onClose={() => setIsEditProfile(false)}
                   content={modalContent}
-                  primaryAction={handleSaveProfile}
-                  // buttonText={"Edit Profile"}
+                  primaryButton={{
+                    action: mutationUpdateProfileInfo?.mutate,
+                  }}
+                  secondaryButton={{
+                    action: () => setIsEditProfile(false),
+                  }}
                 />
               </Text>
             </TouchableOpacity>
           ),
         }}
       />
+      <Loader loading={mutationUpdateProfileInfo?.isPending} />
       <ScrollView style={styles.container}>
         <View style={styles.userInfoSection}>
           <View style={{ flexDirection: "row", marginTop: 15 }}>
-            <Avatar.Image
-              source={{
-                uri: userDetails?.avatar,
-              }}
-              size={80}
+            <AvatarComponent
+              isEditable={true}
+              profileImage={avatar}
+              setProfileImage={setAvatar}
+              onUpload={handleUploadAvatar}
             />
-            <View style={{ width: "72%", marginLeft: 20 }}>
-              <Title
+            <View style={{ flex: 1, marginHorizontal: 20 }}>
+              <Text
                 style={[
                   styles.title,
                   {
@@ -294,10 +289,25 @@ const ProfileScreen = () => {
               >
                 {userDetails?.firstName || "Name"}{" "}
                 {userDetails?.lastName || "Name"}
-              </Title>
-              <Caption style={styles.caption}>
-                {userDetails?.role || "User"}
-              </Caption>
+              </Text>
+              <Text style={styles.caption}>
+                {userDetails?.role === "WORKER"
+                  ? userDetails?.roleType === "ONE"
+                    ? "WORKER"
+                    : "MEDIATOR"
+                  : userDetails?.role}
+              </Text>
+              <Button
+                style={styles?.mediatorButton}
+                textStyle={styles?.mediatorButtonText}
+                isPrimary={true}
+                title={
+                  userDetails?.roleType === "ONE"
+                    ? "Change To Mediator"
+                    : "Change To Worker"
+                }
+                onPress={() => router?.push("/screens/profile/changeRole")}
+              />
             </View>
           </View>
         </View>
@@ -305,7 +315,7 @@ const ProfileScreen = () => {
           <View style={styles.userInfoBox}>
             <View style={[styles.row, styles.firstBox]}>
               <Text style={styles.userInfoText}>
-                {userDetails?.address || ""}
+                {userDetails?.address || "Address Not Found"}
               </Text>
             </View>
             <View style={styles.row}>
@@ -330,12 +340,12 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>₹ {earnings?.work}</Title>
-            <Caption>Earnings</Caption>
+            <Text>₹ {earnings?.work}</Text>
+            <Text>Earnings</Text>
           </View>
           <View style={styles.infoBox}>
-            <Title>₹ {earnings?.rewards}</Title>
-            <Caption>Rewards</Caption>
+            <Text>₹ {earnings?.rewards}</Text>
+            <Text>Rewards</Text>
           </View>
         </View>
 
@@ -350,8 +360,8 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>{workDetails?.total}</Title>
-            <Caption>Total Tasks</Caption>
+            <Text>{workDetails?.total}</Text>
+            <Text>Total Tasks</Text>
           </View>
           <View
             style={[
@@ -362,18 +372,44 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Title>{workDetails?.completed}</Title>
-            <Caption>Completed</Caption>
+            <Text>{workDetails?.completed}</Text>
+            <Text>Completed</Text>
           </View>
           <View style={styles.workInfoBox}>
-            <Title>{workDetails?.upcoming}</Title>
-            <Caption>Pending</Caption>
+            <Text>{workDetails?.upcoming}</Text>
+            <Text>Pending</Text>
           </View>
         </View>
 
         <View style={styles.menuWrapper}>
+          <Link href="/screens/team" asChild>
+            <TouchableOpacity>
+              <View style={styles.menuItem}>
+                <FontAwesome6
+                  name="people-group"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Your Team</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/screens/requests" asChild>
+            <TouchableOpacity>
+              <View style={styles.menuItem}>
+                <FontAwesome6
+                  name="hands-praying"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Request</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
           <Link href="/screens/favourite" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <MaterialIcons
                   name="space-dashboard"
@@ -382,11 +418,11 @@ const ProfileScreen = () => {
                 />
                 <Text style={styles.menuItemText}>Your Favorites</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           <Link href="/screens/payments" asChild>
-            <TouchableRipple onPress={() => {}}>
+            <TouchableOpacity onPress={() => {}}>
               <View style={styles.menuItem}>
                 <MaterialIcons
                   name="payment"
@@ -395,20 +431,20 @@ const ProfileScreen = () => {
                 />
                 <Text style={styles.menuItemText}>Payment</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           <Link href="/screens/shareApp" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <MaterialIcons name="share" size={28} color={Colors.primary} />
                 <Text style={styles.menuItemText}>Tell Your Friends</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           <Link href="/screens/support" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <MaterialIcons
                   name="support-agent"
@@ -417,24 +453,24 @@ const ProfileScreen = () => {
                 />
                 <Text style={styles.menuItemText}>Support</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           {/* <Link href="/screens/settings" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <Ionicons name="settings" size={28} color={Colors.primary} />
                 <Text style={styles.menuItemText}>Settings</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link> */}
           <Link href="/screens/settings/changeLanguage" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <Entypo name="language" size={28} color={Colors.primary} />
                 <Text style={styles.menuItemText}>Change Language</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
           <TouchableOpacity>
             <View style={styles.settingsItem}>
@@ -483,7 +519,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           <Link href="/screens/feedback" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <MaterialIcons
                   name="chat-bubble"
@@ -492,20 +528,20 @@ const ProfileScreen = () => {
                 />
                 <Text style={styles.menuItemText}>Feedback</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           <Link href="/screens/privacyPolicy" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <FontAwesome6 name="lock" size={28} color={Colors.primary} />
                 <Text style={styles.menuItemText}>Privacy Policy</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
           <Link href="/screens/terms&Conditions" asChild>
-            <TouchableRipple>
+            <TouchableOpacity>
               <View style={styles.menuItem}>
                 <FontAwesome6
                   name="file-contract"
@@ -514,15 +550,28 @@ const ProfileScreen = () => {
                 />
                 <Text style={styles.menuItemText}>Terms and Conditions</Text>
               </View>
-            </TouchableRipple>
+            </TouchableOpacity>
           </Link>
 
-          <TouchableRipple onPress={handleLogout}>
+          <Link href="/screens/profile/deleteProfile" asChild>
+            <TouchableOpacity>
+              <View style={styles.menuItem}>
+                <MaterialCommunityIcons
+                  name="delete-forever"
+                  size={32}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>Delete Account</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <TouchableOpacity onPress={handleLogout}>
             <View style={styles.menuItem}>
               <MaterialIcons name="logout" size={28} color={Colors.primary} />
               <Text style={styles.menuItemText}>Log Out</Text>
             </View>
-          </TouchableRipple>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </>
@@ -577,9 +626,29 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   caption: {
-    fontSize: 14,
-    lineHeight: 14,
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    width: 130,
+    padding: 6,
+    borderRadius: 30,
+    textAlign: "center",
+    textTransform: "uppercase",
+    backgroundColor: "#d6ecdd",
+  },
+  mediatorButton: {
+    borderWidth: 1,
+    backgroundColor: "#fa6400",
+    borderColor: "#fa6400",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginTop: 16,
+  },
+  mediatorButtonText: {
     fontWeight: "500",
+    fontSize: 16,
   },
   row: {
     paddingTop: 0,
@@ -588,12 +657,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   firstBox: {
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
+    borderTopRightRadius: 4,
+    borderTopLeftRadius: 4,
   },
   lastBox: {
-    borderBottomRightRadius: 16,
-    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 4,
+    borderBottomLeftRadius: 4,
   },
   infoBoxWrapper: {
     marginTop: 10,
@@ -652,7 +721,7 @@ const styles = StyleSheet.create({
 
   formContainer: {
     marginTop: 20,
-    padding: 10,
+    // padding: 10,
   },
   avatarContainer: {
     // height: 53,

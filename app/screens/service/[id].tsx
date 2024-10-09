@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,6 +18,7 @@ import {
   FontAwesome,
   FontAwesome5,
   Ionicons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, {
@@ -32,6 +34,7 @@ import {
   fetchMyApplicants,
   getServiceById,
   likeService,
+  unApplyService,
   unLikeService,
 } from "../../api/services";
 import Loader from "@/components/Loader";
@@ -40,32 +43,32 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAtom } from "jotai";
 import { LocationAtom, UserAtom } from "../../AtomStore/user";
 import { toast } from "../../hooks/toast";
+import profileImage from "../../../assets/person-placeholder.png";
+import { dateDifference } from "@/constants/functions";
+import Button from "@/components/Button";
+import ModalComponent from "@/components/Modal";
+import EditService from "./editService";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-const ListingDetails = () => {
+const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [location, setLocation] = useAtom(LocationAtom);
-  const [mapLocation, setMapLocation]: any = useState({
-    region: {
-      latitude: location?.coords?.latitude,
-      longitude: location?.coords?.longitude,
-      latitudeDelta: 2,
-      longitudeDelta: 2,
-    },
-  });
+  const [mapLocation, setMapLocation]: any = useState({});
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+  const [isEditService, setIsEditService] = useState(false);
   const [isServiceLiked, setIsServiceLiked] = useState(
     service?.isLiked || false
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.isApplied || false
   );
+
   const {
     isLoading,
     isError,
@@ -99,8 +102,6 @@ const ListingDetails = () => {
       return undefined;
     },
   });
-
-  console.log("applicants---", applicants?.pages[0]?.data);
 
   const getServiceDetailsById = async (id: any) => {
     try {
@@ -152,7 +153,7 @@ const ListingDetails = () => {
 
   const mutationUnApplyService = useMutation({
     mutationKey: ["unapplyService", { id }],
-    mutationFn: () => unLikeService({ serviceID: id }),
+    mutationFn: () => unApplyService({ serviceID: id }),
     onSuccess: (response) => {
       console.log("Response while unapplying the service - ", response);
     },
@@ -172,8 +173,8 @@ const ListingDetails = () => {
     React.useCallback(() => {
       const locationObject = {
         cordinates: {
-          latitude: location?.coords?.latitude,
-          longitude: location?.coords?.longitude,
+          latitude: 28.6448,
+          longitude: 77.216721,
           latitudeDelta: 2,
           longitudeDelta: 2,
         },
@@ -203,31 +204,12 @@ const ListingDetails = () => {
     };
   });
 
-  const renderApplicant = ({ item, index }: any) => {
-    console.log("Item---", item);
+  console.log("Service----", service?.location, mapLocation);
 
-    return (
-      <View style={styles.productCard}>
-        <Image source={{ uri: item.avatar }} style={styles.productImage} />
-        <View style={styles.productInfo}>
-          <Text style={styles.productTitle}>
-            {item.firstName} {item.lastName}
-          </Text>
-          <Text style={styles.productPrice}>
-            {item.skills.join(", ") || "Labour, Mistri, Plumber"}
-          </Text>
-          <View style={styles.recommendationContainer}>
-            <FontAwesome name="user-circle" size={16} color="gray" />
-            <Text style={styles.recommendationText}>
-              {item.address || "Balipur, Shakarauli, Jalesar Etah"}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
+  const modalContent = () => {
+    return <EditService />;
   };
 
-  console.log("Service----", service);
   return (
     <>
       <Stack.Screen
@@ -309,7 +291,7 @@ const ListingDetails = () => {
             <View style={styles.listingLocationWrapper}>
               <Entypo name="calendar" size={18} color={Colors.primary} />
               <Text style={styles.listingLocationTxt}>
-                Start {service?.startDate} - End {service?.endDate}
+                Start {service?.startDate}
               </Text>
             </View>
 
@@ -321,7 +303,8 @@ const ListingDetails = () => {
                 <View>
                   <Text style={styles.highlightTxt}>Duration</Text>
                   <Text style={styles.highlightTxtVal}>
-                    {service?.duration} Days
+                    {service?.duration ||
+                      dateDifference(service?.startDate, service?.endDate)}
                   </Text>
                 </View>
               </View>
@@ -350,56 +333,186 @@ const ListingDetails = () => {
             </View>
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
-          </View>
-          {/* First Make Google Maps API Key Then Uncomment It */}
-          {/* <Map data={mapLocation && mapLocation} /> */}
 
-          <View style={styles.applicantContainer}>
-            <Text style={styles.applicantHeader}>Applicants</Text>
-            {isApplicantLoading ? (
-              <ActivityIndicator />
-            ) : (
-              <FlatList
-                data={applicants?.pages[0]?.data ?? []}
-                renderItem={renderApplicant}
-                keyExtractor={(item) => item._id.toString()} // Assuming each applicant has a unique ID
-                contentContainerStyle={styles.applicantList}
-              />
+            {service && service?.requirements?.length > 0 && (
+              <View style={styles.requirmentContainer}>
+                {service &&
+                  service?.requirements?.length > 0 &&
+                  service?.requirements?.map((requirement: any) => {
+                    return (
+                      <View style={styles.card}>
+                        <View style={styles.header}>
+                          <Text style={styles.title}>{requirement?.name}</Text>
+                          <Text style={styles.price}>
+                            ₹ {requirement?.payPerDay} Per Day
+                          </Text>
+                        </View>
+                        <Text style={styles.subTitle}>shuttering</Text>
+
+                        <View style={styles.details}>
+                          <Text style={styles.detailLabel}>Count</Text>
+                          <Text style={styles.detailLabel}>Food</Text>
+                          <Text style={styles.detailLabel}>Living</Text>
+                          <Text style={styles.detailLabel}>ESI / PF</Text>
+                        </View>
+
+                        <View style={styles.values}>
+                          <Text style={styles.value}>
+                            {requirement?.totalRequired}
+                          </Text>
+                          <Text style={styles.value}>
+                            {requirement?.foodProvided ? "Yes" : "No"}
+                          </Text>
+                          <Text style={styles.value}>
+                            {requirement?.shelterProvider ? "Yes" : "No"}
+                          </Text>
+                          <Text style={styles.value}>No</Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+              </View>
             )}
           </View>
+
+          {service?.employer === userDetails?._id &&
+            applicants?.pages[0]?.data &&
+            applicants?.pages[0]?.data?.length > 0 && (
+              <View style={styles.applicantContainer}>
+                <Text style={styles.applicantHeader}>Applicants</Text>
+                {applicants?.pages[0]?.data?.map((item: any, index: number) => {
+                  return (
+                    <View key={index} style={styles.productCard}>
+                      <Image
+                        source={
+                          item.avatar ? { uri: item.avatar } : profileImage
+                        }
+                        style={styles.productImage}
+                      />
+                      <View style={styles.productInfo}>
+                        <View style={styles?.titleContainer}>
+                          <Text style={styles.productTitle}>
+                            {item.firstName} {item.lastName}
+                          </Text>
+                          <Button
+                            style={{
+                              paddingVertical: 4,
+                              paddingHorizontal: 10,
+                              marginLeft: 4,
+                            }}
+                            textStyle={{
+                              fontSize: 10,
+                            }}
+                            isPrimary={true}
+                            title="View Details"
+                            onPress={() =>
+                              router?.push(`/screens/worker/${item._id}`)
+                            }
+                          />
+                        </View>
+
+                        <Text style={styles.productPrice}>
+                          {item.skills.join(", ") || "Labour, Mistri, Plumber"}
+                        </Text>
+                        <View style={styles.recommendationContainer}>
+                          <FontAwesome
+                            name="user-circle"
+                            size={16}
+                            color="gray"
+                          />
+                          <Text style={styles.recommendationText}>
+                            {item.address ||
+                              "Balipur, Shakarauli, Jalesar Etah"}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
+          {/* First Make Google Maps API Key Then Uncomment It */}
+          {service?.location && service?.location?.latitude && (
+            <Map
+              data={{
+                ...service?.location,
+                latitudeDelta: 2,
+                longitudeDelta: 2,
+              }}
+            />
+          )}
         </Animated.ScrollView>
       </ScrollView>
 
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        <TouchableOpacity
-          onPress={() => mutationApplyService.mutate()}
-          style={[styles.footerBtn, styles.footerBookBtn]}
-        >
-          <Text style={styles.footerBtnTxt}>
-            {isServiceApplied ? "Already Applied" : "Apply Now"}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            isServiceLiked
-              ? mutationUnLikeService.mutate()
-              : mutationLikeService.mutate()
-          }
-          style={[styles.footerBtn]}
-        >
-          <Text style={styles.footerBtnTxt}>
-            {isServiceLiked ? "Unlike" : "Like"}
-          </Text>
-        </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
+      {service?.employer === userDetails?._id ? (
+        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+          <TouchableOpacity
+            onPress={() =>
+              isServiceApplied
+                ? mutationApplyService.mutate()
+                : mutationUnApplyService.mutate()
+            }
+            style={[styles.footerBtn, styles.footerBookBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>
+              {isServiceApplied ? "Already Applied" : "Cancel"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsEditService(true)}
+            style={[styles.footerBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>Edit</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      ) : (
+        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+          <TouchableOpacity
+            onPress={() => mutationApplyService.mutate()}
+            style={[styles.footerBtn, styles.footerBookBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>
+              {isServiceApplied ? "Already Applied" : "Apply Now"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              isServiceLiked
+                ? mutationUnLikeService.mutate()
+                : mutationLikeService.mutate()
+            }
+            style={[styles.footerBtn]}
+          >
+            <Text style={styles.footerBtnTxt}>
+              {isServiceLiked ? "Unlike" : "Like"}
+            </Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
           <Text style={styles.footerBtnTxt}>${service?.price}</Text>
-        </TouchableOpacity> */}
-      </Animated.View>
+          </TouchableOpacity> */}
+        </Animated.View>
+      )}
+
+      <ModalComponent
+        title="Add Service"
+        visible={isEditService}
+        onClose={() => setIsEditService(false)}
+        content={modalContent}
+        primaryButton={
+          {
+            // action: mutationUpdateProfileInfo?.mutate,
+          }
+        }
+        secondaryButton={{
+          action: () => setIsEditService(false),
+        }}
+      />
     </>
   );
 };
 
-export default ListingDetails;
+export default ServiceDetails;
 
 const styles = StyleSheet.create({
   container: {
@@ -464,7 +577,7 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   applicantContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
     backgroundColor: Colors.white,
   },
   applicantHeader: {
@@ -496,10 +609,17 @@ const styles = StyleSheet.create({
   productInfo: {
     flex: 1,
   },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 2,
+  },
   productTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+    flex: 1,
   },
   productPrice: {
     fontSize: 14,
@@ -514,6 +634,60 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
     color: "gray",
+    flex: 1,
+  },
+  requirmentContainer: {
+    marginVertical: 10,
+    backgroundColor: "#e1e8e5",
+    borderRadius: 8,
+  },
+  card: {
+    backgroundColor: "#e1e8e5",
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+  },
+  viewButton: {
+    width: 100,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors?.black,
+    textTransform: "capitalize",
+  },
+  price: {
+    fontSize: 16,
+    color: Colors?.black,
+  },
+  subTitle: {
+    fontSize: 14,
+    color: Colors?.primary,
+    marginBottom: 12,
+  },
+  details: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  detailLabel: {
+    fontSize: 12,
+    color: "#4F4F4F",
+    fontWeight: "600",
+  },
+  values: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  value: {
+    fontSize: 16,
+    color: "#000",
   },
   footer: {
     flexDirection: "row",

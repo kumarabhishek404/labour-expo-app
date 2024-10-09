@@ -75,12 +75,14 @@ const Workers = () => {
     }
   };
 
-  const memoizedData = useMemo(() => filteredData?.flatMap((data:any) => data), [filteredData]);
+  const memoizedData = useMemo(
+    () => filteredData?.flatMap((data: any) => data),
+    [filteredData]
+  );
 
   const onCatChanged = (category: string) => {
     setCategory(category);
   };
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -109,7 +111,11 @@ const Workers = () => {
           </View>
         </View>
 
-        <CategoryButtons type={userDetails?.role === 'Employer' ? 'workers' : 'services'} onCagtegoryChanged={onCatChanged} stylesProp={styles.categoryContainer} />
+        <CategoryButtons
+          type={userDetails?.role === "Employer" ? "workers" : "services"}
+          onCagtegoryChanged={onCatChanged}
+          stylesProp={styles.categoryContainer}
+        />
 
         <View style={styles.totalData}>
           <Text style={styles.totalItemTxt}>
@@ -129,6 +135,7 @@ const Workers = () => {
             category="services"
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
+            isMyService={userDetails?.role === "Employer"}
           />
         )}
       </View>
@@ -170,7 +177,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   totalData: {
     paddingHorizontal: 20,

@@ -105,7 +105,7 @@ const ListingsVerticalWorkers = ({
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
-    <View>
+    <View style={{ marginBottom: 90 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}

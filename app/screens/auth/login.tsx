@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/Loader";
@@ -42,7 +42,7 @@ const LoginScreen = () => {
       let work = user?.workDetails;
       let earnings = user?.earnings;
       console.log("Workrrrrrr---", user?.earnings);
-      
+
       setUserDetails({
         isAuth: true,
         _id: user?._id,
@@ -56,19 +56,20 @@ const LoginScreen = () => {
         address: user?.address,
         avatar: user?.avatar,
         role: user?.role,
+        roleType: user?.labourType,
         token: response?.token,
-        serviceAddress: ["Balipur, post - Shakrauli, Etah Uttar Predesh"],
+        serviceAddress: ["1234 Main St, New York, NY 10001", "Balipur, post - Shakrauli, Etah Uttar Predesh"],
       });
       setWorkDetails({
         total: work?.total,
         completed: work?.completed,
         cancelled: work?.cancelled,
         upcoming: work?.upcoming,
-      })
+      });
       setEarnings({
         work: earnings?.work,
-        rewards: earnings?.rewards
-      })
+        rewards: earnings?.rewards,
+      });
       toast.success("Logged in successfully!");
       console.log("Response while loging a user - ", response);
     },
@@ -77,7 +78,9 @@ const LoginScreen = () => {
     },
   });
 
-  const handleForgotPassword = () => {};
+  const handleForgotPassword = () => {
+    router.push("/screens/auth/forgetPassword");
+  };
 
   return (
     <>
@@ -90,7 +93,7 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Hey,</Text>
-          <Text style={styles.headingText}>{i18n.t('welcome')}</Text>
+          <Text style={styles.headingText}>{i18n.t("welcome")}</Text>
           <Text style={styles.headingText}>Back</Text>
         </View>
         <View style={styles.formContainer}>
@@ -153,7 +156,7 @@ const LoginScreen = () => {
             <Text style={styles.googleText}>Google</Text>
           </TouchableOpacity>
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>Already have an account!</Text>
+            <Text style={styles.accountText}>Don't have an account!</Text>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
                 <Text style={styles.signupText}>Sign Up</Text>

@@ -4,11 +4,12 @@ import { Tabs } from "expo-router";
 import {
   Entypo,
   FontAwesome,
+  FontAwesome6,
   Ionicons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../AtomStore/user";
+import { AddServiceInProcess, UserAtom } from "../AtomStore/user";
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
 import { usePushNotifications } from "../hooks/usePushNotification";
@@ -17,14 +18,12 @@ import { useLocale } from "../context/locale";
 export default function Layout() {
   const { locale } = useLocale();
   const userDetails = useAtomValue(UserAtom);
+  const isAddService = useAtomValue(AddServiceInProcess);
   const { expoPushToken, sendPushNotification } = usePushNotifications(
     userDetails?._id
   );
 
   useEffect(() => {}, [locale]);
-  // if (state?.isLoading) {
-  //   return <Text>Loading...</Text>;
-  // }
 
   if (!userDetails?.isAuth) {
     expoPushToken && sendPushNotification(expoPushToken);
@@ -35,6 +34,7 @@ export default function Layout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
+          display: isAddService ? "none" : "flex",
           backgroundColor: Colors.bgColor,
           borderTopWidth: 0,
           padding: 0,
@@ -69,33 +69,38 @@ export default function Layout() {
           ),
         }}
       />
-      {userDetails?.role === "Employer" ? (
+      {(userDetails?.role === "WORKER" || userDetails?.role === "Labour") &&
+      userDetails?.roleType === "ONE" ? (
         <Tabs.Screen
-          name="search"
+          name="help"
           options={{
-            title:
-              userDetails?.role === "Employer"
-                ? "Add Service"
-                : "Add Availability",
-            tabBarIcon: ({ color }: any) => (
-              <View>
-                <Ionicons
-                  name="add-outline"
-                  size={60}
-                  color={color}
-                  style={styles.addIcon}
-                />
-              </View>
-            ),
+            title: userDetails?.roleType === "ONE" ? "Help" : "Workers",
+            tabBarIcon: ({ color }: any) =>
+              userDetails?.roleType === "ONE" ? (
+                <Entypo name="help" size={30} color={color} />
+              ) : (
+                <FontAwesome6 name="people-group" size={30} color={color} />
+              ),
           }}
         />
       ) : (
         <Tabs.Screen
-          name="search"
+          name={userDetails?.role === "Employer" ? "addService" : "addService"}
           options={{
-            title: "Help",
+            headerShown: false,
+            title:
+              userDetails?.role === "Employer"
+                ? "Add Service"
+                : "Add Requirments",
             tabBarIcon: ({ color }: any) => (
-              <Entypo name="help" size={30} color={color} />
+              <View>
+                <Entypo
+                  name="squared-plus"
+                  size={30}
+                  color={color}
+                  // style={styles.addIcon}
+                />
+              </View>
             ),
           }}
         />
@@ -118,6 +123,17 @@ export default function Layout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name={userDetails?.roleType === "ONE" ? "addService" : "help"}
+        options={{
+          title: "Add Service",
+          headerShown: false,
+          href: null,
+          tabBarIcon: ({ color }: any) => (
+            <FontAwesome name="user" size={30} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
@@ -129,7 +145,7 @@ const styles = StyleSheet.create({
       ios: 30,
       android: 50,
     }),
-    overflow: "hidden", // Add this to clip the content inside
+    overflow: "hidden",
     color: Colors.white,
     position: "absolute",
     right: -32,

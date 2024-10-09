@@ -14,29 +14,13 @@ import { Feather, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
+import ImageUpload from "@/components/ImagePicker";
 
 const FeedbackForm = () => {
   const [rating, setRating] = useState(0); // For star rating
   const [feedbackType, setFeedbackType] = useState(""); // For selected feedback option
   const [comment, setComment] = useState(""); // For text input
   const [images, setImages] = useState<string[]>([]); // For multiple image uploads
-
-  // Handle Image Upload
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true, // Allow multiple images to be picked
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      // Add new images to the array of images
-      const selectedImages = result.assets.map((asset) => asset.uri);
-      setImages([...images, ...selectedImages]);
-    }
-  };
 
   return (
     <>
@@ -124,22 +108,9 @@ const FeedbackForm = () => {
             onChangeText={setComment}
             multiline={true}
           />
-          {/* Display Uploaded Images Inside the Text Area */}
-          <View style={styles.imageContainer}>
-            {images.map((imgUri, index) => (
-              <Image
-                key={index}
-                source={{ uri: imgUri }}
-                style={styles.uploadedImage}
-              />
-            ))}
-          </View>
         </View>
 
-        {/* Image Upload Button */}
-        <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
-          <Text style={styles.uploadText}>Upload Images</Text>
-        </TouchableOpacity>
+        <ImageUpload images={images} setImages={images} />
 
         {/* Submit Button */}
         <TouchableOpacity style={styles.submitButton}>

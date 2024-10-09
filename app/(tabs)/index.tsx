@@ -28,6 +28,12 @@ import i18n from "@/utils/i18n";
 import { useLocale } from "../context/locale";
 import ListingHorizontalServices from "@/components/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/ListingHorizontalWorkers";
+import Farmer1 from "../../assets/farmer1.png";
+import Farmer2 from "../../assets/farmer2.png";
+import Farmer3 from "../../assets/farmer3.png";
+import Farmer4 from "../../assets/farmer4.png";
+import Farmer5 from "../../assets/farmer5.png";
+
 // import { useLocale } from "../context/locale";
 
 const Page = () => {
@@ -63,6 +69,7 @@ const Page = () => {
         : fetchAllServices({ pageParam });
     },
     initialPageParam: 1,
+    retry: false,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
         return lastPage?.pagination?.page + 1;
@@ -85,6 +92,7 @@ const Page = () => {
         : fetchAllEmployers({ pageParam });
     },
     initialPageParam: 1,
+    retry: false,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
         return lastPage?.pagination?.page + 1;
@@ -195,6 +203,86 @@ const Page = () => {
             </TouchableOpacity>
           </View>
 
+          <View style={styles?.linksContainer}>
+            <View style={styles.row}>
+              <TouchableOpacity
+                style={styles.box}
+                onPress={() => router.push("/(tabs)/workers")}
+              >
+                <View style={styles?.firstBoxText}>
+                  <Text style={styles.title}>Services</Text>
+                  <Text style={styles.subtitle}>
+                    Mobile, Fiber and AirFiber
+                  </Text>
+                </View>
+                <View style={styles?.imageContainer}>
+                  <Image source={Farmer1} style={styles.image} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.secondBox}
+                onPress={() => router.push("/screens/employer")}
+              >
+                <View style={styles?.secondBoxText}>
+                  <Text style={styles.title}>Employers</Text>
+                  <Text style={[styles.subtitle, { width: 70 }]}>
+                    Free health check
+                  </Text>
+                </View>
+                <View style={styles?.imageContainer}>
+                  <Image source={Farmer5} style={{ width: 102, height: 75 }} />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.secondRow}>
+              <TouchableOpacity
+                style={styles.secondBox}
+                onPress={() => router.push("/screens/mediators")}
+              >
+                <View style={styles?.secondBoxText}>
+                  <Text style={styles.title}>Mediators</Text>
+                  <Text style={styles.subtitle}>UPI, Bank, Loan</Text>
+                </View>
+                <View style={styles?.imageContainer}>
+                  <Image source={Farmer3} style={styles.secondImage} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.secondBox}
+                onPress={() => router?.push("/(tabs)/bookings")}
+              >
+                <View style={styles?.secondBoxText}>
+                  <Text style={styles.title}>My Bookings</Text>
+                  <Text style={styles.subtitle}>Grocery, Fashion</Text>
+                </View>
+                <View style={styles?.imageContainer}>
+                  <Image source={Farmer2} style={{ width: 80, height: 90 }} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.secondBox}
+                onPress={() => router.push("/(tabs)/help")}
+              >
+                <View style={styles?.secondBoxText}>
+                  <Text style={styles.title}>Guides / Helps</Text>
+                  <Text style={[styles.subtitle, { width: 90 }]}>
+                    Music, TV, Games
+                  </Text>
+                </View>
+                <View style={styles?.imageContainer}>
+                  <Image source={Farmer4} style={{ width: 70, height: 90 }} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <Text style={styles.categroyTitle}>
+            {userDetails?.role === "Employer" ? "Workers" : "Services"}
+          </Text>
           <CategoryButtons
             type={userDetails?.role === "Employer" ? "workers" : "services"}
             onCagtegoryChanged={onCatChanged}
@@ -282,6 +370,109 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  linksContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  row: {
+    width: "48%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  secondRow: {
+    width: "48%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  box: {
+    // width: "100%",
+    height: 176,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    // alignItems: "flex-end",
+    // flexDirection:'column',
+    // justifyContent: "center",
+    paddingTop: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  secondBox: {
+    // width: "100%",
+    height: 80,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    // borderWidth: 1,
+    // borderColor: "#DDDDDD",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  firstBoxText: {
+    width: 140,
+    alignSelf: "flex-start",
+    paddingHorizontal: 15,
+    textAlign: "left",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    padding: 10,
+  },
+  secondBoxText: {
+    width: 140,
+    alignSelf: "flex-start",
+    paddingHorizontal: 15,
+    textAlign: "left",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    padding: 10,
+    zIndex: 1,
+  },
+  imageContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    opacity: 0.9,
+  },
+  image: {
+    width: 120,
+    height: 150,
+  },
+  secondImage: {
+    width: 70,
+    height: 75,
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#333333",
+  },
+  subtitle: {
+    fontSize: 12,
+    color: "#888888",
+  },
+  singleBoxContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  categroyTitle: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: Colors.black,
+    // marginBottom: 10,
   },
   categoryContainer: {
     // paddingHorizontal: 20,
