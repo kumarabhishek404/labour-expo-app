@@ -9,25 +9,12 @@ interface Step {
 
 interface StepperProps {
   currentStep: number;
+  steps: Array<any>;
   // steps?: Step[];
 }
 
-const Stepper: React.FC<StepperProps> = ({ currentStep }) => {
+const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
   let activeStep = currentStep - 1;
-  const [steps, setSteps] = useState([
-    {
-      label: "Work Info",
-    },
-    {
-      label: "Work Info",
-    },
-    {
-      label: "Work Info",
-    },
-    {
-      label: "Work Info",
-    },
-  ]);
 
   return (
     <View style={styles.container}>
@@ -99,8 +86,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 5,
+    alignItems: "flex-start",
+    // paddingVertical: 5,
+    // marginTop: 10,
+    padding: 0,
   },
   stepContainer: {
     alignItems: "center",

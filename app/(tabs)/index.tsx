@@ -456,11 +456,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
     color: "#333333",
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#888888",
   },
   singleBoxContainer: {

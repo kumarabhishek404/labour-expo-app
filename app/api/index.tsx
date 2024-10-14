@@ -11,15 +11,6 @@ const getHeaders = async (retries = 3, delay = 500) => {
     const parsedUser = user ? JSON.parse(user) : null;
     // console.log("Token---", user, parsedUser);
 
-    // if (parsedUser?.token) {
-    //   return {
-    //     Authorization: `Bearer ${parsedUser?.token}`,
-    //   };
-    // }
-    // return {
-    //   Authorization: "",
-    // };
-
     if (parsedUser?.token) {
       return {
         Authorization: `Bearer ${parsedUser.token}`,
@@ -141,7 +132,23 @@ export const makePutRequest = async (
   const response = await api.put(url, body, {
     headers: {
       // ...api.defaults.headers.common,
+      ...(await getHeaders())
+      // ...headers,
+    },
+  });
+  return response;
+};
+
+export const makePutRequestFormData = async (
+  url: string,
+  body: object,
+  headers?: { [key: string]: string }
+): Promise<AxiosResponse> => {
+  const response: any = await api.put(url, body, {
+    headers: {
+      // ...api.defaults.headers.common,
       ...(await getHeaders()),
+      "Content-Type": "application/json",
       // ...headers,
     },
   });

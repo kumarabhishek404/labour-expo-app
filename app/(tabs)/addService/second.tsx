@@ -1,224 +1,171 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView,
-} from "react-native";
-import { router } from "expo-router";
-import Colors, { darkGreen } from "@/constants/Colors";
-import Step2 from "../../../assets/step2.jpg";
-import LocationField from "@/components/LocationField";
-import { useAtom } from "jotai";
-import { AddServiceAtom, AddServiceInProcess } from "@/app/AtomStore/user";
-import Animated, { SlideInDown } from "react-native-reanimated";
-import { AntDesign } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import React from "react";
+import { View, StyleSheet, Image } from "react-native";
+import Colors from "@/constants/Colors";
 import Button from "@/components/Button";
-import { toast } from "@/app/hooks/toast";
-import Stepper from "./stepper";
+import Stepper from "@/app/(tabs)/addService/stepper";
+import { ADDSERVICESTEPS } from "@/constants";
 import AddLocationAndAddress from "@/components/AddLocationAndAddress";
+import { Controller, useForm } from "react-hook-form";
+import Step2 from "../../../assets/step2.jpg";
+import DateField from "@/components/dateField";
 
-interface WorkDurationProps {}
-const { width } = Dimensions.get("window");
+interface SecondScreenProps {
+  setStep: any;
+  address: string;
+  setAddress: any;
+  location: string;
+  setLocation: any;
+  startDate: Date;
+  setStartDate: any;
+  endDate: Date;
+  setEndDate: any;
+}
 
-const WorkDuration: React.FC<WorkDurationProps> = () => {
-  const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
-  const [addService, setAddService] = useAtom(AddServiceAtom);
-  const [startDate, setStartDate] = useState<any>(
-    new Date(addService?.startDate) ?? ""
-  );
-  const [endDate, setEndDate] = useState<any>(
-    new Date(addService?.endDate) ?? ""
-  );
-  const [address, setAddress] = useState(addService?.address ?? "");
-  const [location, setLocation]: any = useState(addService?.location ?? {});
+const SecondScreen: React.FC<SecondScreenProps> = ({
+  setStep,
+  address,
+  setAddress,
+  location,
+  setLocation,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+}: SecondScreenProps) => {
+  const {
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      address: address,
+      location: location,
+      startDate: startDate,
+      endDate: endDate,
+    },
+  });
 
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
-  const onStartDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || startDate;
-    setShowStartDatePicker(false);
-    setStartDate(currentDate);
-  };
-
-  const onEndDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || endDate;
-    setShowEndDatePicker(false);
-    setEndDate(currentDate);
-  };
-
-  const handleNext = () => {
-    if (startDate && endDate && address) {
-      setAddService({
-        startDate: startDate,
-        endDate: endDate,
-        address: address,
-        location: location,
-        ...addService,
-      });
-      // setIsAddService(true);
-      router?.push("/(tabs)/addService/third");
-    } else {
-      toast.error("Please fill all the input fields");
-    }
+  const onSubmit = (data: any) => {
+    setAddress(data?.address);
+    setLocation(data?.location);
+    setStartDate(data?.startDate);
+    setEndDate(data?.endDate);
+    setStep(3);
   };
 
   return (
-    <>
-      <ScrollView style={styles.container}>
-        <View style={styles?.customHeader}>
-          <Text style={styles?.headerText}>Add Service</Text>
-        </View>
-        <Image source={Step2} style={styles.image} />
-        <Stepper currentStep={2} />
+    <View style={styles?.container}>
+      <Image source={Step2} style={styles.image} />
+      <View style={{ marginVertical: 30 }}>
+        <Stepper currentStep={2} steps={ADDSERVICESTEPS} />
+      </View>
 
-        <View style={styles?.formContainer}>
-          {/* <LocationField address={address} setAddress={setAddress} /> */}
-          <AddLocationAndAddress
-            address={address}
-            setAddress={setAddress}
-            location={location}
-            setLocation={setLocation}
-          />
-          <TouchableOpacity
-            style={styles?.dateField}
-            onPress={() => setShowStartDatePicker(true)}
-          >
-            <View style={styles.dateItem}>
-              <Text style={styles.itemText}>Start Date</Text>
-              <View style={styles?.calendar}>
-                {startDate ? (
-                  <Text>{`${startDate.getDate()}/${startDate.getMonth()}/${startDate.getFullYear()}`}</Text>
-                ) : (
-                  <Text>dd/mm/yyyy</Text>
-                )}
-                <AntDesign name="calendar" size={20} color={Colors.secondary} />
-              </View>
-            </View>
-            {showStartDatePicker && (
-              <DateTimePicker
-                testID="startDatePicker"
-                value={startDate || new Date()}
-                mode="date"
-                is24Hour={true}
-                display="default"
-                onChange={onStartDateChange}
-              />
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles?.dateField}
-            onPress={() => setShowEndDatePicker(true)}
-          >
-            <View style={styles.dateItem}>
-              <Text style={styles.itemText}>End Date</Text>
-              <View style={styles?.calendar}>
-                {endDate ? (
-                  <Text>{`${endDate.getDate()}/${endDate.getMonth()}/${endDate.getFullYear()}`}</Text>
-                ) : (
-                  <Text>dd/mm/yyyy</Text>
-                )}
-                <AntDesign name="calendar" size={20} color={Colors.secondary} />
-              </View>
-            </View>
-            {showEndDatePicker && (
-              <DateTimePicker
-                testID="endDatePicker"
-                value={endDate || new Date()}
-                mode="date"
-                is24Hour={true}
-                display="default"
-                onChange={onEndDateChange}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        <Button
-          isPrimary={false}
-          title="Back"
-          onPress={() => {
-            setIsAddService(false);
-            return router.back();
+      <View style={{ flexDirection: "column", gap: 15 }}>
+        <Controller
+          control={control}
+          name="address"
+          defaultValue=""
+          rules={{
+            required: "Address is required",
           }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <AddLocationAndAddress
+              name="address"
+              address={value}
+              setAddress={onChange}
+              onBlur={onBlur}
+              location={location}
+              setLocation={setLocation}
+              errors={errors}
+            />
+          )}
         />
-        <Button isPrimary={true} title="Next" onPress={handleNext} />
-      </Animated.View>
-    </>
+
+        <Controller
+          control={control}
+          name="startDate"
+          defaultValue={new Date()}
+          rules={{
+            required: "Start date is required",
+            validate: (value) => {
+              if (new Date(value) < new Date()) {
+                return "Start date cannot be earlier than today";
+              } else if (new Date(value) > new Date(watch("endDate"))) {
+                return "Start date cannot be later than End date";
+              } else {
+                return true;
+              }
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DateField
+              title="Start Date"
+              name="startDate"
+              date={value}
+              setDate={onChange}
+              onBlur={onBlur}
+              errors={errors}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="endDate"
+          defaultValue={new Date()}
+          rules={{
+            required: "End date is required",
+            validate: (value) => {
+              if (new Date(value) <= new Date()) {
+                return "End date cannot be earlier than today";
+              } else if (new Date(value) < new Date(watch("startDate"))) {
+                return "End date cannot be earlier than Start date";
+              } else {
+                return true;
+              }
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DateField
+              title="End Date"
+              name="endDate"
+              date={value}
+              setDate={onChange}
+              onBlur={onBlur}
+              errors={errors}
+            />
+          )}
+        />
+      </View>
+      <View style={styles?.buttonContainer}>
+        <Button isPrimary={false} title="Back" onPress={() => setStep(1)} />
+        <Button
+          isPrimary={true}
+          title="Save and Next"
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
+    height: "100%",
     backgroundColor: "white",
-  },
-  customHeader: {
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  headerText: {
-    // textAlign: 'center',
-    fontWeight: "700",
-    fontSize: 20,
-  },
-  formContainer: {
-    padding: 20,
-    marginBottom: 100,
   },
   image: {
     width: "100%",
-    height: 350,
+    height: 260,
     resizeMode: "cover",
-    marginBottom: 20,
   },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    padding: 20,
-    paddingBottom: 30,
-    width: width,
+  buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  dateField: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    height: 53,
-    padding: 10,
-    borderColor: Colors?.secondary,
-    borderRadius: 8,
-    marginVertical: 16,
-  },
-  dateItem: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  calendar: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 10,
-  },
-  itemText: {
-    color: darkGreen,
-    fontWeight: "400",
-    fontSize: 16,
+    marginVertical: 20,
   },
 });
 
-export default WorkDuration;
+export default SecondScreen;

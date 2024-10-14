@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 
-const Counter = ({counter, setCounter}:any) => {
+const Counter = ({ counter, setCounter, style }: any) => {
   // const [counter, setCounter] = useState(0);
   const [initialCount, setInitialCount] = useState(0);
 
@@ -26,18 +26,27 @@ const Counter = ({counter, setCounter}:any) => {
   };
 
   const handleClick2 = () => {
-    if(counter > 0) setCounter(counter - 1);
+    if (counter > 0) setCounter(counter - 1);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
-        <TouchableOpacity style={styles.button} onPress={handleClick1}>
+        <TouchableOpacity style={[styles.button, style]} onPress={handleClick1}>
           <Foundation style={styles.counterIcon} name="plus" size={28} />
         </TouchableOpacity>
         <Text style={styles.counterValue}>{counter}</Text>
-        <TouchableOpacity style={styles.button} onPress={handleClick2}>
-          <Foundation style={styles.counterIcon} name="minus" size={32} />
+        <TouchableOpacity
+          disabled={counter === 0}
+          style={[styles.button, style]}
+          onPress={handleClick2}
+        >
+          <Foundation
+            style={styles.counterIcon}
+            name="minus"
+            size={32}
+            color={counter === 0 ? Colors?.secondary : "black"}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -46,17 +55,14 @@ const Counter = ({counter, setCounter}:any) => {
 
 const styles = StyleSheet.create({
   container: {
-    // width: "50%",
-    height: 56,
-    // borderColor: 'red',
-    // borderWidth: 1
+    height: 44,
   },
   buttons: {
-    height: '100%',
-    padding:0,
+    height: "100%",
+    padding: 0,
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: 'center',
+    alignItems: "center",
     gap: 8,
   },
   counterValue: {
@@ -66,16 +72,16 @@ const styles = StyleSheet.create({
   },
   counterIcon: {
     fontWeight: 900,
-    fontSize: 20
+    fontSize: 20,
   },
   button: {
-    padding: 12,
-    height: 53,
-    justifyContent: 'center',
-    borderRadius: 8,
+    padding: 10,
+    height: 44,
+    justifyContent: "center",
+    borderRadius: 4,
     backgroundColor: Colors.white,
     borderColor: Colors.secondary,
-    borderWidth: 1
+    borderWidth: 1,
   },
 });
 

@@ -9,16 +9,27 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Feather, FontAwesome, FontAwesome5, FontAwesome6, Fontisto, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome,
+  FontAwesome5,
+  FontAwesome6,
+  Fontisto,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
 import DropdownComponent from "@/components/Dropdown";
-import { statesOfIndia } from "@/constants";
+import { STETESOFINDIA } from "@/constants";
+import { useAtom } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 const AddCurrentLocation = () => {
   const navigation = useNavigation();
   const [secureEntery, setSecureEntery] = useState(true);
-
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [village, setVillage] = useState("");
   const [post, setPost] = useState("");
   const [city, setCity] = useState("");
@@ -35,8 +46,12 @@ const AddCurrentLocation = () => {
       state: state,
       country: country,
     };
-    console.log("Post service button pressed", payload);
-
+    const address = `${village}, ${post} ${city} ${pinCode} ${state} ${country}`;
+    console.log("Post service button pressed", payload, address);
+    let tempUserDetails = userDetails;
+    tempUserDetails.serviceAddress = [...userDetails?.serviceAddress, address];
+    setUserDetails(tempUserDetails);
+    router.back();
     // navigation.navigate("LOGIN");
   };
 
@@ -120,11 +135,7 @@ const AddCurrentLocation = () => {
           </View>
           <Text style={styles.inputLabel}>City</Text>
           <View style={styles.inputContainer}>
-            <FontAwesome5
-              name="city"
-              size={25}
-              color={Colors.secondary}
-            />
+            <FontAwesome5 name="city" size={25} color={Colors.secondary} />
             <TextInput
               value={city}
               style={styles.textInput}
@@ -135,11 +146,7 @@ const AddCurrentLocation = () => {
           </View>
           <Text style={styles.inputLabel}>Pin Code</Text>
           <View style={styles.inputContainer}>
-            <Feather
-              name="map-pin"
-              size={30}
-              color={Colors.secondary}
-            />
+            <Feather name="map-pin" size={30} color={Colors.secondary} />
             <TextInput
               value={pinCode}
               style={styles.textInput}
@@ -154,18 +161,21 @@ const AddCurrentLocation = () => {
               value={state}
               setValue={(state: any) => setState(state)}
               placeholder="Select State"
-              options={statesOfIndia}
-              icon={<FontAwesome6 style={styles.icon} color="black" name="map-location" size={25} />}
+              options={STETESOFINDIA}
+              icon={
+                <FontAwesome6
+                  style={styles.icon}
+                  color="black"
+                  name="map-location"
+                  size={25}
+                />
+              }
             />
           </View>
 
           <Text style={styles.inputLabel}>Country</Text>
           <View style={styles.inputContainer}>
-            <FontAwesome
-              name="flag"
-              size={30}
-              color={Colors.secondary}
-            />
+            <FontAwesome name="flag" size={30} color={Colors.secondary} />
             <TextInput
               value={country}
               style={styles.textInput}

@@ -52,7 +52,7 @@ const GroupWorkersListing = ({
 
     return (
       <Link href={`/screens/worker/${item?._id}`} asChild>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles?.container}>
           <View style={[styles.item, isLastItem && styles.lastElement]}>
             <Image
               source={
@@ -121,6 +121,12 @@ const GroupWorkersListing = ({
 export default GroupWorkersListing;
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 15,
+    marginRight: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.white,
+  },
   title: {
     fontSize: 22,
     fontWeight: "600",
@@ -128,10 +134,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   item: {
-    backgroundColor: Colors.white,
-    padding: 10,
-    borderRadius: 10,
-    marginRight: 20,
+    // padding: 10,
+    // marginRight: 20,
     flexDirection: "row",
     alignItems: "center",
   },

@@ -19,47 +19,59 @@ import { Link } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 
+interface LocationFieldProps {
+  address: string;
+  setAddress: any;
+  isError: boolean;
+}
 
-const LocationField = ({ address, setAddress }: any) => {
+const LocationField = ({
+  address,
+  setAddress,
+  isError,
+}: LocationFieldProps) => {
   const [isFocus, setIsFocus] = useState(false);
-  const userDetails = useAtomValue(UserAtom)
-  const [serviceAddress, setServiceAddress] = useState([])
-  
-  useEffect(() => {
-    let addresses = userDetails?.serviceAddress && userDetails?.serviceAddress?.map((address:any) => {
-      return {
-        label: address,
-        value: address
-      }
-    })
-    setServiceAddress(addresses)
-  }, [userDetails])
+  const userDetails = useAtomValue(UserAtom);
+  const [allSavedAddresses, setAllSavedAddresses] = useState([
+    { label: "Add New Address", value: "addAddress" },
+  ]);
 
-  const data = [
-    ...serviceAddress,
-    { label: "Add New Address", value: "addAddress" }
-  ];
-  
+  console.log("userDetails---22", userDetails);
+
+  useEffect(() => {
+    let addresses =
+      userDetails?.serviceAddress &&
+      userDetails?.serviceAddress?.map((address: any) => {
+        return {
+          label: address,
+          value: address,
+        };
+      });
+
+    if (addresses && addresses?.length > 0)
+      setAllSavedAddresses([...addresses, ...allSavedAddresses]);
+  }, [userDetails?.serviceAddress]);
+
   return (
     <View style={styles.container}>
-      {/* <Text
-        style={{
-          marginVertical: 10,
-        }}
-      >
-        Address
-      </Text> */}
       <Dropdown
-        style={styles.dropdown}
+        style={[
+          styles.dropdown,
+          isFocus && styles?.focusStyle,
+          isError && styles?.errorInput,
+        ]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
+        containerStyle={isFocus && styles?.containerStyle}
         iconStyle={styles.iconStyle}
-        data={data}
+        data={allSavedAddresses}
         labelField="label"
         valueField="value"
         placeholder="Select item"
         value={address}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
           setAddress(item.value);
         }}
@@ -103,14 +115,31 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
-    marginBottom: 16
+    marginBottom: 10,
   },
   dropdown: {
     height: 53,
     borderColor: Colors.secondary,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 10,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
+  },
+  focusStyle: {
+    borderColor: Colors?.primary,
+    borderBottomEndRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
+  containerStyle: {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    borderWidth: 0,
   },
   icon: {
     marginRight: 10,

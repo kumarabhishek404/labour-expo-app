@@ -8,8 +8,12 @@ import {
   Ionicons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { useAtomValue } from "jotai";
-import { AddServiceInProcess, UserAtom } from "../AtomStore/user";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  AddServiceAtom,
+  AddServiceInProcess,
+  UserAtom,
+} from "../AtomStore/user";
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
 import { usePushNotifications } from "../hooks/usePushNotification";
@@ -18,6 +22,7 @@ import { useLocale } from "../context/locale";
 export default function Layout() {
   const { locale } = useLocale();
   const userDetails = useAtomValue(UserAtom);
+  const [addService, setAddService] = useAtom(AddServiceAtom);
   const isAddService = useAtomValue(AddServiceInProcess);
   const { expoPushToken, sendPushNotification } = usePushNotifications(
     userDetails?._id
@@ -52,6 +57,11 @@ export default function Layout() {
     >
       <Tabs.Screen
         name="index"
+        listeners={{
+          tabPress: () => {
+            setAddService({});
+          },
+        }}
         options={{
           title: "Home",
           tabBarIcon: ({ color }: any) => (
@@ -61,6 +71,11 @@ export default function Layout() {
       />
       <Tabs.Screen
         name="bookings"
+        listeners={{
+          tabPress: () => {
+            setAddService({});
+          },
+        }}
         options={{
           title:
             userDetails?.role === "Employer" ? "My Services" : "My Bookings",
@@ -85,12 +100,14 @@ export default function Layout() {
         />
       ) : (
         <Tabs.Screen
-          name={userDetails?.role === "Employer" ? "addService" : "addService"}
+          name="addService"
           options={{
             headerShown: false,
             title:
               userDetails?.role === "Employer"
-                ? "Add Service"
+                ? addService?._id
+                  ? "Edit Service"
+                  : "Add Service"
                 : "Add Requirments",
             tabBarIcon: ({ color }: any) => (
               <View>
@@ -107,6 +124,11 @@ export default function Layout() {
       )}
       <Tabs.Screen
         name="workers"
+        listeners={{
+          tabPress: () => {
+            setAddService({});
+          },
+        }}
         options={{
           title: userDetails?.role === "Employer" ? "Workers" : "Services",
           tabBarIcon: ({ color }: any) => (
@@ -116,6 +138,11 @@ export default function Layout() {
       />
       <Tabs.Screen
         name="profile"
+        listeners={{
+          tabPress: () => {
+            setAddService({});
+          },
+        }}
         options={{
           title: "My Profile",
           tabBarIcon: ({ color }: any) => (

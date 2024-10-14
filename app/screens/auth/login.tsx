@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -10,38 +10,42 @@ import {
 import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  Ionicons,
+  Octicons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/Loader";
 import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
 import { signIn } from "../../api/user";
 import { toast } from "../../hooks/toast";
 import i18n from "@/utils/i18n";
+import { useForm, Controller } from "react-hook-form"; // Import react-hook-form
+import TextInputComponent from "@/components/TextInputWithIcon";
+import PasswordComponent from "@/components/password";
+import SelfieScreen from "@/components/selfie";
 
 const LoginScreen = () => {
   const setUserDetails = useSetAtom(UserAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
   const setEarnings = useSetAtom(EarningAtom);
-  const [secureEntery, setSecureEntery] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [secureEntry, setSecureEntry] = useState(true);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
-    mutationFn: () => {
-      let payload = {
-        email: email,
-        password: password,
-      };
-      return signIn(payload);
-    },
+    mutationFn: (data) => signIn(data), // Pass form data to mutation
     onSuccess: (response) => {
-      // setUser(response?.user)
-      // setToken(response?.token)
       let user = response?.user;
       let work = user?.workDetails;
       let earnings = user?.earnings;
-      console.log("Workrrrrrr---", user?.earnings);
 
       setUserDetails({
         isAuth: true,
@@ -58,28 +62,38 @@ const LoginScreen = () => {
         role: user?.role,
         roleType: user?.labourType,
         token: response?.token,
-        serviceAddress: ["1234 Main St, New York, NY 10001", "Balipur, post - Shakrauli, Etah Uttar Predesh"],
+        serviceAddress: [
+          "1234 Main St, New York, NY 10001",
+          "Balipur, post - Shakrauli, Etah Uttar Predesh",
+        ],
       });
+
       setWorkDetails({
         total: work?.total,
         completed: work?.completed,
         cancelled: work?.cancelled,
         upcoming: work?.upcoming,
       });
+
       setEarnings({
         work: earnings?.work,
         rewards: earnings?.rewards,
       });
+
       toast.success("Logged in successfully!");
-      console.log("Response while loging a user - ", response);
     },
     onError: (err) => {
-      console.error("error while loging a user - ", err);
+      console.error("Error while logging in user - ", err);
+      toast.error("Login failed");
     },
   });
 
   const handleForgotPassword = () => {
     router.push("/screens/auth/forgetPassword");
+  };
+
+  const onSubmit = (data: any) => {
+    mutationSignIn.mutate(data);
   };
 
   return (
@@ -96,67 +110,98 @@ const LoginScreen = () => {
           <Text style={styles.headingText}>{i18n.t("welcome")}</Text>
           <Text style={styles.headingText}>Back</Text>
         </View>
+
         <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name={"mail-outline"}
-              size={30}
-              color={Colors.secondary}
-            />
-            <TextInput
-              value={email}
-              style={styles.textInput}
-              placeholder="Enter your email"
-              placeholderTextColor={Colors.secondary}
-              keyboardType="email-address"
-              onChangeText={(email) => {
-                setEmail(email);
-              }}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <SimpleLineIcons name={"lock"} size={30} color={Colors.secondary} />
-            <TextInput
-              value={password}
-              style={styles.textInput}
-              placeholder="Enter your password"
-              placeholderTextColor={Colors.secondary}
-              secureTextEntry={secureEntery}
-              onChangeText={(password) => {
-                setPassword(password);
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setSecureEntery((prev) => !prev);
-              }}
-            >
-              <SimpleLineIcons
-                name={"eye"}
-                size={20}
-                color={Colors.secondary}
+          <Controller
+            control={control}
+            name="email"
+            defaultValue=""
+            rules={{
+              required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: "Enter a valid email address",
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                label="Email"
+                name="email"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Enter your email"
+                containerStyle={errors?.email && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Ionicons
+                    name={"mail-outline"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
               />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="password"
+            defaultValue=""
+            rules={{ required: "Password is required" }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <PasswordComponent
+                label="Password"
+                name="password"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Enter your password"
+                containerStyle={errors?.password && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Ionicons
+                    name={"mail-outline"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
+
+          <View style={styles.forgetPasswordContainer}>
+            <TouchableOpacity
+              style={styles.forgetPasswordContainer}
+              onPress={handleForgotPassword}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleForgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
+
+          {/* Login Button */}
           <TouchableOpacity
-            onPress={() => mutationSignIn.mutate()}
+            onPress={handleSubmit(onSubmit)}
             style={styles.loginButtonWrapper}
           >
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
-          <Text style={styles.continueText}>or continue with</Text>
-          <TouchableOpacity style={styles.googleButtonContainer}>
+
+          {/* <Text style={styles.continueText}>or continue with</Text> */}
+
+          {/* Google Login Button */}
+          {/* <TouchableOpacity style={styles.googleButtonContainer}>
             <Image
               source={require("../../../assets/images/google.png")}
               style={styles.googleImage}
             />
             <Text style={styles.googleText}>Google</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>Don't have an account!</Text>
+            <Text style={styles.accountText}>Don't have an account?</Text>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
                 <Text style={styles.signupText}>Sign Up</Text>
@@ -177,43 +222,53 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     padding: 20,
   },
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: Colors.gray,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   textContainer: {
     marginVertical: 20,
   },
   headingText: {
     fontSize: 32,
     color: Colors.primary,
-    // fontFamily: Fonts.SemiBold,
   },
   formContainer: {
     marginTop: 20,
+    // gap: 10,
+  },
+  input: {
+    marginBottom: 20,
   },
   inputContainer: {
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 10,
+    borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    marginBottom: 4,
   },
   textInput: {
+    height: 53,
     flex: 1,
     paddingHorizontal: 10,
     marginLeft: 10,
   },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
+  },
+  forgetPasswordContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 5,
+  },
   forgotPasswordText: {
-    width: 117,
     textAlign: "right",
-    alignSelf: "flex-end",
     color: Colors.primary,
     marginVertical: 10,
   },
@@ -228,7 +283,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: Fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },
@@ -236,7 +290,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 20,
     fontSize: 14,
-    // fontFamily: Fonts.Regular,
     color: Colors.primary,
   },
   googleButtonContainer: {
@@ -255,7 +308,6 @@ const styles = StyleSheet.create({
   },
   googleText: {
     fontSize: 20,
-    // fontFamily: Fonts.SemiBold,
   },
   footerContainer: {
     flexDirection: "row",
@@ -266,32 +318,11 @@ const styles = StyleSheet.create({
   },
   accountText: {
     color: Colors.primary,
-    // fontFamily: Fonts.Regular,
-  },
-  redirectButtonWrapper: {
-    // width: '100%',
-    // display: 'flex',
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 18,
-    marginVertical: 20,
-  },
-  loginButton: {
-    flexDirection: "row",
-    borderWidth: 2,
-    height: 50,
-    borderColor: Colors.primary,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 3,
-    paddingHorizontal: 20,
-    gap: 10,
   },
   signupText: {
     color: Colors.black,
+    fontSize: 20,
+    fontWeight: "500",
     textDecorationLine: "underline",
-    // fontFamily: Fonts.Bold,
   },
 });

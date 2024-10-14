@@ -37,21 +37,10 @@ const ProfileScreen = () => {
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [email, setEmail] = useState(userDetails?.email);
   const [avatar, setAvatar] = useState(userDetails?.avatar);
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
-  const [numberValue, setNumberValue] = useState("");
-  const [emailValue, setEmailValue] = useState("");
-  const [dropdownValue, setDropdownValue] = useState("");
-
-  // Create a reference to the ScrollView
-  // const scrollViewRef: any = useRef(null);
-
-  // useEffect(() => {
-  //   scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
-  // }, []);
 
   useEffect(() => {
     setFirstName(userDetails?.firstName);
@@ -82,6 +71,29 @@ const ProfileScreen = () => {
       console.error("error while updating the profile ", err);
       setIsEditProfile(false);
     },
+  });
+
+  const mutationUploadProfileImage = useMutation({
+    mutationKey: ["uploadProfileImage"],
+    mutationFn: (payload) => handleUploadAvatar(payload),
+    onSuccess: (response) => {
+      console.log("Response from avatar image uploading - ", response);
+      setUserDetails({
+        ...userDetails,
+        avatar: response?.data,
+      });
+      setAvatar(response?.data);
+    },
+    onError: (err) => {
+      console.log("Error while uploading avatar image - ", err);
+    },
+  });
+
+  const mutationRemoveProfileImage = useMutation({
+    mutationKey: ["removeProfileImage"],
+    mutationFn: () => handleRemoveProfileImage(),
+    onSuccess: (response) => {},
+    onError: (err) => {},
   });
 
   const toggleNotificationSwitch = () =>
@@ -121,67 +133,24 @@ const ProfileScreen = () => {
   };
 
   const handleEditProfile = () => {
-    console.log("Edit profile");
     setIsEditProfile(true);
   };
 
-  // const handleSaveProfile = async () => {
-  //   console.log("Input Value:", firstName, lastName, address);
-  //   let payload = {
-  //     firstName: firstName,
-  //     lastName: lastName,
-  //     address: address,
-  //   };
-  //   try {
-  //     const response = await updateUserById(payload);
-  //     console.log("response after user update  ---", response?.data);
-  //     let user = response?.data;
-  //     setIsEditProfile(false);
-  //     setUserDetails({
-  //       ...userDetails,
-  //       firstName: user?.firstName,
-  //       lastName: user?.lastName,
-  //       address: user?.address,
-  //     });
-  //   } catch (err) {
-  //     setIsEditProfile(false);
-  //     console.log("error while updating user info ", err);
-  //   }
-  // };
-
-  const handleChooseAvatar = async () => {
-    console.log("Handling Image upload");
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setAvatar(result.assets[0].uri);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUploadAvatar = async (profileImage: any) => {
+    const formData: any = new FormData();
+    const avatarFile = profileImage.split("/").pop();
+    formData.append("avatar", {
+      uri: profileImage,
+      type: "image/jpeg",
+      name: avatarFile,
+    });
+    return await uploadFile(formData);
   };
 
-  const handleUploadAvatar = async () => {
-    try {
-      const formData: any = new FormData();
-      // const imageUri: any = images;
-      console.log("avatar", avatar);
-
-      const avatarFile = avatar.split("/").pop();
-      formData.append("avatar", {
-        uri: avatar,
-        type: "image/jpeg",
-        name: avatarFile,
-      });
-      const response = await uploadFile(formData);
-      console.log("Response from avatar image uploading - ", response);
-    } catch (err: any) {
-      console.log("Error while uploading avatar image - ", err);
-    }
+  const handleRemoveProfileImage = () => {
+    let tempUserDetails = { ...userDetails };
+    tempUserDetails.avatar = "";
+    return setUserDetails(tempUserDetails);
   };
 
   const modalContent = () => {
@@ -269,14 +238,22 @@ const ProfileScreen = () => {
       <Loader loading={mutationUpdateProfileInfo?.isPending} />
       <ScrollView style={styles.container}>
         <View style={styles.userInfoSection}>
-          <View style={{ flexDirection: "row", marginTop: 15 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: 15,
+            }}
+          >
             <AvatarComponent
               isEditable={true}
+              isLoading={mutationUploadProfileImage?.isPending}
               profileImage={avatar}
               setProfileImage={setAvatar}
-              onUpload={handleUploadAvatar}
+              onUpload={mutationUploadProfileImage?.mutate}
+              onRemoveImage={mutationRemoveProfileImage?.mutate}
             />
-            <View style={{ flex: 1, marginHorizontal: 20 }}>
+            <View style={{ flex: 1, marginHorizontal: 10 }}>
               <Text
                 style={[
                   styles.title,
@@ -311,6 +288,7 @@ const ProfileScreen = () => {
             </View>
           </View>
         </View>
+
         <View style={styles.userInfoTextWrapper}>
           <View style={styles.userInfoBox}>
             <View style={[styles.row, styles.firstBox]}>
@@ -583,52 +561,35 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
   },
   userInfoSection: {
-    paddingHorizontal: 30,
-    marginBottom: 25,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   userInfoTextWrapper: {
     // width: '100%',
-    paddingHorizontal: 30,
-    marginBottom: 25,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
   userInfoBox: {
     // width: '90%',
     // borderRadius: 16,
     padding: 15,
-    marginLeft: -20,
+    // marginLeft: -20,
   },
   userInfoText: {
     color: "#777777",
     padding: 12,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 15,
-    paddingHorizontal: 10,
-    padding: 7.8,
-    borderRadius: 8,
-    // fontFamily: fonts.Light,
-  },
-  textInput1: {
-    width: 60,
-    // flex: 1,
-    fontSize: 15,
-    paddingHorizontal: 10,
-    padding: 6,
-    borderRadius: 8,
-    marginBottom: 6,
-    // fontFamily: fonts.Light,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
   },
   caption: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
-    letterSpacing: 0.5,
+    letterSpacing: 0,
     borderWidth: 1,
     borderColor: "#ddd",
     width: 130,

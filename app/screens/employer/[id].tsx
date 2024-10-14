@@ -32,19 +32,26 @@ import ViewMap from "@/components/ViewMap";
 import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
-import { getEmployerById } from "../../api/employer";
-import AvatarComponent from "@/components/Avatar";
+import profileImage from "../../../assets/images/placeholder-person.jpg";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
+import { sendJoiningRequest } from "@/app/api/requests";
+import { getEmployerById, likeEmployer } from "@/app/api/employer";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-const Employer = () => {
+const Worker = () => {
+  const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
-  const [worker, setWorker]: any = useState({});
-  // const worker: any = (workers as ListingType[]).find((item) => item._id === id);
+  const [employer, setWorker]: any = useState({});
+  // const employer: any = (workers as ListingType[]).find((item) => item._id === id);
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+  const [isEmployerLiked, setIsEmployerLiked] = useState(
+    employer?.isLiked || false
+  );
 
   const {
     isLoading,
@@ -53,31 +60,31 @@ const Employer = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["workerDetails"],
-    queryFn: async () => await getEmployerDetailsById(id),
-    retry: 0,
+    queryKey: ["employerDetails"],
+    queryFn: () => getEmployerById(id),
+    retry: false,
     enabled: !!id,
-    // refetchOnWindowFocus: true
   });
 
-  const getEmployerDetailsById = async (id: any) => {
-    try {
-      const response = await getEmployerById(id);
-      return response;
-    } catch (err) {
-      router.back();
-      console.log("error while getting details of service");
-    }
-  };
-
-  const mutation = useMutation({
-    mutationKey: ["likeWorker", { id }],
-    mutationFn: () => likeWorker({ workerID: id }),
+  const mutationLikeEmployer = useMutation({
+    mutationKey: ["likeEmployer", { id }],
+    mutationFn: () => likeEmployer({ employerID: id }),
     onSuccess: (response) => {
-      console.log("Response while liking a worker - ", response);
+      console.log("Response while liking a employer - ", response);
     },
     onError: (err) => {
-      console.error("error while liking the worker ", err);
+      console.error("error while liking the employer ", err);
+    },
+  });
+
+  const mutationSendRequest = useMutation({
+    mutationKey: ["sendRequest", { id }],
+    mutationFn: () => sendJoiningRequest({ userId: id }),
+    onSuccess: (response) => {
+      console.log("Response while sending a request to employer - ", response);
+    },
+    onError: (err) => {
+      console.error("error while sending request to employer ", err);
     },
   });
 
@@ -108,6 +115,8 @@ const Employer = () => {
       ],
     };
   });
+
+  console.log("employer--", employer);
 
   return (
     <>
@@ -157,7 +166,14 @@ const Employer = () => {
           ),
         }}
       />
-      <Loader loading={isLoading || isRefetching || mutation?.isPending} />
+      <Loader
+        loading={
+          isLoading ||
+          isRefetching ||
+          mutationLikeEmployer?.isPending ||
+          mutationSendRequest?.isPending
+        }
+      />
 
       <View style={styles.container}>
         <Animated.ScrollView
@@ -165,88 +181,177 @@ const Employer = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            // source={{ uri: worker.image }}
+            // source={{ uri: employer.image }}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Image source={{ uri: worker?.image }} style={styles.workerImage} />
-            <AvatarComponent
-              isEditable={false}
-              profileImage={
-                "https://xsgames.co/randomusers/avatar.php?g=female"
+            <Image
+              source={{ uri: employer?.image }}
+              style={styles.workerImage}
+            />
+            <Image
+              style={styles.workerImage}
+              source={
+                employer?.avatar ? { uri: employer?.avatar } : profileImage
               }
+              // size={150}
             />
             <Text style={styles.listingName}>
-              {worker?.firstName} {worker?.lastName}
+              {employer?.firstName} {employer?.middleName} {employer?.lastName}
             </Text>
-            <View style={styles.listingLocationWrapper}>
+
+            <Text style={styles.caption}>EMPLOYER</Text>
+
+            {/* <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
                 size={18}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{worker?.location}</Text>
-            </View>
+              <Text style={styles.listingLocationTxt}>
+                {employer?.address || "Address not found"}
+              </Text>
+            </View> */}
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row" }}>
-                <View style={styles.highlightIcon}>
-                  <Ionicons name="time" size={18} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.highlightTxt}>Price</Text>
-                  <Text style={styles.highlightTxtVal}>
-                    {worker?.duration} Rs / Day
-                  </Text>
-                </View>
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                <View style={styles.highlightIcon}>
-                  <FontAwesome name="users" size={18} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.skills}</Text>
-                </View>
-              </View>
-              <View style={{ flexDirection: "row" }}>
+              <View style={styles?.highlightBox}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
-                <View>
+                <View style={{ width: 90 }}>
                   <Text style={styles.highlightTxt}>Rating</Text>
-                  <Text style={styles.highlightTxtVal}>{worker?.rating}</Text>
+                  <Text style={styles.highlightTxtVal}>
+                    {employer?.rating || 0}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles?.highlightBox}>
+                <View style={styles.highlightIcon}>
+                  <FontAwesome name="users" size={18} color={Colors.primary} />
+                </View>
+                <View style={{ width: 100 }}>
+                  <Text style={styles.highlightTxt}>Rank</Text>
+                  <Text style={styles.highlightTxtVal}>Beginer</Text>
+                </View>
+              </View>
+              <View style={styles?.highlightBox}>
+                <View style={styles.highlightIcon}>
+                  <Ionicons name="time" size={18} color={Colors.primary} />
+                </View>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: 90,
+                  }}
+                >
+                  <Text style={styles.highlightTxt}>Badge</Text>
+                  <Text style={styles.highlightTxtVal}>Jameendar</Text>
                 </View>
               </View>
             </View>
 
-            <Text style={styles.listingDetails}>{worker?.description}</Text>
+            <Text style={styles.listingDetails}>{employer?.description}</Text>
+
+            <View style={styles.userInfoTextWrapper}>
+              <View style={styles.userInfoBox}>
+                <View style={[styles.row, styles.firstBox]}>
+                  <Text style={styles.userInfoText}>
+                    <Text style={styles?.infoLabel}>Address</Text>
+                    {"  "}
+                    {employer?.address || "Address not found"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.userInfoText}>
+                    <Text style={styles?.infoLabel}>Mobile Number</Text>
+                    {"  "}
+                    {employer?.mobileNumber ||
+                      employer?.alternateMobileNumber ||
+                      "Mobile not found"}
+                  </Text>
+                </View>
+                <View style={[styles.row, styles.lastBox]}>
+                  <Text style={styles.userInfoText}>
+                    <Text style={styles?.infoLabel}>Email Address</Text>
+                    {"  "}
+                    {employer?.email}, {employer?.alternateEmail}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <Text style={styles.workInfoHeading}>Wallet</Text>
+            <View style={styles.infoBoxWrapper}>
+              <View
+                style={[
+                  styles.infoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>₹ {employer?.earnings?.work}</Text>
+                <Text>Spents</Text>
+              </View>
+              <View style={styles.infoBox}>
+                <Text>₹ {employer?.earnings?.rewards}</Text>
+                <Text>Rewards</Text>
+              </View>
+            </View>
+
+            <Text style={styles.workInfoHeading}>Service Information</Text>
+            <View style={styles.workInfoWrapper}>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{employer?.workDetails?.total}</Text>
+                <Text>Total Services</Text>
+              </View>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{employer?.workDetails?.completed}</Text>
+                <Text>Completed</Text>
+              </View>
+              <View style={styles.workInfoBox}>
+                <Text>{employer?.workDetails?.upcoming}</Text>
+                <Text>Upcoming</Text>
+              </View>
+            </View>
           </View>
         </Animated.ScrollView>
       </View>
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         <TouchableOpacity
-          onPress={() => {}}
-          style={[styles.footerBtn, styles.footerBookBtn]}
-        >
-          <Text style={styles.footerBtnTxt}>Book Now</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => mutation?.mutate()}
+          onPress={() => mutationLikeEmployer?.mutate()}
           style={styles.footerBtn}
         >
-          <Text style={styles.footerBtnTxt}>Like</Text>
+          <Text style={styles.footerBtnTxt}>
+            {isEmployerLiked ? "Unlike" : "Like"}
+          </Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-            <Text style={styles.footerBtnTxt}>${worker?.price}</Text>
-          </TouchableOpacity> */}
       </Animated.View>
     </>
   );
 };
 
-export default Employer;
+export default Worker;
 
 const styles = StyleSheet.create({
   container: {
@@ -270,7 +375,7 @@ const styles = StyleSheet.create({
   workerImage: {
     width: 150,
     height: 150,
-    borderRadius: 10,
+    borderRadius: 100,
     marginBottom: 20,
     position: "absolute",
     right: 22,
@@ -281,6 +386,20 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: Colors.black,
     letterSpacing: 0.5,
+  },
+  caption: {
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    width: 130,
+    padding: 6,
+    marginVertical: 8,
+    borderRadius: 30,
+    textAlign: "center",
+    textTransform: "uppercase",
+    backgroundColor: "#d6ecdd",
   },
   listingLocationWrapper: {
     flexDirection: "row",
@@ -295,15 +414,26 @@ const styles = StyleSheet.create({
   },
   highlightWrapper: {
     flexDirection: "row",
-    marginVertical: 20,
+    marginVertical: 10,
     justifyContent: "space-between",
+    columnGap: 2,
+  },
+  highlightBox: {
+    width: "30%",
+    display: "flex",
+    flexDirection: "row",
+    gap: 4,
+    // borderColor: "red",
+    // borderWidth: 2,
+    // margin: 4,
   },
   highlightIcon: {
+    width: 30,
+    height: 30,
+    display: "flex",
+    justifyContent: "center",
     backgroundColor: "#F4F4F4",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
     borderRadius: 8,
-    marginRight: 5,
     alignItems: "center",
   },
   highlightTxt: {
@@ -319,6 +449,80 @@ const styles = StyleSheet.create({
     color: Colors.black,
     lineHeight: 25,
     letterSpacing: 0.5,
+  },
+  row: {
+    paddingTop: 0,
+    // backgroundColor: Colors.white,
+    flexDirection: "row",
+    marginBottom: 5,
+    backgroundColor: "#d4d4d4",
+  },
+  userInfoTextWrapper: {
+    // width: '100%',
+    // paddingHorizontal: 10,
+    marginBottom: 25,
+  },
+  userInfoBox: {
+    // padding: 10,
+  },
+  userInfoText: {
+    color: "#777777",
+    padding: 12,
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "black",
+  },
+  firstBox: {
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+  },
+  lastBox: {
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  infoBoxWrapper: {
+    marginTop: 10,
+    marginBottom: 20,
+    borderBottomColor: "#dddddd",
+    borderBottomWidth: 1,
+    borderTopColor: "#dddddd",
+    borderTopWidth: 1,
+    backgroundColor: "#ffffff",
+    flexDirection: "row",
+    height: 100,
+  },
+  infoBox: {
+    width: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  workInfoHeading: {
+    color: Colors.primary,
+    // marginLeft: 30,
+    fontWeight: "700",
+    fontSize: 16,
+    lineHeight: 26,
+  },
+  workInfoWrapper: {
+    marginTop: 10,
+    borderBottomColor: "#dddddd",
+    borderBottomWidth: 1,
+    borderTopColor: "#dddddd",
+    backgroundColor: "#ffffff",
+    borderTopWidth: 1,
+    height: 100,
+    display: "flex",
+    flexDirection: "row",
+  },
+  workInfoBox: {
+    width: "33%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  menuWrapper: {
+    marginTop: 10,
   },
   footer: {
     flexDirection: "row",

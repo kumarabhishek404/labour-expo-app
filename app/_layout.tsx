@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import * as Location from "expo-location";
 import { useAtom, useSetAtom } from "jotai";
-import { LocationAtom } from "./AtomStore/user";
+import { AddServiceInProcess, LocationAtom } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
 import { getLocales } from "expo-localization";
 import { LocaleProvider } from "./context/locale";
@@ -32,6 +32,7 @@ export default function RootLayout() {
   // const setLocationAt
   const deviceLanguage = getLocales()[0].languageCode;
   const setLocation = useSetAtom(LocationAtom);
+  const setIsAddService = useSetAtom(AddServiceInProcess);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -52,6 +53,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
+      setIsAddService(false);
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -72,7 +74,7 @@ export default function RootLayout() {
   //     });
 
   //     console.log("response of Expo Location ---", response);
-      
+
   //   };
   //   getPermission();
   // }, []);

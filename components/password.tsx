@@ -1,6 +1,12 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useState } from "react";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
 type TextInputProps = {
@@ -15,7 +21,7 @@ type TextInputProps = {
   containerStyle?: any;
 };
 
-const TextAreaInputComponent = ({
+const PasswordComponent = ({
   label,
   name,
   placeholder,
@@ -26,6 +32,8 @@ const TextAreaInputComponent = ({
   errors,
   containerStyle,
 }: TextInputProps) => {
+  const [secureEntry, setSecureEntry] = useState(true);
+
   return (
     <View style={styles?.inputField}>
       <Text style={styles.label}>{label}</Text>
@@ -36,14 +44,17 @@ const TextAreaInputComponent = ({
           onBlur={onBlur}
           onChangeText={onChangeText}
           style={styles.textInput}
-          placeholder={placeholder ?? "Work Title"}
+          secureTextEntry={secureEntry}
+          placeholder={placeholder}
           placeholderTextColor={Colors.secondary}
-          verticalAlign="top"
-          textAlignVertical="top"
-          editable
-          multiline
-          numberOfLines={10}
         />
+        <TouchableOpacity onPress={() => setSecureEntry((prev) => !prev)}>
+          <Feather
+            name={secureEntry ? "eye" : "eye-off"}
+            size={20}
+            color={Colors.secondary}
+          />
+        </TouchableOpacity>
       </View>
       {errors[name] && (
         <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
@@ -52,23 +63,22 @@ const TextAreaInputComponent = ({
   );
 };
 
-export default TextAreaInputComponent;
+export default PasswordComponent;
 
 const styles = StyleSheet.create({
   inputField: {},
   inputContainer: {
-    height: 140,
+    height: 53,
     borderWidth: 1,
     borderColor: Colors.secondary,
     borderRadius: 4,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     marginBottom: 10,
     paddingHorizontal: 10,
   },
   textInput: {
-    paddingVertical: 12,
-    verticalAlign: "top",
+    padding: 10,
     flex: 1,
   },
   icon: {

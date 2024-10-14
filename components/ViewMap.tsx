@@ -15,13 +15,14 @@ import MapView, {
   PROVIDER_GOOGLE,
   Region,
 } from "react-native-maps";
+import Button from "./Button";
 
 const Map = ({ data }: any) => {
   const mapRef: any = useRef();
   const navigation = useNavigation();
 
   console.log("Map Data--", data);
-  
+
   const focus = () => {
     // const Cordinates = {
     //   latitude: 48.8575,
@@ -30,8 +31,11 @@ const Map = ({ data }: any) => {
     //   longitudeDelta: 2,
     // }
 
-    mapRef.current?.animateCamera({center: data, zoom: 10}, {duration: 3000})
-  }
+    mapRef.current?.animateCamera(
+      { center: data, zoom: 10 },
+      { duration: 3000 }
+    );
+  };
 
   const onRegionChange = (region: Region) => {};
 
@@ -47,11 +51,25 @@ const Map = ({ data }: any) => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={focus}>
-        <Text>Focus on service location</Text>
-      </TouchableOpacity>
+      <Button
+        isPrimary={true}
+        title="Focus On Location"
+        onPress={focus}
+        style={{
+          position: "absolute",
+          top: 6,
+          right: 28,
+          width: 140,
+          zIndex: 1,
+          paddingVertical: 4,
+          paddingHorizontal: 8,
+        }}
+        textStyle={{
+          fontSize: 14,
+        }}
+      />
       <MapView
-        style={{ height: 400, width: 370 }}
+        style={{ height: 400, width: 370, borderRadius: 10 }}
         provider={PROVIDER_GOOGLE}
         initialRegion={data || initialRegion}
         showsUserLocation={true}
@@ -84,5 +102,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 10,
   },
 });

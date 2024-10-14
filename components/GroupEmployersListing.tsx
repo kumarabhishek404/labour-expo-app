@@ -52,7 +52,7 @@ const GroupEmployersListing = ({
 
     return (
       <Link href={`/screens/employer/${item?._id}`} asChild>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles?.container}>
           <View style={[styles.item, isLastItem && styles.lastElement]}>
             <Image
               source={
@@ -121,6 +121,9 @@ const GroupEmployersListing = ({
 export default GroupEmployersListing;
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 10
+  },
   title: {
     fontSize: 22,
     fontWeight: "600",

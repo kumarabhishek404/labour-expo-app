@@ -3,15 +3,34 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import LocationField from "./LocationField";
 import Button from "./Button";
 import * as Location from "expo-location";
+import { useAtom } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
+
+interface AddLocationAndAddressProps {
+  name: string;
+  address: string;
+  setAddress: any;
+  location: any;
+  setLocation: any;
+  onBlur: any;
+  errors: any;
+  icon?: any;
+}
 
 const AddLocationAndAddress = ({
+  name,
   address,
   setAddress,
   location,
   setLocation,
-}: any) => {
+  onBlur,
+  errors,
+}: AddLocationAndAddressProps) => {
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [selectedOption, setSelectedOption] = useState("address");
   const [isLoading, setIsLoading] = useState(false);
+
+  console.log("address---", address, "---", location, errors);
 
   const fetchCurrentLocation = async () => {
     setIsLoading(true);
@@ -25,12 +44,14 @@ const AddLocationAndAddress = ({
       let currentLocation = await Location.getCurrentPositionAsync({});
       let tempLocation = {
         // cordinates: {
-          latitude: currentLocation?.coords?.latitude,
-          longitude: currentLocation?.coords?.longitude,
-          latitudeDelta: 2,
-          longitudeDelta: 2,
+        latitude: currentLocation?.coords?.latitude,
+        longitude: currentLocation?.coords?.longitude,
+        latitudeDelta: 2,
+        longitudeDelta: 2,
         // },
       };
+      console.log("Temp Location --", tempLocation);
+
       setLocation(tempLocation);
       let response: any = await Location.reverseGeocodeAsync({
         latitude: tempLocation?.latitude,
@@ -38,11 +59,15 @@ const AddLocationAndAddress = ({
       });
       setIsLoading(false);
       setAddress(response[0]?.formattedAddress);
-      console.log(
-        "response of Expo Location ---",
-        currentLocation,
-        response[0]?.formattedAddress
-      );
+      let tempUserDetails = { ...userDetails };
+      tempUserDetails = {
+        ...userDetails,
+        serviceAddress: [
+          ...(userDetails?.serviceAddress ? userDetails?.serviceAddress : []),
+          response[0]?.formattedAddress,
+        ],
+      };
+      setUserDetails(tempUserDetails);
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");
@@ -51,7 +76,6 @@ const AddLocationAndAddress = ({
 
   return (
     <View style={styles.container}>
-      {/* Radio Buttons */}
       <View style={styles.radioContainer}>
         <TouchableOpacity
           style={styles.radioButton}
@@ -78,27 +102,53 @@ const AddLocationAndAddress = ({
         </TouchableOpacity>
       </View>
 
-      {/* Render Based on Selected Option */}
       {selectedOption === "address" ? (
-        <LocationField address={address} setAddress={setAddress} />
+        <LocationField
+          address={address}
+          setAddress={setAddress}
+          isError={errors[name]}
+        />
       ) : (
-        <View style={styles.locationContainer}>
-          <Button
-            style={styles?.locationButton}
-            isPrimary={true}
-            title="Get Current Location"
-            onPress={fetchCurrentLocation}
-          />
+        <>
+          <View style={styles.locationContainer}>
+            <Button
+              style={styles?.locationButton}
+              isPrimary={true}
+              title="Get Current Location"
+              onPress={fetchCurrentLocation}
+              loading={isLoading}
+            />
 
-          {location && (
-            <View style={styles.locationText}>
-              <Text style={{ fontWeight: "600" }}>Address: </Text>
-              <Text style={{ flex: 1 }}>
-                {address}
-              </Text>
-            </View>
-          )}
-        </View>
+            {location && (
+              <View style={styles.locationText}>
+                <Text style={{ fontWeight: "600" }}>Address: </Text>
+                {location ? (
+                  <Text
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {address}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      alignSelf: "flex-end",
+                    }}
+                  >
+                    Please fetch current location
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
+        </>
+      )}
+      {errors[name] && (
+        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
       )}
     </View>
   );
@@ -120,7 +170,6 @@ const styles = StyleSheet.create({
   radioContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
   },
   radioButton: {
     flexDirection: "row",
@@ -144,6 +193,8 @@ const styles = StyleSheet.create({
   },
   radioText: {
     fontSize: 16,
+    fontWeight: "600",
+    marginVertical: 15,
   },
   dropdownContainer: {
     marginTop: 20,
@@ -160,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   locationContainer: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   locationButton: {
     height: 53,
@@ -175,6 +226,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 

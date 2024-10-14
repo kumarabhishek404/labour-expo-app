@@ -1,5 +1,6 @@
 import Counter from "@/components/Counter";
 import Dropdown from "@/components/Dropdown";
+import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import {
   Entypo,
@@ -15,15 +16,23 @@ import {
   TextInput,
 } from "react-native";
 
-const WorkRequirment = ({ requirements, setRequirements }: any) => {
-  const data = [
-    { label: "Labour", value: "labour" },
-    { label: "Bricklayer", value: "Bricklayer" },
-    { label: "Stone Mason", value: "Stone Mason" },
-    { label: "Mistri", value: "mistri" },
-    { label: "Electrician", value: "electrician" },
-  ];
+interface WorkRequirmentProps {
+  name: string;
+  requirements: any;
+  setRequirements: any;
+  onBlur: any;
+  errors: any;
+  errorField: any;
+}
 
+const WorkRequirment = ({
+  name,
+  requirements,
+  setRequirements,
+  onBlur,
+  errors,
+  errorField,
+}: WorkRequirmentProps) => {
   const addRequirments = () => {
     let tempRequirements = [...requirements];
     tempRequirements[requirements?.length] = {
@@ -54,29 +63,25 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
     index: number,
     totalRequired: string
   ) => {
-    console.log("Item ---", index, totalRequired);
     let tempRequirments = [...requirements];
     tempRequirments[index].totalRequired = totalRequired;
     setRequirements(tempRequirments);
   };
 
-  const handleRequirementPriceChange = (index: number, payPerDay: number) => {
+  const handleRequirementPriceChange = (index: number, payPerDay: string) => {
     console.log("Item ---", index, payPerDay);
     let tempRequirments = [...requirements];
-    tempRequirments[index].payPerDay = payPerDay;
+    if (isNaN(parseInt(payPerDay))) {
+      tempRequirments[index].payPerDay = payPerDay;
+    } else {
+      tempRequirments[index].payPerDay = parseInt(payPerDay);
+    }
     setRequirements(tempRequirments);
   };
 
   return (
     <View style={styles.addRequirmentWrapper}>
-      <Text
-        style={{
-          fontWeight: "bold",
-          marginBottom: 4,
-        }}
-      >
-        Work Requirments
-      </Text>
+      <Text style={styles?.label}>Work Requirments</Text>
       {requirements &&
         requirements.length > 0 &&
         requirements?.map((requirement: any, index: number) => {
@@ -84,11 +89,19 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
             <View style={{ width: "100%" }} key={index}>
               <View style={styles.addRequirment}>
                 <Dropdown
+                  style={
+                    errorField?.index === index &&
+                    errorField?.name === "dropdown" &&
+                    styles?.errorInput
+                  }
                   value={requirement?.name}
                   setValue={(name: any) =>
                     handleRequirementTypeChange(index, name)
                   }
-                  options={data}
+                  options={WORKERTYPES}
+                  icon={
+                    <Text style={styles.requirementCountText}>{index + 1}</Text>
+                  }
                 />
                 <View style={styles.counterContainer}>
                   <Counter
@@ -96,11 +109,23 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
                     setCounter={(totalRequired: any) =>
                       handleRequirementCountChange(index, totalRequired)
                     }
+                    style={
+                      errorField?.index === index &&
+                      errorField?.name === "counter" &&
+                      styles?.errorInput
+                    }
                   />
-                  <View style={styles.priceField}>
+                  <View
+                    style={[
+                      styles.priceField,
+                      errorField?.index === index &&
+                        errorField?.name === "price" &&
+                        styles?.errorInput,
+                    ]}
+                  >
                     <MaterialIcons
                       name={"currency-rupee"}
-                      size={30}
+                      size={20}
                       color={Colors.secondary}
                     />
                     <TextInput
@@ -108,9 +133,11 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
                       style={styles.textInput}
                       placeholder="Rate per day"
                       placeholderTextColor={Colors.secondary}
+                      keyboardType="numeric"
+                      maxLength={4}
                       onChangeText={(payPerDay: string) => {
-                        const tempPayPerDay = parseInt(payPerDay);
-                        handleRequirementPriceChange(index, tempPayPerDay);
+                        const tempPayPerDay = payPerDay;
+                        handleRequirementPriceChange(index, payPerDay);
                       }}
                     />
                   </View>
@@ -127,18 +154,28 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
             </View>
           );
         })}
-      {/* {requirements &&
-        requirements?.map((requirment: any, index: number) => (
-          <View style={{ width: "100%" }} key={index}>
-            {requirment}
+      <View
+        style={{
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          flexDirection: "row",
+        }}
+      >
+        {errors[name] ? (
+          <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        ) : (
+          <Text></Text>
+        )}
+        <TouchableOpacity
+          onPress={addRequirments}
+          style={styles.addMoreWrapper}
+        >
+          <View style={styles.addMoreBox}>
+            <Entypo style={styles.plusIcon} name="plus" size={18} />
+            <Text style={styles.addMoreText}>Add More</Text>
           </View>
-        ))} */}
-      <TouchableOpacity onPress={addRequirments} style={styles.addMoreWrapper}>
-        <View style={styles.addMoreBox}>
-          <Entypo style={styles.plusIcon} name="plus" size={18} />
-          <Text style={styles.addMoreText}>Add More</Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -146,6 +183,11 @@ const WorkRequirment = ({ requirements, setRequirements }: any) => {
 export default WorkRequirment;
 
 const styles = StyleSheet.create({
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginVertical: 10,
+  },
   addRequirmentWrapper: {
     width: "100%",
     marginVertical: 10,
@@ -155,7 +197,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 25,
   },
   counterContainer: {
     width: "100%",
@@ -164,16 +206,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
-    marginTop: 15,
+    marginTop: 10,
   },
   addMoreWrapper: {
-    // padding: 4,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
     alignSelf: "flex-end",
-    width: "26%",
-    borderRadius: 4,
   },
   addMoreBox: {
     padding: 6,
@@ -194,21 +230,39 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     width: "40%",
-    // color: Colors.,
   },
   priceField: {
-    height: 53,
+    height: 44,
     width: "50%",
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 8,
+    borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 10,
-    // fontFamily: fonts.Light,
+    paddingHorizontal: 4,
+    fontSize: 18,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
+  },
+  errorText: {
+    flex: 1,
+    color: "red",
+    fontSize: 12,
+    marginRight: 16,
+  },
+  requirementCountText: {
+    flex: 1,
+    color: Colors?.secondary,
+    fontWeight: "700",
+    fontSize: 24,
+    marginRight: 16,
+    marginTop: -6,
   },
 });

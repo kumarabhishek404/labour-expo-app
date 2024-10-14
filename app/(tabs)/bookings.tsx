@@ -25,6 +25,7 @@ const Services = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
+  const firstTimeRef = React.useRef(true);
   const [category, setCategory] = useState("All");
   const {
     data: response,
@@ -32,6 +33,7 @@ const Services = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["myServices"],
     queryFn: ({ pageParam }) => {
@@ -47,6 +49,16 @@ const Services = () => {
       return undefined;
     },
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteService"],

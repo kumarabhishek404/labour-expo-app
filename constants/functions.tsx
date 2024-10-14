@@ -33,7 +33,6 @@ export const dateDifference = (date1: Date, date2: Date): string => {
   }`;
 };
 
-
 export const getTimeAgo = (createdOn: Date) => {
   const createdAt = new Date(createdOn);
   const now = new Date();
@@ -43,14 +42,24 @@ export const getTimeAgo = (createdOn: Date) => {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
 
-  if (days > 0) {
-    return `${days} days ago`;
+  if (months > 0) {
+    return `${months} ${months > 1 ? "months" : "month"} ago`;
+  } else if (weeks > 0) {
+    return `${weeks} ${weeks > 1 ? "weeks" : "week"} ago`;
+  } else if (days > 0) {
+    return `${days} ${days > 1 ? "days" : "day"} ago`;
   } else if (hours > 0) {
-    return `${hours} hours ago`;
+    return `${hours} ${hours > 1 ? "hours" : "hour"} ago`;
   } else if (minutes > 0) {
-    return `${minutes} minutes ago`;
+    return `${minutes} ${minutes > 1 ? "minutes" : "minute"} ago`;
   } else {
-    return `${seconds} seconds ago`;
+    return `${seconds} ${seconds > 1 ? "seconds" : "second"} ago`;
   }
-}
+};
+
+export const isEmptyObject = (obj: object) => {
+  return Object.entries(obj).length === 0 && obj.constructor === Object;
+};

@@ -4,6 +4,7 @@ import {
   makePostRequest,
   makePostRequestFormData,
   makePutRequest,
+  makePutRequestFormData,
 } from ".";
 import { toast } from "../hooks/toast";
 
@@ -30,14 +31,15 @@ export const editService = async (payload: any) => {
   try {
     const data = await makePutRequest("/service/update-service", payload);
     toast.success("Service updated successfully");
-    return data?.data;
+    return data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while updating service : `,
-      error?.response?.data
+      error?.response?.data?.message
     );
     toast.error(
-      error?.response?.data?.message || "An error occurred while updating service"
+      error?.response?.data?.message ||
+        "An error occurred while updating service"
     );
     throw error;
   }
@@ -52,10 +54,10 @@ export const getServiceById = async (id: any) => {
       `[Users] [userService] An error occurred while fetching service details : `,
       error
     );
-      toast.error(
-        error?.response?.data?.message ||
-          'An error occurred while fetching service details',
-      );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching service details"
+    );
     throw error;
   }
 };

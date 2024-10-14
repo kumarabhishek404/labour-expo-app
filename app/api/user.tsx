@@ -11,9 +11,25 @@ import {
 import { toast } from "../hooks/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const forgotPassword = async (payload: any) => {
-  console.log("Paylaod----", payload);
+export const register = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/auth/register", payload);
+    toast.success("Your account has registered successfully");
+    router.push("/screens/auth/login");
+    return data?.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while adding new user : `,
+      error?.response?.data
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while adding user"
+    );
+    throw error;
+  }
+};
 
+export const forgotPassword = async (payload: any) => {
   try {
     const response: any = await makePostRequest(
       `/auth/forgot-password-code`,
@@ -80,9 +96,9 @@ export const signIn = async (payload: any) => {
 
 export const updateUserById = async (payload: any) => {
   try {
-    const resposne = await makePatchRequest(`/user/info`, payload);
+    const response = await makePatchRequest(`/user/info`, payload);
     toast.success("User updated successfully");
-    return resposne;
+    return response;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while updating user : `,
@@ -142,9 +158,9 @@ export const uploadFile = async (file: any) => {
     toast.success("File uploaded successfully");
     console.log(
       "[userService] File uploaded successfully with file location",
-      data?.data?.Location
+      data?.data
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       "[userService] An error occurred while uploading file",

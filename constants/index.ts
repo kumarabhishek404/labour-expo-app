@@ -1,4 +1,4 @@
-export const statesOfIndia = [
+export const STETESOFINDIA = [
   { label: "Andhra Pradesh", value: "andhrapradesh" },
   { label: "Arunachal Pradesh", value: "arunachalpradesh" },
   { label: "Assam", value: "assam" },
@@ -27,4 +27,70 @@ export const statesOfIndia = [
   { label: "Uttar Pradesh", value: "uttarpradesh" },
   { label: "Uttarakhand", value: "uttarakhand" },
   { label: "West Bengal", value: "westbengal" },
+];
+
+export const ADDSERVICESTEPS = [
+  {
+    label: "Title & Description",
+  },
+  {
+    label: "Address & Date",
+  },
+  {
+    label: "Requirements",
+  },
+  {
+    label: "Images",
+  },
+];
+
+export const REGISTERSTEPS = [
+  {
+    label: "Name",
+  },
+  {
+    label: "Contacts",
+  },
+  {
+    label: "Skills",
+  },
+  {
+    label: "Password",
+  },
+];
+
+export const WORKERSKILLS = [
+  "Mistri",
+  "Beldaar",
+  "Electrician",
+  "Plumber",
+  "Labour",
+  "Tractor Driver",
+  "Car Driver",
+  "Painter",
+];
+
+export const MEDIATORTYPES = [
+  "Construction",
+  "Dhan Buwai",
+  "Dhan Katai",
+  "Aloo Buwai",
+  "Aloo Khudai",
+  "Gehu Katai",
+  "Bazara Katai",
+];
+
+export const COUNTRYPHONECODE = [
+  { label: "India", value: "+91" },
+  { label: "Canada", value: "+1" },
+  { label: "Belgium", value: "+32" },
+  { label: "Algeria", value: "+213" },
+];
+
+export const WORKERTYPES = [
+  { label: "Labour", value: "labour" },
+  { label: "Bricklayer", value: "Bricklayer" },
+  { label: "Stone Mason", value: "Stone Mason" },
+  { label: "Mistri", value: "mistri" },
+  { label: "Electrician", value: "electrician" },
 ];

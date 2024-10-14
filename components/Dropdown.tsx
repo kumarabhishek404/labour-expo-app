@@ -5,14 +5,18 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "@/constants/Colors";
 import { Fontisto, Ionicons } from "@expo/vector-icons";
 
-const DropdownComponent = ({ value, setValue, placeholder, options, icon }: any) => {
-  // const [value, setValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
-
+const DropdownComponent = ({
+  value,
+  setValue,
+  placeholder,
+  options,
+  icon,
+  style,
+}: any) => {
   return (
     <View style={styles.container}>
       <Dropdown
-        style={styles.dropdown}
+        style={[styles.dropdown, style]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -29,13 +33,23 @@ const DropdownComponent = ({ value, setValue, placeholder, options, icon }: any)
           setValue(item.value);
         }}
         renderLeftIcon={() => (
-          <View style={{marginLeft: 6}}>
-            {icon ? icon : <Ionicons style={styles.icon} color="black" name="person" size={20} />}
+          <View
+            style={{
+              marginLeft: 6,
+            }}
+          >
+            {icon ? (
+              icon
+            ) : (
+              <Ionicons
+                style={styles.icon}
+                color="black"
+                name="person"
+                size={20}
+              />
+            )}
           </View>
         )}
-        // renderItem={(item: any, selected: any) => {
-
-        // }}
       />
     </View>
   );
@@ -47,17 +61,16 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
-    // padding: 16,
   },
   dropdown: {
     height: 53,
     borderColor: Colors.secondary,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 8,
   },
   icon: {
-    marginRight: 20,
+    marginRight: 16,
     color: Colors.secondary,
   },
   placeholderStyle: {

@@ -10,9 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  AntDesign,
   Entypo,
   Feather,
   FontAwesome,
@@ -31,6 +32,7 @@ import Animated, {
 import Map from "@/components/ViewMap";
 import {
   applyService,
+  editService,
   fetchMyApplicants,
   getServiceById,
   likeService,
@@ -40,20 +42,28 @@ import {
 import Loader from "@/components/Loader";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { useAtom } from "jotai";
-import { LocationAtom, UserAtom } from "../../AtomStore/user";
+import { useAtom, useSetAtom } from "jotai";
+import { AddServiceAtom, LocationAtom, UserAtom } from "../../AtomStore/user";
 import { toast } from "../../hooks/toast";
 import profileImage from "../../../assets/person-placeholder.png";
 import { dateDifference } from "@/constants/functions";
 import Button from "@/components/Button";
 import ModalComponent from "@/components/Modal";
 import EditService from "./editService";
+import moment from "moment";
+import AvatarComponent from "@/components/Avatar";
+import { openGoogleMaps } from "@/app/hooks/map";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
+interface ImageAsset {
+  uri: string;
+}
+
 const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const setAddService = useSetAtom(AddServiceAtom);
   const [location, setLocation] = useAtom(LocationAtom);
   const [mapLocation, setMapLocation]: any = useState({});
   const { id } = useLocalSearchParams();
@@ -66,8 +76,39 @@ const ServiceDetails = () => {
     service?.isLiked || false
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
-    service?.isApplied || false
+    service?.isApplied || service?.applied?.includes(userDetails?._id) || false
   );
+
+  // const [addService, setAddService] = useAtom(AddServiceAtom);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [images, setImages]: any = useState<ImageAsset[]>([
+    service?.coverImage,
+  ]);
+  const [title, setTitle] = useState<string>(service?.name ?? "");
+  const [description, setDescription] = useState<string>(
+    service?.description ?? ""
+  );
+  const [startDate, setStartDate] = useState<any>(
+    moment(service?.startDate).format("DD/MM/YYYY") ?? ""
+  );
+  const [endDate, setEndDate] = useState<any>(
+    moment(service?.endDate).format("DD/MM/YYYY") ?? ""
+  );
+
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
+  const onStartDateChange = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate || startDate;
+    setShowStartDatePicker(false);
+    setStartDate(currentDate);
+  };
+
+  const onEndDateChange = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate || endDate;
+    setShowEndDatePicker(false);
+    setEndDate(currentDate);
+  };
 
   const {
     isLoading,
@@ -77,10 +118,9 @@ const ServiceDetails = () => {
     isRefetching,
   } = useQuery({
     queryKey: ["serviceDetails"],
-    queryFn: async () => await getServiceDetailsById(id),
-    retry: 0,
+    queryFn: async () => await getServiceById(id),
+    retry: false,
     enabled: !!id,
-    // refetchOnWindowFocus: true
   });
 
   const {
@@ -103,20 +143,11 @@ const ServiceDetails = () => {
     },
   });
 
-  const getServiceDetailsById = async (id: any) => {
-    try {
-      const response = await getServiceById(id);
-      return response;
-    } catch (err) {
-      router.back();
-      console.log("error while getting details of service");
-    }
-  };
-
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
     mutationFn: () => likeService({ serviceID: id }),
     onSuccess: (response) => {
+      refetch();
       toast.success("Service added in favourites");
       console.log("Response while liking a service - ", response);
     },
@@ -129,6 +160,7 @@ const ServiceDetails = () => {
     mutationKey: ["unlikeService", { id }],
     mutationFn: () => unLikeService({ serviceID: id }),
     onSuccess: (response) => {
+      refetch();
       // console.log("Response while unliking a service - ", response);
       let likedService = [...userDetails?.likedJobs];
       console.log("Response while unliking a service - ", likedService);
@@ -144,6 +176,7 @@ const ServiceDetails = () => {
     mutationKey: ["applyService", { id }],
     mutationFn: () => applyService({ serviceID: id }),
     onSuccess: (response) => {
+      refetch();
       console.log("Response while applying in the service - ", response);
     },
     onError: (err) => {
@@ -155,12 +188,22 @@ const ServiceDetails = () => {
     mutationKey: ["unapplyService", { id }],
     mutationFn: () => unApplyService({ serviceID: id }),
     onSuccess: (response) => {
+      refetch();
       console.log("Response while unapplying the service - ", response);
     },
     onError: (err) => {
       console.error("error while unapplying the service ", err);
     },
   });
+
+  useEffect(() => {
+    console.log("Resposne --", response?.data);
+    setIsServiceApplied(
+      service?.isApplied ||
+        service?.applied?.includes(userDetails?._id) ||
+        false
+    );
+  }, [service]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -183,6 +226,51 @@ const ServiceDetails = () => {
     }, [location])
   );
 
+  console.log(
+    "serviceserviceservice----",
+    service,
+    userDetails?._id,
+    service?.applied?.includes(userDetails?._id)
+  );
+
+  const handleSubmit = async () => {
+    if (images && images?.length > 0) {
+      setIsEditLoading(true);
+
+      let payload = {
+        ...service,
+        _id: service?._id,
+        name: title,
+        description: description,
+        // startDate: startDate,
+        // endDate: endDate,
+        location: {
+          latitude: 27.1767,
+          longitude: 78.0081,
+        },
+        // city: service?.city,
+        // state: service?.state,
+        // pinCode: service?.pinCode,
+        // address: service?.address,
+        // requirements: service?.requirements,
+      };
+
+      try {
+        const response: any = await editService(payload);
+        console.log("Response Data ---", response?.data);
+        setIsEditLoading(false);
+        setIsEditService(false);
+        toast?.success("Form submitted successfully!");
+        refetch();
+      } catch (error: any) {
+        console.log("error?.response?.data?.message--", error);
+        setIsEditLoading(false);
+      }
+    } else {
+      toast.error("Please fill all the input fields");
+    }
+  };
+
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -204,10 +292,30 @@ const ServiceDetails = () => {
     };
   });
 
-  console.log("Service----", service?.location, mapLocation);
+  const destination = {
+    latitude: 40.758896,
+    longitude: -73.98513,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
 
   const modalContent = () => {
-    return <EditService />;
+    return (
+      <EditService
+        title={title}
+        setTitle={setTitle}
+        description={description}
+        setDescription={setDescription}
+        startDate={startDate}
+        showStartDatePicker={showStartDatePicker}
+        setShowStartDatePicker={setShowStartDatePicker}
+        onStartDateChange={onStartDateChange}
+        endDate={endDate}
+        showEndDatePicker={showEndDatePicker}
+        setShowEndDatePicker={setShowEndDatePicker}
+        onEndDateChange={onEndDateChange}
+      />
+    );
   };
 
   return (
@@ -215,7 +323,7 @@ const ServiceDetails = () => {
       <Stack.Screen
         options={{
           // headerTransparent: false,
-          headerTitle: "",
+          headerTitle: "Service Details",
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
@@ -261,6 +369,7 @@ const ServiceDetails = () => {
       <Loader
         loading={
           isLoading ||
+          isEditLoading ||
           isRefetching ||
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
@@ -291,16 +400,21 @@ const ServiceDetails = () => {
             <View style={styles.listingLocationWrapper}>
               <Entypo name="calendar" size={18} color={Colors.primary} />
               <Text style={styles.listingLocationTxt}>
-                Start {service?.startDate}
+                Start from {moment(service?.startDate).format("LL")}
               </Text>
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "32%",
+                }}
+              >
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text style={styles.highlightTxt}>Duration</Text>
                   <Text style={styles.highlightTxtVal}>
                     {service?.duration ||
@@ -308,28 +422,64 @@ const ServiceDetails = () => {
                   </Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "32%",
+                }}
+              >
                 <View style={styles.highlightIcon}>
                   <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
-                <View>
-                  <Text style={styles.highlightTxt}>Need</Text>
-                  <Text style={styles.highlightTxtVal}>2 Mistri</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.highlightTxt}>Travelling</Text>
+                  <Text style={styles.highlightTxtVal}>Yes</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: "row", maxWidth: "30%" }}>
-                <View style={styles.highlightIcon}>
-                  <FontAwesome5
-                    name="rupee-sign"
-                    size={18}
-                    color={Colors.primary}
+              {service?.location && service?.location?.latitude && (
+                <View
+                  style={{
+                    flexDirection: "column",
+                    width: "32%",
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={styles.highlightIcon}>
+                      <FontAwesome5
+                        name="rupee-sign"
+                        size={18}
+                        color={Colors.primary}
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.highlightTxt}>Distance</Text>
+                      <Text style={styles.highlightTxtVal}>Just 2 Kms</Text>
+                    </View>
+                  </View>
+                  <Button
+                    isPrimary={false}
+                    title="Get Direction"
+                    onPress={() => openGoogleMaps(destination)}
+                    // icon={
+                    //   <FontAwesome
+                    //     name="users"
+                    //     size={12}
+                    //     color={Colors.primary}
+                    //   />
+                    // }
+                    style={{
+                      marginTop: 6,
+                      borderWidth: 1.5,
+                      paddingVertical: 3,
+                      paddingHorizontal: 6,
+                    }}
+                    textStyle={{
+                      fontWeight: "700",
+                      fontSize: 12,
+                    }}
                   />
                 </View>
-                <View>
-                  <Text style={styles.highlightTxt}>Price</Text>
-                  <Text style={styles.highlightTxtVal}>1200</Text>
-                </View>
-              </View>
+              )}
             </View>
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
@@ -338,39 +488,43 @@ const ServiceDetails = () => {
               <View style={styles.requirmentContainer}>
                 {service &&
                   service?.requirements?.length > 0 &&
-                  service?.requirements?.map((requirement: any) => {
-                    return (
-                      <View style={styles.card}>
-                        <View style={styles.header}>
-                          <Text style={styles.title}>{requirement?.name}</Text>
-                          <Text style={styles.price}>
-                            ₹ {requirement?.payPerDay} Per Day
-                          </Text>
-                        </View>
-                        <Text style={styles.subTitle}>shuttering</Text>
+                  service?.requirements?.map(
+                    (requirement: any, index: number) => {
+                      return (
+                        <View style={styles.card} key={index}>
+                          <View style={styles.header}>
+                            <Text style={styles.title}>
+                              {requirement?.name}
+                            </Text>
+                            <Text style={styles.price}>
+                              ₹ {requirement?.payPerDay} Per Day
+                            </Text>
+                          </View>
+                          <Text style={styles.subTitle}>shuttering</Text>
 
-                        <View style={styles.details}>
-                          <Text style={styles.detailLabel}>Count</Text>
-                          <Text style={styles.detailLabel}>Food</Text>
-                          <Text style={styles.detailLabel}>Living</Text>
-                          <Text style={styles.detailLabel}>ESI / PF</Text>
-                        </View>
+                          <View style={styles.details}>
+                            <Text style={styles.detailLabel}>Count</Text>
+                            <Text style={styles.detailLabel}>Food</Text>
+                            <Text style={styles.detailLabel}>Living</Text>
+                            <Text style={styles.detailLabel}>ESI / PF</Text>
+                          </View>
 
-                        <View style={styles.values}>
-                          <Text style={styles.value}>
-                            {requirement?.totalRequired}
-                          </Text>
-                          <Text style={styles.value}>
-                            {requirement?.foodProvided ? "Yes" : "No"}
-                          </Text>
-                          <Text style={styles.value}>
-                            {requirement?.shelterProvider ? "Yes" : "No"}
-                          </Text>
-                          <Text style={styles.value}>No</Text>
+                          <View style={styles.values}>
+                            <Text style={styles.value}>
+                              {requirement?.totalRequired}
+                            </Text>
+                            <Text style={styles.value}>
+                              {requirement?.foodProvided ? "Yes" : "No"}
+                            </Text>
+                            <Text style={styles.value}>
+                              {requirement?.shelterProvider ? "Yes" : "No"}
+                            </Text>
+                            <Text style={styles.value}>No</Text>
+                          </View>
                         </View>
-                      </View>
-                    );
-                  })}
+                      );
+                    }
+                  )}
               </View>
             )}
           </View>
@@ -442,25 +596,169 @@ const ServiceDetails = () => {
               }}
             />
           )}
+
+          {service && service?.employer && (
+            <View
+              style={[
+                styles.requirmentContainer,
+                {
+                  marginVertical: 20,
+                  marginHorizontal: 20,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.card,
+                  {
+                    marginBottom: 0,
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  },
+                ]}
+              >
+                <View style={{ width: "67%" }}>
+                  <Text style={[styles.title, { marginBottom: 10 }]}>
+                    Employer
+                  </Text>
+                  <Text style={{ fontSize: 14, fontWeight: "500" }}>
+                    Sanaya Singh
+                  </Text>
+                  <Text style={{ fontSize: 14, fontWeight: "500" }}>
+                    Balipur, Shakrauli, Jalesar, Etah Uttar Predesh
+                  </Text>
+                  <View
+                    style={{
+                      borderWidth: 2,
+                      borderColor: Colors?.primary,
+                      width: 120,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <FontAwesome5
+                      name="phone-alt"
+                      size={16}
+                      color={Colors.primary}
+                    />
+                    <Text
+                      style={{
+                        color: Colors?.primary,
+                        marginLeft: 6,
+                        fontSize: 14,
+                        fontWeight: "600",
+                      }}
+                    >
+                      Dial Phone
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      borderWidth: 2,
+                      borderColor: Colors?.primary,
+                      width: 160,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <FontAwesome5
+                      name="whatsapp"
+                      size={18}
+                      color={Colors.primary}
+                    />
+                    <Text
+                      style={{
+                        color: Colors?.primary,
+                        marginLeft: 6,
+                        fontSize: 14,
+                        fontWeight: "600",
+                      }}
+                    >
+                      Whatsapp Message
+                    </Text>
+                  </View>
+                </View>
+                <View style={{ width: "33%" }}>
+                  <AvatarComponent
+                    isEditable={false}
+                    profileImage={
+                      "https://xsgames.co/randomusers/avatar.php?g=female"
+                    }
+                  />
+                  <TouchableOpacity
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      right: 0,
+                      borderWidth: 2,
+                      borderColor: Colors?.primary,
+                      width: 120,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 4,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 10,
+                    }}
+                    onPress={() =>
+                      router.push(
+                        userDetails?._id === service?.employer
+                          ? "/(tabs)/profile"
+                          : `/screens/employer/${service?.employer}`
+                      )
+                    }
+                  >
+                    <AntDesign name="eye" size={18} color={Colors.primary} />
+                    <Text
+                      style={{
+                        color: Colors?.primary,
+                        marginLeft: 6,
+                        fontSize: 14,
+                        fontWeight: "600",
+                      }}
+                    >
+                      View Details
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
         </Animated.ScrollView>
       </ScrollView>
 
       {service?.employer === userDetails?._id ? (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
           <TouchableOpacity
-            onPress={() =>
-              isServiceApplied
-                ? mutationApplyService.mutate()
-                : mutationUnApplyService.mutate()
-            }
+            // onPress={() =>
+            //   isServiceApplied
+            //     ? mutationUnApplyService.mutate()
+            //     : mutationApplyService.mutate()
+            // }
             style={[styles.footerBtn, styles.footerBookBtn]}
           >
-            <Text style={styles.footerBtnTxt}>
-              {isServiceApplied ? "Already Applied" : "Cancel"}
-            </Text>
+            <Text style={styles.footerBtnTxt}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setIsEditService(true)}
+            onPress={() => {
+              router.push("/(tabs)/addService/");
+              setAddService(service);
+            }}
             style={[styles.footerBtn]}
           >
             <Text style={styles.footerBtnTxt}>Edit</Text>
@@ -469,7 +767,11 @@ const ServiceDetails = () => {
       ) : (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
           <TouchableOpacity
-            onPress={() => mutationApplyService.mutate()}
+            onPress={() =>
+              isServiceApplied
+                ? mutationUnApplyService.mutate()
+                : mutationApplyService.mutate()
+            }
             style={[styles.footerBtn, styles.footerBookBtn]}
           >
             <Text style={styles.footerBtnTxt}>
@@ -497,13 +799,15 @@ const ServiceDetails = () => {
       <ModalComponent
         title="Add Service"
         visible={isEditService}
-        onClose={() => setIsEditService(false)}
+        onClose={() => {
+          setIsEditService(false);
+          setShowStartDatePicker(false);
+          setShowEndDatePicker(false);
+        }}
         content={modalContent}
-        primaryButton={
-          {
-            // action: mutationUpdateProfileInfo?.mutate,
-          }
-        }
+        primaryButton={{
+          action: () => handleSubmit(),
+        }}
         secondaryButton={{
           action: () => setIsEditService(false),
         }}
@@ -566,6 +870,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginRight: 10,
+  },
+  getDirectionText: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginRight: 10,
+    textAlign: "left",
   },
   listingDetails: {
     fontSize: 16,

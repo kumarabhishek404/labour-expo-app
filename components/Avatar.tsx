@@ -6,21 +6,26 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 type AvatarProps = {
   isEditable: Boolean;
+  isLoading?: boolean;
   profileImage: String;
   setProfileImage?: any;
   onUpload?: any;
+  onRemoveImage?: any;
 };
 
 const AvatarComponent = ({
   isEditable,
+  isLoading,
   profileImage,
   setProfileImage,
   onUpload,
+  onRemoveImage,
 }: AvatarProps) => {
   const pickImage = async () => {
     let result: any = await ImagePicker.launchImageLibraryAsync({
@@ -31,14 +36,12 @@ const AvatarComponent = ({
     });
 
     if (!result.cancelled) {
-      setProfileImage(result.uri);
-    }
-
-    try {
-      let response = await onUpload();
-      console.log(" Resppsne ---", response);
-    } catch (err) {
-      console.log("Error --", err);
+      try {
+        let response = await onUpload(result?.assets[0]?.uri);
+        console.log(" Resppsne ---", response);
+      } catch (err) {
+        console.log("Error --", err);
+      }
     }
   };
 
@@ -48,7 +51,7 @@ const AvatarComponent = ({
       "Are you sure you want to remove the profile image?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Remove", onPress: () => setProfileImage(null) },
+        { text: "Remove", onPress: onRemoveImage },
       ]
     );
   };
@@ -64,6 +67,12 @@ const AvatarComponent = ({
           }
           style={styles.avatar}
         />
+
+        {isLoading && (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        )}
       </View>
       {isEditable && (
         <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
@@ -91,7 +100,14 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     overflow: "hidden",
     borderWidth: 2,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderColor: "#ddd",
+  },
+  loader: {
+    position: "absolute",
+    top: 48,
+    left: 48,
+    zIndex: 2,
   },
   avatar: {
     width: "100%",
@@ -108,6 +124,12 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 12,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

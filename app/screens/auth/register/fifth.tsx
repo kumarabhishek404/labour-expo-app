@@ -1,0 +1,154 @@
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet } from "react-native";
+import Colors from "@/constants/Colors";
+import Button from "@/components/Button";
+import { toast } from "@/app/hooks/toast";
+import { FontAwesome } from "@expo/vector-icons";
+import Stepper from "@/app/(tabs)/addService/stepper";
+import { REGISTERSTEPS } from "@/constants";
+import PasswordComponent from "@/components/password";
+import { Controller, useForm } from "react-hook-form";
+import SelfieScreen from "@/components/selfie";
+
+interface FifthScreenProps {
+  setStep: any;
+  avatar: string;
+  setAvatar: any;
+  handleRegister: any;
+}
+
+const FifthScreen: React.FC<FifthScreenProps> = ({
+  setStep,
+  avatar,
+  setAvatar,
+  handleRegister,
+}: FifthScreenProps) => {
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      avatar: avatar,
+    },
+  });
+
+  const onSubmit = (data: any) => {
+    setAvatar(data?.avatar);
+    handleRegister();
+  };
+
+  return (
+    <View style={styles?.container}>
+      <Controller
+        control={control}
+        name="avatar"
+        defaultValue=""
+        rules={{
+          required: "Profile picture is required",
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <SelfieScreen
+            name="avatar"
+            avatar={value}
+            setAvatar={onChange}
+            onBlur={onBlur}
+            errors={errors}
+          />
+        )}
+      />
+      <View style={styles?.buttonContainer}>
+        <Button isPrimary={false} title="Back" onPress={() => setStep(4)} />
+        <Button
+          isPrimary={true}
+          title="Save Profile Picture"
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: "white",
+    paddingVertical: 40,
+  },
+  customHeader: {
+    width: "100%",
+    marginTop: 40,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerText: {
+    fontWeight: "700",
+    fontSize: 20,
+  },
+  formContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    marginBottom: 40,
+  },
+
+  label: {
+    marginVertical: 10,
+  },
+  input: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 16,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: Colors?.white,
+    fontWeight: "700",
+    textAlign: "center",
+    fontSize: 18,
+  },
+
+  forgotPasswordText: {
+    textAlign: "right",
+    color: Colors.primary,
+    // fontFamily: fonts.SemiBold,
+    marginVertical: 10,
+  },
+  loginButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    marginTop: 20,
+  },
+  loginText: {
+    color: Colors.white,
+    fontSize: 20,
+    // fontFamily: fonts.SemiBold,
+    textAlign: "center",
+    padding: 10,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
+  },
+  conditionsContainer: {},
+  conditionText: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  successText: {
+    color: "green",
+  },
+});
+
+export default FifthScreen;

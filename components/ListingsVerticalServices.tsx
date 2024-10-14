@@ -21,9 +21,10 @@ import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import coverImage from "../assets/images/placeholder-cover.jpg";
 import { ServiceType } from "@/types/type";
-import { dateDifference } from "@/constants/functions";
+import { dateDifference, getTimeAgo } from "@/constants/functions";
 import { AddServiceAtom } from "@/app/AtomStore/user";
 import { useSetAtom } from "jotai";
+import moment from "moment";
 
 type Props = {
   listings: any[];
@@ -37,6 +38,8 @@ type Props = {
 type RenderItemTypes = {
   item: {
     _id: string;
+    createdAt: Date;
+    updatedAt: Date;
     coverImage: string;
     duration: string;
     name: string;
@@ -77,13 +80,19 @@ const ListingsVerticalServices = ({
                   color={Colors.white}
                 />
               </View>
-              <Text
-                style={styles.itemTxt}
-                numberOfLines={1}
-                ellipsizeMode="tail"
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                {item.name}
-              </Text>
+                <Text style={styles.itemTxt}>{item.name}</Text>
+                <Text style={styles.itemPriceTxt}>
+                  {item?.duration ||
+                    getTimeAgo(item?.createdAt || "2024-10-13")}
+                </Text>
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -113,7 +122,9 @@ const ListingsVerticalServices = ({
 
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Entypo name="calendar" size={18} color={Colors.primary} />
-                    <Text style={styles.itemLocationTxt}>12 July, 2024</Text>
+                    <Text style={styles.itemLocationTxt}>
+                      {moment(item?.startDate)?.format("Do MMMM YYYY")}
+                    </Text>
                   </View>
                 </View>
 
@@ -122,25 +133,8 @@ const ListingsVerticalServices = ({
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}
                   </Text>
-                  {isMyService ? (
-                    <></>
-                    // <TouchableOpacity
-                    //   onPress={() => {
-                    //     let URL = `/screens/service/${[item._id]}`
-                    //     router?.push({
-                    //       pathname: JSON?.stringify(URL),
-                    //     });
-                    //     // setAddService(item);
-                    //   }}
-                    //   style={styles?.deleteButton}
-                    // >
-                    //   <Text style={styles?.deleteText}>Edit</Text>
-                    // </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity style={styles?.deleteButton}>
-                      <Text style={styles?.deleteText}>Apply</Text>
-                    </TouchableOpacity>
-                  )}
+
+                  <Text style={styles.itemDistanceAway}>Just 2 Kms</Text>
                 </View>
               </View>
             </View>
@@ -214,6 +208,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.white,
   },
   itemTxt: {
+    width: "70%",
     fontSize: 16,
     fontWeight: "600",
     color: Colors.black,
@@ -228,6 +223,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.primary,
   },
+  itemDistanceAway: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: Colors.primary,
+  },
   loaderStyle: {
     alignItems: "flex-start",
     paddingLeft: 20,
@@ -235,7 +235,8 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
   deleteButton: {
     backgroundColor: Colors?.primary,
