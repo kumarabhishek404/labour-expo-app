@@ -57,8 +57,6 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
     handleOnSubmit();
   };
 
-  console.log("requirements---", requirements);
-
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -253,7 +251,7 @@ const styles = StyleSheet.create({
     width: "60%",
     backgroundColor: "#f3f3f3",
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   placeholderText: {
     fontSize: 16,
@@ -264,7 +262,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "#6200ea",
-    borderRadius: 4,
+    borderRadius: 8,
     paddingVertical: 15,
     justifyContent: "center",
     alignItems: "center",
@@ -278,13 +276,13 @@ const styles = StyleSheet.create({
 
   requirmentContainer: {
     width: "100%",
-    borderRadius: 4,
+    borderRadius: 8,
     backgroundColor: "#e1e8e5",
   },
   card: {
     backgroundColor: "#e1e8e5",
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 8,
     fontSize: 16,
     color: "#000",
   },
@@ -349,7 +347,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     // margin: 10,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   imagesContainer: {
     marginRight: 10,

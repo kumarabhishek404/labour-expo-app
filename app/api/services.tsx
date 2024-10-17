@@ -26,8 +26,6 @@ export const addNewService = async (payload: any) => {
 };
 
 export const editService = async (payload: any) => {
-  console.log("Payload inside api - ", payload);
-
   try {
     const data = await makePutRequest("/service/update-service", payload);
     toast.success("Service updated successfully");
@@ -63,7 +61,6 @@ export const getServiceById = async (id: any) => {
 };
 
 export const deleteServiceById = async (id: any) => {
-  console.log("Click delete ---", id);
   try {
     const data = await makeDeleteRequest(`/service/delete/${id}`);
     toast.success("Service deleted successfully");
@@ -120,8 +117,6 @@ export const fetchAllLikedServices = async ({ pageParam }: any) => {
 };
 
 export const likeService = async (payload: any) => {
-  console.log("Payload --", payload);
-
   try {
     const data = await makePostRequest("/service/like-service", payload);
     return data.data;

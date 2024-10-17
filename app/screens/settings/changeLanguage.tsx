@@ -60,7 +60,7 @@ export default function LanguageSelectionScreen() {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -68,7 +68,7 @@ export default function LanguageSelectionScreen() {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   radioSelected: {
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: Colors?.primary,
     backgroundColor: Colors?.primary,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   radioUnselected: {
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: "#999",
   },

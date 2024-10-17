@@ -1,32 +1,35 @@
 import { deleteUserById } from "@/app/api/user";
-import { UserAtom } from "@/app/AtomStore/user";
 import Loader from "@/components/Loader";
 import ModalComponent from "@/components/Modal";
 import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
-import { useAtomValue } from "jotai";
 import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   StyleSheet,
   ScrollView,
-  Dimensions,
 } from "react-native";
-import Animated, { SlideInDown } from "react-native-reanimated";
-
-const { width } = Dimensions.get("window");
+import { Controller, useForm } from "react-hook-form"; // react-hook-form imports
+import Button from "@/components/Button";
+import TextAreaInputComponent from "@/components/TextArea";
 
 const DeleteAccountScreen = () => {
-  const userDetails = useAtomValue(UserAtom);
-  const [selectedReason, setSelectedReason] = useState("");
-  const [showTextArea, setShowTextArea] = useState(false);
-  const [otherReason, setOtherReason] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+
+  // useForm setup
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm();
+
+  const selectedReasons: any = watch("selectedReasons"); // Watch for changes in selected reasons
 
   const reasons = [
     "No longer using the service/platform",
@@ -46,54 +49,45 @@ const DeleteAccountScreen = () => {
       console.log("Response while deleting the user - ", response);
     },
     onError: (err) => {
-      console.error("error while deleting the user", err);
+      console.error("Error while deleting the user", err);
     },
   });
 
-  const handleReasonSelect = (reason: React.SetStateAction<string>) => {
-    setSelectedReason(reason);
-    if (reason === "Others") {
-      setShowTextArea(true);
-    } else {
-      setShowTextArea(false);
-      setOtherReason("");
-    }
+  const handleDelete = () => {
+    mutationDeleteService.mutate();
   };
 
-  const handleDelete = () => {
+  const onSubmit = (data: any) => {
+    console.log("Form Data:", data);
     setModalVisible(true);
   };
 
-  //   const confirmDelete = () => {
-  //     setModalVisible(false);
-  //     // Call the Profile Delete function here
-  //     Alert.alert(
-  //       "Profile Deleted",
-  //       "Your profile has been deleted successfully."
-  //     );
-  //   };
+  const handleReasonSelect = (reason: string) => {
+    const currentSelection: any = selectedReasons || [];
+    if (currentSelection.includes(reason)) {
+      setValue(
+        "selectedReasons",
+        currentSelection.filter((item: string) => item !== reason)
+      );
+    } else {
+      setValue("selectedReasons", [...currentSelection, reason]);
+    }
+  };
 
   const modalContent = () => {
     return (
-      // <View style={styles.modalOverlay}>
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
             <Text style={styles.iconText}>?</Text>
           </View>
         </View>
-
         <Text style={styles.modalHeader}>Are you sure?</Text>
         <Text style={styles.modalBody}>
           You want to delete your account permanently.
         </Text>
         <Text style={styles.modalFooter}>
-          Ensuring that the user understands the consequences of deleting their
-          account (
-          <Text style={styles.italicText}>
-            loss of data, subscriptions, etc.
-          </Text>
-          ).
+          This action is irreversible and will lead to a loss of all your data.
         </Text>
       </View>
     );
@@ -103,14 +97,13 @@ const DeleteAccountScreen = () => {
     <>
       <Stack.Screen
         options={{
-          // headerTransparent: false,
           headerTitle: "Delete Profile",
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
                 marginRight: 20,
               }}
@@ -119,7 +112,7 @@ const DeleteAccountScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -132,33 +125,69 @@ const DeleteAccountScreen = () => {
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Delete Account</Text>
         <Text style={styles.subHeader}>
-          If you need to delete an account and you're prompted to provide a
-          reason.
+          Please select the reason(s) for deleting your account.
         </Text>
 
-        {reasons.map((reason, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.optionContainer}
-            onPress={() => handleReasonSelect(reason)}
-          >
-            <View style={styles.radioCircle}>
-              {selectedReason === reason && <View style={styles.selectedRb} />}
-            </View>
-            <Text style={styles.optionText}>{reason}</Text>
-          </TouchableOpacity>
-        ))}
+        <Controller
+          name="selectedReasons"
+          control={control}
+          rules={{
+            validate: (value) =>
+              value?.length > 0 || "At least one reason must be selected",
+          }}
+          render={({ field }) => (
+            <>
+              {reasons.map((reason, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.optionContainer}
+                  onPress={() => handleReasonSelect(reason)}
+                >
+                  <View style={styles.radioCircle}>
+                    {selectedReasons?.includes(reason) && (
+                      <View style={styles.selectedRb} />
+                    )}
+                  </View>
+                  <Text style={styles.optionText}>{reason}</Text>
+                </TouchableOpacity>
+              ))}
+              {errors.selectedReasons && (
+                <Text style={styles.errorText}>
+                  {errors.selectedReasons.message}
+                </Text>
+              )}
+            </>
+          )}
+        />
 
-        {showTextArea && (
-          <TextInput
-            style={styles.textArea}
-            placeholder="Please specify your reason"
-            multiline={true}
-            numberOfLines={4}
-            onChangeText={(text) => setOtherReason(text)}
-            value={otherReason}
+        {selectedReasons?.includes("Others") && (
+          <Controller
+            name="otherReason"
+            control={control}
+            rules={{ required: "Please write your reason." }}
+            render={({ field: { onChange, value, onBlur } }) => (
+              <TextAreaInputComponent
+                label="Write the reason for deleting this account"
+                name="otherReason"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="We'd love to give you the full experience :)"
+                containerStyle={errors?.otherReason && styles.errorInput}
+                errors={errors}
+                icon={
+                  <MaterialIcons
+                    name={"feedback"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
           />
         )}
+
         <ModalComponent
           title="Delete Account"
           visible={modalVisible}
@@ -169,7 +198,7 @@ const DeleteAccountScreen = () => {
             styles: {
               backgroundColor: "red",
             },
-            action: mutationDeleteService?.mutate,
+            action: handleDelete,
           }}
           secondaryButton={{
             title: "Keep Account",
@@ -177,16 +206,20 @@ const DeleteAccountScreen = () => {
             action: () => setModalVisible(false),
           }}
         />
+        <View style={styles.footer}>
+          <Button
+            isPrimary={true}
+            title="Delete Account"
+            onPress={handleSubmit(onSubmit)}
+            style={{
+              width: "100%",
+              paddingVertical: 10,
+              backgroundColor: Colors?.danger,
+              borderColor: Colors?.danger,
+            }}
+          />
+        </View>
       </ScrollView>
-
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        <TouchableOpacity
-          onPress={handleDelete}
-          style={[styles.footerBtn, styles.footerBookBtn]}
-        >
-          <Text style={styles.footerBtnTxt}>Delete</Text>
-        </TouchableOpacity>
-      </Animated.View>
     </>
   );
 };
@@ -215,7 +248,7 @@ const styles = StyleSheet.create({
   radioCircle: {
     height: 20,
     width: 20,
-    borderRadius: 10,
+    borderRadius: 100,
     borderWidth: 1,
     borderColor: "#3C3C3C",
     alignItems: "center",
@@ -225,30 +258,24 @@ const styles = StyleSheet.create({
   selectedRb: {
     width: 12,
     height: 12,
-    borderRadius: 6,
+    borderRadius: 8,
     backgroundColor: "#3C3C3C",
   },
   optionText: {
     fontSize: 16,
   },
-  textArea: {
-    borderColor: "#B0B0B0",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 20,
+  footer: {
+    flexDirection: "row",
+    paddingTop: 30,
   },
-  deleteButton: {
-    backgroundColor: "#000",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
+  errorText: {
+    color: "red",
+    marginTop: 5,
   },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 16,
+  errorInput: {
+    borderColor: "red",
   },
+
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
@@ -256,19 +283,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
-    // width: 300,
     backgroundColor: "white",
-    borderRadius: 15,
+    borderRadius: 8,
     padding: 20,
     alignItems: "center",
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    // elevation: 5,
   },
   iconContainer: {
     alignItems: "center",
@@ -277,7 +295,7 @@ const styles = StyleSheet.create({
   iconCircle: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 8,
     backgroundColor: "#FFD700", // Yellow circle
     justifyContent: "center",
     alignItems: "center",
@@ -315,7 +333,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     marginHorizontal: 5,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: "center",
   },
   deleteButtonStyle: {
@@ -331,31 +349,6 @@ const styles = StyleSheet.create({
   keepText: {
     color: "#fff",
     fontSize: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    position: "absolute",
-    bottom: 0,
-    padding: 20,
-    paddingBottom: 30,
-    width: width,
-  },
-  footerBtn: {
-    flex: 1,
-    backgroundColor: Colors.black,
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  footerBookBtn: {
-    flex: 2,
-    backgroundColor: Colors.primary,
-  },
-  footerBtnTxt: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: "600",
-    textTransform: "uppercase",
   },
 });
 

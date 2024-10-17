@@ -19,9 +19,6 @@ import Button from "./Button";
 
 const Map = ({ data }: any) => {
   const mapRef: any = useRef();
-  const navigation = useNavigation();
-
-  console.log("Map Data--", data);
 
   const focus = () => {
     // const Cordinates = {
@@ -69,7 +66,7 @@ const Map = ({ data }: any) => {
         }}
       />
       <MapView
-        style={{ height: 400, width: 370, borderRadius: 10 }}
+        style={{ height: 400, width: 370, borderRadius: 4 }}
         provider={PROVIDER_GOOGLE}
         initialRegion={data || initialRegion}
         showsUserLocation={true}
@@ -102,6 +99,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 8,
   },
 });

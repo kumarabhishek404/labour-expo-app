@@ -23,7 +23,7 @@ const PaymentScreen = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -31,7 +31,7 @@ const PaymentScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     width: "48%",
     padding: 10,
     backgroundColor: "#ffffff",
-    borderRadius: 10,
+    borderRadius: 8,
     borderColor: Colors?.primary,
     borderWidth: 2,
     alignItems: "center",
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   formContainer: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     elevation: 2,
   },
   input: {

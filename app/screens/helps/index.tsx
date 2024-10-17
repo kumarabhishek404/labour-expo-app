@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
   },
   faqCard: {
     backgroundColor: "#F0F4FF",
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 20,
     width: 180,
     marginRight: 10,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     width: "90%",
     maxHeight: "80%",
   },
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
   modalImage: {
     width: 100,
     height: 100,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   chatModalContainer: {
     flex: 1,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     marginBottom: 10,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     maxWidth: "80%",
   },
   incomingMessage: {
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   chatInput: {
     flex: 1,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: "#F0F4FF",
     fontSize: 16,
   },

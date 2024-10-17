@@ -8,7 +8,6 @@ const StateField = () => {
 
   const handleStateChange = (itemValue: any) => {
     setSelectedState(itemValue);
-    console.log("Selected State:", itemValue); // Handle selected state here
   };
 
   return (

@@ -36,12 +36,13 @@ export default function Button({
           style={{
             backgroundColor: bgColor || Colors?.primary,
             borderWidth: 2,
-            borderColor: Colors?.primary,
+            borderColor: bgColor || Colors?.primary,
             paddingVertical: 8,
             paddingHorizontal: 20,
-            borderRadius: 4,
+            borderRadius: 8,
             flexDirection: loading || icon ? "row" : "column",
             alignItems: "center",
+            justifyContent: "center",
             ...style,
           }}
         >
@@ -77,9 +78,10 @@ export default function Button({
             borderColor: Colors?.primary,
             paddingVertical: 8,
             paddingHorizontal: 20,
-            borderRadius: 4,
+            borderRadius: 8,
             flexDirection: loading || icon ? "row" : "column",
             alignItems: "center",
+            justifyContent: "center",
             ...style,
           }}
         >

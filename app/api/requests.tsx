@@ -97,7 +97,6 @@ export const fetchRecievedRequests = async ({ pageParam }: any) => {
     const data = await makeGetRequest(
       `/request/all-received-requests?page=${pageParam}&limit=5`
     );
-    console.log("Recieved - ", data?.data);
     return data?.data;
   } catch (error: any) {
     console.error(
@@ -113,8 +112,6 @@ export const fetchRecievedRequests = async ({ pageParam }: any) => {
 };
 
 export const fetchSentRequests = async ({ pageParam }: any) => {
-  console.log("Sent - ", pageParam);
-
   try {
     const data = await makeGetRequest(
       `/request/all-sent-requests?page=${pageParam}&limit=5`

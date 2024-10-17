@@ -62,6 +62,8 @@ const ListingsVerticalServices = ({
   const setAddService = useSetAtom(AddServiceAtom);
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
+    console.log("Itemmm--", item);
+    
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
@@ -123,7 +125,7 @@ const ListingsVerticalServices = ({
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Entypo name="calendar" size={18} color={Colors.primary} />
                     <Text style={styles.itemLocationTxt}>
-                      {moment(item?.startDate)?.format("Do MMMM YYYY")}
+                      {moment(item?.startDate, "YYYY-MM-DD")?.format("Do MMMM YYYY")}
                     </Text>
                   </View>
                 </View>
@@ -147,11 +149,11 @@ const ListingsVerticalServices = ({
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
-    <View style={{ marginBottom: 90 }}>
+    <View style={{ marginBottom: 30 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
-        keyExtractor={(item) => item?._id?.toString()}
+        keyExtractor={(item, index) => index?.toString()}
         onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
         onEndReachedThreshold={0.9}
         ListFooterComponent={() =>
@@ -170,8 +172,8 @@ const ListingsVerticalServices = ({
         })}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
-        windowSize={5}
-        removeClippedSubviews={true}
+        windowSize={15}
+        removeClippedSubviews={false}
         contentContainerStyle={{ paddingBottom: 180 }}
       />
     </View>
@@ -188,13 +190,13 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: Colors.white,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     width: "100%",
   },
   image: {
     width: "100%",
     height: 200,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 30,
   },
   bookmark: {
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   loaderStyle: {
-    alignItems: "flex-start",
+    alignItems: "center",
     paddingLeft: 20,
     paddingBottom: 10,
   },
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors?.primary,
     paddingHorizontal: 8,
     paddingVertical: 6,
-    borderRadius: 4,
+    borderRadius: 8,
     marginTop: 10,
   },
   deleteText: {

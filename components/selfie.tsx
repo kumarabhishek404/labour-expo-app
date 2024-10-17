@@ -71,7 +71,6 @@ const SelfieScreen = ({
       );
 
       // Set the corrected photo URI
-      console.log("Photot--", photo?.uri);
       setLoading(false);
       setAvatar(manipulatedPhoto?.uri);
       //   setAvatar(
@@ -340,14 +339,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     textAlign: "center",
     alignItems: "center",
-    borderRadius: 4,
+    borderRadius: 8,
     // borderWidth: 5,
     borderColor: "#fff",
     backgroundColor: "#000",
   },
   previewImage: {
     width: 250,
-    borderRadius: 4,
+    borderRadius: 8,
     height: 400,
     resizeMode: "cover",
     marginBottom: 20,

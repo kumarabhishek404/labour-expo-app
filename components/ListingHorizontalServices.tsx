@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: Colors.white,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     marginRight: 20,
     width: 220,
   },
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 30,
   },
   bookmark: {

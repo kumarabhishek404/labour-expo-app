@@ -23,11 +23,7 @@ const PriceField = (props: any) => {
     },
   ]);
 
-  console.log("requirements[index]?.price---", requirements[2]?.price);
-
   const onChangePrice = (event: any, index: number) => {
-    console.log("Index-", index, event.target.value);
-    // let allRequirements = requirements
     setPrice(event.target.value);
   };
 

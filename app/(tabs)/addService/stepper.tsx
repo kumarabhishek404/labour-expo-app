@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 6,

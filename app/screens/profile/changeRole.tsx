@@ -19,8 +19,6 @@ const ChangeRoleScreen = () => {
   const [isFocus2, setIsFocus2] = useState(false);
   const [isFocus3, setIsFocus3] = useState(false);
 
-  console.log("userDetails----", userDetails);
-  
   const mutationChangeProfileRole = useMutation({
     mutationKey: ["changeRole"],
     mutationFn: async () => {
@@ -85,7 +83,7 @@ const ChangeRoleScreen = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -93,7 +91,7 @@ const ChangeRoleScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -217,7 +215,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     backgroundColor: "#dedede",
-    borderRadius: 10,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -252,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF0000",
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   cancelButtonText: {
     color: "#FFF",
@@ -262,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#007BFF",
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   changeRoleButtonText: {
     color: "#FFF",

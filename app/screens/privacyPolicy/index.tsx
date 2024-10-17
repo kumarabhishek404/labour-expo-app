@@ -23,7 +23,7 @@ const PrivacyPolicyScreen = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -31,7 +31,7 @@ const PrivacyPolicyScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   tabButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 8,
     marginHorizontal: 5,
   },
   activeTabButton: {
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   contentBox: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

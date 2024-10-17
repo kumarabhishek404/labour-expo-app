@@ -18,7 +18,6 @@
 // i18n.fallbacks = true;
 
 // export const setI18nLocale = (locale: string) => {
-//   console.log("Locale ---", locale);
 //   i18n.locale = locale;
 // };
 

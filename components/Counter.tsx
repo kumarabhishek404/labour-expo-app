@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     padding: 10,
     height: 44,
     justifyContent: "center",
-    borderRadius: 4,
+    borderRadius: 8,
     backgroundColor: Colors.white,
     borderColor: Colors.secondary,
     borderWidth: 1,

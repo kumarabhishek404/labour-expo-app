@@ -153,12 +153,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.white,
     paddingLeft: 16,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   filterBtn: {
     backgroundColor: Colors.primary,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 8,
     marginLeft: 20,
   },
   categoryContainer: {

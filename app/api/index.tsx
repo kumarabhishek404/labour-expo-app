@@ -6,11 +6,8 @@ import { UserAtom } from "../AtomStore/user";
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
-    // console.log("Token--- 00", AsyncStorage.getItem("user"));
     const user: any = await AsyncStorage.getItem("user");
     const parsedUser = user ? JSON.parse(user) : null;
-    // console.log("Token---", user, parsedUser);
-
     if (parsedUser?.token) {
       return {
         Authorization: `Bearer ${parsedUser.token}`,
@@ -51,7 +48,6 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log("errorerrorerror---", error);
     
     if (error.response) {
       if (

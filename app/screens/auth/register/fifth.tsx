@@ -6,9 +6,9 @@ import { toast } from "@/app/hooks/toast";
 import { FontAwesome } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { REGISTERSTEPS } from "@/constants";
-import PasswordComponent from "@/components/password";
+import PasswordComponent from "@/components/Password";
 import { Controller, useForm } from "react-hook-form";
-import SelfieScreen from "@/components/selfie";
+import SelfieScreen from "@/components/Selfie";
 
 interface FifthScreenProps {
   setStep: any;
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 16,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
-    borderRadius: 4,
+    borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 3,
     marginTop: 20,

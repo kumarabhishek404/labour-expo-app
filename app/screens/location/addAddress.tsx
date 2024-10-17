@@ -47,7 +47,6 @@ const AddCurrentLocation = () => {
       country: country,
     };
     const address = `${village}, ${post} ${city} ${pinCode} ${state} ${country}`;
-    console.log("Post service button pressed", payload, address);
     let tempUserDetails = userDetails;
     tempUserDetails.serviceAddress = [...userDetails?.serviceAddress, address];
     setUserDetails(tempUserDetails);
@@ -72,7 +71,7 @@ const AddCurrentLocation = () => {
                 marginRight: 20,
                 backgroundColor: Colors.white,
                 padding: 6,
-                borderRadius: 6,
+                borderRadius: 8,
                 shadowColor: "#171717",
                 shadowOffset: { width: 2, height: 4 },
                 shadowOpacity: 0.2,
@@ -89,7 +88,7 @@ const AddCurrentLocation = () => {
           //       marginLeft: 20,
           //       backgroundColor: Colors.white,
           //       padding: 6,
-          //       borderRadius: 6,
+          //       borderRadius: 8,
           //       shadowColor: "#171717",
           //       shadowOffset: { width: 2, height: 4 },
           //       shadowOpacity: 0.2,
@@ -209,7 +208,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     backgroundColor: Colors.gray,
-    borderRadius: 20,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
   },

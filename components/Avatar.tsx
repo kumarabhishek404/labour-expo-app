@@ -1,11 +1,10 @@
-import React, { SetStateAction, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -14,18 +13,14 @@ type AvatarProps = {
   isEditable: Boolean;
   isLoading?: boolean;
   profileImage: String;
-  setProfileImage?: any;
   onUpload?: any;
-  onRemoveImage?: any;
 };
 
 const AvatarComponent = ({
   isEditable,
   isLoading,
   profileImage,
-  setProfileImage,
   onUpload,
-  onRemoveImage,
 }: AvatarProps) => {
   const pickImage = async () => {
     let result: any = await ImagePicker.launchImageLibraryAsync({
@@ -43,17 +38,6 @@ const AvatarComponent = ({
         console.log("Error --", err);
       }
     }
-  };
-
-  const removeImage = () => {
-    Alert.alert(
-      "Remove Image",
-      "Are you sure you want to remove the profile image?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Remove", onPress: onRemoveImage },
-      ]
-    );
   };
 
   return (
@@ -77,11 +61,6 @@ const AvatarComponent = ({
       {isEditable && (
         <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
           <Text style={styles.iconText}>Upload New Image</Text>
-        </TouchableOpacity>
-      )}
-      {profileImage && isEditable && (
-        <TouchableOpacity style={styles.editIcon} onPress={removeImage}>
-          <Text style={styles.iconText}>Remove Image</Text>
         </TouchableOpacity>
       )}
     </View>

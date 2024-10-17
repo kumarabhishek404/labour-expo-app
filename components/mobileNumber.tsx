@@ -100,7 +100,6 @@ const MobileNumberField = ({
   };
 
   const handleVerify = () => {
-    console.log("OTP Submitted: ", otp.join(""));
     if (otp.join("") === "1234") {
       toast.success("Success", "Mobile number verified successfully.");
       setModalVisible(false);
@@ -112,8 +111,6 @@ const MobileNumberField = ({
   const resendOtp = () => {
     console.log("OTP Resent");
   };
-
-  console.log("phoneNumber--", phoneNumber);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -179,8 +176,6 @@ const MobileNumberField = ({
                     maxLength={1}
                     onChangeText={(text) => handleChange(text, index)}
                     onKeyPress={({ nativeEvent }) => {
-                      console.log("Native--", nativeEvent.key, index);
-
                       nativeEvent.key === "Backspace"
                         ? handleBackspace("", index)
                         : null;
@@ -244,7 +239,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     marginBottom: 15,
-    borderRadius: 4,
+    borderRadius: 8,
     padding: 14,
     backgroundColor: "#fff",
     display: "flex",
@@ -276,7 +271,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     marginBottom: 15,
-    borderRadius: 4,
+    borderRadius: 8,
     padding: 10,
     backgroundColor: "#fff",
   },
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
     height: 53,
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 4,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
@@ -322,7 +317,7 @@ const styles = StyleSheet.create({
     bottom: 23,
     backgroundColor: "#007bff",
     padding: 6,
-    borderRadius: 4,
+    borderRadius: 8,
     alignItems: "center",
   },
   btnText: {
@@ -377,7 +372,7 @@ const styles = StyleSheet.create({
   otpInput: {
     width: 60,
     height: 60,
-    borderRadius: 10,
+    borderRadius: 8,
     borderColor: "#4CAF50",
     borderWidth: 2,
     textAlign: "center",
@@ -399,13 +394,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     borderColor: "#CCC",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   verifyButton: {
     paddingVertical: 12,
     paddingHorizontal: 25,
     backgroundColor: "#4CAF50",
-    borderRadius: 5,
+    borderRadius: 8,
   },
   cancelText: {
     color: "#555",

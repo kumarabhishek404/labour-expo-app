@@ -1,40 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  Image,
+  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
-import { FontAwesome5, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import {
+  Entypo,
+  FontAwesome,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/Loader";
-import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
-import { forgotPassword, resetPassword, signIn } from "../../api/user";
-import { toast } from "../../hooks/toast";
-import i18n from "@/utils/i18n";
+import { forgotPassword, resetPassword } from "../../api/user";
+import { Controller, useForm } from "react-hook-form";
+import TextInputComponent from "@/components/TextInputWithIcon";
+import PasswordComponent from "@/components/Password";
 
-const LoginScreen = () => {
-  const setUserDetails = useSetAtom(UserAtom);
-  const setWorkDetails = useSetAtom(WorkAtom);
-  const setEarnings = useSetAtom(EarningAtom);
+interface ForgetPasswordScreenProps {}
+
+const ForgetPasswordScreen = () => {
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      resetToken: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
   const [isResetCodeSent, setIsResetCodeSent] = useState(false);
-  const [secureEntery, setSecureEntery] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [resetCode, setResetCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+
+  const [passwordConditions, setPasswordConditions] = useState({
+    hasNumber: false,
+    hasAlphabet: false,
+    hasSymbol: false,
+    isLongEnough: false,
+  });
+
+  const checkPasswordConditions = (password: any) => {
+    const conditions = {
+      hasNumber: /\d/.test(password),
+      hasAlphabet: /[A-Za-z]/.test(password),
+      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      isLongEnough: password.length >= 8,
+    };
+
+    setPasswordConditions(conditions);
+  };
 
   const mutationForgetPassword = useMutation({
     mutationKey: ["forgetPassword"],
-    mutationFn: () => forgotPassword({ email: email }),
+    mutationFn: (payload: any) => forgotPassword(payload),
     onSuccess: (response) => {
-      console.log("Response ---", response);
       if (response?.status === 200) {
         setIsResetCodeSent(true);
       }
@@ -43,14 +70,8 @@ const LoginScreen = () => {
 
   const mutationSetPassword = useMutation({
     mutationKey: ["setPassword"],
-    mutationFn: () =>
-      resetPassword({
-        email: email,
-        resetToken: resetCode,
-        password: password,
-      }),
+    mutationFn: (payload: any) => resetPassword(payload),
     onSuccess: (response) => {
-      console.log();
       if (response?.status === 200) {
         setIsResetCodeSent(false);
         router.push("/screens/auth/login");
@@ -58,24 +79,28 @@ const LoginScreen = () => {
     },
   });
 
-  const handleOnChangeConfirmPassword = (text: any) => {
-    if (password !== text) {
-      setErrorMessage("Password do not matched");
-      setConfirmPassword(text);
-    } else {
-      setErrorMessage("");
-      setConfirmPassword(text);
-    }
+  const onSubmit = (data: any) => {
+    if (isResetCodeSent)
+      mutationSetPassword.mutate({
+        email: data?.email,
+        resetToken: data?.resetToken,
+        password: data?.password,
+      });
+    else mutationForgetPassword.mutate({ email: data?.email });
   };
 
   return (
-    <>
+    <ScrollView style={styles?.container}>
       <Stack.Screen
         options={{
           headerShown: false,
         }}
       />
-      <Loader loading={mutationForgetPassword?.isPending || mutationSetPassword?.isPending} />
+      <Loader
+        loading={
+          mutationForgetPassword?.isPending || mutationSetPassword?.isPending
+        }
+      />
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Hey,</Text>
@@ -83,103 +108,195 @@ const LoginScreen = () => {
           <Text style={styles.headingText}>Password</Text>
         </View>
         <View style={styles.formContainer}>
-          {isResetCodeSent ? (
+          {!isResetCodeSent ? (
             <>
-              <View style={styles.inputContainer}>
-                <FontAwesome5
-                  name={"user-secret"}
-                  size={30}
-                  color={Colors.secondary}
-                />
-                <TextInput
-                  value={resetCode}
-                  style={styles.textInput}
-                  placeholder="Enter your reset code"
-                  //   keyboardType="numeric"
-                  placeholderTextColor={Colors.secondary}
-                  onChangeText={(code) => {
-                    setResetCode(code.replace(/[^0-9]/g, ""));
-                  }}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <SimpleLineIcons
-                  name={"lock"}
-                  size={30}
-                  color={Colors.secondary}
-                />
-                <TextInput
-                  value={password}
-                  style={styles.textInput}
-                  placeholder="Enter your password"
-                  placeholderTextColor={Colors.secondary}
-                  secureTextEntry={secureEntery}
-                  onChangeText={(password) => {
-                    setPassword(password);
-                  }}
-                />
-                <TouchableOpacity
-                  onPress={() => {
-                    setSecureEntery((prev) => !prev);
-                  }}
-                >
-                  <SimpleLineIcons
-                    name={"eye"}
-                    size={20}
-                    color={Colors.secondary}
+              <Controller
+                control={control}
+                name="resetToken"
+                defaultValue=""
+                rules={{ required: "Reset code is required" }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInputComponent
+                    label="Reset Password Code"
+                    name="resetToken"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="Enter your reset password code"
+                    containerStyle={errors?.resetToken && styles.errorInput}
+                    errors={errors}
+                    icon={
+                      <Ionicons
+                        name={"mail-outline"}
+                        size={30}
+                        color={Colors.secondary}
+                        style={{ paddingVertical: 10, paddingRight: 10 }}
+                      />
+                    }
                   />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.inputContainer}>
-                <SimpleLineIcons
-                  name={"lock"}
-                  size={30}
-                  color={Colors.secondary}
-                />
-                <TextInput
-                  value={confirmPassword}
-                  style={styles.textInput}
-                  placeholder="Re Enter your password"
-                  placeholderTextColor={Colors.secondary}
-                  secureTextEntry={secureEntery}
-                  onChangeText={(password) => {
-                    handleOnChangeConfirmPassword(password);
-                  }}
-                />
-                <TouchableOpacity
-                  onPress={() => {
-                    setSecureEntery((prev) => !prev);
-                  }}
-                >
-                  <SimpleLineIcons
-                    name={"eye"}
-                    size={20}
-                    color={Colors.secondary}
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="password"
+                defaultValue=""
+                rules={{
+                  required: "Password is required",
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "You have to full fill all the following conditions",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <PasswordComponent
+                      label="Password"
+                      name="password"
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={(text: any) => {
+                        onChange(text);
+                        checkPasswordConditions(text);
+                      }}
+                      placeholder="Enter your password"
+                      containerStyle={errors?.password && styles.errorInput}
+                      errors={errors}
+                      icon={
+                        <MaterialIcons
+                          name={"password"}
+                          size={30}
+                          color={Colors.secondary}
+                          style={{ paddingVertical: 10, paddingRight: 10 }}
+                        />
+                      }
+                    />
+                    <View style={styles.conditionsContainer}>
+                      <Text
+                        style={[
+                          styles.conditionText,
+                          passwordConditions.hasNumber && styles?.successText,
+                        ]}
+                      >
+                        {passwordConditions.hasNumber ? (
+                          <Entypo name={"check"} size={18} />
+                        ) : (
+                          <Entypo name="cross" size={18} />
+                        )}{" "}
+                        Use at least one number (0-9)
+                      </Text>
+                      <Text
+                        style={[
+                          styles.conditionText,
+                          passwordConditions.hasAlphabet && styles?.successText,
+                        ]}
+                      >
+                        {passwordConditions.hasAlphabet ? (
+                          <Entypo name={"check"} size={18} />
+                        ) : (
+                          <Entypo name="cross" size={18} />
+                        )}{" "}
+                        Use at least one lower-case letter (a-z)
+                      </Text>
+                      <Text
+                        style={[
+                          styles.conditionText,
+                          passwordConditions.hasSymbol && styles?.successText,
+                        ]}
+                      >
+                        {passwordConditions.hasSymbol ? (
+                          <Entypo name={"check"} size={18} />
+                        ) : (
+                          <Entypo name="cross" size={18} />
+                        )}{" "}
+                        Use at least one symbol (e.g., !@#$%^&*)
+                      </Text>
+                      <Text
+                        style={[
+                          styles.conditionText,
+                          passwordConditions.isLongEnough &&
+                            styles?.successText,
+                        ]}
+                      >
+                        {passwordConditions.isLongEnough ? (
+                          <Entypo name={"check"} size={18} />
+                        ) : (
+                          <Entypo name="cross" size={18} />
+                        )}{" "}
+                        Be at least 8 characters long
+                      </Text>
+                    </View>
+                  </>
+                )}
+              />
+              <Controller
+                control={control}
+                name="confirmPassword"
+                defaultValue=""
+                rules={{
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value == watch("password") || "Passwords do not match",
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <PasswordComponent
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="Re Enter your password"
+                    containerStyle={
+                      errors?.confirmPassword && styles.errorInput
+                    }
+                    errors={errors}
+                    icon={
+                      <FontAwesome
+                        name={"user-secret"}
+                        size={30}
+                        color={Colors.secondary}
+                        style={{ paddingVertical: 10, paddingRight: 10 }}
+                      />
+                    }
                   />
-                </TouchableOpacity>
-              </View>
-              {errorMessage ? (
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              ) : null}
+                )}
+              />
             </>
           ) : (
-            <View style={styles.inputContainer}>
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-              />
-              <TextInput
-                value={email}
-                style={styles.textInput}
-                placeholder="Enter your email"
-                placeholderTextColor={Colors.secondary}
-                keyboardType="email-address"
-                onChangeText={(email) => {
-                  setEmail(email);
-                }}
-              />
-            </View>
+            <Controller
+              control={control}
+              name="email"
+              defaultValue=""
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Enter a valid email address",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInputComponent
+                  label="Email"
+                  name="email"
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  placeholder="Enter your email"
+                  containerStyle={errors?.email && styles.errorInput}
+                  errors={errors}
+                  icon={
+                    <Ionicons
+                      name={"mail-outline"}
+                      size={30}
+                      color={Colors.secondary}
+                      style={{ paddingVertical: 10, paddingRight: 10 }}
+                    />
+                  }
+                />
+              )}
+            />
           )}
           <View style={styles.signContainer}>
             <Text style={styles.accountText}>If you knew your password?</Text>
@@ -190,11 +307,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
           <TouchableOpacity
-            onPress={() =>
-              isResetCodeSent
-                ? mutationSetPassword.mutate()
-                : mutationForgetPassword.mutate()
-            }
+            onPress={handleSubmit(onSubmit)}
             style={styles.forgetButtonWrapper}
           >
             <Text style={styles.loginText}>
@@ -212,23 +325,23 @@ const LoginScreen = () => {
           </View>
         </View>
       </View>
-    </>
+    </ScrollView>
   );
 };
 
-export default LoginScreen;
+export default ForgetPasswordScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    padding: 20,
+    padding: 10,
   },
   backButtonWrapper: {
     height: 40,
     width: 40,
     backgroundColor: Colors.gray,
-    borderRadius: 20,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -238,7 +351,6 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 32,
     color: Colors.primary,
-    // fontFamily: Fonts.SemiBold,
   },
   formContainer: {
     marginTop: 20,
@@ -246,7 +358,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 10,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
@@ -259,10 +371,12 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     textAlign: "right",
-    fontWeight: "600",
     alignSelf: "flex-end",
     marginVertical: 10,
     textDecorationLine: "underline",
+    color: Colors.black,
+    fontSize: 20,
+    fontWeight: "500",
   },
   forgetButtonWrapper: {
     backgroundColor: Colors.primary,
@@ -346,11 +460,25 @@ const styles = StyleSheet.create({
   signupText: {
     color: Colors.black,
     textDecorationLine: "underline",
-    // fontFamily: Fonts.Bold,
+    fontSize: 20,
+    fontWeight: "500",
   },
   errorText: {
     color: "#FF0000",
     fontSize: 14,
     marginBottom: 10,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
+  },
+  conditionsContainer: {},
+  conditionText: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  successText: {
+    color: "green",
   },
 });

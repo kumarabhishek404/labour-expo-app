@@ -35,7 +35,7 @@
 //               onPress={() => router.back()}
 //               style={{
 //                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-//                 borderRadius: 10,
+//                 borderRadius: 8,
 //                 padding: 4,
 //                 marginRight: 20
 //               }}
@@ -44,7 +44,7 @@
 //                 style={{
 //                   backgroundColor: Colors.white,
 //                   padding: 6,
-//                   borderRadius: 10,
+//                   borderRadius: 8,
 //                 }}
 //               >
 //                 <Feather name="arrow-left" size={20} />
@@ -58,7 +58,7 @@
 //                 marginRight: 20,
 //                 backgroundColor: Colors.white,
 //                 padding: 10,
-//                 borderRadius: 10,
+//                 borderRadius: 8,
 //                 shadowColor: "#171717",
 //                 shadowOffset: { width: 2, height: 4 },
 //                 shadowOpacity: 0.2,

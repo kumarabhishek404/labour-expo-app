@@ -9,7 +9,6 @@ interface SkillsSelectorProps {
   availableOptions: Array<any>;
   onBlur: any;
   errors: any;
-  placeholder: string;
   icon?: any;
 }
 
@@ -20,7 +19,6 @@ const SkillsSelector = ({
   availableOptions,
   onBlur,
   errors,
-  placeholder,
 }: SkillsSelectorProps) => {
   const handleSelect = (interest: any) => {
     if (selectedInterests.length < 10) {
@@ -118,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6B6B",
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
@@ -138,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEE",
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 8,
     margin: 5,
   },
   interestText: {

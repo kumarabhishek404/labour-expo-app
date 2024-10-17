@@ -1,12 +1,9 @@
 import {
-  ActivityIndicator,
   Dimensions,
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -46,6 +43,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { AddServiceAtom, LocationAtom, UserAtom } from "../../AtomStore/user";
 import { toast } from "../../hooks/toast";
 import profileImage from "../../../assets/person-placeholder.png";
+import coverImage from "../../../assets/images/placeholder-cover.jpg";
 import { dateDifference } from "@/constants/functions";
 import Button from "@/components/Button";
 import ModalComponent from "@/components/Modal";
@@ -161,11 +159,8 @@ const ServiceDetails = () => {
     mutationFn: () => unLikeService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      // console.log("Response while unliking a service - ", response);
       let likedService = [...userDetails?.likedJobs];
       console.log("Response while unliking a service - ", likedService);
-
-      // likeService?.filter((serviceId:any) => serviceId !== id)
     },
     onError: (err) => {
       console.error("error while unliking the service ", err);
@@ -197,7 +192,6 @@ const ServiceDetails = () => {
   });
 
   useEffect(() => {
-    console.log("Resposne --", response?.data);
     setIsServiceApplied(
       service?.isApplied ||
         service?.applied?.includes(userDetails?._id) ||
@@ -226,13 +220,6 @@ const ServiceDetails = () => {
     }, [location])
   );
 
-  console.log(
-    "serviceserviceservice----",
-    service,
-    userDetails?._id,
-    service?.applied?.includes(userDetails?._id)
-  );
-
   const handleSubmit = async () => {
     if (images && images?.length > 0) {
       setIsEditLoading(true);
@@ -242,17 +229,10 @@ const ServiceDetails = () => {
         _id: service?._id,
         name: title,
         description: description,
-        // startDate: startDate,
-        // endDate: endDate,
         location: {
           latitude: 27.1767,
           longitude: 78.0081,
         },
-        // city: service?.city,
-        // state: service?.state,
-        // pinCode: service?.pinCode,
-        // address: service?.address,
-        // requirements: service?.requirements,
       };
 
       try {
@@ -329,7 +309,7 @@ const ServiceDetails = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -337,7 +317,7 @@ const ServiceDetails = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -349,7 +329,7 @@ const ServiceDetails = () => {
               onPress={() => {}}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -357,7 +337,7 @@ const ServiceDetails = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Ionicons name="bookmark-outline" size={20} />
@@ -383,7 +363,13 @@ const ServiceDetails = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={{ uri: service?.coverImage }}
+            source={
+              service?.coverImage
+                ? {
+                    uri: service?.coverImage,
+                  }
+                : coverImage
+            }
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
@@ -422,6 +408,7 @@ const ServiceDetails = () => {
                   </Text>
                 </View>
               </View>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -436,6 +423,7 @@ const ServiceDetails = () => {
                   <Text style={styles.highlightTxtVal}>Yes</Text>
                 </View>
               </View>
+
               {service?.location && service?.location?.latitude && (
                 <View
                   style={{
@@ -602,8 +590,8 @@ const ServiceDetails = () => {
               style={[
                 styles.requirmentContainer,
                 {
-                  marginVertical: 20,
-                  marginHorizontal: 20,
+                  marginVertical: 10,
+                  marginHorizontal: 10,
                 },
               ]}
             >
@@ -615,106 +603,84 @@ const ServiceDetails = () => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    gap: 6,
                   },
                 ]}
               >
-                <View style={{ width: "67%" }}>
-                  <Text style={[styles.title, { marginBottom: 10 }]}>
-                    Employer
-                  </Text>
-                  <Text style={{ fontSize: 14, fontWeight: "500" }}>
-                    Sanaya Singh
-                  </Text>
-                  <Text style={{ fontSize: 14, fontWeight: "500" }}>
-                    Balipur, Shakrauli, Jalesar, Etah Uttar Predesh
-                  </Text>
-                  <View
-                    style={{
-                      borderWidth: 2,
-                      borderColor: Colors?.primary,
-                      width: 120,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 4,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
-                    }}
-                  >
-                    <FontAwesome5
-                      name="phone-alt"
-                      size={16}
-                      color={Colors.primary}
-                    />
-                    <Text
-                      style={{
-                        color: Colors?.primary,
-                        marginLeft: 6,
-                        fontSize: 14,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Dial Phone
+                <View style={{ width: "60%", gap: 10 }}>
+                  <View style={{ gap: 2 }}>
+                    <Text style={[styles.title, { marginBottom: 10 }]}>
+                      Employer
+                    </Text>
+                    <Text style={{ fontSize: 13, fontWeight: "500" }}>
+                      <Text style={styles?.employerLabel}>Name : </Text>Sanaya
+                      Singh
+                    </Text>
+                    <Text style={{ fontSize: 13, fontWeight: "500" }}>
+                      <Text style={styles?.employerLabel}>Address : </Text>
+                      Balipur, Shakrauli, Jalesar, Etah Uttar Predesh
                     </Text>
                   </View>
-                  <View
+
+                  <Button
+                    isPrimary={false}
+                    title="Dial Phone"
+                    onPress={() => {}}
+                    icon={
+                      <FontAwesome5
+                        name="phone-alt"
+                        size={16}
+                        color={Colors.primary}
+                      />
+                    }
                     style={{
-                      borderWidth: 2,
-                      borderColor: Colors?.primary,
-                      width: 160,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 4,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
+                      paddingVertical: 6,
+                      paddingHorizontal: 6,
                     }}
-                  >
-                    <FontAwesome5
-                      name="whatsapp"
-                      size={18}
-                      color={Colors.primary}
-                    />
-                    <Text
-                      style={{
-                        color: Colors?.primary,
-                        marginLeft: 6,
-                        fontSize: 14,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Whatsapp Message
-                    </Text>
-                  </View>
+                    textStyle={{
+                      marginLeft: 6,
+                      fontSize: 12,
+                    }}
+                  />
+
+                  <Button
+                    isPrimary={false}
+                    title="Whatsapp Message"
+                    onPress={() => {}}
+                    icon={
+                      <FontAwesome5
+                        name="whatsapp"
+                        size={18}
+                        color={Colors.primary}
+                      />
+                    }
+                    style={{
+                      paddingVertical: 6,
+                      paddingHorizontal: 6,
+                    }}
+                    textStyle={{
+                      marginLeft: 6,
+                      fontSize: 12,
+                    }}
+                  />
                 </View>
-                <View style={{ width: "33%" }}>
+                <View
+                  style={{
+                    width: "auto",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                    gap: 10,
+                  }}
+                >
                   <AvatarComponent
                     isEditable={false}
                     profileImage={
                       "https://xsgames.co/randomusers/avatar.php?g=female"
                     }
                   />
-                  <TouchableOpacity
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      right: 0,
-                      borderWidth: 2,
-                      borderColor: Colors?.primary,
-                      width: 120,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 4,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
-                    }}
+                  <Button
+                    isPrimary={true}
+                    title="View Details"
                     onPress={() =>
                       router.push(
                         userDetails?._id === service?.employer
@@ -722,19 +688,18 @@ const ServiceDetails = () => {
                           : `/screens/employer/${service?.employer}`
                       )
                     }
-                  >
-                    <AntDesign name="eye" size={18} color={Colors.primary} />
-                    <Text
-                      style={{
-                        color: Colors?.primary,
-                        marginLeft: 6,
-                        fontSize: 14,
-                        fontWeight: "600",
-                      }}
-                    >
-                      View Details
-                    </Text>
-                  </TouchableOpacity>
+                    icon={
+                      <AntDesign name="eye" size={18} color={Colors.white} />
+                    }
+                    style={{
+                      paddingVertical: 6,
+                      paddingHorizontal: 6,
+                    }}
+                    textStyle={{
+                      marginLeft: 6,
+                      fontSize: 12,
+                    }}
+                  />
                 </View>
               </View>
             </View>
@@ -744,55 +709,44 @@ const ServiceDetails = () => {
 
       {service?.employer === userDetails?._id ? (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          <TouchableOpacity
-            // onPress={() =>
-            //   isServiceApplied
-            //     ? mutationUnApplyService.mutate()
-            //     : mutationApplyService.mutate()
-            // }
-            style={[styles.footerBtn, styles.footerBookBtn]}
-          >
-            <Text style={styles.footerBtnTxt}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          <Button isPrimary={true} title="Cancel" onPress={() => {}} />
+          <Button
+            isPrimary={false}
+            title="Edit"
             onPress={() => {
               router.push("/(tabs)/addService/");
               setAddService(service);
             }}
-            style={[styles.footerBtn]}
-          >
-            <Text style={styles.footerBtnTxt}>Edit</Text>
-          </TouchableOpacity>
+            style={styles?.footerBtn}
+            textStyle={{
+              color: Colors?.white,
+            }}
+          />
         </Animated.View>
       ) : (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          <TouchableOpacity
+          <Button
+            isPrimary={true}
+            title={isServiceApplied ? "Already Applied" : "Apply Now"}
             onPress={() =>
               isServiceApplied
                 ? mutationUnApplyService.mutate()
                 : mutationApplyService.mutate()
             }
-            style={[styles.footerBtn, styles.footerBookBtn]}
-          >
-            <Text style={styles.footerBtnTxt}>
-              {isServiceApplied ? "Already Applied" : "Apply Now"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          />
+          <Button
+            isPrimary={false}
+            title={isServiceLiked ? "Unlike" : "Like"}
             onPress={() =>
               isServiceLiked
                 ? mutationUnLikeService.mutate()
                 : mutationLikeService.mutate()
             }
-            style={[styles.footerBtn]}
-          >
-            <Text style={styles.footerBtnTxt}>
-              {isServiceLiked ? "Unlike" : "Like"}
-            </Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-          <Text style={styles.footerBtnTxt}>${service?.price}</Text>
-          </TouchableOpacity> */}
+            style={styles?.footerBtn}
+            textStyle={{
+              color: Colors?.white,
+            }}
+          />
         </Animated.View>
       )}
 
@@ -898,22 +852,17 @@ const styles = StyleSheet.create({
   productCard: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    borderRadius: 4,
+    borderRadius: 8,
     padding: 10,
     marginBottom: 10,
     alignItems: "center",
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 5,
-    // elevation: 2,
     borderColor: "gray",
     borderWidth: 1,
   },
   productImage: {
     width: 60,
     height: 60,
-    borderRadius: 4,
+    borderRadius: 8,
     marginRight: 15,
   },
   productInfo: {
@@ -953,9 +902,9 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#e1e8e5",
-    padding: 16,
+    padding: 15,
     marginBottom: 16,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   viewButton: {
     width: 100,
@@ -1001,6 +950,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
     position: "absolute",
     bottom: 0,
     padding: 20,
@@ -1010,8 +961,7 @@ const styles = StyleSheet.create({
   footerBtn: {
     flex: 1,
     backgroundColor: Colors.black,
-    padding: 20,
-    borderRadius: 10,
+    borderColor: Colors.black,
     alignItems: "center",
   },
   footerBookBtn: {
@@ -1019,13 +969,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     marginRight: 20,
   },
-  // footerLikeBtn: {
-  //   backgroundColor: "gray",
-  // },
   footerBtnTxt: {
     color: Colors.white,
     fontSize: 16,
     fontWeight: "600",
     textTransform: "uppercase",
+  },
+  employerLabel: {
+    fontSize: 12,
+    color: "#615d5d",
+    fontWeight: "600",
   },
 });

@@ -25,7 +25,7 @@ import ThirdScreen from "./third";
 import FourthScreen from "./fourth";
 import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
-import SelfieScreen from "@/components/selfie";
+import SelfieScreen from "@/components/Selfie";
 import FifthScreen from "./fifth";
 
 const SignupScreen = () => {
@@ -41,8 +41,11 @@ const SignupScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
-  const [role, setRole]: any = useState("WORKER");
-  const [labourType, setLabourType]: any = useState("ONE");
+  const [role, setRole]: any = useState({
+    name: "WORKER",
+    type: "ONE"
+  });
+  // const [labourType, setLabourType]: any = useState("ONE");
   const [skills, setSkills]: any = useState([]);
 
   const [password, setPassword] = useState("");
@@ -61,7 +64,7 @@ const SignupScreen = () => {
       setPhoneNumber("");
       setEmail("");
       setRole("WORKER");
-      setLabourType("ONE");
+      // setLabourType("ONE");
       setSkills("");
       setPassword("");
       setConfirmPassword("");
@@ -93,11 +96,11 @@ const SignupScreen = () => {
       mobileNumber: phoneNumber,
       email: email,
       role: role,
-      labourType: labourType,
+      // labourType: labourType,
       skills: skills,
       password: password,
     };
-    console.log("Payload---", payload);
+    
     mutationRegister.mutate(payload);
   };
 
@@ -137,8 +140,8 @@ const SignupScreen = () => {
             setStep={setStep}
             role={role}
             setRole={setRole}
-            labourType={labourType}
-            setLabourType={setLabourType}
+            // labourType={labourType}
+            // setLabourType={setLabourType}
             selectedInterests={skills}
             setSelectedInterests={setSkills}
           />
@@ -180,8 +183,8 @@ const SignupScreen = () => {
       <Loader loading={mutationRegister?.isPending} />
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Let's get</Text>
-          <Text style={styles.headingText}>started</Text>
+          <Text style={styles.headingText}>Make new</Text>
+          <Text style={styles.headingText}>account</Text>
         </View>
         <View style={styles.formContainer}>
           <View style={styles?.inputContainer}>{renderFormComponents()}</View>
@@ -208,7 +211,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     backgroundColor: Colors.gray,
-    borderRadius: 20,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
   },

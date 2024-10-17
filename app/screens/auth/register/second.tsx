@@ -31,8 +31,8 @@ import {
 } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
-import MobileNumberField from "@/components/mobileNumber";
-import EmailAddressField from "@/components/emailAddress";
+import MobileNumberField from "@/components/MobileNumber";
+import EmailAddressField from "@/components/EmailAddress";
 import AddLocationAndAddress from "@/components/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 16,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
-    borderRadius: 4,
+    borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 3,
     marginTop: 20,

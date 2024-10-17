@@ -55,8 +55,6 @@ const SignupScreen = () => {
     addService?.coverImage ? [addService?.coverImage] : []
   );
 
-  console.log("addService ====", addService);
-
   const mutationAddService = useMutation({
     mutationKey: ["addService"],
     mutationFn: () => (addService?._id ? handleEditSubmit() : handleSubmit()),
@@ -134,10 +132,7 @@ const SignupScreen = () => {
     formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
     formData.append("requirements", JSON.stringify(requirements));
 
-    console.log("payloadddd---", formData);
-
     const response: any = await addNewService(formData);
-    console.log("Response Data ---", response?.data);
     return response?.data;
   };
 
@@ -157,10 +152,7 @@ const SignupScreen = () => {
       images: images,
     };
 
-    console.log("payloadddd---", payload);
-
     const response: any = await editService(payload);
-    console.log("Response Data ---", response?.data);
     return response?.data;
   };
 
@@ -265,7 +257,7 @@ const SignupScreen = () => {
               }}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -273,7 +265,7 @@ const SignupScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />

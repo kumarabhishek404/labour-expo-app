@@ -36,8 +36,6 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     setStep(4);
   };
 
-  console.log("errors--", errors, parseInt("231wewesds"));
-
   return (
     <View style={styles?.container}>
       <Image source={Step3} style={styles.image} />

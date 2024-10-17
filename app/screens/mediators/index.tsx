@@ -88,7 +88,7 @@ const Mediators = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -96,7 +96,7 @@ const Mediators = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -108,7 +108,7 @@ const Mediators = () => {
               onPress={() => {}}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -116,7 +116,7 @@ const Mediators = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Ionicons name="bookmark-outline" size={20} />
@@ -202,12 +202,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.white,
     paddingLeft: 16,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   filterBtn: {
     backgroundColor: Colors.primary,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 8,
     marginLeft: 20,
   },
   categoryContainer: {

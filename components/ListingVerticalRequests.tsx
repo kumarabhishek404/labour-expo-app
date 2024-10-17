@@ -210,7 +210,7 @@ const ListingVerticalRequests = ({
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
-    <View style={{ marginBottom: 90 }}>
+    <View style={{ marginBottom: 30 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: Colors.white,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   image: {
     width: 150,
     height: 150,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 20,
   },
   bookmark: {
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     color: "#999",
   },
   loaderStyle: {
-    alignItems: "flex-start",
+    alignItems: "center",
     paddingLeft: 20,
     paddingBottom: 10,
   },
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   //   Request Card
   card: {
     backgroundColor: "white",
-    borderRadius: 4,
+    borderRadius: 8,
     padding: 12,
     marginHorizontal: 15,
     marginVertical: 10,
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 8,
   },
   infoContainer: {
     flex: 1,
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   declineText: {
     fontSize: 14,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: "center",
   },
   acceptText: {
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   },
   counterContainer: {
     backgroundColor: "white",
-    borderRadius: 15,
+    borderRadius: 8,
     padding: 5,
     marginLeft: 10,
   },

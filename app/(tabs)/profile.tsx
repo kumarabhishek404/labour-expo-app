@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  SafeAreaView,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -11,24 +10,24 @@ import {
 } from "react-native";
 import {
   Entypo,
-  Feather,
-  FontAwesome,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
-import { Link, router, Stack, useFocusEffect } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { EarningAtom, UserAtom, WorkAtom } from "../AtomStore/user";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import ModalComponent from "@/components/Modal";
-import { updateUserById, updateUserRoleById, uploadFile } from "../api/user";
+import { updateUserById, uploadFile } from "../api/user";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
 import AvatarComponent from "@/components/Avatar";
 import Button from "@/components/Button";
+import UserInfoComponent from "@/components/UserInfoBox";
+import TextInputComponent from "@/components/TextInputWithIcon";
+import { Controller, useForm } from "react-hook-form";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -42,23 +41,34 @@ const ProfileScreen = () => {
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
 
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: userDetails?.firstName,
+      lastName: userDetails?.lastName,
+      address: userDetails?.address,
+    },
+  });
+
   useEffect(() => {
-    setFirstName(userDetails?.firstName);
-    setLastName(userDetails?.lastName);
-    setAddress(userDetails?.address);
+    setValue("firstName", userDetails?.firstName);
+    setValue("lastName", userDetails?.lastName);
+    setValue("address", userDetails?.address);
   }, [isEditProfile]);
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: () =>
-      updateUserById({
-        firstName: firstName,
-        lastName: lastName,
-        address: address,
-      }),
+    mutationFn: (payload: any) => updateUserById(payload),
     onSuccess: (response) => {
-      console.log("Response while updating the profile - ", response);
-      let user = response?.data;
+      console.log(
+        "Response while updating the profile - ",
+        response?.data?.data
+      );
+      let user = response?.data?.data;
       setIsEditProfile(false);
       setUserDetails({
         ...userDetails,
@@ -102,7 +112,6 @@ const ProfileScreen = () => {
     setDarkModeEnabled((prevState) => !prevState);
 
   const handleLogout = () => {
-    console.log("Logout button pressed");
     setUserDetails({
       isAuth: false,
       _id: "",
@@ -156,7 +165,102 @@ const ProfileScreen = () => {
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
+        <View style={{ marginBottom: 10 }}>
+          <AvatarComponent
+            isEditable={true}
+            isLoading={mutationUploadProfileImage?.isPending}
+            profileImage={avatar}
+            onUpload={mutationUploadProfileImage?.mutate}
+          />
+        </View>
+
+        <Controller
+          control={control}
+          name="firstName"
+          defaultValue=""
+          rules={{
+            required: "First Name is required",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              label="First Name"
+              name="firstName"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="Enter your First Name"
+              containerStyle={errors?.firstName && styles.errorInput}
+              errors={errors}
+              icon={
+                <Ionicons
+                  name="person"
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="lastName"
+          defaultValue=""
+          rules={{
+            required: "First Name is required",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              label="Last Name"
+              name="lastName"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="Enter your Last Name"
+              containerStyle={errors?.lastName && styles.errorInput}
+              errors={errors}
+              icon={
+                <Ionicons
+                  name="person"
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="address"
+          defaultValue=""
+          rules={{
+            required: "Address is required",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              label="Address"
+              name="address"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="Enter your Address"
+              containerStyle={errors?.lastName && styles.errorInput}
+              errors={errors}
+              icon={
+                <Entypo
+                  name="location"
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+        {/* <View style={styles.inputContainer}>
           <Ionicons name="person" size={30} color={Colors.secondary} />
           <TextInput
             value={firstName}
@@ -165,8 +269,8 @@ const ProfileScreen = () => {
             placeholderTextColor={Colors.secondary}
             onChangeText={setFirstName}
           />
-        </View>
-        <View style={styles.inputContainer}>
+        </View> */}
+        {/* <View style={styles.inputContainer}>
           <Ionicons name="person" size={30} color={Colors.secondary} />
           <TextInput
             value={lastName}
@@ -175,8 +279,8 @@ const ProfileScreen = () => {
             placeholderTextColor={Colors.secondary}
             onChangeText={setLastName}
           />
-        </View>
-        <View style={styles.inputContainer}>
+        </View> */}
+        {/* <View style={styles.inputContainer}>
           <Entypo name={"home"} size={30} color={Colors.secondary} />
           <TextInput
             value={address}
@@ -185,54 +289,27 @@ const ProfileScreen = () => {
             placeholderTextColor={Colors.secondary}
             onChangeText={setAddress}
           />
-        </View>
+        </View> */}
       </View>
     );
+  };
+
+  const onSubmit = (data: any) => {
+    let payload = {
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      address: data?.address,
+    };
+    console.log("Payload---", payload);
+    mutationUpdateProfileInfo?.mutate(payload);
   };
 
   return (
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerTitle: "Profile",
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                !isEditProfile && handleEditProfile();
-              }}
-              style={{
-                marginRight: 20,
-                backgroundColor: Colors.white,
-                padding: 6,
-                borderRadius: 6,
-                shadowColor: "#171717",
-                shadowOffset: { width: 2, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3,
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 16,
-                }}
-              >
-                Edit Profile
-                <ModalComponent
-                  visible={isEditProfile}
-                  onClose={() => setIsEditProfile(false)}
-                  content={modalContent}
-                  primaryButton={{
-                    action: mutationUpdateProfileInfo?.mutate,
-                  }}
-                  secondaryButton={{
-                    action: () => setIsEditProfile(false),
-                  }}
-                />
-              </Text>
-            </TouchableOpacity>
-          ),
+          headerTransparent: true,
+          headerTitle: "",
         }}
       />
       <Loader loading={mutationUpdateProfileInfo?.isPending} />
@@ -240,20 +317,25 @@ const ProfileScreen = () => {
         <View style={styles.userInfoSection}>
           <View
             style={{
-              flexDirection: "row",
+              flexDirection: "column",
               justifyContent: "space-between",
               marginTop: 15,
             }}
           >
             <AvatarComponent
-              isEditable={true}
+              isEditable={false}
               isLoading={mutationUploadProfileImage?.isPending}
               profileImage={avatar}
-              setProfileImage={setAvatar}
               onUpload={mutationUploadProfileImage?.mutate}
-              onRemoveImage={mutationRemoveProfileImage?.mutate}
             />
-            <View style={{ flex: 1, marginHorizontal: 10 }}>
+            <View
+              style={{
+                flex: 1,
+                marginHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Text
                 style={[
                   styles.title,
@@ -274,38 +356,45 @@ const ProfileScreen = () => {
                     : "MEDIATOR"
                   : userDetails?.role}
               </Text>
-              <Button
-                style={styles?.mediatorButton}
-                textStyle={styles?.mediatorButtonText}
-                isPrimary={true}
-                title={
-                  userDetails?.roleType === "ONE"
-                    ? "Change To Mediator"
-                    : "Change To Worker"
-                }
-                onPress={() => router?.push("/screens/profile/changeRole")}
-              />
             </View>
           </View>
         </View>
 
-        <View style={styles.userInfoTextWrapper}>
-          <View style={styles.userInfoBox}>
-            <View style={[styles.row, styles.firstBox]}>
-              <Text style={styles.userInfoText}>
-                {userDetails?.address || "Address Not Found"}
-              </Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.userInfoText}>
-                {userDetails?.mobileNumber || "1234567890"}
-              </Text>
-            </View>
-            <View style={[styles.row, styles.lastBox]}>
-              <Text style={styles.userInfoText}>{userDetails?.email}</Text>
-            </View>
-          </View>
+        <View style={styles?.changeRoleWrapper}>
+          <Button
+            style={styles?.mediatorButton}
+            textStyle={styles?.mediatorButtonText}
+            isPrimary={true}
+            title="Change Role"
+            onPress={() => router?.push("/screens/profile/changeRole")}
+          />
+          <Button
+            style={{
+              ...styles?.mediatorButton,
+              backgroundColor: Colors?.black,
+              borderColor: Colors?.black,
+            }}
+            textStyle={styles?.mediatorButtonText}
+            isPrimary={true}
+            title="Edit Profile"
+            onPress={() => {
+              !isEditProfile && handleEditProfile();
+            }}
+          />
+          <ModalComponent
+            visible={isEditProfile}
+            onClose={() => setIsEditProfile(false)}
+            content={modalContent}
+            primaryButton={{
+              action: handleSubmit(onSubmit),
+            }}
+            secondaryButton={{
+              action: () => setIsEditProfile(false),
+            }}
+          />
         </View>
+
+        <UserInfoComponent user={userDetails} />
 
         <Text style={styles.workInfoHeading}>Wallet</Text>
         <View style={styles.infoBoxWrapper}>
@@ -394,7 +483,25 @@ const ProfileScreen = () => {
                   size={28}
                   color={Colors.primary}
                 />
-                <Text style={styles.menuItemText}>Your Favorites</Text>
+                <Text style={styles.menuItemText}>
+                  Your Favourites{" "}
+                  {userDetails?.role === "EMPLOYER" ? "Workers" : "Employers"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/screens/favourite" asChild>
+            <TouchableOpacity>
+              <View style={styles.menuItem}>
+                <MaterialIcons
+                  name="space-dashboard"
+                  size={28}
+                  color={Colors.primary}
+                />
+                <Text style={styles.menuItemText}>
+                  Your Favourite Mediators
+                </Text>
               </View>
             </TouchableOpacity>
           </Link>
@@ -536,18 +643,22 @@ const ProfileScreen = () => {
               <View style={styles.menuItem}>
                 <MaterialCommunityIcons
                   name="delete-forever"
-                  size={32}
-                  color={Colors.primary}
+                  size={28}
+                  color={Colors.danger}
                 />
-                <Text style={styles.menuItemText}>Delete Account</Text>
+                <Text style={[styles.menuItemText, { color: Colors?.danger }]}>
+                  Delete Account
+                </Text>
               </View>
             </TouchableOpacity>
           </Link>
 
           <TouchableOpacity onPress={handleLogout}>
             <View style={styles.menuItem}>
-              <MaterialIcons name="logout" size={28} color={Colors.primary} />
-              <Text style={styles.menuItemText}>Log Out</Text>
+              <MaterialIcons name="logout" size={28} color={Colors.danger} />
+              <Text style={[styles.menuItemText, { color: Colors?.danger }]}>
+                Log Out
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -562,29 +673,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    marginTop: 60,
+    // backgroundColor: Colors?.white
+  },
+  changeRoleWrapper: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
   },
   userInfoSection: {
     paddingHorizontal: 20,
     marginBottom: 20,
   },
-  userInfoTextWrapper: {
-    // width: '100%',
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  userInfoBox: {
-    // width: '90%',
-    // borderRadius: 16,
-    padding: 15,
-    // marginLeft: -20,
-  },
-  userInfoText: {
-    color: "#777777",
-    padding: 12,
-  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    textAlign: "center",
   },
   caption: {
     fontSize: 14,
@@ -600,11 +708,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6ecdd",
   },
   mediatorButton: {
-    borderWidth: 1,
+    width: "48%",
+    borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 25,
     marginTop: 16,
   },
   mediatorButtonText: {
@@ -733,5 +842,10 @@ const styles = StyleSheet.create({
     color: Colors?.primary,
     tintColor: Colors?.primary,
     transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
   },
 });

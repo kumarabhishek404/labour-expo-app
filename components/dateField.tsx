@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     height: 53,
     padding: 10,
     borderColor: Colors?.secondary,
-    borderRadius: 4,
+    borderRadius: 8,
     marginBottom: 10,
   },
   dateItem: {

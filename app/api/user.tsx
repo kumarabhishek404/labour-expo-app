@@ -69,7 +69,6 @@ export const resetPassword = async (payload: any) => {
 };
 
 export const signIn = async (payload: any) => {
-  console.log("Payloadddd---", payload);
   try {
     console.log(
       `[Sign In] [userService] Signing in the user with API /auth/login and payload `,

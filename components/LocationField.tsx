@@ -35,9 +35,7 @@ const LocationField = ({
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     { label: "Add New Address", value: "addAddress" },
   ]);
-
-  console.log("userDetails---22", userDetails);
-
+  
   useEffect(() => {
     let addresses =
       userDetails?.serviceAddress &&
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     height: 53,
     borderColor: Colors.secondary,
     borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 8,
     paddingHorizontal: 10,
   },
   errorInput: {

@@ -6,8 +6,6 @@
 
 // const StateContext: any = createContext({});
 
-// console.log("Refreshing===========================-----------2222222")
-
 // const initialState = {
 //   isAuth:
 //     (SecureStore.getItem("user") &&
@@ -70,8 +68,6 @@
 // const stateReducer = (state: any, action: any) => {
 //   switch (action.type) {
 //     case "LOGIN":
-//       console.log("Action - ", action.payload);
-
 //       SecureStore.setItem(
 //         "user",
 //         JSON.stringify({

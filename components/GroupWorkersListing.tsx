@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     marginRight: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: Colors.white,
   },
   title: {
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    borderRadius: 10,
+    borderRadius: 8,
     marginRight: 10,
   },
   itemTxt: {

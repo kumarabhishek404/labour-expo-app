@@ -135,7 +135,7 @@ const PaymentMethodsScreen = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -143,7 +143,7 @@ const PaymentMethodsScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   paymentOption: {
     backgroundColor: "#f9f9f9",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   addPaymentButton: {
     backgroundColor: Colors?.primary,
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
   },
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   transactionItem: {
     backgroundColor: "#f1f1f1",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 10,
   },
   transactionText: {

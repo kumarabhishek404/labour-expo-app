@@ -37,7 +37,7 @@ const SupportScreen = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -45,7 +45,7 @@ const SupportScreen = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     marginHorizontal: 20,
     marginVertical: 10,
     shadowColor: "#000",

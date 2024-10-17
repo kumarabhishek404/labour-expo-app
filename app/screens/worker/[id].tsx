@@ -33,6 +33,7 @@ import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader";
 import profileImage from "../../../assets/images/placeholder-person.jpg";
+import coverImage from "../../../assets/images/placeholder-cover.jpg";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import { sendJoiningRequest } from "@/app/api/requests";
@@ -127,8 +128,6 @@ const Worker = () => {
     };
   });
 
-  console.log("worker--", worker);
-
   return (
     <>
       <Stack.Screen
@@ -140,7 +139,7 @@ const Worker = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -148,7 +147,7 @@ const Worker = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -160,7 +159,7 @@ const Worker = () => {
               onPress={() => {}}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -168,7 +167,7 @@ const Worker = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Ionicons name="bookmark-outline" size={20} />
@@ -177,7 +176,14 @@ const Worker = () => {
           ),
         }}
       />
-      <Loader loading={isLoading || isRefetching || mutation?.isPending || mutationSendRequest?.isPending} />
+      <Loader
+        loading={
+          isLoading ||
+          isRefetching ||
+          mutation?.isPending ||
+          mutationSendRequest?.isPending
+        }
+      />
 
       <View style={styles.container}>
         <Animated.ScrollView
@@ -185,15 +191,13 @@ const Worker = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            // source={{ uri: worker.image }}
+            source={worker.image ? { uri: worker.image } : coverImage}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Image source={{ uri: worker?.image }} style={styles.workerImage} />
             <Image
-              style={styles.workerImage}
               source={worker?.avatar ? { uri: worker?.avatar } : profileImage}
-              // size={150}
+              style={styles.workerImage}
             />
             <Text style={styles.listingName}>
               {worker?.firstName} {worker?.lastName}
@@ -530,7 +534,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.black,
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
   },
   footerBookBtn: {

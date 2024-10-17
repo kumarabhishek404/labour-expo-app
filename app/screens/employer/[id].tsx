@@ -116,8 +116,6 @@ const Worker = () => {
     };
   });
 
-  console.log("employer--", employer);
-
   return (
     <>
       <Stack.Screen
@@ -129,7 +127,7 @@ const Worker = () => {
               onPress={() => router.back()}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -137,7 +135,7 @@ const Worker = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Feather name="arrow-left" size={20} />
@@ -149,7 +147,7 @@ const Worker = () => {
               onPress={() => {}}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 10,
+                borderRadius: 8,
                 padding: 4,
               }}
             >
@@ -157,7 +155,7 @@ const Worker = () => {
                 style={{
                   backgroundColor: Colors.white,
                   padding: 6,
-                  borderRadius: 10,
+                  borderRadius: 8,
                 }}
               >
                 <Ionicons name="bookmark-outline" size={20} />
@@ -214,7 +212,12 @@ const Worker = () => {
             </View> */}
 
             <View style={styles.highlightWrapper}>
-              <View style={styles?.highlightBox}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "32%",
+                }}
+              >
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
@@ -226,7 +229,12 @@ const Worker = () => {
                 </View>
               </View>
 
-              <View style={styles?.highlightBox}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "32%",
+                }}
+              >
                 <View style={styles.highlightIcon}>
                   <FontAwesome name="users" size={18} color={Colors.primary} />
                 </View>
@@ -235,7 +243,13 @@ const Worker = () => {
                   <Text style={styles.highlightTxtVal}>Beginer</Text>
                 </View>
               </View>
-              <View style={styles?.highlightBox}>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "32%",
+                }}
+              >
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
@@ -414,27 +428,17 @@ const styles = StyleSheet.create({
   },
   highlightWrapper: {
     flexDirection: "row",
-    marginVertical: 10,
+    marginVertical: 20,
     justifyContent: "space-between",
-    columnGap: 2,
-  },
-  highlightBox: {
-    width: "30%",
-    display: "flex",
-    flexDirection: "row",
-    gap: 4,
-    // borderColor: "red",
-    // borderWidth: 2,
-    // margin: 4,
   },
   highlightIcon: {
-    width: 30,
-    height: 30,
-    display: "flex",
-    justifyContent: "center",
     backgroundColor: "#F4F4F4",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
     borderRadius: 8,
+    marginRight: 5,
     alignItems: "center",
+    height: 30,
   },
   highlightTxt: {
     fontSize: 12,
@@ -443,6 +447,7 @@ const styles = StyleSheet.create({
   highlightTxtVal: {
     fontSize: 14,
     fontWeight: "600",
+    marginRight: 10,
   },
   listingDetails: {
     fontSize: 16,
@@ -466,13 +471,14 @@ const styles = StyleSheet.create({
     // padding: 10,
   },
   userInfoText: {
-    color: "#777777",
+    fontSize: 13,
+    fontWeight: "500",
     padding: 12,
   },
   infoLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "black",
+    fontSize: 12,
+    color: "#615d5d",
+    fontWeight: "600",
   },
   firstBox: {
     borderTopRightRadius: 8,
@@ -536,7 +542,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.black,
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
   },
   footerBookBtn: {

@@ -30,8 +30,6 @@ const AddLocationAndAddress = ({
   const [selectedOption, setSelectedOption] = useState("address");
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("address---", address, "---", location, errors);
-
   const fetchCurrentLocation = async () => {
     setIsLoading(true);
     try {
@@ -50,8 +48,6 @@ const AddLocationAndAddress = ({
         longitudeDelta: 2,
         // },
       };
-      console.log("Temp Location --", tempLocation);
-
       setLocation(tempLocation);
       let response: any = await Location.reverseGeocodeAsync({
         latitude: tempLocation?.latitude,
@@ -178,7 +174,7 @@ const styles = StyleSheet.create({
   radioCircle: {
     height: 20,
     width: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: "#000",
     alignItems: "center",
@@ -188,7 +184,7 @@ const styles = StyleSheet.create({
   radioChecked: {
     width: 12,
     height: 12,
-    borderRadius: 6,
+    borderRadius: 8,
     backgroundColor: "#000",
   },
   radioText: {

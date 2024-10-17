@@ -74,8 +74,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     addService?.description ?? ""
   );
 
-  console.log("User Details--- params", addService);
-
   useEffect(() => {
     setTitle(addService?.name ?? "");
     setDescription(addService?.description ?? "");
@@ -106,8 +104,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   //   try {
   //     const formData: any = new FormData();
   //     // const imageUri: any = images;
-  //     console.log("avatar", avatar);
-
   //     const avatarFile = avatar.split("/").pop();
   //     formData.append("avatar", {
   //       uri: avatar,
@@ -126,12 +122,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       <View style={{ marginBottom: 20 }}>
         <Stepper currentStep={1} steps={REGISTERSTEPS} />
       </View>
-      {/* <AvatarComponent
-        isEditable={true}
-        profileImage={avatar}
-        setProfileImage={setAvatar}
-        onUpload={handleUploadAvatar}
-      /> */}
 
       <Controller
         control={control}
@@ -250,7 +240,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 16,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   errorInput: {
     borderWidth: 1,
@@ -261,7 +251,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: Colors?.primary,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   buttonText: {
     color: Colors?.white,

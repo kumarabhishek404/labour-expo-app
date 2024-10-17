@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { MEDIATORTYPES, REGISTERSTEPS, WORKERSKILLS } from "@/constants";
-import SkillsSelector from "@/components/selectSkills";
-import RoleSelection from "@/components/selectRole";
+import SkillsSelector from "@/components/SelectSkills";
+import RoleSelection from "@/components/SelectRole";
 import { Controller, useForm } from "react-hook-form";
 
 interface ThirdScreenProps {
   setStep: any;
   role: any;
   setRole: any;
-  labourType: string;
-  setLabourType: any;
+  // labourType: string;
+  // setLabourType: any;
   selectedInterests: any;
   setSelectedInterests: any;
 }
@@ -22,39 +22,41 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
   setStep,
   role,
   setRole,
-  labourType,
-  setLabourType,
+  // labourType,
+  // setLabourType,
   selectedInterests,
   setSelectedInterests,
 }: ThirdScreenProps) => {
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
       role: role,
-      labourType: labourType,
       interest: selectedInterests,
     },
   });
-  const handleNext = () => {
-    setStep(4);
-    // if (title && description) {
-    //   setAddService({
-    //     ...addService,
-    //     name: title,
-    //     description: description,
-    //   });
-    //   setIsAddService(true);
-    //   router?.push("/(tabs)/addService/second");
-    // } else {
-    //   toast.error("Please fill all the input fields");
-    // }
-  };
-  console.log("selectedRole ---", role);
+
+  const [previousRole, setPreviousRole] = useState({
+    name: "",
+    type: "",
+  });
+  React.useEffect(() => {
+    if (
+      previousRole?.name !== watch("role")?.name ||
+      (previousRole?.name === watch("role")?.name &&
+        previousRole?.type !== watch("role")?.type)
+    ) {
+      setValue("interest", []);
+    }
+    setPreviousRole({ ...watch("role") });
+  }, [watch("role")]);
 
   const onSubmit = (data: any) => {
+    setRole(data?.role);
     setSelectedInterests(data?.interest);
     setStep(4);
   };
@@ -65,13 +67,25 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         <Stepper currentStep={3} steps={REGISTERSTEPS} />
       </View>
       <View style={{ flexDirection: "column", gap: 20 }}>
-        <RoleSelection
-          role={role}
-          setRole={setRole}
-          labourType={labourType}
-          setLabourType={setLabourType}
+        <Controller
+          control={control}
+          name="role"
+          rules={{
+            required: false,
+            // required: "Select at least one skill",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <RoleSelection
+              role={value}
+              setRole={onChange}
+              onBlur={onBlur}
+              // labourType={labourType}
+              // setLabourType={setLabourType}
+            />
+          )}
         />
-        {role === "WORKER" && (
+
+        {watch("role")?.name === "WORKER" && watch("role")?.type === "ONE" && (
           <Controller
             control={control}
             name="interest"
@@ -88,13 +102,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                 availableOptions={WORKERSKILLS}
                 onBlur={onBlur}
                 errors={errors}
-                placeholder="Entet mobile number"
               />
             )}
           />
         )}
 
-        {role === "MEDIATOR" && (
+        {watch("role")?.name === "WORKER" && watch("role")?.type === "ORG" && (
           <Controller
             control={control}
             name="interest"
@@ -111,7 +124,6 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                 availableOptions={MEDIATORTYPES}
                 onBlur={onBlur}
                 errors={errors}
-                placeholder="Entet mobile number"
               />
             )}
           />
@@ -160,7 +172,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 16,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
   },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
-    borderRadius: 4,
+    borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 3,
     marginTop: 20,

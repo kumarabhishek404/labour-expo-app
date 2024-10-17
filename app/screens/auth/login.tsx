@@ -13,6 +13,7 @@ import { Link, router, Stack } from "expo-router";
 import {
   Feather,
   Ionicons,
+  MaterialIcons,
   Octicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
@@ -24,8 +25,8 @@ import { toast } from "../../hooks/toast";
 import i18n from "@/utils/i18n";
 import { useForm, Controller } from "react-hook-form"; // Import react-hook-form
 import TextInputComponent from "@/components/TextInputWithIcon";
-import PasswordComponent from "@/components/password";
-import SelfieScreen from "@/components/selfie";
+import PasswordComponent from "@/components/Password";
+import SelfieScreen from "@/components/Selfie";
 
 const LoginScreen = () => {
   const setUserDetails = useSetAtom(UserAtom);
@@ -106,9 +107,8 @@ const LoginScreen = () => {
       <Loader loading={mutationSignIn?.isPending} />
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Hey,</Text>
+          <Text style={styles.headingText}>Hello,</Text>
           <Text style={styles.headingText}>{i18n.t("welcome")}</Text>
-          <Text style={styles.headingText}>Back</Text>
         </View>
 
         <View style={styles.formContainer}>
@@ -161,8 +161,8 @@ const LoginScreen = () => {
                 containerStyle={errors?.password && styles.errorInput}
                 errors={errors}
                 icon={
-                  <Ionicons
-                    name={"mail-outline"}
+                  <MaterialIcons
+                    name={"password"}
                     size={30}
                     color={Colors.secondary}
                     style={{ paddingVertical: 10, paddingRight: 10 }}
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 4,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,

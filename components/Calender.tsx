@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     // height: 53,
     // borderWidth: 1,
     // borderColor: Colors.secondary,
-    borderRadius: 10,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "flex-start",
     padding: 10,

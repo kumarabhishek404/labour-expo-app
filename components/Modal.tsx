@@ -42,7 +42,7 @@
 //   modalView: {
 //     margin: 20,
 //     backgroundColor: 'white',
-//     borderRadius: 20,
+//     borderRadius: 8,
 //     padding: 35,
 //     alignItems: 'center',
 //     shadowColor: '#000',
@@ -55,7 +55,7 @@
 //     elevation: 5,
 //   },
 //   button: {
-//     // borderRadius: 20,
+//     // borderRadius: 8,
 //     // padding: 10,
 //     // elevation: 2,
 //   },
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
     padding: 20,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   header: {
     display: "flex",
@@ -167,10 +167,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 14,
+    marginTop: 10
   },
   button: {
     backgroundColor: Colors.primary,
-    borderRadius: 4,
+    borderRadius: 8,
+    paddingHorizontal: 14
   },
   buttonText: {
     color: Colors.white,

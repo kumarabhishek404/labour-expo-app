@@ -70,79 +70,11 @@ const ProfileScreen = () => {
     // }
   };
 
-  const toggleNotificationSwitch = () =>
-    setNotificationsEnabled((prevState) => !prevState);
-  const toggleDarkModeSwitch = () =>
-    setDarkModeEnabled((prevState) => !prevState);
-
-  const handleLogout = () => {
-    console.log("Logout button pressed");
-    setUserDetails({
-      isAuth: false,
-      _id: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      mobileNumber: "",
-      likedJobs: "",
-      likedEmployees: "",
-      email: "",
-      address: "",
-      avatar: "",
-      role: "",
-      token: "",
-      serviceAddress: [],
-    });
-    setWorkDetails({
-      total: "",
-      completed: "",
-      cancelled: "",
-      upcoming: "",
-    });
-    setEarnings({
-      work: "",
-      rewards: "",
-    });
-    router.navigate("/screens/auth/login");
-  };
-
   const handleEditProfile = () => {
-    console.log("Edit profile");
     setIsEditProfile(true);
   };
 
-  const handleSaveProfile = async () => {
-    console.log("Input Value:", firstName, lastName, address);
-    let payload = {
-      firstName: firstName,
-      middleName: "Amruta",
-      lastName: lastName,
-      address: address,
-      mobileNumber: "1234567890",
-      alternateMobileNumber: "1223456",
-      email: "abhishek@gmail.com",
-      alternateEmail: "officialsujitmemane@gmail.com",
-      role: "User",
-    };
-    try {
-      const responseNew = await handleUploadAvatar();
-      const response = await updateUserById(payload);
-      console.log("response after user update  ---", response?.data);
-      let user = response?.data;
-      setIsEditProfile(false);
-      setUserDetails({
-        ...userDetails,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-      });
-    } catch (err) {
-      setIsEditProfile(false);
-      console.log("error while updating user info ", err);
-    }
-  };
-
   const handleChooseAvatar = async () => {
-    console.log("Handling Image upload");
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -161,8 +93,6 @@ const ProfileScreen = () => {
     try {
       const formData: any = new FormData();
       // const imageUri: any = images;
-      console.log("avatar", avatar);
-
       const avatarFile = avatar.split("/").pop();
       formData.append("avatar", {
         uri: avatar,
@@ -234,7 +164,7 @@ const ProfileScreen = () => {
                 marginRight: 20,
                 backgroundColor: Colors.white,
                 padding: 6,
-                borderRadius: 6,
+                borderRadius: 8,
                 shadowColor: "#171717",
                 shadowOffset: { width: 2, height: 4 },
                 shadowOpacity: 0.2,
@@ -361,7 +291,7 @@ const styles = StyleSheet.create({
   },
   userInfoBox: {
     // width: '90%',
-    // borderRadius: 16,
+    // borderRadius: 8,,
     padding: 15,
     marginLeft: -20,
   },

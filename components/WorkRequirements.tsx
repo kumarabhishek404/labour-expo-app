@@ -69,7 +69,6 @@ const WorkRequirment = ({
   };
 
   const handleRequirementPriceChange = (index: number, payPerDay: string) => {
-    console.log("Item ---", index, payPerDay);
     let tempRequirments = [...requirements];
     if (isNaN(parseInt(payPerDay))) {
       tempRequirments[index].payPerDay = payPerDay;
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 2,
-    borderRadius: 4,
+    borderRadius: 8,
     backgroundColor: Colors.primary,
   },
   addMoreText: {
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
     width: "50%",
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 4,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     padding: 10,

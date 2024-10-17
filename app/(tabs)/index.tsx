@@ -152,7 +152,7 @@ const Page = () => {
                       }
                     : profileImage
                 }
-                style={{ width: 40, height: 40, borderRadius: 10 }}
+                style={{ width: 40, height: 40, borderRadius: 4 }}
               />
             </TouchableOpacity>
           ),
@@ -163,7 +163,7 @@ const Page = () => {
                 marginRight: 20,
                 backgroundColor: Colors.white,
                 padding: 10,
-                borderRadius: 10,
+                borderRadius: 8,
                 shadowColor: "#171717",
                 shadowOffset: { width: 2, height: 4 },
                 shadowOpacity: 0.2,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.white,
     paddingLeft: 16,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   searchBox: {
     color: "#000000",
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   filterBtn: {
     backgroundColor: Colors.primary,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 8,
     marginLeft: 20,
   },
   linksContainer: {
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     // width: "100%",
     height: 176,
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    borderRadius: 8,
     // alignItems: "flex-end",
     // flexDirection:'column',
     // justifyContent: "center",
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     // width: "100%",
     height: 80,
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    borderRadius: 8,
     // borderWidth: 1,
     // borderColor: "#DDDDDD",
     alignItems: "center",

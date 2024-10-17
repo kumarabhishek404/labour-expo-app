@@ -164,18 +164,3 @@ export default function Layout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  addIcon: {
-    backgroundColor: Colors.primary,
-    borderRadius: Platform.select({
-      ios: 30,
-      android: 50,
-    }),
-    overflow: "hidden",
-    color: Colors.white,
-    position: "absolute",
-    right: -32,
-    top: -50,
-  },
-});

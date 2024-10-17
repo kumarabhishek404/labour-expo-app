@@ -7,7 +7,7 @@ import { ADDSERVICESTEPS } from "@/constants";
 import AddLocationAndAddress from "@/components/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import Step2 from "../../../assets/step2.jpg";
-import DateField from "@/components/dateField";
+import DateField from "@/components/DateField";
 
 interface SecondScreenProps {
   setStep: any;

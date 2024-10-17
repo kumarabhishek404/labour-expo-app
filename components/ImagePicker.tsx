@@ -39,8 +39,6 @@ const ImageUpload = ({
       if (index === indexParam) return;
       else return image;
     });
-    console.log("Alll image--", allImages);
-
     setImages(allImages);
   };
 
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 4,
+    borderRadius: 8,
     flexDirection: "column",
     alignItems: "flex-start",
     padding: 10,
@@ -117,12 +115,12 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     margin: 10,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   uploadButton: {
     backgroundColor: Colors?.primary,
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 8,
     alignItems: "center",
     marginBottom: 20,
   },
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
   imageUploadButton: {
     backgroundColor: Colors.primary,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 8,
     marginBottom: 10,
   },
   imageUploadButtonText: {

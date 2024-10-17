@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface RoleSelectionProps {
-  role: string;
+  role: {
+    name: String;
+    type: String;
+  };
   setRole: any;
-  labourType: string;
-  setLabourType: any;
+  // labourType: string;
+  // setLabourType: any;
+  onBlur: any;
 }
 const RoleSelection = ({
   role,
   setRole,
-  labourType,
-  setLabourType,
+  // labourType,
+  // setLabourType,
+  onBlur,
 }: RoleSelectionProps) => {
   const roles = [
     {
@@ -38,8 +43,10 @@ const RoleSelection = ({
   ];
 
   const handleSelectRole = (selectedRole: any) => {
-    setRole(selectedRole?.id);
-    setLabourType(selectedRole?.labourType);
+    setRole({
+      name: selectedRole?.id,
+      type: selectedRole?.labourType,
+    });
   };
 
   return (
@@ -51,8 +58,8 @@ const RoleSelection = ({
             key={index}
             style={[
               styles.roleBox,
-              role === selectedRole.id &&
-                labourType === selectedRole.labourType &&
+              role?.name === selectedRole.id &&
+                role?.type === selectedRole.labourType &&
                 styles.selectedRoleBox,
             ]}
             onPress={() => handleSelectRole(selectedRole)}
@@ -66,8 +73,8 @@ const RoleSelection = ({
             <View
               style={[
                 styles.radioCircle,
-                role === selectedRole.id &&
-                  labourType === selectedRole.labourType &&
+                role?.name === selectedRole.id &&
+                  role?.type === selectedRole.labourType &&
                   styles.selectedRadio,
               ]}
             />
@@ -100,7 +107,7 @@ const styles = StyleSheet.create({
     width: "30%",
     padding: 10,
     backgroundColor: "#FFF",
-    borderRadius: 4,
+    borderRadius: 8,
     borderColor: "#DDD",
     borderWidth: 1,
     alignItems: "center",
@@ -134,7 +141,7 @@ const styles = StyleSheet.create({
   radioCircle: {
     height: 20,
     width: 20,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: "#DDD",
     marginTop: 10,

@@ -44,8 +44,6 @@ const ListingVerticalMembers = ({
   isFetchingNextPage,
 }: Props) => {
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
-    console.log("Itemss---", item);
-    
     return (
       <View style={styles.container}>
         <Link href={`/screens/worker/${item?._id}`} asChild>
@@ -107,7 +105,7 @@ const ListingVerticalMembers = ({
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
-    <View style={{ marginBottom: 90 }}>
+    <View style={{ marginBottom: 30 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -148,7 +146,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: Colors.white,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -165,7 +163,7 @@ const styles = StyleSheet.create({
   image: {
     width: 150,
     height: 150,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 20,
   },
   bookmark: {
@@ -208,7 +206,7 @@ const styles = StyleSheet.create({
     color: "#999",
   },
   loaderStyle: {
-    alignItems: "flex-start",
+    alignItems: "center",
     paddingLeft: 20,
     paddingBottom: 10,
   },
