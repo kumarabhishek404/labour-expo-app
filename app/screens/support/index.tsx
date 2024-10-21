@@ -15,6 +15,7 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
+import { FAQS } from "@/constants";
 
 const SupportScreen = () => {
   const [activeSections, setActiveSections] = useState<number[]>([]);
@@ -91,7 +92,7 @@ const SupportScreen = () => {
         {/* FAQ Section */}
         <Text style={styles.faqHeader}>Frequently Asked Questions</Text>
 
-        {faqData.map((item, index) => (
+        {FAQS.map((item, index) => (
           <View key={index}>
             <TouchableOpacity
               style={styles.faqItem}
@@ -123,52 +124,13 @@ const SupportScreen = () => {
   );
 };
 
-const faqData = [
-  {
-    question: "How to recharge a fastag?",
-    answer: [
-      "1. Add new fastag.",
-      "2. Go to Fastags.",
-      "3. Click on Recharge button, and enter amount.",
-      "4. Select payment method and pay.",
-    ],
-  },
-  {
-    question: "Can I recharge fastags from different provider?",
-    answer: [
-      "Yes, you can recharge fastags from different providers using the app.",
-    ],
-  },
-  {
-    question: "Recharge failed but amount deducted from account?",
-    answer: [
-      "Please contact our support team, and we will assist you in resolving the issue.",
-    ],
-  },
-  {
-    question: "How to add credit or debit card for easy recharge?",
-    answer: [
-      "You can add your card details under the Payments section for easy recharges.",
-    ],
-  },
-  {
-    question: "Can I see tolls paid before I started using the app?",
-    answer: [
-      "Unfortunately, tolls paid before using the app cannot be viewed.",
-    ],
-  },
-];
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
     marginTop: 10,
   },
-  headerContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-  },
+  headerContainer: {},
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",

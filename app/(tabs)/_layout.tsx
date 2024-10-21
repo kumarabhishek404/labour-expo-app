@@ -16,22 +16,23 @@ import {
 } from "../AtomStore/user";
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
-import { usePushNotifications } from "../hooks/usePushNotification";
+// import { usePushNotifications } from "../hooks/usePushNotification";
 import { useLocale } from "../context/locale";
+import usePushNotifications from "../hooks/usePushNotification";
 
 export default function Layout() {
   const { locale } = useLocale();
   const userDetails = useAtomValue(UserAtom);
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const isAddService = useAtomValue(AddServiceInProcess);
-  const { expoPushToken, sendPushNotification } = usePushNotifications(
-    userDetails?._id
-  );
+  // const { expoPushToken, sendPushNotification } = usePushNotifications(
+  //   userDetails?._id
+  // );
 
   useEffect(() => {}, [locale]);
 
   if (!userDetails?.isAuth) {
-    expoPushToken && sendPushNotification(expoPushToken);
+    // expoPushToken && sendPushNotification(expoPushToken);
     return <Login />;
   }
 
@@ -78,24 +79,20 @@ export default function Layout() {
         }}
         options={{
           title:
-            userDetails?.role === "Employer" ? "My Services" : "My Bookings",
+            userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings",
           tabBarIcon: ({ color }: any) => (
             <MaterialIcons name="calendar-month" size={30} color={color} />
           ),
         }}
       />
-      {(userDetails?.role === "WORKER" || userDetails?.role === "Labour") &&
-      userDetails?.roleType === "ONE" ? (
+      {userDetails?.role === "WORKER" ? (
         <Tabs.Screen
           name="help"
           options={{
-            title: userDetails?.roleType === "ONE" ? "Help" : "Workers",
-            tabBarIcon: ({ color }: any) =>
-              userDetails?.roleType === "ONE" ? (
-                <Entypo name="help" size={30} color={color} />
-              ) : (
-                <FontAwesome6 name="people-group" size={30} color={color} />
-              ),
+            title: "Help",
+            tabBarIcon: ({ color }: any) => (
+              <Entypo name="help" size={30} color={color} />
+            ),
           }}
         />
       ) : (
@@ -104,7 +101,7 @@ export default function Layout() {
           options={{
             headerShown: false,
             title:
-              userDetails?.role === "Employer"
+              userDetails?.role === "EMPLOYER"
                 ? addService?._id
                   ? "Edit Service"
                   : "Add Service"
@@ -130,7 +127,7 @@ export default function Layout() {
           },
         }}
         options={{
-          title: userDetails?.role === "Employer" ? "Workers" : "Services",
+          title: userDetails?.role === "EMPLOYER" ? "Workers" : "Services",
           tabBarIcon: ({ color }: any) => (
             <MaterialIcons name="work" size={30} color={color} />
           ),
@@ -151,7 +148,7 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name={userDetails?.roleType === "ONE" ? "addService" : "help"}
+        name={userDetails?.role === "WORKER" ? "addService" : "help"}
         options={{
           title: "Add Service",
           headerShown: false,

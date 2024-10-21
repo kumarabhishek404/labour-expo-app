@@ -1,5 +1,22 @@
-import { makeGetRequest, makePostRequest } from ".";
+import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
 import { toast } from "../hooks/toast";
+
+export const getMediatorById = async (id: any) => {
+  try {
+    const { data } = await makeGetRequest(`/mediator/detail/${id}`);
+    return data;
+  } catch (error: any) {
+    console.error(
+      `An error occurred while fetching mediator details : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while getting mediator by id"
+    );
+    throw error;
+  }
+};
 
 export const fetchAllMembers = async ({ pageParam }: any) => {
   try {
@@ -23,7 +40,7 @@ export const fetchAllMembers = async ({ pageParam }: any) => {
 export const fetchAllMediators = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all?page=${pageParam}&limit=3`
+      `/mediator/all?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -34,6 +51,63 @@ export const fetchAllMediators = async ({ pageParam }: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all mediators"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllBookedMediators = async ({ pageParam }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/mediator/all-booked?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching booked mediators : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching booked mediators"
+    );
+    throw error;
+  }
+};
+
+export const bookMediator = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/mediator/book", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while booking mediator : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while booking mediators"
+    );
+    throw error;
+  }
+};
+
+export const removeBookedMediator = async (payload: any) => {
+  console.log("Payload---", payload);
+
+  try {
+    const data = await makeDeleteRequest(
+      `/mediator/remove-booked/${payload?.mediatorID}`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while removing booked mediators : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while removing booked mediators"
     );
     throw error;
   }

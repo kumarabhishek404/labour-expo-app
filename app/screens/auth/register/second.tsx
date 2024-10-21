@@ -20,8 +20,8 @@ import {
   AddServiceInProcess,
   UserAtom,
 } from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import Button from "@/components/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import {
   Feather,
@@ -31,9 +31,9 @@ import {
 } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
-import MobileNumberField from "@/components/MobileNumber";
-import EmailAddressField from "@/components/EmailAddress";
-import AddLocationAndAddress from "@/components/AddLocationAndAddress";
+import MobileNumberField from "@/components/inputs/MobileNumber";
+import EmailAddressField from "@/components/inputs/EmailAddress";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 
 interface SecondScreenProps {

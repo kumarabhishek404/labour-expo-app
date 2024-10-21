@@ -1,13 +1,13 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/Button";
+import Button from "@/components/inputs/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { ADDSERVICESTEPS } from "@/constants";
-import AddLocationAndAddress from "@/components/AddLocationAndAddress";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import Step2 from "../../../assets/step2.jpg";
-import DateField from "@/components/DateField";
+import DateField from "@/components/inputs/DateField";
 
 interface SecondScreenProps {
   setStep: any;

@@ -15,11 +15,11 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { forgotPassword, resetPassword } from "../../api/user";
 import { Controller, useForm } from "react-hook-form";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import PasswordComponent from "@/components/Password";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import PasswordComponent from "@/components/inputs/Password";
 
 interface ForgetPasswordScreenProps {}
 

@@ -28,15 +28,16 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import ViewMap from "@/components/ViewMap";
+import ViewMap from "@/components/commons/ViewMap";
 import { getWorkerById, likeWorker } from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import profileImage from "../../../assets/images/placeholder-person.jpg";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import { sendJoiningRequest } from "@/app/api/requests";
 import { getEmployerById, likeEmployer } from "@/app/api/employer";
+import CoverImage from '../../../assets/banner-placeholder.jpg'
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -179,7 +180,7 @@ const Worker = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            // source={{ uri: employer.image }}
+            source={employer?.coverImage ? { uri: employer.coverImage } : CoverImage}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
@@ -190,7 +191,7 @@ const Worker = () => {
             <Image
               style={styles.workerImage}
               source={
-                employer?.avatar ? { uri: employer?.avatar } : profileImage
+                employer?.profilePicture ? { uri: employer?.profilePicture } : profileImage
               }
               // size={150}
             />
@@ -374,8 +375,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width,
-    height: IMG_HEIGHT,
-    backgroundColor: Colors.primary,
+    height: IMG_HEIGHT
   },
   contentWrapper: {
     padding: 20,

@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/Button";
+import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import { FontAwesome } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { REGISTERSTEPS } from "@/constants";
-import PasswordComponent from "@/components/Password";
+import PasswordComponent from "@/components/inputs/Password";
 import { Controller, useForm } from "react-hook-form";
-import SelfieScreen from "@/components/Selfie";
+import SelfieScreen from "@/components/inputs/Selfie";
 
 interface FifthScreenProps {
   setStep: any;
-  avatar: string;
-  setAvatar: any;
+  profilePicture: string;
+  setProfilePicture: any;
   handleRegister: any;
 }
 
 const FifthScreen: React.FC<FifthScreenProps> = ({
   setStep,
-  avatar,
-  setAvatar,
+  profilePicture,
+  setProfilePicture,
   handleRegister,
 }: FifthScreenProps) => {
   const {
@@ -30,12 +30,12 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      avatar: avatar,
+      profilePicture: profilePicture,
     },
   });
 
   const onSubmit = (data: any) => {
-    setAvatar(data?.avatar);
+    setProfilePicture(data?.profilePicture);
     handleRegister();
   };
 
@@ -43,16 +43,16 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
     <View style={styles?.container}>
       <Controller
         control={control}
-        name="avatar"
+        name="profilePicture"
         defaultValue=""
         rules={{
           required: "Profile picture is required",
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <SelfieScreen
-            name="avatar"
-            avatar={value}
-            setAvatar={onChange}
+            name="profilePicture"
+            profilePicture={value}
+            setProfilePicture={onChange}
             onBlur={onBlur}
             errors={errors}
           />

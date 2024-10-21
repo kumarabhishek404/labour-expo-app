@@ -11,8 +11,8 @@ import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import TextAreaInputComponent from "@/components/TextArea";
-import Button from "@/components/Button";
+import TextAreaInputComponent from "@/components/inputs/TextArea";
+import Button from "@/components/inputs/Button";
 
 const FeedbackForm = () => {
   const {

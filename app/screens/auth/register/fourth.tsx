@@ -20,8 +20,8 @@ import {
   AddServiceInProcess,
   UserAtom,
 } from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import Button from "@/components/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import {
   Entypo,
@@ -35,7 +35,7 @@ import {
 } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { REGISTERSTEPS } from "@/constants";
-import PasswordComponent from "@/components/Password";
+import PasswordComponent from "@/components/inputs/Password";
 import { Controller, useForm } from "react-hook-form";
 
 interface FourthScreenProps {

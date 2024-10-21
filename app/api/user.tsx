@@ -13,14 +13,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const register = async (payload: any) => {
   try {
-    const data = await makePostRequest("/auth/register", payload);
+    const data = await makePostRequestFormData("/auth/register", payload);
     toast.success("Your account has registered successfully");
     router.push("/screens/auth/login");
     return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding new user : `,
-      error?.response?.data
+      error
     );
     toast.error(
       error?.response?.data?.message || "An error occurred while adding user"

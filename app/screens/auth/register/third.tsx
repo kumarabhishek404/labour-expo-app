@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/Button";
+import Button from "@/components/inputs/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { MEDIATORTYPES, REGISTERSTEPS, WORKERSKILLS } from "@/constants";
-import SkillsSelector from "@/components/SelectSkills";
-import RoleSelection from "@/components/SelectRole";
+import SkillsSelector from "@/components/inputs/SelectSkills";
+import RoleSelection from "@/components/inputs/SelectRole";
 import { Controller, useForm } from "react-hook-form";
 
 interface ThirdScreenProps {
   setStep: any;
   role: any;
   setRole: any;
-  // labourType: string;
-  // setLabourType: any;
   selectedInterests: any;
   setSelectedInterests: any;
 }
@@ -22,8 +20,6 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
   setStep,
   role,
   setRole,
-  // labourType,
-  // setLabourType,
   selectedInterests,
   setSelectedInterests,
 }: ThirdScreenProps) => {
@@ -79,8 +75,6 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
               role={value}
               setRole={onChange}
               onBlur={onBlur}
-              // labourType={labourType}
-              // setLabourType={setLabourType}
             />
           )}
         />

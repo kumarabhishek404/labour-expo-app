@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Image, View } from "react-native";
 import Colors from "@/constants/Colors";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import Button from "@/components/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Button from "@/components/inputs/Button";
 import { Ionicons } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { ADDSERVICESTEPS } from "@/constants";
@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import Step1 from "../../../assets/step1.jpg";
 import { useSetAtom } from "jotai";
 import { AddServiceInProcess } from "@/app/AtomStore/user";
-import TextAreaInputComponent from "@/components/TextArea";
+import TextAreaInputComponent from "@/components/inputs/TextArea";
 
 interface FirstScreenProps {
   setStep: any;

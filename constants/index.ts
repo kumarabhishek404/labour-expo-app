@@ -1,3 +1,5 @@
+export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
+
 export const STETESOFINDIA = [
   { label: "Andhra Pradesh", value: "andhrapradesh" },
   { label: "Arunachal Pradesh", value: "arunachalpradesh" },
@@ -93,4 +95,42 @@ export const WORKERTYPES = [
   { label: "Stone Mason", value: "Stone Mason" },
   { label: "Mistri", value: "mistri" },
   { label: "Electrician", value: "electrician" },
+];
+
+
+
+export const FAQS = [
+  {
+    question: "How to recharge a fastag?",
+    answer: [
+      "1. Add new fastag.",
+      "2. Go to Fastags.",
+      "3. Click on Recharge button, and enter amount.",
+      "4. Select payment method and pay.",
+    ],
+  },
+  {
+    question: "Can I recharge fastags from different provider?",
+    answer: [
+      "Yes, you can recharge fastags from different providers using the app.",
+    ],
+  },
+  {
+    question: "Recharge failed but amount deducted from account?",
+    answer: [
+      "Please contact our support team, and we will assist you in resolving the issue.",
+    ],
+  },
+  {
+    question: "How to add credit or debit card for easy recharge?",
+    answer: [
+      "You can add your card details under the Payments section for easy recharges.",
+    ],
+  },
+  {
+    question: "Can I see tolls paid before I started using the app?",
+    answer: [
+      "Unfortunately, tolls paid before using the app cannot be viewed.",
+    ],
+  },
 ];

@@ -20,7 +20,7 @@ export interface WorkerType {
   firstName: string;
   middleName: string;
   lastName: string;
-  avatar: string;
+  profilePicture: string;
   isBookmarked: boolean;
   skills: string;
   rating: number;

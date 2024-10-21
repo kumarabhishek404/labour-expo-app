@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import {
   Stack,
   useFocusEffect,
+  useGlobalSearchParams,
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
@@ -28,15 +29,24 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import ViewMap from "@/components/ViewMap";
-import { getWorkerById, likeWorker } from "../../api/workers";
+import ViewMap from "@/components/commons/ViewMap";
+import {
+  bookWorker,
+  getWorkerById,
+  likeWorker,
+  removeBookedWorker,
+  unlikeWorker,
+} from "../../api/workers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import profileImage from "../../../assets/images/placeholder-person.jpg";
 import coverImage from "../../../assets/images/placeholder-cover.jpg";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import { sendJoiningRequest } from "@/app/api/requests";
+import UserInfoComponent from "@/components/commons/UserInfoBox";
+import CoverImage from "../../../assets/banner-placeholder.jpg";
+import { toast } from "@/app/hooks/toast";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -50,9 +60,12 @@ const Worker = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isWorkerBooked, setIsWorkerBooked] = useState(
-    worker?.isBooked || false
+    worker?.bookedBy || false
   );
-  const [isWorkerLiked, setIsWorkerLiked] = useState(worker?.isLiked || false);
+  const [isWorkerLiked, setIsWorkerLiked] = useState(
+    worker?.likedBy?.includes(userDetails?._id) || false
+  );
+  const { type } = useGlobalSearchParams();
 
   const {
     isLoading,
@@ -89,6 +102,61 @@ const Worker = () => {
     },
   });
 
+  const mutationLikeWorker = useMutation({
+    mutationKey: ["likeWorker", { id }],
+    mutationFn: () => likeWorker({ workerID: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success("Worker added in favourites");
+      console.log("Response while liking a worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while liking the worker ", err);
+    },
+  });
+
+  const mutationUnLikeWorker = useMutation({
+    mutationKey: ["unlikeService", { id }],
+    mutationFn: () => unlikeWorker({ workerID: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success("Worker removed from favourites");
+      console.log("Response while unliking a worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while unliking the worker ", err);
+    },
+  });
+
+  const mutationBookWorker = useMutation({
+    mutationKey: ["bookWorker", { id }],
+    mutationFn: () => bookWorker({ workerID: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success("Worker booked in successfully");
+      console.log("Response while liking a worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while booking the worker ", err);
+    },
+  });
+
+  const mutationRemoveBookedWorker = useMutation({
+    mutationKey: ["removeBookedService", { id }],
+    mutationFn: () => removeBookedWorker({ workerID: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success("Successfully cancel booking of the worker");
+      console.log(
+        "Response while canceling booking of this worker - ",
+        response
+      );
+    },
+    onError: (err) => {
+      console.error("error while canceling the booking of the worker ", err);
+    },
+  });
+
   const mutationSendRequest = useMutation({
     mutationKey: ["sendRequest", { id }],
     mutationFn: () => sendJoiningRequest({ userId: id }),
@@ -99,6 +167,11 @@ const Worker = () => {
       console.error("error while sending request to worker ", err);
     },
   });
+
+  useEffect(() => {
+    setIsWorkerLiked(worker?.likedBy?.includes(userDetails?._id) || false);
+    setIsWorkerBooked(worker?.bookedBy?.includes(userDetails?._id) || false);
+  }, [worker]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -180,8 +253,11 @@ const Worker = () => {
         loading={
           isLoading ||
           isRefetching ||
-          mutation?.isPending ||
-          mutationSendRequest?.isPending
+          mutationLikeWorker?.isPending ||
+          mutationUnLikeWorker?.isPending ||
+          mutationSendRequest?.isPending || 
+          mutationBookWorker?.isPending ||
+          mutationRemoveBookedWorker?.isPending
         }
       />
 
@@ -191,12 +267,14 @@ const Worker = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={worker.image ? { uri: worker.image } : coverImage}
+            source={
+              worker?.coverImage ? { uri: worker?.coverImage } : CoverImage
+            }
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
             <Image
-              source={worker?.avatar ? { uri: worker?.avatar } : profileImage}
+              source={worker?.profilePicture ? { uri: worker?.profilePicture } : profileImage}
               style={styles.workerImage}
             />
             <Text style={styles.listingName}>
@@ -258,7 +336,9 @@ const Worker = () => {
 
             <Text style={styles.listingDetails}>{worker?.description}</Text>
 
-            <View style={styles.userInfoTextWrapper}>
+            <UserInfoComponent user={worker} style={{ marginHorizontal: 0 }} />
+
+            {/* <View style={styles.userInfoTextWrapper}>
               <View style={styles.userInfoBox}>
                 <View style={[styles.row, styles.firstBox]}>
                   <Text style={styles.userInfoText}>
@@ -274,7 +354,7 @@ const Worker = () => {
                   <Text style={styles.userInfoText}>{worker?.email}</Text>
                 </View>
               </View>
-            </View>
+            </View> */}
 
             <Text style={styles.workInfoHeading}>Wallet</Text>
             <View style={styles.infoBoxWrapper}>
@@ -332,17 +412,34 @@ const Worker = () => {
       </View>
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        {userDetails?.role === "Employer" && (
+        {type === "applicant" && (
           <TouchableOpacity
             onPress={() => {}}
             style={[styles.footerBtn, styles.footerBookBtn]}
           >
             <Text style={styles.footerBtnTxt}>
-              {isWorkerBooked ? "Already Booked" : "Book Now"}
+              {isWorkerBooked ? "Selected" : "Select"}
             </Text>
           </TouchableOpacity>
         )}
-        {userDetails?.role === "WORKER" && userDetails?.roleType === "ORG" && (
+
+        {userDetails?.role === "EMPLOYER" &&
+          (!type || type !== "applicant") && (
+            <TouchableOpacity
+              onPress={() =>
+                isWorkerBooked
+                  ? mutationRemoveBookedWorker?.mutate()
+                  : mutationBookWorker?.mutate()
+              }
+              style={[styles.footerBtn, styles.footerBookBtn]}
+            >
+              <Text style={styles.footerBtnTxt}>
+                {isWorkerBooked ? "Already Booked" : "Book Now"}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+        {userDetails?.role === "MEDIATOR" && (
           <TouchableOpacity
             onPress={() => mutationSendRequest?.mutate()}
             style={[styles.footerBtn, styles.footerBookBtn]}
@@ -353,16 +450,17 @@ const Worker = () => {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={() => mutation?.mutate()}
+          onPress={() =>
+            isWorkerLiked
+              ? mutationUnLikeWorker?.mutate()
+              : mutationLikeWorker?.mutate()
+          }
           style={styles.footerBtn}
         >
           <Text style={styles.footerBtnTxt}>
             {isWorkerLiked ? "Unlike" : "Like"}
           </Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => {}} style={styles.footerBtn}>
-          <Text style={styles.footerBtnTxt}>${worker?.price}</Text>
-        </TouchableOpacity> */}
       </Animated.View>
     </>
   );

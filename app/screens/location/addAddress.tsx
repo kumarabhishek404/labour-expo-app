@@ -21,7 +21,7 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
-import DropdownComponent from "@/components/Dropdown";
+import DropdownComponent from "@/components/inputs/Dropdown";
 import { STETESOFINDIA } from "@/constants";
 import { useAtom } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";

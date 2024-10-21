@@ -48,13 +48,15 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log("error.response.statusText--", error.response);
     
     if (error.response) {
       if (
         (error.response.status === 400 &&
           error.response.data.message === "jwt expired") ||
         error.response.data.message === "jwt malformed" ||
-        error.response.statusText === "TokenExpiredError"
+        error.response.statusText === "TokenExpiredError" ||
+        error.response.statusText === "Unautorized Request"
       ) {
         AsyncStorage.removeItem("user");
         router.push("/screens/auth/login");
@@ -188,9 +190,7 @@ export const makeDeleteRequest = async (
 ): Promise<AxiosResponse> => {
   const response = await api.delete(url, {
     headers: {
-      // ...api.defaults.headers.common,
-      ...(await getHeaders()),
-      // ...headers,
+      ...(await getHeaders())
     },
   });
   return response;

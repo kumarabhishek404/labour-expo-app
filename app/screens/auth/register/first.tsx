@@ -1,154 +1,70 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import {
-  Link,
-  router,
-  useGlobalSearchParams,
-  useLocalSearchParams,
-} from "expo-router";
-import Colors from "@/constants/Colors";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  AddServiceAtom,
-  AddServiceInProcess,
-  UserAtom,
-} from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import Button from "@/components/Button";
-import { toast } from "@/app/hooks/toast";
-import {
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-  Octicons,
-} from "@expo/vector-icons";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { REGISTERSTEPS } from "@/constants";
-import AvatarComponent from "@/components/Avatar";
-import { uploadFile } from "@/app/api/user";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller, useForm } from "react-hook-form";
+import Colors from "@/constants/Colors";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Gender from "@/components/inputs/Gender";
+import DateField from "@/components/inputs/DateField";
 
 interface FirstScreenProps {
   setStep: any;
-  // avatar: string;
-  setAvatar: any;
+  setProfilePicture: any;
   firstName: string;
   setFirstName: any;
   lastName: string;
   setLastName: any;
+  gender: string;
+  setGender: any;
+  dateOfBirth: Date;
+  setDateOfBirth: any;
 }
 
 const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
-  // avatar,
-  setAvatar,
-  firstName,
   setFirstName,
-  lastName,
   setLastName,
+  setGender,
+  setDateOfBirth
 }: FirstScreenProps) => {
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      firstName: firstName,
-      lastName: lastName,
+      firstName: "",
+      lastName: "",
+      gender: "",
+      dateOfBirth: new Date(),
     },
   });
-
-  const global = useGlobalSearchParams();
-  const userDetails = useAtomValue(UserAtom);
-  const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
-  const [addService, setAddService] = useAtom(AddServiceAtom);
-  const [title, setTitle] = useState<string>(addService?.name ?? "");
-  const [description, setDescription] = useState<string>(
-    addService?.description ?? ""
-  );
-
-  useEffect(() => {
-    setTitle(addService?.name ?? "");
-    setDescription(addService?.description ?? "");
-  }, [addService]);
-
-  const handleNext = () => {
-    setStep(2);
-    // if (title && description) {
-    //   setAddService({
-    //     ...addService,
-    //     name: title,
-    //     description: description,
-    //   });
-    //   setIsAddService(true);
-    //   router?.push("/(tabs)/addService/second");
-    // } else {
-    //   toast.error("Please fill all the input fields");
-    // }
-  };
 
   const onSubmit = (data: any) => {
     setFirstName(data?.firstName);
     setLastName(data?.lastName);
+    setGender(data?.gender);
+    setDateOfBirth(data?.dateOfBirth);
     setStep(2);
   };
 
-  // const handleUploadAvatar = async () => {
-  //   try {
-  //     const formData: any = new FormData();
-  //     // const imageUri: any = images;
-  //     const avatarFile = avatar.split("/").pop();
-  //     formData.append("avatar", {
-  //       uri: avatar,
-  //       type: "image/jpeg",
-  //       name: avatarFile,
-  //     });
-  //     const response = await uploadFile(formData);
-  //     console.log("Response from avatar image uploading - ", response);
-  //   } catch (err: any) {
-  //     console.log("Error while uploading avatar image - ", err);
-  //   }
-  // };
-
   return (
     <>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={1} steps={REGISTERSTEPS} />
-      </View>
-
+      {/* Existing form fields */}
       <Controller
         control={control}
         name="firstName"
-        defaultValue=""
-        rules={{
-          required: false,
-          // required: "First Name is required",
-        }}
+        rules={{ required: "First Name is required" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInputComponent
-            label="First Name"
             name="firstName"
+            label="First Name"
             value={value}
             onBlur={onBlur}
             onChangeText={onChange}
             placeholder="Enter your First Name"
             containerStyle={errors?.firstName && styles.errorInput}
             errors={errors}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
           />
         )}
       />
@@ -156,174 +72,108 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       <Controller
         control={control}
         name="lastName"
-        defaultValue=""
-        rules={{
-          required: false,
-          // required: "Last Name is required",
-        }}
+        rules={{ required: "Last Name is required" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInputComponent
-            label="Last Name"
             name="lastName"
+            label="Last Name"
             value={value}
             onBlur={onBlur}
             onChangeText={onChange}
             placeholder="Enter your Last Name"
             containerStyle={errors?.lastName && styles.errorInput}
             errors={errors}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
+          />
+        )}
+      />
+
+      {/* Gender selection */}
+      <Controller
+        control={control}
+        name="gender"
+        rules={{ required: "Gender is required" }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Gender
+            name="gender"
+            label="What's your gender?"
+            options={[
+              { title: "Male", value: "male", icon: "👩‍🦰" },
+              { title: "Female", value: "female", icon: "👨" },
+              { title: "Other", value: "other", icon: "✨" },
+            ]}
+            gender={value}
+            setGender={onChange}
+            containerStyle={errors?.lastName && styles.errorInput}
+            errors={errors}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="dateOfBirth"
+        defaultValue={new Date()}
+        rules={{
+          required: "Start date is required",
+          validate: (value) => {
+            const selectedDate = new Date(value);
+            const today = new Date();
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+            if (selectedDate > eighteenYearsAgo) {
+              return "You must be at least 18 years old";
+            } else {
+              return true;
             }
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <DateField
+            title="Date Of Birth"
+            name="dateOfBirth"
+            date={value}
+            setDate={onChange}
+            onBlur={onBlur}
+            errors={errors}
           />
         )}
       />
 
       <TouchableOpacity
         onPress={handleSubmit(onSubmit)}
-        style={styles.loginButtonWrapper}
+        style={styles.submitButton}
       >
-        <Text style={styles.loginText}>Save and Next</Text>
+        <Text style={styles.submitButtonText}>Save and Next</Text>
       </TouchableOpacity>
-      {/* <Text style={styles.continueText}>or continue with</Text>
-      <TouchableOpacity style={styles.googleButtonContainer}>
-        <Image
-          source={require("../../../../assets/images/google.png")}
-          style={styles.googleImage}
-        />
-        <Text style={styles.googleText}>Google</Text>
-      </TouchableOpacity> */}
-      <View style={styles.footerContainer}>
-        <Text style={styles.accountText}>Already have an account!</Text>
-        <Link href="/screens/auth/login" asChild>
-          <TouchableOpacity>
-            <Text style={styles.signupText}>Log In</Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "white",
+  selectedButton: {
+    borderColor: Colors.primary,
+    backgroundColor: "#ffe5cc",
   },
-  customHeader: {
-    width: "100%",
-    marginTop: 40,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-  },
-  formContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    marginBottom: 40,
-  },
-
-  label: {
-    marginVertical: 10,
-  },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 8,
+  genderText: {
+    fontSize: 16,
+    fontWeight: "500",
   },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
   },
-  buttonContainer: {
-    marginTop: 20,
-    backgroundColor: Colors?.primary,
-    padding: 8,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: Colors?.white,
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 18,
-  },
-
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
-    marginVertical: 10,
-  },
-  loginButtonWrapper: {
+  submitButton: {
     backgroundColor: Colors.primary,
     borderRadius: 100,
     marginTop: 20,
   },
-  loginText: {
+  submitButtonText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
-  },
-  signupButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
-    // marginTop: 20,
-  },
-  continueText: {
-    textAlign: "center",
-    marginVertical: 20,
-    fontSize: 14,
-    // fontFamily: fonts.Regular,
-    color: Colors.primary,
-  },
-  googleButtonContainer: {
-    flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    gap: 10,
-  },
-  googleImage: {
-    height: 20,
-    width: 20,
-  },
-  googleText: {
-    fontSize: 20,
-    // fontFamily: fonts.SemiBold,
-  },
-  footerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-    gap: 5,
-  },
-  accountText: {
-    color: Colors.primary,
-    // fontFamily: fonts.Regular,
-  },
-  signupText: {
-    color: Colors.black,
-    fontSize: 20,
-    fontWeight: "500",
-    textDecorationLine: "underline",
   },
 });
 

@@ -18,12 +18,14 @@
       "jsEngine": "jsc",
       "supportsTablet": true,
       "bundleIdentifier": "com.kumarabhishek404.labourapp",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
       "package": "com.kumarabhishek404.labourapp",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -34,7 +36,13 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font", "expo-localization"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      "@react-native-firebase/app", 
+      "@react-native-firebase/auth"
+    ],
     "experiments": {
       "typedRoutes": true
     },

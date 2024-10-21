@@ -16,7 +16,7 @@ import { Link, router, Stack } from "expo-router";
 import axios from "axios";
 // import { useStateContext } from "../context/context";
 // import UsersClient from "../api/user";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { toast } from "@/app/hooks/toast";
 import FirstScreen from "./first";
 import Step1 from "../../../../assets/step1.jpg";
@@ -25,15 +25,18 @@ import ThirdScreen from "./third";
 import FourthScreen from "./fourth";
 import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
-import SelfieScreen from "@/components/Selfie";
+import SelfieScreen from "@/components/inputs/Selfie";
 import FifthScreen from "./fifth";
+import moment from "moment";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [avatar, setAvatar] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
 
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState<any>({});
@@ -43,9 +46,8 @@ const SignupScreen = () => {
 
   const [role, setRole]: any = useState({
     name: "WORKER",
-    type: "ONE"
+    type: "ONE",
   });
-  // const [labourType, setLabourType]: any = useState("ONE");
   const [skills, setSkills]: any = useState([]);
 
   const [password, setPassword] = useState("");
@@ -55,7 +57,7 @@ const SignupScreen = () => {
     mutationKey: ["register"],
     mutationFn: (payload: any) => register(payload),
     onSuccess: () => {
-      setAvatar("");
+      setProfilePicture("");
       setFirstName("");
       setLastName("");
       setAddress("");
@@ -76,18 +78,20 @@ const SignupScreen = () => {
     // },
   });
 
-  const handleRegister = () => {
+  const handleSubmit = async () => {
     const formData: any = new FormData();
-    const imageUri: any = avatar;
-    const imageName = imageUri.split("/").pop();
-    formData.append("avatar", {
-      uri: imageUri,
+
+    console.log("Image--", profilePicture);
+    
+    const imageName = profilePicture.split("/").pop();
+    formData.append("profileImage", {
+      uri: profilePicture,
       type: "image/jpeg",
       name: imageName,
     });
 
     const payload = {
-      avatar: avatar,
+      profilePicture: profilePicture,
       firstName: firstName,
       lastName: lastName,
       address: address,
@@ -96,11 +100,57 @@ const SignupScreen = () => {
       mobileNumber: phoneNumber,
       email: email,
       role: role,
-      // labourType: labourType,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
       skills: skills,
       password: password,
     };
     
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("address", address);
+    // formData.append("location", JSON.stringify(location ?? {}));
+    // formData.append("countryCode", countryCode);
+    formData.append("mobile", phoneNumber);
+    formData.append("email", email);
+    formData.append("role", role?.name);
+    formData.append("gender", gender);
+    formData.append("dateOfBirth", moment(dateOfBirth).format("DD-MM-YYYY"));
+    formData.append("skills", skills);
+    formData.append("password", password);
+
+console.log("Formdata --", formData);
+
+
+    mutationRegister.mutate(formData);
+  };
+
+  const handleRegister = () => {
+    const formData: any = new FormData();
+    const imageUri: any = profilePicture;
+    const imageName = imageUri.split("/").pop();
+    formData.append("profilePicture", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: imageName,
+    });
+
+    const payload = {
+      profilePicture: profilePicture,
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      location: location,
+      countryCode: countryCode,
+      mobileNumber: phoneNumber,
+      email: email,
+      role: role,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      skills: skills,
+      password: password,
+    };
+
     mutationRegister.mutate(payload);
   };
 
@@ -110,12 +160,16 @@ const SignupScreen = () => {
         return (
           <FirstScreen
             setStep={setStep}
-            // avatar={avatar}
-            setAvatar={setAvatar}
+            // profilePicture={profilePicture}
+            setProfilePicture={setProfilePicture}
             firstName={firstName}
             setFirstName={setFirstName}
             lastName={lastName}
             setLastName={setLastName}
+            gender={gender}
+            setGender={setGender}
+            dateOfBirth={dateOfBirth}
+            setDateOfBirth={setDateOfBirth}
           />
         );
       case 2:
@@ -140,8 +194,6 @@ const SignupScreen = () => {
             setStep={setStep}
             role={role}
             setRole={setRole}
-            // labourType={labourType}
-            // setLabourType={setLabourType}
             selectedInterests={skills}
             setSelectedInterests={setSkills}
           />
@@ -162,9 +214,9 @@ const SignupScreen = () => {
         return (
           <FifthScreen
             setStep={setStep}
-            avatar={avatar}
-            setAvatar={setAvatar}
-            handleRegister={handleRegister}
+            profilePicture={profilePicture}
+            setProfilePicture={setProfilePicture}
+            handleRegister={handleSubmit}
           />
         );
 

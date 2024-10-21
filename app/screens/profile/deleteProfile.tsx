@@ -1,6 +1,6 @@
 import { deleteUserById } from "@/app/api/user";
-import Loader from "@/components/Loader";
-import ModalComponent from "@/components/Modal";
+import Loader from "@/components/commons/Loader";
+import ModalComponent from "@/components/commons/Modal";
 import Colors from "@/constants/Colors";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
@@ -14,8 +14,8 @@ import {
   ScrollView,
 } from "react-native";
 import { Controller, useForm } from "react-hook-form"; // react-hook-form imports
-import Button from "@/components/Button";
-import TextAreaInputComponent from "@/components/TextArea";
+import Button from "@/components/inputs/Button";
+import TextAreaInputComponent from "@/components/inputs/TextArea";
 
 const DeleteAccountScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);

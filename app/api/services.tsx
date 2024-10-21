@@ -27,7 +27,7 @@ export const addNewService = async (payload: any) => {
 
 export const editService = async (payload: any) => {
   try {
-    const data = await makePutRequest("/service/update-service", payload);
+    const data = await makePostRequestFormData("/service/update-service", payload);
     toast.success("Service updated successfully");
     return data;
   } catch (error: any) {
@@ -78,7 +78,7 @@ export const deleteServiceById = async (id: any) => {
   }
 };
 
-export const fetchAllServices = async ({ pageParam }: any) => {
+export const fetchAllServices = async ({pageParam}: any) => {
   try {
     const data = await makeGetRequest(
       `/service/all?page=${pageParam}&limit=10`

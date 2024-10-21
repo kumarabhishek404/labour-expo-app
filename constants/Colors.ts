@@ -1,5 +1,6 @@
 export default {
   primary: "#006A42",
+  tertiery: "#fa6400",
   secondary: "#AEB5BB",
   bgColor: "#F4F4F4",
   black: "#27283a",

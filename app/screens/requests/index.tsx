@@ -11,8 +11,8 @@ import {
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/Loader";
-import CategoryButtons from "@/components/CategoryButtons";
+import Loader from "@/components/commons/Loader";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { UserAtom } from "@/app/AtomStore/user";
 import { router, Stack } from "expo-router";
 import {
@@ -23,10 +23,12 @@ import {
   fetchSentRequests,
   rejectJoiningRequest,
 } from "@/app/api/requests";
-import ListingVerticalRequests from "@/components/ListingVerticalRequests";
+import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Requests = () => {
   const userDetails = useAtomValue(UserAtom);
+  const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("recievedRequests");
@@ -53,7 +55,7 @@ const Requests = () => {
         : fetchSentRequests({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -63,6 +65,8 @@ const Requests = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages?.flatMap((page: any) => page.data || [])
       );
@@ -218,13 +222,13 @@ const Requests = () => {
             stylesProp={styles.categoryContainer}
           />
 
-          <View style={styles.totalData}>
-            <Text style={styles.totalItemTxt}>
-              {isLoading
-                ? "Loading..."
-                : `${memoizedData?.length || 0} Results`}
-            </Text>
-          </View>
+          <PaginationString
+            type="requests"
+            isLoading={isLoading}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+
           <ListingVerticalRequests
             listings={memoizedData || []}
             category={category}
@@ -244,10 +248,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10
   },
   headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
   },
   searchBox: {
     color: "#000000",
@@ -274,14 +277,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
   },
 });
 

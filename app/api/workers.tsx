@@ -1,4 +1,4 @@
-import { makeGetRequest, makePostRequest } from ".";
+import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
 import { toast } from "../hooks/toast";
 
 export const getWorkerById = async (id: any) => {
@@ -20,7 +20,7 @@ export const getWorkerById = async (id: any) => {
 
 export const fetchAllWorkers = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(`/worker/all?page=${pageParam}&limit=3`);
+    const data = await makeGetRequest(`/worker/all?page=${pageParam}&limit=5`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -54,7 +54,7 @@ export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
   }
 };
 
-export const likeWorker = async (payload: any) => {
+export const likeWorker = async (payload: any) => {  
   try {
     const data = await makePostRequest("/worker/add-bookmark", payload);
     return data.data;
@@ -72,8 +72,10 @@ export const likeWorker = async (payload: any) => {
 };
 
 export const unlikeWorker = async (payload: any) => {
+  console.log("Payload---", payload);
+
   try {
-    const data = await makePostRequest("/worker/remove-bookmark", payload);
+    const data = await makeDeleteRequest(`/worker/remove-bookmark/${payload?.workerID}`,);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -83,6 +85,61 @@ export const unlikeWorker = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while fetching services"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/worker/all-booked?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching booked workers : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching booked workers"
+    );
+    throw error;
+  }
+};
+
+export const bookWorker = async (payload: any) => {  
+  try {
+    const data = await makePostRequest("/worker/book", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while booking worker : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while booking worker"
+    );
+    throw error;
+  }
+};
+
+export const removeBookedWorker = async (payload: any) => {
+  console.log("Payload---", payload);
+
+  try {
+    const data = await makeDeleteRequest(`/worker/remove-booked/${payload?.workerID}`,);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while removing booked worker : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while removing booked worker"
     );
     throw error;
   }

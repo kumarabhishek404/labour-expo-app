@@ -24,7 +24,7 @@ import { router, Stack } from "expo-router";
 import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
 import { useAtom } from "jotai";
 import { updateUserById, uploadFile } from "../../api/user";
-import AvatarComponent from "@/components/Avatar";
+import AvatarComponent from "@/components/commons/Avatar";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -35,7 +35,7 @@ const ProfileScreen = () => {
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
   const [email, setEmail] = useState(userDetails?.email);
 
-  const [avatar, setAvatar] = useState(userDetails?.avatar);
+  const [profilePicture, setProfilePicture] = useState(userDetails?.profilePicture);
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
@@ -82,7 +82,7 @@ const ProfileScreen = () => {
       });
 
       if (!result.canceled) {
-        setAvatar(result.assets[0].uri);
+        setProfilePicture(result.assets[0].uri);
       }
     } catch (error) {
       console.log(error);
@@ -93,16 +93,16 @@ const ProfileScreen = () => {
     try {
       const formData: any = new FormData();
       // const imageUri: any = images;
-      const avatarFile = avatar.split("/").pop();
-      formData.append("avatar", {
-        uri: avatar,
+      const avatarFile = profilePicture.split("/").pop();
+      formData.append("profilePicture", {
+        uri: profilePicture,
         type: "image/jpeg",
         name: avatarFile,
       });
       const response = await uploadFile(formData);
-      console.log("Response from avatar image uploading - ", response);
+      console.log("Response from profilePicture image uploading - ", response);
     } catch (err: any) {
-      console.log("Error while uploading avatar image - ", err);
+      console.log("Error while uploading profilePicture image - ", err);
     }
   };
 
@@ -110,7 +110,7 @@ const ProfileScreen = () => {
     return (
       <View ref={scrollViewRef} style={styles.formContainer}>
         <View style={styles.avatarContainer}>
-          <AvatarComponent isEditable={false} profileImage={avatar} />
+          <AvatarComponent isEditable={false} profileImage={profilePicture} />
           <TouchableOpacity onPress={handleChooseAvatar}>
             <Text style={styles?.avatarText}>Choose Profile Image</Text>
           </TouchableOpacity>
@@ -180,7 +180,7 @@ const ProfileScreen = () => {
           <View style={{ flexDirection: "row", marginTop: 15 }}>
             <AvatarComponent
               isEditable={false}
-              profileImage={userDetails?.avatar ?? ""}
+              profileImage={userDetails?.profilePicture ?? ""}
             />
             <View style={{ width: "72%", marginLeft: 20 }}>
               <Text

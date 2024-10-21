@@ -101,9 +101,23 @@ const mediators = [
   },
 ];
 
+const employers = [
+  {
+    title: "All",
+    value: 'all',
+    iconName: "beach",
+  },
+  {
+    title: "Hirings",
+    value: 'hirings',
+    iconName: "city",
+  },
+];
+
 export default {
   services: services,
   workers: workers,
+  employers: employers,
   members: members,
   requests: requests,
   mediators: mediators

@@ -12,18 +12,24 @@ import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { UserAtom } from "../AtomStore/user";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { fetchAllServices } from "../api/services";
 import { fetchAllWorkers } from "../api/workers";
-import CategoryButtons from "@/components/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
-import ListingsVerticalServices from "@/components/ListingsVerticalServices";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
+import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import FilterModal from "@/components/inputs/Filters";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
+  const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("All");
+  const [isFilterVisible, setFilterVisible] = useState(false);
+  const [filters, setFilters] = useState({}); // Store applied filters here
 
   const {
     data: response,
@@ -32,15 +38,19 @@ const Workers = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["services"],
+    queryKey: ["services", filters], // Add filters to queryKey to refetch when they change
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "Employer"
-        ? fetchAllWorkers({ pageParam })
-        : fetchAllServices({ pageParam });
+      const payload = {
+        pageParam,
+        ...filters, // Add filters to the API request payload
+      };
+      return userDetails?.role === "EMPLOYER"
+        ? fetchAllWorkers(payload)
+        : fetchAllServices(payload);
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -49,6 +59,8 @@ const Workers = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages.flatMap((page: any) => page.data || [])
       );
@@ -56,17 +68,29 @@ const Workers = () => {
     }, [response])
   );
 
+  console.log("userDetails--", userDetails);
+  
   const handleSearch = (text: any) => {
     setSearchText(text);
     let workers = response?.pages.flatMap((page: any) => page.data || []);
-    const filtered: any = workers?.filter(
-      (item: any) =>
+    const filtered = workers?.filter(
+      (item) =>
         item.name.toLowerCase().includes(text.toLowerCase()) ||
         item.description.toLowerCase().includes(text.toLowerCase())
-      // item.location.toLowerCase().includes(text.toLowerCase()) ||
-      // item.category.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
+  };
+
+  const handleApply = (appliedFilters: React.SetStateAction<{}>) => {
+    // Apply filters to API call and close modal
+    setFilters(appliedFilters);
+    setFilterVisible(false); // Close the modal
+  };
+
+  const handleClear = () => {
+    // Clear all filters and refetch data
+    setFilters({});
+    setFilterVisible(false);
   };
 
   const loadMore = () => {
@@ -80,7 +104,7 @@ const Workers = () => {
     [filteredData]
   );
 
-  const onCatChanged = (category: string) => {
+  const onCatChanged = (category: React.SetStateAction<string>) => {
     setCategory(category);
   };
 
@@ -105,40 +129,61 @@ const Workers = () => {
                 placeholderTextColor="black"
               />
             </View>
-            <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
+            <TouchableOpacity
+              onPress={() => setFilterVisible(true)}
+              style={styles.filterBtn}
+            >
               <Ionicons name="options" size={28} color={Colors.white} />
             </TouchableOpacity>
           </View>
         </View>
 
         <CategoryButtons
-          type={userDetails?.role === "Employer" ? "workers" : "services"}
+          type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
           onCagtegoryChanged={onCatChanged}
-          stylesProp={styles.categoryContainer}
         />
 
-        <View style={styles.totalData}>
-          <Text style={styles.totalItemTxt}>
-            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
-          </Text>
-        </View>
-        {userDetails?.role === "Employer" ? (
-          <ListingsVerticalWorkers
-            listings={memoizedData || []}
-            category="workers"
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
-          />
+        <PaginationString
+          type="services"
+          isLoading={isLoading}
+          totalFetchedData={memoizedData?.length}
+          totalData={totalData}
+        />
+
+        {memoizedData && memoizedData?.length > 0 ? (
+          <>
+            {userDetails?.role === "EMPLOYER" ? (
+              <ListingsVerticalWorkers
+                type="worker"
+                listings={memoizedData || []}
+                category="workers"
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+              />
+            ) : (
+              <ListingsVerticalServices
+                listings={memoizedData || []}
+                category="services"
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+                isMyService={userDetails?.role === "EMPLOYER"}
+              />
+            )}
+          </>
         ) : (
-          <ListingsVerticalServices
-            listings={memoizedData || []}
-            category="services"
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
-            isMyService={userDetails?.role === "Employer"}
+          <EmptyDatePlaceholder
+            title={userDetails?.role === "EMPLOYER" ? "Worker" : "Service"}
           />
         )}
       </View>
+
+      {/* Filter Modal */}
+      <FilterModal
+        isVisible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+        onApply={handleApply}
+        onClear={handleClear}
+      />
     </View>
   );
 };
@@ -147,10 +192,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10
   },
   headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
   },
   searchBox: {
     color: "#000000",
@@ -177,15 +221,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
-  },
+  }
 });
 
 export default Workers;

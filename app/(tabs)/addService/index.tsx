@@ -8,7 +8,7 @@ import {
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
@@ -43,10 +43,12 @@ const SignupScreen = () => {
     addService?.requirements || [
       {
         name: "",
-        totalRequired: 0,
+        count: 0,
         payPerDay: 0,
-        foodProvided: false,
-        shelterProvider: false,
+        food: false,
+        shelter: false,
+        pf: false,
+        insurance: false,
       },
     ]
   );
@@ -76,10 +78,12 @@ const SignupScreen = () => {
         addService?.requirements || [
           {
             name: "",
-            totalRequired: 0,
+            count: 0,
             payPerDay: 0,
-            foodProvided: false,
-            shelterProvider: false,
+            food: false,
+            shelter: false,
+            pf: false,
+            insurance: false,
           },
         ]
       );
@@ -95,22 +99,22 @@ const SignupScreen = () => {
 
   const handleSubmit = async () => {
     const formData: any = new FormData();
-    const imageUri: any = images[0];
-    const imageName = imageUri.split("/").pop();
-    formData.append("coverImage", {
-      uri: imageUri,
-      type: "image/jpeg",
-      name: imageName,
-    });
-
-    // images.forEach((imageUri: string, index: number) => {
-    //   const imageName = imageUri.split("/").pop();
-    //   formData.append("workImages", {
-    //     uri: imageUri,
-    //     type: "image/jpeg",
-    //     name: imageName,
-    //   });
+    // const imageUri: any = images[0];
+    // const imageName = imageUri.split("/").pop();
+    // formData.append("coverImage", {
+    //   uri: imageUri,
+    //   type: "image/jpeg",
+    //   name: imageName,
     // });
+
+    images.forEach((imageUri: string, index: number) => {
+      const imageName = imageUri.split("/").pop();
+      formData.append("images", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: imageName,
+      });
+    });
 
     const jobData = {
       location: {
@@ -132,28 +136,74 @@ const SignupScreen = () => {
     formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
     formData.append("requirements", JSON.stringify(requirements));
 
+    console.log("form Data --", formData);
+
     const response: any = await addNewService(formData);
     return response?.data;
   };
 
   const handleEditSubmit = async () => {
-    let payload = {
-      _id: addService?._id,
-      name: title,
-      description: description,
-      startDate: startDate,
-      endDate: endDate,
-      location: location,
-      city: "city",
-      state: "state",
-      pinCode: "pinCode",
-      address: address,
-      requirements: requirements,
-      images: images,
+    const formData: any = new FormData();
+    // const imageUri: any = images[0];
+    // const imageName = imageUri.split("/").pop();
+    // formData.append("coverImage", {
+    //   uri: imageUri,
+    //   type: "image/jpeg",
+    //   name: imageName,
+    // });
+
+    images.forEach((imageUri: string, index: number) => {
+      const imageName = imageUri.split("/").pop();
+      formData.append("images", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: imageName,
+      });
+    });
+
+    const jobData = {
+      location: {
+        latitude: 27.1767,
+        longitude: 78.0081,
+        latitudeDelta: 2,
+        longitudeDelta: 2,
+      },
     };
 
-    const response: any = await editService(payload);
+    formData.append("name", title);
+    formData.append("description", description);
+    formData.append("address", address);
+    formData.append("location", JSON.stringify(location || jobData?.location));
+    formData.append("city", "Jalesar");
+    formData.append("state", "Uttar Predesh");
+    formData.append("pinCode", "207302");
+    formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
+    formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
+    formData.append("requirements", JSON.stringify(requirements));
+
+    console.log("form Data --", formData);
+
+    const response: any = await editService(formData);
     return response?.data;
+    // let payload = {
+    //   _id: addService?._id,
+    //   name: title,
+    //   description: description,
+    //   startDate: startDate,
+    //   endDate: endDate,
+    //   location: location,
+    //   city: "city",
+    //   state: "state",
+    //   pinCode: "pinCode",
+    //   address: address,
+    //   requirements: requirements,
+    //   images: images,
+    // };
+
+    // console.log("payload- --", payload);
+
+    // const response: any = await editService(payload);
+    // return response?.data;
   };
 
   const renderFormComponents = () => {
@@ -238,6 +288,29 @@ const SignupScreen = () => {
       <Stack.Screen
         options={{
           headerShown: false,
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                if (step === 1) setIsAddService(false);
+                router.back();
+              }}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 8,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Feather name="arrow-left" size={20} />
+              </View>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Loader loading={mutationAddService?.isPending} />

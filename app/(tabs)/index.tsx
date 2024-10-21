@@ -9,52 +9,35 @@ import {
   View,
 } from "react-native";
 import React, { useMemo, useState } from "react";
-import { router, Stack } from "expo-router";
+import { router, Stack, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useHeaderHeight } from "@react-navigation/elements";
-import CategoryButtons from "@/components/CategoryButtons";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { fetchAllWorkers } from "../api/workers";
 import { fetchAllServices } from "../api/services";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { fetchAllEmployers } from "../api/employer";
-import GroupWorkersListing from "@/components/GroupWorkersListing";
-import GroupEmployersListing from "@/components/GroupEmployersListing";
+import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
+import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
 import profileImage from "../../assets/images/placeholder-person.jpg";
 import i18n from "@/utils/i18n";
 import { useLocale } from "../context/locale";
-import ListingHorizontalServices from "@/components/ListingHorizontalServices";
-import ListingHorizontalWorkers from "@/components/ListingHorizontalWorkers";
-import Farmer1 from "../../assets/farmer1.png";
-import Farmer2 from "../../assets/farmer2.png";
-import Farmer3 from "../../assets/farmer3.png";
-import Farmer4 from "../../assets/farmer4.png";
-import Farmer5 from "../../assets/farmer5.png";
-
-// import { useLocale } from "../context/locale";
+import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
+import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
+import HomePageLinks from "@/components/commons/HomePageLinks";
+import { useNotification } from "../context/NotificationContext";
 
 const Page = () => {
   useLocale();
+  const { notification, expoPushToken, error } = useNotification();
   const userDetails = useAtomValue(UserAtom);
   const headerHeight = useHeaderHeight();
+  const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("All");
-
-  // const {
-  //   isLoading,
-  //   data: response,
-  //   isRefetching,
-  // } = useQuery({
-  //   queryKey: ["services"],
-  //   queryFn: async () =>
-  //     (await userDetails?.role) === "Employer"
-  //       ? fetchAllWorkers()
-  //       : fetchAllServices(),
-  //   retry: 0,
-  // });
-
   const {
     data: response,
     isLoading,
@@ -64,14 +47,14 @@ const Page = () => {
   } = useInfiniteQuery({
     queryKey: ["homepage"],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "Employer"
+      return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ pageParam })
         : fetchAllServices({ pageParam });
     },
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -87,19 +70,28 @@ const Page = () => {
   } = useInfiniteQuery({
     queryKey: ["tops"],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "Employer"
+      return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ pageParam })
         : fetchAllEmployers({ pageParam });
     },
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setFilteredData(
+        response?.pages.flatMap((page: any) => page.data || [])
+      );
+      return () => unsubscribe;
+    }, [response])
+  );
 
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -118,10 +110,7 @@ const Page = () => {
   };
 
   const memoizedData = useMemo(
-    () =>
-      response?.pages
-        .flatMap((page: any) => page.data || [])
-        ?.flatMap((data: any) => data),
+    () => response?.pages?.flatMap((data: any) => data?.data),
     [response]
   );
 
@@ -146,9 +135,9 @@ const Page = () => {
             >
               <Image
                 source={
-                  userDetails?.avatar
+                  userDetails?.profilePicture
                     ? {
-                        uri: userDetails?.avatar,
+                        uri: userDetails?.profilePicture,
                       }
                     : profileImage
                 }
@@ -203,100 +192,19 @@ const Page = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles?.linksContainer}>
-            <View style={styles.row}>
-              <TouchableOpacity
-                style={styles.box}
-                onPress={() => router.push("/(tabs)/workers")}
-              >
-                <View style={styles?.firstBoxText}>
-                  <Text style={styles.title}>Services</Text>
-                  <Text style={styles.subtitle}>
-                    Mobile, Fiber and AirFiber
-                  </Text>
-                </View>
-                <View style={styles?.imageContainer}>
-                  <Image source={Farmer1} style={styles.image} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.secondBox}
-                onPress={() => router.push("/screens/employer")}
-              >
-                <View style={styles?.secondBoxText}>
-                  <Text style={styles.title}>Employers</Text>
-                  <Text style={[styles.subtitle, { width: 70 }]}>
-                    Free health check
-                  </Text>
-                </View>
-                <View style={styles?.imageContainer}>
-                  <Image source={Farmer5} style={{ width: 102, height: 75 }} />
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.secondRow}>
-              <TouchableOpacity
-                style={styles.secondBox}
-                onPress={() => router.push("/screens/mediators")}
-              >
-                <View style={styles?.secondBoxText}>
-                  <Text style={styles.title}>Mediators</Text>
-                  <Text style={styles.subtitle}>UPI, Bank, Loan</Text>
-                </View>
-                <View style={styles?.imageContainer}>
-                  <Image source={Farmer3} style={styles.secondImage} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.secondBox}
-                onPress={() => router?.push("/(tabs)/bookings")}
-              >
-                <View style={styles?.secondBoxText}>
-                  <Text style={styles.title}>My Bookings</Text>
-                  <Text style={styles.subtitle}>Grocery, Fashion</Text>
-                </View>
-                <View style={styles?.imageContainer}>
-                  <Image source={Farmer2} style={{ width: 80, height: 90 }} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.secondBox}
-                onPress={() => router.push("/(tabs)/help")}
-              >
-                <View style={styles?.secondBoxText}>
-                  <Text style={styles.title}>Guides / Helps</Text>
-                  <Text style={[styles.subtitle, { width: 90 }]}>
-                    Music, TV, Games
-                  </Text>
-                </View>
-                <View style={styles?.imageContainer}>
-                  <Image source={Farmer4} style={{ width: 70, height: 90 }} />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <HomePageLinks />
 
           <Text style={styles.categroyTitle}>
-            {userDetails?.role === "Employer" ? "Workers" : "Services"}
+            {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
           </Text>
+
           <CategoryButtons
-            type={userDetails?.role === "Employer" ? "workers" : "services"}
+            type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
             onCagtegoryChanged={onCatChanged}
             stylesProp={styles.categoryContainer}
           />
 
-          <View style={styles.totalData}>
-            <Text style={styles.totalItemTxt}>
-              {isLoading
-                ? "Loading..."
-                : `${memoizedData?.length || 0} Results`}
-            </Text>
-          </View>
-          {userDetails?.role === "Employer" ? (
+          {userDetails?.role === "EMPLOYER" ? (
             <ListingHorizontalWorkers
               category={category}
               listings={memoizedData || []}
@@ -312,7 +220,7 @@ const Page = () => {
             />
           )}
 
-          {userDetails?.role === "Employer" ? (
+          {userDetails?.role === "EMPLOYER" ? (
             <GroupWorkersListing
               category={category}
               listings={secondMemoizedData || []}
@@ -338,7 +246,7 @@ export default Page;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     backgroundColor: Colors.bgColor,
   },
   headingTxt: {
@@ -389,13 +297,9 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   box: {
-    // width: "100%",
     height: 176,
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
-    // alignItems: "flex-end",
-    // flexDirection:'column',
-    // justifyContent: "center",
     paddingTop: 15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -404,12 +308,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   secondBox: {
-    // width: "100%",
     height: 80,
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
-    // borderWidth: 1,
-    // borderColor: "#DDDDDD",
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
@@ -472,16 +373,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     color: Colors.black,
-    // marginBottom: 10,
   },
-  categoryContainer: {
-    // paddingHorizontal: 20,
-  },
-  totalData: {
-    // paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
-  },
+  categoryContainer: {},
 });

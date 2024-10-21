@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  Image,
 } from "react-native";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
@@ -17,14 +18,18 @@ import {
   fetchMyAppliedServices,
   fetchMyServices,
 } from "../api/services";
-import CategoryButtons from "@/components/CategoryButtons";
-import ListingsVerticalServices from "@/components/ListingsVerticalServices";
-import Loader from "@/components/Loader";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
+import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
+import Loader from "@/components/commons/Loader";
+import EmptyPlaceholder from "../../assets/empty-placeholder.png";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
   const [category, setCategory] = useState("All");
   const {
@@ -37,13 +42,13 @@ const Services = () => {
   } = useInfiniteQuery({
     queryKey: ["myServices"],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "Employer"
+      return userDetails?.role === "EMPLOYER"
         ? fetchMyServices({ pageParam })
         : fetchMyAppliedServices({ pageParam });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -73,6 +78,8 @@ const Services = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages.flatMap((page: any) => page.data || [])
       );
@@ -136,26 +143,34 @@ const Services = () => {
         </View>
 
         <CategoryButtons
-          type={userDetails?.role === "Employer" ? "services" : "services"}
+          type={userDetails?.role === "EMPLOYER" ? "services" : "services"}
           onCagtegoryChanged={onCatChanged}
           stylesProp={styles.categoryContainer}
         />
 
-        <View style={styles.totalData}>
-          <Text style={styles.totalItemTxt}>
-            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
-          </Text>
-        </View>
-        <ListingsVerticalServices
-          listings={memoizedData || []}
-          category="workers"
-          isFetchingNextPage={isFetchingNextPage}
-          isMyService={userDetails?.role === "Employer"}
-          loadMore={loadMore}
-          onDelete={(id: any) => {
-            mutationDeleteService?.mutate(id);
-          }}
+        <PaginationString
+          type="services"
+          isLoading={isLoading}
+          totalFetchedData={memoizedData?.length}
+          totalData={totalData}
         />
+
+        {memoizedData && memoizedData?.length > 0 ? (
+          <ListingsVerticalServices
+            listings={memoizedData || []}
+            category="workers"
+            isFetchingNextPage={isFetchingNextPage}
+            isMyService={userDetails?.role === "EMPLOYER"}
+            loadMore={loadMore}
+            onDelete={(id: any) => {
+              mutationDeleteService?.mutate(id);
+            }}
+          />
+        ) : (
+          <EmptyDatePlaceholder
+            title={userDetails?.role === "EMPLOYER" ? "Service" : "Booking"}
+          />
+        )}
       </View>
     </View>
   );
@@ -165,11 +180,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
   },
-  headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
+  headerContainer: {},
   searchBox: {
     color: "#000000",
     height: "100%",
@@ -194,16 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 20,
   },
-  categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
-  },
+  categoryContainer: {},
 });
 
 export default Services;

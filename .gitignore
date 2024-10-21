@@ -13,6 +13,9 @@ npm-debug.log
 yarn-error.log
 /package-lock.json
 
+google-services.json
+GoogleService-Info.plist
+labour-app-d27c8-firebase-adminsdk-hkj4c-d729f83092.json
 /android
 /ios
 

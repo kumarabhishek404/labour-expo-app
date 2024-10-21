@@ -15,34 +15,20 @@ import { UserAtom } from "../../AtomStore/user";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { fetchAllLikedServices } from "../../api/services";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { fetchAllLikedWorkers } from "../../api/workers";
-import CategoryButtons from "@/components/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
-import ListingsVerticalServices from "@/components/ListingsVerticalServices";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
+import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Favourite = (props: any) => {
   const userDetails = useAtomValue(UserAtom);
+  const [totalData, setTotalData] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [workers, setWorkers] = useState([]);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("All");
-
-  // const { state, dispatch }: any = useStateContext();
-
-  // const {
-  //   isLoading,
-  //   data: response,
-  //   refetch,
-  //   isRefetching,
-  // } = useQuery({
-  //   queryKey: ["services"],
-  //   queryFn: async () =>
-  //     (await userDetails?.role) === "Employer"
-  //       ? fetchAllLikedWorkers()
-  //       : fetchAllLikedServices(),
-  //   retry: 0,
-  // });
 
   const {
     data: response,
@@ -53,13 +39,13 @@ const Favourite = (props: any) => {
   } = useInfiniteQuery({
     queryKey: ["favourites"],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "Employer"
+      return userDetails?.role === "EMPLOYER"
         ? fetchAllLikedWorkers({ pageParam })
         : fetchAllLikedServices({ pageParam });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -68,6 +54,8 @@ const Favourite = (props: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages.flatMap((page: any) => page.data || [])
       );
@@ -176,18 +164,21 @@ const Favourite = (props: any) => {
         </View>
 
         <CategoryButtons
-          type={userDetails?.role === "Employer" ? "workers" : "services"}
+          type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
           onCagtegoryChanged={onCatChanged}
           stylesProp={styles.categoryContainer}
         />
 
-        <View style={styles.totalData}>
-          <Text style={styles.totalItemTxt}>
-            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
-          </Text>
-        </View>
-        {userDetails?.role === "Employer" ? (
+        <PaginationString
+          type="services"
+          isLoading={isLoading}
+          totalFetchedData={memoizedData?.length}
+          totalData={totalData}
+        />
+
+        {userDetails?.role === "EMPLOYER" ? (
           <ListingsVerticalWorkers
+            type="employer"
             listings={memoizedData || []}
             category="workers"
             loadMore={loadMore}
@@ -210,10 +201,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10
   },
   headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
   },
   searchBox: {
     color: "#000000",
@@ -240,13 +230,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-  },
-  totalItemTxt: {
-    fontSize: 12,
   },
 });
 

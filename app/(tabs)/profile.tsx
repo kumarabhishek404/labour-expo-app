@@ -11,6 +11,7 @@ import {
 import {
   Entypo,
   FontAwesome6,
+  Fontisto,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
@@ -19,14 +20,14 @@ import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
 import { EarningAtom, UserAtom, WorkAtom } from "../AtomStore/user";
 import { useAtom } from "jotai";
-import ModalComponent from "@/components/Modal";
+import ModalComponent from "@/components/commons/Modal";
 import { updateUserById, uploadFile } from "../api/user";
 import { useMutation } from "@tanstack/react-query";
-import Loader from "@/components/Loader";
-import AvatarComponent from "@/components/Avatar";
-import Button from "@/components/Button";
-import UserInfoComponent from "@/components/UserInfoBox";
-import TextInputComponent from "@/components/TextInputWithIcon";
+import Loader from "@/components/commons/Loader";
+import AvatarComponent from "@/components/commons/Avatar";
+import Button from "@/components/inputs/Button";
+import UserInfoComponent from "@/components/commons/UserInfoBox";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 
 const ProfileScreen = () => {
@@ -36,7 +37,9 @@ const ProfileScreen = () => {
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [avatar, setAvatar] = useState(userDetails?.avatar);
+  const [profilePicture, setProfilePicture] = useState(
+    userDetails?.profilePicture
+  );
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
@@ -87,15 +90,15 @@ const ProfileScreen = () => {
     mutationKey: ["uploadProfileImage"],
     mutationFn: (payload) => handleUploadAvatar(payload),
     onSuccess: (response) => {
-      console.log("Response from avatar image uploading - ", response);
+      console.log("Response from profilePicture image uploading - ", response);
       setUserDetails({
         ...userDetails,
-        avatar: response?.data,
+        profilePicture: response?.data,
       });
-      setAvatar(response?.data);
+      setProfilePicture(response?.data);
     },
     onError: (err) => {
-      console.log("Error while uploading avatar image - ", err);
+      console.log("Error while uploading profilePicture image - ", err);
     },
   });
 
@@ -123,7 +126,7 @@ const ProfileScreen = () => {
       likedEmployees: "",
       email: "",
       address: "",
-      avatar: "",
+      profilePicture: "",
       role: "",
       token: "",
       serviceAddress: [],
@@ -148,7 +151,7 @@ const ProfileScreen = () => {
   const handleUploadAvatar = async (profileImage: any) => {
     const formData: any = new FormData();
     const avatarFile = profileImage.split("/").pop();
-    formData.append("avatar", {
+    formData.append("profilePicture", {
       uri: profileImage,
       type: "image/jpeg",
       name: avatarFile,
@@ -158,7 +161,7 @@ const ProfileScreen = () => {
 
   const handleRemoveProfileImage = () => {
     let tempUserDetails = { ...userDetails };
-    tempUserDetails.avatar = "";
+    tempUserDetails.profilePicture = "";
     return setUserDetails(tempUserDetails);
   };
 
@@ -169,7 +172,7 @@ const ProfileScreen = () => {
           <AvatarComponent
             isEditable={true}
             isLoading={mutationUploadProfileImage?.isPending}
-            profileImage={avatar}
+            profileImage={profilePicture}
             onUpload={mutationUploadProfileImage?.mutate}
           />
         </View>
@@ -304,6 +307,8 @@ const ProfileScreen = () => {
     mutationUpdateProfileInfo?.mutate(payload);
   };
 
+  console.log("userDetails---", userDetails);
+
   return (
     <>
       <Stack.Screen
@@ -325,7 +330,7 @@ const ProfileScreen = () => {
             <AvatarComponent
               isEditable={false}
               isLoading={mutationUploadProfileImage?.isPending}
-              profileImage={avatar}
+              profileImage={profilePicture}
               onUpload={mutationUploadProfileImage?.mutate}
             />
             <View
@@ -349,13 +354,7 @@ const ProfileScreen = () => {
                 {userDetails?.firstName || "Name"}{" "}
                 {userDetails?.lastName || "Name"}
               </Text>
-              <Text style={styles.caption}>
-                {userDetails?.role === "WORKER"
-                  ? userDetails?.roleType === "ONE"
-                    ? "WORKER"
-                    : "MEDIATOR"
-                  : userDetails?.role}
-              </Text>
+              <Text style={styles.caption}>{userDetails?.role}</Text>
             </View>
           </View>
         </View>
@@ -449,37 +448,104 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.menuWrapper}>
-          <Link href="/screens/team" asChild>
+          {userDetails?.role === "MEDIATOR" && (
+            <Link href="/screens/team" asChild>
+              <TouchableOpacity>
+                <View style={styles.menuItem}>
+                  <FontAwesome6
+                    name="people-group"
+                    size={28}
+                    color={Colors.primary}
+                  />
+                  <Text style={styles.menuItemText}>Your Team</Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          )}
+
+          {userDetails?.role !== "EMPLOYER" && (
+            <Link href="/screens/requests" asChild>
+              <TouchableOpacity>
+                <View style={styles.menuItem}>
+                  <FontAwesome6
+                    name="hands-praying"
+                    size={28}
+                    color={Colors.primary}
+                  />
+                  <Text style={styles.menuItemText}>Requests</Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          )}
+
+          {userDetails?.role === "WORKER" ? (
+            <Link
+              href={{
+                pathname: "/screens/service",
+                params: { title: "Saved Services", type: "favourite" },
+              }}
+              asChild
+            >
+              <TouchableOpacity>
+                <View style={styles.menuItem}>
+                  <Fontisto name="persons" size={28} color={Colors.primary} />
+                  <Text style={styles.menuItemText}>Saved Services</Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          ) : (
+            <>
+              <Link
+                href={{
+                  pathname: "/screens/worker",
+                  params: { title: "Booked Worker", type: "booked" },
+                }}
+                asChild
+              >
+                <TouchableOpacity>
+                  <View style={styles.menuItem}>
+                    <Fontisto name="persons" size={28} color={Colors.primary} />
+                    <Text style={styles.menuItemText}>Booked Workers</Text>
+                  </View>
+                </TouchableOpacity>
+              </Link>
+              <Link
+                href={{
+                  pathname: "/screens/mediators",
+                  params: { title: "Booked Mediators", type: "booked" },
+                }}
+                asChild
+              >
+                <TouchableOpacity>
+                  <View style={styles.menuItem}>
+                    <Fontisto name="persons" size={28} color={Colors.primary} />
+                    <Text style={styles.menuItemText}>Booked Mediators</Text>
+                  </View>
+                </TouchableOpacity>
+              </Link>
+            </>
+          )}
+
+          <Link
+            href={{
+              pathname:
+                userDetails?.role === "EMPLOYER"
+                  ? "/screens/worker"
+                  : "/screens/employer",
+              params: {
+                title:
+                  userDetails?.role === "EMPLOYER"
+                    ? "Favourite Workers"
+                    : "Favourite Employers",
+                type: "favourite",
+              },
+            }}
+            asChild
+          >
             <TouchableOpacity>
               <View style={styles.menuItem}>
                 <FontAwesome6
                   name="people-group"
-                  size={28}
-                  color={Colors.primary}
-                />
-                <Text style={styles.menuItemText}>Your Team</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/screens/requests" asChild>
-            <TouchableOpacity>
-              <View style={styles.menuItem}>
-                <FontAwesome6
-                  name="hands-praying"
-                  size={28}
-                  color={Colors.primary}
-                />
-                <Text style={styles.menuItemText}>Request</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/screens/favourite" asChild>
-            <TouchableOpacity>
-              <View style={styles.menuItem}>
-                <MaterialIcons
-                  name="space-dashboard"
                   size={28}
                   color={Colors.primary}
                 />
@@ -491,20 +557,24 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </Link>
 
-          <Link href="/screens/favourite" asChild>
-            <TouchableOpacity>
-              <View style={styles.menuItem}>
-                <MaterialIcons
-                  name="space-dashboard"
-                  size={28}
-                  color={Colors.primary}
-                />
-                <Text style={styles.menuItemText}>
-                  Your Favourite Mediators
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
+          {userDetails?.role !== "MEDIATOR" && (
+            <Link
+              href={{
+                pathname: "/screens/mediators",
+                params: { title: "Favourite Mediators", type: "favourite" },
+              }}
+              asChild
+            >
+              <TouchableOpacity>
+                <View style={styles.menuItem}>
+                  <Fontisto name="persons" size={28} color={Colors.primary} />
+                  <Text style={styles.menuItemText}>
+                    Your Favourite Mediators
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          )}
 
           <Link href="/screens/payments" asChild>
             <TouchableOpacity onPress={() => {}}>

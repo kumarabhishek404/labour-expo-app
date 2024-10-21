@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import TextInputComponent from "@/components/TextInputWithIcon";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
 import Colors, { darkGreen } from "@/constants/Colors";

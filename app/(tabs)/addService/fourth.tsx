@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import Button from "@/components/Button";
+import Button from "@/components/inputs/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { ADDSERVICESTEPS, REGISTERSTEPS } from "@/constants";
 import { Controller, useForm } from "react-hook-form";
 import Step4 from "../../../assets/step4.jpg";
-import ImageUpload from "@/components/ImagePicker";
+import ImageUpload from "@/components/inputs/ImagePicker";
 import { AddServiceAtom } from "@/app/AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
 

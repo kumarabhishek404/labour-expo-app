@@ -12,8 +12,8 @@ import Colors from "@/constants/Colors";
 import Step1 from "../../../assets/step1.jpg";
 import { useAtom, useSetAtom } from "jotai";
 import { AddServiceAtom, AddServiceInProcess } from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/TextInputWithIcon";
-import Button from "@/components/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import Stepper from "./stepper";
 import { ADDSERVICESTEPS } from "@/constants";
@@ -147,10 +147,10 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                           ]}
                         >
                           <Text style={styles.requirementValue}>
-                            {requirement?.totalRequired}
+                            {requirement?.count}
                           </Text>
                           <Text style={styles.requirementValue}>
-                            {requirement?.foodProvided ? "Yes" : "No"}
+                            {requirement?.food ? "Yes" : "No"}
                           </Text>
                           <Text style={styles.requirementValue}>
                             {requirement?.shelterProvider ? "Yes" : "No"}

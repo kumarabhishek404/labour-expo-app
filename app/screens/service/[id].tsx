@@ -26,7 +26,7 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import Map from "@/components/ViewMap";
+import Map from "@/components/commons/ViewMap";
 import {
   applyService,
   editService,
@@ -36,21 +36,27 @@ import {
   unApplyService,
   unLikeService,
 } from "../../api/services";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtom, useSetAtom } from "jotai";
 import { AddServiceAtom, LocationAtom, UserAtom } from "../../AtomStore/user";
 import { toast } from "../../hooks/toast";
-import profileImage from "../../../assets/person-placeholder.png";
 import coverImage from "../../../assets/images/placeholder-cover.jpg";
 import { dateDifference } from "@/constants/functions";
-import Button from "@/components/Button";
-import ModalComponent from "@/components/Modal";
+import Button from "@/components/inputs/Button";
+import ModalComponent from "@/components/commons/Modal";
 import EditService from "./editService";
 import moment from "moment";
-import AvatarComponent from "@/components/Avatar";
+import AvatarComponent from "@/components/commons/Avatar";
 import { openGoogleMaps } from "@/app/hooks/map";
+import CoverImage from "../../../assets/banner-placeholder.jpg";
+import Applicants from "@/components/commons/Applicants";
+import SelectedApplicants from "@/components/commons/SelectedApplicants";
+import Requirements from "@/components/commons/Requirements";
+import EmployerCard from "@/components/commons/EmployerCard";
+import Highlights from "@/components/commons/Highlights";
+import ImageSlider from "@/components/commons/ImageSlider";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -71,10 +77,10 @@ const ServiceDetails = () => {
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isEditService, setIsEditService] = useState(false);
   const [isServiceLiked, setIsServiceLiked] = useState(
-    service?.isLiked || false
+    service?.liked?.includes(userDetails?._id) || false
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
-    service?.isApplied || service?.applied?.includes(userDetails?._id) || false
+    service?.applied?.includes(userDetails?._id) || false
   );
 
   // const [addService, setAddService] = useAtom(AddServiceAtom);
@@ -134,7 +140,7 @@ const ServiceDetails = () => {
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -159,8 +165,8 @@ const ServiceDetails = () => {
     mutationFn: () => unLikeService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      let likedService = [...userDetails?.likedJobs];
-      console.log("Response while unliking a service - ", likedService);
+      toast.success("Service removed from favourites");
+      console.log("Response while unliking a service - ", response);
     },
     onError: (err) => {
       console.error("error while unliking the service ", err);
@@ -192,11 +198,8 @@ const ServiceDetails = () => {
   });
 
   useEffect(() => {
-    setIsServiceApplied(
-      service?.isApplied ||
-        service?.applied?.includes(userDetails?._id) ||
-        false
-    );
+    setIsServiceApplied(service?.applied?.includes(userDetails?._id) || false);
+    setIsServiceLiked(service?.liked?.includes(userDetails?._id) || false);
   }, [service]);
 
   useFocusEffect(
@@ -272,13 +275,6 @@ const ServiceDetails = () => {
     };
   });
 
-  const destination = {
-    latitude: 40.758896,
-    longitude: -73.98513,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
-
   const modalContent = () => {
     return (
       <EditService
@@ -297,6 +293,12 @@ const ServiceDetails = () => {
       />
     );
   };
+
+  const imagess: any = [
+    "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUx08RYYFIya79TX7js7AgoeewkB2atkyIrmbEPXwcVc3MqSr8bms5_AXyB8ODT4_vEXg&usqp=CAU",
+    "https://img.freepik.com/photos-premium/photo-detaillee-yeux-cameleon_129172-1195.jpg",
+  ];
 
   return (
     <>
@@ -353,7 +355,8 @@ const ServiceDetails = () => {
           isRefetching ||
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
-          mutationApplyService?.isPending
+          mutationApplyService?.isPending ||
+          mutationUnApplyService
         }
       />
 
@@ -362,17 +365,46 @@ const ServiceDetails = () => {
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
         >
-          <Animated.Image
-            source={
-              service?.coverImage
-                ? {
-                    uri: service?.coverImage,
-                  }
-                : coverImage
-            }
-            style={[styles.image, imageAnimatedStyle]}
-          />
+          {service && service?.images?.length > 0 && (
+            <ImageSlider images={service?.images} />
+          )}
+
           <View style={styles.contentWrapper}>
+            {service?.applied?.includes(userDetails?._id) && (
+              <View style={styles?.selectedWrapper}>
+                <View style={{ width: "50%" }}>
+                  <Text style={styles.selectedText}>You are Selected</Text>
+                  <Text style={styles.helpingText}>
+                    (Do your best work and get best rating. It will help you to
+                    get more work)
+                  </Text>
+                </View>
+                <View style={{ width: "50%" }}>
+                  <Button
+                    isPrimary={true}
+                    title="Call Employer"
+                    onPress={() => {}}
+                    style={{
+                      backgroundColor: "#007BFF",
+                      borderColor: "#007BFF",
+                      paddingHorizontal: 0,
+                      borderWidth: 0,
+                    }}
+                    textStyle={{
+                      fontSize: 16,
+                    }}
+                    icon={
+                      <FontAwesome5
+                        name="phone-alt"
+                        size={16}
+                        color={Colors.white}
+                        style={{ marginRight: 10 }}
+                      />
+                    }
+                  />
+                </View>
+              </View>
+            )}
             <Text style={styles.listingName}>{service?.name}</Text>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
@@ -390,192 +422,29 @@ const ServiceDetails = () => {
               </Text>
             </View>
 
-            <View style={styles.highlightWrapper}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "32%",
-                }}
-              >
-                <View style={styles.highlightIcon}>
-                  <Ionicons name="time" size={18} color={Colors.primary} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.highlightTxt}>Duration</Text>
-                  <Text style={styles.highlightTxtVal}>
-                    {service?.duration ||
-                      dateDifference(service?.startDate, service?.endDate)}
-                  </Text>
-                </View>
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "32%",
-                }}
-              >
-                <View style={styles.highlightIcon}>
-                  <FontAwesome name="users" size={18} color={Colors.primary} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.highlightTxt}>Travelling</Text>
-                  <Text style={styles.highlightTxtVal}>Yes</Text>
-                </View>
-              </View>
-
-              {service?.location && service?.location?.latitude && (
-                <View
-                  style={{
-                    flexDirection: "column",
-                    width: "32%",
-                  }}
-                >
-                  <View style={{ flexDirection: "row" }}>
-                    <View style={styles.highlightIcon}>
-                      <FontAwesome5
-                        name="rupee-sign"
-                        size={18}
-                        color={Colors.primary}
-                      />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.highlightTxt}>Distance</Text>
-                      <Text style={styles.highlightTxtVal}>Just 2 Kms</Text>
-                    </View>
-                  </View>
-                  <Button
-                    isPrimary={false}
-                    title="Get Direction"
-                    onPress={() => openGoogleMaps(destination)}
-                    // icon={
-                    //   <FontAwesome
-                    //     name="users"
-                    //     size={12}
-                    //     color={Colors.primary}
-                    //   />
-                    // }
-                    style={{
-                      marginTop: 6,
-                      borderWidth: 1.5,
-                      paddingVertical: 3,
-                      paddingHorizontal: 6,
-                    }}
-                    textStyle={{
-                      fontWeight: "700",
-                      fontSize: 12,
-                    }}
-                  />
-                </View>
-              )}
-            </View>
+            <Highlights service={service} />
 
             <Text style={styles.listingDetails}>{service?.description}</Text>
 
             {service && service?.requirements?.length > 0 && (
-              <View style={styles.requirmentContainer}>
-                {service &&
-                  service?.requirements?.length > 0 &&
-                  service?.requirements?.map(
-                    (requirement: any, index: number) => {
-                      return (
-                        <View style={styles.card} key={index}>
-                          <View style={styles.header}>
-                            <Text style={styles.title}>
-                              {requirement?.name}
-                            </Text>
-                            <Text style={styles.price}>
-                              ₹ {requirement?.payPerDay} Per Day
-                            </Text>
-                          </View>
-                          <Text style={styles.subTitle}>shuttering</Text>
-
-                          <View style={styles.details}>
-                            <Text style={styles.detailLabel}>Count</Text>
-                            <Text style={styles.detailLabel}>Food</Text>
-                            <Text style={styles.detailLabel}>Living</Text>
-                            <Text style={styles.detailLabel}>ESI / PF</Text>
-                          </View>
-
-                          <View style={styles.values}>
-                            <Text style={styles.value}>
-                              {requirement?.totalRequired}
-                            </Text>
-                            <Text style={styles.value}>
-                              {requirement?.foodProvided ? "Yes" : "No"}
-                            </Text>
-                            <Text style={styles.value}>
-                              {requirement?.shelterProvider ? "Yes" : "No"}
-                            </Text>
-                            <Text style={styles.value}>No</Text>
-                          </View>
-                        </View>
-                      );
-                    }
-                  )}
-              </View>
+              <Requirements requirements={service?.requirements} />
             )}
           </View>
 
-          {service?.employer === userDetails?._id &&
+          {service?.employer?._id === userDetails?._id &&
             applicants?.pages[0]?.data &&
             applicants?.pages[0]?.data?.length > 0 && (
-              <View style={styles.applicantContainer}>
-                <Text style={styles.applicantHeader}>Applicants</Text>
-                {applicants?.pages[0]?.data?.map((item: any, index: number) => {
-                  return (
-                    <View key={index} style={styles.productCard}>
-                      <Image
-                        source={
-                          item.avatar ? { uri: item.avatar } : profileImage
-                        }
-                        style={styles.productImage}
-                      />
-                      <View style={styles.productInfo}>
-                        <View style={styles?.titleContainer}>
-                          <Text style={styles.productTitle}>
-                            {item.firstName} {item.lastName}
-                          </Text>
-                          <Button
-                            style={{
-                              paddingVertical: 4,
-                              paddingHorizontal: 10,
-                              marginLeft: 4,
-                            }}
-                            textStyle={{
-                              fontSize: 10,
-                            }}
-                            isPrimary={true}
-                            title="View Details"
-                            onPress={() =>
-                              router?.push(`/screens/worker/${item._id}`)
-                            }
-                          />
-                        </View>
+              <SelectedApplicants applicants={applicants} />
+            )}
 
-                        <Text style={styles.productPrice}>
-                          {item.skills.join(", ") || "Labour, Mistri, Plumber"}
-                        </Text>
-                        <View style={styles.recommendationContainer}>
-                          <FontAwesome
-                            name="user-circle"
-                            size={16}
-                            color="gray"
-                          />
-                          <Text style={styles.recommendationText}>
-                            {item.address ||
-                              "Balipur, Shakarauli, Jalesar Etah"}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                })}
-              </View>
+          {service?.employer?._id === userDetails?._id &&
+            applicants?.pages[0]?.data &&
+            applicants?.pages[0]?.data?.length > 0 && (
+              <Applicants applicants={applicants} />
             )}
 
           {/* First Make Google Maps API Key Then Uncomment It */}
-          {service?.location && service?.location?.latitude && (
+          {/* {service?.location && service?.location?.latitude && (
             <Map
               data={{
                 ...service?.location,
@@ -583,157 +452,71 @@ const ServiceDetails = () => {
                 longitudeDelta: 2,
               }}
             />
-          )}
+          )} */}
 
-          {service && service?.employer && (
-            <View
-              style={[
-                styles.requirmentContainer,
-                {
-                  marginVertical: 10,
-                  marginHorizontal: 10,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.card,
-                  {
-                    marginBottom: 0,
-                    width: "100%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    gap: 6,
-                  },
-                ]}
-              >
-                <View style={{ width: "60%", gap: 10 }}>
-                  <View style={{ gap: 2 }}>
-                    <Text style={[styles.title, { marginBottom: 10 }]}>
-                      Employer
-                    </Text>
-                    <Text style={{ fontSize: 13, fontWeight: "500" }}>
-                      <Text style={styles?.employerLabel}>Name : </Text>Sanaya
-                      Singh
-                    </Text>
-                    <Text style={{ fontSize: 13, fontWeight: "500" }}>
-                      <Text style={styles?.employerLabel}>Address : </Text>
-                      Balipur, Shakrauli, Jalesar, Etah Uttar Predesh
-                    </Text>
-                  </View>
-
-                  <Button
-                    isPrimary={false}
-                    title="Dial Phone"
-                    onPress={() => {}}
-                    icon={
-                      <FontAwesome5
-                        name="phone-alt"
-                        size={16}
-                        color={Colors.primary}
-                      />
-                    }
-                    style={{
-                      paddingVertical: 6,
-                      paddingHorizontal: 6,
-                    }}
-                    textStyle={{
-                      marginLeft: 6,
-                      fontSize: 12,
-                    }}
-                  />
-
-                  <Button
-                    isPrimary={false}
-                    title="Whatsapp Message"
-                    onPress={() => {}}
-                    icon={
-                      <FontAwesome5
-                        name="whatsapp"
-                        size={18}
-                        color={Colors.primary}
-                      />
-                    }
-                    style={{
-                      paddingVertical: 6,
-                      paddingHorizontal: 6,
-                    }}
-                    textStyle={{
-                      marginLeft: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: "auto",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                    gap: 10,
-                  }}
-                >
-                  <AvatarComponent
-                    isEditable={false}
-                    profileImage={
-                      "https://xsgames.co/randomusers/avatar.php?g=female"
-                    }
-                  />
-                  <Button
-                    isPrimary={true}
-                    title="View Details"
-                    onPress={() =>
-                      router.push(
-                        userDetails?._id === service?.employer
-                          ? "/(tabs)/profile"
-                          : `/screens/employer/${service?.employer}`
-                      )
-                    }
-                    icon={
-                      <AntDesign name="eye" size={18} color={Colors.white} />
-                    }
-                    style={{
-                      paddingVertical: 6,
-                      paddingHorizontal: 6,
-                    }}
-                    textStyle={{
-                      marginLeft: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
+          {service && service?.employer?._id !== userDetails?._id && (
+            <EmployerCard service={service} />
           )}
         </Animated.ScrollView>
       </ScrollView>
 
-      {service?.employer === userDetails?._id ? (
+      {service?.employer?._id === userDetails?._id ? (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
           <Button isPrimary={true} title="Cancel" onPress={() => {}} />
-          <Button
-            isPrimary={false}
-            title="Edit"
-            onPress={() => {
-              router.push("/(tabs)/addService/");
-              setAddService(service);
-            }}
-            style={styles?.footerBtn}
-            textStyle={{
-              color: Colors?.white,
-            }}
-          />
+          {applicants &&
+          applicants?.pages[0]?.data &&
+          applicants?.pages[0]?.data?.length > 0 ? (
+            <Button
+              isPrimary={false}
+              title="Complete Service"
+              onPress={() => {
+                router.push("/(tabs)/addService/");
+                setAddService(service);
+              }}
+              style={styles?.footerBtn}
+              textStyle={{
+                color: Colors?.white,
+              }}
+            />
+          ) : (
+            <Button
+              isPrimary={false}
+              title="Edit"
+              onPress={() => {
+                router.push("/(tabs)/addService/");
+                setAddService(service);
+              }}
+              style={styles?.footerBtn}
+              textStyle={{
+                color: Colors?.white,
+              }}
+            />
+          )}
         </Animated.View>
       ) : (
         <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          <Button
-            isPrimary={true}
-            title={isServiceApplied ? "Already Applied" : "Apply Now"}
-            onPress={() =>
-              isServiceApplied
-                ? mutationUnApplyService.mutate()
-                : mutationApplyService.mutate()
-            }
-          />
+          {service?.isSelected ? (
+            <Button
+              isPrimary={true}
+              title="Remove from Service"
+              onPress={() =>
+                isServiceApplied
+                  ? mutationUnApplyService.mutate()
+                  : mutationApplyService.mutate()
+              }
+            />
+          ) : (
+            <Button
+              isPrimary={true}
+              title={isServiceApplied ? "Cancel Apply" : "Apply Now"}
+              onPress={() =>
+                isServiceApplied
+                  ? mutationUnApplyService.mutate()
+                  : mutationApplyService.mutate()
+              }
+            />
+          )}
+
           <Button
             isPrimary={false}
             title={isServiceLiked ? "Unlike" : "Like"}
@@ -785,6 +568,31 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: Colors.white,
   },
+  selectedWrapper: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    textTransform: "uppercase",
+    backgroundColor: Colors?.tertiery,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 4,
+  },
+  selectedText: {
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0,
+    color: Colors?.white,
+  },
+  helpingText: {
+    fontSize: 13,
+    fontWeight: "500",
+    letterSpacing: 0,
+    color: Colors?.white,
+  },
   listingName: {
     fontSize: 24,
     fontWeight: "500",
@@ -802,152 +610,14 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     color: Colors.black,
   },
-  highlightWrapper: {
-    flexDirection: "row",
-    marginVertical: 20,
-    justifyContent: "space-between",
-  },
-  highlightIcon: {
-    backgroundColor: "#F4F4F4",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 8,
-    marginRight: 5,
-    alignItems: "center",
-    height: 30,
-  },
-  highlightTxt: {
-    fontSize: 12,
-    color: "#999",
-  },
-  highlightTxtVal: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginRight: 10,
-  },
-  getDirectionText: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginRight: 10,
-    textAlign: "left",
-  },
+
   listingDetails: {
     fontSize: 16,
     color: Colors.black,
     lineHeight: 25,
     letterSpacing: 0.5,
   },
-  applicantList: {
-    display: "flex",
-  },
-  applicantContainer: {
-    paddingHorizontal: 20,
-    backgroundColor: Colors.white,
-  },
-  applicantHeader: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  productCard: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-    alignItems: "center",
-    borderColor: "gray",
-    borderWidth: 1,
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 15,
-  },
-  productInfo: {
-    flex: 1,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 2,
-  },
-  productTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    flex: 1,
-  },
-  productPrice: {
-    fontSize: 14,
-    color: "#888",
-    marginVertical: 5,
-  },
-  recommendationContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  recommendationText: {
-    marginLeft: 5,
-    fontSize: 12,
-    color: "gray",
-    flex: 1,
-  },
-  requirmentContainer: {
-    marginVertical: 10,
-    backgroundColor: "#e1e8e5",
-    borderRadius: 8,
-  },
-  card: {
-    backgroundColor: "#e1e8e5",
-    padding: 15,
-    marginBottom: 16,
-    borderRadius: 8,
-  },
-  viewButton: {
-    width: 100,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Colors?.black,
-    textTransform: "capitalize",
-  },
-  price: {
-    fontSize: 16,
-    color: Colors?.black,
-  },
-  subTitle: {
-    fontSize: 14,
-    color: Colors?.primary,
-    marginBottom: 12,
-  },
-  details: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  detailLabel: {
-    fontSize: 12,
-    color: "#4F4F4F",
-    fontWeight: "600",
-  },
-  values: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  value: {
-    fontSize: 16,
-    color: "#000",
-  },
+
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -974,10 +644,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     textTransform: "uppercase",
-  },
-  employerLabel: {
-    fontSize: 12,
-    color: "#615d5d",
-    fontWeight: "600",
   },
 });

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import Button from "@/components/Button";
+import Button from "@/components/inputs/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { Controller, useForm } from "react-hook-form";
 import Step3 from "../../../assets/step3.jpg";
-import WorkRequirment from "@/components/WorkRequirements";
+import WorkRequirment from "@/components/inputs/WorkRequirements";
 
 interface ThirdScreenProps {
   setStep: any;
@@ -88,7 +88,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                     i + 1
                   }: Pay per day must be greater than 0`;
                 }
-                if (item?.totalRequired === 0 || !item?.totalRequired) {
+                if (item?.count === 0 || !item?.count) {
                   setErrorField({
                     index: i,
                     name: "counter",

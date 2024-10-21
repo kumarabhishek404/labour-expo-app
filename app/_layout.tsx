@@ -4,16 +4,22 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-// import { StateProvider } from "./context/context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import * as Location from "expo-location";
-import { useAtom, useSetAtom } from "jotai";
-import { AddServiceInProcess, LocationAtom } from "./AtomStore/user";
+import { useSetAtom } from "jotai";
+import { AddServiceInProcess } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
-import { getLocales } from "expo-localization";
 import { LocaleProvider } from "./context/locale";
-// import { NativeModules } from "react-native";
+import { NotificationProvider } from "./context/NotificationContext";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -29,24 +35,12 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // const setLocationAt
-  const deviceLanguage = getLocales()[0].languageCode;
-  const setLocation = useSetAtom(LocationAtom);
   const setIsAddService = useSetAtom(AddServiceInProcess);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
-  // if (__DEV__) {
-  //   // Set the debugger host
-  //   // const { NativeModules } = require("react-native");
-  //   const { DevSettings } = NativeModules;
-  //   DevSettings.setIsDebuggingRemotely(true);
-  //   DevSettings.setDebugHost("localhost:8081");
-  // }
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -57,27 +51,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
-  // useEffect(() => {
-  //   const getPermission = async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       console.log("Please grant location permission");
-  //       return;
-  //     }
-
-  //     let currentLocation = await Location.getCurrentPositionAsync({});
-  //     setLocation(currentLocation);
-  //     let response = await Location.reverseGeocodeAsync({
-  //       latitude: currentLocation?.coords?.latitude,
-  //       longitude: currentLocation?.coords?.longitude,
-  //     });
-
-  //     console.log("response of Expo Location ---", response);
-
-  //   };
-  //   getPermission();
-  // }, []);
 
   if (!loaded) {
     return null;
@@ -90,13 +63,15 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <LocaleProvider>
-      <QueryClientProvider client={queryClient}>
-        <Stack screenOptions={{ headerShown: true }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <Toast />
-      </QueryClientProvider>
-    </LocaleProvider>
+    <NotificationProvider>
+      <LocaleProvider>
+        <QueryClientProvider client={queryClient}>
+          <Stack screenOptions={{ headerShown: true }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+          <Toast />
+        </QueryClientProvider>
+      </LocaleProvider>
+    </NotificationProvider>
   );
 }

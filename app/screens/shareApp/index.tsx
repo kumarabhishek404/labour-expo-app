@@ -14,16 +14,15 @@ import * as SMS from "expo-sms";
 import * as MailComposer from "expo-mail-composer";
 import { router, Stack } from "expo-router";
 import Colors from "@/constants/Colors";
+import { APPLINK } from "@/constants";
 
 const ShareAppScreen = () => {
-  const appLink = "https://your-app-link.com"; // Replace with your actual app link
-
   // Share using Social Media Platforms (e.g., WhatsApp, Facebook, Telegram)
   const shareToSocialMedia = (platform: any) => {
     let url;
     switch (platform) {
       case "whatsapp":
-        url = `whatsapp://send?text=Check out this amazing app: ${appLink}`;
+        url = `whatsapp://send?text=Check out this amazing app: ${APPLINK}`;
         break;
       case "instagram":
         url = `instagram://story-camera`; // Instagram doesn't support text sharing directly, so it opens the camera
@@ -32,7 +31,7 @@ const ShareAppScreen = () => {
         url = `linkedin://sharing/share-offsite/?url=https://example.com`;
         break;
       case "facebook":
-        url = `fb://faceweb/f?href=${appLink}`;
+        url = `fb://faceweb/f?href=${APPLINK}`;
         break;
       default:
         url = "";
@@ -55,7 +54,7 @@ const ShareAppScreen = () => {
     if (isAvailable) {
       await SMS.sendSMSAsync(
         [], // Leave empty to allow users to choose recipients
-        `Check out this amazing app: ${appLink}`
+        `Check out this amazing app: ${APPLINK}`
       );
     } else {
       Alert.alert("SMS service is not available");
@@ -67,7 +66,7 @@ const ShareAppScreen = () => {
     const options = {
       recipients: [],
       subject: "Check out this amazing app!",
-      body: `I wanted to share this awesome app with you: ${appLink}`,
+      body: `I wanted to share this awesome app with you: ${APPLINK}`,
     };
 
     const isAvailable = await MailComposer.isAvailableAsync();
@@ -82,7 +81,7 @@ const ShareAppScreen = () => {
   const shareAppLink = async () => {
     try {
       await Sharing.shareAsync(null, {
-        message: `Check out this amazing app: ${appLink}`,
+        message: `Check out this amazing app: ${APPLINK}`,
         // url: appLink,
       });
     } catch (err) {
@@ -92,7 +91,7 @@ const ShareAppScreen = () => {
 
   // Copy link to clipboard
   const copyLink = () => {
-    Clipboard.setString(appLink);
+    Clipboard.setString(APPLINK);
     Alert.alert("Link copied to clipboard");
   };
 

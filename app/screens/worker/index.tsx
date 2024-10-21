@@ -1,5 +1,5 @@
 import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import {
   View,
@@ -11,18 +11,29 @@ import {
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/Loader";
-import CategoryButtons from "@/components/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
-import ListingsVerticalServices from "@/components/ListingsVerticalServices";
-import { fetchAllWorkers } from "@/app/api/workers";
+import Loader from "@/components/commons/Loader";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
+import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
+import {
+  fetchAllBookedWorkers,
+  fetchAllLikedWorkers,
+  fetchAllWorkers,
+} from "@/app/api/workers";
 import { UserAtom } from "@/app/AtomStore/user";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import { router, Stack, useGlobalSearchParams } from "expo-router";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
+  const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("All");
+  const { title, type } = useGlobalSearchParams();
+
+  console.log("Typppppeeeee----", type);
 
   const {
     data: response,
@@ -31,11 +42,22 @@ const Workers = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["workers"],
-    queryFn: ({ pageParam }) => fetchAllWorkers({ pageParam }),
+    queryKey: [
+      type === "favourite"
+        ? "favouriteWorkers"
+        : type === "booked"
+        ? "bookedWorkers"
+        : "workers",
+    ],
+    queryFn: ({ pageParam }) =>
+      type === "favourite"
+        ? fetchAllLikedWorkers({ pageParam })
+        : type === "booked"
+        ? fetchAllBookedWorkers({ pageParam })
+        : fetchAllWorkers({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
@@ -44,6 +66,8 @@ const Workers = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages.flatMap((page: any) => page.data || [])
       );
@@ -79,52 +103,109 @@ const Workers = () => {
     setCategory(category);
   };
 
+  console.log("Total Date---", totalData);
+
   return (
-    <View style={{ flex: 1 }}>
-      <Loader loading={isLoading} />
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.searchSectionWrapper}>
-            <View style={styles.searchBar}>
-              <Ionicons
-                name="search"
-                size={18}
-                style={{ marginRight: 5 }}
-                color={Colors.black}
-              />
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search..."
-                value={searchText}
-                onChangeText={handleSearch}
-                placeholderTextColor="black"
-              />
-            </View>
-            <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
-              <Ionicons name="options" size={28} color={Colors.white} />
+    <>
+      <Stack.Screen
+        options={{
+          headerTransparent: false,
+          headerTitle: `${title}`,
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 8,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Feather name="arrow-left" size={20} />
+              </View>
             </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {}}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 8,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Ionicons name="bookmark-outline" size={20} />
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <View style={{ flex: 1 }}>
+        <Loader loading={isLoading} />
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <View style={styles.searchSectionWrapper}>
+              <View style={styles.searchBar}>
+                <Ionicons
+                  name="search"
+                  size={18}
+                  style={{ marginRight: 5 }}
+                  color={Colors.black}
+                />
+                <TextInput
+                  style={styles.searchBox}
+                  placeholder="Search..."
+                  value={searchText}
+                  onChangeText={handleSearch}
+                  placeholderTextColor="black"
+                />
+              </View>
+              <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
+                <Ionicons name="options" size={28} color={Colors.white} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        <CategoryButtons
-          type="workers"
-          onCagtegoryChanged={onCatChanged}
-          stylesProp={styles.categoryContainer}
-        />
+          <CategoryButtons
+            type="workers"
+            onCagtegoryChanged={onCatChanged}
+            stylesProp={styles.categoryContainer}
+          />
 
-        <View style={styles.totalData}>
-          <Text style={styles.totalItemTxt}>
-            {isLoading ? "Loading..." : `${memoizedData?.length || 0} Results`}
-          </Text>
+          <PaginationString
+            type="workers"
+            isLoading={isLoading}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalWorkers
+              type="worker"
+              listings={memoizedData || []}
+              category="workers"
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          ) : (
+            <EmptyDatePlaceholder title={"Worker"} />
+          )}
         </View>
-        <ListingsVerticalWorkers
-          listings={memoizedData || []}
-          category="workers"
-          loadMore={loadMore}
-          isFetchingNextPage={isFetchingNextPage}
-        />
       </View>
-    </View>
+    </>
   );
 };
 
@@ -132,11 +213,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
   },
-  headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
+  headerContainer: {},
   searchBox: {
     color: "#000000",
     height: "100%",
@@ -161,16 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 20,
   },
-  categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
-  },
+  categoryContainer: {},
 });
 
 export default Workers;

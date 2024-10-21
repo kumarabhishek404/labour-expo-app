@@ -1,38 +1,23 @@
-import React, { useState } from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useAtom, useSetAtom } from "jotai";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
-import {
-  Feather,
-  Ionicons,
-  MaterialIcons,
-  Octicons,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/Loader";
+import Loader from "@/components/commons/Loader";
 import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
 import { signIn } from "../../api/user";
 import { toast } from "../../hooks/toast";
 import i18n from "@/utils/i18n";
-import { useForm, Controller } from "react-hook-form"; // Import react-hook-form
-import TextInputComponent from "@/components/TextInputWithIcon";
-import PasswordComponent from "@/components/Password";
-import SelfieScreen from "@/components/Selfie";
+import { useForm, Controller } from "react-hook-form";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import PasswordComponent from "@/components/inputs/Password";
 
 const LoginScreen = () => {
   const setUserDetails = useSetAtom(UserAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
   const setEarnings = useSetAtom(EarningAtom);
-  const [secureEntry, setSecureEntry] = useState(true);
 
   const {
     control,
@@ -55,13 +40,13 @@ const LoginScreen = () => {
         middleName: user?.middleName,
         lastName: user?.lastName,
         mobileNumber: user?.mobileNumber,
-        likedJobs: user?.likedJobs,
-        likedEmployees: user?.likedEmployees,
+        likedServices: user?.likedJobs || [],
+        likedWorkers: user?.bookmarkedWorkers || [],
+        likedMediators: user?.likedMediators || [],
         email: user?.email,
         address: user?.address,
-        avatar: user?.avatar,
+        profilePicture: user?.profilePicture,
         role: user?.role,
-        roleType: user?.labourType,
         token: response?.token,
         serviceAddress: [
           "1234 Main St, New York, NY 10001",
@@ -110,7 +95,6 @@ const LoginScreen = () => {
           <Text style={styles.headingText}>Hello,</Text>
           <Text style={styles.headingText}>{i18n.t("welcome")}</Text>
         </View>
-
         <View style={styles.formContainer}>
           <Controller
             control={control}

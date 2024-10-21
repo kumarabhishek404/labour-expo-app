@@ -10,17 +10,21 @@ import {
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/Loader";
-import CategoryButtons from "@/components/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/ListingsVerticalWorkers";
+import Loader from "@/components/commons/Loader";
+import CategoryButtons from "@/components/inputs/CategoryButtons";
+import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import { fetchAllMediators } from "@/app/api/mediator";
-import { router, Stack } from "expo-router";
-import { fetchAllEmployers } from "@/app/api/employer";
+import { router, Stack, useGlobalSearchParams } from "expo-router";
+import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import PaginationString from "@/components/commons/PaginationString";
 
 const Employers = () => {
   const [filteredData, setFilteredData]: any = useState([]);
+  const [totalData, setTotalData] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("All");
+  const { title, type } = useGlobalSearchParams();
 
   const {
     data: response,
@@ -29,13 +33,16 @@ const Employers = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["mediators"],
-    queryFn: ({ pageParam }) => fetchAllEmployers({ pageParam }),
+    queryKey: [type === "favourite" ? "favouriteEmployers" : "employers"],
+    queryFn: ({ pageParam }) =>
+      type === "favourite"
+        ? fetchAllLikedEmployer({ pageParam })
+        : fetchAllEmployers({ pageParam }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.totalPages) {
-        return lastPage?.pagination?.page + 1;
+      if (lastPage?.pagination?.currentPage < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.currentPage + 1;
       }
       return undefined;
     },
@@ -43,6 +50,8 @@ const Employers = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const totalData = response?.pages[0]?.pagination?.total;
+      setTotalData(totalData);
       const unsubscribe = setFilteredData(
         response?.pages.flatMap((page: any) => page.data || [])
       );
@@ -83,7 +92,7 @@ const Employers = () => {
       <Stack.Screen
         options={{
           headerTransparent: false,
-          headerTitle: "Employers",
+          headerTitle: `${title}`,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
@@ -153,25 +162,29 @@ const Employers = () => {
           </View>
 
           <CategoryButtons
-            type="mediators"
+            type="employers"
             onCagtegoryChanged={onCatChanged}
             stylesProp={styles.categoryContainer}
           />
 
-          <View style={styles.totalData}>
-            <Text style={styles.totalItemTxt}>
-              {isLoading
-                ? "Loading..."
-                : `${memoizedData?.length || 0} Results`}
-            </Text>
-          </View>
-
-          <ListingsVerticalWorkers
-            listings={memoizedData || []}
-            category="workers"
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
+          <PaginationString
+            type="employers"
+            isLoading={isLoading}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
           />
+
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalWorkers
+              type="employer"
+              listings={memoizedData || []}
+              category="employers"
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          ) : (
+            <EmptyDatePlaceholder title={"Employer"} />
+          )}
         </View>
       </View>
     </>
@@ -182,11 +195,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
   },
-  headerContainer: {
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
+  headerContainer: {},
   searchBox: {
     color: "#000000",
     height: "100%",
@@ -211,16 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 20,
   },
-  categoryContainer: {
-    paddingHorizontal: 20,
-  },
-  totalData: {
-    paddingHorizontal: 20,
-    paddingBottom: 6,
-  },
-  totalItemTxt: {
-    fontSize: 12,
-  },
+  categoryContainer: {},
 });
 
 export default Employers;

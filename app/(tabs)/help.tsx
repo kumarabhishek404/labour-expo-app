@@ -17,7 +17,7 @@ const MiddleOption = () => {
         options={{
           headerTransparent: false,
           headerShown: true,
-          headerTitle: userDetails?.roleType === "ONE" ? "Helps" : "Workers",
+          headerTitle: userDetails?.role === "WORKER" ? "Helps" : "Workers",
           headerTintColor: Colors.white,
           headerStyle: {
             backgroundColor: Colors.primary,
@@ -41,8 +41,7 @@ const MiddleOption = () => {
           ),
         }}
       />
-      {userDetails?.roleType === "ONE" && <Helps />}
-      {userDetails?.roleType === "ORG" && <Workers />}
+      {userDetails?.role === "WORKER" ? <Helps /> : <Workers />}
     </>
   );
 };
