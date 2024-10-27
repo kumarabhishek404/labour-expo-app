@@ -5,6 +5,9 @@ import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Gender from "@/components/inputs/Gender";
 import DateField from "@/components/inputs/DateField";
+import { Link } from "expo-router";
+import Stepper from "@/app/(tabs)/addService/stepper";
+import { REGISTERSTEPS } from "@/constants";
 
 interface FirstScreenProps {
   setStep: any;
@@ -21,10 +24,14 @@ interface FirstScreenProps {
 
 const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
+  firstName,
   setFirstName,
+  lastName,
   setLastName,
+  gender,
   setGender,
-  setDateOfBirth
+  dateOfBirth,
+  setDateOfBirth,
 }: FirstScreenProps) => {
   const {
     control,
@@ -33,10 +40,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      gender: "",
-      dateOfBirth: new Date(),
+      firstName: firstName,
+      lastName: lastName,
+      gender: gender,
+      dateOfBirth: new Date(dateOfBirth),
     },
   });
 
@@ -50,11 +57,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
   return (
     <>
-      {/* Existing form fields */}
+      <View style={{ marginBottom: 20 }}>
+        <Stepper currentStep={1} steps={REGISTERSTEPS} />
+      </View>
       <Controller
         control={control}
         name="firstName"
-        rules={{ required: "First Name is required" }}
+        rules={{
+          required: false,
+          // required: "First Name is required"
+        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInputComponent
             name="firstName"
@@ -72,7 +84,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       <Controller
         control={control}
         name="lastName"
-        rules={{ required: "Last Name is required" }}
+        rules={{
+          required: false,
+          // required: "Last Name is required"
+        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInputComponent
             name="lastName"
@@ -87,11 +102,13 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         )}
       />
 
-      {/* Gender selection */}
       <Controller
         control={control}
         name="gender"
-        rules={{ required: "Gender is required" }}
+        rules={{ 
+          required: false,
+          // required: "Gender is required"
+         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Gender
             name="gender"
@@ -103,7 +120,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             ]}
             gender={value}
             setGender={onChange}
-            containerStyle={errors?.lastName && styles.errorInput}
+            containerStyle={errors?.gender && styles.errorInput}
             errors={errors}
           />
         )}
@@ -114,19 +131,20 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         name="dateOfBirth"
         defaultValue={new Date()}
         rules={{
-          required: "Start date is required",
-          validate: (value) => {
-            const selectedDate = new Date(value);
-            const today = new Date();
-            const eighteenYearsAgo = new Date();
-            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+          required: false,
+          // required: "Start date is required",
+          // validate: (value) => {
+          //   const selectedDate = new Date(value);
+          //   const today = new Date();
+          //   const eighteenYearsAgo = new Date();
+          //   eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
 
-            if (selectedDate > eighteenYearsAgo) {
-              return "You must be at least 18 years old";
-            } else {
-              return true;
-            }
-          },
+          //   if (selectedDate > eighteenYearsAgo) {
+          //     return "You must be at least 18 years old";
+          //   } else {
+          //     return true;
+          //   }
+          // },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <DateField
@@ -146,6 +164,15 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       >
         <Text style={styles.submitButtonText}>Save and Next</Text>
       </TouchableOpacity>
+
+      <View style={styles.footerContainer}>
+        <Text style={styles.accountText}>Already have an account?</Text>
+        <Link href="/screens/auth/login" asChild>
+          <TouchableOpacity>
+            <Text style={styles.signupText}>Sign In</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </>
   );
 };
@@ -174,6 +201,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     padding: 10,
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+    gap: 5,
+  },
+  accountText: {
+    color: Colors.primary,
+  },
+  signupText: {
+    color: Colors.black,
+    fontSize: 20,
+    fontWeight: "500",
+    textDecorationLine: "underline",
   },
 });
 

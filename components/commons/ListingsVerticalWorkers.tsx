@@ -16,13 +16,15 @@ import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import { getWorkLabel } from "@/constants/functions";
+import { MEDIATORTYPES } from "@/constants";
 
 type Props = {
   type: String;
   listings: any[];
-  category: string;
   loadMore: any;
   isFetchingNextPage: boolean;
+  refreshControl: any;
 };
 
 type RenderItemTypes = {
@@ -48,9 +50,9 @@ type RenderItemTypes = {
 const ListingsVerticalWorkers = ({
   type,
   listings,
-  category,
   loadMore,
   isFetchingNextPage,
+  refreshControl,
 }: Props) => {
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
@@ -82,9 +84,16 @@ const ListingsVerticalWorkers = ({
                 </Text>
                 <View style={styles.locationBox}>
                   <Text style={styles.itemLabel}>Skills</Text>
-                  <Text style={styles.itemValue}>
-                    {item?.skills?.join(", ")}
-                  </Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                    {item?.skills &&
+                      item?.skills?.length > 0 &&
+                      item?.skills?.map((skill: any, index: number) => (
+                        <Text key={skill} style={styles.itemValue}>
+                          {getWorkLabel(MEDIATORTYPES, skill)}
+                          {item?.skills?.length - index > 1 && ", "}
+                        </Text>
+                      ))}
+                  </View>
                 </View>
                 <View style={styles.locationBox}>
                   <Text style={styles.itemLabel}>Address</Text>
@@ -146,6 +155,7 @@ const ListingsVerticalWorkers = ({
         windowSize={3}
         removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 110 }}
+        refreshControl={refreshControl}
       />
     </View>
   );
@@ -224,7 +234,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 6,
   },
   itemLocationTxt: {
     fontSize: 12,

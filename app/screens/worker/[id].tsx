@@ -47,6 +47,8 @@ import { sendJoiningRequest } from "@/app/api/requests";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import { toast } from "@/app/hooks/toast";
+import SkillSelector from "@/components/commons/skills";
+import { WORKERTYPES } from "@/constants";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -255,7 +257,7 @@ const Worker = () => {
           isRefetching ||
           mutationLikeWorker?.isPending ||
           mutationUnLikeWorker?.isPending ||
-          mutationSendRequest?.isPending || 
+          mutationSendRequest?.isPending ||
           mutationBookWorker?.isPending ||
           mutationRemoveBookedWorker?.isPending
         }
@@ -274,7 +276,11 @@ const Worker = () => {
           />
           <View style={styles.contentWrapper}>
             <Image
-              source={worker?.profilePicture ? { uri: worker?.profilePicture } : profileImage}
+              source={
+                worker?.profilePicture
+                  ? { uri: worker?.profilePicture }
+                  : profileImage
+              }
               style={styles.workerImage}
             />
             <Text style={styles.listingName}>
@@ -312,23 +318,41 @@ const Worker = () => {
               </View>
               <View style={styles?.highlightBox}>
                 <View style={styles.highlightIcon}>
-                  <FontAwesome name="users" size={18} color={Colors.primary} />
-                </View>
-                <View style={{ width: 100 }}>
-                  <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>
-                    {["Labour", "Mistri", "Beldaar", "Plumber"]?.join(", ")}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles?.highlightBox}>
-                <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
                 <View style={{ width: 90 }}>
                   <Text style={styles.highlightTxt}>Rating</Text>
                   <Text style={styles.highlightTxtVal}>
                     {worker?.rating || 0}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <SkillSelector
+              canAddSkills={false}
+              userSkills={worker?.skills}
+              availableSkills={WORKERTYPES}
+            />
+
+            <View style={styles.highlightWrapper}>
+              <View style={[styles?.highlightBox, { width: "100%" }]}>
+                <View style={styles.highlightIcon}>
+                  <FontAwesome name="users" size={18} color={Colors.primary} />
+                </View>
+                <View>
+                  <Text style={styles.highlightTxt}>Skill</Text>
+                  <Text style={styles.highlightTxtVal}>
+                    {[
+                      "Labour",
+                      "Mistri",
+                      "Beldaar",
+                      "Plumber",
+                      "Labour",
+                      "Mistri",
+                      "Beldaar",
+                      "Plumber",
+                    ]?.join(", ")}
                   </Text>
                 </View>
               </View>
@@ -514,13 +538,16 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   highlightWrapper: {
+    width: "100%",
     flexDirection: "row",
     marginVertical: 10,
     justifyContent: "space-between",
     columnGap: 2,
+    // borderColor: "green",
+    // borderWidth: 2,
   },
   highlightBox: {
-    width: "30%",
+    width: "48%",
     display: "flex",
     flexDirection: "row",
     gap: 4,

@@ -13,7 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "jsEngine": "hermes",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "jsEngine": "jsc",
       "supportsTablet": true,
@@ -40,8 +42,9 @@
       "expo-router",
       "expo-font",
       "expo-localization",
-      "@react-native-firebase/app", 
-      "@react-native-firebase/auth"
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "react-native-vision-camera"
     ],
     "experiments": {
       "typedRoutes": true

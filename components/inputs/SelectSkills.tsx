@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // You need to install this or use a cross icon from other libraries
+import { WORKERTYPES } from "@/constants";
+import { getWorkLabel } from "@/constants/functions";
 
 interface SkillsSelectorProps {
   name: string;
@@ -20,9 +22,11 @@ const SkillsSelector = ({
   onBlur,
   errors,
 }: SkillsSelectorProps) => {
+  console.log("availableOptions--", availableOptions, selectedInterests);
+
   const handleSelect = (interest: any) => {
     if (selectedInterests.length < 10) {
-      setSelectedInterests([...selectedInterests, interest]);
+      setSelectedInterests([...selectedInterests, interest?.value]);
     }
   };
 
@@ -30,6 +34,8 @@ const SkillsSelector = ({
     const updatedInterests = selectedInterests.filter(
       (item: any) => item !== interest
     );
+    console.log("Upr---", updatedInterests);
+
     setSelectedInterests(updatedInterests);
   };
 
@@ -42,7 +48,9 @@ const SkillsSelector = ({
         {selectedInterests && selectedInterests?.length > 0 ? (
           selectedInterests.map((interest: any, index: number) => (
             <View key={index} style={styles.selectedItem}>
-              <Text style={styles.selectedText}>{interest}</Text>
+              <Text style={styles.selectedText}>
+                {getWorkLabel(availableOptions, interest)}
+              </Text>
               <TouchableOpacity onPress={() => handleRemove(interest)}>
                 <Ionicons name="close-circle" size={20} color="white" />
               </TouchableOpacity>
@@ -60,14 +68,14 @@ const SkillsSelector = ({
       {/* Display available interests */}
       <View style={styles.interestsContainer}>
         {availableOptions
-          .filter((interest) => !selectedInterests.includes(interest)) // Filter out selected interests
+          .filter((interest) => !selectedInterests.includes(interest?.value)) // Filter out selected interests
           .map((interest, index) => (
             <TouchableOpacity
               key={index}
               style={styles.interestItem}
               onPress={() => handleSelect(interest)}
             >
-              <Text style={styles.interestText}>+ {interest}</Text>
+              <Text style={styles.interestText}>+ {interest?.label}</Text>
             </TouchableOpacity>
           ))}
       </View>

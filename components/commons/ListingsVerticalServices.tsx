@@ -28,6 +28,7 @@ type Props = {
   isMyService?: boolean;
   loadMore: () => void;
   onDelete?: any;
+  refreshControl: any;
 };
 
 type RenderItemTypes = {
@@ -44,7 +45,8 @@ type RenderItemTypes = {
     address: string;
     startDate: Date;
     endDate: Date;
-    applied: Array<string>;
+    appliedBy: Array<string>;
+    selected: Array<string>;
   };
 };
 
@@ -55,6 +57,7 @@ const ListingsVerticalServices = ({
   isMyService,
   loadMore,
   onDelete,
+  refreshControl
 }: Props) => {
   const userDetails = useAtomValue(UserAtom);
 
@@ -70,7 +73,7 @@ const ListingsVerticalServices = ({
                 }
                 style={styles.image}
               />
-              {item?.applied?.includes(userDetails?._id) && (
+              {item?.selected?.includes(userDetails?._id) && (
                 <View
                   style={[
                     styles.applicants,
@@ -82,13 +85,13 @@ const ListingsVerticalServices = ({
                 </View>
               )}
 
-              {item?.applied &&
-                item?.applied?.length > 0 &&
-                !item?.applied?.includes(userDetails?._id) && (
+              {item?.appliedBy &&
+                item?.appliedBy?.length > 0 &&
+                !item?.appliedBy?.includes(userDetails?._id) && (
                   <View style={styles.applicants}>
                     <Fontisto name="persons" size={18} color={Colors.white} />
                     <Text style={styles?.applicantsValue}>
-                      {item?.applied?.length}
+                      {item?.appliedBy?.length}
                     </Text>
                     <Text style={styles?.applicantsLabel}>Proposals</Text>
                   </View>
@@ -191,6 +194,7 @@ const ListingsVerticalServices = ({
         windowSize={15}
         removeClippedSubviews={false}
         contentContainerStyle={{ paddingBottom: 180 }}
+        refreshControl={refreshControl}
       />
     </View>
   );

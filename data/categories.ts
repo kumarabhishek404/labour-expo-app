@@ -76,11 +76,11 @@ const workers = [
 ];
 
 const requests = [
-  {
-    title: "Recieved Requests",
-    value: 'recievedRequests',
-    iconName: "beach",
-  },
+  // {
+  //   title: "Recieved Requests",
+  //   value: 'recievedRequests',
+  //   iconName: "beach",
+  // },
   {
     title: "Sent Requests",
     value: 'sentRequests',

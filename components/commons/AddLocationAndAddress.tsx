@@ -12,6 +12,8 @@ interface AddLocationAndAddressProps {
   setAddress: any;
   location: any;
   setLocation: any;
+  selectedOption: string;
+  setSelectedOption: any;
   onBlur: any;
   errors: any;
   icon?: any;
@@ -23,11 +25,12 @@ const AddLocationAndAddress = ({
   setAddress,
   location,
   setLocation,
+  selectedOption,
+  setSelectedOption,
   onBlur,
   errors,
 }: AddLocationAndAddressProps) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const [selectedOption, setSelectedOption] = useState("address");
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchCurrentLocation = async () => {
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
   radioCircle: {
     height: 20,
     width: 20,
-    borderRadius: 8,
+    borderRadius: 100,
     borderWidth: 2,
     borderColor: "#000",
     alignItems: "center",

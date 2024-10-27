@@ -1,37 +1,19 @@
-import {
-  Alert,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { Ionicons, Octicons, SimpleLineIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { Link, router, Stack } from "expo-router";
-import axios from "axios";
-// import { useStateContext } from "../context/context";
-// import UsersClient from "../api/user";
+import { Stack } from "expo-router";
 import Loader from "@/components/commons/Loader";
-import { toast } from "@/app/hooks/toast";
 import FirstScreen from "./first";
-import Step1 from "../../../../assets/step1.jpg";
 import SecondScreen from "./second";
 import ThirdScreen from "./third";
 import FourthScreen from "./fourth";
 import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
-import SelfieScreen from "@/components/inputs/Selfie";
 import FifthScreen from "./fifth";
 import moment from "moment";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [profilePicture, setProfilePicture] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -66,23 +48,15 @@ const SignupScreen = () => {
       setPhoneNumber("");
       setEmail("");
       setRole("WORKER");
-      // setLabourType("ONE");
       setSkills("");
       setPassword("");
       setConfirmPassword("");
       setStep(5);
     },
-    // onError: (err) => {
-    //   console.error("Error while logging in user - ", err);
-    //   toast.error("Login failed");
-    // },
   });
 
   const handleSubmit = async () => {
     const formData: any = new FormData();
-
-    console.log("Image--", profilePicture);
-    
     const imageName = profilePicture.split("/").pop();
     formData.append("profileImage", {
       uri: profilePicture,
@@ -90,27 +64,11 @@ const SignupScreen = () => {
       name: imageName,
     });
 
-    const payload = {
-      profilePicture: profilePicture,
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      location: location,
-      countryCode: countryCode,
-      mobileNumber: phoneNumber,
-      email: email,
-      role: role,
-      gender: gender,
-      dateOfBirth: dateOfBirth,
-      skills: skills,
-      password: password,
-    };
-    
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("address", address);
-    // formData.append("location", JSON.stringify(location ?? {}));
-    // formData.append("countryCode", countryCode);
+    formData.append("location", JSON.stringify(location ?? {}));
+    formData.append("countryCode", countryCode);
     formData.append("mobile", phoneNumber);
     formData.append("email", email);
     formData.append("role", role?.name);
@@ -119,39 +77,7 @@ const SignupScreen = () => {
     formData.append("skills", skills);
     formData.append("password", password);
 
-console.log("Formdata --", formData);
-
-
     mutationRegister.mutate(formData);
-  };
-
-  const handleRegister = () => {
-    const formData: any = new FormData();
-    const imageUri: any = profilePicture;
-    const imageName = imageUri.split("/").pop();
-    formData.append("profilePicture", {
-      uri: imageUri,
-      type: "image/jpeg",
-      name: imageName,
-    });
-
-    const payload = {
-      profilePicture: profilePicture,
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      location: location,
-      countryCode: countryCode,
-      mobileNumber: phoneNumber,
-      email: email,
-      role: role,
-      gender: gender,
-      dateOfBirth: dateOfBirth,
-      skills: skills,
-      password: password,
-    };
-
-    mutationRegister.mutate(payload);
   };
 
   const renderFormComponents = () => {
@@ -160,7 +86,6 @@ console.log("Formdata --", formData);
         return (
           <FirstScreen
             setStep={setStep}
-            // profilePicture={profilePicture}
             setProfilePicture={setProfilePicture}
             firstName={firstName}
             setFirstName={setFirstName}
@@ -234,10 +159,17 @@ console.log("Formdata --", formData);
       />
       <Loader loading={mutationRegister?.isPending} />
       <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Make new</Text>
-          <Text style={styles.headingText}>account</Text>
-        </View>
+        {step === 5 ? (
+          <View style={styles.textContainer}>
+            <Text style={styles.headingText}>Click selfie</Text>
+            <Text style={styles.headingText}>to verify</Text>
+          </View>
+        ) : (
+          <View style={styles.textContainer}>
+            <Text style={styles.headingText}>Make new</Text>
+            <Text style={styles.headingText}>account</Text>
+          </View>
+        )}
         <View style={styles.formContainer}>
           <View style={styles?.inputContainer}>{renderFormComponents()}</View>
         </View>
@@ -276,7 +208,7 @@ const styles = StyleSheet.create({
     // fontFamily: fonts.SemiBold,
   },
   formContainer: {
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   inputContainer: {
     // height: 400,

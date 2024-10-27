@@ -27,7 +27,10 @@ export const addNewService = async (payload: any) => {
 
 export const editService = async (payload: any) => {
   try {
-    const data = await makePostRequestFormData("/service/update-service", payload);
+    const data = await makePostRequestFormData(
+      "/service/update-service",
+      payload
+    );
     toast.success("Service updated successfully");
     return data;
   } catch (error: any) {
@@ -78,7 +81,9 @@ export const deleteServiceById = async (id: any) => {
   }
 };
 
-export const fetchAllServices = async ({pageParam}: any) => {
+export const fetchAllServices = async ({ pageParam }: any) => {
+  console.log("Pagedd", pageParam);
+  
   try {
     const data = await makeGetRequest(
       `/service/all?page=${pageParam}&limit=10`
@@ -100,7 +105,7 @@ export const fetchAllServices = async ({pageParam}: any) => {
 export const fetchAllLikedServices = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/liked-services?page${pageParam}&limit=5`
+      `/service/all-liked?page${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -118,7 +123,7 @@ export const fetchAllLikedServices = async ({ pageParam }: any) => {
 
 export const likeService = async (payload: any) => {
   try {
-    const data = await makePostRequest("/service/like-service", payload);
+    const data = await makePostRequest("/service/like", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -135,7 +140,7 @@ export const likeService = async (payload: any) => {
 
 export const unLikeService = async (payload: any) => {
   try {
-    const data = await makePostRequest("/service/unlike-service", payload);
+    const data = await makePostRequest("/service/remove-liked", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -174,7 +179,7 @@ export const fetchMyServices = async ({ pageParam }: any) => {
 export const fetchMyAppliedServices = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/my-apply?page=${pageParam}&limit=5`
+      `/service/all-applied?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -225,10 +230,10 @@ export const unApplyService = async (payload: any) => {
 };
 
 // Applicants
-export const fetchMyApplicants = async ({ pageParam, id }: any) => {
+export const fetchMyApplicants = async ({ pageParam, serviceId }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/applied/${id}?page=${pageParam}&limit=5`
+      `/service/applied/${serviceId}?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -239,6 +244,100 @@ export const fetchMyApplicants = async ({ pageParam, id }: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all applicants"
+    );
+    throw error;
+  }
+};
+
+export const selectFromApplicant = async (payload: any) => {
+  console.log("Patload---", payload);
+
+  try {
+    const data = await makePostRequest("/service/select", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while selecting applicant : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while selecting applicant"
+    );
+    throw error;
+  }
+};
+
+export const rejectApplicant = async (payload: any) => {
+  try {
+    const data = await makeDeleteRequest("/service/reject", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while rejecting applicant : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while rejecting applicant"
+    );
+    throw error;
+  }
+};
+
+export const cancelSeletedApplicant = async (payload: any) => {
+  console.log("Payload --", payload);
+
+  try {
+    const data = await makePostRequest("/service/cancel-selected", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while canceling selected applicant : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while canceling selected applicant"
+    );
+    throw error;
+  }
+};
+
+export const fetchSelectedCandidates = async ({
+  pageParam,
+  serviceId,
+}: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/service/selected/${serviceId}?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching selected candidates of service : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching selected candidates of service"
+    );
+    throw error;
+  }
+};
+
+export const completeService = async (payload: any) => {
+  try {
+    const data = await makePostRequest(`/service/complete`, payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while cancelling service : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while cancelling service"
     );
     throw error;
   }

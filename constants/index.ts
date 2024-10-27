@@ -72,16 +72,6 @@ export const WORKERSKILLS = [
   "Painter",
 ];
 
-export const MEDIATORTYPES = [
-  "Construction",
-  "Dhan Buwai",
-  "Dhan Katai",
-  "Aloo Buwai",
-  "Aloo Khudai",
-  "Gehu Katai",
-  "Bazara Katai",
-];
-
 export const COUNTRYPHONECODE = [
   { label: "India", value: "+91" },
   { label: "Canada", value: "+1" },
@@ -91,13 +81,19 @@ export const COUNTRYPHONECODE = [
 
 export const WORKERTYPES = [
   { label: "Labour", value: "labour" },
-  { label: "Bricklayer", value: "Bricklayer" },
-  { label: "Stone Mason", value: "Stone Mason" },
+  { label: "Bricklayer", value: "bricklayer" },
+  { label: "Stone Mason", value: "stoneMason" },
   { label: "Mistri", value: "mistri" },
   { label: "Electrician", value: "electrician" },
 ];
 
-
+export const MEDIATORTYPES = [
+  { label: "Construction", value: "construction" },
+  { label: "Dhan Buwai", value: "dhaanBuwai" },
+  { label: "Dhaan Pitai", value: "dhaanPitai" },
+  { label: "Aloo Buwai", value: "alooBuwai" },
+  { label: "Bazara Katai", value: "bazraaKatai" },
+];
 
 export const FAQS = [
   {

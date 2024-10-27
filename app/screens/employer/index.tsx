@@ -41,13 +41,15 @@ const Employers = () => {
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.currentPage < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.currentPage + 1;
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
   });
 
+  console.log("response --", response?.pages[0]);
+  
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
@@ -178,7 +180,6 @@ const Employers = () => {
             <ListingsVerticalWorkers
               type="employer"
               listings={memoizedData || []}
-              category="employers"
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
             />

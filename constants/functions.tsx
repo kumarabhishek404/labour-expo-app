@@ -63,3 +63,8 @@ export const getTimeAgo = (createdOn: Date) => {
 export const isEmptyObject = (obj: object) => {
   return Object.entries(obj).length === 0 && obj.constructor === Object;
 };
+
+export const getWorkLabel = (availableSkills: any, skill: string) => {
+  let object = availableSkills?.filter((type: any) => type?.value === skill)[0];
+  return object?.label;
+};

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  RefreshControl,
 } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import FilterModal from "@/components/inputs/Filters";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -37,6 +39,7 @@ const Workers = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["services", filters], // Add filters to queryKey to refetch when they change
     queryFn: ({ pageParam }) => {
@@ -55,6 +58,7 @@ const Workers = () => {
       }
       return undefined;
     },
+    // refetchInterval: 5000
   });
 
   useFocusEffect(
@@ -69,7 +73,7 @@ const Workers = () => {
   );
 
   console.log("userDetails--", userDetails);
-  
+
   const handleSearch = (text: any) => {
     setSearchText(text);
     let workers = response?.pages.flatMap((page: any) => page.data || []);
@@ -107,6 +111,10 @@ const Workers = () => {
   const onCatChanged = (category: React.SetStateAction<string>) => {
     setCategory(category);
   };
+
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
 
   return (
     <View style={{ flex: 1 }}>
@@ -156,9 +164,14 @@ const Workers = () => {
               <ListingsVerticalWorkers
                 type="worker"
                 listings={memoizedData || []}
-                category="workers"
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
               />
             ) : (
               <ListingsVerticalServices
@@ -167,6 +180,12 @@ const Workers = () => {
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
                 isMyService={userDetails?.role === "EMPLOYER"}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
               />
             )}
           </>
@@ -192,10 +211,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
-  headerContainer: {
-  },
+  headerContainer: {},
   searchBox: {
     color: "#000000",
     height: "100%",
@@ -220,8 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 20,
   },
-  categoryContainer: {
-  }
+  categoryContainer: {},
 });
 
 export default Workers;

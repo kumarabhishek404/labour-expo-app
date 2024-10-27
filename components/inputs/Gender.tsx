@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   genderSelectionWrapper: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderRadius: 50,
     backgroundColor: "#fff",
   },

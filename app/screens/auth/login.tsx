@@ -6,7 +6,12 @@ import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
-import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
+import {
+  EarningAtom,
+  ServiceAtom,
+  UserAtom,
+  WorkAtom,
+} from "../../AtomStore/user";
 import { signIn } from "../../api/user";
 import { toast } from "../../hooks/toast";
 import i18n from "@/utils/i18n";
@@ -17,6 +22,7 @@ import PasswordComponent from "@/components/inputs/Password";
 const LoginScreen = () => {
   const setUserDetails = useSetAtom(UserAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
+  const setServiceDetails = useSetAtom(ServiceAtom);
   const setEarnings = useSetAtom(EarningAtom);
 
   const {
@@ -27,11 +33,13 @@ const LoginScreen = () => {
 
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
-    mutationFn: (data) => signIn(data), // Pass form data to mutation
+    mutationFn: (data) => signIn(data),
     onSuccess: (response) => {
       let user = response?.user;
       let work = user?.workDetails;
+      let service = user?.serviceDetails;
       let earnings = user?.earnings;
+      console.log("Worr---", work);
 
       setUserDetails({
         isAuth: true,
@@ -45,20 +53,24 @@ const LoginScreen = () => {
         likedMediators: user?.likedMediators || [],
         email: user?.email,
         address: user?.address,
+        skills: user?.skills,
         profilePicture: user?.profilePicture,
         role: user?.role,
         token: response?.token,
-        serviceAddress: [
-          "1234 Main St, New York, NY 10001",
-          "Balipur, post - Shakrauli, Etah Uttar Predesh",
-        ],
+        serviceAddress: [],
       });
 
       setWorkDetails({
         total: work?.total,
         completed: work?.completed,
-        cancelled: work?.cancelled,
-        upcoming: work?.upcoming,
+        cancelled: work?.cancelled?.byEmployer + work?.cancelled?.byWorker,
+        upcoming: work?.upcoming || 0,
+      });
+
+      setServiceDetails({
+        total: service?.total,
+        completed: service?.completed,
+        cancelled: service?.cancelled,
       });
 
       setEarnings({
@@ -165,24 +177,12 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Login Button */}
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             style={styles.loginButtonWrapper}
           >
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
-
-          {/* <Text style={styles.continueText}>or continue with</Text> */}
-
-          {/* Google Login Button */}
-          {/* <TouchableOpacity style={styles.googleButtonContainer}>
-            <Image
-              source={require("../../../assets/images/google.png")}
-              style={styles.googleImage}
-            />
-            <Text style={styles.googleText}>Google</Text>
-          </TouchableOpacity> */}
 
           <View style={styles.footerContainer}>
             <Text style={styles.accountText}>Don't have an account?</Text>
@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
-    // gap: 10,
   },
   input: {
     marginBottom: 20,

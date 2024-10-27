@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  RefreshControl,
 } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -24,6 +25,7 @@ import { UserAtom } from "@/app/AtomStore/user";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -33,14 +35,13 @@ const Workers = () => {
   const [category, setCategory] = useState("All");
   const { title, type } = useGlobalSearchParams();
 
-  console.log("Typppppeeeee----", type);
-
   const {
     data: response,
     isLoading,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch
   } = useInfiniteQuery({
     queryKey: [
       type === "favourite"
@@ -103,7 +104,9 @@ const Workers = () => {
     setCategory(category);
   };
 
-  console.log("Total Date---", totalData);
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
 
   return (
     <>
@@ -196,9 +199,14 @@ const Workers = () => {
             <ListingsVerticalWorkers
               type="worker"
               listings={memoizedData || []}
-              category="workers"
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
             />
           ) : (
             <EmptyDatePlaceholder title={"Worker"} />

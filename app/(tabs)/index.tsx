@@ -1,6 +1,7 @@
 import {
   Button,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { router, Stack, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -30,6 +31,7 @@ import ListingHorizontalServices from "@/components/commons/ListingHorizontalSer
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
 import { useNotification } from "../context/NotificationContext";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 
 const Page = () => {
   useLocale();
@@ -38,12 +40,14 @@ const Page = () => {
   const headerHeight = useHeaderHeight();
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("All");
+
   const {
     data: response,
     isLoading,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["homepage"],
     queryFn: ({ pageParam }) => {
@@ -67,6 +71,7 @@ const Page = () => {
     isFetchingNextPage: isSecondFetchingNextPage,
     fetchNextPage: fetchSecondNextPage,
     hasNextPage: hasSecondsNextPage,
+    refetch: secondRefetch,
   } = useInfiniteQuery({
     queryKey: ["tops"],
     queryFn: ({ pageParam }) => {
@@ -122,6 +127,11 @@ const Page = () => {
     [secondResponse]
   );
 
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+    await secondRefetch();
+  });
+
   return (
     <>
       <Stack.Screen
@@ -167,7 +177,12 @@ const Page = () => {
       <Loader loading={isLoading || isSecondLoading} />
 
       <View style={[styles.container, { paddingTop: headerHeight }]}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <Text style={styles.headingTxt}>
             {i18n.t("welcome")} {userDetails?.firstName}
           </Text>

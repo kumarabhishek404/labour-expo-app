@@ -11,18 +11,50 @@ import {
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import profileImage from "../../assets/person-placeholder.jpg";
+import { useMutation } from "@tanstack/react-query";
+import { cancelSeletedApplicant } from "@/app/api/services";
+import { toast } from "@/app/hooks/toast";
+import Loader from "./Loader";
 
-const SelectedApplicants = ({ applicants }: any) => {
+interface SelectedApplicantsProps {
+  selectedApplicants: any;
+  serviceId: String;
+  refetchSelectedApplicants: any;
+}
+
+const SelectedApplicants = ({
+  selectedApplicants,
+  serviceId,
+  refetchSelectedApplicants,
+}: SelectedApplicantsProps) => {
+  const mutationCancelSelectedApplicant = useMutation({
+    mutationKey: ["rejectCandidate", { serviceId }],
+    mutationFn: (userId) => cancelSeletedApplicant({ serviceId, userId }),
+    onSuccess: (response) => {
+      refetchSelectedApplicants();
+      toast.success("Cancel selected applicant successfully");
+      console.log(
+        "Response while cancelling an selected applicant - ",
+        response
+      );
+    },
+    onError: (err) => {
+      console.error("error while cancelling an selected applicant ", err);
+    },
+  });
+
   return (
-    <View style={styles.applicantContainer}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={styles.applicantHeader}>Selected Worker</Text>
-        {/* <Button
+    <>
+      <Loader loading={mutationCancelSelectedApplicant?.isPending} />
+      <View style={styles.applicantContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={styles.applicantHeader}>Selected Worker</Text>
+          {/* <Button
           style={{
             paddingVertical: 2,
             paddingHorizontal: 8,
@@ -45,39 +77,37 @@ const SelectedApplicants = ({ applicants }: any) => {
           title="Complete Service"
           onPress={() => {}}
         /> */}
-      </View>
-      {applicants?.pages[0]?.data?.map((item: any, index: number) => {
-        return (
-          <View key={index} style={styles.productCard}>
-            <Image
-              source={
-                item.profilePicture
-                  ? { uri: item.profilePicture }
-                  : profileImage
-              }
-              style={styles.productImage}
-            />
-            <View style={styles.productInfo}>
-              <View style={styles?.titleContainer}>
-                <View style={{ gap: 2, marginBottom: 4 }}>
-                  <Text style={styles.productTitle}>
-                    {item.firstName} {item.lastName}
-                  </Text>
-                  <Text style={styles.caption}>
-                    {item?.role === "WORKER" ? "WORKER" : "MEDIATOR"}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                    gap: 10,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", gap: 4 }}>
+        </View>
+        {selectedApplicants?.map((item: any, index: number) => {
+          console.log("itemmm---", item);
+
+          return (
+            <View key={index} style={styles.productCard}>
+              <Image
+                source={
+                  item?.profilePicture
+                    ? { uri: item?.profilePicture }
+                    : profileImage
+                }
+                style={styles.productImage}
+              />
+              <View style={styles.productInfo}>
+                <View style={styles?.titleContainer}>
+                  <View style={{ gap: 2, marginBottom: 4 }}>
+                    <Text style={styles.productTitle}>
+                      {item?.firstName} {item?.lastName}
+                    </Text>
+                    <Text style={styles.caption}>
+                      {item?.role === "WORKER" ? "WORKER" : "MEDIATOR"}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      gap: 10,
+                    }}
+                  >
                     <Button
                       style={{
                         paddingVertical: 3,
@@ -101,54 +131,56 @@ const SelectedApplicants = ({ applicants }: any) => {
                       title="Call"
                       onPress={() => {}}
                     />
+                    <Button
+                      style={{
+                        paddingVertical: 3,
+                        paddingHorizontal: 6,
+                        marginLeft: 4,
+                        backgroundColor: Colors?.danger,
+                        borderColor: Colors?.danger,
+                      }}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      icon={
+                        <FontAwesome
+                          name="remove"
+                          size={14}
+                          color="white"
+                          style={{ marginRight: 4 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title="Remove"
+                      onPress={() =>
+                        mutationCancelSelectedApplicant?.mutate(item?._id)
+                      }
+                    />
                   </View>
-                  <Button
-                    style={{
-                      paddingVertical: 3,
-                      paddingHorizontal: 6,
-                      marginLeft: 4,
-                      backgroundColor: Colors?.danger,
-                      borderColor: Colors?.danger,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    icon={
-                      <FontAwesome
-                        name="remove"
-                        size={14}
-                        color="white"
-                        style={{ marginRight: 4 }}
-                      />
-                    }
-                    isPrimary={true}
-                    title="Remove"
-                    onPress={() => {}}
+                </View>
+
+                <View style={styles.recommendationContainer}>
+                  <MaterialCommunityIcons
+                    name="hammer-sickle"
+                    size={16}
+                    color="gray"
                   />
+                  <Text style={styles.recommendationText}>
+                    {"Labour, Mistri, Plumber"}
+                  </Text>
+                </View>
+                <View style={styles.recommendationContainer}>
+                  <Ionicons name="location" size={16} color="gray" />
+                  <Text style={styles.recommendationText}>
+                    {item?.address || "Balipur, Shakarauli, Jalesar Etah"}
+                  </Text>
                 </View>
               </View>
-
-              <View style={styles.recommendationContainer}>
-                <MaterialCommunityIcons
-                  name="hammer-sickle"
-                  size={16}
-                  color="gray"
-                />
-                <Text style={styles.recommendationText}>
-                  {item.skills.join(", ") || "Labour, Mistri, Plumber"}
-                </Text>
-              </View>
-              <View style={styles.recommendationContainer}>
-                <Ionicons name="location" size={16} color="gray" />
-                <Text style={styles.recommendationText}>
-                  {item.address || "Balipur, Shakarauli, Jalesar Etah"}
-                </Text>
-              </View>
             </View>
-          </View>
-        );
-      })}
-    </View>
+          );
+        })}
+      </View>
+    </>
   );
 };
 

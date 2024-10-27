@@ -7,6 +7,8 @@ import { router } from "expo-router";
 import AvatarComponent from "./Avatar";
 
 const EmployerCard = ({ service }: any) => {
+  console.log("employer--", service?.employer);
+  
   return (
     <View
       style={[

@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import { toast } from "@/app/hooks/toast";
-import { FontAwesome } from "@expo/vector-icons";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { REGISTERSTEPS } from "@/constants";
-import PasswordComponent from "@/components/inputs/Password";
 import { Controller, useForm } from "react-hook-form";
 import SelfieScreen from "@/components/inputs/Selfie";
 
@@ -75,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     backgroundColor: "white",
-    paddingVertical: 40,
+    paddingVertical: 0,
   },
   customHeader: {
     width: "100%",

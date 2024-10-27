@@ -4,22 +4,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Image,
   ActivityIndicator,
 } from "react-native";
-import {
-  Camera,
-  CameraType,
-  CameraPictureOptions,
-  CameraView,
-} from "expo-camera";
-import axios from "axios";
-import Button from "./Button";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Camera, CameraType, CameraView } from "expo-camera";
 import Colors from "@/constants/Colors";
-import { isLoading } from "expo-font";
 import * as ImageManipulator from "expo-image-manipulator";
+import { toast } from "@/app/hooks/toast";
 
 interface SelfieScreenProps {
   name: string;
@@ -37,20 +28,15 @@ const SelfieScreen = ({
   errors,
 }: SelfieScreenProps) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  //   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  //   const [selfieUri, setSelfieUri] = useState<string | null>(null);
   const cameraRef = useRef<any>(null);
   const [facing, setFacing] = useState<CameraType>("front");
-  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
 
-  // CameraPictureOptions object
   const pictureOptions = {
-    quality: 0.5, // Image quality (0 to 1)
-    skipProcessing: true, // If true, skips image processing
+    quality: 0.5,
+    skipProcessing: true,
   };
 
-  // Get camera permission on component mount
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -58,73 +44,33 @@ const SelfieScreen = ({
     })();
   }, []);
 
-  // Function to take a selfie
   const takeSelfie = async () => {
     if (cameraRef.current) {
-      setLoading(true);
-      const photo = await cameraRef.current.takePictureAsync();
+      try {
+        setLoading(true);
+        const photo = await cameraRef.current.takePictureAsync();
 
-      const manipulatedPhoto = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
-        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-      );
+        // const manipulatedPhoto = await ImageManipulator.manipulateAsync(
+        //   photo.uri,
+        //   [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
+        //   { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+        // );
 
-      // Set the corrected photo URI
-      setLoading(false);
-      setProfilePicture(manipulatedPhoto?.uri);
-      //   setProfilePicture(
-      //     "https://img.freepik.com/premium-photo/happy-indian-farmer-family-smiling-green-field-bright-sunny-day_1076263-3881.jpg"
-      //   ); // Store selfie URI in state
-      //   validatePhoto(photo.uri);
+        setLoading(false);
+        setProfilePicture(photo?.uri);
+      } catch (err) {
+        console.log("error while capturing image ", err);
+        setLoading(false);
+        setProfilePicture("");
+        toast?.error("Failed to capture image, Retry again!");
+      }
     } else {
       setLoading(false);
     }
   };
 
-  //   const takeSelfie = async () => {
-  //     if (cameraRef) {
-  //       const photo = await cameraRef.current.takePictureAsync();
-
-  //       // If using the front camera, flip the image horizontally to correct mirroring
-  //       const manipulatedPhoto = await ImageManipulator.manipulateAsync(
-  //         photo.uri,
-  //         [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
-  //         { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-  //       );
-
-  //       // Set the corrected photo URI
-  //       setProfilePicture(manipulatedPhoto.uri);
-  //     }
-  //   };
-
-  const handleCameraFlip = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
-
   const handleRetakeSelfie = () => {
     setProfilePicture("");
-  };
-
-  // Validate selfie photo by sending it to the API
-  const validatePhoto = async (uri: string) => {
-    return true;
-    // setLoading(true);
-    // try {
-    //   const response = await axios.post("https://your-api/validate-selfie", {
-    //     imageUri: uri,
-    //   });
-    //   if (response.data.isValid) {
-    //     Alert.alert("Selfie Validated", "Your selfie is valid!");
-    //   } else {
-    //     Alert.alert("Invalid Selfie", "Please take a realistic human selfie.");
-    //     setSelfieUri(null); // Reset the selfie
-    //   }
-    // } catch (error) {
-    //   Alert.alert("Error", "Failed to validate selfie.");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   if (hasPermission === null) {
@@ -146,84 +92,75 @@ const SelfieScreen = ({
   return (
     <View style={styles.container}>
       {profilePicture ? (
-        <View style={{ position: "relative" }}>
+        <View
+          style={{
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
           <Image source={{ uri: profilePicture }} style={styles.previewImage} />
-          <Button
-            isPrimary={true}
-            title="Retake"
-            style={{
-              position: "absolute",
-              bottom: 35,
-              right: 15,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={handleRetakeSelfie}
-          />
+          <View style={styles.footerContainer}>
+            <Text style={styles.accountText}>
+              Want to click more better selfie?
+            </Text>
+            <TouchableOpacity onPress={handleRetakeSelfie}>
+              <Text style={styles.signupText}>Retake Selfie</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
         <>
           <View
             style={[styles.cameraContainer, errors[name] && styles?.errorInput]}
           >
-            <CameraView
-              ref={cameraRef}
-              style={styles.camera}
-              facing={facing}
-              autofocus="off"
-              enableTorch={true}
-              flash="on"
-              mirror={false}
-              mode="picture"
-              ratio="16:9"
-            >
-              {/* Oval Masking Layer */}
-              <View style={styles.maskContainer}>
-                {/* <View style={styles.maskTop} /> */}
-                <View style={styles.maskLeftRightContainer}>
-                  {/* <View style={styles.maskSide} /> */}
-                  <View style={styles.ovalFrame} />
-                  {/* <View style={styles.maskSide} /> */}
-                </View>
-                {/* <View style={styles.maskBottom} /> */}
-              </View>
-            </CameraView>
-
-            {loading ? (
-              <View style={styles.captureButton}>
-                <ActivityIndicator
-                  style={styles?.circleButton}
-                  size="large"
-                  color="#0000ff"
-                />
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={styles.captureButton}
-                onPress={takeSelfie}
-              >
-                <View style={styles.circleButton}>
-                  <Text style={styles?.circleButtonText}>PRESS</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={handleCameraFlip}
-            >
-              <MaterialCommunityIcons
-                name="camera-flip"
-                size={35}
-                color={Colors.white}
+            <View style={styles.cameraBorderContainer}>
+              <CameraView
+                ref={cameraRef}
+                style={styles.camera}
+                facing={facing}
+                autofocus="off"
+                enableTorch={true}
+                flash="on"
+                mirror={false}
+                mode="picture"
+                ratio="16:9"
               />
-              <Text style={styles?.circleButtonText}>FLIP</Text>
-            </TouchableOpacity>
+              {loading && (
+                <ActivityIndicator
+                  style={styles.loading}
+                  size="large"
+                  color="#fff"
+                />
+              )}
+            </View>
           </View>
 
+          {loading ? (
+            <View style={styles.captureButton}>
+              <ActivityIndicator
+                style={styles.circleButton}
+                size="large"
+                color="#0000ff"
+              />
+            </View>
+          ) : (
+            <TouchableOpacity style={styles.captureButton} onPress={takeSelfie}>
+              <Text
+                style={{
+                  color: Colors?.white,
+                  fontWeight: "700",
+                  fontSize: 16,
+                }}
+              >
+                PRESS
+              </Text>
+            </TouchableOpacity>
+          )}
           <View style={styles.instructionContainer}>
-            <Text style={styles.instructions}>Verify your identity</Text>
             <Text style={styles.positionText}>
-              Position your face in the camera view above
+              Position your face in the oval above
             </Text>
             {errors[name] && (
               <Text style={styles.errorText}>
@@ -239,56 +176,66 @@ const SelfieScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-    height: "100%",
   },
   cameraContainer: {
-    flex: 1,
+    width: 300,
+    height: 350,
     justifyContent: "center",
     alignItems: "center",
+  },
+  cameraBorderContainer: {
     width: 250,
-    height: 400,
+    height: 350,
+    borderRadius: 200,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  loading: {
+    position: "absolute",
+    backgroundColor: "#000",
+    width: 250,
+    height: 350,
   },
   camera: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
+    width: 250,
+    height: 350,
   },
-  maskContainer: {
-    ...StyleSheet.absoluteFillObject, // Overlay fills entire screen
-    flexDirection: "column",
+  captureButton: {
+    marginTop: 0,
+    width: 70,
+    height: 70,
+    backgroundColor: "#000",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    // borderWidth: 3,
+    // borderColor: "#000",
+  },
+  circleButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 5,
+    borderColor: "#fff",
+    backgroundColor: "#000",
     justifyContent: "center",
     alignItems: "center",
   },
-  maskTop: {
+  flipButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 30,
+  },
+  previewImage: {
     width: "100%",
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Dark area above the oval
-  },
-  maskBottom: {
-    width: "100%",
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Dark area below the oval
-  },
-  maskLeftRightContainer: {
-    flexDirection: "row",
-  },
-  maskSide: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Dark areas on the sides
-  },
-  ovalFrame: {
-    width: 250,
-    height: 400,
-    borderColor: "white",
-    borderWidth: 2,
-    // borderRadius: 157, // Oval shape
-    overflow: "hidden", // Clip the camera preview
+    height: 350,
+    borderRadius: 8,
+    resizeMode: "cover",
   },
   instructionContainer: {
     marginVertical: 20,
@@ -305,63 +252,372 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
   },
-  captureButton: {
-    position: "absolute",
-    bottom: 20,
-    left: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  circleButton: {
-    width: 70,
-    height: 70,
-    display: "flex",
-    justifyContent: "center",
-    textAlign: "center",
-    alignItems: "center",
-    borderRadius: 35,
-    borderWidth: 5,
-    borderColor: "#fff",
-    backgroundColor: "#000",
-  },
-  circleButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
-  },
-  flipButton: {
-    position: "absolute",
-    bottom: 20,
-    right: 30,
-    width: 50,
-    height: 70,
-    display: "flex",
-    justifyContent: "center",
-    textAlign: "center",
-    alignItems: "center",
-    borderRadius: 8,
-    // borderWidth: 5,
-    borderColor: "#fff",
-    backgroundColor: "#000",
-  },
-  previewImage: {
-    width: 250,
-    borderRadius: 8,
-    height: 400,
-    resizeMode: "cover",
-    marginBottom: 20,
-  },
-  retakeButton: {},
   errorInput: {
     borderWidth: 4,
+    padding: 4,
     borderColor: "red",
-    color: "red",
+    borderRadius: 90,
   },
   errorText: {
     color: "red",
     fontSize: 12,
     marginBottom: 10,
   },
+  footerContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    marginVertical: 10,
+    gap: 5,
+  },
+  accountText: {
+    color: Colors.primary,
+  },
+  signupText: {
+    color: Colors.black,
+    fontSize: 20,
+    fontWeight: "500",
+    textDecorationLine: "underline",
+  },
 });
 
 export default SelfieScreen;
+
+// import React, { useState, useEffect, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Image,
+//   ActivityIndicator,
+// } from "react-native";
+// import {
+//   Camera,
+//   CameraDevice,
+//   useCameraDevices,
+// } from "react-native-vision-camera";
+// import { useFrameProcessor } from "react-native-vision-camera";
+// import { scanFaces } from "vision-camera-face-detector"; // Correct import for face detection (may need to check the actual function name)
+// import { runOnJS } from "react-native-reanimated";
+// import Colors from "@/constants/Colors";
+// import { toast } from "@/app/hooks/toast";
+
+// interface SelfieScreenProps {
+//   name: string;
+//   profilePicture: string;
+//   setProfilePicture: any;
+//   onBlur: any;
+//   errors: any;
+// }
+
+// const SelfieScreen = ({
+//   name,
+//   profilePicture,
+//   setProfilePicture,
+//   onBlur,
+//   errors,
+// }: SelfieScreenProps) => {
+//   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const [isFaceDetected, setIsFaceDetected] = useState(false); // Track if a face is detected
+//   const cameraRef = useRef<any>(null);
+//   const devices = useCameraDevices();
+//   // const device = devices.front;
+//   const device = devices?.find(
+//     (device: CameraDevice) => device.position === "front"
+//   );
+
+//   useEffect(() => {
+//     (async () => {
+//       const status = await Camera.requestCameraPermission();
+//       setHasPermission(status === "granted");
+//     })();
+//   }, []);
+
+//   const takeSelfie = async () => {
+//     if (cameraRef.current && isFaceDetected) {
+//       try {
+//         setLoading(true);
+//         const photo = await cameraRef.current.takePhoto({
+//           quality: 0.5,
+//           skipProcessing: true,
+//         });
+
+//         setLoading(false);
+//         setProfilePicture(photo.uri);
+//       } catch (err) {
+//         console.log("Error while capturing image ", err);
+//         setLoading(false);
+//         setProfilePicture("");
+//         toast?.error("Failed to capture image, retry again!");
+//       }
+//     } else {
+//       toast?.error("No face detected!");
+//     }
+//   };
+
+//   const handleRetakeSelfie = () => {
+//     setProfilePicture("");
+//   };
+
+//   // Frame processor to detect faces in real-time
+//   const frameProcessor = useFrameProcessor((frame) => {
+//     "worklet";
+//     const faces = scanFaces(frame); // Corrected face detection function (use scanFaces)
+//     if (faces.length > 0) {
+//       const face = faces[0];
+//       const faceInsideOval = isFaceInsideOval(face.bounds);
+//       runOnJS(setIsFaceDetected)(faceInsideOval); // Only set if the face is inside the oval
+//     } else {
+//       runOnJS(setIsFaceDetected)(false);
+//     }
+//   }, []);
+//   // const frameProcessor = useFrameProcessor((frame) => {
+//   //   "worklet";
+//   //   const now = Date.now();
+
+//   //   // Limit frame processing to 1 FPS (1000ms delay)
+//   //   if (now - lastFrameTimeRef.current >= 1000) {
+//   //     const faces = scanFaces(frame);
+//   //     if (faces.length > 0) {
+//   //       const face = faces[0];
+//   //       const faceInsideOval = isFaceInsideOval(face.bounds);
+//   //       runOnJS(setIsFaceDetected)(faceInsideOval); // Update face detection state
+//   //     } else {
+//   //       runOnJS(setIsFaceDetected)(false);
+//   //     }
+//   //     lastFrameTimeRef.current = now;
+//   //   }
+//   // }, []);
+
+//   // Helper function to check if the face is inside the oval area
+//   const isFaceInsideOval = (bounds: {
+//     x: number;
+//     y: number;
+//     width: number;
+//     height: number;
+//   }) => {
+//     const faceCenterX = bounds.x + bounds.width / 2;
+//     const faceCenterY = bounds.y + bounds.height / 2;
+
+//     // Oval parameters
+//     const ovalCenterX = 125;
+//     const ovalCenterY = 175;
+//     const ovalRadiusX = 125;
+//     const ovalRadiusY = 175;
+
+//     const insideOval =
+//       Math.pow((faceCenterX - ovalCenterX) / ovalRadiusX, 2) +
+//         Math.pow((faceCenterY - ovalCenterY) / ovalRadiusY, 2) <=
+//       1;
+
+//     return insideOval;
+//   };
+
+//   if (hasPermission === null) {
+//     return (
+//       <View style={styles.container}>
+//         <Text>Requesting Camera Permission...</Text>
+//       </View>
+//     );
+//   }
+
+//   if (hasPermission === false) {
+//     return (
+//       <View style={styles.container}>
+//         <Text>No access to camera</Text>
+//       </View>
+//     );
+//   }
+
+//   // const lastFrameTimeRef = useRef<number>(0);
+
+//   return (
+//     <View style={styles.container}>
+//       {profilePicture ? (
+//         <View
+//           style={{
+//             width: "100%",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             gap: 10,
+//           }}
+//         >
+//           <Image source={{ uri: profilePicture }} style={styles.previewImage} />
+//           <View style={styles.footerContainer}>
+//             <Text style={styles.accountText}>
+//               Want to click more better selfie?
+//             </Text>
+//             <TouchableOpacity onPress={handleRetakeSelfie}>
+//               <Text style={styles.signupText}>Retake Selfie</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       ) : (
+//         <>
+//           <View
+//             style={[styles.cameraContainer, errors[name] && styles.errorInput]}
+//           >
+//             <View style={styles.cameraBorderContainer}>
+//               {device && (
+//                 <Camera
+//                   ref={cameraRef}
+//                   style={styles.camera}
+//                   device={device}
+//                   isActive={true}
+//                   frameProcessor={frameProcessor}
+//                   // frameProcessorFps={1}
+//                   photo={true}
+//                 />
+//               )}
+//               {loading && (
+//                 <ActivityIndicator
+//                   style={styles.loading}
+//                   size="large"
+//                   color="#fff"
+//                 />
+//               )}
+//             </View>
+//           </View>
+
+//           {loading ? (
+//             <View style={styles.captureButton}>
+//               <ActivityIndicator
+//                 style={styles.circleButton}
+//                 size="large"
+//                 color="#0000ff"
+//               />
+//             </View>
+//           ) : (
+//             <TouchableOpacity
+//               style={[
+//                 styles.captureButton,
+//                 !isFaceDetected && { backgroundColor: "#d3d3d3" }, // Disable button when no face detected
+//               ]}
+//               onPress={takeSelfie}
+//               disabled={!isFaceDetected} // Disable button when no face detected
+//             >
+//               <Text
+//                 style={{
+//                   color: Colors?.white,
+//                   fontWeight: "700",
+//                   fontSize: 16,
+//                 }}
+//               >
+//                 PRESS
+//               </Text>
+//             </TouchableOpacity>
+//           )}
+//           <View style={styles.instructionContainer}>
+//             <Text style={styles.positionText}>
+//               Position your face in the oval above
+//             </Text>
+//             {errors[name] && (
+//               <Text style={styles.errorText}>
+//                 {errors[name]?.message || ""}
+//               </Text>
+//             )}
+//           </View>
+//         </>
+//       )}
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   cameraContainer: {
+//     width: 300,
+//     height: 350,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   cameraBorderContainer: {
+//     width: 250,
+//     height: 350,
+//     borderRadius: 200,
+//     overflow: "hidden",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginBottom: 20,
+//   },
+//   loading: {
+//     position: "absolute",
+//     backgroundColor: "#000",
+//     width: 250,
+//     height: 350,
+//   },
+//   camera: {
+//     width: 250,
+//     height: 350,
+//   },
+//   captureButton: {
+//     marginTop: 0,
+//     width: 70,
+//     height: 70,
+//     backgroundColor: "#000",
+//     borderRadius: 40,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   circleButton: {
+//     width: 70,
+//     height: 70,
+//     borderRadius: 35,
+//     borderWidth: 5,
+//     borderColor: "#fff",
+//     backgroundColor: "#000",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   previewImage: {
+//     width: "100%",
+//     height: 350,
+//     borderRadius: 8,
+//     resizeMode: "cover",
+//   },
+//   instructionContainer: {
+//     marginVertical: 20,
+//     alignItems: "center",
+//   },
+//   positionText: {
+//     color: "#000",
+//     fontSize: 14,
+//     textAlign: "center",
+//   },
+//   errorInput: {
+//     borderWidth: 4,
+//     padding: 4,
+//     borderColor: "red",
+//     borderRadius: 90,
+//   },
+//   errorText: {
+//     color: "red",
+//     fontSize: 12,
+//     marginBottom: 10,
+//   },
+//   footerContainer: {
+//     width: "100%",
+//     flexDirection: "row",
+//     justifyContent: "flex-end",
+//     alignItems: "flex-end",
+//     marginVertical: 10,
+//     gap: 5,
+//   },
+//   accountText: {
+//     color: Colors.primary,
+//   },
+//   signupText: {
+//     color: Colors.black,
+//     fontSize: 20,
+//     fontWeight: "500",
+//     textDecorationLine: "underline",
+//   },
+// });
+
+// export default SelfieScreen;

@@ -1,37 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
 } from "react-native";
-import {
-  Link,
-  router,
-  useGlobalSearchParams,
-  useLocalSearchParams,
-} from "expo-router";
 import Colors from "@/constants/Colors";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  AddServiceAtom,
-  AddServiceInProcess,
-  UserAtom,
-} from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import {
   Entypo,
-  Feather,
   FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
   MaterialIcons,
-  Octicons,
-  SimpleLineIcons,
 } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { REGISTERSTEPS } from "@/constants";

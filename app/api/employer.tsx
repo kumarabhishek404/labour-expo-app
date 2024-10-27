@@ -1,4 +1,4 @@
-import { makeGetRequest, makePostRequest } from ".";
+import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
 import { toast } from "../hooks/toast";
 
 export const getEmployerById = async (id: any) => {
@@ -40,7 +40,7 @@ export const fetchAllEmployers = async ({ pageParam }: any) => {
 export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/employer/all-bookmarks-employer?page=${pageParam}&limit=5`
+      `/employer/all-liked?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -58,7 +58,7 @@ export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
 
 export const likeEmployer = async (payload: any) => {
   try {
-    const data = await makePostRequest("/employer/bookmark-employer", payload);
+    const data = await makePostRequest("/employer/like", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -75,9 +75,8 @@ export const likeEmployer = async (payload: any) => {
 
 export const unlikeEmployer = async (payload: any) => {
   try {
-    const data = await makePostRequest(
-      "/employer/unbookmark-employer",
-      payload
+    const data = await makeDeleteRequest(
+      `/employer/remove-liked/${payload?.employerID}`
     );
     return data.data;
   } catch (error: any) {

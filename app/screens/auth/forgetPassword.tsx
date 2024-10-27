@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import { useMutation } from "@tanstack/react-query";
-import { Link, router, Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import {
   Entypo,
   FontAwesome,
@@ -20,8 +20,6 @@ import { forgotPassword, resetPassword } from "../../api/user";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
-
-interface ForgetPasswordScreenProps {}
 
 const ForgetPasswordScreen = () => {
   const {
@@ -90,7 +88,7 @@ const ForgetPasswordScreen = () => {
   };
 
   return (
-    <ScrollView style={styles?.container}>
+    <ScrollView style={{ padding: 10, backgroundColor: Colors?.white }}>
       <Stack.Screen
         options={{
           headerShown: false,
@@ -298,14 +296,7 @@ const ForgetPasswordScreen = () => {
               )}
             />
           )}
-          <View style={styles.signContainer}>
-            <Text style={styles.accountText}>If you knew your password?</Text>
-            <TouchableOpacity
-              onPress={() => router.push("/screens/auth/login")}
-            >
-              <Text style={styles.forgotPasswordText}>Sign In</Text>
-            </TouchableOpacity>
-          </View>
+
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             style={styles.forgetButtonWrapper}
@@ -316,12 +307,12 @@ const ForgetPasswordScreen = () => {
           </TouchableOpacity>
 
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>Don't have account!</Text>
-            <Link href="/screens/auth/register" asChild>
-              <TouchableOpacity>
-                <Text style={styles.signupText}>Sign Up</Text>
-              </TouchableOpacity>
-            </Link>
+            <Text style={styles.accountText}>If you knew your password?</Text>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/auth/login")}
+            >
+              <Text style={styles.forgotPasswordText}>Sign In</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -352,9 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.primary,
   },
-  formContainer: {
-    marginTop: 20,
-  },
+  formContainer: {},
   inputContainer: {
     borderWidth: 1,
     borderColor: Colors.secondary,
@@ -389,7 +378,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: Fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },
@@ -397,7 +385,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 20,
     fontSize: 14,
-    // fontFamily: Fonts.Regular,
     color: Colors.primary,
   },
   googleButtonContainer: {
@@ -416,7 +403,6 @@ const styles = StyleSheet.create({
   },
   googleText: {
     fontSize: 20,
-    // fontFamily: Fonts.SemiBold,
   },
   signContainer: {
     flexDirection: "row",
@@ -429,16 +415,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 20,
+    marginVertical: 10,
     gap: 5,
   },
   accountText: {
     color: Colors.primary,
-    // fontFamily: Fonts.Regular,
   },
   redirectButtonWrapper: {
-    // width: '100%',
-    // display: 'flex',
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

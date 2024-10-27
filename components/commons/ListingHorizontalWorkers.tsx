@@ -73,7 +73,7 @@ const ListingHorizontalWorkers = ({
                   size={18}
                   color={Colors.primary}
                 />
-                <Text style={styles.itemLocationTxt}>{item?.location}</Text>
+                <Text style={styles.itemLocationTxt}>{JSON.stringify(item?.location)}</Text>
               </View>
               <Text style={styles.itemPriceTxt}>${item?.price}</Text>
             </View>

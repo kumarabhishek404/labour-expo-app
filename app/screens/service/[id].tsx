@@ -29,8 +29,10 @@ import Animated, {
 import Map from "@/components/commons/ViewMap";
 import {
   applyService,
+  completeService,
   editService,
   fetchMyApplicants,
+  fetchSelectedCandidates,
   getServiceById,
   likeService,
   unApplyService,
@@ -77,10 +79,13 @@ const ServiceDetails = () => {
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isEditService, setIsEditService] = useState(false);
   const [isServiceLiked, setIsServiceLiked] = useState(
-    service?.liked?.includes(userDetails?._id) || false
+    service?.likedBy?.includes(userDetails?._id) || false
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
-    service?.applied?.includes(userDetails?._id) || false
+    service?.appliedBy?.includes(userDetails?._id) || false
+  );
+  const [isSelected, setIsSelected] = useState(
+    service?.selected?.includes(userDetails?._id) || false
   );
 
   // const [addService, setAddService] = useAtom(AddServiceAtom);
@@ -133,10 +138,11 @@ const ServiceDetails = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch: refetchApplicants,
   } = useInfiniteQuery({
     queryKey: ["applicants"],
     queryFn: ({ pageParam }) => {
-      return fetchMyApplicants({ pageParam, id });
+      return fetchMyApplicants({ pageParam, serviceId: id });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -146,6 +152,28 @@ const ServiceDetails = () => {
       return undefined;
     },
   });
+
+  const {
+    data: selectedApplicants,
+    isLoading: isSelectedApplicantLoading,
+    // isFetchingNextPage,
+    // fetchNextPage,
+    // hasNextPage,
+    refetch: refetchSelectedApplicants,
+  } = useInfiniteQuery({
+    queryKey: ["selectedApplicants"],
+    queryFn: ({ pageParam }) => {
+      return fetchSelectedCandidates({ pageParam, serviceId: id });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+  console.log("sewrvire----", service?.selected);
 
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
@@ -197,9 +225,25 @@ const ServiceDetails = () => {
     },
   });
 
+  const mutationCompleteService = useMutation({
+    mutationKey: ["completeService", { id }],
+    mutationFn: () => completeService({ serviceID: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success("Service completed successfully");
+      console.log("Response while completing a service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while completing the service ", err);
+    },
+  });
+
   useEffect(() => {
-    setIsServiceApplied(service?.applied?.includes(userDetails?._id) || false);
-    setIsServiceLiked(service?.liked?.includes(userDetails?._id) || false);
+    setIsServiceApplied(
+      service?.appliedBy?.includes(userDetails?._id) || false
+    );
+    setIsServiceLiked(service?.likedBy?.includes(userDetails?._id) || false);
+    setIsSelected(service?.selected?.includes(userDetails?._id) || false);
   }, [service]);
 
   useFocusEffect(
@@ -294,12 +338,6 @@ const ServiceDetails = () => {
     );
   };
 
-  const imagess: any = [
-    "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUx08RYYFIya79TX7js7AgoeewkB2atkyIrmbEPXwcVc3MqSr8bms5_AXyB8ODT4_vEXg&usqp=CAU",
-    "https://img.freepik.com/photos-premium/photo-detaillee-yeux-cameleon_129172-1195.jpg",
-  ];
-
   return (
     <>
       <Stack.Screen
@@ -356,7 +394,8 @@ const ServiceDetails = () => {
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
           mutationApplyService?.isPending ||
-          mutationUnApplyService
+          mutationUnApplyService?.isPending ||
+          mutationCompleteService?.isPending
         }
       />
 
@@ -370,7 +409,7 @@ const ServiceDetails = () => {
           )}
 
           <View style={styles.contentWrapper}>
-            {service?.applied?.includes(userDetails?._id) && (
+            {isSelected && (
               <View style={styles?.selectedWrapper}>
                 <View style={{ width: "50%" }}>
                   <Text style={styles.selectedText}>You are Selected</Text>
@@ -405,6 +444,7 @@ const ServiceDetails = () => {
                 </View>
               </View>
             )}
+
             <Text style={styles.listingName}>{service?.name}</Text>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
@@ -432,15 +472,24 @@ const ServiceDetails = () => {
           </View>
 
           {service?.employer?._id === userDetails?._id &&
-            applicants?.pages[0]?.data &&
-            applicants?.pages[0]?.data?.length > 0 && (
-              <SelectedApplicants applicants={applicants} />
+            selectedApplicants?.pages[0]?.data &&
+            selectedApplicants?.pages[0]?.data?.length > 0 && (
+              <SelectedApplicants
+                selectedApplicants={selectedApplicants?.pages[0]?.data}
+                serviceId={service?._id}
+                refetchSelectedApplicants={refetchSelectedApplicants}
+              />
             )}
 
           {service?.employer?._id === userDetails?._id &&
             applicants?.pages[0]?.data &&
             applicants?.pages[0]?.data?.length > 0 && (
-              <Applicants applicants={applicants} />
+              <Applicants
+                applicants={applicants}
+                serviceId={service?._id}
+                refetchApplicants={refetchApplicants}
+                refetchSelectedApplicants={refetchSelectedApplicants}
+              />
             )}
 
           {/* First Make Google Maps API Key Then Uncomment It */}
@@ -469,10 +518,7 @@ const ServiceDetails = () => {
             <Button
               isPrimary={false}
               title="Complete Service"
-              onPress={() => {
-                router.push("/(tabs)/addService/");
-                setAddService(service);
-              }}
+              onPress={() => mutationCompleteService?.mutate()}
               style={styles?.footerBtn}
               textStyle={{
                 color: Colors?.white,
@@ -565,7 +611,8 @@ const styles = StyleSheet.create({
     height: IMG_HEIGHT,
   },
   contentWrapper: {
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
     backgroundColor: Colors.white,
   },
   selectedWrapper: {

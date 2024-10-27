@@ -48,7 +48,7 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log("error.response.statusText--", error.response);
+    console.log("error.response.statusText--", error);
     
     if (error.response) {
       if (

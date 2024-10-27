@@ -18,7 +18,12 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Link, router, Stack } from "expo-router";
-import { EarningAtom, UserAtom, WorkAtom } from "../AtomStore/user";
+import {
+  EarningAtom,
+  ServiceAtom,
+  UserAtom,
+  WorkAtom,
+} from "../AtomStore/user";
 import { useAtom } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import { updateUserById, uploadFile } from "../api/user";
@@ -29,10 +34,15 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
+import SkillSelector from "@/components/commons/skills";
+import { addSkills } from "../api/workers";
+import { toast } from "../hooks/toast";
+import { WORKERTYPES } from "@/constants";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [workDetails, setWorkDetails] = useAtom(WorkAtom);
+  const [serviceDetails, setServiceDetails] = useAtom(ServiceAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -40,9 +50,13 @@ const ProfileScreen = () => {
   const [profilePicture, setProfilePicture] = useState(
     userDetails?.profilePicture
   );
+  const [selectedSkills, setSelectedSkills] = useState([]);
+
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
+
+  console.log("workDetails--", workDetails);
 
   const {
     control,
@@ -109,6 +123,21 @@ const ProfileScreen = () => {
     onError: (err) => {},
   });
 
+  const mutationAddSkills = useMutation({
+    mutationKey: ["addSkills"],
+    mutationFn: (skills: Array<string>) => addSkills({ skills: skills }),
+    onSuccess: (response) => {
+      let user = response?.data;
+      setUserDetails({ ...userDetails, skills: user?.skills });
+      setSelectedSkills([]);
+      toast.success("Skills added successfully");
+      console.log("Response while adding new skills in a worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while adding new skills in a worker ", err);
+    },
+  });
+
   const toggleNotificationSwitch = () =>
     setNotificationsEnabled((prevState) => !prevState);
   const toggleDarkModeSwitch = () =>
@@ -132,6 +161,12 @@ const ProfileScreen = () => {
       serviceAddress: [],
     });
     setWorkDetails({
+      total: "",
+      completed: "",
+      cancelled: "",
+      upcoming: "",
+    });
+    setServiceDetails({
       total: "",
       completed: "",
       cancelled: "",
@@ -297,6 +332,13 @@ const ProfileScreen = () => {
     );
   };
 
+  const handleAddSkills = () => {
+    const skills = selectedSkills?.map((skill: any) => {
+      return skill?.value;
+    });
+    mutationAddSkills?.mutate(skills);
+  };
+
   const onSubmit = (data: any) => {
     let payload = {
       firstName: data?.firstName,
@@ -317,7 +359,11 @@ const ProfileScreen = () => {
           headerTitle: "",
         }}
       />
-      <Loader loading={mutationUpdateProfileInfo?.isPending} />
+      <Loader
+        loading={
+          mutationUpdateProfileInfo?.isPending || mutationAddSkills?.isPending
+        }
+      />
       <ScrollView style={styles.container}>
         <View style={styles.userInfoSection}>
           <View
@@ -393,6 +439,17 @@ const ProfileScreen = () => {
           />
         </View>
 
+        {userDetails?.role !== "EMPLOYER" && (
+          <SkillSelector
+            canAddSkills={true}
+            style={styles?.skillsContainer}
+            selectedSkills={selectedSkills}
+            setSelectedSkills={setSelectedSkills}
+            userSkills={userDetails?.skills}
+            handleAddSkill={handleAddSkills}
+            availableSkills={WORKERTYPES}
+          />
+        )}
         <UserInfoComponent user={userDetails} />
 
         <Text style={styles.workInfoHeading}>Wallet</Text>
@@ -415,37 +472,80 @@ const ProfileScreen = () => {
           </View>
         </View>
 
-        <Text style={styles.workInfoHeading}>Work Information</Text>
-        <View style={styles.workInfoWrapper}>
-          <View
-            style={[
-              styles.workInfoBox,
-              {
-                borderRightColor: "#dddddd",
-                borderRightWidth: 1,
-              },
-            ]}
-          >
-            <Text>{workDetails?.total}</Text>
-            <Text>Total Tasks</Text>
-          </View>
-          <View
-            style={[
-              styles.workInfoBox,
-              {
-                borderRightColor: "#dddddd",
-                borderRightWidth: 1,
-              },
-            ]}
-          >
-            <Text>{workDetails?.completed}</Text>
-            <Text>Completed</Text>
-          </View>
-          <View style={styles.workInfoBox}>
-            <Text>{workDetails?.upcoming}</Text>
-            <Text>Pending</Text>
-          </View>
-        </View>
+        {userDetails?.role === "EMPLOYER" && (
+          <>
+            <Text style={styles.workInfoHeading}>Service Information</Text>
+            <View style={styles.workInfoWrapper}>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{serviceDetails?.total || 0}</Text>
+                <Text>Total Tasks</Text>
+              </View>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{serviceDetails?.completed || 0}</Text>
+                <Text>Completed</Text>
+              </View>
+              <View style={styles.workInfoBox}>
+                <Text>{serviceDetails?.cancelled || 0}</Text>
+                <Text>Cancelled</Text>
+              </View>
+            </View>
+          </>
+        )}
+
+        {userDetails?.role === "WORKER" && userDetails?.role === "MEDIATOR" && (
+          <>
+            <Text style={styles.workInfoHeading}>Work Information</Text>
+            <View style={styles.workInfoWrapper}>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{workDetails?.total}</Text>
+                <Text>Total Tasks</Text>
+              </View>
+              <View
+                style={[
+                  styles.workInfoBox,
+                  {
+                    borderRightColor: "#dddddd",
+                    borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Text>{workDetails?.completed}</Text>
+                <Text>Completed</Text>
+              </View>
+              <View style={styles.workInfoBox}>
+                <Text>
+                  {workDetails?.cancelled?.byEmployer +
+                    workDetails?.cancelled?.byEmployer}
+                </Text>
+                <Text>Cancelled</Text>
+              </View>
+            </View>
+          </>
+        )}
 
         <View style={styles.menuWrapper}>
           {userDetails?.role === "MEDIATOR" && (
@@ -478,7 +578,7 @@ const ProfileScreen = () => {
             </Link>
           )}
 
-          {userDetails?.role === "WORKER" ? (
+          {userDetails?.role !== "EMPLOYER" ? (
             <Link
               href={{
                 pathname: "/screens/service",
@@ -498,20 +598,20 @@ const ProfileScreen = () => {
               <Link
                 href={{
                   pathname: "/screens/worker",
-                  params: { title: "Booked Worker", type: "booked" },
+                  params: { title: "Booked", type: "booked" },
                 }}
                 asChild
               >
                 <TouchableOpacity>
                   <View style={styles.menuItem}>
                     <Fontisto name="persons" size={28} color={Colors.primary} />
-                    <Text style={styles.menuItemText}>Booked Workers</Text>
+                    <Text style={styles.menuItemText}>Booked</Text>
                   </View>
                 </TouchableOpacity>
               </Link>
-              <Link
+              {/* <Link
                 href={{
-                  pathname: "/screens/mediators",
+                  pathname: "/screens/mediator",
                   params: { title: "Booked Mediators", type: "booked" },
                 }}
                 asChild
@@ -522,7 +622,7 @@ const ProfileScreen = () => {
                     <Text style={styles.menuItemText}>Booked Mediators</Text>
                   </View>
                 </TouchableOpacity>
-              </Link>
+              </Link> */}
             </>
           )}
 
@@ -560,7 +660,7 @@ const ProfileScreen = () => {
           {userDetails?.role !== "MEDIATOR" && (
             <Link
               href={{
-                pathname: "/screens/mediators",
+                pathname: "/screens/mediator",
                 params: { title: "Favourite Mediators", type: "favourite" },
               }}
               asChild
@@ -570,6 +670,25 @@ const ProfileScreen = () => {
                   <Fontisto name="persons" size={28} color={Colors.primary} />
                   <Text style={styles.menuItemText}>
                     Your Favourite Mediators
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          )}
+
+          {userDetails?.role === "MEDIATOR" && (
+            <Link
+              href={{
+                pathname: "/screens/worker",
+                params: { title: "Favourite Workers", type: "favourite" },
+              }}
+              asChild
+            >
+              <TouchableOpacity>
+                <View style={styles.menuItem}>
+                  <Fontisto name="persons" size={28} color={Colors.primary} />
+                  <Text style={styles.menuItemText}>
+                    Your Favourite Workers
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -790,20 +909,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 16,
   },
-  row: {
-    paddingTop: 0,
-    backgroundColor: Colors.white,
-    flexDirection: "row",
-    marginBottom: 5,
-  },
-  firstBox: {
-    borderTopRightRadius: 4,
-    borderTopLeftRadius: 4,
-  },
-  lastBox: {
-    borderBottomRightRadius: 4,
-    borderBottomLeftRadius: 4,
-  },
   infoBoxWrapper: {
     marginTop: 10,
     marginBottom: 20,
@@ -917,5 +1022,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "red",
     color: "red",
+  },
+  skillsContainer: {
+    padding: 12,
+    marginHorizontal: 20,
+    flexDirection: "column",
+    marginBottom: 5,
+    backgroundColor: "#ddd",
+    borderTopEndRadius: 8,
+    borderTopStartRadius: 8
   },
 });

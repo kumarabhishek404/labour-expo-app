@@ -7,16 +7,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  RefreshControl,
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import { fetchAllBookedMediators, fetchAllMediators } from "@/app/api/mediator";
+import { fetchAllBookedMediators, fetchAllLikedMediators, fetchAllMediators } from "@/app/api/mediator";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 
 const Mediators = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -31,6 +33,7 @@ const Mediators = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch
   } = useInfiniteQuery({
     queryKey: [
       type === "favourite"
@@ -41,15 +44,15 @@ const Mediators = () => {
     ],
     queryFn: ({ pageParam }) =>
       type === "favourite"
-        ? fetchAllMediators({ pageParam })
+        ? fetchAllLikedMediators({ pageParam })
         : type === "booked"
         ? fetchAllBookedMediators({ pageParam })
         : fetchAllMediators({ pageParam }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.currentPage < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.currentPage + 1;
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
@@ -93,6 +96,10 @@ const Mediators = () => {
   const onCatChanged = (category: string) => {
     setCategory(category);
   };
+
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
 
   return (
     <>
@@ -185,9 +192,14 @@ const Mediators = () => {
             <ListingsVerticalWorkers
               type="mediator"
               listings={memoizedData || []}
-              category="workers"
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
             />
           ) : (
             <EmptyDatePlaceholder title={"Mediator"} />

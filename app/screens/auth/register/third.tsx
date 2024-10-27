@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import Stepper from "@/app/(tabs)/addService/stepper";
-import { MEDIATORTYPES, REGISTERSTEPS, WORKERSKILLS } from "@/constants";
+import { MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
 import SkillsSelector from "@/components/inputs/SelectSkills";
 import RoleSelection from "@/components/inputs/SelectRole";
 import { Controller, useForm } from "react-hook-form";
@@ -47,6 +47,8 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         previousRole?.type !== watch("role")?.type)
     ) {
       setValue("interest", []);
+    } else {
+      setValue("interest", [...selectedInterests]);
     }
     setPreviousRole({ ...watch("role") });
   }, [watch("role")]);
@@ -71,15 +73,11 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             // required: "Select at least one skill",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <RoleSelection
-              role={value}
-              setRole={onChange}
-              onBlur={onBlur}
-            />
+            <RoleSelection role={value} setRole={onChange} onBlur={onBlur} />
           )}
         />
 
-        {watch("role")?.name === "WORKER" && watch("role")?.type === "ONE" && (
+        {watch("role")?.name === "WORKER" && (
           <Controller
             control={control}
             name="interest"
@@ -93,7 +91,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                 name="interest"
                 selectedInterests={value}
                 setSelectedInterests={onChange}
-                availableOptions={WORKERSKILLS}
+                availableOptions={WORKERTYPES}
                 onBlur={onBlur}
                 errors={errors}
               />
@@ -101,7 +99,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           />
         )}
 
-        {watch("role")?.name === "WORKER" && watch("role")?.type === "ORG" && (
+        {watch("role")?.name === "MEDIATOR" && (
           <Controller
             control={control}
             name="interest"
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     marginBottom: 40,
   },
-
   label: {
     marginVertical: 10,
   },
@@ -179,11 +176,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
   },
-
   forgotPasswordText: {
     textAlign: "right",
     color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
@@ -196,7 +191,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },

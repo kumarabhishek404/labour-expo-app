@@ -19,6 +19,8 @@ export const getWorkerById = async (id: any) => {
 };
 
 export const fetchAllWorkers = async ({ pageParam }: any) => {
+  console.log("Page 0--", pageParam);
+
   try {
     const data = await makeGetRequest(`/worker/all?page=${pageParam}&limit=5`);
     return data.data;
@@ -38,7 +40,7 @@ export const fetchAllWorkers = async ({ pageParam }: any) => {
 export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/worker/my-bookmarks?page=${pageParam}&limit=5`
+      `/worker/all-liked?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -54,9 +56,9 @@ export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
   }
 };
 
-export const likeWorker = async (payload: any) => {  
+export const likeWorker = async (payload: any) => {
   try {
-    const data = await makePostRequest("/worker/add-bookmark", payload);
+    const data = await makePostRequest("/worker/like", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -71,11 +73,9 @@ export const likeWorker = async (payload: any) => {
   }
 };
 
-export const unlikeWorker = async (payload: any) => {
-  console.log("Payload---", payload);
-
+export const unlikeWorker = async ({ workerID }: any) => {
   try {
-    const data = await makeDeleteRequest(`/worker/remove-bookmark/${payload?.workerID}`,);
+    const data = await makeDeleteRequest(`/worker/remove-liked/${workerID}`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -109,7 +109,7 @@ export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   }
 };
 
-export const bookWorker = async (payload: any) => {  
+export const bookWorker = async (payload: any) => {
   try {
     const data = await makePostRequest("/worker/book", payload);
     return data.data;
@@ -119,8 +119,7 @@ export const bookWorker = async (payload: any) => {
       error?.response?.data?.message
     );
     toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while booking worker"
+      error?.response?.data?.message || "An error occurred while booking worker"
     );
     throw error;
   }
@@ -130,7 +129,9 @@ export const removeBookedWorker = async (payload: any) => {
   console.log("Payload---", payload);
 
   try {
-    const data = await makeDeleteRequest(`/worker/remove-booked/${payload?.workerID}`,);
+    const data = await makeDeleteRequest(
+      `/worker/remove-booked/${payload?.workerID}`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -140,6 +141,25 @@ export const removeBookedWorker = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while removing booked worker"
+    );
+    throw error;
+  }
+};
+
+export const addSkills = async (payload: any) => {
+  console.log("Skisll-",payload);
+  
+  try {
+    const data = await makePostRequest("/worker/add-skills", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while adding skills in the worker : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while adding skills in the worker"
     );
     throw error;
   }

@@ -36,8 +36,13 @@ import profileImage from "../../../assets/images/placeholder-person.jpg";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import { sendJoiningRequest } from "@/app/api/requests";
-import { getEmployerById, likeEmployer } from "@/app/api/employer";
-import CoverImage from '../../../assets/banner-placeholder.jpg'
+import {
+  getEmployerById,
+  likeEmployer,
+  unlikeEmployer,
+} from "@/app/api/employer";
+import CoverImage from "../../../assets/banner-placeholder.jpg";
+import { toast } from "@/app/hooks/toast";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -45,14 +50,16 @@ const IMG_HEIGHT = 300;
 const Worker = () => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
-  const [employer, setWorker]: any = useState({});
+  const [employer, setEmployer]: any = useState({});
   // const employer: any = (workers as ListingType[]).find((item) => item._id === id);
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isEmployerLiked, setIsEmployerLiked] = useState(
-    employer?.isLiked || false
+    employer?.likedBy || false
   );
+
+  console.log("id  in parama --", id);
 
   const {
     isLoading,
@@ -61,7 +68,7 @@ const Worker = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["employerDetails"],
+    queryKey: ["employerDetails", { id }],
     queryFn: () => getEmployerById(id),
     retry: false,
     enabled: !!id,
@@ -71,6 +78,8 @@ const Worker = () => {
     mutationKey: ["likeEmployer", { id }],
     mutationFn: () => likeEmployer({ employerID: id }),
     onSuccess: (response) => {
+      refetch();
+      toast.success("Employer added in favourites");
       console.log("Response while liking a employer - ", response);
     },
     onError: (err) => {
@@ -78,20 +87,28 @@ const Worker = () => {
     },
   });
 
-  const mutationSendRequest = useMutation({
-    mutationKey: ["sendRequest", { id }],
-    mutationFn: () => sendJoiningRequest({ userId: id }),
+  const mutationUnLikeEmployer = useMutation({
+    mutationKey: ["unlikeEmployer", { id }],
+    mutationFn: () => unlikeEmployer({ employerID: id }),
     onSuccess: (response) => {
-      console.log("Response while sending a request to employer - ", response);
+      refetch();
+      toast.success("Employer removed from favourites");
+      console.log("Response while unliking a employer - ", response);
     },
     onError: (err) => {
-      console.error("error while sending request to employer ", err);
+      console.error("error while unliking the employer ", err);
     },
   });
 
+  console.log("employer---", employer);
+
+  useEffect(() => {
+    setIsEmployerLiked(employer?.likedBy?.includes(userDetails?._id) || false);
+  }, [employer]);
+
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setWorker(response?.data);
+      const unsubscribe = setEmployer(response?.data);
       return () => unsubscribe;
     }, [response])
   );
@@ -170,7 +187,7 @@ const Worker = () => {
           isLoading ||
           isRefetching ||
           mutationLikeEmployer?.isPending ||
-          mutationSendRequest?.isPending
+          mutationUnLikeEmployer?.isPending
         }
       />
 
@@ -180,7 +197,9 @@ const Worker = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={employer?.coverImage ? { uri: employer.coverImage } : CoverImage}
+            source={
+              employer?.coverImage ? { uri: employer.coverImage } : CoverImage
+            }
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
@@ -191,7 +210,9 @@ const Worker = () => {
             <Image
               style={styles.workerImage}
               source={
-                employer?.profilePicture ? { uri: employer?.profilePicture } : profileImage
+                employer?.profilePicture
+                  ? { uri: employer?.profilePicture }
+                  : profileImage
               }
               // size={150}
             />
@@ -354,7 +375,11 @@ const Worker = () => {
 
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         <TouchableOpacity
-          onPress={() => mutationLikeEmployer?.mutate()}
+          onPress={() =>
+            isEmployerLiked
+              ? mutationUnLikeEmployer?.mutate()
+              : mutationLikeEmployer?.mutate()
+          }
           style={styles.footerBtn}
         >
           <Text style={styles.footerBtnTxt}>
@@ -375,7 +400,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width,
-    height: IMG_HEIGHT
+    height: IMG_HEIGHT,
   },
   contentWrapper: {
     padding: 20,

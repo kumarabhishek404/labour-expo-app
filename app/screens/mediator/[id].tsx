@@ -47,7 +47,15 @@ import { sendJoiningRequest } from "@/app/api/requests";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import { toast } from "@/app/hooks/toast";
-import { bookMediator, getMediatorById, removeBookedMediator } from "@/app/api/mediator";
+import {
+  bookMediator,
+  getMediatorById,
+  likeMediator,
+  removeBookedMediator,
+  unlikeMediator,
+} from "@/app/api/mediator";
+import SkillSelector from "@/components/commons/skills";
+import { MEDIATORTYPES } from "@/constants";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -94,7 +102,7 @@ const Mediator = () => {
 
   const mutationLikeMediator = useMutation({
     mutationKey: ["likeMediator", { id }],
-    mutationFn: () => likeWorker({ workerID: id }),
+    mutationFn: () => likeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
       toast.success("Mediator added in favourites");
@@ -105,9 +113,9 @@ const Mediator = () => {
     },
   });
 
-  const mutationUnLikeWorker = useMutation({
+  const mutationUnLikeMediator = useMutation({
     mutationKey: ["unlikeMediator", { id }],
-    mutationFn: () => unlikeWorker({ workerID: id }),
+    mutationFn: () => unlikeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
       toast.success("Mediator removed from favourites");
@@ -120,7 +128,7 @@ const Mediator = () => {
 
   const mutationBookWorker = useMutation({
     mutationKey: ["bookMediator", { id }],
-    mutationFn: () => bookMediator({ workerID: id }),
+    mutationFn: () => bookMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
       toast.success("Worker booked in successfully");
@@ -133,7 +141,7 @@ const Mediator = () => {
 
   const mutationRemoveBookedWorker = useMutation({
     mutationKey: ["removeBookedMediator", { id }],
-    mutationFn: () => removeBookedMediator({ workerID: id }),
+    mutationFn: () => removeBookedMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
       toast.success("Successfully cancel booking of the mediator");
@@ -160,7 +168,9 @@ const Mediator = () => {
 
   useEffect(() => {
     setIsMediatorLiked(mediator?.likedBy?.includes(userDetails?._id) || false);
-    setIsMediatorBooked(mediator?.bookedBy?.includes(userDetails?._id) || false);
+    setIsMediatorBooked(
+      mediator?.bookedBy?.includes(userDetails?._id) || false
+    );
   }, [mediator]);
 
   useFocusEffect(
@@ -243,8 +253,8 @@ const Mediator = () => {
         loading={
           isLoading ||
           isRefetching ||
-          mutationLikeWorker?.isPending ||
-          mutationUnLikeWorker?.isPending ||
+          mutationLikeMediator?.isPending ||
+          mutationUnLikeMediator?.isPending ||
           mutationSendRequest?.isPending ||
           mutationBookWorker?.isPending ||
           mutationRemoveBookedWorker?.isPending
@@ -264,7 +274,11 @@ const Mediator = () => {
           />
           <View style={styles.contentWrapper}>
             <Image
-              source={mediator?.profilePicture ? { uri: mediator?.profilePicture } : profileImage}
+              source={
+                mediator?.profilePicture
+                  ? { uri: mediator?.profilePicture }
+                  : profileImage
+              }
               style={styles.workerImage}
             />
             <Text style={styles.listingName}>
@@ -326,25 +340,17 @@ const Mediator = () => {
 
             <Text style={styles.listingDetails}>{mediator?.description}</Text>
 
-            <UserInfoComponent user={mediator} style={{ marginHorizontal: 0 }} />
+            <SkillSelector
+              canAddSkills={false}
+              style={styles?.skillsContainer}
+              userSkills={mediator?.skills}
+              availableSkills={MEDIATORTYPES}
+            />
 
-            {/* <View style={styles.userInfoTextWrapper}>
-                <View style={styles.userInfoBox}>
-                  <View style={[styles.row, styles.firstBox]}>
-                    <Text style={styles.userInfoText}>
-                      {mediator?.address || "Address not found"}
-                    </Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.userInfoText}>
-                      {mediator?.mobileNumber || "Mobile not found"}
-                    </Text>
-                  </View>
-                  <View style={[styles.row, styles.lastBox]}>
-                    <Text style={styles.userInfoText}>{mediator?.email}</Text>
-                  </View>
-                </View>
-              </View> */}
+            <UserInfoComponent
+              user={mediator}
+              style={{ marginHorizontal: 0 }}
+            />
 
             <Text style={styles.workInfoHeading}>Wallet</Text>
             <View style={styles.infoBoxWrapper}>
@@ -442,8 +448,8 @@ const Mediator = () => {
         <TouchableOpacity
           onPress={() =>
             isMediatorLiked
-              ? mutationUnLikeWorker?.mutate()
-              : mutationLikeWorker?.mutate()
+              ? mutationUnLikeMediator?.mutate()
+              : mutationLikeMediator?.mutate()
           }
           style={styles.footerBtn}
         >
@@ -635,5 +641,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     textTransform: "uppercase",
+  },
+  skillsContainer: {
+    padding: 12,
+    flexDirection: "column",
+    marginBottom: 5,
+    backgroundColor: "#ddd",
+    borderTopEndRadius: 8,
+    borderTopStartRadius: 8,
   },
 });

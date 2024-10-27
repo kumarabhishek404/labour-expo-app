@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#e1e8e5",
     padding: 15,
-    marginBottom: 16,
+    marginBottom: 6,
     borderRadius: 8,
   },
   viewButton: {

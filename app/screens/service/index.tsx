@@ -42,8 +42,8 @@ const Services = () => {
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.currentPage < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.currentPage + 1;
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },

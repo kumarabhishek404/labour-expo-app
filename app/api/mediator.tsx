@@ -112,3 +112,58 @@ export const removeBookedMediator = async (payload: any) => {
     throw error;
   }
 };
+
+export const likeMediator = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/mediator/like", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while liking mediator : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching services"
+    );
+    throw error;
+  }
+};
+
+export const unlikeMediator = async ({mediatorID}: any) => {
+  try {
+    const data = await makeDeleteRequest(
+      `/mediator/remove-liked/${mediatorID}`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while unliking mediator : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "[userService] An error occurred while unliking mediator"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllLikedMediators = async ({ pageParam }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/mediator/all-liked?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching liked employers : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching employers"
+    );
+    throw error;
+  }
+};

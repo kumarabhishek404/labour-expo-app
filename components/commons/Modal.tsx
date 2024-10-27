@@ -27,7 +27,9 @@ const ModalComponent = ({
       <View style={styles.modalContainer}>
         <View style={styles?.container}>
           <View style={styles?.header}>
-            <Text style={styles?.headerText}>{title ? title : "Edit Profile"}</Text>
+            <Text style={styles?.headerText}>
+              {title ? title : "Edit Profile"}
+            </Text>
             <TouchableOpacity onPress={onClose} style={styles?.headerButton}>
               <Entypo name="cross" size={30} color={Colors.primary} />
             </TouchableOpacity>
@@ -44,7 +46,12 @@ const ModalComponent = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={primaryButton?.action}
-              style={[styles?.button, primaryButton?.styles]}
+              style={[
+                styles?.button,
+                primaryButton?.styles,
+                primaryButton?.disabled && styles?.disabled,
+              ]}
+              disabled={primaryButton?.disabled}
             >
               <Text style={styles?.buttonText}>
                 {primaryButton?.title ? primaryButton?.title : "Save"}
@@ -64,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.8)",
     paddingHorizontal: 20,
-    height: 500
+    height: 500,
   },
   container: {
     backgroundColor: "white",
@@ -87,12 +94,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 14,
-    marginTop: 10
+    marginTop: 10,
   },
   button: {
     backgroundColor: Colors.primary,
     borderRadius: 8,
-    paddingHorizontal: 14
+    paddingHorizontal: 14,
+  },
+  disabled: {
+    backgroundColor: Colors?.secondary,
   },
   buttonText: {
     color: Colors.white,

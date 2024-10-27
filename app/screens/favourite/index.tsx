@@ -180,7 +180,6 @@ const Favourite = (props: any) => {
           <ListingsVerticalWorkers
             type="employer"
             listings={memoizedData || []}
-            category="workers"
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
           />

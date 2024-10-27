@@ -1,46 +1,21 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import {
-  Link,
-  router,
-  useGlobalSearchParams,
-  useLocalSearchParams,
-} from "expo-router";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  AddServiceAtom,
-  AddServiceInProcess,
-  UserAtom,
-} from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
-import { toast } from "@/app/hooks/toast";
-import {
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-  Octicons,
-} from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
 import MobileNumberField from "@/components/inputs/MobileNumber";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
+import { isEmptyObject } from "@/constants/functions";
 
 interface SecondScreenProps {
   setStep: any;
   address: string;
   setAddress: any;
-  location: string;
+  location: Object;
   setLocation: any;
   phoneNumber: string;
   setPhoneNumber: any;
@@ -76,28 +51,15 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       email: email,
     },
   });
-
-  const handleNext = () => {
-    setStep(3);
-    // if (title && description) {
-    //   setAddService({
-    //     ...addService,
-    //     name: title,
-    //     description: description,
-    //   });
-    //   setIsAddService(true);
-    //   router?.push("/(tabs)/addService/second");
-    // } else {
-    //   toast.error("Please fill all the input fields");
-    // }
-  };
+  const [selectedOption, setSelectedOption] = useState(
+    !isEmptyObject(location) ? "currentLocation" : "address"
+  );
 
   const onSubmit = (data: any) => {
     setAddress(data?.address);
     setCountryCode(data?.countryCode);
     setPhoneNumber(data?.phoneNumber);
     setEmail(data?.email);
-    // setLastName(data?.lastName);
     setStep(3);
   };
 
@@ -120,9 +82,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               name="address"
               address={value}
               setAddress={onChange}
-              onBlur={onBlur}
               location={location}
               setLocation={setLocation}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              onBlur={onBlur}
               errors={errors}
             />
           )}
@@ -251,11 +215,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
   },
-
   forgotPasswordText: {
     textAlign: "right",
     color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
@@ -268,7 +230,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },

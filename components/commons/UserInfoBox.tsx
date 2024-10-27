@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
     color: "#777",
     fontWeight: "600",
   },
-  firstBox: {
-    borderTopRightRadius: 8,
-    borderTopLeftRadius: 8,
-  },
+  // firstBox: {
+  //   borderTopRightRadius: 8,
+  //   borderTopLeftRadius: 8,
+  // },
   lastBox: {
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,

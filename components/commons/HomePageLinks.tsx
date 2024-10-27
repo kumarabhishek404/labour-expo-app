@@ -118,7 +118,7 @@ const HomePageLinks = () => {
             style={styles.secondBox}
             onPress={() =>
               router.push({
-                pathname: "/screens/mediators",
+                pathname: "/screens/mediator",
                 params: {
                   title: "Mediators",
                   type: "all",
