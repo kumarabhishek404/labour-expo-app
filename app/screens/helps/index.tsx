@@ -1,6 +1,7 @@
 import Colors from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import { Video } from "expo-av";
+import { router, Stack } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -268,225 +269,256 @@ const HelpScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Have a burning question? 🔥</Text>
+    <>
+      <Stack.Screen
+        options={{
+          headerTransparent: false,
+          headerTitle: "Helps",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 8,
+                padding: 4,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.white,
+                  padding: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Feather name="arrow-left" size={20} />
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <View style={styles.container}>
+        <Text style={styles.header}>Have a burning question? 🔥</Text>
 
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for topics or questions..."
-          placeholderTextColor="#999"
-          onChangeText={handleSearch}
-        />
-      </View>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for topics or questions..."
+            placeholderTextColor="#999"
+            onChangeText={handleSearch}
+          />
+        </View>
 
-      {searchQuery.length > 0 && (
-        <View style={styles.filteredQuestionsContainer}>
-          {filteredQuestions.map((q, index) => (
+        {searchQuery.length > 0 && (
+          <View style={styles.filteredQuestionsContainer}>
+            {filteredQuestions.map((q, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.questionButton}
+                onPress={() => openModal(q)}
+              >
+                <Text style={styles.questionText}>{q.question}</Text>
+              </TouchableOpacity>
+            ))}
+            {filteredQuestions.length === 0 && (
+              <Text style={styles.noResultsText}>No results found</Text>
+            )}
+          </View>
+        )}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Frequently Asked</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAll}>View All</Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          data={faqs ?? []}
+          renderItem={({ item, index }: any) => (
             <TouchableOpacity
               key={index}
-              style={styles.questionButton}
-              onPress={() => openModal(q)}
+              style={styles.faqCard}
+              onPress={() => openModal(item)}
             >
-              <Text style={styles.questionText}>{q.question}</Text>
+              <Text style={styles.faqIcon}>{item.icon}</Text>
+              <Text style={styles.faqText}>{item.question}</Text>
             </TouchableOpacity>
-          ))}
-          {filteredQuestions.length === 0 && (
-            <Text style={styles.noResultsText}>No results found</Text>
           )}
-        </View>
-      )}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Frequently Asked</Text>
-        <TouchableOpacity>
-          <Text style={styles.viewAll}>View All</Text>
-        </TouchableOpacity>
-      </View>
+          keyExtractor={(item) => item?.id?.toString()}
+          // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+          onEndReachedThreshold={0.9}
+          // ListFooterComponent={() =>
+          //   isFetchingNextPage ? (
+          //     <ActivityIndicator
+          //       size="large"
+          //       color={Colors?.primary}
+          //       style={styles.loaderStyle}
+          //     />
+          //   ) : null
+          // }
+          // getItemLayout={(data, index) => ({
+          //   length: 200,
+          //   offset: 200 * index,
+          //   index,
+          // })}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={3}
+          removeClippedSubviews={true}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        />
 
-      <FlatList
-        data={faqs ?? []}
-        renderItem={({ item, index }: any) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.faqCard}
-            onPress={() => openModal(item)}
-          >
-            <Text style={styles.faqIcon}>{item.icon}</Text>
-            <Text style={styles.faqText}>{item.question}</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Topics</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item?.id?.toString()}
-        // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-        onEndReachedThreshold={0.9}
-        // ListFooterComponent={() =>
-        //   isFetchingNextPage ? (
-        //     <ActivityIndicator
-        //       size="large"
-        //       color={Colors?.primary}
-        //       style={styles.loaderStyle}
-        //     />
-        //   ) : null
-        // }
-        // getItemLayout={(data, index) => ({
-        //   length: 200,
-        //   offset: 200 * index,
-        //   index,
-        // })}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={3}
-        removeClippedSubviews={true}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      />
+        </View>
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Topics</Text>
-        <TouchableOpacity>
-          <Text style={styles.viewAll}>View All</Text>
-        </TouchableOpacity>
-      </View>
+        <FlatList
+          data={topics ?? []}
+          renderItem={renderItem}
+          keyExtractor={(item) => item?.id?.toString()}
+          // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+          onEndReachedThreshold={0.9}
+          // ListFooterComponent={() =>
+          //   isFetchingNextPage ? (
+          //     <ActivityIndicator
+          //       size="large"
+          //       color={Colors?.primary}
+          //       style={styles.loaderStyle}
+          //     />
+          //   ) : null
+          // }
+          getItemLayout={(data, index) => ({
+            length: 200,
+            offset: 200 * index,
+            index,
+          })}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={3}
+          removeClippedSubviews={true}
+          showsVerticalScrollIndicator={false}
+        />
 
-      <FlatList
-        data={topics ?? []}
-        renderItem={renderItem}
-        keyExtractor={(item) => item?.id?.toString()}
-        // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-        onEndReachedThreshold={0.9}
-        // ListFooterComponent={() =>
-        //   isFetchingNextPage ? (
-        //     <ActivityIndicator
-        //       size="large"
-        //       color={Colors?.primary}
-        //       style={styles.loaderStyle}
-        //     />
-        //   ) : null
-        // }
-        getItemLayout={(data, index) => ({
-          length: 200,
-          offset: 200 * index,
-          index,
-        })}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={3}
-        removeClippedSubviews={true}
-        showsVerticalScrollIndicator={false}
-      />
+        {selectedQuestion && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={closeModal}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  onPress={closeModal}
+                  style={styles.closeIconContainer}
+                >
+                  <Feather name="x" size={24} color="#333" />
+                </TouchableOpacity>
+                <Text style={styles.modalHeading}>
+                  {selectedQuestion.question}
+                </Text>
+                <Text style={styles.modalParagraph}>
+                  {selectedQuestion.answer}
+                </Text>
 
-      {selectedQuestion && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <TouchableOpacity
-                onPress={closeModal}
-                style={styles.closeIconContainer}
-              >
-                <Feather name="x" size={24} color="#333" />
-              </TouchableOpacity>
-              <Text style={styles.modalHeading}>
-                {selectedQuestion.question}
-              </Text>
-              <Text style={styles.modalParagraph}>
-                {selectedQuestion.answer}
-              </Text>
-
-              {/* Video Player */}
-              <Video
-                source={{ uri: "https://youtu.be/nFgsBxw-zWQ" }}
-                rate={1.0}
-                volume={1.0}
-                isMuted={false}
-                // resizeMode={"cover"}
-                shouldPlay={true}
-                useNativeControls
-                style={styles.videoPlayer}
-              />
-
-              {/* Image Section */}
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{
-                    uri: "https://thumbs.dreamstime.com/b/help-wanted-vector-clip-art-31368648.jpg",
-                  }}
-                  style={styles.modalImage}
+                {/* Video Player */}
+                <Video
+                  source={{ uri: "https://youtu.be/nFgsBxw-zWQ" }}
+                  rate={1.0}
+                  volume={1.0}
+                  isMuted={false}
+                  // resizeMode={"cover"}
+                  shouldPlay={true}
+                  useNativeControls
+                  style={styles.videoPlayer}
                 />
-                <Image
-                  source={{
-                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWLxLohqKFddXcpZgU57idshaJpixaiy4Qsg&s",
-                  }}
-                  style={styles.modalImage}
-                />
+
+                {/* Image Section */}
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={{
+                      uri: "https://thumbs.dreamstime.com/b/help-wanted-vector-clip-art-31368648.jpg",
+                    }}
+                    style={styles.modalImage}
+                  />
+                  <Image
+                    source={{
+                      uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWLxLohqKFddXcpZgU57idshaJpixaiy4Qsg&s",
+                    }}
+                    style={styles.modalImage}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
-      <TouchableOpacity
-        style={styles.startConversationButton}
-        onPress={() => setChatVisible(true)}
-      >
-        <Text style={styles.startConversationText}>Start a conversation</Text>
-      </TouchableOpacity>
-
-      {/* Chat Screen Modal */}
-      <Modal
-        visible={chatVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setChatVisible(false)}
-      >
-        <KeyboardAvoidingView
-          behavior="height"
-          style={styles.chatModalContainer}
+        <TouchableOpacity
+          style={styles.startConversationButton}
+          onPress={() => setChatVisible(true)}
         >
-          <View style={styles.chatScreen}>
-            <View style={styles.chatHeader}>
-              <Text style={styles.chatTitle}>Chat with Support</Text>
-              <TouchableOpacity onPress={() => setChatVisible(false)}>
-                <Feather name="x" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
+          <Text style={styles.startConversationText}>Start a conversation</Text>
+        </TouchableOpacity>
 
-            {/* Chat Messages */}
-            <ScrollView style={styles.chatMessagesContainer}>
-              {messages.map((message, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.messageContainer,
-                    message.id === 1
-                      ? styles.incomingMessage
-                      : styles.outgoingMessage,
-                  ]}
+        {/* Chat Screen Modal */}
+        <Modal
+          visible={chatVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setChatVisible(false)}
+        >
+          <KeyboardAvoidingView
+            behavior="height"
+            style={styles.chatModalContainer}
+          >
+            <View style={styles.chatScreen}>
+              <View style={styles.chatHeader}>
+                <Text style={styles.chatTitle}>Chat with Support</Text>
+                <TouchableOpacity onPress={() => setChatVisible(false)}>
+                  <Feather name="x" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Chat Messages */}
+              <ScrollView style={styles.chatMessagesContainer}>
+                {messages.map((message, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.messageContainer,
+                      message.id === 1
+                        ? styles.incomingMessage
+                        : styles.outgoingMessage,
+                    ]}
+                  >
+                    <Text style={styles.messageText}>{message.text}</Text>
+                  </View>
+                ))}
+              </ScrollView>
+
+              {/* Chat Input */}
+              <View style={styles.chatInputContainer}>
+                <TextInput
+                  style={styles.chatInput}
+                  placeholder="Type a message..."
+                  value={newMessage}
+                  onChangeText={setNewMessage}
+                />
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={sendMessage}
                 >
-                  <Text style={styles.messageText}>{message.text}</Text>
-                </View>
-              ))}
-            </ScrollView>
-
-            {/* Chat Input */}
-            <View style={styles.chatInputContainer}>
-              <TextInput
-                style={styles.chatInput}
-                placeholder="Type a message..."
-                value={newMessage}
-                onChangeText={setNewMessage}
-              />
-              <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-                <Feather name="send" size={24} color="#007BFF" />
-              </TouchableOpacity>
+                  <Feather name="send" size={24} color="#007BFF" />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-    </View>
+          </KeyboardAvoidingView>
+        </Modal>
+      </View>
+    </>
   );
 };
 

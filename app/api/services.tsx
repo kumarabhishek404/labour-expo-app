@@ -81,12 +81,10 @@ export const deleteServiceById = async (id: any) => {
   }
 };
 
-export const fetchAllServices = async ({ pageParam }: any) => {
-  console.log("Pagedd", pageParam);
-  
+export const fetchAllServices = async ({ pageParam, type }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/all?page=${pageParam}&limit=10`
+      `/service/all?page=${pageParam}&limit=10&type=${type}`
     );
     return data.data;
   } catch (error: any) {
@@ -156,10 +154,10 @@ export const unLikeService = async (payload: any) => {
 };
 
 // My Services
-export const fetchMyServices = async ({ pageParam }: any) => {
+export const fetchMyServices = async ({ pageParam, type }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/my-services?page=${pageParam}&limit=5`
+      `/service/my-services?page=${pageParam}&limit=5&type=${type}`
     );
     return data.data;
   } catch (error: any) {

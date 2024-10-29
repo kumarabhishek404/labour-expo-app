@@ -15,7 +15,7 @@ import { UserAtom } from "@/app/AtomStore/user";
 type Props = {
   type: string;
   onCagtegoryChanged: (category: string) => void;
-  stylesProp?: object
+  stylesProp?: object;
 };
 
 const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
@@ -44,7 +44,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
 
   return (
     <View style={stylesProp}>
-      {/* <Text style={styles.title}>
+      {/* <Text style={styles.label}>
         {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
       </Text> */}
       <ScrollView
@@ -57,7 +57,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
           marginBottom: 10,
         }}
       >
-        {categories.map((item:any, index:number) => (
+        {categories.map((item: any, index: number) => (
           <TouchableOpacity
             key={index}
             ref={(el) => (itemRef.current[index] = el)}
@@ -80,7 +80,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
                   : styles.categoryBtnTxt
               }
             >
-              {item.title}
+              {item.label}
             </Text>
           </TouchableOpacity>
         ))}

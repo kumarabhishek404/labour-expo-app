@@ -54,8 +54,9 @@ import {
   removeBookedMediator,
   unlikeMediator,
 } from "@/app/api/mediator";
-import SkillSelector from "@/components/commons/skills";
+import SkillSelector from "@/components/commons/SkillSelector";
 import { MEDIATORTYPES } from "@/constants";
+import WorkInformation from "@/components/commons/WorkInformation";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -342,6 +343,7 @@ const Mediator = () => {
 
             <SkillSelector
               canAddSkills={false}
+              isShowLabel={true}
               style={styles?.skillsContainer}
               userSkills={mediator?.skills}
               availableSkills={MEDIATORTYPES}
@@ -372,37 +374,7 @@ const Mediator = () => {
               </View>
             </View>
 
-            <Text style={styles.workInfoHeading}>Work Information</Text>
-            <View style={styles.workInfoWrapper}>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{mediator?.workDetails?.total}</Text>
-                <Text>Total Tasks</Text>
-              </View>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{mediator?.workDetails?.completed}</Text>
-                <Text>Completed</Text>
-              </View>
-              <View style={styles.workInfoBox}>
-                <Text>{mediator?.workDetails?.upcoming}</Text>
-                <Text>Pending</Text>
-              </View>
-            </View>
+            <WorkInformation information={mediator} />
           </View>
         </Animated.ScrollView>
       </View>

@@ -9,11 +9,10 @@ import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import Loader from "@/components/commons/Loader";
-import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
 import { Feather } from "@expo/vector-icons";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { AddServiceAtom, AddServiceInProcess } from "@/app/AtomStore/user";
 import SecondScreen from "./second";
 import moment from "moment";
@@ -52,9 +51,9 @@ const SignupScreen = () => {
       },
     ]
   );
-
+  
   const [images, setImages]: any = useState(
-    addService?.coverImage ? [addService?.coverImage] : []
+    addService?.images ? [...addService?.images] : []
   );
 
   const mutationAddService = useMutation({
@@ -116,19 +115,10 @@ const SignupScreen = () => {
       });
     });
 
-    const jobData = {
-      location: {
-        latitude: 27.1767,
-        longitude: 78.0081,
-        latitudeDelta: 2,
-        longitudeDelta: 2,
-      },
-    };
-
     formData.append("name", title);
     formData.append("description", description);
     formData.append("address", address);
-    formData.append("location", JSON.stringify(location || jobData?.location));
+    formData.append("location", JSON.stringify(location || {}));
     formData.append("city", "Jalesar");
     formData.append("state", "Uttar Predesh");
     formData.append("pinCode", "207302");
@@ -161,19 +151,10 @@ const SignupScreen = () => {
       });
     });
 
-    const jobData = {
-      location: {
-        latitude: 27.1767,
-        longitude: 78.0081,
-        latitudeDelta: 2,
-        longitudeDelta: 2,
-      },
-    };
-
     formData.append("name", title);
     formData.append("description", description);
     formData.append("address", address);
-    formData.append("location", JSON.stringify(location || jobData?.location));
+    formData.append("location", JSON.stringify(location || {}));
     formData.append("city", "Jalesar");
     formData.append("state", "Uttar Predesh");
     formData.append("pinCode", "207302");

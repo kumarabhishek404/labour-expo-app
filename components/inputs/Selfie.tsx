@@ -50,14 +50,14 @@ const SelfieScreen = ({
         setLoading(true);
         const photo = await cameraRef.current.takePictureAsync();
 
-        // const manipulatedPhoto = await ImageManipulator.manipulateAsync(
-        //   photo.uri,
-        //   [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
-        //   { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-        // );
+        const manipulatedPhoto = await ImageManipulator.manipulateAsync(
+          photo.uri,
+          [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
+          { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+        );
 
         setLoading(false);
-        setProfilePicture(photo?.uri);
+        setProfilePicture(manipulatedPhoto?.uri);
       } catch (err) {
         console.log("error while capturing image ", err);
         setLoading(false);
@@ -97,25 +97,50 @@ const SelfieScreen = ({
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            gap: 10,
           }}
         >
           <Image source={{ uri: profilePicture }} style={styles.previewImage} />
-          <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>
-              Want to click more better selfie?
+          <TouchableOpacity
+            style={[
+              styles.captureButton,
+              {
+                borderRadius: 100,
+                width: 90,
+                backgroundColor: Colors?.tertiery,
+              },
+            ]}
+            onPress={handleRetakeSelfie}
+          >
+            <Text
+              style={{
+                color: Colors?.white,
+                fontWeight: "700",
+                fontSize: 16,
+              }}
+            >
+              RETAKE
             </Text>
-            <TouchableOpacity onPress={handleRetakeSelfie}>
-              <Text style={styles.signupText}>Retake Selfie</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
+          <View style={styles.instructionContainer}>
+            <Text style={styles.positionText}>
+              If you want to click more better selfie?
+            </Text>
+            {errors[name] && (
+              <Text style={styles.errorText}>
+                {errors[name]?.message || ""}
+              </Text>
+            )}
           </View>
         </View>
       ) : (
         <>
-          <View
-            style={[styles.cameraContainer, errors[name] && styles?.errorInput]}
-          >
-            <View style={styles.cameraBorderContainer}>
+          <View style={styles.cameraContainer}>
+            <View
+              style={[
+                styles.cameraBorderContainer,
+                errors[name] && styles?.errorInput,
+              ]}
+            >
               <CameraView
                 ref={cameraRef}
                 style={styles.camera}
@@ -181,8 +206,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cameraContainer: {
-    width: 300,
-    height: 350,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -232,10 +255,11 @@ const styles = StyleSheet.create({
     right: 30,
   },
   previewImage: {
-    width: "100%",
+    width: 250,
     height: 350,
-    borderRadius: 8,
+    borderRadius: 200,
     resizeMode: "cover",
+    marginBottom: 20,
   },
   instructionContainer: {
     marginVertical: 20,
@@ -254,9 +278,10 @@ const styles = StyleSheet.create({
   },
   errorInput: {
     borderWidth: 4,
-    padding: 4,
     borderColor: "red",
-    borderRadius: 90,
+    width: 250,
+    height: 350,
+    borderRadius: 200,
   },
   errorText: {
     color: "red",
@@ -272,11 +297,12 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   accountText: {
+    fontSize: 12,
     color: Colors.primary,
   },
   signupText: {
     color: Colors.black,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "500",
     textDecorationLine: "underline",
   },

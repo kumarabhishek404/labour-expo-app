@@ -37,10 +37,10 @@ export const fetchAllMembers = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllMediators = async ({ pageParam }: any) => {
+export const fetchAllMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all?page=${pageParam}&limit=5`
+      `/mediator/all?page=${pageParam}&limit=5&skill=${skill}`
     );
     return data.data;
   } catch (error: any) {
@@ -56,10 +56,10 @@ export const fetchAllMediators = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllBookedMediators = async ({ pageParam }: any) => {
+export const fetchAllBookedMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all-booked?page=${pageParam}&limit=5`
+      `/mediator/all-booked?page=${pageParam}&limit=5&skill=${skill}`
     );
     return data.data;
   } catch (error: any) {
@@ -149,10 +149,10 @@ export const unlikeMediator = async ({mediatorID}: any) => {
   }
 };
 
-export const fetchAllLikedMediators = async ({ pageParam }: any) => {
+export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all-liked?page=${pageParam}&limit=5`
+      `/mediator/all-liked?page=${pageParam}&limit=5&skill=${skill}`
     );
     return data.data;
   } catch (error: any) {

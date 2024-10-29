@@ -163,9 +163,9 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
               </View>
             </View>
 
-            <View style={styles.row}>
-              <Text style={styles.label}>Images</Text>
-              <View style={styles.value}>
+            <View style={[styles.row, { flexDirection: "column" }]}>
+              <Text style={[styles.label, { marginBottom: 10 }]}>Images</Text>
+              <View style={[styles.value, { width: "100%", paddingBottom: 0, paddingRight: 0 }]}>
                 <View style={styles.imageContainer}>
                   {images &&
                     images?.map((imgUri: any, index: number) => (
@@ -351,6 +351,7 @@ const styles = StyleSheet.create({
   },
   imagesContainer: {
     marginRight: 10,
+    marginBottom: 10,
   },
 });
 

@@ -1,22 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  SafeAreaView,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Switch,
   Text,
 } from "react-native";
 import {
   Entypo,
-  Feather,
-  FontAwesome,
-  FontAwesome6,
   Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
@@ -25,6 +18,7 @@ import { EarningAtom, UserAtom, WorkAtom } from "../../AtomStore/user";
 import { useAtom } from "jotai";
 import { updateUserById, uploadFile } from "../../api/user";
 import AvatarComponent from "@/components/commons/Avatar";
+import WorkInformation from "@/components/commons/WorkInformation";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -238,37 +232,8 @@ const ProfileScreen = () => {
           </View>
         </View>
 
-        <Text style={styles.workInfoHeading}>Work Information</Text>
-        <View style={styles.workInfoWrapper}>
-          <View
-            style={[
-              styles.workInfoBox,
-              {
-                borderRightColor: "#dddddd",
-                borderRightWidth: 1,
-              },
-            ]}
-          >
-            <Text>{workDetails?.total}</Text>
-            <Text>Total Tasks</Text>
-          </View>
-          <View
-            style={[
-              styles.workInfoBox,
-              {
-                borderRightColor: "#dddddd",
-                borderRightWidth: 1,
-              },
-            ]}
-          >
-            <Text>{workDetails?.completed}</Text>
-            <Text>Completed</Text>
-          </View>
-          <View style={styles.workInfoBox}>
-            <Text>{workDetails?.upcoming}</Text>
-            <Text>Pending</Text>
-          </View>
-        </View>
+        <WorkInformation information={userDetails} />
+
       </ScrollView>
     </>
   );

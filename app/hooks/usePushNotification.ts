@@ -2,6 +2,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
+import { registerDevice } from "../api/user";
 
 export async function registerForPushNotificationsAsync() {
   if (Platform.OS === "android") {
@@ -17,7 +18,7 @@ export async function registerForPushNotificationsAsync() {
     alert(errorMessage);
     throw new Error(errorMessage);
   }
-  
+
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -43,12 +44,17 @@ export async function registerForPushNotificationsAsync() {
           projectId,
         })
       ).data;
-      console.log(pushTokenString);
+      console.log("push token - ", pushTokenString);
+      try {
+        await registerDevice({ pushToken: pushTokenString });
+      } catch (err) {
+        console.log("An error occurred while registering user device", err);
+      }
       return pushTokenString;
     } catch (e: unknown) {
       throw new Error(`${e}`);
     }
   } else {
-    handleRegistrationError("Must use physical device for push notifications")
+    handleRegistrationError("Must use physical device for push notifications");
   }
 }

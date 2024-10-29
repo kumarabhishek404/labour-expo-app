@@ -1,6 +1,5 @@
 import {
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,28 +8,14 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import {
-  AntDesign,
-  Entypo,
-  Feather,
-  FontAwesome,
-  FontAwesome5,
-  Ionicons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Entypo, Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, {
-  SlideInDown,
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useScrollViewOffset,
-} from "react-native-reanimated";
+import Animated, { SlideInDown, useAnimatedRef } from "react-native-reanimated";
 import Map from "@/components/commons/ViewMap";
 import {
   applyService,
   completeService,
-  editService,
+  deleteServiceById,
   fetchMyApplicants,
   fetchSelectedCandidates,
   getServiceById,
@@ -42,17 +27,11 @@ import Loader from "@/components/commons/Loader";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtom, useSetAtom } from "jotai";
-import { AddServiceAtom, LocationAtom, UserAtom } from "../../AtomStore/user";
+import { AddServiceAtom, UserAtom } from "../../AtomStore/user";
 import { toast } from "../../hooks/toast";
-import coverImage from "../../../assets/images/placeholder-cover.jpg";
-import { dateDifference } from "@/constants/functions";
 import Button from "@/components/inputs/Button";
 import ModalComponent from "@/components/commons/Modal";
-import EditService from "./editService";
 import moment from "moment";
-import AvatarComponent from "@/components/commons/Avatar";
-import { openGoogleMaps } from "@/app/hooks/map";
-import CoverImage from "../../../assets/banner-placeholder.jpg";
 import Applicants from "@/components/commons/Applicants";
 import SelectedApplicants from "@/components/commons/SelectedApplicants";
 import Requirements from "@/components/commons/Requirements";
@@ -70,14 +49,10 @@ interface ImageAsset {
 const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setAddService = useSetAtom(AddServiceAtom);
-  const [location, setLocation] = useAtom(LocationAtom);
-  const [mapLocation, setMapLocation]: any = useState({});
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
-  const [isEditService, setIsEditService] = useState(false);
   const [isServiceLiked, setIsServiceLiked] = useState(
     service?.likedBy?.includes(userDetails?._id) || false
   );
@@ -106,6 +81,8 @@ const ServiceDetails = () => {
 
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const onStartDateChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || startDate;
@@ -173,7 +150,6 @@ const ServiceDetails = () => {
       return undefined;
     },
   });
-  console.log("sewrvire----", service?.selected);
 
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
@@ -253,96 +229,43 @@ const ServiceDetails = () => {
     }, [response])
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const locationObject = {
-        cordinates: {
-          latitude: 28.6448,
-          longitude: 77.216721,
-          latitudeDelta: 2,
-          longitudeDelta: 2,
-        },
-      };
-      return () => setMapLocation(locationObject);
-    }, [location])
-  );
-
-  const handleSubmit = async () => {
-    if (images && images?.length > 0) {
-      setIsEditLoading(true);
-
-      let payload = {
-        ...service,
-        _id: service?._id,
-        name: title,
-        description: description,
-        location: {
-          latitude: 27.1767,
-          longitude: 78.0081,
-        },
-      };
-
-      try {
-        const response: any = await editService(payload);
-        console.log("Response Data ---", response?.data);
-        setIsEditLoading(false);
-        setIsEditService(false);
-        toast?.success("Form submitted successfully!");
-        refetch();
-      } catch (error: any) {
-        console.log("error?.response?.data?.message--", error);
-        setIsEditLoading(false);
-      }
-    } else {
-      toast.error("Please fill all the input fields");
-    }
-  };
-
-  const imageAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollOffset.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-          ),
-        },
-        {
-          scale: interpolate(
-            scrollOffset.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [2, 1, 1]
-          ),
-        },
-      ],
-    };
+  const mutationDeleteService = useMutation({
+    mutationKey: ["deleteService", { id }],
+    mutationFn: () => deleteServiceById(id),
+    onSuccess: (response) => {
+      setModalVisible(false);
+      console.log("Response while deleting a service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while deleting a service ", err);
+    },
   });
 
-  const modalContent = () => {
-    return (
-      <EditService
-        title={title}
-        setTitle={setTitle}
-        description={description}
-        setDescription={setDescription}
-        startDate={startDate}
-        showStartDatePicker={showStartDatePicker}
-        setShowStartDatePicker={setShowStartDatePicker}
-        onStartDateChange={onStartDateChange}
-        endDate={endDate}
-        showEndDatePicker={showEndDatePicker}
-        setShowEndDatePicker={setShowEndDatePicker}
-        onEndDateChange={onEndDateChange}
-      />
-    );
+  const handleDelete = () => {
+    mutationDeleteService.mutate();
   };
 
+  const deleteModalContent = () => {
+    return (
+      <View style={styles.modalView}>
+        <View style={styles.iconContainer}>
+          <View style={styles.iconCircle}>
+            <Text style={styles.iconText}>?</Text>
+          </View>
+        </View>
+        <Text style={styles.modalHeader}>Are you sure?</Text>
+        <Text style={styles.modalBody}>You want to delete this service.</Text>
+        <Text style={styles.modalFooter}>
+          This action is irreversible and will lead to a loss of all your
+          created service.
+        </Text>
+      </View>
+    );
+  };
   return (
     <>
       <Stack.Screen
         options={{
-          // headerTransparent: false,
           headerTitle: "Service Details",
           headerLeft: () => (
             <TouchableOpacity
@@ -395,7 +318,8 @@ const ServiceDetails = () => {
           mutationUnLikeService?.isPending ||
           mutationApplyService?.isPending ||
           mutationUnApplyService?.isPending ||
-          mutationCompleteService?.isPending
+          mutationCompleteService?.isPending ||
+          mutationDeleteService?.isPending
         }
       />
 
@@ -409,7 +333,22 @@ const ServiceDetails = () => {
           )}
 
           <View style={styles.contentWrapper}>
-            {isSelected && (
+            {isSelected && service?.status === "Cancelled" && (
+              <View style={styles?.selectedWrapper}>
+                <View style={{ width: "100%" }}>
+                  <Text style={styles.selectedText}>
+                    This Service Is Cancelled
+                  </Text>
+                  <Text style={styles.helpingText}>
+                    (We apologize for the inconvenience, but due to unforeseen
+                    circumstances, we need to cancel this service. Thank you for
+                    your understanding)
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {isSelected && service?.status !== "Cancelled" && (
               <View style={styles?.selectedWrapper}>
                 <View style={{ width: "50%" }}>
                   <Text style={styles.selectedText}>You are Selected</Text>
@@ -509,90 +448,125 @@ const ServiceDetails = () => {
         </Animated.ScrollView>
       </ScrollView>
 
-      {service?.employer?._id === userDetails?._id ? (
-        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          <Button isPrimary={true} title="Cancel" onPress={() => {}} />
-          {applicants &&
-          applicants?.pages[0]?.data &&
-          applicants?.pages[0]?.data?.length > 0 ? (
+      {service?.employer?._id !== userDetails?._id &&
+        service?.status === "Hiring" && (
+          <Animated.View
+            style={styles.footer}
+            entering={SlideInDown.delay(200)}
+          >
+            {service?.isSelected ? (
+              <Button
+                isPrimary={true}
+                title="Remove from Service"
+                onPress={() =>
+                  isServiceApplied
+                    ? mutationUnApplyService.mutate()
+                    : mutationApplyService.mutate()
+                }
+              />
+            ) : (
+              <Button
+                isPrimary={true}
+                title={isServiceApplied ? "Cancel Apply" : "Apply Now"}
+                onPress={() =>
+                  isServiceApplied
+                    ? mutationUnApplyService.mutate()
+                    : mutationApplyService.mutate()
+                }
+              />
+            )}
+
             <Button
               isPrimary={false}
-              title="Complete Service"
+              title={isServiceLiked ? "Unlike" : "Like"}
+              onPress={() =>
+                isServiceLiked
+                  ? mutationUnLikeService.mutate()
+                  : mutationLikeService.mutate()
+              }
+              style={styles?.footerBtn}
+              textStyle={{
+                color: Colors?.white,
+              }}
+            />
+          </Animated.View>
+        )}
+
+      {service?.employer?._id === userDetails?._id &&
+        service?.status !== "Cancelled" && (
+          <Animated.View
+            style={styles.footer}
+            entering={SlideInDown.delay(200)}
+          >
+            <Button
+              isPrimary={true}
+              title="Delete Service"
+              onPress={() => setModalVisible(true)}
+            />
+            {applicants &&
+            applicants?.pages[0]?.data &&
+            applicants?.pages[0]?.data?.length > 0 ? (
+              <Button
+                isPrimary={false}
+                title="Complete Service"
+                onPress={() => mutationCompleteService?.mutate()}
+                style={styles?.footerBtn}
+                textStyle={{
+                  color: Colors?.white,
+                }}
+              />
+            ) : (
+              <Button
+                isPrimary={false}
+                title="Edit"
+                onPress={() => {
+                  router.push("/(tabs)/addService/");
+                  setAddService(service);
+                }}
+                style={styles?.footerBtn}
+                textStyle={{
+                  color: Colors?.white,
+                }}
+              />
+            )}
+          </Animated.View>
+        )}
+
+      {service?.employer?._id === userDetails?._id &&
+        service?.status === "Cancelled" && (
+          <Animated.View
+            style={styles.footer}
+            entering={SlideInDown.delay(200)}
+          >
+            <Button
+              isPrimary={false}
+              title="Restore Service"
               onPress={() => mutationCompleteService?.mutate()}
               style={styles?.footerBtn}
+              bgColor={Colors?.tertiery}
               textStyle={{
                 color: Colors?.white,
               }}
             />
-          ) : (
-            <Button
-              isPrimary={false}
-              title="Edit"
-              onPress={() => {
-                router.push("/(tabs)/addService/");
-                setAddService(service);
-              }}
-              style={styles?.footerBtn}
-              textStyle={{
-                color: Colors?.white,
-              }}
-            />
-          )}
-        </Animated.View>
-      ) : (
-        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          {service?.isSelected ? (
-            <Button
-              isPrimary={true}
-              title="Remove from Service"
-              onPress={() =>
-                isServiceApplied
-                  ? mutationUnApplyService.mutate()
-                  : mutationApplyService.mutate()
-              }
-            />
-          ) : (
-            <Button
-              isPrimary={true}
-              title={isServiceApplied ? "Cancel Apply" : "Apply Now"}
-              onPress={() =>
-                isServiceApplied
-                  ? mutationUnApplyService.mutate()
-                  : mutationApplyService.mutate()
-              }
-            />
-          )}
-
-          <Button
-            isPrimary={false}
-            title={isServiceLiked ? "Unlike" : "Like"}
-            onPress={() =>
-              isServiceLiked
-                ? mutationUnLikeService.mutate()
-                : mutationLikeService.mutate()
-            }
-            style={styles?.footerBtn}
-            textStyle={{
-              color: Colors?.white,
-            }}
-          />
-        </Animated.View>
-      )}
+          </Animated.View>
+        )}
 
       <ModalComponent
-        title="Add Service"
-        visible={isEditService}
-        onClose={() => {
-          setIsEditService(false);
-          setShowStartDatePicker(false);
-          setShowEndDatePicker(false);
-        }}
-        content={modalContent}
+        title="Delete Service"
+        visible={modalVisible}
+        content={deleteModalContent}
+        onClose={() => setModalVisible(false)}
         primaryButton={{
-          action: () => handleSubmit(),
+          title: "Delete",
+          styles: {
+            backgroundColor: "red",
+          },
+          action: handleDelete,
         }}
         secondaryButton={{
-          action: () => setIsEditService(false),
+          title: "Cancel",
+          styles: "",
+          action: () => setModalVisible(false),
         }}
       />
     </>
@@ -691,5 +665,74 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     textTransform: "uppercase",
+  },
+
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 20,
+    alignItems: "center",
+  },
+  iconContainer: {
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  iconCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: "#FFD700", // Yellow circle
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconText: {
+    fontSize: 30,
+    color: "#000",
+    fontWeight: "bold",
+  },
+  modalHeader: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalBody: {
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  modalFooter: {
+    fontSize: 14,
+    color: "#6e6e6e",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  italicText: {
+    fontStyle: "italic",
+  },
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  deleteButtonStyle: {
+    backgroundColor: "#FF3B30",
+  },
+  keepButtonStyle: {
+    backgroundColor: Colors?.primary,
+  },
+  deleteText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  keepText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

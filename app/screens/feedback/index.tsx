@@ -6,13 +6,13 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { RadioButton } from "react-native-paper";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import Button from "@/components/inputs/Button";
+import ReasoneSelection from "./reasons";
 
 const FeedbackForm = () => {
   const {
@@ -103,29 +103,8 @@ const FeedbackForm = () => {
           control={control}
           name="feedbackType"
           rules={{ required: false }}
-          render={({ field: { onChange, value } }) => (
-            <RadioButton.Group onValueChange={onChange} value={value}>
-              <RadioButton.Item
-                color={Colors?.primary}
-                label="Screen capture feedback"
-                value="screen_capture"
-              />
-              <RadioButton.Item
-                color={Colors?.primary}
-                label="In-app customer surveys"
-                value="in_app_surveys"
-              />
-              <RadioButton.Item
-                color={Colors?.primary}
-                label="Feedback menu for websites"
-                value="feedback_menu"
-              />
-              <RadioButton.Item
-                color={Colors?.primary}
-                label="Collaboration dashboard"
-                value="collaboration_dashboard"
-              />
-            </RadioButton.Group>
+          render={({ field: { onChange, value, onBlur } }) => (
+            <ReasoneSelection role={value} setRole={onChange} onBlur={onBlur} />
           )}
         />
         {errors.feedbackType && (

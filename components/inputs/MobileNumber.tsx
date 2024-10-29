@@ -1,7 +1,7 @@
 import { toast } from "@/app/hooks/toast";
 import Colors from "@/constants/Colors";
 import React, { useRef, useState } from "react";
-import auth from "@react-native-firebase/auth";
+// import auth from "@react-native-firebase/auth";
 import {
   View,
   Text,
@@ -54,23 +54,23 @@ const MobileNumberField = ({
     setPhoneNumber(number);
   };
 
-  const handleSendOtp = async () => {
-    try {
-      const confirmation: any = await auth().signInWithPhoneNumber(
-        "+916397308499"
-      );
-      // setConfirm(confirmation);
-      toast.success("OTP sent to", confirmation);
-    } catch (err) {
-      console.log("Error while sending code", err);
-    }
-    // if (isPhoneValid) {
-    //   setModalVisible(true);
-    //   toast.success("OTP sent to", `${countryCode} ${phoneNumber}`);
-    // } else {
-    //   Alert.alert("Error", "Please enter a valid phone number.");
-    // }
-  };
+  // const handleSendOtp = async () => {
+  //   try {
+  //     const confirmation: any = await auth().signInWithPhoneNumber(
+  //       "+916397308499"
+  //     );
+  //     // setConfirm(confirmation);
+  //     toast.success("OTP sent to", confirmation);
+  //   } catch (err) {
+  //     console.log("Error while sending code", err);
+  //   }
+  //   // if (isPhoneValid) {
+  //   //   setModalVisible(true);
+  //   //   toast.success("OTP sent to", `${countryCode} ${phoneNumber}`);
+  //   // } else {
+  //   //   Alert.alert("Error", "Please enter a valid phone number.");
+  //   // }
+  // };
 
   //   const handleVerifyOtp = () => {
   //     if (otp === "1234") {
@@ -161,11 +161,11 @@ const MobileNumberField = ({
         <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
       )}
 
-      {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
+      {/* {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
         <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
           <Text style={styles.btnText}>Verify Mobile</Text>
         </TouchableOpacity>
-      )}
+      )} */}
 
       <Modal visible={isModalVisible} transparent={true} animationType="slide">
         <View style={styles.otpContainer}>

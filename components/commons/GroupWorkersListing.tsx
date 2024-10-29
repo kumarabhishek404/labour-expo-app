@@ -17,6 +17,7 @@ import { UserAtom } from "@/app/AtomStore/user";
 import profileImage from "../../assets/images/placeholder-person.jpg";
 import { Link } from "expo-router";
 import { debounce } from "lodash";
+import RatingAndReviews from "./RatingAndReviews";
 
 type RenderItemTypes = {
   item: {
@@ -26,7 +27,7 @@ type RenderItemTypes = {
     lastName: string;
     coverImage: string;
     location: any;
-    profileImage: string;
+    profilePicture: string;
     skills: string[];
     rating: string;
     reviews: string;
@@ -56,7 +57,9 @@ const GroupWorkersListing = ({
           <View style={[styles.item, isLastItem && styles.lastElement]}>
             <Image
               source={
-                item?.profileImage ? { uri: item?.profileImage } : profileImage
+                item?.profilePicture
+                  ? { uri: item?.profilePicture }
+                  : profileImage
               }
               style={styles.image}
             />
@@ -64,13 +67,17 @@ const GroupWorkersListing = ({
               <Text style={styles.itemTxt}>
                 {item.firstName} {item.lastName}
               </Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Ionicons name="star" size={20} color={Colors.primary} />
                 <Text style={styles.itemRating}>{item.rating || "4.6"} </Text>
                 <Text style={styles.itemReviews}>
                   ({item.reviews || "450"})
                 </Text>
-              </View>
+              </View> */}
+              <RatingAndReviews
+                rating={item?.rating || 4.5}
+                reviews={item?.reviews || 400}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -122,7 +129,7 @@ export default GroupWorkersListing;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    padding: 10,
     marginRight: 20,
     borderRadius: 8,
     backgroundColor: Colors.white,
@@ -158,7 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: Colors.black,
-    marginLeft: 5,
+    // marginLeft: 5,
   },
   itemReviews: {
     fontSize: 14,

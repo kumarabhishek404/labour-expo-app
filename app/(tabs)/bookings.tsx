@@ -8,22 +8,20 @@ import {
   StyleSheet,
   Text,
   Image,
+  RefreshControl,
 } from "react-native";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
-import {
-  deleteServiceById,
-  fetchMyAppliedServices,
-  fetchMyServices,
-} from "../api/services";
+import { fetchMyAppliedServices, fetchMyServices } from "../api/services";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import Loader from "@/components/commons/Loader";
 import EmptyPlaceholder from "../../assets/empty-placeholder.png";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -31,21 +29,23 @@ const Services = () => {
   const [searchText, setSearchText] = useState("");
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("Hiring");
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["myServices"],
+    queryKey: ["myServices", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchMyServices({ pageParam })
+        ? fetchMyServices({ pageParam, type: category })
         : fetchMyAppliedServices({ pageParam });
     },
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -64,17 +64,6 @@ const Services = () => {
       refetch();
     }, [refetch])
   );
-
-  const mutationDeleteService = useMutation({
-    mutationKey: ["deleteService"],
-    mutationFn: (id) => deleteServiceById(id),
-    onSuccess: (response) => {
-      console.log("Response while liking a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the service ", err);
-    },
-  });
 
   useFocusEffect(
     React.useCallback(() => {
@@ -113,11 +102,16 @@ const Services = () => {
 
   const onCatChanged = (category: string) => {
     setCategory(category);
+    // refetch();
   };
+
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
 
   return (
     <View style={{ flex: 1 }}>
-      <Loader loading={isLoading || mutationDeleteService?.isPending} />
+      <Loader loading={isLoading || isRefetching} />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.searchSectionWrapper}>
@@ -143,7 +137,7 @@ const Services = () => {
         </View>
 
         <CategoryButtons
-          type={userDetails?.role === "EMPLOYER" ? "services" : "services"}
+          type={userDetails?.role === "EMPLOYER" ? "myServices" : "services"}
           onCagtegoryChanged={onCatChanged}
           stylesProp={styles.categoryContainer}
         />
@@ -158,13 +152,14 @@ const Services = () => {
         {memoizedData && memoizedData?.length > 0 ? (
           <ListingsVerticalServices
             listings={memoizedData || []}
-            category="workers"
             isFetchingNextPage={isFetchingNextPage}
-            isMyService={userDetails?.role === "EMPLOYER"}
             loadMore={loadMore}
-            onDelete={(id: any) => {
-              mutationDeleteService?.mutate(id);
-            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           />
         ) : (
           <EmptyDatePlaceholder

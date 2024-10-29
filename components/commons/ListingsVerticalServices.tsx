@@ -15,7 +15,11 @@ import { Entypo, FontAwesome5, Fontisto, Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { ServiceType } from "@/types/type";
-import { dateDifference, getTimeAgo } from "@/constants/functions";
+import {
+  calculateDistance,
+  dateDifference,
+  getTimeAgo,
+} from "@/constants/functions";
 import { AddServiceAtom, UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue, useSetAtom } from "jotai";
 import moment from "moment";
@@ -23,11 +27,8 @@ import ImageSlider from "./ImageSlider";
 
 type Props = {
   listings: any[];
-  category: string;
   isFetchingNextPage: boolean;
-  isMyService?: boolean;
   loadMore: () => void;
-  onDelete?: any;
   refreshControl: any;
 };
 
@@ -52,14 +53,12 @@ type RenderItemTypes = {
 
 const ListingsVerticalServices = ({
   listings,
-  category,
   isFetchingNextPage,
-  isMyService,
   loadMore,
-  onDelete,
-  refreshControl
+  refreshControl,
 }: Props) => {
   const userDetails = useAtomValue(UserAtom);
+  console.log("userDetails--", userDetails);
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
@@ -126,7 +125,7 @@ const ListingsVerticalServices = ({
                 >
                   <View
                     style={{
-                      width: "80%",
+                      width: "69%",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
@@ -151,11 +150,25 @@ const ListingsVerticalServices = ({
 
                 <View style={styles?.actionContainer}>
                   <Text style={styles.itemPriceTxt}>
+                    Duration{" "}
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}
                   </Text>
 
-                  <Text style={styles.itemDistanceAway}>Just 2 Kms</Text>
+                  {item?.location &&
+                    item?.location?.latitude &&
+                    userDetails?.location &&
+                    !isNaN(
+                      calculateDistance(item?.location, userDetails?.location)
+                    ) && (
+                      <Text style={styles.itemDistanceAway}>
+                        {calculateDistance(
+                          item?.location,
+                          userDetails?.location
+                        )}{" "}
+                        Kms
+                      </Text>
+                    )}
                 </View>
               </View>
             </View>
@@ -275,6 +288,8 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   itemDistanceAway: {
+    // flex: 1,
+    // width: 80,
     fontSize: 14,
     fontWeight: "700",
     color: Colors.primary,
@@ -285,9 +300,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   actionContainer: {
+    width: "30%",
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "flex-end",
+    marginRight: 0,
   },
   deleteButton: {
     backgroundColor: Colors?.primary,

@@ -2,64 +2,35 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Colors from "@/constants/Colors";
-import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
-import { getWorkLabel } from "@/constants/functions";
-import { MEDIATORTYPES } from "@/constants";
-
-type Props = {
-  type: String;
-  listings: any[];
-  loadMore: any;
-  isFetchingNextPage: boolean;
-  refreshControl: any;
-};
-
-type RenderItemTypes = {
-  item: {
-    _id: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    coverImage: string;
-    location: any;
-    address: string;
-    profilePicture: string;
-    skills: string[];
-    role: string;
-    isActive: boolean;
-    isBookmarked: boolean;
-    rating: string;
-    reviews: string;
-    price: string;
-  };
-};
+import RatingAndReviews from "./RatingAndReviews";
+import SkillSelector from "./SkillSelector";
 
 const ListingsVerticalWorkers = ({
   type,
+  availableInterest,
   listings,
   loadMore,
   isFetchingNextPage,
   refreshControl,
-}: Props) => {
-  const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
+}: any) => {
+  const RenderItem = React.memo(({ item }: any) => {
     return (
       <View style={styles.container}>
         <Link href={`/screens/${type}/${item?._id}`} asChild>
           <TouchableOpacity>
             <View style={styles.item}>
+              {/* Profile Image */}
               <Image
                 source={
                   item?.coverImage || item?.profilePicture
@@ -70,53 +41,40 @@ const ListingsVerticalWorkers = ({
               />
               {item && item?.isBookmarked && (
                 <View style={styles.liked}>
-                  <Ionicons
-                    name="heart-outline"
-                    size={16}
-                    color={Colors.white}
-                  />
-                  <Text style={styles.likedText}>Liked</Text>
+                  <Ionicons name="heart" size={16} color={Colors.white} />
                 </View>
               )}
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>
-                  {item?.firstName} {item?.middleName} {item?.lastName}
-                </Text>
-                <View style={styles.locationBox}>
-                  <Text style={styles.itemLabel}>Skills</Text>
-                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                    {item?.skills &&
-                      item?.skills?.length > 0 &&
-                      item?.skills?.map((skill: any, index: number) => (
-                        <Text key={skill} style={styles.itemValue}>
-                          {getWorkLabel(MEDIATORTYPES, skill)}
-                          {item?.skills?.length - index > 1 && ", "}
-                        </Text>
-                      ))}
-                  </View>
-                </View>
-                <View style={styles.locationBox}>
-                  <Text style={styles.itemLabel}>Address</Text>
-                  <Text style={styles.itemValue}>{item?.address}</Text>
-                </View>
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                >
-                  <Text style={styles.itemLabel}>Rating</Text>
-                  <Text style={styles.itemValue}>{item?.rating || "4.3"}</Text>
-                  <Text style={styles.itemReviews}>
-                    ({item?.reviews || "400"})
-                  </Text>
-                </View>
 
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                >
-                  <Text style={styles.itemLabel}>Price</Text>
-                  <Text style={styles.itemValue}>
-                    <FontAwesome name="rupee" size={14} />{" "}
-                    {item?.price || "350"}/Day
+              <View style={styles.itemInfo}>
+                <View>
+                  <SkillSelector
+                    canAddSkills={false}
+                    isShowLabel={false}
+                    style={styles?.skillsContainer}
+                    tagStyle={styles?.skillTag}
+                    tagTextStyle={styles?.skillTagText}
+                    userSkills={item?.skills}
+                    availableSkills={availableInterest}
+                    count={5}
+                  />
+
+                  <Text style={styles.itemName}>
+                    {item?.firstName} {item?.middleName} {item?.lastName}
                   </Text>
+
+                  <Text style={styles.itemAddress}>{item?.address}</Text>
+                </View>
+                <View style={styles.ratingPriceContainer}>
+                  <RatingAndReviews
+                    rating={item?.rating || 4.5}
+                    reviews={item?.reviews || 400}
+                  />
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.itemPrice}>
+                      <FontAwesome name="rupee" size={14} />{" "}
+                      {item?.price || "350"}/Day
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -126,15 +84,13 @@ const ListingsVerticalWorkers = ({
     );
   });
 
-  const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
-
   return (
     <View style={{ marginBottom: 110 }}>
       <FlatList
         data={listings ?? []}
-        renderItem={renderItem}
+        renderItem={({ item }) => <RenderItem item={item} />}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReached={debounce(loadMore, 300)}
         onEndReachedThreshold={0.9}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
@@ -156,6 +112,7 @@ const ListingsVerticalWorkers = ({
         removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 110 }}
         refreshControl={refreshControl}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -165,94 +122,88 @@ export default ListingsVerticalWorkers;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingBottom: 20,
+    flex: 1
   },
   item: {
     backgroundColor: Colors.white,
     padding: 10,
     borderRadius: 8,
-    width: "100%",
-    display: "flex",
     flexDirection: "row",
     justifyContent: "flex-start",
     position: "relative",
+    marginBottom: 10
+  },
+  image: {
+    width: 80,
+    minHeight: 100,
+    maxHeight: 150,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  liked: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: Colors.primary,
+    padding: 5,
+    borderRadius: 20,
   },
   itemInfo: {
-    width: "70%",
-    display: "flex",
+    flex: 1,
     flexDirection: "column",
-    alignItems: "flex-start",
-    gap: 5,
-    paddingLeft: 10,
+    justifyContent: "space-between",
+  },
+  skillsContainer: {
+    paddingVertical: 0
+  },
+  skillTag: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginVertical: 0,
+    marginBottom: 5
+  },
+  skillTagText: {
+    fontSize: 12,
+    color: Colors.primary,
   },
   itemName: {
-    fontSize: 17,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.black,
+  },
+  itemAddress: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 5,
+  },
+  ratingPriceContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
   },
   itemLabel: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "600",
     color: "#fa6400",
     marginRight: 5,
   },
   itemValue: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  image: {
-    width: "30%",
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  liked: {
-    position: "absolute",
-    top: 140,
-    left: 55,
-    backgroundColor: Colors.primary,
-    paddingVertical: 4,
-    paddingHorizontal: 6,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: Colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  likedText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "white",
-  },
-  itemTxt: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.black,
-  },
-  locationBox: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  itemLocationTxt: {
-    fontSize: 12,
-  },
-  itemPriceTxt: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.primary,
-  },
-  itemRating: {
     fontSize: 14,
-    fontWeight: "600",
     color: Colors.black,
-    marginLeft: 5,
+    fontWeight: "600",
   },
   itemReviews: {
     fontSize: 14,
     color: "#999",
+  },
+  priceContainer: {
+    alignItems: "flex-end",
+  },
+  itemPrice: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.primary,
   },
   loaderStyle: {
     alignItems: "center",

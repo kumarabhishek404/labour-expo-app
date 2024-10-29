@@ -80,19 +80,19 @@ export const COUNTRYPHONECODE = [
 ];
 
 export const WORKERTYPES = [
-  { label: "Labour", value: "labour" },
-  { label: "Bricklayer", value: "bricklayer" },
-  { label: "Stone Mason", value: "stoneMason" },
-  { label: "Mistri", value: "mistri" },
-  { label: "Electrician", value: "electrician" },
+  { label: "Labour", value: "labour", iconName: "beach" },
+  { label: "Bricklayer", value: "bricklayer", iconName: "terrain" },
+  { label: "Stone Mason", value: "stoneMason", iconName: "city" },
+  { label: "Mistri", value: "mistri", iconName: "tree" },
+  { label: "Electrician", value: "electrician", iconName: "swim" },
 ];
 
 export const MEDIATORTYPES = [
-  { label: "Construction", value: "construction" },
-  { label: "Dhan Buwai", value: "dhaanBuwai" },
-  { label: "Dhaan Pitai", value: "dhaanPitai" },
-  { label: "Aloo Buwai", value: "alooBuwai" },
-  { label: "Bazara Katai", value: "bazraaKatai" },
+  { label: "Construction", value: "construction", iconName: "beach" },
+  { label: "Dhan Buwai", value: "dhaanBuwai", iconName: "terrain" },
+  { label: "Dhaan Pitai", value: "dhaanPitai", iconName: "city" },
+  { label: "Aloo Buwai", value: "alooBuwai", iconName: "tree" },
+  { label: "Bazara Katai", value: "bazraaKatai", iconName: "swim" },
 ];
 
 export const FAQS = [

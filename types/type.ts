@@ -9,8 +9,8 @@ export interface ServiceType {
   price: string;
   duration: string;
   location: {
-    latitude: string,
-    longitude: string
+    latitude: string;
+    longitude: string;
   };
   category: string;
 }

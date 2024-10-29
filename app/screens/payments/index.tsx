@@ -9,7 +9,6 @@ import {
   Image,
 } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { StripeProvider } from "@stripe/stripe-react-native";
 import { router, Stack } from "expo-router";
 import Colors from "@/constants/Colors";
 
@@ -152,36 +151,34 @@ const PaymentMethodsScreen = () => {
           ),
         }}
       />
-      <StripeProvider publishableKey="your-publishable-key-from-stripe-dashboard">
-        <ScrollView
-          style={styles.scrollViewContainer}
-          showsVerticalScrollIndicator={false}
+      <ScrollView
+        style={styles.scrollViewContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Payment methods</Text>
+
+        <FlatList
+          scrollEnabled={false}
+          data={paymentMethods}
+          renderItem={renderPaymentMethod}
+          keyExtractor={(item) => item.type}
+        />
+
+        <TouchableOpacity
+          style={styles.addPaymentButton}
+          onPress={() => router.push("/screens/payments/addPaymentMethod")}
         >
-          <Text style={styles.title}>Payment methods</Text>
+          <Text style={styles.addPaymentText}>Add Payment Method</Text>
+        </TouchableOpacity>
 
-          <FlatList
-            scrollEnabled={false}
-            data={paymentMethods}
-            renderItem={renderPaymentMethod}
-            keyExtractor={(item) => item.type}
-          />
-
-          <TouchableOpacity
-            style={styles.addPaymentButton}
-            onPress={() => router.push("/screens/payments/addPaymentMethod")}
-          >
-            <Text style={styles.addPaymentText}>Add Payment Method</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.historyTitle}>Transaction History</Text>
-          <FlatList
-            scrollEnabled={false}
-            data={transactionHistory}
-            renderItem={renderTransaction}
-            keyExtractor={(item) => item.id}
-          />
-        </ScrollView>
-      </StripeProvider>
+        <Text style={styles.historyTitle}>Transaction History</Text>
+        <FlatList
+          scrollEnabled={false}
+          data={transactionHistory}
+          renderItem={renderTransaction}
+          keyExtractor={(item) => item.id}
+        />
+      </ScrollView>
     </>
   );
 };

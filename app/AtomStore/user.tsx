@@ -14,6 +14,8 @@ export const ServiceAtom = atomWithStorage<any>('service', {}, asyncStorage);
 
 export const EarningAtom = atomWithStorage<any>('earnings', {}, asyncStorage);
 
+export const SpentAtom = atomWithStorage<any>('spents', {}, asyncStorage);
+
 export const LocationAtom = atomWithStorage<any>('location', {}, asyncStorage);
 
 export const AddServiceInProcess = atom<any>(false)

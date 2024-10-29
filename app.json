@@ -19,11 +19,7 @@
     "ios": {
       "jsEngine": "jsc",
       "supportsTablet": true,
-      "bundleIdentifier": "com.kumarabhishek404.labourapp",
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "infoPlist": {
-        "CFBundleAllowMixedLocalizations": true
-      }
+      "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
       "package": "com.kumarabhishek404.labourapp",
@@ -43,7 +39,6 @@
       "expo-font",
       "expo-localization",
       "@react-native-firebase/app",
-      "@react-native-firebase/auth",
       "react-native-vision-camera"
     ],
     "experiments": {

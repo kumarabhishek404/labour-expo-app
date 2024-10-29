@@ -171,3 +171,29 @@ export const uploadFile = async (file: any) => {
     throw error;
   }
 };
+
+export const registerDevice = async (payload: any) => {
+  console.log("Payload --", payload);
+
+  try {
+    console.log(
+      `[Sign In] [userService] registering the user device with API /notification/register and payload `,
+      payload
+    );
+    await makePostRequest("/notification/register", payload);
+    console.log(
+      `[Sign In] [userService] user device registered successfully with the response `
+    );
+    // return data.data;
+  } catch (error: any) {
+    console.log(
+      `[Sign In] [userService] An error occurred while registering user device `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while registering user device"
+    );
+    throw error;
+  }
+};

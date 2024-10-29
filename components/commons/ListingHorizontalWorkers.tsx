@@ -10,13 +10,17 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { WorkerType } from "@/types/type";
 import { debounce } from "lodash";
+import { getWorkLabel } from "@/constants/functions";
+import RatingAndReviews from "./RatingAndReviews";
+import SkillSelector from "./SkillSelector";
 
 type Props = {
+  availableInterest: any;
   listings: any[];
   category: string;
   isFetchingNextPage: boolean;
@@ -30,17 +34,18 @@ type RenderItemTypes = {
     middleName: string;
     lastName: string;
     coverImage: string;
-    location: any;
+    address: string;
     profilePicture: string;
     skills: string[];
-    rating: string;
-    reviews: string;
+    rating: number;
+    reviews: number;
     price: string;
     isBookmarked: boolean;
   };
 };
 
 const ListingHorizontalWorkers = ({
+  availableInterest,
   listings,
   category,
   loadMore,
@@ -51,9 +56,12 @@ const ListingHorizontalWorkers = ({
       <Link href={`/screens/worker/${item?._id}`} asChild>
         <TouchableOpacity>
           <View style={styles.item}>
-            {/* <Image source={{ uri: item?.coverImage }} style={styles.image} /> */}
             <Image
-              source={item?.profilePicture ? { uri: item?.profilePicture } : coverImage}
+              source={
+                item?.profilePicture
+                  ? { uri: item?.profilePicture }
+                  : coverImage
+              }
               style={styles.image}
             />
             {item?.isBookmarked && (
@@ -61,21 +69,56 @@ const ListingHorizontalWorkers = ({
                 <Ionicons name="heart" size={30} color={Colors.white} />
               </View>
             )}
-            <Text style={styles.itemTxt} numberOfLines={1} ellipsizeMode="tail">
+
+            <SkillSelector
+              canAddSkills={false}
+              isShowLabel={false}
+              style={styles?.skillsContainer}
+              tagStyle={styles?.skillTag}
+              tagTextStyle={styles?.skillTagText}
+              userSkills={item?.skills}
+              availableSkills={availableInterest}
+              count={2}
+            />
+
+            <Text style={styles.itemTxt}>
               {item?.firstName} {item?.middleName} {item?.lastName}
             </Text>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
             >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <FontAwesome5
                   name="map-marker-alt"
-                  size={18}
+                  size={12}
                   color={Colors.primary}
                 />
-                <Text style={styles.itemLocationTxt}>{JSON.stringify(item?.location)}</Text>
+                <Text style={styles.itemAddressTxt}>
+                  {item?.address || "Address not found"}
+                </Text>
               </View>
-              <Text style={styles.itemPriceTxt}>${item?.price}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                }}
+              >
+                <RatingAndReviews
+                  rating={item?.rating || 4.5}
+                  reviews={item?.reviews || 400}
+                />
+                <View style={styles.priceContainer}>
+                  <Text style={styles.itemPrice}>
+                    <FontAwesome name="rupee" size={14} />{" "}
+                    {item?.price || "350"}/Day
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
         </TouchableOpacity>
@@ -132,7 +175,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 8,
-    marginBottom: 30,
   },
   bookmark: {
     position: "absolute",
@@ -145,23 +187,37 @@ const styles = StyleSheet.create({
     borderColor: Colors.white,
   },
   itemTxt: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: Colors.black,
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  itemLocationTxt: {
+  itemAddressTxt: {
     fontSize: 12,
     marginLeft: 5,
-  },
-  itemPriceTxt: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: Colors.primary,
   },
   loaderStyle: {
     alignItems: "flex-start",
     paddingLeft: 20,
     paddingBottom: 10,
+  },
+  skillsContainer: {
+    paddingVertical: 0,
+  },
+  skillTag: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+  },
+  skillTagText: {
+    fontSize: 12,
+    color: Colors.primary,
+  },
+  priceContainer: {
+    alignItems: "flex-end",
+  },
+  itemPrice: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.primary,
   },
 });

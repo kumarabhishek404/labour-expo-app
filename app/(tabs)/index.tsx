@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { router, Stack, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -32,6 +32,9 @@ import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWork
 import HomePageLinks from "@/components/commons/HomePageLinks";
 import { useNotification } from "../context/NotificationContext";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
+import { fetchCurrentLocation } from "@/constants/functions";
+import BannerSlider from "@/components/commons/BannerSlider";
+import { WORKERTYPES } from "@/constants";
 
 const Page = () => {
   useLocale();
@@ -39,21 +42,24 @@ const Page = () => {
   const userDetails = useAtomValue(UserAtom);
   const headerHeight = useHeaderHeight();
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState(
+    userDetails?.role === "EMPLOYER" ? "" : "Hiring"
+  );
 
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["homepage"],
+    queryKey: ["homepage", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ pageParam })
-        : fetchAllServices({ pageParam });
+        ? fetchAllWorkers({ pageParam, skill: category })
+        : fetchAllServices({ pageParam, type: category });
     },
     initialPageParam: 1,
     retry: false,
@@ -68,16 +74,17 @@ const Page = () => {
   const {
     data: secondResponse,
     isLoading: isSecondLoading,
+    isRefetching: isSecondRefetching,
     isFetchingNextPage: isSecondFetchingNextPage,
     fetchNextPage: fetchSecondNextPage,
     hasNextPage: hasSecondsNextPage,
     refetch: secondRefetch,
   } = useInfiniteQuery({
-    queryKey: ["tops"],
+    queryKey: ["tops", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ pageParam })
-        : fetchAllEmployers({ pageParam });
+        ? fetchAllWorkers({ pageParam, skill: category })
+        : fetchAllEmployers({ pageParam, type: category });
     },
     initialPageParam: 1,
     retry: false,
@@ -88,6 +95,9 @@ const Page = () => {
       return undefined;
     },
   });
+  useEffect(() => {
+    fetchLocation();
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -132,6 +142,10 @@ const Page = () => {
     await secondRefetch();
   });
 
+  const fetchLocation = async () => {
+    await fetchCurrentLocation();
+  };
+
   return (
     <>
       <Stack.Screen
@@ -174,18 +188,26 @@ const Page = () => {
           ),
         }}
       />
-      <Loader loading={isLoading || isSecondLoading} />
+      <Loader
+        loading={
+          isLoading || isRefetching || isSecondLoading || isSecondRefetching
+        }
+      />
 
       <View style={[styles.container, { paddingTop: headerHeight }]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl
+              refreshing={!isRefetching && !isSecondRefetching && refreshing}
+              onRefresh={onRefresh}
+            />
           }
         >
           <Text style={styles.headingTxt}>
             {i18n.t("welcome")} {userDetails?.firstName}
           </Text>
+
           <View style={styles.searchSectionWrapper}>
             <View style={styles.searchBar}>
               <Ionicons
@@ -207,6 +229,7 @@ const Page = () => {
             </TouchableOpacity>
           </View>
 
+          <BannerSlider />
           <HomePageLinks />
 
           <Text style={styles.categroyTitle}>
@@ -221,6 +244,7 @@ const Page = () => {
 
           {userDetails?.role === "EMPLOYER" ? (
             <ListingHorizontalWorkers
+              availableInterest={WORKERTYPES}
               category={category}
               listings={memoizedData || []}
               loadMore={loadMore}

@@ -15,7 +15,6 @@ import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { fetchAllMembers } from "@/app/api/mediator";
 import { UserAtom } from "@/app/AtomStore/user";
-import { fetchAllWorkers } from "@/app/api/workers";
 import { router, Stack } from "expo-router";
 import ListingVerticalMembers from "@/components/commons/ListingVerticalMembers";
 import PaginationString from "@/components/commons/PaginationString";

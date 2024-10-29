@@ -1,23 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  Button,
-  StyleSheet,
-  FlatList,
-} from "react-native";
-import { MultiSelect } from "react-native-element-dropdown"; // You can use a multi-select library like this one
-import axios from "axios"; // For API calls
-import {
-  FontAwesome,
-  FontAwesome6,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import ModalComponent from "./Modal";
-import DropdownComponent from "../inputs/Dropdown";
 import MultiSelectDropdownComponent from "../inputs/MultiSelectDropdown";
 import { UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue } from "jotai";
@@ -25,26 +10,33 @@ import { getWorkLabel } from "@/constants/functions";
 
 interface SkillSelectorProps {
   canAddSkills: boolean;
+  isShowLabel?: boolean;
   style?: any;
+  tagStyle?: any;
+  tagTextStyle?: any,
   selectedSkills?: Array<string>;
   setSelectedSkills?: any;
   userSkills: Array<string>;
   availableSkills: any;
   handleAddSkill?: any;
+  count?: number; // Optional prop to control the number of displayed skills
 }
 
 const SkillSelector = ({
   canAddSkills,
+  isShowLabel,
   style,
+  tagStyle,
+  tagTextStyle,
   selectedSkills,
   setSelectedSkills,
   userSkills,
   availableSkills,
   handleAddSkill,
+  count, // Optional count parameter
 }: SkillSelectorProps) => {
   const userDetails = useAtomValue(UserAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  console.log("selectedSkills", selectedSkills);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -55,30 +47,34 @@ const SkillSelector = ({
       await handleAddSkill();
       setIsModalVisible(false);
     } catch (err) {
-      console.log("errr");
+      console.log("Error adding skill:", err);
     }
   };
 
-  const modalContent = () => {
+  // Function to render the skill tags
+  const renderSkills = () => {
+    // Show all skills if count is not provided, otherwise limit to `count`
+    const skillsToShow = count ? userSkills?.slice(0, count) : userSkills;
+
     return (
-      <View style={{ paddingVertical: 20 }}>
-        <MultiSelectDropdownComponent
-          value={selectedSkills}
-          setValue={(state: any) => setSelectedSkills(state)}
-          placeholder="Seach and select skills..."
-          options={availableSkills?.filter(
-            (type: any) => !userSkills?.includes(type?.value)
-          )}
-          icon={
-            <MaterialCommunityIcons
-              style={styles.icon}
-              color="black"
-              name="hammer-sickle"
-              size={30}
-            />
-          }
-        />
-      </View>
+      <>
+        {skillsToShow?.map((skill) => (
+          <View key={skill}>
+            {getWorkLabel(availableSkills, skill) && (
+              <View style={[styles.skillBox, tagStyle]}>
+                <Text style={[styles.skillText, tagTextStyle]}>
+                  {getWorkLabel(availableSkills, skill)}
+                </Text>
+              </View>
+            )}
+          </View>
+        ))}
+
+        {/* Conditionally render three dots (...) if count is less than the total number of skills */}
+        {count && count < userSkills?.length && (
+          <Text style={styles.viewMoreText}>...</Text>
+        )}
+      </>
     );
   };
 
@@ -91,12 +87,14 @@ const SkillSelector = ({
           alignItems: "flex-start",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <View style={styles.highlightIcon}>
-            <FontAwesome name="users" size={14} color={Colors.primary} />
+        {isShowLabel && (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <View style={styles.highlightIcon}>
+              <FontAwesome name="users" size={14} color={Colors.primary} />
+            </View>
+            <Text style={styles.title}>Skills</Text>
           </View>
-          <Text style={styles.title}>Skills</Text>
-        </View>
+        )}
         {canAddSkills && (
           <TouchableOpacity onPress={toggleModal}>
             <Text style={styles.addSkillText}>Add New Skills</Text>
@@ -104,27 +102,32 @@ const SkillSelector = ({
         )}
       </View>
 
-      <View style={styles.skillContainer}>
-        {userSkills &&
-          userSkills?.length > 0 &&
-          userSkills?.map((skill: any) => (
-            <View key={skill}>
-              {getWorkLabel(availableSkills, skill) && (
-                <View style={styles.skillBox}>
-                  <Text style={styles.skillText}>
-                    {getWorkLabel(availableSkills, skill)}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ))}
-      </View>
+      <View style={styles.skillContainer}>{renderSkills()}</View>
 
       <ModalComponent
         title="Add New Skills"
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        content={modalContent}
+        content={() => (
+          <View style={{ paddingVertical: 20 }}>
+            <MultiSelectDropdownComponent
+              value={selectedSkills}
+              setValue={(state: any) => setSelectedSkills(state)}
+              placeholder="Search and select skills..."
+              options={availableSkills?.filter(
+                (type: any) => !userSkills?.includes(type?.value)
+              )}
+              icon={
+                <MaterialCommunityIcons
+                  style={styles.icon}
+                  color="black"
+                  name="hammer-sickle"
+                  size={30}
+                />
+              }
+            />
+          </View>
+        )}
         primaryButton={{
           title: "Add Skill",
           action: onAddSkills,
@@ -142,14 +145,14 @@ export default SkillSelector;
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
-    flex: 1,
+    // paddingVertical: 10,
+    // flex: 1,
   },
   title: {
     fontSize: 20,
     fontWeight: "500",
     color: "#000",
-    marginLeft: 6,
+    // marginLeft: 6,
   },
   addSkillText: {
     color: "#007bff",
@@ -158,10 +161,10 @@ const styles = StyleSheet.create({
   skillContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingTop: 5,
+    alignItems: "flex-end",
   },
   skillBox: {
-    backgroundColor: "#333",
+    backgroundColor: Colors?.white,
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 15,
@@ -169,7 +172,8 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   skillText: {
-    color: "#fff",
+    color: Colors?.primary,
+    fontSize: 14
   },
   highlightIcon: {
     width: 25,
@@ -183,5 +187,11 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
     color: Colors.secondary,
+  },
+  viewMoreText: {
+    color: "#007bff",
+    fontWeight: "bold",
+    marginBottom: 2,
+    fontSize: 20,
   },
 });

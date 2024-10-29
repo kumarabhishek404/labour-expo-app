@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  RefreshControl,
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
@@ -18,6 +19,8 @@ import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import { WORKERTYPES } from "@/constants";
 
 const Employers = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -29,15 +32,17 @@ const Employers = () => {
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
-    queryKey: [type === "favourite" ? "favouriteEmployers" : "employers"],
+    queryKey: [type === "favourite" ? "favouriteEmployers" : "employers", category],
     queryFn: ({ pageParam }) =>
       type === "favourite"
-        ? fetchAllLikedEmployer({ pageParam })
-        : fetchAllEmployers({ pageParam }),
+        ? fetchAllLikedEmployer({ pageParam, type: category })
+        : fetchAllEmployers({ pageParam, type: category }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
@@ -49,7 +54,7 @@ const Employers = () => {
   });
 
   console.log("response --", response?.pages[0]);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
@@ -88,6 +93,10 @@ const Employers = () => {
   const onCatChanged = (category: string) => {
     setCategory(category);
   };
+
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
 
   return (
     <>
@@ -138,7 +147,7 @@ const Employers = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <View style={styles.searchSectionWrapper}>
@@ -179,9 +188,13 @@ const Employers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               type="employer"
+              availableInterest={WORKERTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl refreshing={!isRefetching && refreshing} onRefresh={onRefresh} />
+              }
             />
           ) : (
             <EmptyDatePlaceholder title={"Employer"} />

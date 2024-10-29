@@ -44,12 +44,10 @@ const AddLocationAndAddress = ({
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       let tempLocation = {
-        // cordinates: {
         latitude: currentLocation?.coords?.latitude,
         longitude: currentLocation?.coords?.longitude,
         latitudeDelta: 2,
         longitudeDelta: 2,
-        // },
       };
       setLocation(tempLocation);
       let response: any = await Location.reverseGeocodeAsync({

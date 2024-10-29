@@ -1,13 +1,8 @@
-import { markers } from "@/constants/mapData";
-import { useNavigation } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   View,
   StyleSheet,
-  Image,
   Text,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import MapView, {
   Callout,
@@ -21,13 +16,6 @@ const Map = ({ data }: any) => {
   const mapRef: any = useRef();
 
   const focus = () => {
-    // const Cordinates = {
-    //   latitude: 48.8575,
-    //   longitude: 2.3514,
-    //   latitudeDelta: 2,
-    //   longitudeDelta: 2,
-    // }
-
     mapRef.current?.animateCamera(
       { center: data, zoom: 10 },
       { duration: 3000 }

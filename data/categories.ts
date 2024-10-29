@@ -1,124 +1,119 @@
-const services = [
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+
+const myServices = [
   {
-    title: "All",
+    label: "Active",
+    value: "Hiring",
     iconName: "hiking",
   },
   {
-    title: "Upcoming",
+    label: "Completed",
+    value: "Completed",
     iconName: "beach",
   },
   {
-    title: "Active",
+    label: "Cancelled",
+    value: "Cancelled",
+    iconName: "terrain",
+  },
+];
+
+const services = [
+  {
+    label: "Hiring",
+    value: "Hiring",
+    iconName: "hiking",
+  },
+  {
+    label: "Cancelled",
+    value: "Cancelled",
     iconName: "terrain",
   },
 ];
 
 const members = [
   {
-    title: "All",
+    label: "All",
     iconName: "hiking",
   },
   {
-    title: "Construction",
+    label: "Construction",
     iconName: "beach",
   },
   {
-    title: "Farming",
+    label: "Farming",
     iconName: "city",
   },
   {
-    title: "Electric",
+    label: "Electric",
     iconName: "city",
   },
 ];
 
 const workers = [
   {
-    title: "All",
+    label: "All",
+    value: "",
     iconName: "hiking",
   },
-  {
-    title: "Labour",
-    iconName: "beach",
-  },
-  {
-    title: "Eletrician",
-    iconName: "terrain",
-  },
-  {
-    title: "Plumber",
-    iconName: "city",
-  },
-  {
-    title: "Mistri",
-    iconName: "tree",
-  },
-  {
-    title: "Tractor Driver",
-    iconName: "swim",
-  },
-  {
-    title: "Car Driver",
-    iconName: "castle",
-  },
-  {
-    title: "Farming Helper",
-    iconName: "pine-tree",
-  },
-  {
-    title: "Sichai",
-    iconName: "island",
-  },
-  {
-    title: "Katai",
-    iconName: "weather-sunny",
-  },
+  ...WORKERTYPES,
 ];
 
-const requests = [
+const mediatorRequests = [
   // {
-  //   title: "Recieved Requests",
+  //   label: "Recieved Requests",
   //   value: 'recievedRequests',
   //   iconName: "beach",
   // },
   {
-    title: "Sent Requests",
-    value: 'sentRequests',
+    label: "Sent Requests",
+    value: "sentRequests",
     iconName: "city",
   },
+];
+
+const workerRequests = [
+  {
+    label: "Recieved Requests",
+    value: "recievedRequests",
+    iconName: "beach",
+  },
+  // {
+  //   label: "Sent Requests",
+  //   value: "sentRequests",
+  //   iconName: "city",
+  // },
 ];
 
 const mediators = [
   {
-    title: "All",
-    value: 'all',
+    label: "All",
+    value: "all",
     iconName: "beach",
   },
-  {
-    title: "Hirings",
-    value: 'hirings',
-    iconName: "city",
-  },
+  ...MEDIATORTYPES
 ];
 
 const employers = [
   {
-    title: "All",
-    value: 'all',
+    label: "All",
+    value: "all",
     iconName: "beach",
   },
   {
-    title: "Hirings",
-    value: 'hirings',
+    label: "Hirings",
+    value: "hirings",
     iconName: "city",
   },
 ];
 
 export default {
+  myServices: myServices,
   services: services,
   workers: workers,
   employers: employers,
   members: members,
-  requests: requests,
-  mediators: mediators
+  mediatorRequests: mediatorRequests,
+  workerRequests: workerRequests,
+  mediators: mediators,
 };

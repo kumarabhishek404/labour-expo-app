@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  RefreshControl,
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
@@ -19,6 +20,7 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
 import { fetchAllLikedServices, fetchAllServices } from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -30,9 +32,11 @@ const Services = () => {
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: [type === "favourite" ? "savedServices" : "services"],
     queryFn: ({ pageParam }) =>
@@ -88,6 +92,10 @@ const Services = () => {
     setCategory(category);
   };
 
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
+
   return (
     <>
       <Stack.Screen
@@ -137,7 +145,7 @@ const Services = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <View style={styles.searchSectionWrapper}>
@@ -178,9 +186,11 @@ const Services = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalServices
               listings={memoizedData || []}
-              category="services"
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl refreshing={!isRefetching && refreshing} onRefresh={onRefresh} />
+              }
             />
           ) : (
             <EmptyDatePlaceholder title={"Mediator"} />

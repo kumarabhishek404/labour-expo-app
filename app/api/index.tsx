@@ -45,6 +45,10 @@ const api = axios.create({
   //   }
   // },
 });
+
+// AsyncStorage.removeItem("user");
+// router.push("/screens/auth/login");
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

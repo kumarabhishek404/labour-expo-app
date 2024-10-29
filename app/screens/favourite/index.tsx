@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   StyleSheet,
+  RefreshControl,
 } from "react-native";
 import { router, Stack, useFocusEffect } from "expo-router";
 import Colors from "@/constants/Colors";
@@ -21,6 +22,8 @@ import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import PaginationString from "@/components/commons/PaginationString";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import { WORKERTYPES } from "@/constants";
 
 const Favourite = (props: any) => {
   const userDetails = useAtomValue(UserAtom);
@@ -33,9 +36,11 @@ const Favourite = (props: any) => {
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["favourites"],
     queryFn: ({ pageParam }) => {
@@ -91,6 +96,10 @@ const Favourite = (props: any) => {
     setCategory(category);
   };
 
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
+
   return (
     <>
       <Stack.Screen
@@ -138,7 +147,7 @@ const Favourite = (props: any) => {
         }}
       />
 
-      <Loader loading={isLoading} />
+      <Loader loading={isLoading || isRefetching} />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.searchSectionWrapper}>
@@ -179,16 +188,22 @@ const Favourite = (props: any) => {
         {userDetails?.role === "EMPLOYER" ? (
           <ListingsVerticalWorkers
             type="employer"
+            availableInterest={WORKERTYPES}
             listings={memoizedData || []}
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
+            refreshControl={
+              <RefreshControl refreshing={!isRefetching && refreshing} onRefresh={onRefresh} />
+            }
           />
         ) : (
           <ListingsVerticalServices
             listings={memoizedData || []}
-            category="services"
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
+            refreshControl={
+              <RefreshControl refreshing={!isRefetching && refreshing} onRefresh={onRefresh} />
+            }
           />
         )}
       </View>
@@ -200,10 +215,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
-  headerContainer: {
-  },
+  headerContainer: {},
   searchBox: {
     color: "#000000",
     height: "100%",
@@ -228,8 +242,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 20,
   },
-  categoryContainer: {
-  },
+  categoryContainer: {},
 });
 
 export default Favourite;

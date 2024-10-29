@@ -47,8 +47,10 @@ import { sendJoiningRequest } from "@/app/api/requests";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import { toast } from "@/app/hooks/toast";
-import SkillSelector from "@/components/commons/skills";
+import SkillSelector from "@/components/commons/SkillSelector";
 import { WORKERTYPES } from "@/constants";
+import WorkInformation from "@/components/commons/WorkInformation";
+import WallletInformation from "@/components/commons/WalletInformation";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -67,6 +69,9 @@ const Worker = () => {
   const [isWorkerLiked, setIsWorkerLiked] = useState(
     worker?.likedBy?.includes(userDetails?._id) || false
   );
+  // const [isWorkerLiked, setIsWorkerLiked] = useState(
+  //   worker?.likedBy?.includes(userDetails?._id) || false
+  // );
   const { type } = useGlobalSearchParams();
 
   const {
@@ -93,16 +98,7 @@ const Worker = () => {
     }
   };
 
-  const mutation = useMutation({
-    mutationKey: ["likeWorker", { id }],
-    mutationFn: () => likeWorker({ workerID: id }),
-    onSuccess: (response) => {
-      console.log("Response while liking a worker - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the worker ", err);
-    },
-  });
+  console.log("worker--", worker);
 
   const mutationLikeWorker = useMutation({
     mutationKey: ["likeWorker", { id }],
@@ -329,108 +325,22 @@ const Worker = () => {
               </View>
             </View>
 
+            <Text style={styles.listingDetails}>{worker?.description}</Text>
+
             <SkillSelector
               canAddSkills={false}
+              isShowLabel={true}
+              style={styles?.skillsContainer}
               userSkills={worker?.skills}
               availableSkills={WORKERTYPES}
             />
 
-            <View style={styles.highlightWrapper}>
-              <View style={[styles?.highlightBox, { width: "100%" }]}>
-                <View style={styles.highlightIcon}>
-                  <FontAwesome name="users" size={18} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.highlightTxt}>Skill</Text>
-                  <Text style={styles.highlightTxtVal}>
-                    {[
-                      "Labour",
-                      "Mistri",
-                      "Beldaar",
-                      "Plumber",
-                      "Labour",
-                      "Mistri",
-                      "Beldaar",
-                      "Plumber",
-                    ]?.join(", ")}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <Text style={styles.listingDetails}>{worker?.description}</Text>
-
             <UserInfoComponent user={worker} style={{ marginHorizontal: 0 }} />
 
-            {/* <View style={styles.userInfoTextWrapper}>
-              <View style={styles.userInfoBox}>
-                <View style={[styles.row, styles.firstBox]}>
-                  <Text style={styles.userInfoText}>
-                    {worker?.address || "Address not found"}
-                  </Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.userInfoText}>
-                    {worker?.mobileNumber || "Mobile not found"}
-                  </Text>
-                </View>
-                <View style={[styles.row, styles.lastBox]}>
-                  <Text style={styles.userInfoText}>{worker?.email}</Text>
-                </View>
-              </View>
-            </View> */}
+            <WallletInformation type="earnings" wallet={worker} />
 
-            <Text style={styles.workInfoHeading}>Wallet</Text>
-            <View style={styles.infoBoxWrapper}>
-              <View
-                style={[
-                  styles.infoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>₹ {worker?.earnings?.work}</Text>
-                <Text>Earnings</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text>₹ {worker?.earnings?.rewards}</Text>
-                <Text>Rewards</Text>
-              </View>
-            </View>
+            <WorkInformation information={worker} />
 
-            <Text style={styles.workInfoHeading}>Work Information</Text>
-            <View style={styles.workInfoWrapper}>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{worker?.workDetails?.total}</Text>
-                <Text>Total Tasks</Text>
-              </View>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{worker?.workDetails?.completed}</Text>
-                <Text>Completed</Text>
-              </View>
-              <View style={styles.workInfoBox}>
-                <Text>{worker?.workDetails?.upcoming}</Text>
-                <Text>Pending</Text>
-              </View>
-            </View>
           </View>
         </Animated.ScrollView>
       </View>
@@ -466,7 +376,7 @@ const Worker = () => {
         {userDetails?.role === "MEDIATOR" && (
           <TouchableOpacity
             onPress={() => mutationSendRequest?.mutate()}
-            style={[styles.footerBtn, styles.footerBookBtn]}
+            style={[styles.footerBtn, styles.footerAddRequestBtn]}
           >
             <Text style={styles.footerBtnTxt}>
               {isWorkerBooked ? "Already Added" : "Add In Your Team"}
@@ -605,47 +515,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
   },
-  infoBoxWrapper: {
-    marginTop: 10,
-    marginBottom: 20,
-    borderBottomColor: "#dddddd",
-    borderBottomWidth: 1,
-    borderTopColor: "#dddddd",
-    borderTopWidth: 1,
-    backgroundColor: "#ffffff",
-    flexDirection: "row",
-    height: 100,
-  },
-  infoBox: {
-    width: "50%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   workInfoHeading: {
     color: Colors.primary,
     // marginLeft: 30,
     fontWeight: "700",
     fontSize: 16,
     lineHeight: 26,
-  },
-  workInfoWrapper: {
-    marginTop: 10,
-    borderBottomColor: "#dddddd",
-    borderBottomWidth: 1,
-    borderTopColor: "#dddddd",
-    backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    height: 100,
-    display: "flex",
-    flexDirection: "row",
-  },
-  workInfoBox: {
-    width: "33%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  menuWrapper: {
-    marginTop: 10,
   },
   footer: {
     flexDirection: "row",
@@ -666,11 +541,28 @@ const styles = StyleSheet.create({
     flex: 2,
     backgroundColor: Colors.primary,
     marginRight: 20,
+    paddingHorizontal: 10
   },
   footerBtnTxt: {
     color: Colors.white,
     fontSize: 16,
     fontWeight: "600",
     textTransform: "uppercase",
+    
+  },
+  footerAddRequestBtn: {
+    flex: 2,
+    backgroundColor: Colors.primary,
+    marginRight: 10,
+    paddingHorizontal: 10
+  },
+  skillsContainer: {
+    padding: 12,
+    // marginHorizontal: 20,
+    flexDirection: "column",
+    marginBottom: 5,
+    backgroundColor: "#ddd",
+    borderTopEndRadius: 8,
+    borderTopStartRadius: 8,
   },
 });

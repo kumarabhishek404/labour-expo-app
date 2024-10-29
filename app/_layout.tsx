@@ -11,6 +11,7 @@ import { AddServiceInProcess } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
 import { LocaleProvider } from "./context/locale";
 import { NotificationProvider } from "./context/NotificationContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -63,15 +64,17 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <NotificationProvider>
-      <LocaleProvider>
-        <QueryClientProvider client={queryClient}>
-          <Stack screenOptions={{ headerShown: true }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <Toast />
-        </QueryClientProvider>
-      </LocaleProvider>
-    </NotificationProvider>
+    <SafeAreaProvider>
+      <NotificationProvider>
+        <LocaleProvider>
+          <QueryClientProvider client={queryClient}>
+            <Stack screenOptions={{ headerShown: true }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <Toast />
+          </QueryClientProvider>
+        </LocaleProvider>
+      </NotificationProvider>
+    </SafeAreaProvider>
   );
 }

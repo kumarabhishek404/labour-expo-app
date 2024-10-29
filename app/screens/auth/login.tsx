@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -9,21 +9,25 @@ import Loader from "@/components/commons/Loader";
 import {
   EarningAtom,
   ServiceAtom,
+  SpentAtom,
   UserAtom,
   WorkAtom,
 } from "../../AtomStore/user";
-import { signIn } from "../../api/user";
+import { signIn, updateUserById } from "../../api/user";
 import { toast } from "../../hooks/toast";
 import i18n from "@/utils/i18n";
 import { useForm, Controller } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
+import * as Location from "expo-location"; // Importing Location module
+import { fetchCurrentLocation, isEmptyObject } from "@/constants/functions";
 
 const LoginScreen = () => {
-  const setUserDetails = useSetAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
   const setServiceDetails = useSetAtom(ServiceAtom);
   const setEarnings = useSetAtom(EarningAtom);
+  const setSpents = useSetAtom(SpentAtom);
 
   const {
     control,
@@ -31,16 +35,31 @@ const LoginScreen = () => {
     formState: { errors },
   } = useForm();
 
+  const mutationUpdateProfileInfo = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) => updateUserById(payload),
+    onSuccess: (response) => {
+      console.log(
+        "Response while updating the profile - ",
+        response?.data?.data
+      );
+    },
+    onError: (err) => {
+      console.error("error while updating the profile ", err);
+    },
+  });
+
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data) => signIn(data),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       let user = response?.user;
       let work = user?.workDetails;
       let service = user?.serviceDetails;
       let earnings = user?.earnings;
-      console.log("Worr---", work);
+      let spents = user?.spent;
 
+      // Set user details in global state
       setUserDetails({
         isAuth: true,
         _id: user?._id,
@@ -52,8 +71,9 @@ const LoginScreen = () => {
         likedWorkers: user?.bookmarkedWorkers || [],
         likedMediators: user?.likedMediators || [],
         email: user?.email,
-        address: user?.address,
         skills: user?.skills,
+        location: user?.location || {},
+        address: user?.address,
         profilePicture: user?.profilePicture,
         role: user?.role,
         token: response?.token,
@@ -70,7 +90,7 @@ const LoginScreen = () => {
       setServiceDetails({
         total: service?.total,
         completed: service?.completed,
-        cancelled: service?.cancelled,
+        cancelled: work?.cancelled?.byEmployer + work?.cancelled?.byWorker,
       });
 
       setEarnings({
@@ -78,7 +98,32 @@ const LoginScreen = () => {
         rewards: earnings?.rewards,
       });
 
+      setSpents({
+        work: spents?.work,
+        tip: spents?.tip,
+      });
+
       toast.success("Logged in successfully!");
+
+      // Condition to fetch location if location key is empty or has latitude 0
+      if (
+        !user?.location ||
+        // isEmptyObject(user?.location) ||
+        user?.location?.latitude === 0
+      ) {
+        const locationData = await fetchCurrentLocation();
+        if (locationData) {
+          setUserDetails((prevDetails: any) => ({
+            ...prevDetails,
+            location: locationData.location,
+            // address: locationData.address,
+          }));
+          mutationUpdateProfileInfo?.mutate({
+            location: locationData.location,
+            // address: locationData.address,
+          });
+        }
+      }
     },
     onError: (err) => {
       console.error("Error while logging in user - ", err);
@@ -101,7 +146,11 @@ const LoginScreen = () => {
           headerShown: false,
         }}
       />
-      <Loader loading={mutationSignIn?.isPending} />
+      <Loader
+        loading={
+          mutationSignIn?.isPending || mutationUpdateProfileInfo?.isPending
+        }
+      />
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headingText}>Hello,</Text>
@@ -197,8 +246,6 @@ const LoginScreen = () => {
     </>
   );
 };
-
-export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -309,3 +356,5 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+
+export default LoginScreen;

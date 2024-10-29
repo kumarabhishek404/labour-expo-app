@@ -21,6 +21,7 @@ import { Link, router, Stack } from "expo-router";
 import {
   EarningAtom,
   ServiceAtom,
+  SpentAtom,
   UserAtom,
   WorkAtom,
 } from "../AtomStore/user";
@@ -34,16 +35,21 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import SkillSelector from "@/components/commons/skills";
 import { addSkills } from "../api/workers";
 import { toast } from "../hooks/toast";
-import { WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import SkillSelector from "@/components/commons/SkillSelector";
+import WorkInformation from "@/components/commons/WorkInformation";
+import ServiceInformation from "@/components/commons/ServiceInformation";
+import WallletInformation from "@/components/commons/WalletInformation";
 
 const ProfileScreen = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [workDetails, setWorkDetails] = useAtom(WorkAtom);
   const [serviceDetails, setServiceDetails] = useAtom(ServiceAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);
+  const [spents, setSpents] = useAtom(SpentAtom);
+
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
@@ -55,8 +61,6 @@ const ProfileScreen = () => {
   const [firstName, setFirstName] = useState(userDetails?.firstName);
   const [lastName, setLastName] = useState(userDetails?.lastName);
   const [address, setAddress] = useState(userDetails?.address);
-
-  console.log("workDetails--", workDetails);
 
   const {
     control,
@@ -173,6 +177,10 @@ const ProfileScreen = () => {
       upcoming: "",
     });
     setEarnings({
+      work: "",
+      rewards: "",
+    });
+    setSpents({
       work: "",
       rewards: "",
     });
@@ -349,8 +357,6 @@ const ProfileScreen = () => {
     mutationUpdateProfileInfo?.mutate(payload);
   };
 
-  console.log("userDetails---", userDetails);
-
   return (
     <>
       <Stack.Screen
@@ -442,108 +448,42 @@ const ProfileScreen = () => {
         {userDetails?.role !== "EMPLOYER" && (
           <SkillSelector
             canAddSkills={true}
+            isShowLabel={true}
             style={styles?.skillsContainer}
             selectedSkills={selectedSkills}
             setSelectedSkills={setSelectedSkills}
             userSkills={userDetails?.skills}
             handleAddSkill={handleAddSkills}
-            availableSkills={WORKERTYPES}
+            availableSkills={
+              userDetails?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
+            }
           />
         )}
-        <UserInfoComponent user={userDetails} />
 
-        <Text style={styles.workInfoHeading}>Wallet</Text>
-        <View style={styles.infoBoxWrapper}>
-          <View
-            style={[
-              styles.infoBox,
-              {
-                borderRightColor: "#dddddd",
-                borderRightWidth: 1,
-              },
-            ]}
-          >
-            <Text>₹ {earnings?.work}</Text>
-            <Text>Earnings</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text>₹ {earnings?.rewards}</Text>
-            <Text>Rewards</Text>
-          </View>
-        </View>
+        <UserInfoComponent user={userDetails} />
 
         {userDetails?.role === "EMPLOYER" && (
           <>
-            <Text style={styles.workInfoHeading}>Service Information</Text>
-            <View style={styles.workInfoWrapper}>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{serviceDetails?.total || 0}</Text>
-                <Text>Total Tasks</Text>
-              </View>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{serviceDetails?.completed || 0}</Text>
-                <Text>Completed</Text>
-              </View>
-              <View style={styles.workInfoBox}>
-                <Text>{serviceDetails?.cancelled || 0}</Text>
-                <Text>Cancelled</Text>
-              </View>
-            </View>
+            <WallletInformation
+              type="spents"
+              wallet={{ spents }}
+              style={{ marginLeft: 20 }}
+            />
+            <ServiceInformation
+              information={userDetails}
+              style={{ marginLeft: 20 }}
+            />
           </>
         )}
 
         {userDetails?.role === "WORKER" && userDetails?.role === "MEDIATOR" && (
           <>
-            <Text style={styles.workInfoHeading}>Work Information</Text>
-            <View style={styles.workInfoWrapper}>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{workDetails?.total}</Text>
-                <Text>Total Tasks</Text>
-              </View>
-              <View
-                style={[
-                  styles.workInfoBox,
-                  {
-                    borderRightColor: "#dddddd",
-                    borderRightWidth: 1,
-                  },
-                ]}
-              >
-                <Text>{workDetails?.completed}</Text>
-                <Text>Completed</Text>
-              </View>
-              <View style={styles.workInfoBox}>
-                <Text>
-                  {workDetails?.cancelled?.byEmployer +
-                    workDetails?.cancelled?.byEmployer}
-                </Text>
-                <Text>Cancelled</Text>
-              </View>
-            </View>
+            <WallletInformation
+              type="earnings"
+              wallet={{ earnings }}
+              style={{ marginLeft: 20 }}
+            />
+            <WorkInformation information={userDetails} />
           </>
         )}
 
@@ -925,29 +865,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  workInfoHeading: {
-    color: Colors.primary,
-    marginLeft: 30,
-    fontWeight: "700",
-    fontSize: 16,
-    lineHeight: 26,
-  },
-  workInfoWrapper: {
-    marginTop: 10,
-    borderBottomColor: "#dddddd",
-    borderBottomWidth: 1,
-    borderTopColor: "#dddddd",
-    backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    height: 100,
-    display: "flex",
-    flexDirection: "row",
-  },
-  workInfoBox: {
-    width: "33%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   menuWrapper: {
     marginTop: 10,
   },
@@ -1030,6 +948,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     backgroundColor: "#ddd",
     borderTopEndRadius: 8,
-    borderTopStartRadius: 8
+    borderTopStartRadius: 8,
   },
 });

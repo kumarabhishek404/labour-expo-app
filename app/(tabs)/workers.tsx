@@ -1,6 +1,6 @@
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   TextInput,
@@ -23,33 +23,38 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import FilterModal from "@/components/inputs/Filters";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
+import { WORKERTYPES } from "@/constants";
+import * as Location from "expo-location";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState(
+    userDetails?.role === "EMPLOYER" ? "" : "Hiring"
+  );
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({}); // Store applied filters here
 
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["services", filters], // Add filters to queryKey to refetch when they change
+    queryKey: ["services", category, filters], // Add filters to queryKey to refetch when they change
     queryFn: ({ pageParam }) => {
       const payload = {
         pageParam,
         ...filters, // Add filters to the API request payload
       };
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers(payload)
-        : fetchAllServices(payload);
+        ? fetchAllWorkers({ ...payload, skill: category })
+        : fetchAllServices({ ...payload, type: category });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -58,8 +63,24 @@ const Workers = () => {
       }
       return undefined;
     },
+    retry: false,
     // refetchInterval: 5000
   });
+
+  useEffect(() => {
+    (async () => {
+      // Request location permissions
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        // setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      // Get the current position
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      // setLocation(currentLocation);
+    })();
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -71,8 +92,6 @@ const Workers = () => {
       return () => unsubscribe;
     }, [response])
   );
-
-  console.log("userDetails--", userDetails);
 
   const handleSearch = (text: any) => {
     setSearchText(text);
@@ -118,7 +137,7 @@ const Workers = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Loader loading={isLoading} />
+      <Loader loading={isLoading || isRefetching} />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.searchSectionWrapper}>
@@ -163,12 +182,13 @@ const Workers = () => {
             {userDetails?.role === "EMPLOYER" ? (
               <ListingsVerticalWorkers
                 type="worker"
+                availableInterest={WORKERTYPES}
                 listings={memoizedData || []}
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
                 refreshControl={
                   <RefreshControl
-                    refreshing={refreshing}
+                    refreshing={!isRefetching && refreshing}
                     onRefresh={onRefresh}
                   />
                 }
@@ -176,13 +196,11 @@ const Workers = () => {
             ) : (
               <ListingsVerticalServices
                 listings={memoizedData || []}
-                category="services"
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
-                isMyService={userDetails?.role === "EMPLOYER"}
                 refreshControl={
                   <RefreshControl
-                    refreshing={refreshing}
+                    refreshing={!isRefetching && refreshing}
                     onRefresh={onRefresh}
                   />
                 }

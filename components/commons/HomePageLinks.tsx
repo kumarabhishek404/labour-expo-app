@@ -6,203 +6,72 @@ import Farmer2 from "../../assets/farmer2.png";
 import Farmer3 from "../../assets/farmer3.png";
 import Farmer4 from "../../assets/farmer4.png";
 import Farmer5 from "../../assets/farmer5.png";
+import Farmer6 from "../../assets/farmer6.png";
+import Farmer7 from "../../assets/farmer7.png";
+import Farmer8 from "../../assets/farmer8.png";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 
 const HomePageLinks = () => {
   const userDetails = useAtomValue(UserAtom);
+
+  const links = [
+    {
+      title: userDetails?.role === "EMPLOYER" ? "Workers" : "Services",
+      subtitle: "Mobile, Fiber and AirFiber",
+      path: "/(tabs)/workers",
+      image: Farmer3,
+      style: [styles.largeBox, styles.serviceBox],
+      big: true,
+    },
+    {
+      title: "Mediators",
+      subtitle: "Mobile, Fiber and AirFiber",
+      path: {
+        pathname: "/screens/mediator",
+        params: { title: "Mediators", type: "all" },
+      },
+      image: Farmer8,
+      style: [styles.largeBox, styles.employerBox],
+      big: true,
+    },
+    {
+      title: userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings",
+      subtitle: "Grocery, Fashion",
+      path: "/(tabs)/bookings",
+      image: Farmer8,
+      style: [styles.smallBox, styles.bookingBox],
+    },
+    {
+      title: "Guides / Helps",
+      subtitle: "Music, TV, Games",
+      path: "/screens/helps",
+      image: Farmer6,
+      style: [styles.smallBox, styles.helpBox],
+    },
+  ];
+
   return (
-    <View style={styles?.linksContainer}>
-      <View style={styles.row}>
-        {userDetails?.role === "EMPLOYER" ? (
+    <View style={styles.linksContainer}>
+      <View style={styles.gridContainer}>
+        {links.map((link: any, index) => (
           <TouchableOpacity
-            style={styles.box}
-            onPress={() => router.push("/(tabs)/profile")}
+            key={index}
+            style={link.style}
+            onPress={() => router.push(link?.path)}
           >
-            <View style={styles?.firstBoxText}>
-              <Text style={styles.title}>My Profile</Text>
-              <Text style={styles.subtitle}>Mobile, Fiber and AirFiber</Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{link.title}</Text>
+              <Text style={styles.subtitle}>{link.subtitle}</Text>
             </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer1} style={styles.image} />
+            <View style={styles.imageContainer}>
+              <Image
+                source={link.image}
+                style={link.big ? styles.largeImage : styles.smallImage}
+              />
             </View>
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() => router.push("/(tabs)/workers")}
-          >
-            <View style={styles?.firstBoxText}>
-              <Text style={styles.title}>Services</Text>
-              <Text style={styles.subtitle}>Mobile, Fiber and AirFiber</Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer1} style={styles.image} />
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {userDetails?.role === "WORKER" ? (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/employer",
-                params: {
-                  title: "Employers",
-                  type: "all",
-                },
-              })
-            }
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>Employers</Text>
-              <Text style={[styles.subtitle, { width: 70 }]}>
-                Free health check
-              </Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer5} style={{ width: 102, height: 75 }} />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/worker",
-                params: {
-                  title: "Workers",
-                  type: "all",
-                },
-              })
-            }
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>Workers</Text>
-              <Text style={[styles.subtitle, { width: 70 }]}>
-                Free health check
-              </Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer5} style={{ width: 102, height: 75 }} />
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      <View style={styles.secondRow}>
-        {userDetails?.role === "MEDIATOR" ? (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/employer",
-                params: {
-                  title: "Employers",
-                  type: "all",
-                },
-              })
-            }
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>Employers</Text>
-              <Text style={styles.subtitle}>UPI, Bank, Loan</Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer3} style={styles.secondImage} />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/mediator",
-                params: {
-                  title: "Mediators",
-                  type: "all",
-                },
-              })
-            }
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>Mediators</Text>
-              <Text style={styles.subtitle}>UPI, Bank, Loan</Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer3} style={styles.secondImage} />
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {userDetails?.role === "EMPLOYER" ? (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() => router?.push("/(tabs)/bookings")}
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>My Services</Text>
-              <Text style={styles.subtitle}>Grocery, Fashion</Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer2} style={{ width: 80, height: 90 }} />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() => router?.push("/(tabs)/bookings")}
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>My Bookings</Text>
-              <Text style={styles.subtitle}>Grocery, Fashion</Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer2} style={{ width: 80, height: 90 }} />
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {userDetails?.role === "EMPLOYER" ? (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/worker",
-                params: {
-                  title: "Favourite Workers",
-                  type: "favourite",
-                },
-              })
-            }
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>My Favourite Workers</Text>
-              <Text style={[styles.subtitle, { width: 90 }]}>
-                Music, TV, Games
-              </Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer4} style={{ width: 70, height: 90 }} />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.secondBox}
-            onPress={() => router.push("/(tabs)/help")}
-          >
-            <View style={styles?.secondBoxText}>
-              <Text style={styles.title}>Guides / Helps</Text>
-              <Text style={[styles.subtitle, { width: 90 }]}>
-                Music, TV, Games
-              </Text>
-            </View>
-            <View style={styles?.imageContainer}>
-              <Image source={Farmer4} style={{ width: 70, height: 90 }} />
-            </View>
-          </TouchableOpacity>
-        )}
+        ))}
       </View>
     </View>
   );
@@ -216,91 +85,91 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
   },
-  row: {
-    width: "48%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 8,
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+    gap: 10,
   },
-  secondRow: {
-    width: "48%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 16,
-  },
-  box: {
-    // width: "100%",
+  largeBox: {
+    width: "48%", // Large box takes up 48% of the width
     height: 176,
     backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    // alignItems: "flex-end",
-    // flexDirection:'column',
-    // justifyContent: "center",
-    paddingTop: 15,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    padding: 0,
+    justifyContent: "space-between",
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+    marginBottom: 8, // Space between large and below box
   },
-  secondBox: {
-    // width: "100%",
+  smallBox: {
+    width: "48%", // Small boxes take up 48% of the width
     height: 80,
     backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    // borderWidth: 1,
-    // borderColor: "#DDDDDD",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    padding: 0,
+    justifyContent: "space-between",
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+    marginBottom: 8,
   },
-  firstBoxText: {
-    width: 140,
-    alignSelf: "flex-start",
-    paddingHorizontal: 15,
-    textAlign: "left",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    padding: 10,
+  serviceBox: {
+    backgroundColor: "#E0F7FA",
   },
-  secondBoxText: {
-    width: 140,
-    alignSelf: "flex-start",
-    paddingHorizontal: 15,
-    textAlign: "left",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    padding: 10,
+  employerBox: {
+    backgroundColor: "#FCE4EC",
+  },
+  mediatorBox: {
+    backgroundColor: "#FFF3E0",
+  },
+  bookingBox: {
+    backgroundColor: "#E8F5E9",
+  },
+  helpBox: {
+    backgroundColor: "#FFFDE7",
+  },
+  textContainer: {
+    width: "70%",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: "flex-start",
     zIndex: 1,
   },
   imageContainer: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    opacity: 0.9,
+    opacity: 0.8,
+    zIndex: -1,
   },
-  image: {
-    width: 120,
-    height: 150,
+  largeImage: {
+    width: 115,
+    height: 125,
+    borderBottomRightRadius: 8,
   },
-  secondImage: {
-    width: 70,
-    height: 75,
+  smallImage: {
+    width: 80,
+    height: 90,
+    borderBottomRightRadius: 8,
   },
   title: {
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 13,
     color: "#333333",
   },
   subtitle: {
     fontSize: 10,
-    color: "#888888",
+    // marginRight: 10,
+    color: "#666666",
   },
 });

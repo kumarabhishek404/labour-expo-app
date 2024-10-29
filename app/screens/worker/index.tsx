@@ -26,22 +26,23 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import { WORKERTYPES } from "@/constants";
 
 const Workers = () => {
-  const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("");
   const { title, type } = useGlobalSearchParams();
 
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    refetch
+    refetch,
   } = useInfiniteQuery({
     queryKey: [
       type === "favourite"
@@ -49,13 +50,14 @@ const Workers = () => {
         : type === "booked"
         ? "bookedWorkers"
         : "workers",
+      category,
     ],
     queryFn: ({ pageParam }) =>
       type === "favourite"
-        ? fetchAllLikedWorkers({ pageParam })
+        ? fetchAllLikedWorkers({ pageParam, skill: category })
         : type === "booked"
-        ? fetchAllBookedWorkers({ pageParam })
-        : fetchAllWorkers({ pageParam }),
+        ? fetchAllBookedWorkers({ pageParam, skill: category })
+        : fetchAllWorkers({ pageParam, skill: category }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -157,7 +159,7 @@ const Workers = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <View style={styles.searchSectionWrapper}>
@@ -198,12 +200,13 @@ const Workers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               type="worker"
+              availableInterest={WORKERTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
               refreshControl={
                 <RefreshControl
-                  refreshing={refreshing}
+                  refreshing={!isRefetching && refreshing}
                   onRefresh={onRefresh}
                 />
               }

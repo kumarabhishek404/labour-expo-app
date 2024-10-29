@@ -100,8 +100,6 @@ const Worker = () => {
     },
   });
 
-  console.log("employer---", employer);
-
   useEffect(() => {
     setIsEmployerLiked(employer?.likedBy?.includes(userDetails?._id) || false);
   }, [employer]);

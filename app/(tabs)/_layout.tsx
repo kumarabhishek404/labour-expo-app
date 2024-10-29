@@ -18,7 +18,6 @@ import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
 // import { usePushNotifications } from "../hooks/usePushNotification";
 import { useLocale } from "../context/locale";
-import usePushNotifications from "../hooks/usePushNotification";
 
 export default function Layout() {
   const { locale } = useLocale();

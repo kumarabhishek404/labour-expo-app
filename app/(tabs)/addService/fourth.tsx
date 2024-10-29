@@ -8,6 +8,7 @@ import Step4 from "../../../assets/step4.jpg";
 import ImageUpload from "@/components/inputs/ImagePicker";
 import { AddServiceAtom } from "@/app/AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
+import { toast } from "@/app/hooks/toast";
 
 interface FourthScreenProps {
   setStep: any;
@@ -30,8 +31,13 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
     },
   });
   const onSubmit = (data: any) => {
-    setImages(data?.images);
-    setStep(5);
+    if(data?.images && data?.images?.length > 3) {
+      toast?.error("You can not upload more than 3 images")
+    }
+    else {
+      setImages(data?.images);
+      setStep(5);
+    }
   };
 
   return (

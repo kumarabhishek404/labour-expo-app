@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
@@ -8,12 +8,15 @@ import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import Step2 from "../../../assets/step2.jpg";
 import DateField from "@/components/inputs/DateField";
+import { isEmptyObject } from "@/constants/functions";
+import { AddServiceInProcess } from "@/app/AtomStore/user";
+import { useSetAtom } from "jotai";
 
 interface SecondScreenProps {
   setStep: any;
   address: string;
   setAddress: any;
-  location: string;
+  location: object;
   setLocation: any;
   startDate: Date;
   setStartDate: any;
@@ -46,9 +49,13 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
     },
   });
 
+  const setIsAddService = useSetAtom(AddServiceInProcess);
+  const [selectedOption, setSelectedOption] = useState(
+    !isEmptyObject(location) ? "currentLocation" : "address"
+  );
+
   const onSubmit = (data: any) => {
     setAddress(data?.address);
-    setLocation(data?.location);
     setStartDate(data?.startDate);
     setEndDate(data?.endDate);
     setStep(3);
@@ -77,6 +84,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               onBlur={onBlur}
               location={location}
               setLocation={setLocation}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
               errors={errors}
             />
           )}
@@ -139,7 +148,14 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         />
       </View>
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title="Back" onPress={() => setStep(1)} />
+        <Button
+          isPrimary={false}
+          title="Back"
+          onPress={() => {
+            setStep(1);
+            setIsAddService(false);
+          }}
+        />
         <Button
           isPrimary={true}
           title="Save and Next"

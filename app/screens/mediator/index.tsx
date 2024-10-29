@@ -14,11 +14,16 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import { fetchAllBookedMediators, fetchAllLikedMediators, fetchAllMediators } from "@/app/api/mediator";
+import {
+  fetchAllBookedMediators,
+  fetchAllLikedMediators,
+  fetchAllMediators,
+} from "@/app/api/mediator";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import { MEDIATORTYPES } from "@/constants";
 
 const Mediators = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -30,10 +35,11 @@ const Mediators = () => {
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    refetch
+    refetch,
   } = useInfiniteQuery({
     queryKey: [
       type === "favourite"
@@ -41,13 +47,14 @@ const Mediators = () => {
         : type === "booked"
         ? "bookedMediators"
         : "mediators",
+        category
     ],
     queryFn: ({ pageParam }) =>
       type === "favourite"
-        ? fetchAllLikedMediators({ pageParam })
+        ? fetchAllLikedMediators({ pageParam, skill: category })
         : type === "booked"
-        ? fetchAllBookedMediators({ pageParam })
-        : fetchAllMediators({ pageParam }),
+        ? fetchAllBookedMediators({ pageParam, skill: category })
+        : fetchAllMediators({ pageParam, skill: category }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
@@ -150,7 +157,7 @@ const Mediators = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <View style={styles.searchSectionWrapper}>
@@ -191,14 +198,12 @@ const Mediators = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               type="mediator"
+              availableInterest={MEDIATORTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}
               refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                />
+                <RefreshControl refreshing={!isRefetching && refreshing} onRefresh={onRefresh} />
               }
             />
           ) : (
