@@ -6,6 +6,16 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomHeader from "../commons/Header";
 import CustomHeading from "../commons/CustomHeading";
 
+interface DropdownComponentProps {
+  label: string;
+  value: any;
+  setValue: any;
+  placeholder: string;
+  options: any;
+  icon: any;
+  style?: any;
+}
+
 const DropdownComponent = ({
   label,
   value,
@@ -14,7 +24,7 @@ const DropdownComponent = ({
   options,
   icon,
   style,
-}: any) => {
+}: DropdownComponentProps) => {
   return (
     <View style={styles.container}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}

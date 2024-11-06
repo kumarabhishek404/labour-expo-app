@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 260,
+    height: 215,
     resizeMode: "cover",
   },
   buttonContainer: {

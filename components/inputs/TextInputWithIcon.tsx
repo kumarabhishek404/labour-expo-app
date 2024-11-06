@@ -15,7 +15,7 @@ type TextInputProps = {
   onChangeText: any;
   onBlur?: any;
   icon?: any;
-  secureTextEntry: any;
+  secureTextEntry?: any;
   secondIcon?: any;
   errors?: any;
   style?: any;

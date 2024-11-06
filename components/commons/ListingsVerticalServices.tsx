@@ -51,6 +51,7 @@ type RenderItemTypes = {
     appliedBy: Array<string>;
     selected: Array<string>;
     requirements: any;
+    employer: any;
   };
 };
 
@@ -63,6 +64,8 @@ const ListingsVerticalServices = ({
   const userDetails = useAtomValue(UserAtom);
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
+    console.log("Ite---", item);
+
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
@@ -113,7 +116,12 @@ const ListingsVerticalServices = ({
                 }}
               >
                 <View style={{ width: "70%", flexDirection: "column" }}>
-                  <CustomHeading textAlign="left">{item.name}</CustomHeading>
+                  <CustomHeading
+                    textAlign="left"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    {item.name}
+                  </CustomHeading>
                 </View>
                 <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
               </View>

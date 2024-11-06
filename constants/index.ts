@@ -130,3 +130,9 @@ export const FAQS = [
     ],
   },
 ];
+
+export const WORKTYPES = [
+  { label: "Construction", value: "construction" },
+  { label: "Farming", value: "farming" },
+  { label: "Helping", value: "helping" },
+];

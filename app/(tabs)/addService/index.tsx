@@ -23,7 +23,7 @@ const SignupScreen = () => {
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
   const [step, setStep] = useState(1);
-  const [title, setTitle] = useState(addService?.name ?? "");
+  const [type, setType] = useState(addService?.name ?? "");
   const [description, setDescription] = useState(addService?.description ?? "");
 
   const [address, setAddress] = useState(addService?.address ?? "");
@@ -64,7 +64,7 @@ const SignupScreen = () => {
       );
       setAddService({});
       setIsAddService(false);
-      setTitle("");
+      setType("");
       setDescription("");
       setAddress("");
       setLocation("");
@@ -112,7 +112,7 @@ const SignupScreen = () => {
       });
     });
 
-    formData.append("name", title);
+    formData.append("name", type);
     formData.append("description", description);
     formData.append("address", address);
     formData.append("location", JSON.stringify(location || {}));
@@ -148,7 +148,7 @@ const SignupScreen = () => {
       });
     });
 
-    formData.append("name", title);
+    formData.append("name", type);
     formData.append("description", description);
     formData.append("address", address);
     formData.append("location", JSON.stringify(location || {}));
@@ -190,10 +190,10 @@ const SignupScreen = () => {
         return (
           <FirstScreen
             setStep={setStep}
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
+            type={type}
+            setType={setType}
+            requirements={requirements}
+            setRequirements={setRequirements}
           />
         );
       case 2:
@@ -214,26 +214,28 @@ const SignupScreen = () => {
         return (
           <ThirdScreen
             setStep={setStep}
-            requirements={requirements}
-            setRequirements={setRequirements}
+            images={images}
+            setImages={setImages}
+            description={description}
+            setDescription={setDescription}
           />
         );
+
+      // case 3:
+      //   return (
+      //     <FourthScreen
+      //       setStep={setStep}
+      //       images={images}
+      //       setImages={setImages}
+      //     />
+      //   );
 
       case 4:
         return (
-          <FourthScreen
-            setStep={setStep}
-            images={images}
-            setImages={setImages}
-          />
-        );
-
-      case 5:
-        return (
           <FinalScreen
             setStep={setStep}
-            title={title}
-            setTitle={setTitle}
+            type={type}
+            setType={setType}
             description={description}
             setDescription={setDescription}
             address={address}

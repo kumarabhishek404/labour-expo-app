@@ -1,31 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Image, View } from "react-native";
 import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { Ionicons } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
-import { ADDSERVICESTEPS } from "@/constants";
+import { ADDSERVICESTEPS, STETESOFINDIA, WORKTYPES } from "@/constants";
 import { Controller, useForm } from "react-hook-form";
 import Step1 from "../../../assets/step1.jpg";
 import { useSetAtom } from "jotai";
 import { AddServiceInProcess } from "@/app/AtomStore/user";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
+import CustomHeading from "@/components/commons/CustomHeading";
+import DropdownComponent from "@/components/inputs/Dropdown";
+import WorkRequirment from "@/components/inputs/WorkRequirements";
 
 interface FirstScreenProps {
   setStep: any;
-  title: string;
-  setTitle: any;
-  description: string;
-  setDescription: any;
+  type: string;
+  setType: any;
+  requirements: any;
+  setRequirements: any;
 }
 
 const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
-  title,
-  setTitle,
-  description,
-  setDescription,
+  type,
+  setType,
+  requirements,
+  setRequirements,
 }: FirstScreenProps) => {
   const {
     control,
@@ -33,15 +36,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: title,
-      description: description,
+      title: type,
+      requirements: requirements,
     },
   });
   const setIsAddService = useSetAtom(AddServiceInProcess);
+  const [errorField, setErrorField] = useState({});
 
   const onSubmit = (data: any) => {
-    setTitle(data?.title);
-    setDescription(data?.description);
+    setType(data?.title);
+    setRequirements(data?.requirements);
     setIsAddService(true);
     setStep(2);
   };
@@ -61,16 +65,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           required: "Work title is required",
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInputComponent
-            label="Work Title"
-            name="title"
+          <DropdownComponent
+            label="Work Type"
             value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="Enter your Work Title"
-            containerStyle={errors?.title && styles.errorInput}
+            setValue={onChange}
+            placeholder="Select State"
+            options={WORKTYPES}
             style={{ marginBottom: 10 }}
-            errors={errors}
+            // containerStyle={errors?.title && styles.errorInput}
             icon={
               <Ionicons
                 name={"mail-outline"}
@@ -85,21 +87,92 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
       <Controller
         control={control}
+        name="requirements"
+        defaultValue=""
+        rules={{
+          required: "Requirements is required",
+          validate: (value) => {
+            if (!value || value.length === 0) {
+              return "At least one requirement is needed";
+            }
+
+            for (let i = 0; i < value.length; i++) {
+              const item = value[i];
+              if (!item?.name) {
+                setErrorField({
+                  index: i,
+                  name: "dropdown",
+                });
+                return `Requirement #${i + 1}: Select a worker`;
+              }
+              if (!item?.payPerDay) {
+                setErrorField({
+                  index: i,
+                  name: "price",
+                });
+                return `Requirement #${i + 1}: Pay per day is required`;
+              }
+              if (isNaN(parseInt(item?.payPerDay))) {
+                setErrorField({
+                  index: i,
+                  name: "price",
+                });
+                return `Requirement #${i + 1}: Pay per day should be in number`;
+              }
+              if (item?.payPerDay === 0 || !item?.payPerDay) {
+                setErrorField({
+                  index: i,
+                  name: "price",
+                });
+                return `Requirement #${
+                  i + 1
+                }: Pay per day must be greater than 0`;
+              }
+              if (item?.count === 0 || !item?.count) {
+                setErrorField({
+                  index: i,
+                  name: "counter",
+                });
+                return `Requirement #${
+                  i + 1
+                }: Total required must be greater than 0`;
+              }
+            }
+            setErrorField({
+              index: -1,
+              name: "",
+            });
+            return true;
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <WorkRequirment
+            name="requirements"
+            requirements={value}
+            setRequirements={onChange}
+            onBlur={onBlur}
+            errors={errors}
+            errorField={errorField}
+          />
+        )}
+      />
+
+      {/* <Controller
+        control={control}
         name="description"
         defaultValue=""
         rules={{
           required: "Work description is required",
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextAreaInputComponent
-            label="Work Description"
-            name="description"
+          <DropdownComponent
+            label="Work Sub-Type"
             value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="Enter your work description"
-            containerStyle={errors?.description && styles.errorInput}
-            errors={errors}
+            setValue={onChange}
+            placeholder="Select State"
+            options={WORKTYPES}
+            style={{ marginBottom: 10 }}
+            // containerStyle={errors?.title && styles.errorInput}
             icon={
               <Ionicons
                 name={"mail-outline"}
@@ -109,8 +182,26 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               />
             }
           />
+          // <TextAreaInputComponent
+          //   label="Work Description"
+          //   name="description"
+          //   value={value}
+          //   onBlur={onBlur}
+          //   onChangeText={onChange}
+          //   placeholder="Enter your work description"
+          //   containerStyle={errors?.description && styles.errorInput}
+          //   errors={errors}
+          //   icon={
+          //     <Ionicons
+          //       name={"mail-outline"}
+          //       size={30}
+          //       color={Colors.secondary}
+          //       style={{ paddingVertical: 10, paddingRight: 10 }}
+          //     />
+          //   }
+          // />
         )}
-      />
+      /> */}
       <Button
         style={styles?.bottomButton}
         isPrimary={true}
@@ -129,7 +220,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 260,
+    height: 245,
     resizeMode: "cover",
   },
   errorInput: {

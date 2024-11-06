@@ -11,8 +11,8 @@ import CustomText from "@/components/commons/CustomText";
 
 interface FinalScreenProps {
   setStep: any;
-  title: string;
-  setTitle: any;
+  type: string;
+  setType: any;
   description: string;
   setDescription: any;
   address: string;
@@ -32,7 +32,7 @@ interface FinalScreenProps {
 
 const FinalScreen: React.FC<FinalScreenProps> = ({
   setStep,
-  title,
+  type,
   description,
   address,
   location,
@@ -58,50 +58,23 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           </View>
           <View>
             <View style={styles.row}>
-              <CustomHeading>Title</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {title}
+              <CustomHeading>Type</CustomHeading>
+              <CustomText
+                style={[styles.value, { textTransform: "capitalize" }]}
+                textAlign="left"
+              >
+                {type}
               </CustomText>
             </View>
 
-            <View style={styles.row}>
-              <CustomHeading>Description</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {description}
-              </CustomText>
-            </View>
-
-            <View style={styles.row}>
-              <CustomHeading>Address</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {address}
-              </CustomText>
-            </View>
-
-            <View style={styles.row}>
-              <CustomHeading>Location</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {!isEmptyObject(location) ? (
-                  JSON?.stringify(location)
-                ) : (
-                  <CustomText>Location not fetched</CustomText>
-                )}
-              </CustomText>
-            </View>
-
-            <View style={styles.row}>
-              <CustomHeading>Start Date</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {moment(startDate)?.format("Do MMM YYYY")}
-              </CustomText>
-            </View>
-
-            <View style={styles.row}>
-              <CustomHeading>End Date</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {moment(endDate)?.format("Do MMM YYYY")}
-              </CustomText>
-            </View>
+            {description && (
+              <View style={styles.row}>
+                <CustomHeading>Description</CustomHeading>
+                <CustomText style={styles.value} textAlign="left">
+                  {description}
+                </CustomText>
+              </View>
+            )}
 
             <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
               <CustomHeading>Requirements</CustomHeading>
@@ -172,33 +145,67 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
               </View>
             </View>
 
-            <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-              <CustomHeading>Images</CustomHeading>
-              <View
-                style={[
-                  styles.value,
-                  { width: "100%", paddingBottom: 0, paddingRight: 0 },
-                ]}
-              >
-                <View style={styles.imageContainer}>
-                  {images &&
-                    images?.map((imgUri: any, index: number) => (
-                      <View key={index} style={styles.imagesContainer}>
-                        <Image
-                          key={index}
-                          source={{ uri: imgUri }}
-                          style={styles.uploadedImage}
-                        />
-                      </View>
-                    ))}
+            <View style={styles.row}>
+              <CustomHeading>Address</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {address}
+              </CustomText>
+            </View>
+
+            <View style={styles.row}>
+              <CustomHeading>Location</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {!isEmptyObject(location) ? (
+                  JSON?.stringify(location)
+                ) : (
+                  <CustomText>Location not fetched</CustomText>
+                )}
+              </CustomText>
+            </View>
+
+            <View style={styles.row}>
+              <CustomHeading>Start Date</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {moment(startDate)?.format("Do MMM YYYY")}
+              </CustomText>
+            </View>
+
+            <View style={styles.row}>
+              <CustomHeading>End Date</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {moment(endDate)?.format("Do MMM YYYY")}
+              </CustomText>
+            </View>
+
+            {images && images?.length > 0 && (
+              <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+                <CustomHeading>Images</CustomHeading>
+                <View
+                  style={[
+                    styles.value,
+                    { width: "100%", paddingBottom: 0, paddingRight: 0 },
+                  ]}
+                >
+                  <View style={styles.imageContainer}>
+                    {images &&
+                      images?.map((imgUri: any, index: number) => (
+                        <View key={index} style={styles.imagesContainer}>
+                          <Image
+                            key={index}
+                            source={{ uri: imgUri }}
+                            style={styles.uploadedImage}
+                          />
+                        </View>
+                      ))}
+                  </View>
                 </View>
               </View>
-            </View>
+            )}
           </View>
         </View>
 
         <View style={styles?.buttonContainer}>
-          <Button isPrimary={false} title="Back" onPress={() => setStep(4)} />
+          <Button isPrimary={false} title="Back" onPress={() => setStep(3)} />
           <Button
             isPrimary={true}
             title="Submit All Details"
@@ -213,21 +220,10 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
     backgroundColor: "white",
   },
   box: {
-    paddingVertical: 20,
     justifyContent: "space-between",
-  },
-  customHeader: {
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  image: {
-    width: "100%",
-    height: 350,
-    resizeMode: "cover",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -246,23 +242,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
   },
-  textArea: {
-    height: 100,
-  },
-  submitButton: {
-    backgroundColor: "#6200ea",
-    borderRadius: 8,
-    paddingVertical: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 30,
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
   requirmentContainer: {
     width: "100%",
     borderRadius: 8,
@@ -276,25 +255,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
   },
-  viewButton: {
-    width: 100,
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 8,
-  },
-  price: {
-    flex: 1,
-    fontSize: 16,
-    color: Colors?.black,
-    textAlign: "right",
-  },
-  subTitle: {
-    fontSize: 14,
-    color: Colors?.primary,
-    textAlign: "left",
   },
   details: {
     flexDirection: "row",
@@ -311,11 +276,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: "#4F4F4F",
   },
-  requirementValue: {
-    fontSize: 16,
-    color: "#000",
-  },
-
   imageContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

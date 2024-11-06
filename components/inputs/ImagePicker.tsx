@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import Button from "./Button";
 import CustomText from "../commons/CustomText";
+import CustomHeading from "../commons/CustomHeading";
 
 interface ImageUploadProps {
   name: string;
@@ -46,6 +47,7 @@ const ImageUpload = ({
 
   return (
     <View>
+      <CustomHeading textAlign="left">Work Images</CustomHeading>
       <View style={[styles.container, errors[name] && styles?.errorInput]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     padding: 10,
-    marginTop: 20,
+    marginTop: 5,
     marginBottom: 10,
   },
   imageContainer: {
