@@ -1,12 +1,4 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -15,16 +7,17 @@ import {
   FontAwesome5,
   FontAwesome6,
   Fontisto,
-  Ionicons,
-  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { Link, router, Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import DropdownComponent from "@/components/inputs/Dropdown";
 import { STETESOFINDIA } from "@/constants";
 import { useAtom } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomHeader from "@/components/commons/Header";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import Button from "@/components/inputs/Button";
 
 const AddCurrentLocation = () => {
   const navigation = useNavigation();
@@ -58,138 +51,95 @@ const AddCurrentLocation = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerTitle: "Add Address",
-          headerTintColor: Colors.white,
-          headerStyle: {
-            backgroundColor: Colors.primary,
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                marginRight: 20,
-                backgroundColor: Colors.white,
-                padding: 6,
-                borderRadius: 8,
-                shadowColor: "#171717",
-                shadowOffset: { width: 2, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3,
-              }}
-            >
-              <Feather name="arrow-left" size={20} />
-            </TouchableOpacity>
-          ),
-          // headerRight: () => (
-          //   <TouchableOpacity
-          //     onPress={() => {}}
-          //     style={{
-          //       marginLeft: 20,
-          //       backgroundColor: Colors.white,
-          //       padding: 6,
-          //       borderRadius: 8,
-          //       shadowColor: "#171717",
-          //       shadowOffset: { width: 2, height: 4 },
-          //       shadowOpacity: 0.2,
-          //       shadowRadius: 3,
-          //     }}
-          //   >
-          //     <Ionicons name="notifications" size={20} color={Colors.black} />
-          //   </TouchableOpacity>
-          // ),
+          header: () => <CustomHeader title="Add Address" left="back" />,
         }}
       />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.formContainer}>
-          <Text style={styles.inputLabel}>Village</Text>
-          <View style={styles.inputContainer}>
-            <Fontisto
-              name="holiday-village"
-              size={25}
-              color={Colors.secondary}
-            />
-            <TextInput
-              value={village}
-              style={styles.textInput}
-              placeholder="Village"
-              placeholderTextColor={Colors.secondary}
-              onChangeText={setVillage}
-            />
-          </View>
-          <Text style={styles.inputLabel}>Post</Text>
-          <View style={styles.inputContainer}>
-            <MaterialIcons
-              name="local-post-office"
-              size={35}
-              color={Colors.secondary}
-            />
-            <TextInput
-              value={post}
-              style={styles.textInput}
-              placeholder="Post"
-              placeholderTextColor={Colors.secondary}
-              onChangeText={setPost}
-            />
-          </View>
-          <Text style={styles.inputLabel}>City</Text>
-          <View style={styles.inputContainer}>
-            <FontAwesome5 name="city" size={25} color={Colors.secondary} />
-            <TextInput
-              value={city}
-              style={styles.textInput}
-              placeholder="City"
-              placeholderTextColor={Colors.secondary}
-              onChangeText={setCity}
-            />
-          </View>
-          <Text style={styles.inputLabel}>Pin Code</Text>
-          <View style={styles.inputContainer}>
-            <Feather name="map-pin" size={30} color={Colors.secondary} />
-            <TextInput
-              value={pinCode}
-              style={styles.textInput}
-              placeholder="Pin Code"
-              placeholderTextColor={Colors.secondary}
-              onChangeText={setPinCode}
-            />
-          </View>
-          <Text style={styles.inputLabel}>State</Text>
-          <View style={{ marginBottom: 20 }}>
-            <DropdownComponent
-              value={state}
-              setValue={(state: any) => setState(state)}
-              placeholder="Select State"
-              options={STETESOFINDIA}
-              icon={
-                <FontAwesome6
-                  style={styles.icon}
-                  color="black"
-                  name="map-location"
-                  size={25}
-                />
-              }
-            />
-          </View>
+          <TextInputComponent
+            value={village}
+            style={styles.textInput}
+            placeholder="Village"
+            onChangeText={setVillage}
+            label="Village"
+            name="village"
+            icon={
+              <Fontisto
+                name="holiday-village"
+                size={20}
+                color={Colors.secondary}
+              />
+            }
+          />
+          <TextInputComponent
+            value={post}
+            style={styles.textInput}
+            placeholder="Post"
+            onChangeText={setPost}
+            label="Post"
+            name="post"
+            icon={
+              <MaterialIcons
+                name="local-post-office"
+                size={28}
+                color={Colors.secondary}
+              />
+            }
+          />
+          <TextInputComponent
+            value={city}
+            style={styles.textInput}
+            placeholder="City"
+            onChangeText={setCity}
+            label="City"
+            name="city"
+            icon={
+              <FontAwesome5 name="city" size={20} color={Colors.secondary} />
+            }
+          />
+          <TextInputComponent
+            value={pinCode}
+            style={styles.textInput}
+            placeholder="Pin Code"
+            onChangeText={setPinCode}
+            label="Pin Code"
+            name="pinCode"
+            icon={<Feather name="map-pin" size={22} color={Colors.secondary} />}
+          />
 
-          <Text style={styles.inputLabel}>Country</Text>
-          <View style={styles.inputContainer}>
-            <FontAwesome name="flag" size={30} color={Colors.secondary} />
-            <TextInput
-              value={country}
-              style={styles.textInput}
-              placeholder="Country"
-              placeholderTextColor={Colors.secondary}
-              onChangeText={() => {}}
-            />
-          </View>
+          <DropdownComponent
+            label="State"
+            value={state}
+            setValue={(state: any) => setState(state)}
+            placeholder="Select State"
+            options={STETESOFINDIA}
+            icon={
+              <FontAwesome6
+                style={styles.icon}
+                color="black"
+                name="map-location"
+                size={20}
+              />
+            }
+          />
+          <TextInputComponent
+            value={country}
+            style={styles.textInput}
+            placeholder="Country"
+            onChangeText={() => {}}
+            label="Country"
+            name="country"
+            icon={
+              <FontAwesome name="flag" size={22} color={Colors.secondary} />
+            }
+          />
 
-          <TouchableOpacity
+          <Button
+            isPrimary={true}
+            title="Save Address"
             onPress={handleAddService}
-            style={styles.loginButtonWrapper}
-          >
-            <Text style={styles.loginText}>Save Address</Text>
-          </TouchableOpacity>
+            style={{marginTop: 10}}
+          />
         </View>
       </ScrollView>
     </>
@@ -222,6 +172,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
+    gap: 10,
   },
   inputContainer: {
     height: 53,
@@ -239,8 +190,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 10,
-    // fontFamily: fonts.Light,
   },
   forgotPasswordText: {
     textAlign: "right",

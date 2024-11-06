@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import ModalComponent from "./Modal";
@@ -7,13 +7,15 @@ import MultiSelectDropdownComponent from "../inputs/MultiSelectDropdown";
 import { UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue } from "jotai";
 import { getWorkLabel } from "@/constants/functions";
+import CustomText from "./CustomText";
+import CustomHeading from "./CustomHeading";
 
 interface SkillSelectorProps {
   canAddSkills: boolean;
   isShowLabel?: boolean;
   style?: any;
   tagStyle?: any;
-  tagTextStyle?: any,
+  tagTextStyle?: any;
   selectedSkills?: Array<string>;
   setSelectedSkills?: any;
   userSkills: Array<string>;
@@ -51,9 +53,7 @@ const SkillSelector = ({
     }
   };
 
-  // Function to render the skill tags
   const renderSkills = () => {
-    // Show all skills if count is not provided, otherwise limit to `count`
     const skillsToShow = count ? userSkills?.slice(0, count) : userSkills;
 
     return (
@@ -62,17 +62,18 @@ const SkillSelector = ({
           <View key={skill}>
             {getWorkLabel(availableSkills, skill) && (
               <View style={[styles.skillBox, tagStyle]}>
-                <Text style={[styles.skillText, tagTextStyle]}>
+                <CustomText style={[tagTextStyle]}>
                   {getWorkLabel(availableSkills, skill)}
-                </Text>
+                </CustomText>
               </View>
             )}
           </View>
         ))}
 
-        {/* Conditionally render three dots (...) if count is less than the total number of skills */}
         {count && count < userSkills?.length && (
-          <Text style={styles.viewMoreText}>...</Text>
+          <CustomText color={Colors?.link} fontSize={18}>
+            ...
+          </CustomText>
         )}
       </>
     );
@@ -92,12 +93,14 @@ const SkillSelector = ({
             <View style={styles.highlightIcon}>
               <FontAwesome name="users" size={14} color={Colors.primary} />
             </View>
-            <Text style={styles.title}>Skills</Text>
+            <CustomHeading>Skills</CustomHeading>
           </View>
         )}
         {canAddSkills && (
           <TouchableOpacity onPress={toggleModal}>
-            <Text style={styles.addSkillText}>Add New Skills</Text>
+            <CustomHeading color={Colors?.link} fontWeight="bold">
+              Add New Skills
+            </CustomHeading>
           </TouchableOpacity>
         )}
       </View>
@@ -144,20 +147,7 @@ const SkillSelector = ({
 export default SkillSelector;
 
 const styles = StyleSheet.create({
-  container: {
-    // paddingVertical: 10,
-    // flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: "#000",
-    // marginLeft: 6,
-  },
-  addSkillText: {
-    color: "#007bff",
-    fontWeight: "bold",
-  },
+  container: {},
   skillContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -171,10 +161,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginVertical: 6,
   },
-  skillText: {
-    color: Colors?.primary,
-    fontSize: 14
-  },
   highlightIcon: {
     width: 25,
     height: 25,
@@ -187,11 +173,5 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
     color: Colors.secondary,
-  },
-  viewMoreText: {
-    color: "#007bff",
-    fontWeight: "bold",
-    marginBottom: 2,
-    fontSize: 20,
   },
 });

@@ -1,17 +1,16 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
-  AntDesign,
   FontAwesome,
   FontAwesome5,
   Ionicons,
 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import { router } from "expo-router";
-import AvatarComponent from "./Avatar";
 import { dateDifference } from "@/constants/functions";
 import { openGoogleMaps } from "@/app/hooks/map";
+import CustomText from "./CustomText";
+import CustomHeading from "./CustomHeading";
 
 const destination = {
   latitude: 40.758896,
@@ -22,93 +21,96 @@ const destination = {
 
 const Highlights = ({ service }: any) => {
   return (
-    <View style={styles.highlightWrapper}>
-      <View
-        style={{
-          flexDirection: "row",
-          width: "32%",
-        }}
-      >
-        <View style={styles.highlightIcon}>
-          <Ionicons name="time" size={18} color={Colors.primary} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.highlightTxt}>Duration</Text>
-          <Text style={styles.highlightTxtVal}>
-            {service?.duration ||
-              dateDifference(service?.startDate, service?.endDate)}
-          </Text>
-        </View>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          width: "32%",
-        }}
-      >
-        <View style={styles.highlightIcon}>
-          <FontAwesome name="users" size={18} color={Colors.primary} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.highlightTxt}>Travelling</Text>
-          <Text style={styles.highlightTxtVal}>Yes</Text>
-        </View>
-      </View>
-
-      {service?.location && service?.location?.latitude && (
-        <View
-          style={{
-            flexDirection: "column",
-            width: "32%",
-          }}
-        >
-          <View style={{ flexDirection: "row" }}>
-            <View style={styles.highlightIcon}>
-              <FontAwesome5
-                name="rupee-sign"
-                size={18}
-                color={Colors.primary}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.highlightTxt}>Distance</Text>
-              <Text style={styles.highlightTxtVal}>Just 2 Kms</Text>
-            </View>
+    <View style={styles?.container}>
+      <View style={styles.highlightWrapper}>
+        <View style={styles?.highlightBox}>
+          <View style={styles.highlightIcon}>
+            <Ionicons name="time" size={18} color={Colors.primary} />
           </View>
-          <Button
-            isPrimary={false}
-            title="Get Direction"
-            onPress={() => openGoogleMaps(destination)}
-            // icon={
-            //   <FontAwesome
-            //     name="users"
-            //     size={12}
-            //     color={Colors.primary}
-            //   />
-            // }
-            style={{
-              marginTop: 6,
-              borderWidth: 1.5,
-              paddingVertical: 3,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              fontWeight: "700",
-              fontSize: 12,
-            }}
-          />
+          <View style={{ flex: 1 }}>
+            <CustomText textAlign="left">Duration</CustomText>
+            <CustomHeading textAlign="left">
+              {service?.duration ||
+                dateDifference(service?.startDate, service?.endDate)}
+            </CustomHeading>
+          </View>
         </View>
-      )}
+
+        <View style={styles?.highlightBox}>
+          <View style={styles.highlightIcon}>
+            <FontAwesome name="users" size={18} color={Colors.primary} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <CustomText textAlign="left">Travelling</CustomText>
+            <CustomHeading textAlign="left">Yes</CustomHeading>
+          </View>
+        </View>
+      </View>
+
+      <View style={[styles.highlightWrapper, {}]}>
+        {service?.location && service?.location?.latitude && (
+          <View
+            style={{
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <View style={styles.highlightIcon}>
+                <FontAwesome5
+                  name="rupee-sign"
+                  size={18}
+                  color={Colors.primary}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <CustomText textAlign="left">Distance</CustomText>
+                <CustomHeading textAlign="left">Just 2 Kms</CustomHeading>
+              </View>
+            </View>
+            <Button
+              isPrimary={false}
+              title="Get Direction"
+              onPress={() => openGoogleMaps(destination)}
+              icon={
+                <FontAwesome
+                  name="users"
+                  size={12}
+                  color={Colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+              }
+              style={{
+                width: 150,
+                marginTop: 6,
+                borderWidth: 1.5,
+                paddingVertical: 3,
+                paddingHorizontal: 6,
+              }}
+              textStyle={{
+                fontWeight: "700",
+                fontSize: 12,
+              }}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 20,
+  },
   highlightWrapper: {
     flexDirection: "row",
-    marginVertical: 20,
+    marginBottom: 10,
     justifyContent: "space-between",
+  },
+  highlightBox: {
+    flexDirection: "row",
+    width: "48%",
   },
   highlightIcon: {
     backgroundColor: "#F4F4F4",

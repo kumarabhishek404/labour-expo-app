@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -11,6 +11,7 @@ import { register } from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import FifthScreen from "./fifth";
 import moment from "moment";
+import CustomHeading from "@/components/commons/CustomHeading";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
@@ -161,18 +162,24 @@ const SignupScreen = () => {
       <View style={styles.container}>
         {step === 5 ? (
           <View style={styles.textContainer}>
-            <Text style={styles.headingText}>Click selfie</Text>
-            <Text style={styles.headingText}>to verify</Text>
+            <CustomHeading textAlign="left" fontSize={22}>
+              Click selfie
+            </CustomHeading>
+            <CustomHeading textAlign="left" fontSize={22}>
+              to verify
+            </CustomHeading>
           </View>
         ) : (
           <View style={styles.textContainer}>
-            <Text style={styles.headingText}>Make new</Text>
-            <Text style={styles.headingText}>account</Text>
+            <CustomHeading textAlign="left" fontSize={22}>
+              Make new
+            </CustomHeading>
+            <CustomHeading textAlign="left" fontSize={22}>
+              account
+            </CustomHeading>
           </View>
         )}
-        <View style={styles.formContainer}>
-          <View style={styles?.inputContainer}>{renderFormComponents()}</View>
-        </View>
+        <View style={styles.formContainer}>{renderFormComponents()}</View>
       </View>
     </ScrollView>
   );
@@ -202,15 +209,7 @@ const styles = StyleSheet.create({
   textContainer: {
     marginVertical: 20,
   },
-  headingText: {
-    fontSize: 32,
-    color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
-  },
   formContainer: {
     paddingVertical: 10,
-  },
-  inputContainer: {
-    // height: 400,
   },
 });

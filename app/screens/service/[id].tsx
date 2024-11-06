@@ -2,7 +2,6 @@ import {
   Dimensions,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -38,6 +37,10 @@ import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
 import ImageSlider from "@/components/commons/ImageSlider";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import Header from "@/components/commons/Header";
+import CustomHeader from "@/components/commons/Header";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -63,38 +66,8 @@ const ServiceDetails = () => {
     service?.selected?.includes(userDetails?._id) || false
   );
 
-  // const [addService, setAddService] = useAtom(AddServiceAtom);
-  const [isEditLoading, setIsEditLoading] = useState(false);
-  const [images, setImages]: any = useState<ImageAsset[]>([
-    service?.coverImage,
-  ]);
-  const [title, setTitle] = useState<string>(service?.name ?? "");
-  const [description, setDescription] = useState<string>(
-    service?.description ?? ""
-  );
-  const [startDate, setStartDate] = useState<any>(
-    moment(service?.startDate).format("DD/MM/YYYY") ?? ""
-  );
-  const [endDate, setEndDate] = useState<any>(
-    moment(service?.endDate).format("DD/MM/YYYY") ?? ""
-  );
-
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
   const [modalVisible, setModalVisible] = useState(false);
-
-  const onStartDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || startDate;
-    setShowStartDatePicker(false);
-    setStartDate(currentDate);
-  };
-
-  const onEndDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || endDate;
-    setShowEndDatePicker(false);
-    setEndDate(currentDate);
-  };
+  const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
 
   const {
     isLoading,
@@ -250,69 +223,57 @@ const ServiceDetails = () => {
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <Text style={styles.iconText}>?</Text>
+            <CustomHeading fontSize={26}>?</CustomHeading>
           </View>
         </View>
-        <Text style={styles.modalHeader}>Are you sure?</Text>
-        <Text style={styles.modalBody}>You want to delete this service.</Text>
-        <Text style={styles.modalFooter}>
+        <CustomHeading>Are you sure?</CustomHeading>
+        <CustomHeading fontSize={14}>
+          You want to delete this service.
+        </CustomHeading>
+        <CustomText>
           This action is irreversible and will lead to a loss of all your
           created service.
-        </Text>
+        </CustomText>
       </View>
     );
   };
+
+  const completeServiceModalContent = () => {
+    return (
+      <View style={styles.modalView}>
+        <View style={styles.iconContainer}>
+          <View style={styles.iconCircle}>
+            <CustomHeading fontSize={26}>?</CustomHeading>
+          </View>
+        </View>
+        <CustomHeading>Are you sure?</CustomHeading>
+        <CustomHeading fontSize={14}>
+          You want to mark this service as completed.
+        </CustomHeading>
+        <CustomText>
+          You can restore your service again and start hiring.
+        </CustomText>
+      </View>
+    );
+  };
+
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Service Details",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {}}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Ionicons name="bookmark-outline" size={20} />
-              </View>
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader
+              title="Service Details"
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
+
       <Loader
         loading={
           isLoading ||
-          isEditLoading ||
           isRefetching ||
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
@@ -333,80 +294,82 @@ const ServiceDetails = () => {
           )}
 
           <View style={styles.contentWrapper}>
-            {isSelected && service?.status === "Cancelled" && (
+            {service?.status === "Cancelled" && (
               <View style={styles?.selectedWrapper}>
                 <View style={{ width: "100%" }}>
-                  <Text style={styles.selectedText}>
+                  <CustomHeading color={Colors?.white} textAlign="left">
                     This Service Is Cancelled
-                  </Text>
-                  <Text style={styles.helpingText}>
+                  </CustomHeading>
+                  <CustomText textAlign="left" color={Colors?.white}>
                     (We apologize for the inconvenience, but due to unforeseen
                     circumstances, we need to cancel this service. Thank you for
                     your understanding)
-                  </Text>
+                  </CustomText>
                 </View>
               </View>
             )}
 
             {isSelected && service?.status !== "Cancelled" && (
               <View style={styles?.selectedWrapper}>
-                <View style={{ width: "50%" }}>
-                  <Text style={styles.selectedText}>You are Selected</Text>
-                  <Text style={styles.helpingText}>
-                    (Do your best work and get best rating. It will help you to
-                    get more work)
-                  </Text>
-                </View>
-                <View style={{ width: "50%" }}>
-                  <Button
-                    isPrimary={true}
-                    title="Call Employer"
-                    onPress={() => {}}
-                    style={{
-                      backgroundColor: "#007BFF",
-                      borderColor: "#007BFF",
-                      paddingHorizontal: 0,
-                      borderWidth: 0,
-                    }}
-                    textStyle={{
-                      fontSize: 16,
-                    }}
-                    icon={
-                      <FontAwesome5
-                        name="phone-alt"
-                        size={16}
-                        color={Colors.white}
-                        style={{ marginRight: 10 }}
-                      />
-                    }
-                  />
-                </View>
+                <CustomHeading color={Colors?.white} textAlign="left">
+                  You are Selected
+                </CustomHeading>
+                <CustomText
+                  textAlign="left"
+                  color={Colors?.white}
+                  style={{ marginBottom: 10 }}
+                >
+                  (Do your best work and get best rating. It will help you to
+                  get more work)
+                </CustomText>
+                <Button
+                  isPrimary={true}
+                  title="Call Employer"
+                  onPress={() => {}}
+                  icon={
+                    <FontAwesome5
+                      name="phone-alt"
+                      size={16}
+                      color={Colors.white}
+                      style={{ marginRight: 10 }}
+                    />
+                  }
+                />
               </View>
             )}
 
-            <Text style={styles.listingName}>{service?.name}</Text>
+            <CustomHeading fontSize={18} textAlign="left">
+              {service?.name}
+            </CustomHeading>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
-                size={18}
+                size={14}
                 color={Colors.primary}
               />
-              <Text style={styles.listingLocationTxt}>{service?.address}</Text>
+              <CustomText textAlign="left">{service?.address}</CustomText>
             </View>
 
             <View style={styles.listingLocationWrapper}>
-              <Entypo name="calendar" size={18} color={Colors.primary} />
-              <Text style={styles.listingLocationTxt}>
+              <Entypo
+                name="calendar"
+                size={14}
+                color={Colors.primary}
+                style={{ alignSelf: "center" }}
+              />
+              <CustomText textAlign="left">
                 Start from {moment(service?.startDate).format("LL")}
-              </Text>
+              </CustomText>
             </View>
 
             <Highlights service={service} />
 
-            <Text style={styles.listingDetails}>{service?.description}</Text>
+            <CustomText textAlign="left" fontSize={13}>
+              {service?.description}
+            </CustomText>
 
             {service && service?.requirements?.length > 0 && (
-              <Requirements requirements={service?.requirements} />
+              <Requirements type="full" requirements={service?.requirements} />
             )}
           </View>
 
@@ -502,6 +465,7 @@ const ServiceDetails = () => {
               isPrimary={true}
               title="Delete Service"
               onPress={() => setModalVisible(true)}
+              style={styles?.deleteBtn}
             />
             {applicants &&
             applicants?.pages[0]?.data &&
@@ -509,8 +473,8 @@ const ServiceDetails = () => {
               <Button
                 isPrimary={false}
                 title="Complete Service"
-                onPress={() => mutationCompleteService?.mutate()}
-                style={styles?.footerBtn}
+                onPress={() => setIsCompleteModalVisible(true)}
+                style={styles?.completeBtn}
                 textStyle={{
                   color: Colors?.white,
                 }}
@@ -552,6 +516,22 @@ const ServiceDetails = () => {
         )}
 
       <ModalComponent
+        title="Complete Service"
+        visible={isCompleteModalVisible}
+        content={completeServiceModalContent}
+        onClose={() => setIsCompleteModalVisible(false)}
+        primaryButton={{
+          title: "Complete",
+          action: mutationCompleteService?.mutate,
+        }}
+        secondaryButton={{
+          title: "Cancel",
+          styles: "",
+          action: () => setIsCompleteModalVisible(false),
+        }}
+      />
+
+      <ModalComponent
         title="Delete Service"
         visible={modalVisible}
         content={deleteModalContent}
@@ -560,6 +540,7 @@ const ServiceDetails = () => {
           title: "Delete",
           styles: {
             backgroundColor: "red",
+            borderColor: "red",
           },
           action: handleDelete,
         }}
@@ -590,41 +571,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   selectedWrapper: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 10,
+    padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    textTransform: "uppercase",
     backgroundColor: Colors?.tertiery,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 4,
-  },
-  selectedText: {
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0,
-    color: Colors?.white,
-  },
-  helpingText: {
-    fontSize: 13,
-    fontWeight: "500",
-    letterSpacing: 0,
-    color: Colors?.white,
-  },
-  listingName: {
-    fontSize: 24,
-    fontWeight: "500",
-    color: Colors.black,
-    letterSpacing: 0.5,
   },
   listingLocationWrapper: {
     flexDirection: "row",
     marginTop: 5,
-    marginBottom: 10,
-    alignItems: "center",
+    alignItems: "flex-start",
+    gap: 5,
   },
   listingLocationTxt: {
     fontSize: 14,
@@ -666,7 +622,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
   },
-
+  deleteBtn: {
+    width: "48%",
+    backgroundColor: Colors?.danger,
+    borderColor: Colors?.danger,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  completeBtn: {
+    width: "48%",
+    backgroundColor: Colors?.primary,
+    borderColor: Colors?.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
@@ -684,55 +653,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700", // Yellow circle
     justifyContent: "center",
     alignItems: "center",
-  },
-  iconText: {
-    fontSize: 30,
-    color: "#000",
-    fontWeight: "bold",
-  },
-  modalHeader: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalBody: {
-    fontSize: 16,
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  modalFooter: {
-    fontSize: 14,
-    color: "#6e6e6e",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  italicText: {
-    fontStyle: "italic",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    marginHorizontal: 5,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  deleteButtonStyle: {
-    backgroundColor: "#FF3B30",
-  },
-  keepButtonStyle: {
-    backgroundColor: Colors?.primary,
-  },
-  deleteText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  keepText: {
-    color: "#fff",
-    fontSize: 16,
   },
 });

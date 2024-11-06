@@ -146,10 +146,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-  },
   formContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,

@@ -1,20 +1,20 @@
 import Colors from "@/constants/Colors";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 interface WorkInformationProps {
   information: any;
+  style?: any;
 }
 
-const WorkInformation = ({ information }: WorkInformationProps) => {
+const WorkInformation = ({ information, style }: WorkInformationProps) => {
   return (
     <View style={styles?.container}>
-      <Text style={styles.workInfoHeading}>Work Information</Text>
+      <CustomHeading textAlign="left" style={[style]}>
+        Work Information
+      </CustomHeading>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
           style={[
@@ -26,30 +26,19 @@ const WorkInformation = ({ information }: WorkInformationProps) => {
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
-              {information?.workDetails?.total}
-            </Text>
-            <MaterialCommunityIcons
-              style={{ transform: "rotate(90deg)" }}
-              name="pause-circle"
-              size={28}
-              color={Colors.black}
-            />
+            <CustomHeading fontSize={26}>
+              {information?.workDetails?.total || 0}
+            </CustomHeading>
           </View>
-          <Text>Total Tasks</Text>
+          <CustomText fontSize={14}>Total Tasks</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
-              {information?.workDetails?.completed}
-            </Text>
-            <Ionicons
-              name="checkmark-done-circle-sharp"
-              size={28}
-              color={Colors.black}
-            />
+            <CustomHeading fontSize={26}>
+              {information?.workDetails?.completed || 0}
+            </CustomHeading>
           </View>
-          <Text>Completed</Text>
+          <CustomText fontSize={14}>Completed</CustomText>
         </View>
       </View>
       <View style={[styles.workInfoWrapper, { borderTopWidth: 0 }]}>
@@ -63,25 +52,19 @@ const WorkInformation = ({ information }: WorkInformationProps) => {
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.workDetails?.pending || 0}
-            </Text>
-            <MaterialCommunityIcons
-              name="clock"
-              size={28}
-              color={Colors.black}
-            />
+            </CustomHeading>
           </View>
-          <Text>Pending</Text>
+          <CustomText fontSize={14}>Pending</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.workDetails?.cancelled?.byWorker || 0}
-            </Text>
-            <MaterialIcons name="cancel" size={28} color={Colors.black} />
+            </CustomHeading>
           </View>
-          <Text>Cancelled</Text>
+          <CustomText fontSize={14}>Cancelled</CustomText>
         </View>
       </View>
     </View>
@@ -91,9 +74,9 @@ const WorkInformation = ({ information }: WorkInformationProps) => {
 export default WorkInformation;
 
 const styles = StyleSheet.create({
-    container: {
-        // padding: 20,
-      },
+  container: {
+    // padding: 20,
+  },
   workInfoHeading: {
     color: Colors.primary,
     // marginLeft: 30,

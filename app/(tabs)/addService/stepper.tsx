@@ -1,11 +1,9 @@
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-
-interface Step {
-  label: string;
-  status: "completed" | "inProgress" | "pending";
-}
+import React from "react";
+import { View, StyleSheet } from "react-native";
 
 interface StepperProps {
   currentStep: number;
@@ -20,7 +18,6 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
     <View style={styles.container}>
       {steps.map((step: any, index: number) => (
         <View key={index} style={styles.stepContainer}>
-          {/* Icon */}
           <View
             style={[
               styles.circle,
@@ -32,38 +29,38 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
             ]}
           >
             {index < activeStep && (
-              <Text style={styles.checkMark}>
-                <Entypo name="check" size={20} />
-              </Text>
+              <Entypo name="check" size={20} color={Colors?.white} />
             )}
             {index === activeStep && (
-              <Text style={styles.lockIcon}>{activeStep + 1}</Text>
+              <CustomHeading color={Colors?.white}>
+                {activeStep + 1}
+              </CustomHeading>
             )}
             {index > activeStep && (
-              <Text style={styles.lockIcon}>
-                <Entypo name="lock" size={20} />
-              </Text>
+              <Entypo name="lock" size={20} color={Colors?.white} />
             )}
           </View>
-          <Text style={styles.stepLabel}>{step.label}</Text>
-          <Text
-            style={[
-              styles.statusText,
+          <CustomText fontWeight="500" fontSize={10}>
+            {step.label}
+          </CustomText>
+          <CustomText
+            fontSize={10}
+            fontWeight="600"
+            color={
               index < activeStep
-                ? styles.completedText
+                ? Colors?.success
                 : index === activeStep
-                ? styles.inProgressText
-                : styles.pendingText,
-            ]}
+                ? Colors?.primary
+                : Colors?.pending
+            }
           >
             {index < activeStep
               ? "Completed"
               : index === activeStep
               ? "In Progress"
               : "Pending"}
-          </Text>
+          </CustomText>
 
-          {/* Line connecting steps */}
           {index < steps.length - 1 && (
             <View style={styles.lineContainer}>
               <View
@@ -87,8 +84,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    // paddingVertical: 5,
-    // marginTop: 10,
     padding: 0,
   },
   stepContainer: {
@@ -105,40 +100,13 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   completedCircle: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: Colors?.success,
   },
   inProgressCircle: {
-    backgroundColor: "#2196F3",
+    backgroundColor: Colors?.primary,
   },
   pendingCircle: {
-    backgroundColor: "#ccc",
-  },
-  checkMark: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  lockIcon: {
-    color: "white",
-    fontSize: 16,
-  },
-  stepLabel: {
-    fontSize: 12,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  statusText: {
-    fontSize: 10,
-    textAlign: "center",
-  },
-  completedText: {
-    color: "#4CAF50",
-  },
-  inProgressText: {
-    color: "#2196F3",
-  },
-  pendingText: {
-    color: "#ccc",
+    backgroundColor: Colors?.pending,
   },
   lineContainer: {
     position: "absolute",

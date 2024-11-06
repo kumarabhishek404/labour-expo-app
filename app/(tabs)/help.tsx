@@ -6,7 +6,8 @@ import { Stack } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import Helps from "../screens/helps";
-import Workers from "../screens/worker";
+import Workers from "../screens/users";
+import CustomHeader from "@/components/commons/Header";
 
 const MiddleOption = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -15,29 +16,11 @@ const MiddleOption = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerShown: true,
-          headerTitle: userDetails?.role === "WORKER" ? "Helps" : "Workers",
-          headerTintColor: Colors.white,
-          headerStyle: {
-            backgroundColor: Colors.primary,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {}}
-              style={{
-                marginRight: 20,
-                backgroundColor: Colors.white,
-                padding: 6,
-                borderRadius: 8,
-                shadowColor: "#171717",
-                shadowOffset: { width: 2, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3,
-              }}
-            >
-              <Ionicons name="notifications" size={20} color={Colors.black} />
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader
+              title={userDetails?.role === "WORKER" ? "Helps" : "Workers"}
+              right="notification"
+            />
           ),
         }}
       />

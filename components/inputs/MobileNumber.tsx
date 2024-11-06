@@ -1,7 +1,6 @@
 import { toast } from "@/app/hooks/toast";
 import Colors from "@/constants/Colors";
 import React, { useRef, useState } from "react";
-// import auth from "@react-native-firebase/auth";
 import {
   View,
   Text,
@@ -9,10 +8,13 @@ import {
   Modal,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
+import TextInputComponent from "./TextInputWithIcon";
+import Button from "./Button";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -43,6 +45,8 @@ const MobileNumberField = ({
   const [isModalVisible, setModalVisible] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const inputs: any = useRef([]);
 
   const validatePhoneNumber = (number: any) => {
     const regex = /[6-9]\d{9}/;
@@ -54,39 +58,36 @@ const MobileNumberField = ({
     setPhoneNumber(number);
   };
 
-  // const handleSendOtp = async () => {
-  //   try {
-  //     const confirmation: any = await auth().signInWithPhoneNumber(
-  //       "+916397308499"
-  //     );
-  //     // setConfirm(confirmation);
-  //     toast.success("OTP sent to", confirmation);
-  //   } catch (err) {
-  //     console.log("Error while sending code", err);
-  //   }
-  //   // if (isPhoneValid) {
-  //   //   setModalVisible(true);
-  //   //   toast.success("OTP sent to", `${countryCode} ${phoneNumber}`);
-  //   // } else {
-  //   //   Alert.alert("Error", "Please enter a valid phone number.");
-  //   // }
-  // };
+  const handleSendOtp = async () => {
+    try {
+      const confirmation: any = await auth().signInWithPhoneNumber(
+        "+916397308499"
+      );
+      // setConfirm(confirmation);
+      toast.success("OTP sent to", confirmation);
+    } catch (err) {
+      console.log("Error while sending code", err);
+    }
+    // if (isPhoneValid) {
+    //   setModalVisible(true);
+    //   toast.success("OTP sent to", `${countryCode} ${phoneNumber}`);
+    // } else {
+    //   Alert.alert("Error", "Please enter a valid phone number.");
+    // }
+  };
 
-  //   const handleVerifyOtp = () => {
-  //     if (otp === "1234") {
-  //       Alert.alert("Success", "Mobile number verified successfully.");
-  //       setModalVisible(false);
-  //     } else {
-  //       Alert.alert("Error", "Incorrect OTP. Try again.");
-  //     }
-  //   };
+  const handleVerifyOtp = () => {
+    if (otp?.join() === "1234") {
+      toast?.success("Mobile number verified successfully.");
+      setModalVisible(false);
+    } else {
+      toast?.error("Incorrect OTP. Try again.");
+    }
+  };
 
   const handleLabelPress = () => {
     setDropdownVisible(!dropdownVisible); // Toggle dropdown when label is clicked
   };
-
-  const [otp, setOtp] = useState(["", "", "", ""]);
-  const inputs: any = useRef([]);
 
   const handleChange = (text: any, index: any) => {
     let newOtp = [...otp];
@@ -124,8 +125,7 @@ const MobileNumberField = ({
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <Text style={styles.label}>Phone Number</Text>
-
+      <CustomHeading textAlign="left">Phone Number</CustomHeading>
       <Dropdown
         style={[styles.dropdown, isFocus && styles?.focusStyle]}
         data={countriesPhoneCode}
@@ -140,42 +140,50 @@ const MobileNumberField = ({
         onChange={(item) => setCountryCode(item.value)}
         showsVerticalScrollIndicator={true}
         renderLeftIcon={() => (
-          <Text style={styles?.countryCodeLabel}>Country Code</Text>
+          <CustomHeading textAlign="left" fontSize={14}>
+            Country Code
+          </CustomHeading>
         )}
       />
 
-      <View style={[styles.inputContainer, errors[name] && styles?.errorInput]}>
-        {icon && icon}
-        <Text style={styles?.countryCodeValue}>{countryCode}</Text>
-        <TextInput
+      <View style={errors[name] && styles?.errorInput}>
+        <TextInputComponent
           value={phoneNumber}
           onBlur={onBlur}
           onChangeText={setPhoneNumber}
-          style={styles.textInput}
           placeholder={placeholder}
-          placeholderTextColor={Colors.secondary}
           maxLength={10}
+          label=""
+          name="firstName"
+          containerStyle={errors?.firstName && styles.errorInput}
+          errors={errors}
+          icon={
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {icon && icon}
+              <CustomHeading>{countryCode}</CustomHeading>
+            </View>
+          }
         />
       </View>
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
 
-      {/* {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
+      {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
         <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
-          <Text style={styles.btnText}>Verify Mobile</Text>
+          <CustomHeading color={Colors?.white}>Verify Mobile</CustomHeading>
         </TouchableOpacity>
-      )} */}
+      )}
 
-      <Modal visible={isModalVisible} transparent={true} animationType="slide">
+      <Modal visible={isPhoneValid} transparent={true} animationType="slide">
         <View style={styles.otpContainer}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.icon}>✉️</Text>
-              <Text style={styles.instruction}>Please check your email</Text>
-              <Text style={styles.subText}>
-                We've sent a code to contact@curfcode.com
-              </Text>
+              <CustomHeading fontSize={50}>✉️</CustomHeading>
+              <CustomHeading>Please check your email</CustomHeading>
+              <CustomText>We've sent a code to contact@curfcode.com</CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (
@@ -196,25 +204,25 @@ const MobileNumberField = ({
                 ))}
               </View>
 
-              <TouchableOpacity onPress={resendOtp}>
-                <Text style={styles.resendLink}>
-                  Didn't get the code? Click to resend.
-                </Text>
+              <TouchableOpacity
+                style={styles?.resendContainer}
+                onPress={resendOtp}
+              >
+                <CustomText>Didn't get the code?</CustomText>
+                <CustomText color={Colors?.link}>Click to resend.</CustomText>
               </TouchableOpacity>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity
+                <Button
+                  isPrimary={false}
+                  title="Cancel"
                   onPress={() => setModalVisible(false)}
-                  style={styles.cancelButton}
-                >
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.verifyButton}
+                />
+                <Button
+                  isPrimary={true}
+                  title="Verify"
                   onPress={handleVerify}
-                >
-                  <Text style={styles.verifyText}>Verify</Text>
-                </TouchableOpacity>
+                />
               </View>
             </View>
           </View>
@@ -227,22 +235,13 @@ const MobileNumberField = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 20,
     justifyContent: "center",
-    // backgroundColor: "#F5F5F5",
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
+    gap: 5,
   },
   countryCodeLabel: {
     width: "50%",
     fontWeight: "700",
     fontSize: 14,
-    // position: 'absolute',
-    // top: 0,
-    // left: 0,
   },
   dropdown: {
     width: "100%",
@@ -273,53 +272,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
     borderWidth: 0,
   },
-  mobileNumber: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginBottom: 15,
-    borderRadius: 8,
-    padding: 10,
-    backgroundColor: "#fff",
-  },
-  countryCodeValue: {
-    marginRight: 10,
-  },
-  input: {
-    fontSize: 16,
-  },
-  inputContainer: {
-    height: 53,
-    borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  textInput: {
-    padding: 10,
-    flex: 1,
-  },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
-  },
-  validInput: {
-    borderColor: "#28a745",
-  },
-  invalidInput: {
-    borderColor: "#dc3545",
   },
   verifyBtn: {
     position: "absolute",
@@ -329,11 +285,6 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 8,
     alignItems: "center",
-  },
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 13,
   },
   modalContainer: {
     // flex: 1,
@@ -346,79 +297,45 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     alignItems: "center",
+    gap: 5,
   },
   icon: {
     fontSize: 60,
     color: "#4CAF50",
     marginBottom: 10,
   },
-  instruction: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  subText: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 30,
-    textAlign: "center",
-  },
   otpContainer: {
     flex: 1,
-    // padding: 20,
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    // backgroundColor: "#F5F5F5",
   },
   otpform: {
-    // flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginTop: 10,
     gap: 10,
   },
   otpInput: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    borderColor: "#4CAF50",
+    borderColor: Colors?.primary,
     borderWidth: 2,
     textAlign: "center",
     fontSize: 24,
   },
-  resendLink: {
-    fontSize: 14,
-    color: "#4CAF50",
-    marginBottom: 30,
-    textDecorationLine: "underline",
+  resendContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 20,
+    gap: 5,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "80%",
-  },
-  cancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderColor: "#CCC",
-    borderWidth: 1,
-    borderRadius: 8,
-  },
-  verifyButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    backgroundColor: "#4CAF50",
-    borderRadius: 8,
-  },
-  cancelText: {
-    color: "#555",
-    fontSize: 16,
-  },
-  verifyText: {
-    color: "#FFF",
-    fontSize: 16,
+    width: "100%",
   },
 });
 

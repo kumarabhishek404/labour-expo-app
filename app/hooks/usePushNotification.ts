@@ -1,3 +1,4 @@
+// notificationSetup.js
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
@@ -5,6 +6,7 @@ import { Platform } from "react-native";
 import { registerDevice } from "../api/user";
 
 export async function registerForPushNotificationsAsync() {
+  // Configure Android notification settings
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -50,8 +52,9 @@ export async function registerForPushNotificationsAsync() {
       } catch (err) {
         console.log("An error occurred while registering user device", err);
       }
+
       return pushTokenString;
-    } catch (e: unknown) {
+    } catch (e) {
       throw new Error(`${e}`);
     }
   } else {

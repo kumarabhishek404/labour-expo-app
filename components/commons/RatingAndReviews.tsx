@@ -1,21 +1,7 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  ListRenderItem,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Colors from "@/constants/Colors";
-import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import coverImage from "../../assets/images/placeholder-cover.jpg";
-import { WorkerType } from "@/types/type";
-import { debounce } from "lodash";
-import { getWorkLabel } from "@/constants/functions";
+import { StyleSheet, View } from "react-native";
+import React from "react";
+import { FontAwesome } from "@expo/vector-icons";
+import CustomText from "./CustomText";
 
 interface RatingAndReviewsProps {
   rating: any;
@@ -34,9 +20,9 @@ const RatingAndReviews = ({ rating, reviews }: RatingAndReviewsProps) => {
             color={index < Math.floor(rating || 4) ? "#FFA41C" : "#E0E0E0"}
           />
         ))}
-        <Text style={styles.reviews}>
+        <CustomText style={styles?.reviews}>
           ({reviews >= 50 ? "50+" : reviews || 23})
-        </Text>
+        </CustomText>
       </View>
     </View>
   );
@@ -53,8 +39,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   reviews: {
-    fontSize: 12,
-    color: "#666666",
     marginLeft: 4,
   },
 });

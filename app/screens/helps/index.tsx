@@ -1,19 +1,21 @@
+import Chat from "@/components/commons/Chat";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import CustomHeader from "@/components/commons/Header";
+import Button from "@/components/inputs/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Colors from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
-  Text,
-  TextInput,
-  ScrollView,
   FlatList,
   TouchableOpacity,
   StyleSheet,
   Image,
   Modal,
-  KeyboardAvoidingView,
 } from "react-native";
 
 type RenderItemTypes = {
@@ -33,11 +35,6 @@ const HelpScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [chatVisible, setChatVisible] = useState(false);
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hello! How can I help you?" },
-  ]);
-  const [newMessage, setNewMessage] = useState("");
-
   const faqs = [
     { id: 1, question: "How do I cancel an existing order?", icon: "📦" },
     { id: 2, question: "What are the other shipping options?", icon: "🚚" },
@@ -161,7 +158,6 @@ const HelpScreen = () => {
     },
   ];
 
-  // Simplified questions and respective content for rural audiences
   const questions = [
     {
       id: 1,
@@ -202,12 +198,10 @@ const HelpScreen = () => {
     }));
   };
 
-  // Function to handle search input changes
   const handleSearch = (text: string) => {
     setSearchQuery(text);
   };
 
-  // Function to filter questions based on the search query
   const filteredQuestions = questions.filter((q) =>
     q.question.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -218,18 +212,18 @@ const HelpScreen = () => {
         onPress={() => toggleSection(item.id)}
         style={styles.topicCard}
       >
-        <Text style={styles.topicIcon}>{item.icon}</Text>
+        <CustomHeading fontSize={30}>{item.icon}</CustomHeading>
         <View style={styles.topicTextContainer}>
-          <Text style={styles.topicTitle}>{item.title}</Text>
-          <Text style={styles.topicArticles}>{item.articles}</Text>
+          <CustomHeading textAlign="left">{item.title}</CustomHeading>
+          <CustomText textAlign="left">{item.articles}</CustomText>
         </View>
-        <Text style={styles.arrow}>
+        <View>
           {openSections[item.id] ? (
-            <Feather name="arrow-down" size={30} color={Colors.secondary} />
+            <Feather name="arrow-down" size={26} color={Colors.secondary} />
           ) : (
-            <Feather name="arrow-right" size={30} color={Colors.secondary} />
+            <Feather name="arrow-right" size={26} color={Colors.secondary} />
           )}
-        </Text>
+        </View>
       </TouchableOpacity>
       {openSections[item.id] && (
         <View style={styles.answerContainer}>
@@ -239,7 +233,7 @@ const HelpScreen = () => {
               onPress={() => openModal(item)}
               style={styles.questionButton}
             >
-              <Text style={styles.questionText}>{item.question}</Text>
+              <CustomText fontSize={14}>{item.question}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -257,13 +251,6 @@ const HelpScreen = () => {
     setSelectedQuestion(null);
   };
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      setMessages([...messages, { id: messages.length + 1, text: newMessage }]);
-      setNewMessage("");
-    }
-  };
-
   const renderItem = ({ item, index }: any) => (
     <RenderItem index={index} item={item} />
   );
@@ -272,39 +259,17 @@ const HelpScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerTitle: "Helps",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Helps" left="back" />,
         }}
       />
       <View style={styles.container}>
-        <Text style={styles.header}>Have a burning question? 🔥</Text>
-
         <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
+          <TextInputComponent
+            value={searchQuery}
             placeholder="Search for topics or questions..."
-            placeholderTextColor="#999"
             onChangeText={handleSearch}
+            label="Have a burning question? 🔥"
+            name="search"
           />
         </View>
 
@@ -316,62 +281,68 @@ const HelpScreen = () => {
                 style={styles.questionButton}
                 onPress={() => openModal(q)}
               >
-                <Text style={styles.questionText}>{q.question}</Text>
+                <CustomHeading fontSize={14}>{q.question}</CustomHeading>
               </TouchableOpacity>
             ))}
             {filteredQuestions.length === 0 && (
-              <Text style={styles.noResultsText}>No results found</Text>
+              <CustomText>No results found</CustomText>
             )}
           </View>
         )}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Frequently Asked</Text>
+          <CustomHeading>Frequently Asked</CustomHeading>
           <TouchableOpacity>
-            <Text style={styles.viewAll}>View All</Text>
+            <CustomHeading color={Colors?.link} fontSize={14}>
+              View All
+            </CustomHeading>
           </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={faqs ?? []}
-          renderItem={({ item, index }: any) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.faqCard}
-              onPress={() => openModal(item)}
-            >
-              <Text style={styles.faqIcon}>{item.icon}</Text>
-              <Text style={styles.faqText}>{item.question}</Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item?.id?.toString()}
-          // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-          onEndReachedThreshold={0.9}
-          // ListFooterComponent={() =>
-          //   isFetchingNextPage ? (
-          //     <ActivityIndicator
-          //       size="large"
-          //       color={Colors?.primary}
-          //       style={styles.loaderStyle}
-          //     />
-          //   ) : null
-          // }
-          // getItemLayout={(data, index) => ({
-          //   length: 200,
-          //   offset: 200 * index,
-          //   index,
-          // })}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={3}
-          removeClippedSubviews={true}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
+        <View>
+          <FlatList
+            data={faqs ?? []}
+            renderItem={({ item, index }: any) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.faqCard}
+                onPress={() => openModal(item)}
+              >
+                <CustomHeading fontSize={30}>{item.icon}</CustomHeading>
+                <CustomText fontSize={14}>{item.question}</CustomText>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item?.id?.toString()}
+            // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+            onEndReachedThreshold={0.9}
+            // ListFooterComponent={() =>
+            //   isFetchingNextPage ? (
+            //     <ActivityIndicator
+            //       size="large"
+            //       color={Colors?.primary}
+            //       style={styles.loaderStyle}
+            //     />
+            //   ) : null
+            // }
+            // getItemLayout={(data, index) => ({
+            //   length: 200,
+            //   offset: 200 * index,
+            //   index,
+            // })}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={3}
+            removeClippedSubviews={true}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Topics</Text>
+          <CustomHeading>Topics</CustomHeading>
           <TouchableOpacity>
-            <Text style={styles.viewAll}>View All</Text>
+            <CustomHeading color={Colors?.link} fontSize={14}>
+              View All
+            </CustomHeading>
           </TouchableOpacity>
         </View>
 
@@ -417,12 +388,12 @@ const HelpScreen = () => {
                 >
                   <Feather name="x" size={24} color="#333" />
                 </TouchableOpacity>
-                <Text style={styles.modalHeading}>
+                <CustomHeading textAlign="left">
                   {selectedQuestion.question}
-                </Text>
-                <Text style={styles.modalParagraph}>
+                </CustomHeading>
+                <CustomText fontSize={14} textAlign="left">
                   {selectedQuestion.answer}
-                </Text>
+                </CustomText>
 
                 {/* Video Player */}
                 <Video
@@ -456,67 +427,17 @@ const HelpScreen = () => {
           </Modal>
         )}
 
-        <TouchableOpacity
-          style={styles.startConversationButton}
-          onPress={() => setChatVisible(true)}
-        >
-          <Text style={styles.startConversationText}>Start a conversation</Text>
-        </TouchableOpacity>
+        <View style={styles?.startConversation}>
+          <Button
+            isPrimary={true}
+            title="Start a conversation"
+            onPress={() => setChatVisible(true)}
+            style={styles.startConversationButton}
+            textStyle={styles.startConversationText}
+          />
+        </View>
 
-        {/* Chat Screen Modal */}
-        <Modal
-          visible={chatVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setChatVisible(false)}
-        >
-          <KeyboardAvoidingView
-            behavior="height"
-            style={styles.chatModalContainer}
-          >
-            <View style={styles.chatScreen}>
-              <View style={styles.chatHeader}>
-                <Text style={styles.chatTitle}>Chat with Support</Text>
-                <TouchableOpacity onPress={() => setChatVisible(false)}>
-                  <Feather name="x" size={24} color="#333" />
-                </TouchableOpacity>
-              </View>
-
-              {/* Chat Messages */}
-              <ScrollView style={styles.chatMessagesContainer}>
-                {messages.map((message, index) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.messageContainer,
-                      message.id === 1
-                        ? styles.incomingMessage
-                        : styles.outgoingMessage,
-                    ]}
-                  >
-                    <Text style={styles.messageText}>{message.text}</Text>
-                  </View>
-                ))}
-              </ScrollView>
-
-              {/* Chat Input */}
-              <View style={styles.chatInputContainer}>
-                <TextInput
-                  style={styles.chatInput}
-                  placeholder="Type a message..."
-                  value={newMessage}
-                  onChangeText={setNewMessage}
-                />
-                <TouchableOpacity
-                  style={styles.sendButton}
-                  onPress={sendMessage}
-                >
-                  <Feather name="send" size={24} color="#007BFF" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </KeyboardAvoidingView>
-        </Modal>
+        <Chat chatVisible={chatVisible} setChatVisible={setChatVisible} />
       </View>
     </>
   );
@@ -526,102 +447,63 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
-    padding: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   searchContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
     marginBottom: 20,
-  },
-  searchInput: {
-    fontSize: 16,
-    color: "#333",
   },
   filteredQuestionsContainer: {
     marginBottom: 10,
-  },
-  noResultsText: {
-    fontSize: 16,
-    color: "#999",
-    textAlign: "center",
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  viewAll: {
-    fontSize: 14,
-    color: "#007BFF",
-    fontWeight: "bold",
-  },
-  faqContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
+    marginTop: 10,
   },
   faqCard: {
     backgroundColor: "#F0F4FF",
     borderRadius: 8,
-    padding: 20,
-    width: 180,
+    padding: 10,
+    minWidth: 180,
+    maxWidth: 240,
     marginRight: 10,
     marginBottom: 10,
-  },
-  faqIcon: {
-    fontSize: 24,
-    marginBottom: 10,
-  },
-  faqText: {
-    fontSize: 16,
-    color: "#333",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   topicCard: {
     padding: 15,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  topicIcon: {
-    fontSize: 24,
-    marginRight: 15,
+    gap: 10,
   },
   topicTextContainer: {
     flex: 1,
   },
-  topicTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  topicArticles: {
-    fontSize: 14,
-    color: "#666",
+  startConversation: {
+    width: "100%",
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
   startConversationButton: {
+    width: "90%",
     backgroundColor: Colors?.primary,
     padding: 15,
     borderRadius: 30,
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 0,
   },
   startConversationText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#fff",
     fontWeight: "bold",
   },
@@ -634,22 +516,14 @@ const styles = StyleSheet.create({
   },
   questionButton: {
     paddingHorizontal: 8,
-    paddingVertical: 10,
+    paddingBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  questionText: {
-    fontSize: 18,
-    color: "#333",
-  },
   answerContainer: {
     padding: 15,
     backgroundColor: "#f0f0f0",
-  },
-  answerText: {
-    fontSize: 16,
-    color: "#555",
   },
   arrow: {
     fontSize: 18,
@@ -671,17 +545,6 @@ const styles = StyleSheet.create({
   closeIconContainer: {
     alignSelf: "flex-end",
   },
-  modalHeading: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-  },
-  modalParagraph: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
   videoPlayer: {
     width: "100%",
     height: 200,
@@ -696,66 +559,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 8,
-  },
-  chatModalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  chatScreen: {
-    backgroundColor: "#fff",
-    height: "90%",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-  },
-  chatHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  chatTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  chatMessagesContainer: {
-    flex: 1,
-  },
-  messageContainer: {
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 8,
-    maxWidth: "80%",
-  },
-  incomingMessage: {
-    backgroundColor: Colors?.primary,
-    alignSelf: "flex-start",
-  },
-  outgoingMessage: {
-    backgroundColor: "#007BFF",
-    alignSelf: "flex-end",
-  },
-  messageText: {
-    color: "#fff",
-  },
-  chatInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderTopColor: "#ddd",
-    borderTopWidth: 1,
-    paddingTop: 10,
-  },
-  chatInput: {
-    flex: 1,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#F0F4FF",
-    fontSize: 16,
-  },
-  sendButton: {
-    marginLeft: 10,
   },
 });
 

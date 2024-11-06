@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -14,8 +13,11 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { FAQS } from "@/constants";
+import CustomHeader from "@/components/commons/Header";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
 
 const SupportScreen = () => {
   const [activeSections, setActiveSections] = useState<number[]>([]);
@@ -32,27 +34,7 @@ const SupportScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Contact Support",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Contact Support" left="back" />,
         }}
       />
       <ScrollView style={styles.container}>
@@ -60,13 +42,14 @@ const SupportScreen = () => {
         <View style={styles.contactBox}>
           <Foundation name="telephone" size={52} color={Colors?.primary} />
           <View style={styles.contactTextContainer}>
-            <Text style={styles.contactText}>Our 24x7 Customer Service</Text>
-            <Text
-              style={styles.contactLink}
-              onPress={() => Linking.openURL("tel:6397308499")}
-            >
-              6397308499
-            </Text>
+            <CustomHeading textAlign="left">
+              Our 24x7 Customer Service
+            </CustomHeading>
+            <TouchableOpacity onPress={() => Linking.openURL("tel:6397308499")}>
+              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+                6397308499
+              </CustomText>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -77,48 +60,53 @@ const SupportScreen = () => {
             color={Colors?.primary}
           />
           <View style={styles.contactTextContainer}>
-            <Text style={styles.contactText}>Write us at</Text>
-            <Text
-              style={styles.contactLink}
+            <CustomHeading textAlign="left">Write us at</CustomHeading>
+            <TouchableOpacity
               onPress={() =>
                 Linking.openURL("mailto:fastag.recharge@support.com")
               }
             >
-              ak7192837@gmail.com
-            </Text>
+              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+                ak7192837@gmail.com
+              </CustomText>
+            </TouchableOpacity>
           </View>
         </View>
+        <View style={{ padding: 20, gap: 10 }}>
+          <CustomHeading textAlign="left" fontSize={18}>
+            Frequently Asked Questions
+          </CustomHeading>
 
-        {/* FAQ Section */}
-        <Text style={styles.faqHeader}>Frequently Asked Questions</Text>
+          {FAQS.map((item, index) => (
+            <View key={index}>
+              <TouchableOpacity
+                style={styles.faqItem}
+                onPress={() => toggleSection(index)}
+              >
+                <CustomHeading textAlign="left">{item.question}</CustomHeading>
+                <Feather
+                  name={
+                    activeSections.includes(index)
+                      ? "chevron-up"
+                      : "chevron-down"
+                  }
+                  size={22}
+                  color="#000"
+                />
+              </TouchableOpacity>
 
-        {FAQS.map((item, index) => (
-          <View key={index}>
-            <TouchableOpacity
-              style={styles.faqItem}
-              onPress={() => toggleSection(index)}
-            >
-              <Text style={styles.faqQuestion}>{item.question}</Text>
-              <Feather
-                name={
-                  activeSections.includes(index) ? "chevron-up" : "chevron-down"
-                }
-                size={22}
-                color="#000"
-              />
-            </TouchableOpacity>
-
-            <Collapsible collapsed={!activeSections.includes(index)}>
-              <View style={styles.faqAnswer}>
-                {item.answer.map((step, idx) => (
-                  <Text key={idx} style={styles.answerText}>
-                    {step}
-                  </Text>
-                ))}
-              </View>
-            </Collapsible>
-          </View>
-        ))}
+              <Collapsible collapsed={!activeSections.includes(index)}>
+                <View style={styles.faqAnswer}>
+                  {item.answer.map((step, idx) => (
+                    <CustomText key={idx} textAlign="left">
+                      {step}
+                    </CustomText>
+                  ))}
+                </View>
+              </Collapsible>
+            </View>
+          ))}
+        </View>
       </ScrollView>
     </>
   );
@@ -173,11 +161,12 @@ const styles = StyleSheet.create({
   faqItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
+    borderRadius: 8,
   },
   faqQuestion: {
     fontSize: 16,

@@ -1,13 +1,13 @@
 import React from "react";
 import {
   View,
-  Text,
   Image,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import CustomText from "./CustomText";
 
 type AvatarProps = {
   isEditable: Boolean;
@@ -62,7 +62,7 @@ const AvatarComponent = ({
       </View>
       {isEditable && (
         <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
-          <Text style={styles.iconText}>Upload New Image</Text>
+          <CustomText>Upload New Image</CustomText>
         </TouchableOpacity>
       )}
     </View>

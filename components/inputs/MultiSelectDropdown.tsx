@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
-  ScrollView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import CustomText from "../commons/CustomText";
+import CustomHeading from "../commons/CustomHeading";
 
 const MultiSelectDropdownComponent = ({
   value,
@@ -19,7 +19,7 @@ const MultiSelectDropdownComponent = ({
   style,
 }: any) => {
   const handleSelectItem = (item: any) => {
-    if(value) setValue([...value, item]);
+    if (value) setValue([...value, item]);
     else setValue([item]);
   };
 
@@ -36,14 +36,14 @@ const MultiSelectDropdownComponent = ({
     <View style={styles.container}>
       <View style={styles.selectedContainer}>
         <View style={{ flexDirection: "column", gap: 4 }}>
-          <Text style={{ fontSize: 14, fontWeight: "500" }}>
+          <CustomHeading textAlign="left">
             Selected Skill
-          </Text>
+          </CustomHeading>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
             {value && value?.length > 0 ? (
               value.map((item: any, index: number) => (
                 <View key={index} style={styles.selectedItem}>
-                  <Text style={styles.selectedItemText}>{item.label}</Text>
+                  <CustomHeading fontSize={14} color={Colors?.white} style={{marginRight: 5}}>{item.label}</CustomHeading>
                   <TouchableOpacity onPress={() => handleRemoveItem(item)}>
                     <Ionicons
                       name="close-circle"
@@ -54,9 +54,9 @@ const MultiSelectDropdownComponent = ({
                 </View>
               ))
             ) : (
-              <Text style={{ fontSize: 12, color: Colors?.secondary }}>
+              <CustomText color={Colors?.secondary}>
                 No one skill is selected
-              </Text>
+              </CustomText>
             )}
           </View>
         </View>

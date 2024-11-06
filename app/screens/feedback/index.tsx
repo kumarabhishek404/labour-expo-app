@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
@@ -13,6 +7,9 @@ import { Controller, useForm } from "react-hook-form";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import Button from "@/components/inputs/Button";
 import ReasoneSelection from "./reasons";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import CustomHeader from "@/components/commons/Header";
 
 const FeedbackForm = () => {
   const {
@@ -35,33 +32,13 @@ const FeedbackForm = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Feedback",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Feedback" left="back" />,
         }}
       />
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>
+        <CustomHeading textAlign="left">
           How is your first impression of the product?
-        </Text>
+        </CustomHeading>
 
         <Controller
           control={control}
@@ -84,20 +61,28 @@ const FeedbackForm = () => {
                   <TouchableOpacity key={num} onPress={() => onChange(num)}>
                     <FontAwesome
                       name={num <= value ? "star" : "star-o"}
-                      size={40}
+                      size={35}
                       color={num <= value ? Colors?.primary : "#b3b3b3"}
                     />
                   </TouchableOpacity>
                 ))}
               </View>
-              {errors.rating && (
-                <Text style={styles.errorText}>{errors.rating.message}</Text>
+              {errors?.rating && (
+                <CustomText
+                  textAlign="left"
+                  fontSize={10}
+                  color={Colors?.danger}
+                >
+                  {errors.rating.message}
+                </CustomText>
               )}
             </View>
           )}
         />
 
-        <Text style={styles.sectionTitle}>What did you like the most?</Text>
+        <CustomHeading textAlign="left">
+          What did you like the most?
+        </CustomHeading>
 
         <Controller
           control={control}
@@ -107,8 +92,11 @@ const FeedbackForm = () => {
             <ReasoneSelection role={value} setRole={onChange} onBlur={onBlur} />
           )}
         />
-        {errors.feedbackType && (
-          <Text style={styles.errorText}>{errors.feedbackType.message}</Text>
+
+        {errors?.feedbackType && (
+          <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+            {errors.feedbackType.message}
+          </CustomText>
         )}
 
         <Controller
@@ -161,26 +149,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f7fa",
     padding: 20,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
   starContainer: {
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "flex-start",
     marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
-  errorText: {
-    color: "red",
-    marginTop: 5,
+    marginTop: 10,
   },
   errorInput: {
     borderWidth: 1,

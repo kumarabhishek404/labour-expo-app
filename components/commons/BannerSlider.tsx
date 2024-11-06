@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Text,
   TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
+import CustomHeading from "./CustomHeading";
 
 const BannerSlider = () => {
   const images = [
@@ -100,12 +100,12 @@ const BannerSlider = () => {
       </View>
       <View style={styles.pagination}>
         {images.map((_, index) => (
-          <Text
+          <CustomHeading
             key={index}
             style={index === active ? styles.activeDot : styles.dot}
           >
             •
-          </Text>
+          </CustomHeading>
         ))}
       </View>
     </View>

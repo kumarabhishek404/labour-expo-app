@@ -10,17 +10,6 @@ export default function StackLayout() {
         headerShown: false,
       }}
     >
-      {/* <Stack.Screen
-        name="index"
-        options={{ headerShown: false, title: "First Page" }}
-      />
-      <Stack.Screen
-        name="second"
-        options={{
-          title: "Second Page",
-          presentation: "card",
-        }}
-      /> */}
     </Stack>
   );
 }

@@ -1,50 +1,90 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import React from "react";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useRef, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
 
 type TextInputProps = {
   label: string;
   name: string;
+  type?: string;
+  maxLength?: number;
   placeholder: string;
   value: string;
   onChangeText: any;
   onBlur?: any;
   icon?: any;
+  secureTextEntry: any;
+  secondIcon?: any;
   errors?: any;
+  style?: any;
   containerStyle?: any;
 };
 
 const TextInputComponent = ({
   label,
   name,
+  type,
+  maxLength,
   placeholder,
   value,
   onChangeText,
   onBlur,
   icon,
+  secureTextEntry,
+  secondIcon,
   errors,
+  style,
   containerStyle,
 }: TextInputProps) => {
+  const inputRef = useRef(null);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleLabelPress = () => {
+    if (!isFocused) {
+      inputRef.current?.focus();
+    }
+  };
+
+  // Function to handle focus event
+  const handleFocus = () => setIsFocused(true);
+
+  // Function to handle blur event
+  const handleBlur = () => setIsFocused(false);
+
   return (
-    <View style={styles?.inputField}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[styles?.inputField, style]}>
+      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <View style={[styles.inputContainer, containerStyle]}>
-        {icon && icon}
+        {icon && (
+          <TouchableOpacity
+            activeOpacity={1}
+            style={{ marginLeft: 10 }}
+            onPress={handleLabelPress}
+          >
+            {icon}
+          </TouchableOpacity>
+        )}
         <TextInput
+          ref={inputRef}
+          style={styles?.input}
+          keyboardType={type === "number" ? "numeric" : "ascii-capable"}
+          maxLength={maxLength}
           value={value}
-          onBlur={onBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          secureTextEntry={secureTextEntry}
           onChangeText={onChangeText}
-          style={styles.textInput}
           placeholder={placeholder ?? "Work Title"}
           placeholderTextColor={Colors.secondary}
-          editable
-          multiline
-          numberOfLines={10}
         />
+        {secondIcon && secondIcon}
       </View>
-      {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+      {errors?.[name] && (
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -53,7 +93,9 @@ const TextInputComponent = ({
 export default TextInputComponent;
 
 const styles = StyleSheet.create({
-  inputField: {},
+  inputField: {
+    gap: 5,
+  },
   inputContainer: {
     height: 53,
     borderWidth: 1,
@@ -61,24 +103,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 10,
   },
-  textInput: {
-    // padding: 10,
+  input: {
+    padding: 0,
+    margin: 0,
     flex: 1,
+    height: "100%",
+    borderRadius: 8,
+    paddingLeft: 10,
   },
   icon: {
     marginRight: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });

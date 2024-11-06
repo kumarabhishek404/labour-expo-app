@@ -1,7 +1,6 @@
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -11,6 +10,7 @@ import allCategories from "@/data/categories";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomText from "../commons/CustomText";
 
 type Props = {
   type: string;
@@ -44,9 +44,6 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
 
   return (
     <View style={stylesProp}>
-      {/* <Text style={styles.label}>
-        {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
-      </Text> */}
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -57,7 +54,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
           marginBottom: 10,
         }}
       >
-        {categories.map((item: any, index: number) => (
+        {categories?.map((item: any, index: number) => (
           <TouchableOpacity
             key={index}
             ref={(el) => (itemRef.current[index] = el)}
@@ -73,7 +70,8 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
               size={20}
               color={activeIndex === index ? Colors.white : Colors.black}
             />
-            <Text
+            <CustomText
+              fontSize={13}
               style={
                 activeIndex === index
                   ? styles.categoryBtnTxtActive
@@ -81,7 +79,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
               }
             >
               {item.label}
-            </Text>
+            </CustomText>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
   categoryBtnActive: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.action,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,
@@ -123,7 +121,7 @@ const styles = StyleSheet.create({
   },
   categoryBtnTxt: {
     marginLeft: 5,
-    color: Colors.black,
+    color: Colors.text,
   },
   categoryBtnTxtActive: {
     marginLeft: 5,

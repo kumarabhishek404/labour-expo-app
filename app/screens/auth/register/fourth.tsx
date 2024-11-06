@@ -1,21 +1,14 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
-import {
-  Entypo,
-  FontAwesome,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Entypo, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import Stepper from "@/app/(tabs)/addService/stepper";
 import { REGISTERSTEPS } from "@/constants";
 import PasswordComponent from "@/components/inputs/Password";
 import { Controller, useForm } from "react-hook-form";
+import CustomText from "@/components/commons/CustomText";
 
 interface FourthScreenProps {
   setStep: any;
@@ -120,59 +113,51 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 />
               }
             />
-            <View style={styles.conditionsContainer}>
-              <Text
-                style={[
-                  styles.conditionText,
-                  passwordConditions.hasNumber && styles?.successText,
-                ]}
+            <View style={{ marginBottom: 15 }}>
+              <CustomText
+                textAlign="left"
+                style={[passwordConditions.hasNumber && styles?.successText]}
               >
                 {passwordConditions.hasNumber ? (
-                  <Entypo name={"check"} size={18} />
+                  <Entypo name={"check"} size={16} />
                 ) : (
-                  <Entypo name="cross" size={18} />
+                  <Entypo name="cross" size={16} />
                 )}{" "}
                 Use at least one number (0-9)
-              </Text>
-              <Text
-                style={[
-                  styles.conditionText,
-                  passwordConditions.hasLowerCase && styles?.successText,
-                ]}
+              </CustomText>
+              <CustomText
+                textAlign="left"
+                style={[passwordConditions.hasLowerCase && styles?.successText]}
               >
                 {passwordConditions.hasLowerCase ? (
-                  <Entypo name={"check"} size={18} />
+                  <Entypo name={"check"} size={16} />
                 ) : (
-                  <Entypo name="cross" size={18} />
+                  <Entypo name="cross" size={16} />
                 )}{" "}
                 Use at least one lower-case letter (a-z)
-              </Text>
-              <Text
-                style={[
-                  styles.conditionText,
-                  passwordConditions.hasSymbol && styles?.successText,
-                ]}
+              </CustomText>
+              <CustomText
+                textAlign="left"
+                style={[passwordConditions.hasSymbol && styles?.successText]}
               >
                 {passwordConditions.hasSymbol ? (
-                  <Entypo name={"check"} size={18} />
+                  <Entypo name={"check"} size={16} />
                 ) : (
-                  <Entypo name="cross" size={18} />
+                  <Entypo name="cross" size={16} />
                 )}{" "}
                 Use at least one symbol (e.g., !@#$%^&*)
-              </Text>
-              <Text
-                style={[
-                  styles.conditionText,
-                  passwordConditions.isLongEnough && styles?.successText,
-                ]}
+              </CustomText>
+              <CustomText
+                textAlign="left"
+                style={[passwordConditions.isLongEnough && styles?.successText]}
               >
                 {passwordConditions.isLongEnough ? (
-                  <Entypo name={"check"} size={18} />
+                  <Entypo name={"check"} size={16} />
                 ) : (
-                  <Entypo name="cross" size={18} />
+                  <Entypo name="cross" size={16} />
                 )}{" "}
                 Be at least 8 characters long
-              </Text>
+              </CustomText>
             </View>
           </>
         )}
@@ -292,10 +277,11 @@ const styles = StyleSheet.create({
     borderColor: "red",
     color: "red",
   },
-  conditionsContainer: {},
   conditionText: {
     fontSize: 13,
     marginBottom: 6,
+    borderWidth: 1,
+    borderColor: "red",
   },
   successText: {
     color: "green",

@@ -19,6 +19,7 @@
     "ios": {
       "jsEngine": "jsc",
       "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
@@ -39,7 +40,8 @@
       "expo-font",
       "expo-localization",
       "@react-native-firebase/app",
-      "react-native-vision-camera"
+      "react-native-vision-camera",
+      "@react-native-voice/voice"
     ],
     "experiments": {
       "typedRoutes": true

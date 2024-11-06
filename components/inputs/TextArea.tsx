@@ -1,7 +1,9 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
 
 type TextInputProps = {
   label: string;
@@ -28,7 +30,7 @@ const TextAreaInputComponent = ({
 }: TextInputProps) => {
   return (
     <View style={styles?.inputField}>
-      <Text style={styles.label}>{label}</Text>
+      <CustomHeading textAlign="left">{label}</CustomHeading>
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && icon}
         <TextInput
@@ -46,7 +48,9 @@ const TextAreaInputComponent = ({
         />
       </View>
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -55,7 +59,9 @@ const TextAreaInputComponent = ({
 export default TextAreaInputComponent;
 
 const styles = StyleSheet.create({
-  inputField: {},
+  inputField: {
+    gap: 5,
+  },
   inputContainer: {
     height: 140,
     borderWidth: 1,
@@ -63,7 +69,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 10,
     paddingHorizontal: 10,
   },
   textInput: {
@@ -73,15 +78,5 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });

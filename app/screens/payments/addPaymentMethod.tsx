@@ -1,14 +1,10 @@
+import CustomHeader from "@/components/commons/Header";
+import Button from "@/components/inputs/Button";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Colors from "@/constants/Colors";
-import { Feather } from "@expo/vector-icons";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, StyleSheet } from "react-native";
 
 const PaymentScreen = () => {
   const [selectedTab, setSelectedTab] = useState("Card");
@@ -17,95 +13,80 @@ const PaymentScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Add New Payment Method",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader title="Add New Payment Method" left="back" />
           ),
         }}
       />
       <View style={styles.container}>
-        {/* Tabs */}
         <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tab, selectedTab === "Card" && styles.activeTab]}
+          <Button
+            isPrimary={selectedTab === "Card" ? true : false}
+            title="Card"
             onPress={() => setSelectedTab("Card")}
-          >
-            <Text
-              style={
-                selectedTab === "Card" ? styles.activeTabText : styles.tabText
-              }
-            >
-              Card
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, selectedTab === "UPI" && styles.activeTab]}
+            style={{ width: "48%" }}
+          />
+          <Button
+            isPrimary={selectedTab === "UPI" ? true : false}
+            title="UPI"
             onPress={() => setSelectedTab("UPI")}
-          >
-            <Text
-              style={
-                selectedTab === "UPI" ? styles.activeTabText : styles.tabText
-              }
-            >
-              UPI
-            </Text>
-          </TouchableOpacity>
+            style={{ width: "48%" }}
+          />
         </View>
 
-        {/* Content */}
         {selectedTab === "Card" && (
           <View style={styles.formContainer}>
-            <TouchableOpacity style={styles.scanButton}>
-              <Text style={styles.buttonText}>SCAN CARD</Text>
-            </TouchableOpacity>
+            <Button isPrimary={true} title="SCAN CARD" onPress={() => {}} />
 
-            <TextInput style={styles.input} placeholder="Name" />
-            <TextInput
-              style={styles.input}
+            <TextInputComponent
+              value=""
+              placeholder="Name"
+              onChangeText={() => {}}
+              label=""
+              name="village"
+            />
+            <TextInputComponent
+              value=""
               placeholder="Credit Card Number"
-              keyboardType="numeric"
+              onChangeText={() => {}}
+              label=""
+              name="creditCardNumber"
+              type="numeric"
             />
             <View style={styles.expiryCvvContainer}>
-              <TextInput
-                style={[styles.input, styles.smallInput]}
+              <TextInputComponent
+                value=""
+                style={styles.smallInput}
                 placeholder="Expires"
+                onChangeText={() => {}}
+                label=""
+                name="expires"
+                type="date"
               />
-              <TextInput
-                style={[styles.input, styles.smallInput]}
+              <TextInputComponent
+                value=""
+                style={styles.smallInput}
                 placeholder="CVV"
-                keyboardType="numeric"
+                type="numeric"
+                onChangeText={() => {}}
+                label=""
+                name="expires"
               />
             </View>
-
-            <TouchableOpacity style={styles.saveButton}>
-              <Text style={styles.buttonText}>SAVE</Text>
-            </TouchableOpacity>
+            <Button isPrimary={true} title="SAVE" onPress={() => {}} />
           </View>
         )}
 
         {selectedTab === "UPI" && (
           <View style={styles.formContainer}>
-            <TextInput style={styles.input} placeholder="UPI ID" />
-            <TouchableOpacity style={styles.saveButton}>
-              <Text style={styles.buttonText}>SAVE</Text>
-            </TouchableOpacity>
+            <TextInputComponent
+              value=""
+              placeholder="UPI ID"
+              onChangeText={() => {}}
+              label=""
+              name="village"
+            />
+            <Button isPrimary={true} title="SAVE" onPress={() => {}} />
           </View>
         )}
       </View>
@@ -116,9 +97,7 @@ const PaymentScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     padding: 20,
-    // justifyContent: 'center',
   },
   tabContainer: {
     flexDirection: "row",
@@ -137,27 +116,12 @@ const styles = StyleSheet.create({
   activeTab: {
     backgroundColor: Colors?.primary,
   },
-  tabText: {
-    color: Colors?.primary,
-    fontWeight: "bold",
-  },
-  activeTabText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
   formContainer: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 8,
     elevation: 2,
-  },
-  input: {
-    height: 50,
-    backgroundColor: "#f1f1f1",
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    gap: 10,
   },
   expiryCvvContainer: {
     flexDirection: "row",
@@ -165,24 +129,6 @@ const styles = StyleSheet.create({
   },
   smallInput: {
     width: "48%",
-  },
-  scanButton: {
-    backgroundColor: Colors?.primary,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  saveButton: {
-    backgroundColor: Colors?.primary,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 

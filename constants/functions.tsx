@@ -1,6 +1,17 @@
 import moment from "moment";
 import * as Location from "expo-location";
 import { toast } from "@/app/hooks/toast";
+import {
+  fetchAllBookedWorkers,
+  fetchAllLikedWorkers,
+  fetchAllWorkers,
+} from "@/app/api/workers";
+import {
+  fetchAllBookedMediators,
+  fetchAllLikedMediators,
+  fetchAllMediators,
+} from "@/app/api/mediator";
+import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days
@@ -107,7 +118,7 @@ export const fetchCurrentLocation = async () => {
     // Check if location services are enabled
     const isLocationServicesEnabled = await Location.hasServicesEnabledAsync();
     console.log("isLocationServicesEnabled--", isLocationServicesEnabled);
-    
+
     // // Prompt user to enable GPS if it's off
     // if (!isLocationServicesEnabled) {
     //   toast?.error("Please enable GPS to get your location.");
@@ -146,5 +157,54 @@ export const fetchCurrentLocation = async () => {
     toast?.error("Error while fetching current location");
     console.log("Error while fetching location:", err);
     return { location: {} };
+  }
+};
+
+export const handleQueryKey = (role: any, type: any) => {
+  if (role === "workers") {
+    if (type === "favourite") return "favouriteWorkers";
+    else if (type === "booked") return "bookedWorkers";
+    else return "workers";
+  } else if (role === "mediators") {
+    if (type === "favourite") return "favouriteMediators";
+    else if (type === "booked") return "bookedMediators";
+    else return "mediators";
+  } else {
+    if (type === "favourite") return "favouriteEmployers";
+    else return "employers";
+  }
+};
+
+export const handleQueryFunction = async (
+  role: any,
+  type: any,
+  pageParam: number,
+  category: any
+) => {
+  console.log("Role-- type --", role, type, pageParam);
+  try {
+    let data = {};
+    if (role === "workers") {
+      if (type === "favourite")
+        data = await fetchAllLikedWorkers({ pageParam, skill: category });
+      else if (type === "booked")
+        data = await fetchAllBookedWorkers({ pageParam, skill: category });
+      else data = await fetchAllWorkers({ pageParam, skill: category });
+      return data;
+    } else if (role === "mediators") {
+      if (type === "favourite")
+        data = await fetchAllLikedMediators({ pageParam, skill: category });
+      else if (type === "booked")
+        data = await fetchAllBookedMediators({ pageParam, skill: category });
+      else data = await fetchAllMediators({ pageParam, skill: category });
+      return data;
+    } else {
+      if (type === "favourite")
+        data = await fetchAllLikedEmployer({ pageParam, skill: category });
+      else data = await fetchAllEmployers({ pageParam, skill: category });
+      return data;
+    }
+  } catch (err) {
+    console.log("error while fetching users ", err);
   }
 };

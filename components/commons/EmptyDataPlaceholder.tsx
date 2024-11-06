@@ -1,7 +1,8 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Image } from "react-native";
 import EmptyPlaceholder from "../../assets/empty-placeholder.png";
+import CustomText from "./CustomText";
 
 const EmptyDatePlaceholder = ({ title }: any) => {
   return (
@@ -10,13 +11,11 @@ const EmptyDatePlaceholder = ({ title }: any) => {
         height: "60%",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: -1
+        zIndex: -1,
       }}
     >
       <Image source={EmptyPlaceholder} />
-      <Text style={{ fontSize: 20, fontWeight: '500', color: Colors?.secondary, marginTop: 20 }}>
-        Not Found Any {title}
-      </Text>
+      <CustomText fontSize={20}>Not Found Any {title}</CustomText>
     </View>
   );
 };

@@ -1,10 +1,12 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import AvatarComponent from "./Avatar";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 const EmployerCard = ({ service }: any) => {
   return (
@@ -31,15 +33,15 @@ const EmployerCard = ({ service }: any) => {
       >
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
-            <Text style={[styles.title, { marginBottom: 10 }]}>Employer</Text>
-            <Text style={{ fontSize: 13, fontWeight: "500" }}>
-              <Text style={styles?.employerLabel}>Name : </Text>
+            <CustomHeading textAlign="left">Employer</CustomHeading>
+            <CustomText textAlign="left">
+              <CustomText style={styles?.employerLabel}>Name : </CustomText>
               {service?.employer?.firstName} {service?.employer?.lastName}
-            </Text>
-            <Text style={{ fontSize: 13, fontWeight: "500" }}>
-              <Text style={styles?.employerLabel}>Address : </Text>
+            </CustomText>
+            <CustomText textAlign="left">
+              <CustomText style={styles?.employerLabel}>Address : </CustomText>
               {service?.employer?.address}
-            </Text>
+            </CustomText>
           </View>
 
           <Button
@@ -92,7 +94,11 @@ const EmployerCard = ({ service }: any) => {
             isPrimary={true}
             title="View Details"
             onPress={() =>
-              router.push(`/screens/employer/${service?.employer?._id}`)
+              router.push({
+                pathname: `/screens/users/${service?.employer?._id}`,
+                params: { role: "employers", title: "Employer Details", type: "details" },
+              }
+                )
             }
             icon={<AntDesign name="eye" size={18} color={Colors.white} />}
             style={{
@@ -129,7 +135,6 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   employerLabel: {
-    fontSize: 12,
     color: "#615d5d",
     fontWeight: "600",
   },

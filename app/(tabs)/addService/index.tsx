@@ -1,10 +1,4 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
@@ -21,6 +15,9 @@ import FourthScreen from "./fourth";
 import { addNewService, editService } from "@/app/api/services";
 import { toast } from "@/app/hooks/toast";
 import FinalScreen from "./final";
+import CustomHeading from "@/components/commons/CustomHeading";
+import Header from "@/components/commons/Header";
+import CustomHeader from "@/components/commons/Header";
 
 const SignupScreen = () => {
   const [addService, setAddService] = useAtom(AddServiceAtom);
@@ -51,7 +48,7 @@ const SignupScreen = () => {
       },
     ]
   );
-  
+
   const [images, setImages]: any = useState(
     addService?.images ? [...addService?.images] : []
   );
@@ -268,35 +265,29 @@ const SignupScreen = () => {
     <ScrollView style={styles?.container}>
       <Stack.Screen
         options={{
-          headerShown: false,
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => {
-                if (step === 1) setIsAddService(false);
-                router.back();
+          headerTransparent: false,
+          headerShown: true,
+          header: () => (
+            <CustomHeader
+              title={addService?._id ? "Edit Service" : "Add Service"}
+              left="back"
+              onLeftAction={() => {
+                if (step > 2) {
+                  setStep(step - 1);
+                } else if (step > 1) {
+                  setStep(step - 1);
+                  setIsAddService(false);
+                } else {
+                  router?.back();
+                }
               }}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
+            />
           ),
         }}
       />
       <Loader loading={mutationAddService?.isPending} />
       <View style={styles.container}>
-        {step < 5 && (
+        {/* {step < 5 && (
           <View style={styles?.customHeader}>
             <TouchableOpacity
               onPress={() => {
@@ -325,14 +316,12 @@ const SignupScreen = () => {
                 <Feather name="arrow-left" size={20} />
               </View>
             </TouchableOpacity>
-            <Text style={styles?.headerText}>
+            <CustomHeading fontSize={18}>
               {addService?._id ? "Edit Service" : "Add Service"}
-            </Text>
+            </CustomHeading>
           </View>
-        )}
-        <View style={styles.formContainer}>
-          <View style={styles?.inputContainer}>{renderFormComponents()}</View>
-        </View>
+        )} */}
+        <View>{renderFormComponents()}</View>
       </View>
     </ScrollView>
   );
@@ -351,16 +340,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
-  },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-    marginLeft: 20,
-  },
-  formContainer: {
-    // paddingVertical: 20,
-  },
-  inputContainer: {
-    // height: 400,
   },
 });

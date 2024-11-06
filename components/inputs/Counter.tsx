@@ -1,26 +1,10 @@
 import Colors from "@/constants/Colors";
-import { AntDesign, Foundation } from "@expo/vector-icons";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { Foundation } from "@expo/vector-icons";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import CustomHeading from "../commons/CustomHeading";
 
 const Counter = ({ counter, setCounter, style }: any) => {
-  // const [counter, setCounter] = useState(0);
-  const [initialCount, setInitialCount] = useState(0);
-
-  const handleInitialCountChange = (value: any) => {
-    setInitialCount(Number(value));
-  };
-
-  const handleReset = () => {
-    setCounter(initialCount);
-  };
-
   const handleClick1 = () => {
     setCounter(counter + 1);
   };
@@ -35,7 +19,7 @@ const Counter = ({ counter, setCounter, style }: any) => {
         <TouchableOpacity style={[styles.button, style]} onPress={handleClick1}>
           <Foundation style={styles.counterIcon} name="plus" size={28} />
         </TouchableOpacity>
-        <Text style={styles.counterValue}>{counter}</Text>
+        <CustomHeading fontSize={30}>{counter}</CustomHeading>
         <TouchableOpacity
           disabled={counter === 0}
           style={[styles.button, style]}

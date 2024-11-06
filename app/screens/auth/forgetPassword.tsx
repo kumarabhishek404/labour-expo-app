@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import {
@@ -20,6 +14,9 @@ import { forgotPassword, resetPassword } from "../../api/user";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import Button from "@/components/inputs/Button";
 
 const ForgetPasswordScreen = () => {
   const {
@@ -41,6 +38,7 @@ const ForgetPasswordScreen = () => {
   const [passwordConditions, setPasswordConditions] = useState({
     hasNumber: false,
     hasAlphabet: false,
+    hasLowerCase: false,
     hasSymbol: false,
     isLongEnough: false,
   });
@@ -49,6 +47,7 @@ const ForgetPasswordScreen = () => {
     const conditions = {
       hasNumber: /\d/.test(password),
       hasAlphabet: /[A-Za-z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
       hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
       isLongEnough: password.length >= 8,
     };
@@ -101,11 +100,17 @@ const ForgetPasswordScreen = () => {
       />
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Hey,</Text>
-          <Text style={styles.headingText}>Reset Your</Text>
-          <Text style={styles.headingText}>Password</Text>
+          <CustomHeading textAlign="left" fontSize={24}>
+            Hey,
+          </CustomHeading>
+          <CustomHeading textAlign="left" fontSize={24}>
+            Reset Your
+          </CustomHeading>
+          <CustomHeading textAlign="left" fontSize={24}>
+            Password
+          </CustomHeading>
         </View>
-        <View style={styles.formContainer}>
+        <View>
           {!isResetCodeSent ? (
             <>
               <Controller
@@ -120,6 +125,7 @@ const ForgetPasswordScreen = () => {
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
+                    style={{ marginBottom: 15 }}
                     placeholder="Enter your reset password code"
                     containerStyle={errors?.resetToken && styles.errorInput}
                     errors={errors}
@@ -171,60 +177,65 @@ const ForgetPasswordScreen = () => {
                         />
                       }
                     />
-                    <View style={styles.conditionsContainer}>
-                      <Text
-                        style={[
-                          styles.conditionText,
-                          passwordConditions.hasNumber && styles?.successText,
-                        ]}
+                    <View style={{ marginBottom: 15 }}>
+                      <CustomText
+                        textAlign="left"
+                        color={
+                          (passwordConditions.hasNumber && Colors?.success) ||
+                          ""
+                        }
                       >
                         {passwordConditions.hasNumber ? (
-                          <Entypo name={"check"} size={18} />
+                          <Entypo name={"check"} size={16} />
                         ) : (
-                          <Entypo name="cross" size={18} />
+                          <Entypo name="cross" size={16} />
                         )}{" "}
                         Use at least one number (0-9)
-                      </Text>
-                      <Text
-                        style={[
-                          styles.conditionText,
-                          passwordConditions.hasAlphabet && styles?.successText,
-                        ]}
+                      </CustomText>
+                      <CustomText
+                        textAlign="left"
+                        color={
+                          (passwordConditions.hasLowerCase &&
+                            Colors?.success) ||
+                          ""
+                        }
                       >
-                        {passwordConditions.hasAlphabet ? (
-                          <Entypo name={"check"} size={18} />
+                        {passwordConditions.hasLowerCase ? (
+                          <Entypo name={"check"} size={16} />
                         ) : (
-                          <Entypo name="cross" size={18} />
+                          <Entypo name="cross" size={16} />
                         )}{" "}
                         Use at least one lower-case letter (a-z)
-                      </Text>
-                      <Text
-                        style={[
-                          styles.conditionText,
-                          passwordConditions.hasSymbol && styles?.successText,
-                        ]}
+                      </CustomText>
+                      <CustomText
+                        textAlign="left"
+                        color={
+                          (passwordConditions.hasSymbol && Colors?.success) ||
+                          ""
+                        }
                       >
                         {passwordConditions.hasSymbol ? (
-                          <Entypo name={"check"} size={18} />
+                          <Entypo name={"check"} size={16} />
                         ) : (
-                          <Entypo name="cross" size={18} />
+                          <Entypo name="cross" size={16} />
                         )}{" "}
                         Use at least one symbol (e.g., !@#$%^&*)
-                      </Text>
-                      <Text
-                        style={[
-                          styles.conditionText,
-                          passwordConditions.isLongEnough &&
-                            styles?.successText,
-                        ]}
+                      </CustomText>
+                      <CustomText
+                        textAlign="left"
+                        color={
+                          (passwordConditions.isLongEnough &&
+                            Colors?.success) ||
+                          ""
+                        }
                       >
                         {passwordConditions.isLongEnough ? (
-                          <Entypo name={"check"} size={18} />
+                          <Entypo name={"check"} size={16} />
                         ) : (
-                          <Entypo name="cross" size={18} />
+                          <Entypo name="cross" size={16} />
                         )}{" "}
                         Be at least 8 characters long
-                      </Text>
+                      </CustomText>
                     </View>
                   </>
                 )}
@@ -297,21 +308,21 @@ const ForgetPasswordScreen = () => {
             />
           )}
 
-          <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
+          <Button
+            isPrimary={true}
+            title={
+              isResetCodeSent ? "Set New Passwords" : "Reset Password Link"
+            }
             style={styles.forgetButtonWrapper}
-          >
-            <Text style={styles.loginText}>
-              {isResetCodeSent ? "Set New Passwords" : "Reset Password Link"}
-            </Text>
-          </TouchableOpacity>
+            onPress={handleSubmit(onSubmit)}
+          />
 
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>If you knew your password?</Text>
+            <CustomText>If you knew your password?</CustomText>
             <TouchableOpacity
               onPress={() => router.push("/screens/auth/login")}
             >
-              <Text style={styles.forgotPasswordText}>Sign In</Text>
+              <CustomHeading color={Colors?.link}>Sign In</CustomHeading>
             </TouchableOpacity>
           </View>
         </View>
@@ -328,81 +339,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     padding: 10,
   },
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: Colors.gray,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   textContainer: {
     marginVertical: 20,
   },
-  headingText: {
-    fontSize: 32,
-    color: Colors.primary,
-  },
-  formContainer: {},
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    marginBottom: 20,
-  },
-  textInput: {
-    flex: 1,
-    paddingHorizontal: 10,
-    marginLeft: 10,
-  },
-  forgotPasswordText: {
-    textAlign: "right",
-    alignSelf: "flex-end",
-    marginVertical: 10,
-    textDecorationLine: "underline",
-    color: Colors.black,
-    fontSize: 20,
-    fontWeight: "500",
-  },
   forgetButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
+    borderRadius: 40,
     marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    textAlign: "center",
-    padding: 10,
-  },
-  continueText: {
-    textAlign: "center",
-    marginVertical: 20,
-    fontSize: 14,
-    color: Colors.primary,
-  },
-  googleButtonContainer: {
-    flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    gap: 10,
-  },
-  googleImage: {
-    height: 20,
-    width: 20,
-  },
-  googleText: {
-    fontSize: 20,
   },
   signContainer: {
     flexDirection: "row",
@@ -417,9 +359,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     gap: 5,
-  },
-  accountText: {
-    color: Colors.primary,
   },
   redirectButtonWrapper: {
     flexDirection: "row",
@@ -440,28 +379,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
   },
-  signupText: {
-    color: Colors.black,
-    textDecorationLine: "underline",
-    fontSize: 20,
-    fontWeight: "500",
-  },
-  errorText: {
-    color: "#FF0000",
-    fontSize: 14,
-    marginBottom: 10,
-  },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  conditionsContainer: {},
-  conditionText: {
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  successText: {
-    color: "green",
   },
 });

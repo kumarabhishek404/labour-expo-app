@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Text,
-} from "react-native";
+import { View, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
+import CustomHeading from "./CustomHeading";
+import Colors from "@/constants/Colors";
 
 const ImageSlider = ({ images }: any) => {
   const { width } = Dimensions.get("window");
@@ -42,9 +37,13 @@ const ImageSlider = ({ images }: any) => {
       </ScrollView>
       <View style={styles.pagination}>
         {images?.map((i: any, k: any) => (
-          <Text key={k} style={k == active ? styles.activeDot : styles.dot}>
+          <CustomHeading
+            key={k}
+            fontSize={50}
+            color={k === active ? Colors?.white : Colors?.secondary}
+          >
             •
-          </Text>
+          </CustomHeading>
         ))}
       </View>
     </View>
@@ -57,14 +56,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -15,
     alignSelf: "center",
-  },
-  dot: {
-    color: "#888",
-    fontSize: 50,
-  },
-  activeDot: {
-    color: "#FFF",
-    fontSize: 50,
   },
 });
 

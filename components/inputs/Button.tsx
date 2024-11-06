@@ -1,8 +1,7 @@
-import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
-import Loader from "../commons/Loader";
+import CustomHeading from "../commons/CustomHeading";
 
 type ButtonProps = {
   isPrimary: boolean;
@@ -14,6 +13,7 @@ type ButtonProps = {
   bgColor?: string;
   textColor?: string;
   loading?: boolean;
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -26,17 +26,18 @@ export default function Button({
   bgColor,
   textColor,
   loading,
+  disabled,
 }: ButtonProps) {
   return (
     <>
       {isPrimary ? (
         <TouchableOpacity
-          disabled={loading}
+          disabled={disabled || loading}
           onPress={onPress}
           style={{
-            backgroundColor: bgColor || Colors?.primary,
+            backgroundColor: bgColor || Colors?.heading,
             borderWidth: 2,
-            borderColor: bgColor || Colors?.primary,
+            borderColor: bgColor || Colors?.heading,
             paddingVertical: 8,
             paddingHorizontal: 20,
             borderRadius: 8,
@@ -47,19 +48,19 @@ export default function Button({
           }}
         >
           {icon && icon}
-          <Text
+          <CustomHeading
             style={{
               color: textColor || Colors?.white,
               fontWeight: "700",
               textAlign: "center",
-              fontSize: 18,
+              fontSize: 16,
               display: "flex",
               flexWrap: "wrap",
               ...textStyle,
             }}
           >
             {title}
-          </Text>
+          </CustomHeading>
           {loading && (
             <ActivityIndicator
               style={{ marginLeft: 10 }}
@@ -70,12 +71,12 @@ export default function Button({
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          disabled={loading}
+          disabled={disabled || loading}
           onPress={onPress}
           style={{
             backgroundColor: bgColor || Colors?.white,
             borderWidth: 2,
-            borderColor: Colors?.primary,
+            borderColor: Colors?.heading,
             paddingVertical: 8,
             paddingHorizontal: 20,
             borderRadius: 8,
@@ -86,19 +87,19 @@ export default function Button({
           }}
         >
           {icon && icon}
-          <Text
+          <CustomHeading
             style={{
               color: textColor || Colors?.primary,
               fontWeight: "700",
               textAlign: "center",
-              fontSize: 18,
+              fontSize: 16,
               display: "flex",
               flexWrap: "wrap",
               ...textStyle,
             }}
           >
             {title}
-          </Text>
+          </CustomHeading>
           {loading && (
             <ActivityIndicator
               style={{ marginLeft: 10 }}

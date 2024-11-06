@@ -1,5 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 interface UserInfoComponentProps {
   user: any;
@@ -9,29 +11,31 @@ interface UserInfoComponentProps {
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
   return (
     <View style={[styles.userInfoTextWrapper, style]}>
-      <View style={styles.userInfoBox}>
-        <View style={[styles.row, styles.firstBox]}>
-          <Text style={styles.userInfoText}>
-            <Text style={styles?.infoLabel}>Address</Text>
+      <View>
+        <View
+          style={[styles.row, user?.role === "EMPLOYER" && styles.firstBox]}
+        >
+          <CustomHeading fontSize={14} padding={12}>
+            <CustomText>Address</CustomText>
             {"  "}
             {user?.address || "Address not found"}
-          </Text>
+          </CustomHeading>
         </View>
         <View style={styles.row}>
-          <Text style={styles.userInfoText}>
-            <Text style={styles?.infoLabel}>Mobile Number</Text>
+          <CustomHeading fontSize={14} padding={12}>
+            <CustomText>Mobile Number</CustomText>
             {"  "}
             {user?.mobileNumber ||
               user?.alternateMobileNumber ||
               "Mobile not found"}
-          </Text>
+          </CustomHeading>
         </View>
         <View style={[styles.row, styles.lastBox]}>
-          <Text style={styles.userInfoText}>
-            <Text style={styles?.infoLabel}>Email Address</Text>
+          <CustomHeading fontSize={14} padding={12}>
+            <CustomText>Email Address</CustomText>
             {"  "}
             {user?.email}, {user?.alternateEmail}
-          </Text>
+          </CustomHeading>
         </View>
       </View>
     </View>
@@ -51,21 +55,10 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     marginHorizontal: 20,
   },
-  userInfoBox: {},
-  userInfoText: {
-    fontSize: 13,
-    fontWeight: "500",
-    padding: 12,
+  firstBox: {
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
   },
-  infoLabel: {
-    fontSize: 12,
-    color: "#777",
-    fontWeight: "600",
-  },
-  // firstBox: {
-  //   borderTopRightRadius: 8,
-  //   borderTopLeftRadius: 8,
-  // },
   lastBox: {
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,

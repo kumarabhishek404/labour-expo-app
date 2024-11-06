@@ -1,14 +1,5 @@
-import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  RefreshControl,
-} from "react-native";
+import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
@@ -20,17 +11,20 @@ import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import FilterModal from "@/components/inputs/Filters";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
+import Filters from "@/components/commons/Filters";
+import SearchFilter from "@/components/commons/SearchFilter";
+import Header from "@/components/commons/Header";
+import { Stack } from "expo-router";
+import CustomHeader from "@/components/commons/Header";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState(
     userDetails?.role === "EMPLOYER" ? "" : "Hiring"
   );
@@ -93,17 +87,6 @@ const Workers = () => {
     }, [response])
   );
 
-  const handleSearch = (text: any) => {
-    setSearchText(text);
-    let workers = response?.pages.flatMap((page: any) => page.data || []);
-    const filtered = workers?.filter(
-      (item) =>
-        item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
-
   const handleApply = (appliedFilters: React.SetStateAction<{}>) => {
     // Apply filters to API call and close modal
     setFilters(appliedFilters);
@@ -136,92 +119,78 @@ const Workers = () => {
   });
 
   return (
-    <View style={{ flex: 1 }}>
-      <Loader loading={isLoading || isRefetching} />
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.searchSectionWrapper}>
-            <View style={styles.searchBar}>
-              <Ionicons
-                name="search"
-                size={18}
-                style={{ marginRight: 5 }}
-                color={Colors.black}
-              />
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search..."
-                value={searchText}
-                onChangeText={handleSearch}
-                placeholderTextColor="black"
-              />
-            </View>
-            <TouchableOpacity
-              onPress={() => setFilterVisible(true)}
-              style={styles.filterBtn}
-            >
-              <Ionicons name="options" size={28} color={Colors.white} />
-            </TouchableOpacity>
-          </View>
+    <>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <CustomHeader
+              title={userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
+              right="notification"
+            />
+          )
+        }}
+      />
+      <View style={{ flex: 1 }}>
+        <Loader loading={isLoading || isRefetching} />
+        <View style={styles.container}>
+          <SearchFilter data={response} setFilteredData={setFilteredData} />
+
+          <CategoryButtons
+            type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
+            onCagtegoryChanged={onCatChanged}
+          />
+
+          <PaginationString
+            type="services"
+            isLoading={isLoading}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+
+          {memoizedData && memoizedData?.length > 0 ? (
+            <>
+              {userDetails?.role === "EMPLOYER" ? (
+                <ListingsVerticalWorkers
+                  type="worker"
+                  availableInterest={WORKERTYPES}
+                  listings={memoizedData || []}
+                  loadMore={loadMore}
+                  isFetchingNextPage={isFetchingNextPage}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={!isRefetching && refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                />
+              ) : (
+                <ListingsVerticalServices
+                  listings={memoizedData || []}
+                  loadMore={loadMore}
+                  isFetchingNextPage={isFetchingNextPage}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={!isRefetching && refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <EmptyDatePlaceholder
+              title={userDetails?.role === "EMPLOYER" ? "Worker" : "Service"}
+            />
+          )}
         </View>
 
-        <CategoryButtons
-          type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
-          onCagtegoryChanged={onCatChanged}
+        <Filters
+          filterVisible={isFilterVisible}
+          setFilterVisible={setFilterVisible}
+          onApply={handleApply}
         />
-
-        <PaginationString
-          type="services"
-          isLoading={isLoading}
-          totalFetchedData={memoizedData?.length}
-          totalData={totalData}
-        />
-
-        {memoizedData && memoizedData?.length > 0 ? (
-          <>
-            {userDetails?.role === "EMPLOYER" ? (
-              <ListingsVerticalWorkers
-                type="worker"
-                availableInterest={WORKERTYPES}
-                listings={memoizedData || []}
-                loadMore={loadMore}
-                isFetchingNextPage={isFetchingNextPage}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={!isRefetching && refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-              />
-            ) : (
-              <ListingsVerticalServices
-                listings={memoizedData || []}
-                loadMore={loadMore}
-                isFetchingNextPage={isFetchingNextPage}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={!isRefetching && refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-              />
-            )}
-          </>
-        ) : (
-          <EmptyDatePlaceholder
-            title={userDetails?.role === "EMPLOYER" ? "Worker" : "Service"}
-          />
-        )}
       </View>
-
-      {/* Filter Modal */}
-      <FilterModal
-        isVisible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-        onApply={handleApply}
-        onClear={handleClear}
-      />
-    </View>
+    </>
   );
 };
 
@@ -231,32 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
   },
-  headerContainer: {},
-  searchBox: {
-    color: "#000000",
-    height: "100%",
-    width: "92%",
-    fontSize: 16,
-  },
-  searchSectionWrapper: {
-    flexDirection: "row",
-    marginVertical: 20,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    paddingLeft: 16,
-    borderRadius: 8,
-  },
-  filterBtn: {
-    backgroundColor: Colors.primary,
-    padding: 12,
-    borderRadius: 8,
-    marginLeft: 20,
-  },
-  categoryContainer: {},
 });
 
 export default Workers;

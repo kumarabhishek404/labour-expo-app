@@ -1,21 +1,24 @@
 import Colors from "@/constants/Colors";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Fontisto, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 interface ServiceInformationProps {
   information: any;
-  style?: any
+  style?: any;
 }
 
-const ServiceInformation = ({ information, style }: ServiceInformationProps) => {
+const ServiceInformation = ({
+  information,
+  style,
+}: ServiceInformationProps) => {
   return (
     <View style={styles?.container}>
-      <Text style={[styles.workInfoHeading, style]}>Service Information</Text>
+      <CustomHeading textAlign="left" style={[style]}>
+        Service Information
+      </CustomHeading>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
           style={[
@@ -27,30 +30,30 @@ const ServiceInformation = ({ information, style }: ServiceInformationProps) => 
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.serviceDetails?.total || 0}
-            </Text>
+            </CustomHeading>
             <MaterialCommunityIcons
               style={{ transform: "rotate(90deg)" }}
-              name="pause-circle"
+              name="pause-circle-outline"
               size={28}
-              color={Colors.black}
+              color={Colors.primary}
             />
           </View>
-          <Text>Total Services</Text>
+          <CustomText fontSize={14}>Total Services</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.serviceDetails?.completed || 0}
-            </Text>
+            </CustomHeading>
             <Ionicons
-              name="checkmark-done-circle-sharp"
+              name="checkmark-done-circle-outline"
               size={28}
-              color={Colors.black}
+              color={Colors.primary}
             />
           </View>
-          <Text>Completed</Text>
+          <CustomText fontSize={14}>Completed</CustomText>
         </View>
       </View>
       <View style={[styles.workInfoWrapper, { borderTopWidth: 0 }]}>
@@ -64,25 +67,25 @@ const ServiceInformation = ({ information, style }: ServiceInformationProps) => 
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.serviceDetails?.pending || 0}
-            </Text>
+            </CustomHeading>
             <MaterialCommunityIcons
-              name="clock"
+              name="clock-outline"
               size={28}
-              color={Colors.black}
+              color={Colors.primary}
             />
           </View>
-          <Text>Pending</Text>
+          <CustomText fontSize={14}>Pending</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <Text style={styles?.itemValue}>
+            <CustomHeading fontSize={26}>
               {information?.serviceDetails?.cancelled?.byWorker || 0}
-            </Text>
-            <MaterialIcons name="cancel" size={28} color={Colors.black} />
+            </CustomHeading>
+            <Fontisto name="close" size={24} color={Colors.primary} />
           </View>
-          <Text>Cancelled</Text>
+          <CustomText fontSize={14}>Cancelled</CustomText>
         </View>
       </View>
     </View>
@@ -92,18 +95,14 @@ const ServiceInformation = ({ information, style }: ServiceInformationProps) => 
 export default ServiceInformation;
 
 const styles = StyleSheet.create({
-  container: {
-    // padding: 20,
-  },
+  container: {},
   workInfoHeading: {
     color: Colors.primary,
-    // marginLeft: 30,
     fontWeight: "700",
     fontSize: 16,
     lineHeight: 26,
   },
   workInfoWrapper: {
-    // marginTop: 10,
     borderBottomColor: "#dddddd",
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
@@ -120,7 +119,7 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     gap: 6,
   },
   itemValue: {

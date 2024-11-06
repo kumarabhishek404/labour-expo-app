@@ -1,9 +1,5 @@
-import React, { useRef, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-} from "react-native";
+import React, { useRef } from "react";
+import { View, StyleSheet } from "react-native";
 import MapView, {
   Callout,
   Marker,
@@ -11,6 +7,7 @@ import MapView, {
   Region,
 } from "react-native-maps";
 import Button from "../inputs/Button";
+import CustomText from "./CustomText";
 
 const Map = ({ data }: any) => {
   const mapRef: any = useRef();
@@ -71,7 +68,7 @@ const Map = ({ data }: any) => {
         <Marker coordinate={data || initialRegion}>
           <Callout onPress={onCalloutPresses}>
             <View style={{ padding: 4 }}>
-              <Text style={{ fontSize: 20 }}>{JSON.stringify(data)}</Text>
+              <CustomText fontSize={20}>{JSON.stringify(data)}</CustomText>
             </View>
           </Callout>
         </Marker>

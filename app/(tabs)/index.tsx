@@ -1,21 +1,9 @@
-import {
-  Button,
-  Image,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { router, Stack, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { Stack, useFocusEffect } from "expo-router";
 import Colors from "@/constants/Colors";
-import { useHeaderHeight } from "@react-navigation/elements";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { fetchAllWorkers } from "../api/workers";
@@ -24,23 +12,29 @@ import Loader from "@/components/commons/Loader";
 import { fetchAllEmployers } from "../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
-import profileImage from "../../assets/images/placeholder-person.jpg";
 import i18n from "@/utils/i18n";
 import { useLocale } from "../context/locale";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
-import { useNotification } from "../context/NotificationContext";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
 import { WORKERTYPES } from "@/constants";
+import QuickContact from "@/components/commons/QuickContact";
+import TestimonialSlider from "@/components/commons/Testimonials";
+import PublicationsScreen from "@/components/commons/Publications";
+import AboutCompany from "@/components/commons/AboutCompany";
+import CompanySuccess from "@/components/commons/CompanySuccessStats";
+import ScrollHint from "@/components/commons/ScrollToRight";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomHeader from "@/components/commons/Header";
+import SpeechToText from "@/components/commons/VoiceToText";
+import AudioRecorder from "@/components/commons/AudioRecord";
 
 const Page = () => {
   useLocale();
-  const { notification, expoPushToken, error } = useNotification();
   const userDetails = useAtomValue(UserAtom);
-  const headerHeight = useHeaderHeight();
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
     userDetails?.role === "EMPLOYER" ? "" : "Hiring"
@@ -95,6 +89,7 @@ const Page = () => {
       return undefined;
     },
   });
+
   useEffect(() => {
     fetchLocation();
   }, []);
@@ -150,51 +145,23 @@ const Page = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: true,
-          headerTitle: "",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/profile")}
-              style={{ marginLeft: 20 }}
-            >
-              <Image
-                source={
-                  userDetails?.profilePicture
-                    ? {
-                        uri: userDetails?.profilePicture,
-                      }
-                    : profileImage
-                }
-                style={{ width: 40, height: 40, borderRadius: 4 }}
-              />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {}}
-              style={{
-                marginRight: 20,
-                backgroundColor: Colors.white,
-                padding: 10,
-                borderRadius: 8,
-                shadowColor: "#171717",
-                shadowOffset: { width: 2, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3,
-              }}
-            >
-              <Ionicons name="notifications" size={20} color={Colors.black} />
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader
+              title=""
+              left="profile"
+              right="notification"
+            />
           ),
         }}
       />
+
       <Loader
         loading={
           isLoading || isRefetching || isSecondLoading || isSecondRefetching
         }
       />
 
-      <View style={[styles.container, { paddingTop: headerHeight }]}>
+      <View style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -204,76 +171,74 @@ const Page = () => {
             />
           }
         >
-          <Text style={styles.headingTxt}>
-            {i18n.t("welcome")} {userDetails?.firstName}
-          </Text>
+          <View style={{ paddingHorizontal: 10, paddingTop: 10 }}>
+            <CustomHeading
+              textAlign="left"
+              fontSize={24}
+              style={{ marginBottom: 10 }}
+            >
+              {i18n.t("welcome")} {userDetails?.firstName}
+            </CustomHeading>
+            <AudioRecorder />
+            <BannerSlider />
+            <HomePageLinks />
 
-          <View style={styles.searchSectionWrapper}>
-            <View style={styles.searchBar}>
-              <Ionicons
-                name="search"
-                size={18}
-                style={{ marginRight: 5 }}
-                color={Colors.black}
-              />
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search..."
-                // value={searchText}
-                // onChangeText={handleSearch}
-                placeholderTextColor="black"
-              />
+            <CustomHeading textAlign="left">
+              {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
+            </CustomHeading>
+            <View style={styles.divider}></View>
+
+            <CategoryButtons
+              type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
+              onCagtegoryChanged={onCatChanged}
+              stylesProp={styles.categoryContainer}
+            />
+
+            <View style={{ paddingBottom: 30 }}>
+              {userDetails?.role === "EMPLOYER" ? (
+                <ListingHorizontalWorkers
+                  availableInterest={WORKERTYPES}
+                  category={category}
+                  listings={memoizedData || []}
+                  loadMore={loadMore}
+                  isFetchingNextPage={isFetchingNextPage}
+                />
+              ) : (
+                <ListingHorizontalServices
+                  category={category}
+                  listings={memoizedData || []}
+                  loadMore={loadMore}
+                  isFetchingNextPage={isFetchingNextPage}
+                />
+              )}
+              <ScrollHint />
             </View>
-            <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
-              <Ionicons name="options" size={28} color={Colors.white} />
-            </TouchableOpacity>
+
+            <View style={{ marginBottom: 40 }}>
+              {userDetails?.role === "EMPLOYER" ? (
+                <GroupWorkersListing
+                  category={category}
+                  listings={secondMemoizedData || []}
+                  loadMore={loadSecondMore}
+                  isFetchingNextPage={isSecondFetchingNextPage}
+                />
+              ) : (
+                <GroupEmployersListing
+                  category={category}
+                  listings={secondMemoizedData || []}
+                  loadMore={loadSecondMore}
+                  isFetchingNextPage={isSecondFetchingNextPage}
+                />
+              )}
+              <ScrollHint />
+            </View>
           </View>
 
-          <BannerSlider />
-          <HomePageLinks />
-
-          <Text style={styles.categroyTitle}>
-            {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
-          </Text>
-
-          <CategoryButtons
-            type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
-            onCagtegoryChanged={onCatChanged}
-            stylesProp={styles.categoryContainer}
-          />
-
-          {userDetails?.role === "EMPLOYER" ? (
-            <ListingHorizontalWorkers
-              availableInterest={WORKERTYPES}
-              category={category}
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-            />
-          ) : (
-            <ListingHorizontalServices
-              category={category}
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-            />
-          )}
-
-          {userDetails?.role === "EMPLOYER" ? (
-            <GroupWorkersListing
-              category={category}
-              listings={secondMemoizedData || []}
-              loadMore={loadSecondMore}
-              isFetchingNextPage={isSecondFetchingNextPage}
-            />
-          ) : (
-            <GroupEmployersListing
-              category={category}
-              listings={secondMemoizedData || []}
-              loadMore={loadSecondMore}
-              isFetchingNextPage={isSecondFetchingNextPage}
-            />
-          )}
+          <AboutCompany />
+          <PublicationsScreen />
+          <CompanySuccess />
+          <TestimonialSlider />
+          <QuickContact />
         </ScrollView>
       </View>
     </>
@@ -285,100 +250,8 @@ export default Page;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     backgroundColor: Colors.bgColor,
-  },
-  headingTxt: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: Colors.black,
-    marginTop: 10,
-  },
-  searchSectionWrapper: {
-    flexDirection: "row",
-    marginVertical: 20,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    paddingLeft: 16,
-    borderRadius: 8,
-  },
-  searchBox: {
-    color: "#000000",
-    height: "100%",
-    width: "92%",
-    fontSize: 16,
-  },
-  filterBtn: {
-    backgroundColor: Colors.primary,
-    padding: 12,
-    borderRadius: 8,
-    marginLeft: 20,
-  },
-  linksContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  row: {
-    width: "48%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  secondRow: {
-    width: "48%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 16,
-  },
-  box: {
-    height: 176,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    paddingTop: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  secondBox: {
-    height: 80,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  firstBoxText: {
-    width: 140,
-    alignSelf: "flex-start",
-    paddingHorizontal: 15,
-    textAlign: "left",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    padding: 10,
-  },
-  secondBoxText: {
-    width: 140,
-    alignSelf: "flex-start",
-    paddingHorizontal: 15,
-    textAlign: "left",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    padding: 10,
-    zIndex: 1,
   },
   imageContainer: {
     position: "absolute",
@@ -394,24 +267,32 @@ const styles = StyleSheet.create({
     width: 70,
     height: 75,
   },
-  title: {
-    fontWeight: "bold",
-    fontSize: 14,
-    color: "#333333",
-  },
-  subtitle: {
-    fontSize: 10,
-    color: "#888888",
-  },
   singleBoxContainer: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 16,
   },
-  categroyTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: Colors.black,
+  divider: {
+    width: 50,
+    height: 2,
+    backgroundColor: "#ccc",
+    marginVertical: 8,
+    marginBottom: 10,
   },
   categoryContainer: {},
+  scrollToRight: {
+    textAlign: "right",
+    paddingTop: 10,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  alertDot: {
+    position: "absolute",
+    top: -5,
+    left: -5,
+    width: 12,
+    height: 12,
+    backgroundColor: "red",
+    borderRadius: 30,
+  },
 });

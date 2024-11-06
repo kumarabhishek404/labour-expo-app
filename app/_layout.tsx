@@ -13,12 +13,13 @@ import { LocaleProvider } from "./context/locale";
 import { NotificationProvider } from "./context/NotificationContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
+import { StatusBar } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 

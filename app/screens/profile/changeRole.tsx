@@ -1,13 +1,14 @@
 import { updateUserRoleById } from "@/app/api/user";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomHeader from "@/components/commons/Header";
 import Loader from "@/components/commons/Loader";
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import Button from "@/components/inputs/Button";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { useAtom } from "jotai";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
 const ChangeRoleScreen = () => {
@@ -24,7 +25,7 @@ const ChangeRoleScreen = () => {
     mutationFn: async () => {
       if (selectedRole1 && selectedRole2 && selectedRole3) {
         return await updateUserRoleById({
-          role: userDetails?.role === "WORKER" ? "MEDIATOR" : "WORKER"
+          role: userDetails?.role === "WORKER" ? "MEDIATOR" : "WORKER",
         });
       } else {
         return Alert.alert("Error", "Please select all roles.");
@@ -75,33 +76,12 @@ const ChangeRoleScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerTitle: "Change Role",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Change Role" left="back" />,
         }}
       />
       <Loader loading={mutationChangeProfileRole?.isPending} />
       <View style={styles.container}>
-        <Text style={styles.label}>Mediator Type</Text>
+        <CustomHeading textAlign="left">Mediator Type</CustomHeading>
         <Dropdown
           style={[styles.dropdown, isFocus1 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
@@ -124,8 +104,7 @@ const ChangeRoleScreen = () => {
           }}
           containerStyle={styles.dropdownContainer}
         />
-
-        <Text style={styles.label}>Extra Facility</Text>
+        <CustomHeading textAlign="left">Extra Facility</CustomHeading>
         <Dropdown
           style={[styles.dropdown, isFocus2 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
@@ -148,8 +127,7 @@ const ChangeRoleScreen = () => {
           }}
           containerStyle={styles.dropdownContainer}
         />
-
-        <Text style={styles.label}>Place of Team Collection</Text>
+        <CustomHeading textAlign="left">Place of Team Collection</CustomHeading>
         <Dropdown
           style={[styles.dropdown, isFocus3 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
@@ -174,19 +152,16 @@ const ChangeRoleScreen = () => {
         />
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.cancelButton}
+          <Button
+            isPrimary={false}
+            title="Cancel"
             onPress={() => router.back()}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.changeRoleButton}
+          />
+          <Button
+            isPrimary={true}
+            title="Change Role"
             onPress={() => mutationChangeProfileRole.mutate()}
-          >
-            <Text style={styles.changeRoleButtonText}>Change Role</Text>
-          </TouchableOpacity>
+          />
         </View>
       </View>
     </>
@@ -197,6 +172,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    gap: 5,
   },
   label: {
     marginBottom: 8,
@@ -243,7 +219,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 30,
+    marginTop: 10,
   },
   cancelButton: {
     backgroundColor: "#FF0000",

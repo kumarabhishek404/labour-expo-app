@@ -11,6 +11,9 @@ import Farmer7 from "../../assets/farmer7.png";
 import Farmer8 from "../../assets/farmer8.png";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
+import Colors from "@/constants/Colors";
 
 const HomePageLinks = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -19,17 +22,24 @@ const HomePageLinks = () => {
     {
       title: userDetails?.role === "EMPLOYER" ? "Workers" : "Services",
       subtitle: "Mobile, Fiber and AirFiber",
-      path: "/(tabs)/workers",
+      path: {
+        pathname: "/(tabs)/workers",
+        params: { role: "workers", title: "Workers", type: "all" },
+      },
       image: Farmer3,
       style: [styles.largeBox, styles.serviceBox],
       big: true,
     },
     {
-      title: "Mediators",
+      title: userDetails?.role === "MEDIATOR" ? "Workers" : "Mediators",
       subtitle: "Mobile, Fiber and AirFiber",
       path: {
-        pathname: "/screens/mediator",
-        params: { title: "Mediators", type: "all" },
+        pathname: "/screens/users",
+        params: {
+          role: userDetails?.role === "MEDIATOR" ? "workers" : "mediators",
+          title: userDetails?.role === "MEDIATOR" ? "Workers" : "Mediators",
+          type: "all",
+        },
       },
       image: Farmer8,
       style: [styles.largeBox, styles.employerBox],
@@ -61,8 +71,12 @@ const HomePageLinks = () => {
             onPress={() => router.push(link?.path)}
           >
             <View style={styles.textContainer}>
-              <Text style={styles.title}>{link.title}</Text>
-              <Text style={styles.subtitle}>{link.subtitle}</Text>
+              <CustomHeading textAlign="left" fontSize={12}>
+                {link.title}
+              </CustomHeading>
+              <CustomText textAlign="left" fontSize={10}>
+                {link.subtitle}
+              </CustomText>
             </View>
             <View style={styles.imageContainer}>
               <Image
@@ -96,8 +110,8 @@ const styles = StyleSheet.create({
     height: 176,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    // borderWidth: 1,
+    // borderColor: Colors?.secondaryText,
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "#000",
@@ -112,8 +126,8 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    // borderWidth: 1,
+    // borderColor: Colors?.secondaryText,
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "#000",
@@ -149,7 +163,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    opacity: 0.8,
+    opacity: 0.9,
     zIndex: -1,
   },
   largeImage: {
@@ -161,15 +175,5 @@ const styles = StyleSheet.create({
     width: 80,
     height: 90,
     borderBottomRightRadius: 8,
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 13,
-    color: "#333333",
-  },
-  subtitle: {
-    fontSize: 10,
-    // marginRight: 10,
-    color: "#666666",
   },
 });

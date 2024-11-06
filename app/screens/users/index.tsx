@@ -3,10 +3,8 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import {
   View,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  Text,
   RefreshControl,
 } from "react-native";
 import { useAtomValue } from "jotai";
@@ -15,7 +13,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import {
   fetchAllBookedWorkers,
   fetchAllLikedWorkers,
@@ -27,13 +24,17 @@ import { router, Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import { WORKERTYPES } from "@/constants";
+import SearchFilter from "@/components/commons/SearchFilter";
+import CustomHeader from "@/components/commons/Header";
+import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
 
 const Workers = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
-  const { title, type } = useGlobalSearchParams();
+  const { role, title, type } = useGlobalSearchParams();
+console.log("role --", role);
 
   const {
     data: response,
@@ -44,20 +45,9 @@ const Workers = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: [
-      type === "favourite"
-        ? "favouriteWorkers"
-        : type === "booked"
-        ? "bookedWorkers"
-        : "workers",
-      category,
-    ],
+    queryKey: [handleQueryKey(role, type), category],
     queryFn: ({ pageParam }) =>
-      type === "favourite"
-        ? fetchAllLikedWorkers({ pageParam, skill: category })
-        : type === "booked"
-        ? fetchAllBookedWorkers({ pageParam, skill: category })
-        : fetchAllWorkers({ pageParam, skill: category }),
+      handleQueryFunction(role, type, pageParam, category),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -114,84 +104,20 @@ const Workers = () => {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
-          headerTitle: `${title}`,
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {}}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Ionicons name="bookmark-outline" size={20} />
-              </View>
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader title={`${title}`} left="back" right="like" />
           ),
         }}
       />
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.searchSectionWrapper}>
-              <View style={styles.searchBar}>
-                <Ionicons
-                  name="search"
-                  size={18}
-                  style={{ marginRight: 5 }}
-                  color={Colors.black}
-                />
-                <TextInput
-                  style={styles.searchBox}
-                  placeholder="Search..."
-                  value={searchText}
-                  onChangeText={handleSearch}
-                  placeholderTextColor="black"
-                />
-              </View>
-              <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
-                <Ionicons name="options" size={28} color={Colors.white} />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons
-            type="workers"
-            onCagtegoryChanged={onCatChanged}
-            stylesProp={styles.categoryContainer}
-          />
+          <CategoryButtons type={role} onCagtegoryChanged={onCatChanged} />
 
           <PaginationString
-            type="workers"
+            type={role}
             isLoading={isLoading}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
@@ -199,7 +125,6 @@ const Workers = () => {
 
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
-              type="worker"
               availableInterest={WORKERTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}
@@ -226,32 +151,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
   },
-  headerContainer: {},
-  searchBox: {
-    color: "#000000",
-    height: "100%",
-    width: "92%",
-    fontSize: 16,
-  },
-  searchSectionWrapper: {
-    flexDirection: "row",
-    marginVertical: 20,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    paddingLeft: 16,
-    borderRadius: 8,
-  },
-  filterBtn: {
-    backgroundColor: Colors.primary,
-    padding: 12,
-    borderRadius: 8,
-    marginLeft: 20,
-  },
-  categoryContainer: {},
 });
 
 export default Workers;

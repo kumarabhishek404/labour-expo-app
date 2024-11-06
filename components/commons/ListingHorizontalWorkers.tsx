@@ -2,22 +2,20 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Colors from "@/constants/Colors";
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
-import { WorkerType } from "@/types/type";
 import { debounce } from "lodash";
-import { getWorkLabel } from "@/constants/functions";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 type Props = {
   availableInterest: any;
@@ -53,76 +51,78 @@ const ListingHorizontalWorkers = ({
 }: Props) => {
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
-      <Link href={`/screens/worker/${item?._id}`} asChild>
-        <TouchableOpacity>
-          <View style={styles.item}>
-            <Image
-              source={
-                item?.profilePicture
-                  ? { uri: item?.profilePicture }
-                  : coverImage
-              }
-              style={styles.image}
-            />
-            {item?.isBookmarked && (
-              <View style={styles.bookmark}>
-                <Ionicons name="heart" size={30} color={Colors.white} />
-              </View>
-            )}
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: `/screens/users/${item?._id}`,
+            params: { role: "workers", title: "Worker Details", type: "details" },
+          })
+        }
+      >
+        <View style={styles.item}>
+          <Image
+            source={
+              item?.profilePicture ? { uri: item?.profilePicture } : coverImage
+            }
+            style={styles.image}
+          />
+          {item?.isBookmarked && (
+            <View style={styles.bookmark}>
+              <Ionicons name="heart" size={30} color={Colors.white} />
+            </View>
+          )}
 
-            <SkillSelector
-              canAddSkills={false}
-              isShowLabel={false}
-              style={styles?.skillsContainer}
-              tagStyle={styles?.skillTag}
-              tagTextStyle={styles?.skillTagText}
-              userSkills={item?.skills}
-              availableSkills={availableInterest}
-              count={2}
-            />
+          <SkillSelector
+            canAddSkills={false}
+            isShowLabel={false}
+            style={styles?.skillsContainer}
+            tagStyle={styles?.skillTag}
+            tagTextStyle={styles?.skillTagText}
+            userSkills={item?.skills}
+            availableSkills={availableInterest}
+            count={2}
+          />
 
-            <Text style={styles.itemTxt}>
-              {item?.firstName} {item?.middleName} {item?.lastName}
-            </Text>
+          <CustomHeading textAlign="left">
+            {item?.firstName} {item?.middleName} {item?.lastName}
+          </CustomHeading>
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
+            >
+              <FontAwesome5
+                name="map-marker-alt"
+                size={12}
+                color={Colors.primary}
+              />
+              <CustomText>{item?.address || "Address not found"}</CustomText>
+            </View>
             <View
               style={{
-                flexDirection: "column",
+                flexDirection: "row",
                 justifyContent: "space-between",
-                gap: 8,
+                alignItems: "flex-end",
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <FontAwesome5
-                  name="map-marker-alt"
-                  size={12}
-                  color={Colors.primary}
-                />
-                <Text style={styles.itemAddressTxt}>
-                  {item?.address || "Address not found"}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                }}
-              >
-                <RatingAndReviews
-                  rating={item?.rating || 4.5}
-                  reviews={item?.reviews || 400}
-                />
-                <View style={styles.priceContainer}>
-                  <Text style={styles.itemPrice}>
-                    <FontAwesome name="rupee" size={14} />{" "}
-                    {item?.price || "350"}/Day
-                  </Text>
-                </View>
+              <RatingAndReviews
+                rating={item?.rating || 4.5}
+                reviews={item?.reviews || 400}
+              />
+              <View style={styles.priceContainer}>
+                <CustomHeading>
+                  <FontAwesome name="rupee" size={14} /> {item?.price}/Day
+                </CustomHeading>
               </View>
             </View>
           </View>
-        </TouchableOpacity>
-      </Link>
+        </View>
+      </TouchableOpacity>
     );
   });
 
@@ -170,6 +170,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 20,
     width: 220,
+    height: "auto",
+    maxHeight: "auto",
   },
   image: {
     width: 200,

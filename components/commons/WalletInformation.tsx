@@ -1,6 +1,8 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 interface WallletInformationProps {
   type: string;
@@ -17,7 +19,9 @@ const WallletInformation = ({
     <View style={styles?.container}>
       {type === "spents" ? (
         <>
-          <Text style={[styles.workInfoHeading, style]}>Wallet</Text>
+          <CustomHeading textAlign="left" style={[style]}>
+            Wallet
+          </CustomHeading>
           <View style={styles.infoBoxWrapper}>
             <View
               style={[
@@ -28,18 +32,24 @@ const WallletInformation = ({
                 },
               ]}
             >
-              <Text>₹ {wallet?.spents?.work}</Text>
-              <Text>Spents</Text>
+              <CustomHeading fontSize={20}>
+                ₹ {wallet?.spents?.work}
+              </CustomHeading>
+              <CustomText fontSize={14}>Spents</CustomText>
             </View>
             <View style={styles.infoBox}>
-              <Text>₹ {wallet?.spents?.tip}</Text>
-              <Text>Tip</Text>
+              <CustomHeading fontSize={20}>
+                ₹ {wallet?.spents?.tip}
+              </CustomHeading>
+              <CustomText fontSize={14}>Tip</CustomText>
             </View>
           </View>
         </>
       ) : (
         <>
-          <Text style={[styles.workInfoHeading, style]}>Wallet</Text>
+          <CustomHeading textAlign="left" style={[style]}>
+            Wallet
+          </CustomHeading>
           <View style={styles.infoBoxWrapper}>
             <View
               style={[
@@ -50,12 +60,16 @@ const WallletInformation = ({
                 },
               ]}
             >
-              <Text>₹ {wallet?.earnings?.work}</Text>
-              <Text>Earnings</Text>
+              <CustomHeading fontSize={20}>
+                ₹ {wallet?.earnings?.work}
+              </CustomHeading>
+              <CustomText fontSize={14}>Earnings</CustomText>
             </View>
             <View style={styles.infoBox}>
-              <Text>₹ {wallet?.earnings?.rewards}</Text>
-              <Text>Rewards</Text>
+              <CustomHeading fontSize={20}>
+                ₹ {wallet?.earnings?.rewards}
+              </CustomHeading>
+              <CustomText fontSize={14}>Rewards</CustomText>
             </View>
           </View>
         </>

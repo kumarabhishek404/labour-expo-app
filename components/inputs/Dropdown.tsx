@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "@/constants/Colors";
-import { Fontisto, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import CustomHeader from "../commons/Header";
+import CustomHeading from "../commons/CustomHeading";
 
 const DropdownComponent = ({
+  label,
   value,
   setValue,
   placeholder,
@@ -15,6 +17,7 @@ const DropdownComponent = ({
 }: any) => {
   return (
     <View style={styles.container}>
+      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <Dropdown
         style={[styles.dropdown, style]}
         placeholderStyle={styles.placeholderStyle}
@@ -35,7 +38,7 @@ const DropdownComponent = ({
         renderLeftIcon={() => (
           <View
             style={{
-              marginLeft: 6,
+              marginRight: 5,
             }}
           >
             {icon ? (
@@ -61,6 +64,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
+    gap: 5,
   },
   dropdown: {
     height: 53,

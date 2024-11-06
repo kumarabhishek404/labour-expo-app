@@ -4,7 +4,6 @@ import {
   Image,
   ListRenderItem,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -24,6 +23,9 @@ import { AddServiceAtom, UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue, useSetAtom } from "jotai";
 import moment from "moment";
 import ImageSlider from "./ImageSlider";
+import Requirements from "./Requirements";
+import CustomText from "./CustomText";
+import CustomHeading from "./CustomHeading";
 
 type Props = {
   listings: any[];
@@ -48,6 +50,7 @@ type RenderItemTypes = {
     endDate: Date;
     appliedBy: Array<string>;
     selected: Array<string>;
+    requirements: any;
   };
 };
 
@@ -58,7 +61,6 @@ const ListingsVerticalServices = ({
   refreshControl,
 }: Props) => {
   const userDetails = useAtomValue(UserAtom);
-  console.log("userDetails--", userDetails);
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
@@ -80,7 +82,7 @@ const ListingsVerticalServices = ({
                   ]}
                 >
                   <Ionicons name="happy" size={20} color={Colors.white} />
-                  <Text style={styles?.applicantsLabel}>Selected</Text>
+                  <CustomHeading color={Colors?.white}>Selected</CustomHeading>
                 </View>
               )}
 
@@ -89,12 +91,19 @@ const ListingsVerticalServices = ({
                 !item?.appliedBy?.includes(userDetails?._id) && (
                   <View style={styles.applicants}>
                     <Fontisto name="persons" size={18} color={Colors.white} />
-                    <Text style={styles?.applicantsValue}>
+                    <CustomHeading color={Colors?.white}>
                       {item?.appliedBy?.length}
-                    </Text>
-                    <Text style={styles?.applicantsLabel}>Proposals</Text>
+                    </CustomHeading>
+                    <CustomHeading color={Colors?.white}>
+                      Proposals
+                    </CustomHeading>
                   </View>
                 )}
+
+              <Requirements
+                type="highlights"
+                requirements={item?.requirements}
+              />
 
               <View
                 style={{
@@ -104,12 +113,9 @@ const ListingsVerticalServices = ({
                 }}
               >
                 <View style={{ width: "70%", flexDirection: "column" }}>
-                  <Text style={styles.itemTxt}>{item.name}</Text>
+                  <CustomHeading textAlign="left">{item.name}</CustomHeading>
                 </View>
-                <Text style={styles.itemPriceTxt}>
-                  {item?.duration ||
-                    getTimeAgo(item?.createdAt || "2024-10-13")}
-                </Text>
+                <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
               </View>
               <View
                 style={{
@@ -127,33 +133,43 @@ const ListingsVerticalServices = ({
                     style={{
                       width: "69%",
                       flexDirection: "row",
-                      alignItems: "center",
+                      alignItems: "flex-start",
                     }}
                   >
                     <FontAwesome5
                       name="map-marker-alt"
-                      size={18}
+                      size={14}
                       color={Colors.primary}
                     />
-                    <Text style={styles.itemLocationTxt}>{item?.address}</Text>
+                    <CustomText
+                      fontSize={10}
+                      textAlign="left"
+                      style={{ marginLeft: 5 }}
+                    >
+                      {item?.address}
+                    </CustomText>
                   </View>
 
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Entypo name="calendar" size={18} color={Colors.primary} />
-                    <Text style={styles.itemLocationTxt}>
+                    <Entypo name="calendar" size={14} color={Colors.primary} />
+                    <CustomText
+                      fontSize={10}
+                      textAlign="left"
+                      style={{ marginLeft: 5 }}
+                    >
                       {moment(item?.startDate, "YYYY-MM-DD")?.format(
                         "Do MMMM YYYY"
                       )}
-                    </Text>
+                    </CustomText>
                   </View>
                 </View>
 
                 <View style={styles?.actionContainer}>
-                  <Text style={styles.itemPriceTxt}>
+                  <CustomText>
                     Duration{" "}
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}
-                  </Text>
+                  </CustomText>
 
                   {item?.location &&
                     item?.location?.latitude &&
@@ -161,13 +177,13 @@ const ListingsVerticalServices = ({
                     !isNaN(
                       calculateDistance(item?.location, userDetails?.location)
                     ) && (
-                      <Text style={styles.itemDistanceAway}>
+                      <CustomHeading>
                         {calculateDistance(
                           item?.location,
                           userDetails?.location
                         )}{" "}
                         Kms
-                      </Text>
+                      </CustomHeading>
                     )}
                 </View>
               </View>
@@ -225,17 +241,18 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     width: "100%",
+    position: "relative",
   },
   image: {
     width: "100%",
     height: 200,
     borderRadius: 8,
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   applicants: {
     position: "absolute",
-    top: 185,
-    right: 20,
+    top: 180,
+    right: 6,
     backgroundColor: Colors.primary,
     paddingVertical: 6,
     paddingHorizontal: 8,
@@ -245,11 +262,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  applicantsLabel: {
-    color: Colors?.white,
-    fontSize: 16,
-    fontWeight: "600",
   },
   applicantsValue: {
     color: Colors?.white,
@@ -277,10 +289,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textTransform: "uppercase",
     backgroundColor: "#d6ecdd",
-  },
-  itemLocationTxt: {
-    fontSize: 12,
-    marginLeft: 5,
   },
   itemPriceTxt: {
     fontSize: 12,

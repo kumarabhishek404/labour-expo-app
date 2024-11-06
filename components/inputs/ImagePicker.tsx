@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React from "react";
+import { View, StyleSheet, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
+import Button from "./Button";
+import CustomText from "../commons/CustomText";
 
 interface ImageUploadProps {
   name: string;
@@ -47,17 +49,17 @@ const ImageUpload = ({
       <View style={[styles.container, errors[name] && styles?.errorInput]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />
-          <TouchableOpacity
+          <Button
+            isPrimary={true}
+            title="Choose images"
             onPress={pickImage}
             style={styles.imageUploadButton}
-          >
-            <Text style={styles.imageUploadButtonText}>Choose images</Text>
-          </TouchableOpacity>
+          />
         </View>
         <View style={styles.imageContainer}>
           {images && images?.length > 0 ? (
             images?.map((imgUri: any, index: number) => (
-              <View key={index} style={styles.imagesContainer}>
+              <View key={index}>
                 <Entypo
                   name="cross"
                   size={17}
@@ -73,16 +75,16 @@ const ImageUpload = ({
               </View>
             ))
           ) : (
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <Text>Not added any image</Text>
-            </View>
+            <CustomText style={{ width: "100%" }}>
+              Not added any image
+            </CustomText>
           )}
         </View>
       </View>
-      {errors[name] ? (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
-      ) : (
-        <Text></Text>
+      {errors[name] && (
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -91,11 +93,6 @@ const ImageUpload = ({
 export default ImageUpload;
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "#f5f7fa",
-  //   padding: 20,
-  // },
   container: {
     borderWidth: 1,
     borderColor: Colors.secondary,
@@ -117,17 +114,6 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 8,
   },
-  uploadButton: {
-    backgroundColor: Colors?.primary,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  uploadText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
   imageUploadContainer: {
     width: "100%",
     display: "flex",
@@ -135,21 +121,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   imageUploadButton: {
-    backgroundColor: Colors.primary,
-    padding: 8,
-    borderRadius: 8,
-    marginBottom: 10,
+    paddingHorizontal: 8,
   },
-  imageUploadButtonText: {
-    color: Colors.white,
-    fontSize: 16,
-  },
-  selectedImageContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginVertical: 18,
-  },
-  imagesContainer: {},
   cancelImage: {
     position: "absolute",
     zIndex: 1,
@@ -159,14 +132,6 @@ const styles = StyleSheet.create({
   },
   errorInput: {
     borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
-  errorText: {
-    flex: 1,
-    color: "red",
-    fontSize: 12,
-    marginRight: 16,
-    marginBottom: 10,
+    borderColor: Colors?.danger,
   },
 });

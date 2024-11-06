@@ -2,19 +2,20 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
-import { ServiceType } from "@/types/type";
 import { debounce } from "lodash";
+import Requirements from "./Requirements";
+import { dateDifference, getTimeAgo } from "@/constants/functions";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 type Props = {
   listings: any[];
@@ -26,11 +27,20 @@ type Props = {
 type RenderItemTypes = {
   item: {
     _id: string;
+    createdAt: Date;
+    updatedAt: Date;
     coverImage: string;
+    images: Array<String>;
+    duration: string;
     name: string;
     location: any;
     price: string;
     address: string;
+    startDate: Date;
+    endDate: Date;
+    appliedBy: Array<string>;
+    selected: Array<string>;
+    requirements: any;
   };
   index: number;
 };
@@ -60,21 +70,49 @@ const ListingHorizontalServices = ({
                 color={Colors.white}
               />
             </View>
-            <Text style={styles.itemTxt} numberOfLines={1} ellipsizeMode="tail">
-              {item?.name}
-            </Text>
+
+            <Requirements type="highlights" requirements={item?.requirements} />
+
+            <CustomHeading textAlign="left">{item?.name}</CustomHeading>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: 5,
+              }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  width: "60%",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  gap: 5,
+                }}
+              >
                 <FontAwesome5
                   name="map-marker-alt"
-                  size={18}
+                  size={14}
                   color={Colors.primary}
                 />
-                <Text style={styles.itemLocationTxt}>{item?.address}</Text>
+                <CustomText textAlign="left">{item?.address}</CustomText>
               </View>
-              <Text style={styles.itemPriceTxt}>${item?.price}</Text>
+              <View
+                style={{
+                  width: "40%",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                }}
+              >
+                <CustomText>
+                  {item?.duration || getTimeAgo(item?.createdAt)}
+                </CustomText>
+                <CustomText>
+                  {item?.duration ||
+                    dateDifference(item?.startDate, item?.endDate)}
+                </CustomText>
+              </View>
             </View>
           </View>
         </TouchableOpacity>
@@ -138,12 +176,12 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 8,
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   bookmark: {
     position: "absolute",
-    top: 185,
-    right: 30,
+    top: 170,
+    right: 15,
     backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 30,
@@ -157,12 +195,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemLocationTxt: {
-    width: "70%",
+    // width: "70%",
     fontSize: 12,
     marginLeft: 5,
   },
   itemPriceTxt: {
-    width: "20%",
+    // width: "20%",
     fontSize: 12,
     fontWeight: "600",
     color: Colors.primary,

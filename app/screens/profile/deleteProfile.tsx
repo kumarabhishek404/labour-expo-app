@@ -2,9 +2,9 @@ import { deleteUserById } from "@/app/api/user";
 import Loader from "@/components/commons/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import Colors from "@/constants/Colors";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -16,6 +16,9 @@ import {
 import { Controller, useForm } from "react-hook-form"; // react-hook-form imports
 import Button from "@/components/inputs/Button";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
+import CustomText from "@/components/commons/CustomText";
+import CustomHeader from "@/components/commons/Header";
+import CustomHeading from "@/components/commons/CustomHeading";
 
 const DeleteAccountScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,16 +82,14 @@ const DeleteAccountScreen = () => {
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <Text style={styles.iconText}>?</Text>
+            <CustomHeading fontSize={30}>?</CustomHeading>
           </View>
         </View>
-        <Text style={styles.modalHeader}>Are you sure?</Text>
-        <Text style={styles.modalBody}>
-          You want to delete your account permanently.
-        </Text>
-        <Text style={styles.modalFooter}>
-          This action is irreversible and will lead to a loss of all your data.
-        </Text>
+        <CustomHeading fontSize={20}>Are you sure?</CustomHeading>
+        <CustomText fontSize={14}>
+          You want to delete your account permanently. This action is
+          irreversible and will lead to a loss of all your data.
+        </CustomText>
       </View>
     );
   };
@@ -97,36 +98,14 @@ const DeleteAccountScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Delete Profile",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-                marginRight: 20,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Delete Profile" left="back" />,
         }}
       />
       <Loader loading={mutationDeleteService?.isPending} />
       <ScrollView style={styles.container}>
-        <Text style={styles.header}>Delete Account</Text>
-        <Text style={styles.subHeader}>
+        <CustomHeading textAlign="left">
           Please select the reason(s) for deleting your account.
-        </Text>
+        </CustomHeading>
 
         <Controller
           name="selectedReasons"
@@ -148,13 +127,17 @@ const DeleteAccountScreen = () => {
                       <View style={styles.selectedRb} />
                     )}
                   </View>
-                  <Text style={styles.optionText}>{reason}</Text>
+                  <CustomText fontSize={14}>{reason}</CustomText>
                 </TouchableOpacity>
               ))}
-              {errors.selectedReasons && (
-                <Text style={styles.errorText}>
+              {errors?.selectedReasons && (
+                <CustomText
+                  textAlign="left"
+                  fontSize={10}
+                  color={Colors?.danger}
+                >
                   {errors.selectedReasons.message}
-                </Text>
+                </CustomText>
               )}
             </>
           )}
@@ -197,6 +180,7 @@ const DeleteAccountScreen = () => {
             title: "Delete",
             styles: {
               backgroundColor: "red",
+              borderColor: "red",
             },
             action: handleDelete,
           }}
@@ -230,16 +214,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     padding: 20,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subHeader: {
-    fontSize: 16,
-    color: "#6e6e6e",
-    marginBottom: 20,
-  },
   optionContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -261,26 +235,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#3C3C3C",
   },
-  optionText: {
-    fontSize: 16,
-  },
   footer: {
     flexDirection: "row",
     paddingTop: 30,
   },
-  errorText: {
-    color: "red",
-    marginTop: 5,
-  },
   errorInput: {
     borderColor: "red",
-  },
-
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     backgroundColor: "white",
@@ -290,7 +250,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 10,
   },
   iconCircle: {
     width: 50,
@@ -299,56 +259,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700", // Yellow circle
     justifyContent: "center",
     alignItems: "center",
-  },
-  iconText: {
-    fontSize: 30,
-    color: "#000",
-    fontWeight: "bold",
-  },
-  modalHeader: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalBody: {
-    fontSize: 16,
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  modalFooter: {
-    fontSize: 14,
-    color: "#6e6e6e",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  italicText: {
-    fontStyle: "italic",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    marginHorizontal: 5,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  deleteButtonStyle: {
-    backgroundColor: "#FF3B30",
-  },
-  keepButtonStyle: {
-    backgroundColor: Colors?.primary,
-  },
-  deleteText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  keepText: {
-    color: "#fff",
-    fontSize: 16,
   },
 });
 

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import LocationField from "../inputs/LocationField";
 import Button from "../inputs/Button";
 import * as Location from "expo-location";
 import { useAtom } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomHeading from "./CustomHeading";
+import Colors from "@/constants/Colors";
+import CustomText from "./CustomText";
 
 interface AddLocationAndAddressProps {
   name: string;
@@ -83,7 +86,7 @@ const AddLocationAndAddress = ({
               <View style={styles.radioChecked} />
             )}
           </View>
-          <Text style={styles.radioText}>Address</Text>
+          <CustomHeading>Address</CustomHeading>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -95,7 +98,7 @@ const AddLocationAndAddress = ({
               <View style={styles.radioChecked} />
             )}
           </View>
-          <Text style={styles.radioText}>Current Location</Text>
+          <CustomHeading>Current Location</CustomHeading>
         </TouchableOpacity>
       </View>
 
@@ -109,7 +112,6 @@ const AddLocationAndAddress = ({
         <>
           <View style={styles.locationContainer}>
             <Button
-              style={styles?.locationButton}
               isPrimary={true}
               title="Get Current Location"
               onPress={fetchCurrentLocation}
@@ -118,26 +120,19 @@ const AddLocationAndAddress = ({
 
             {location && (
               <View style={styles.locationText}>
-                <Text style={{ fontWeight: "600" }}>Address: </Text>
+                <CustomText>Address: </CustomText>
                 {location ? (
-                  <Text
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+                  <CustomText
+                    style={{ width: "92%" }}
+                    textAlign="left"
+                    fontWeight="bold"
                   >
                     {address}
-                  </Text>
+                  </CustomText>
                 ) : (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      alignSelf: "flex-end",
-                    }}
-                  >
+                  <CustomText style={{ width: "92%" }} textAlign="left">
                     Please fetch current location
-                  </Text>
+                  </CustomText>
                 )}
               </View>
             )}
@@ -145,7 +140,9 @@ const AddLocationAndAddress = ({
         </>
       )}
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -154,15 +151,14 @@ const AddLocationAndAddress = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 20,
     justifyContent: "center",
     backgroundColor: "#fff",
+    gap: 5,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    // marginBottom: 20,
   },
   radioContainer: {
     flexDirection: "row",
@@ -177,16 +173,16 @@ const styles = StyleSheet.create({
     width: 20,
     borderRadius: 100,
     borderWidth: 2,
-    borderColor: "#000",
+    borderColor: Colors?.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 10,
+    marginRight: 5,
   },
   radioChecked: {
     width: 12,
     height: 12,
     borderRadius: 8,
-    backgroundColor: "#000",
+    backgroundColor: Colors?.primary,
   },
   radioText: {
     fontSize: 16,
@@ -195,10 +191,6 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     marginTop: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 10,
   },
   picker: {
     height: 50,
@@ -210,12 +202,6 @@ const styles = StyleSheet.create({
   locationContainer: {
     marginBottom: 10,
   },
-  locationButton: {
-    height: 53,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   locationText: {
     marginTop: 10,
     fontSize: 16,
@@ -223,11 +209,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });
 

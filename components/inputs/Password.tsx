@@ -1,13 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import CustomText from "../commons/CustomText";
+import TextInputComponent from "./TextInputWithIcon";
 
 type TextInputProps = {
   label: string;
@@ -36,28 +32,36 @@ const PasswordComponent = ({
 
   return (
     <View style={styles?.inputField}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={[styles.inputContainer, containerStyle]}>
-        {icon && icon}
-        <TextInput
+      <View style={containerStyle}>
+        <TextInputComponent
           value={value}
           onBlur={onBlur}
           onChangeText={onChangeText}
-          style={styles.textInput}
-          secureTextEntry={secureEntry}
           placeholder={placeholder}
-          placeholderTextColor={Colors.secondary}
+          secureTextEntry={secureEntry}
+          label={label}
+          name="firstName"
+          containerStyle={errors?.firstName && styles.errorInput}
+          errors={errors}
+          icon={icon && icon}
+          secondIcon={
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => setSecureEntry((prev) => !prev)}
+            >
+              <Feather
+                name={secureEntry ? "eye" : "eye-off"}
+                size={20}
+                color={Colors.secondary}
+              />
+            </TouchableOpacity>
+          }
         />
-        <TouchableOpacity onPress={() => setSecureEntry((prev) => !prev)}>
-          <Feather
-            name={secureEntry ? "eye" : "eye-off"}
-            size={20}
-            color={Colors.secondary}
-          />
-        </TouchableOpacity>
       </View>
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -66,32 +70,10 @@ const PasswordComponent = ({
 export default PasswordComponent;
 
 const styles = StyleSheet.create({
-  inputField: {},
-  inputContainer: {
-    height: 53,
+  inputField: { gap: 5 },
+  errorInput: {
     borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  textInput: {
-    padding: 10,
-    flex: 1,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
-  errorText: {
+    borderColor: "red",
     color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });

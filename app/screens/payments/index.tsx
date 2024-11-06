@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   FlatList,
   Image,
 } from "react-native";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import Colors from "@/constants/Colors";
+import CustomHeader from "@/components/commons/Header";
+import CustomHeading from "@/components/commons/CustomHeading";
+import Button from "@/components/inputs/Button";
+import CustomText from "@/components/commons/CustomText";
 
 interface PaymentMethod {
   type: string;
@@ -104,9 +107,9 @@ const PaymentMethodsScreen = () => {
       <View style={styles.paymentRow}>
         <Image source={item.icon} style={styles.paymentIcon} />
         <View>
-          <Text style={styles.paymentLabel}>{item.label}</Text>
+          <CustomHeading>{item.label}</CustomHeading>
           {item.expiry && (
-            <Text style={styles.expiry}>Expires {item.expiry}</Text>
+            <CustomText textAlign="left">Expires {item.expiry}</CustomText>
           )}
         </View>
       </View>
@@ -118,8 +121,8 @@ const PaymentMethodsScreen = () => {
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
     <View style={styles.transactionItem}>
-      <Text style={styles.transactionText}>{item.description}</Text>
-      <Text style={styles.transactionDate}>{item.date}</Text>
+      <CustomHeading textAlign="left">{item.description}</CustomHeading>
+      <CustomText textAlign="left">{item.date}</CustomText>
     </View>
   );
 
@@ -127,35 +130,20 @@ const PaymentMethodsScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerShown: true,
-          headerTitle: "Payment Settings",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Payment Settings" left="back" />,
         }}
       />
       <ScrollView
         style={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Payment methods</Text>
+        <CustomHeading
+          textAlign="left"
+          fontSize={20}
+          style={{ marginBottom: 10 }}
+        >
+          Payment methods
+        </CustomHeading>
 
         <FlatList
           scrollEnabled={false}
@@ -164,14 +152,19 @@ const PaymentMethodsScreen = () => {
           keyExtractor={(item) => item.type}
         />
 
-        <TouchableOpacity
-          style={styles.addPaymentButton}
+        <Button
+          isPrimary={true}
+          title="Add Payment Method"
           onPress={() => router.push("/screens/payments/addPaymentMethod")}
-        >
-          <Text style={styles.addPaymentText}>Add Payment Method</Text>
-        </TouchableOpacity>
+        />
 
-        <Text style={styles.historyTitle}>Transaction History</Text>
+        <CustomHeading
+          textAlign="left"
+          fontSize={20}
+          style={{ marginBottom: 10, marginTop: 20 }}
+        >
+          Transaction History
+        </CustomHeading>
         <FlatList
           scrollEnabled={false}
           data={transactionHistory}

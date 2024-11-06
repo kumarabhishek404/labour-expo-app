@@ -1,46 +1,89 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
-const Requirements = ({ requirements }: any) => {
+interface RequirementsProps {
+  type: String;
+  requirements: any;
+}
+
+const Requirements = ({ type, requirements }: RequirementsProps) => {
   return (
-    <View style={styles.requirmentContainer}>
-      {requirements?.map((requirement: any, index: number) => {
-        return (
-          <View style={styles.card} key={index}>
-            <View style={styles.header}>
-              <Text style={styles.title}>{requirement?.name}</Text>
-              <Text style={styles.price}>
+    <>
+      {type === "highlights" ? (
+        <View style={styles.container}>
+          {requirements?.map((requirement: any, index: number) => (
+            <View key={index} style={styles.tag}>
+              <CustomHeading
+                fontSize={14}
+                color={Colors?.white}
+                style={{ textTransform: "capitalize" }}
+              >
+                {requirement?.count} {requirement?.name}
+              </CustomHeading>
+              <CustomText color={Colors?.white} fontSize={12}>
                 ₹ {requirement?.payPerDay} Per Day
-              </Text>
+              </CustomText>
             </View>
-            <Text style={styles.subTitle}>shuttering</Text>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.requirmentContainer}>
+          {requirements?.map((requirement: any, index: number) => {
+            return (
+              <View style={styles.card} key={index}>
+                <View style={styles.header}>
+                  <CustomHeading style={{ textTransform: "capitalize" }}>
+                    {requirement?.name}
+                  </CustomHeading>
+                  <CustomText fontSize={14}>
+                    ₹ {requirement?.payPerDay} Per Day
+                  </CustomText>
+                </View>
 
-            <View style={styles.details}>
-              <Text style={styles.detailLabel}>Count</Text>
-              <Text style={styles.detailLabel}>Food</Text>
-              <Text style={styles.detailLabel}>Living</Text>
-              <Text style={styles.detailLabel}>ESI / PF</Text>
-            </View>
-
-            <View style={styles.values}>
-              <Text style={styles.value}>{requirement?.count}</Text>
-              <Text style={styles.value}>
-                {requirement?.food ? "Yes" : "No"}
-              </Text>
-              <Text style={styles.value}>
-                {requirement?.shelterProvider ? "Yes" : "No"}
-              </Text>
-              <Text style={styles.value}>No</Text>
-            </View>
-          </View>
-        );
-      })}
-    </View>
+                <View style={styles.details}>
+                  <View style={styles?.detailBox}>
+                    <CustomText fontWeight="700">Count</CustomText>
+                    <CustomText fontWeight="800" textAlign="left">
+                      {requirement?.count}
+                    </CustomText>
+                  </View>
+                  <View style={styles?.detailBox}>
+                    <CustomText fontWeight="700">Food</CustomText>
+                    <CustomText fontWeight="800" textAlign="left">
+                      {requirement?.food ? "Yes" : "No"}
+                    </CustomText>
+                  </View>
+                  <View style={styles?.detailBox}>
+                    <CustomText fontWeight="700">Living</CustomText>
+                    <CustomText fontWeight="800" textAlign="left">
+                      {requirement?.shelterProvider ? "Yes" : "No"}
+                    </CustomText>
+                  </View>
+                  <View style={styles?.detailBox}>
+                    <CustomText fontWeight="700">ESI / PF</CustomText>
+                    <CustomText fontWeight="800" textAlign="left">
+                      No
+                    </CustomText>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingVertical: 6,
+  },
   requirmentContainer: {
     marginVertical: 10,
     backgroundColor: "#e1e8e5",
@@ -52,47 +95,29 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     borderRadius: 8,
   },
-  viewButton: {
-    width: 100,
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Colors?.black,
-    textTransform: "capitalize",
-  },
-  price: {
-    fontSize: 16,
-    color: Colors?.black,
-  },
-  subTitle: {
-    fontSize: 14,
-    color: Colors?.primary,
-    marginBottom: 12,
   },
   details: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 4,
+    marginTop: 8,
   },
-  detailLabel: {
-    fontSize: 12,
-    color: "#4F4F4F",
-    fontWeight: "600",
+  detailBox: {
+    flexDirection: "column",
   },
-  values: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  value: {
-    fontSize: 16,
-    color: "#000",
+  tag: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: Colors?.tertiery,
+    borderColor: Colors?.tertiery,
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    marginRight: 5,
+    borderWidth: 1,
   },
 });
 

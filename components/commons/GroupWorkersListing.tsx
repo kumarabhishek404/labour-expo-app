@@ -2,22 +2,17 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React from "react";
-import { GroupType } from "@/types/groupType";
 import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
 import profileImage from "../../assets/images/placeholder-person.jpg";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
+import CustomHeading from "./CustomHeading";
 
 type RenderItemTypes = {
   item: {
@@ -52,36 +47,35 @@ const GroupWorkersListing = ({
     const isLastItem = index === listings.length - 1;
 
     return (
-      <Link href={`/screens/worker/${item?._id}`} asChild>
-        <TouchableOpacity style={styles?.container}>
-          <View style={[styles.item, isLastItem && styles.lastElement]}>
-            <Image
-              source={
-                item?.profilePicture
-                  ? { uri: item?.profilePicture }
-                  : profileImage
-              }
-              style={styles.image}
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/screens/users",
+            params: { role: "mediators", title: "Mediators", type: "all" },
+          })
+        }
+        style={styles?.container}
+      >
+        <View style={[styles.item, isLastItem && styles.lastElement]}>
+          <Image
+            source={
+              item?.profilePicture
+                ? { uri: item?.profilePicture }
+                : profileImage
+            }
+            style={styles.image}
+          />
+          <View>
+            <CustomHeading textAlign="left" fontSize={14}>
+              {item.firstName} {item.lastName}
+            </CustomHeading>
+            <RatingAndReviews
+              rating={item?.rating || 4.5}
+              reviews={item?.reviews || 400}
             />
-            <View>
-              <Text style={styles.itemTxt}>
-                {item.firstName} {item.lastName}
-              </Text>
-              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons name="star" size={20} color={Colors.primary} />
-                <Text style={styles.itemRating}>{item.rating || "4.6"} </Text>
-                <Text style={styles.itemReviews}>
-                  ({item.reviews || "450"})
-                </Text>
-              </View> */}
-              <RatingAndReviews
-                rating={item?.rating || 4.5}
-                reviews={item?.reviews || 400}
-              />
-            </View>
           </View>
-        </TouchableOpacity>
-      </Link>
+        </View>
+      </TouchableOpacity>
     );
   });
 
@@ -90,8 +84,9 @@ const GroupWorkersListing = ({
   );
 
   return (
-    <View style={{ marginVertical: 20 }}>
-      <Text style={styles.title}>Top Rated Workers</Text>
+    <View style={{ marginTop: 20 }}>
+      <CustomHeading textAlign="left">Top Rated Workers</CustomHeading>
+      <View style={styles.divider}></View>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -135,10 +130,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   title: {
-    fontSize: 22,
+    fontSize: 16,
+    color: "#1F3E72",
     fontWeight: "600",
-    color: Colors.black,
-    marginBottom: 10,
+    // marginBottom: 8,
+  },
+  divider: {
+    width: 50,
+    height: 2,
+    backgroundColor: "#ccc",
+    marginVertical: 8,
+    marginBottom: 20,
   },
   item: {
     // padding: 10,

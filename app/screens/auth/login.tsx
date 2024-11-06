@@ -1,12 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAtom, useSetAtom } from "jotai";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
 import {
+  AccountStatusAtom,
   EarningAtom,
   ServiceAtom,
   SpentAtom,
@@ -19,11 +20,14 @@ import i18n from "@/utils/i18n";
 import { useForm, Controller } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
-import * as Location from "expo-location"; // Importing Location module
-import { fetchCurrentLocation, isEmptyObject } from "@/constants/functions";
+import { fetchCurrentLocation } from "@/constants/functions";
+import CustomHeading from "@/components/commons/CustomHeading";
+import Button from "@/components/inputs/Button";
+import CustomText from "@/components/commons/CustomText";
 
 const LoginScreen = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const setUserDetails = useSetAtom(UserAtom);
+  const setIsAccountInactive = useSetAtom(AccountStatusAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
   const setServiceDetails = useSetAtom(ServiceAtom);
   const setEarnings = useSetAtom(EarningAtom);
@@ -63,21 +67,40 @@ const LoginScreen = () => {
       setUserDetails({
         isAuth: true,
         _id: user?._id,
+        status: user?.status || "",
         firstName: user?.firstName,
         middleName: user?.middleName,
         lastName: user?.lastName,
         mobileNumber: user?.mobileNumber,
-        likedServices: user?.likedJobs || [],
-        likedWorkers: user?.bookmarkedWorkers || [],
-        likedMediators: user?.likedMediators || [],
         email: user?.email,
+        gender: user?.gender || "",
+        dateOfBirth: user?.dateOfBirth || "",
         skills: user?.skills,
         location: user?.location || {},
         address: user?.address,
         profilePicture: user?.profilePicture,
+        coverPicture: user?.coverPicture || "",
         role: user?.role,
+        description: user?.description || "",
         token: response?.token,
-        serviceAddress: [],
+        rating: user?.rating || "",
+        reviews: user?.reviews || {},
+        alternateMobile: user?.alternateMobile || "",
+        alternateEmail: user?.alternateEmail || "",
+        savedAddresses: user?.savedAddresses || [],
+        savedLocation: user?.savedLocation || [],
+        likedServices: user?.likedJobs || [],
+        likedEmployers: user?.likedEmployers || [],
+        likedWorkers: user?.bookmarkedWorkers || [],
+        likedMediators: user?.likedMediators || [],
+        appliedServices: user?.appliedServices || [],
+        likedBy: user?.likedBy || [],
+        bookedBy: user?.bookedBy || [],
+        myServices: user?.myServices || [],
+        myBookings: user?.myBookings || [],
+        booked: user?.booked || [],
+        createdAt: user?.createdAt || "",
+        updatedAt: user?.updatedAt || "",
       });
 
       setWorkDetails({
@@ -104,7 +127,13 @@ const LoginScreen = () => {
       });
 
       toast.success("Logged in successfully!");
-
+      if (user?.status === "inactive") {
+        setIsAccountInactive(true);
+        router.replace("/(tabs)/profile");
+      } else {
+        setIsAccountInactive(false);
+        router.replace("/(tabs)");
+      }
       // Condition to fetch location if location key is empty or has latitude 0
       if (
         !user?.location ||
@@ -153,8 +182,12 @@ const LoginScreen = () => {
       />
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Hello,</Text>
-          <Text style={styles.headingText}>{i18n.t("welcome")}</Text>
+          <CustomHeading textAlign="left" fontSize={24}>
+            Hello,
+          </CustomHeading>
+          <CustomHeading textAlign="left" fontSize={24}>
+            {i18n.t("welcome")}
+          </CustomHeading>
         </View>
         <View style={styles.formContainer}>
           <Controller
@@ -222,22 +255,24 @@ const LoginScreen = () => {
               style={styles.forgetPasswordContainer}
               onPress={handleForgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <CustomHeading fontWeight="normal" color={Colors?.link}>
+                Forgot Password?
+              </CustomHeading>
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
+          <Button
+            isPrimary={true}
+            title="Login"
             onPress={handleSubmit(onSubmit)}
             style={styles.loginButtonWrapper}
-          >
-            <Text style={styles.loginText}>Login</Text>
-          </TouchableOpacity>
+          />
 
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>Don't have an account?</Text>
+            <CustomText>Don't have an account?</CustomText>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
-                <Text style={styles.signupText}>Sign Up</Text>
+                <CustomHeading color={Colors?.link}>Sign Up</CustomHeading>
               </TouchableOpacity>
             </Link>
           </View>
@@ -256,40 +291,14 @@ const styles = StyleSheet.create({
   textContainer: {
     marginVertical: 20,
   },
-  headingText: {
-    fontSize: 32,
-    color: Colors.primary,
-  },
   formContainer: {
-    marginTop: 20,
-  },
-  input: {
-    marginBottom: 20,
-  },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    marginBottom: 4,
-  },
-  textInput: {
-    height: 53,
-    flex: 1,
-    paddingHorizontal: 10,
-    marginLeft: 10,
+    marginTop: 15,
+    gap: 15,
   },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
   forgetPasswordContainer: {
     flexDirection: "row",
@@ -297,63 +306,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
-    marginVertical: 10,
-  },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
     borderRadius: 100,
-    marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    textAlign: "center",
-    padding: 10,
-  },
-  continueText: {
-    textAlign: "center",
-    marginVertical: 20,
-    fontSize: 14,
-    color: Colors.primary,
-  },
-  googleButtonContainer: {
-    flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    gap: 10,
-  },
-  googleImage: {
-    height: 20,
-    width: 20,
-  },
-  googleText: {
-    fontSize: 20,
   },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 20,
     gap: 5,
-  },
-  accountText: {
-    color: Colors.primary,
-  },
-  signupText: {
-    color: Colors.black,
-    fontSize: 20,
-    fontWeight: "500",
-    textDecorationLine: "underline",
   },
 });
 

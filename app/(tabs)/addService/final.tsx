@@ -1,24 +1,13 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { router } from "expo-router";
+import React from "react";
+import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
-import Step1 from "../../../assets/step1.jpg";
-import { useAtom, useSetAtom } from "jotai";
-import { AddServiceAtom, AddServiceInProcess } from "@/app/AtomStore/user";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
-import { toast } from "@/app/hooks/toast";
 import Stepper from "./stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import moment from "moment";
 import { isEmptyObject } from "@/constants/functions";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
 
 interface FinalScreenProps {
   setStep: any;
@@ -60,61 +49,62 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <View style={styles?.formContainer}>
-          {/* <Image source={Step1} style={styles.image} /> */}
-          <Text style={styles?.headerText}>
+        <View>
+          <CustomHeading>
             Check all the details which you have filled
-          </Text>
+          </CustomHeading>
           <View style={{ marginVertical: 30 }}>
             <Stepper currentStep={5} steps={ADDSERVICESTEPS} />
           </View>
           <View>
             <View style={styles.row}>
-              <Text style={styles.label}>Title</Text>
-              <Text style={styles.value}>{title}</Text>
+              <CustomHeading>Title</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {title}
+              </CustomText>
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Description</Text>
-              <Text style={styles.value}>{description}</Text>
+              <CustomHeading>Description</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {description}
+              </CustomText>
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Address</Text>
-              <Text style={styles.value}>{address}</Text>
+              <CustomHeading>Address</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {address}
+              </CustomText>
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Location</Text>
-              <Text style={styles.value}>
+              <CustomHeading>Location</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
                 {!isEmptyObject(location) ? (
                   JSON?.stringify(location)
                 ) : (
-                  <Text style={styles.placeholderText}>
-                    Location not fetched
-                  </Text>
+                  <CustomText>Location not fetched</CustomText>
                 )}
-              </Text>
+              </CustomText>
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Start Date</Text>
-              <Text style={styles.value}>
+              <CustomHeading>Start Date</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
                 {moment(startDate)?.format("Do MMM YYYY")}
-              </Text>
+              </CustomText>
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>End Date</Text>
-              <Text style={styles.value}>
+              <CustomHeading>End Date</CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
                 {moment(endDate)?.format("Do MMM YYYY")}
-              </Text>
+              </CustomText>
             </View>
 
-            <View style={[styles.row, { flexDirection: "column" }]}>
-              <Text style={[styles.label, { marginBottom: 10 }]}>
-                Requirements
-              </Text>
+            <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+              <CustomHeading>Requirements</CustomHeading>
               <View style={styles.requirmentContainer}>
                 {requirements &&
                   requirements?.map((requirement: any, index: number) => {
@@ -122,21 +112,42 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                       <View style={styles.card} key={index}>
                         <View style={styles.header}>
                           <View style={{ flexDirection: "column" }}>
-                            <Text style={styles.title}>
+                            <CustomHeading
+                              style={{ textTransform: "capitalize" }}
+                            >
                               {requirement?.name}
-                            </Text>
-                            <Text style={styles.subTitle}>shuttering</Text>
+                            </CustomHeading>
                           </View>
-                          <Text style={styles.price}>
+                          <CustomHeading>
                             ₹ {requirement?.payPerDay} Per Day
-                          </Text>
+                          </CustomHeading>
                         </View>
 
                         <View style={styles.details}>
-                          <Text style={styles.detailLabel}>Count</Text>
-                          <Text style={styles.detailLabel}>Food</Text>
-                          <Text style={styles.detailLabel}>Living</Text>
-                          <Text style={styles.detailLabel}>ESI / PF</Text>
+                          <CustomHeading
+                            fontSize={14}
+                            color={Colors?.secondaryText}
+                          >
+                            Count
+                          </CustomHeading>
+                          <CustomHeading
+                            fontSize={14}
+                            color={Colors?.secondaryText}
+                          >
+                            Food
+                          </CustomHeading>
+                          <CustomHeading
+                            fontSize={14}
+                            color={Colors?.secondaryText}
+                          >
+                            Living
+                          </CustomHeading>
+                          <CustomHeading
+                            fontSize={14}
+                            color={Colors?.secondaryText}
+                          >
+                            ESI / PF
+                          </CustomHeading>
                         </View>
 
                         <View
@@ -146,16 +157,14 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                               styles?.divider,
                           ]}
                         >
-                          <Text style={styles.requirementValue}>
-                            {requirement?.count}
-                          </Text>
-                          <Text style={styles.requirementValue}>
+                          <CustomText>{requirement?.count}</CustomText>
+                          <CustomText>
                             {requirement?.food ? "Yes" : "No"}
-                          </Text>
-                          <Text style={styles.requirementValue}>
+                          </CustomText>
+                          <CustomText>
                             {requirement?.shelterProvider ? "Yes" : "No"}
-                          </Text>
-                          <Text style={styles.requirementValue}>No</Text>
+                          </CustomText>
+                          <CustomText>No</CustomText>
                         </View>
                       </View>
                     );
@@ -163,9 +172,14 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
               </View>
             </View>
 
-            <View style={[styles.row, { flexDirection: "column" }]}>
-              <Text style={[styles.label, { marginBottom: 10 }]}>Images</Text>
-              <View style={[styles.value, { width: "100%", paddingBottom: 0, paddingRight: 0 }]}>
+            <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+              <CustomHeading>Images</CustomHeading>
+              <View
+                style={[
+                  styles.value,
+                  { width: "100%", paddingBottom: 0, paddingRight: 0 },
+                ]}
+              >
                 <View style={styles.imageContainer}>
                   {images &&
                     images?.map((imgUri: any, index: number) => (
@@ -210,13 +224,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-    color: "green",
-    textAlign: "center",
-  },
-  formContainer: {},
   image: {
     width: "100%",
     height: 350,
@@ -227,35 +234,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 20,
   },
-  buttonText: {
-    color: Colors?.white,
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 18,
-  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
-    color: "#555",
-    width: "40%",
-    fontWeight: "bold",
-  },
   value: {
-    fontSize: 14,
-    color: "#000",
     width: "60%",
     backgroundColor: "#f3f3f3",
     padding: 10,
     borderRadius: 8,
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: "#aaa9a9",
   },
   textArea: {
     height: 100,
@@ -280,6 +269,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e1e8e5",
   },
   card: {
+    width: "100%",
     backgroundColor: "#e1e8e5",
     padding: 10,
     borderRadius: 8,
@@ -294,13 +284,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Colors?.black,
-    textTransform: "capitalize",
-    marginRight: 10,
   },
   price: {
     flex: 1,
@@ -317,11 +300,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 4,
-  },
-  detailLabel: {
-    fontSize: 12,
-    color: "#4F4F4F",
-    fontWeight: "600",
   },
   values: {
     flexDirection: "row",
@@ -341,12 +319,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    // marginTop: 10,
   },
   uploadedImage: {
     width: 70,
     height: 70,
-    // margin: 10,
     borderRadius: 8,
   },
   imagesContainer: {

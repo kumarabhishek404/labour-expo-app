@@ -1,7 +1,6 @@
 import React from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Alert,
@@ -9,12 +8,15 @@ import {
   Clipboard,
 } from "react-native";
 import * as Sharing from "expo-sharing";
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import * as SMS from "expo-sms";
 import * as MailComposer from "expo-mail-composer";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import Colors from "@/constants/Colors";
 import { APPLINK } from "@/constants";
+import CustomHeader from "@/components/commons/Header";
+import CustomHeading from "@/components/commons/CustomHeading";
+import Button from "@/components/inputs/Button";
 
 const ShareAppScreen = () => {
   // Share using Social Media Platforms (e.g., WhatsApp, Facebook, Telegram)
@@ -99,34 +101,14 @@ const ShareAppScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Share App To Your Family",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
+          header: () => (
+            <CustomHeader title="Share App To Your Family" left="back" />
           ),
         }}
       />
       <View style={styles.container}>
-        {/* Title */}
-        <Text style={styles.title}>Share Our App</Text>
+        <CustomHeading fontSize={24}>Share Our App</CustomHeading>
 
-        {/* Social Media Icons */}
         <View style={styles.iconContainer}>
           <TouchableOpacity onPress={() => shareToSocialMedia("whatsapp")}>
             <FontAwesome name="whatsapp" size={50} color="#25D366" />
@@ -142,31 +124,59 @@ const ShareAppScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Additional Share Options */}
         <View style={styles.actionContainer}>
-          {/* SMS */}
-          <TouchableOpacity style={styles.actionButton} onPress={shareViaSMS}>
-            <MaterialIcons name="textsms" size={24} color="white" />
-            <Text style={styles.buttonText}>Share via SMS</Text>
-          </TouchableOpacity>
-
-          {/* Email */}
-          <TouchableOpacity style={styles.actionButton} onPress={shareViaEmail}>
-            <MaterialIcons name="email" size={24} color="white" />
-            <Text style={styles.buttonText}>Share via Email</Text>
-          </TouchableOpacity>
-
-          {/* Copy Link */}
-          <TouchableOpacity style={styles.actionButton} onPress={copyLink}>
-            <MaterialIcons name="link" size={24} color="white" />
-            <Text style={styles.buttonText}>Copy Link</Text>
-          </TouchableOpacity>
-
-          {/* Share App Link */}
-          <TouchableOpacity style={styles.actionButton} onPress={shareAppLink}>
-            <MaterialIcons name="share" size={24} color="white" />
-            <Text style={styles.buttonText}>Share Link</Text>
-          </TouchableOpacity>
+          <Button
+            isPrimary={true}
+            title="Share via SMS"
+            onPress={shareViaSMS}
+            icon={
+              <MaterialIcons
+                name="textsms"
+                size={24}
+                color="white"
+                style={{ marginRight: 10 }}
+              />
+            }
+          />
+          <Button
+            isPrimary={true}
+            title="Share via Email"
+            onPress={shareViaEmail}
+            icon={
+              <MaterialIcons
+                name="email"
+                size={24}
+                color="white"
+                style={{ marginRight: 10 }}
+              />
+            }
+          />
+          <Button
+            isPrimary={true}
+            title="Copy Link"
+            onPress={copyLink}
+            icon={
+              <MaterialIcons
+                name="link"
+                size={24}
+                color="white"
+                style={{ marginRight: 10 }}
+              />
+            }
+          />
+          <Button
+            isPrimary={true}
+            title="Share Link"
+            onPress={shareAppLink}
+            icon={
+              <MaterialIcons
+                name="share"
+                size={24}
+                color="white"
+                style={{ marginRight: 10 }}
+              />
+            }
+          />
         </View>
       </View>
     </>
@@ -180,6 +190,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
+    gap: 10,
   },
   title: {
     fontSize: 24,
@@ -195,6 +206,7 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     width: "100%",
+    gap: 20
   },
   actionButton: {
     flexDirection: "row",

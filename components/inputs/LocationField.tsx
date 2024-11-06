@@ -1,23 +1,12 @@
-// import { View, Text } from 'react-native'
-// import React from 'react'
-
-// export default function LocationField() {
-//   return (
-//     <View>
-//       <Text>LocationField</Text>
-//     </View>
-//   )
-// }
-
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "@/constants/Colors";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
+import CustomHeading from "../commons/CustomHeading";
 
 interface LocationFieldProps {
   address: string;
@@ -35,7 +24,7 @@ const LocationField = ({
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     { label: "Add New Address", value: "addAddress" },
   ]);
-  
+
   useEffect(() => {
     let addresses =
       userDetails?.serviceAddress &&
@@ -78,20 +67,23 @@ const LocationField = ({
             return (
               <Link href="/screens/location/addAddress" asChild>
                 <TouchableOpacity style={styles.actionItemWrapper}>
-                  <Text style={[styles.menuItem, styles.actionItem]}>
+                  <CustomHeading color={Colors?.link}>
                     {item.label}
-                  </Text>
-                  <Entypo
-                    name="link"
-                    size={20}
-                    color="blue"
-                    // style={styles.cancelImage}
-                  />
+                  </CustomHeading>
+                  <Entypo name="link" size={20} color={Colors?.link} />
                 </TouchableOpacity>
               </Link>
             );
           } else {
-            return <Text style={styles.menuItem}>{item.label}</Text>;
+            return (
+              <CustomHeading
+                textAlign="left"
+                fontSize={12}
+                style={{ padding: 10 }}
+              >
+                {item.label}
+              </CustomHeading>
+            );
           }
         }}
         renderLeftIcon={() => (
@@ -163,6 +155,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    padding: 10,
+    gap: 10,
   },
   menuItem: {
     padding: 8,

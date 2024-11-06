@@ -1,11 +1,21 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
 
-const Gender = ({ name, label, options, gender, setGender, containerStyle, errors }: any) => {
+const Gender = ({
+  name,
+  label,
+  options,
+  gender,
+  setGender,
+  containerStyle,
+  errors,
+}: any) => {
   return (
     <View style={styles.genderContainer}>
-      <Text style={styles.label}>{label}</Text>
+      <CustomHeading textAlign="left">{label}</CustomHeading>
       <View style={styles.genderSelectionWrapper}>
         {options &&
           options?.length > 0 &&
@@ -14,40 +24,35 @@ const Gender = ({ name, label, options, gender, setGender, containerStyle, error
               key={option?.value}
               onPress={() => setGender(option?.value)}
               style={[
-                styles.genderButton, containerStyle,
+                styles.genderButton,
+                containerStyle,
                 gender === option?.value && styles.selectedButton,
               ]}
             >
-              <Text
-                style={[
-                  styles.genderText,
-                  gender === option?.value && { color: Colors?.white },
-                ]}
+              <CustomHeading
+                style={[gender === option?.value && { color: Colors?.white }]}
               >
                 {option?.icon} {option?.title}
-              </Text>
+              </CustomHeading>
             </TouchableOpacity>
           ))}
       </View>
-      {/* {errors[name] && ( */}
-      <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
-      {/* )} */}
+      {errors[name] && (
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  genderContainer: {},
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
+  genderContainer: { gap: 5 },
   genderSelectionWrapper: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10
+    marginBottom: 10,
   },
   genderButton: {
     borderWidth: 1,
@@ -60,15 +65,6 @@ const styles = StyleSheet.create({
   selectedButton: {
     borderColor: Colors?.tertiery,
     backgroundColor: Colors?.tertiery,
-  },
-  genderText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 20,
   },
 });
 

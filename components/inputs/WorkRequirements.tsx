@@ -7,14 +7,11 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-} from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
+import TextInputComponent from "./TextInputWithIcon";
 
 interface WorkRequirmentProps {
   name: string;
@@ -79,7 +76,7 @@ const WorkRequirment = ({
 
   return (
     <View style={styles.addRequirmentWrapper}>
-      <Text style={styles?.label}>Work Requirments</Text>
+      <CustomHeading textAlign="left">Work Requirments</CustomHeading>
       {requirements &&
         requirements.length > 0 &&
         requirements?.map((requirement: any, index: number) => {
@@ -98,7 +95,9 @@ const WorkRequirment = ({
                   }
                   options={WORKERTYPES}
                   icon={
-                    <Text style={styles.requirementCountText}>{index + 1}</Text>
+                    <CustomHeading fontSize={20} color={Colors?.secondary}>
+                      {index + 1}
+                    </CustomHeading>
                   }
                 />
                 <View style={styles.counterContainer}>
@@ -113,32 +112,32 @@ const WorkRequirment = ({
                       styles?.errorInput
                     }
                   />
-                  <View
-                    style={[
-                      styles.priceField,
+                  <TextInputComponent
+                    label=""
+                    name="payPerDay"
+                    value={requirement?.payPerDay.toString()}
+                    placeholder="Rate per day"
+                    type="numeric"
+                    maxLength={4}
+                    onChangeText={(payPerDay: string) => {
+                      const tempPayPerDay = payPerDay;
+                      handleRequirementPriceChange(index, payPerDay);
+                    }}
+                    style={styles.textInput}
+                    containerStyle={[
+                      { height: 44 },
                       errorField?.index === index &&
                         errorField?.name === "price" &&
                         styles?.errorInput,
                     ]}
-                  >
-                    <MaterialIcons
-                      name={"currency-rupee"}
-                      size={20}
-                      color={Colors.secondary}
-                    />
-                    <TextInput
-                      value={requirement?.payPerDay.toString()}
-                      style={styles.textInput}
-                      placeholder="Rate per day"
-                      placeholderTextColor={Colors.secondary}
-                      keyboardType="numeric"
-                      maxLength={4}
-                      onChangeText={(payPerDay: string) => {
-                        const tempPayPerDay = payPerDay;
-                        handleRequirementPriceChange(index, payPerDay);
-                      }}
-                    />
-                  </View>
+                    icon={
+                      <MaterialIcons
+                        name={"currency-rupee"}
+                        size={20}
+                        color={Colors.secondary}
+                      />
+                    }
+                  />
                   {requirements && requirements?.length > 1 && (
                     <MaterialCommunityIcons
                       style={styles.deleteIcon}
@@ -152,25 +151,21 @@ const WorkRequirment = ({
             </View>
           );
         })}
-      <View
-        style={{
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          flexDirection: "row",
-        }}
-      >
-        {errors[name] ? (
-          <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
-        ) : (
-          <Text></Text>
+      <View style={errors[name] && styles?.addMore}>
+        {errors[name] && (
+          <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+            {errors[name]?.message || ""}
+          </CustomText>
         )}
         <TouchableOpacity
           onPress={addRequirments}
           style={styles.addMoreWrapper}
         >
           <View style={styles.addMoreBox}>
-            <Entypo style={styles.plusIcon} name="plus" size={18} />
-            <Text style={styles.addMoreText}>Add More</Text>
+            <Entypo color={Colors?.white} name="plus" size={18} />
+            <CustomHeading textAlign="left" color={Colors?.white}>
+              Add More
+            </CustomHeading>
           </View>
         </TouchableOpacity>
       </View>
@@ -181,21 +176,17 @@ const WorkRequirment = ({
 export default WorkRequirment;
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
   addRequirmentWrapper: {
     width: "100%",
     marginVertical: 10,
+    gap: 5,
   },
   addRequirment: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 10,
   },
   counterContainer: {
     width: "100%",
@@ -206,6 +197,11 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 10,
   },
+  addMore: {
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    flexDirection: "row",
+  },
   addMoreWrapper: {
     alignSelf: "flex-end",
   },
@@ -214,53 +210,26 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     display: "flex",
     flexDirection: "row",
+    justifyContent: "flex-end",
     alignItems: "center",
-    gap: 2,
+    gap: 5,
     borderRadius: 8,
     backgroundColor: Colors.primary,
-  },
-  addMoreText: {
-    fontWeight: "600",
-    color: Colors.white,
-  },
-  plusIcon: {
-    color: Colors.white,
   },
   deleteIcon: {
     width: "40%",
   },
-  priceField: {
-    height: 44,
-    width: "50%",
-    borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-  },
   textInput: {
-    flex: 1,
-    paddingHorizontal: 4,
+    width: "48%",
     fontSize: 18,
+    color: Colors?.primary,
+    fontWeight: "600",
+    padding: 0,
+    margin: 0,
   },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  errorText: {
-    flex: 1,
-    color: "red",
-    fontSize: 12,
-    marginRight: 16,
-  },
-  requirementCountText: {
-    flex: 1,
-    color: Colors?.secondary,
-    fontWeight: "700",
-    fontSize: 24,
-    marginRight: 16,
-    marginTop: -6,
   },
 });

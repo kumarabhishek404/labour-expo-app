@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
 
 interface RoleSelectionProps {
   role: {
@@ -39,7 +41,7 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Select Your Role</Text>
+      <CustomHeading textAlign="left">Select Your Role</CustomHeading>
       <View style={styles.roleContainer}>
         {roles.map((selectedRole, index) => (
           <TouchableOpacity
@@ -51,10 +53,10 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
             onPress={() => handleSelectRole(selectedRole)}
           >
             <View style={styles.roleContent}>
-              <Text style={styles.roleTitle}>{selectedRole.title}</Text>
-              <Text style={styles.roleDescription}>
+              <CustomHeading>{selectedRole.title}</CustomHeading>
+              <CustomText fontWeight="600">
                 {selectedRole.description}
-              </Text>
+              </CustomText>
             </View>
             <View
               style={[
@@ -74,6 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
+    gap: 5,
     // backgroundColor: "#F9F9F9",
     // padding: 20,
   },
@@ -104,6 +107,7 @@ const styles = StyleSheet.create({
   },
   roleContent: {
     alignItems: "center",
+    gap: 5,
   },
   roleTitle: {
     fontSize: 16,

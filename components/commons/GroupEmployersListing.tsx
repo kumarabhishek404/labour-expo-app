@@ -2,21 +2,19 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React from "react";
-import { GroupType } from "@/types/groupType";
 import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import profileImage from "../../assets/images/placeholder-person.jpg";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { debounce } from "lodash";
+import CustomHeading from "./CustomHeading";
+import RatingAndReviews from "./RatingAndReviews";
+import CustomText from "./CustomText";
 
 type RenderItemTypes = {
   item: {
@@ -26,7 +24,7 @@ type RenderItemTypes = {
     lastName: string;
     coverImage: string;
     location: any;
-    profileImage: string;
+    profilePicture: string;
     skills: string[];
     rating: string;
     reviews: string;
@@ -51,30 +49,46 @@ const GroupEmployersListing = ({
     const isLastItem = index === listings.length - 1;
 
     return (
-      <Link href={`/screens/employer/${item?._id}`} asChild>
-        <TouchableOpacity style={styles?.container}>
-          <View style={[styles.item, isLastItem && styles.lastElement]}>
-            <Image
-              source={
-                item?.profileImage ? { uri: item?.profileImage } : profileImage
-              }
-              style={styles.image}
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/screens/users",
+            params: { role: "employers", title: "Employers", type: "top" },
+          })
+        }
+      >
+        <View style={[styles.item, isLastItem && styles.lastElement]}>
+          <Image
+            source={
+              item?.profilePicture
+                ? { uri: item?.profilePicture }
+                : profileImage
+            }
+            style={styles.image}
+          />
+          <View>
+            <CustomHeading textAlign="left">
+              {item.firstName} {item.lastName}
+            </CustomHeading>
+            <RatingAndReviews
+              rating={item?.rating || 4.5}
+              reviews={item?.reviews || 400}
             />
-            <View>
-              <Text style={styles.itemTxt}>
-                {item.firstName} {item.lastName}
-              </Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons name="star" size={20} color={Colors.primary} />
-                <Text style={styles.itemRating}>{item.rating || "4.6"} </Text>
-                <Text style={styles.itemReviews}>
-                  ({item.reviews || "450"})
-                </Text>
-              </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <MaterialCommunityIcons
+                name="hammer-sickle"
+                size={20}
+                style={{ marginRight: 5 }}
+                color={Colors.primary}
+              />
+              <CustomHeading fontSize={14}>
+                {item.rating || "34 Services"}{" "}
+              </CustomHeading>
+              <CustomText>({item.reviews || "5 Active"})</CustomText>
             </View>
           </View>
-        </TouchableOpacity>
-      </Link>
+        </View>
+      </TouchableOpacity>
     );
   });
 
@@ -84,7 +98,8 @@ const GroupEmployersListing = ({
 
   return (
     <View style={{ marginVertical: 20 }}>
-      <Text style={styles.title}>Top Rated Employers</Text>
+      <CustomHeading textAlign="left">Top Rated Employers</CustomHeading>
+      <View style={styles.divider}></View>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -121,14 +136,12 @@ const GroupEmployersListing = ({
 export default GroupEmployersListing;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: Colors.black,
-    marginBottom: 10,
+  divider: {
+    width: 50,
+    height: 2,
+    backgroundColor: "#ccc",
+    marginVertical: 8,
+    marginBottom: 20,
   },
   item: {
     backgroundColor: Colors.white,
@@ -136,7 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 20,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   lastElement: {
     marginRight: 0,
@@ -146,22 +159,6 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 8,
     marginRight: 10,
-  },
-  itemTxt: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.black,
-    marginBottom: 8,
-  },
-  itemRating: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.black,
-    marginLeft: 5,
-  },
-  itemReviews: {
-    fontSize: 14,
-    color: "#999",
   },
   loaderStyle: {
     alignItems: "flex-start",

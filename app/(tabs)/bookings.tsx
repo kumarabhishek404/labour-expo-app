@@ -1,32 +1,23 @@
-import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  Image,
-  RefreshControl,
-} from "react-native";
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "expo-router";
+import { View, StyleSheet, RefreshControl } from "react-native";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Stack, useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
 import { fetchMyAppliedServices, fetchMyServices } from "../api/services";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import Loader from "@/components/commons/Loader";
-import EmptyPlaceholder from "../../assets/empty-placeholder.png";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
+import SearchFilter from "@/components/commons/SearchFilter";
+import Header from "@/components/commons/Header";
+import CustomHeader from "@/components/commons/Header";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
   const [category, setCategory] = useState("Hiring");
@@ -76,19 +67,6 @@ const Services = () => {
     }, [response])
   );
 
-  const handleSearch = (text: any) => {
-    setSearchText(text);
-    let workers = response?.pages.flatMap((page: any) => page.data || []);
-    const filtered: any = workers?.filter(
-      (item: any) =>
-        item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase())
-      // item.location.toLowerCase().includes(text.toLowerCase()) ||
-      // item.category.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
-
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -110,64 +88,57 @@ const Services = () => {
   });
 
   return (
-    <View style={{ flex: 1 }}>
-      <Loader loading={isLoading || isRefetching} />
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.searchSectionWrapper}>
-            <View style={styles.searchBar}>
-              <Ionicons
-                name="search"
-                size={18}
-                style={{ marginRight: 5 }}
-                color={Colors.black}
-              />
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search..."
-                value={searchText}
-                onChangeText={handleSearch}
-                placeholderTextColor="black"
-              />
-            </View>
-            <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
-              <Ionicons name="options" size={28} color={Colors.white} />
-            </TouchableOpacity>
-          </View>
+    <>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <CustomHeader
+              title={
+                userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings"
+              }
+              right="notification"
+            />
+          ),
+        }}
+      />
+
+      <View style={{ flex: 1 }}>
+        <Loader loading={isLoading || isRefetching} />
+        <View style={styles.container}>
+          <SearchFilter data={response} setFilteredData={setFilteredData} />
+
+          <CategoryButtons
+            type={userDetails?.role === "EMPLOYER" ? "myServices" : "services"}
+            onCagtegoryChanged={onCatChanged}
+          />
+
+          <PaginationString
+            type="services"
+            isLoading={isLoading}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalServices
+              listings={memoizedData || []}
+              isFetchingNextPage={isFetchingNextPage}
+              loadMore={loadMore}
+              refreshControl={
+                <RefreshControl
+                  refreshing={!isRefetching && refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+            />
+          ) : (
+            <EmptyDatePlaceholder
+              title={userDetails?.role === "EMPLOYER" ? "Service" : "Booking"}
+            />
+          )}
         </View>
-
-        <CategoryButtons
-          type={userDetails?.role === "EMPLOYER" ? "myServices" : "services"}
-          onCagtegoryChanged={onCatChanged}
-          stylesProp={styles.categoryContainer}
-        />
-
-        <PaginationString
-          type="services"
-          isLoading={isLoading}
-          totalFetchedData={memoizedData?.length}
-          totalData={totalData}
-        />
-
-        {memoizedData && memoizedData?.length > 0 ? (
-          <ListingsVerticalServices
-            listings={memoizedData || []}
-            isFetchingNextPage={isFetchingNextPage}
-            loadMore={loadMore}
-            refreshControl={
-              <RefreshControl
-                refreshing={!isRefetching && refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        ) : (
-          <EmptyDatePlaceholder
-            title={userDetails?.role === "EMPLOYER" ? "Service" : "Booking"}
-          />
-        )}
       </View>
-    </View>
+    </>
   );
 };
 
@@ -177,32 +148,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
   },
-  headerContainer: {},
-  searchBox: {
-    color: "#000000",
-    height: "100%",
-    width: "92%",
-    fontSize: 16,
-  },
-  searchSectionWrapper: {
-    flexDirection: "row",
-    marginVertical: 20,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    paddingLeft: 16,
-    borderRadius: 8,
-  },
-  filterBtn: {
-    backgroundColor: Colors.primary,
-    padding: 12,
-    borderRadius: 8,
-    marginLeft: 20,
-  },
-  categoryContainer: {},
 });
 
 export default Services;

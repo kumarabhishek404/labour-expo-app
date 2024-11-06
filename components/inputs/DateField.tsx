@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import Colors, { darkGreen } from "@/constants/Colors";
+import React, { useState } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import Colors from "@/constants/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
+import CustomHeading from "../commons/CustomHeading";
+import CustomText from "../commons/CustomText";
 
 interface DateFieldProps {
   title: string;
@@ -43,16 +38,18 @@ const DateField: React.FC<DateFieldProps> = ({
         onPress={() => setShowDatePicker(true)}
       >
         <View style={styles.dateItem}>
-          <Text style={styles.itemText}>{title}</Text>
+          <CustomHeading>{title}</CustomHeading>
           <View style={styles?.calendar}>
-            <Text>{date ? moment(date).format("LL") : "dd/mm/yyyy"}</Text>
-            <AntDesign name="calendar" size={20} color={Colors.secondary} />
+            <CustomText fontSize={14} fontWeight="bold">
+              {date ? moment(date).format("LL") : "dd/mm/yyyy"}
+            </CustomText>
+            <AntDesign name="calendar" size={24} color={Colors.secondary} />
           </View>
         </View>
         {showDatePicker && (
           <DateTimePicker
             testID="startDatePicker"
-            value={date}
+            value={date || new Date()}
             mode="date"
             is24Hour={true}
             display="default"
@@ -61,7 +58,9 @@ const DateField: React.FC<DateFieldProps> = ({
         )}
       </TouchableOpacity>
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
     </View>
   );
@@ -85,28 +84,18 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
   },
   calendar: {
     display: "flex",
     flexDirection: "row",
-    gap: 10,
-  },
-  itemText: {
-    color: darkGreen,
-    fontWeight: "400",
-    fontSize: 16,
+    gap: 5,
   },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });
 

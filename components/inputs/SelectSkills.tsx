@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // You need to install this or use a cross icon from other libraries
-import { WORKERTYPES } from "@/constants";
 import { getWorkLabel } from "@/constants/functions";
+import CustomHeading from "../commons/CustomHeading";
+import Colors from "@/constants/Colors";
+import CustomText from "../commons/CustomText";
 
 interface SkillsSelectorProps {
   name: string;
@@ -22,8 +24,6 @@ const SkillsSelector = ({
   onBlur,
   errors,
 }: SkillsSelectorProps) => {
-  console.log("availableOptions--", availableOptions, selectedInterests);
-
   const handleSelect = (interest: any) => {
     if (selectedInterests.length < 10) {
       setSelectedInterests([...selectedInterests, interest?.value]);
@@ -34,35 +34,35 @@ const SkillsSelector = ({
     const updatedInterests = selectedInterests.filter(
       (item: any) => item !== interest
     );
-    console.log("Upr---", updatedInterests);
-
     setSelectedInterests(updatedInterests);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Select Any 3 Skills</Text>
+      <CustomHeading textAlign="left">Select Any 3 Skills</CustomHeading>
       <View
         style={[styles.selectedContainer, errors[name] && styles?.errorInput]}
       >
         {selectedInterests && selectedInterests?.length > 0 ? (
           selectedInterests.map((interest: any, index: number) => (
             <View key={index} style={styles.selectedItem}>
-              <Text style={styles.selectedText}>
+              <CustomHeading color={Colors?.white}>
                 {getWorkLabel(availableOptions, interest)}
-              </Text>
+              </CustomHeading>
               <TouchableOpacity onPress={() => handleRemove(interest)}>
                 <Ionicons name="close-circle" size={20} color="white" />
               </TouchableOpacity>
             </View>
           ))
         ) : (
-          <Text style={styles.placeholderText}>What you can do?</Text>
+          <CustomText fontSize={14}>What you can do?</CustomText>
         )}
       </View>
 
       {errors[name] && (
-        <Text style={styles.errorText}>{errors[name]?.message || ""}</Text>
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
       )}
 
       {/* Display available interests */}
@@ -75,7 +75,7 @@ const SkillsSelector = ({
               style={styles.interestItem}
               onPress={() => handleSelect(interest)}
             >
-              <Text style={styles.interestText}>+ {interest?.label}</Text>
+              <CustomHeading>+ {interest?.label}</CustomHeading>
             </TouchableOpacity>
           ))}
       </View>
@@ -88,19 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    // paddingTop: 10,
-    // backgroundColor: "#F9F9F9",
-  },
-  heading: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  subheading: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 10,
-    textAlign: "center",
+    gap: 5,
   },
   selectedContainer: {
     flexDirection: "row",
@@ -128,11 +116,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
-  },
-  selectedText: {
-    color: "white",
-    fontSize: 16,
-    marginRight: 5,
+    gap: 5,
   },
   interestsContainer: {
     flexDirection: "row",
@@ -147,19 +131,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     margin: 5,
   },
-  interestText: {
-    color: "#333",
-    fontSize: 16,
-  },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
   },
 });
 

@@ -3,21 +3,21 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router, useGlobalSearchParams } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
+import CustomHeading from "./CustomHeading";
+import CustomText from "./CustomText";
 
 const ListingsVerticalWorkers = ({
-  type,
   availableInterest,
   listings,
   loadMore,
@@ -25,61 +25,70 @@ const ListingsVerticalWorkers = ({
   refreshControl,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
+    const { role } = useGlobalSearchParams();
+
     return (
       <View style={styles.container}>
-        <Link href={`/screens/${type}/${item?._id}`} asChild>
-          <TouchableOpacity>
-            <View style={styles.item}>
-              {/* Profile Image */}
-              <Image
-                source={
-                  item?.coverImage || item?.profilePicture
-                    ? { uri: item?.coverImage || item?.profilePicture }
-                    : coverImage
-                }
-                style={styles.image}
-              />
-              {item && item?.isBookmarked && (
-                <View style={styles.liked}>
-                  <Ionicons name="heart" size={16} color={Colors.white} />
-                </View>
-              )}
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: `/screens/users/${item?._id}`,
+              params: {
+                role: role,
+                title: "Worker Details",
+                type: "details",
+              },
+            })
+          }
+        >
+          <View style={styles.item}>
+            <Image
+              source={
+                item?.coverImage || item?.profilePicture
+                  ? { uri: item?.coverImage || item?.profilePicture }
+                  : coverImage
+              }
+              style={styles.image}
+            />
+            {item && item?.isBookmarked && (
+              <View style={styles.liked}>
+                <Ionicons name="heart" size={16} color={Colors.white} />
+              </View>
+            )}
 
-              <View style={styles.itemInfo}>
-                <View>
-                  <SkillSelector
-                    canAddSkills={false}
-                    isShowLabel={false}
-                    style={styles?.skillsContainer}
-                    tagStyle={styles?.skillTag}
-                    tagTextStyle={styles?.skillTagText}
-                    userSkills={item?.skills}
-                    availableSkills={availableInterest}
-                    count={5}
-                  />
+            <View style={styles.itemInfo}>
+              <View>
+                <SkillSelector
+                  canAddSkills={false}
+                  isShowLabel={false}
+                  style={styles?.skillsContainer}
+                  tagStyle={styles?.skillTag}
+                  userSkills={item?.skills}
+                  availableSkills={availableInterest}
+                  count={5}
+                />
 
-                  <Text style={styles.itemName}>
-                    {item?.firstName} {item?.middleName} {item?.lastName}
-                  </Text>
+                <CustomHeading textAlign="left">
+                  {item?.firstName} {item?.middleName} {item?.lastName}
+                </CustomHeading>
 
-                  <Text style={styles.itemAddress}>{item?.address}</Text>
-                </View>
-                <View style={styles.ratingPriceContainer}>
-                  <RatingAndReviews
-                    rating={item?.rating || 4.5}
-                    reviews={item?.reviews || 400}
-                  />
-                  <View style={styles.priceContainer}>
-                    <Text style={styles.itemPrice}>
-                      <FontAwesome name="rupee" size={14} />{" "}
-                      {item?.price || "350"}/Day
-                    </Text>
-                  </View>
+                <CustomText textAlign="left">{item?.address}</CustomText>
+              </View>
+              <View style={styles.ratingPriceContainer}>
+                <RatingAndReviews
+                  rating={item?.rating || 4.5}
+                  reviews={item?.reviews || 400}
+                />
+                <View style={styles.priceContainer}>
+                  <CustomHeading>
+                    <FontAwesome name="rupee" size={14} />{" "}
+                    {item?.price || "350"}/Day
+                  </CustomHeading>
                 </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </Link>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   });
@@ -122,7 +131,7 @@ export default ListingsVerticalWorkers;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   item: {
     backgroundColor: Colors.white,
@@ -131,7 +140,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     position: "relative",
-    marginBottom: 10
+    marginBottom: 10,
   },
   image: {
     width: 80,
@@ -154,26 +163,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   skillsContainer: {
-    paddingVertical: 0
+    paddingVertical: 0,
   },
   skillTag: {
     backgroundColor: "#e0e0e0",
     borderRadius: 5,
     marginVertical: 0,
-    marginBottom: 5
-  },
-  skillTagText: {
-    fontSize: 12,
-    color: Colors.primary,
-  },
-  itemName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: Colors.black,
-  },
-  itemAddress: {
-    fontSize: 14,
-    color: "#777",
     marginBottom: 5,
   },
   ratingPriceContainer: {
@@ -182,28 +177,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  itemLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#fa6400",
-    marginRight: 5,
-  },
-  itemValue: {
-    fontSize: 14,
-    color: Colors.black,
-    fontWeight: "600",
-  },
-  itemReviews: {
-    fontSize: 14,
-    color: "#999",
-  },
   priceContainer: {
     alignItems: "flex-end",
-  },
-  itemPrice: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.primary,
   },
   loaderStyle: {
     alignItems: "center",

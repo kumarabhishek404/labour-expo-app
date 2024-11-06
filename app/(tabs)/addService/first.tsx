@@ -69,6 +69,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             onChangeText={onChange}
             placeholder="Enter your Work Title"
             containerStyle={errors?.title && styles.errorInput}
+            style={{ marginBottom: 10 }}
             errors={errors}
             icon={
               <Ionicons

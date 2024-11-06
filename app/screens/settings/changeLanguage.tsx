@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   FlatList,
   TouchableOpacity,
-  Button,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocale } from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import CustomHeader from "@/components/commons/Header";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import Button from "@/components/inputs/Button";
+import Animated, { SlideInDown } from "react-native-reanimated";
 
+const { width } = Dimensions.get("window");
 interface Language {
   code: string;
   name: string;
@@ -37,6 +42,7 @@ export default function LanguageSelectionScreen() {
   const handleSave = async () => {
     setLocale(selectedLanguage);
     await AsyncStorage.setItem("selectedLanguage", selectedLanguage);
+    router?.back();
   };
 
   // Filter the list to have selected language on the top
@@ -54,31 +60,13 @@ export default function LanguageSelectionScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Change Language",
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-          ),
+          header: () => <CustomHeader title="Change Language" left="back" />,
         }}
       />
       <View style={styles.container}>
-        <Text style={styles.sectionTitle}>Selected Language</Text>
+        <CustomHeading textAlign="left" fontSize={18}>
+          Selected Language
+        </CustomHeading>
         <FlatList
           data={[
             {
@@ -90,14 +78,16 @@ export default function LanguageSelectionScreen() {
           ]}
           renderItem={({ item }) => (
             <View style={styles.languageItem}>
-              <Text style={styles.languageName}>{item?.name}</Text>
+              <CustomText fontSize={16}>{item?.name}</CustomText>
               <TouchableOpacity style={styles.radioSelected} />
             </View>
           )}
           keyExtractor={(item) => item.code}
         />
 
-        <Text style={styles.sectionTitle}>Available Languages</Text>
+        <CustomHeading textAlign="left" fontSize={18}>
+          Available Languages
+        </CustomHeading>
         <FlatList
           data={availableLanguages}
           renderItem={({ item }) => (
@@ -105,7 +95,7 @@ export default function LanguageSelectionScreen() {
               style={styles.languageItem}
               onPress={() => setSelectedLanguage(item.code)}
             >
-              <Text style={styles.languageName}>{item.name}</Text>
+              <CustomText fontSize={16}>{item.name}</CustomText>
               <View
                 style={
                   selectedLanguage === item.code
@@ -118,11 +108,12 @@ export default function LanguageSelectionScreen() {
           keyExtractor={(item) => item.code}
         />
 
-        <View style={styles.saveButtonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
+        <Animated.View
+          style={styles.saveButtonContainer}
+          entering={SlideInDown.delay(200)}
+        >
+          <Button isPrimary={true} title="Save" onPress={handleSave} />
+        </Animated.View>
       </View>
     </>
   );
@@ -134,11 +125,6 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "space-between",
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
   languageItem: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -147,13 +133,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
-  languageName: {
-    fontSize: 16,
-  },
   radioSelected: {
     width: 20,
     height: 20,
-    borderRadius: 8,
+    borderRadius: 30,
     borderWidth: 2,
     borderColor: Colors?.primary,
     backgroundColor: Colors?.primary,
@@ -171,17 +154,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: "#f9f9f9",
   },
   saveButton: {
     backgroundColor: Colors?.primary,
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

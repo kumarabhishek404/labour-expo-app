@@ -1,5 +1,6 @@
+import CustomText from "@/components/commons/CustomText";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 interface RoleSelectionProps {
   role: string;
@@ -42,7 +43,7 @@ const ReasoneSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
             ]}
             onPress={() => handleSelectRole(selectedRole)}
           >
-            <Text style={styles.roleTitle}>{selectedRole.label}</Text>
+            <CustomText fontSize={14}>{selectedRole.label}</CustomText>
             <View
               style={[
                 styles.radioCircle,
