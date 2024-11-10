@@ -2,12 +2,13 @@ import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Stepper from "./stepper";
-import { ADDSERVICESTEPS } from "@/constants";
 import moment from "moment";
 import { isEmptyObject } from "@/constants/functions";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
+import Stepper from "@/components/commons/Stepper";
+import { ADDSERVICESTEPS } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 interface FinalScreenProps {
   setStep: any;
@@ -50,15 +51,13 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
     <View style={styles.container}>
       <View style={styles.box}>
         <View>
-          <CustomHeading>
-            Check all the details which you have filled
-          </CustomHeading>
+          <CustomHeading>{t("checkServiceDetails")}</CustomHeading>
           <View style={{ marginVertical: 30 }}>
             <Stepper currentStep={5} steps={ADDSERVICESTEPS} />
           </View>
           <View>
             <View style={styles.row}>
-              <CustomHeading>Type</CustomHeading>
+              <CustomHeading>{t("workType")}</CustomHeading>
               <CustomText
                 style={[styles.value, { textTransform: "capitalize" }]}
                 textAlign="left"
@@ -69,7 +68,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
             {description && (
               <View style={styles.row}>
-                <CustomHeading>Description</CustomHeading>
+                <CustomHeading>{t("workDescription")}</CustomHeading>
                 <CustomText style={styles.value} textAlign="left">
                   {description}
                 </CustomText>
@@ -77,7 +76,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             )}
 
             <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-              <CustomHeading>Requirements</CustomHeading>
+              <CustomHeading>{t("workRequirements")}</CustomHeading>
               <View style={styles.requirmentContainer}>
                 {requirements &&
                   requirements?.map((requirement: any, index: number) => {
@@ -88,11 +87,11 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                             <CustomHeading
                               style={{ textTransform: "capitalize" }}
                             >
-                              {requirement?.name}
+                              {t(requirement?.name)}
                             </CustomHeading>
                           </View>
                           <CustomHeading>
-                            ₹ {requirement?.payPerDay} Per Day
+                            ₹ {requirement?.payPerDay} {t("perDay")}
                           </CustomHeading>
                         </View>
 
@@ -101,25 +100,25 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                             fontSize={14}
                             color={Colors?.secondaryText}
                           >
-                            Count
+                            {t("count")}
                           </CustomHeading>
                           <CustomHeading
                             fontSize={14}
                             color={Colors?.secondaryText}
                           >
-                            Food
+                            {t("food")}
                           </CustomHeading>
                           <CustomHeading
                             fontSize={14}
                             color={Colors?.secondaryText}
                           >
-                            Living
+                            {t("living")}
                           </CustomHeading>
                           <CustomHeading
                             fontSize={14}
                             color={Colors?.secondaryText}
                           >
-                            ESI / PF
+                            {t("esi/pf")}
                           </CustomHeading>
                         </View>
 
@@ -146,32 +145,32 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             </View>
 
             <View style={styles.row}>
-              <CustomHeading>Address</CustomHeading>
+              <CustomHeading>{t("address")}</CustomHeading>
               <CustomText style={styles.value} textAlign="left">
                 {address}
               </CustomText>
             </View>
 
             <View style={styles.row}>
-              <CustomHeading>Location</CustomHeading>
+              <CustomHeading>{t("location")}</CustomHeading>
               <CustomText style={styles.value} textAlign="left">
                 {!isEmptyObject(location) ? (
                   JSON?.stringify(location)
                 ) : (
-                  <CustomText>Location not fetched</CustomText>
+                  <CustomText>{t("checkServiceDetails")}</CustomText>
                 )}
               </CustomText>
             </View>
 
             <View style={styles.row}>
-              <CustomHeading>Start Date</CustomHeading>
+              <CustomHeading>{t("startDate")}</CustomHeading>
               <CustomText style={styles.value} textAlign="left">
                 {moment(startDate)?.format("Do MMM YYYY")}
               </CustomText>
             </View>
 
             <View style={styles.row}>
-              <CustomHeading>End Date</CustomHeading>
+              <CustomHeading>{t("endDate")}</CustomHeading>
               <CustomText style={styles.value} textAlign="left">
                 {moment(endDate)?.format("Do MMM YYYY")}
               </CustomText>
@@ -179,7 +178,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
             {images && images?.length > 0 && (
               <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-                <CustomHeading>Images</CustomHeading>
+                <CustomHeading>{t("workImages")}</CustomHeading>
                 <View
                   style={[
                     styles.value,
@@ -205,10 +204,14 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
         </View>
 
         <View style={styles?.buttonContainer}>
-          <Button isPrimary={false} title="Back" onPress={() => setStep(3)} />
+          <Button
+            isPrimary={false}
+            title={t("back")}
+            onPress={() => setStep(3)}
+          />
           <Button
             isPrimary={true}
-            title="Submit All Details"
+            title={t("submitAllDetails")}
             onPress={handleFinish}
           />
         </View>

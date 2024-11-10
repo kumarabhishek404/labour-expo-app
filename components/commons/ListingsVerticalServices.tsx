@@ -26,6 +26,7 @@ import ImageSlider from "./ImageSlider";
 import Requirements from "./Requirements";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 type Props = {
   listings: any[];
@@ -64,8 +65,6 @@ const ListingsVerticalServices = ({
   const userDetails = useAtomValue(UserAtom);
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
-    console.log("Ite---", item);
-
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
@@ -85,7 +84,7 @@ const ListingsVerticalServices = ({
                   ]}
                 >
                   <Ionicons name="happy" size={20} color={Colors.white} />
-                  <CustomHeading color={Colors?.white}>Selected</CustomHeading>
+                  <CustomHeading color={Colors?.white}>{t("selected")}</CustomHeading>
                 </View>
               )}
 
@@ -98,7 +97,7 @@ const ListingsVerticalServices = ({
                       {item?.appliedBy?.length}
                     </CustomHeading>
                     <CustomHeading color={Colors?.white}>
-                      Proposals
+                      {t("proposals")}
                     </CustomHeading>
                   </View>
                 )}

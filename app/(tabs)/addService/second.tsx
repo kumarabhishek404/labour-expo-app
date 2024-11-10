@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { ADDSERVICESTEPS } from "@/constants";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import Step2 from "../../../assets/step2.jpg";
@@ -11,6 +9,10 @@ import DateField from "@/components/inputs/DateField";
 import { isEmptyObject } from "@/constants/functions";
 import { AddServiceInProcess } from "@/app/AtomStore/user";
 import { useSetAtom } from "jotai";
+import Stepper from "@/components/commons/Stepper";
+import { ADDSERVICESTEPS } from "@/constants";
+import { t } from "@/utils/translationHelper";
+
 
 interface SecondScreenProps {
   setStep: any;
@@ -78,6 +80,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <AddLocationAndAddress
+            label={t("address")}
               name="address"
               address={value}
               setAddress={onChange}
@@ -109,7 +112,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <DateField
-              title="Start Date"
+              title={t("startDate")}
               name="startDate"
               date={value}
               setDate={onChange}
@@ -137,7 +140,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <DateField
-              title="End Date"
+              title={t("endDate")}
               name="endDate"
               date={value}
               setDate={onChange}
@@ -150,7 +153,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
-          title="Back"
+          title={t("back")}
           onPress={() => {
             setStep(1);
             setIsAddService(false);
@@ -158,7 +161,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         />
         <Button
           isPrimary={true}
-          title="Save and Next"
+          title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
         />
       </View>

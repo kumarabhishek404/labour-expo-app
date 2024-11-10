@@ -19,6 +19,8 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
+import { SERVICES } from "@/constants";
+
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -94,7 +96,7 @@ const Services = () => {
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons type="services" onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons options={SERVICES} onCagtegoryChanged={onCatChanged} />
 
           <PaginationString
             type="services"

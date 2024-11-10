@@ -26,7 +26,7 @@ import { UserAtom } from "@/app/AtomStore/user";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import SkillSelector from "@/components/commons/SkillSelector";
-import { WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import WorkInformation from "@/components/commons/WorkInformation";
 import WallletInformation from "@/components/commons/WalletInformation";
 import CustomHeading from "@/components/commons/CustomHeading";
@@ -51,7 +51,7 @@ const Worker = () => {
     worker?.likedBy?.includes(userDetails?._id) || false
   );
 
-  const { role } = useGlobalSearchParams();
+  const { role, title } = useGlobalSearchParams();
 
   const {
     isLoading,
@@ -144,7 +144,7 @@ const Worker = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title="Details" left="back" right="like" />
+            <CustomHeader title={title || "Details"} left="back" right="like" />
           ),
         }}
       />
@@ -213,7 +213,9 @@ const Worker = () => {
               isShowLabel={true}
               style={styles?.skillsContainer}
               userSkills={worker?.skills}
-              availableSkills={WORKERTYPES}
+              availableSkills={
+                userDetails?.rol === "WORKER" ? WORKERTYPES : MEDIATORTYPES
+              }
             />
 
             <UserInfoComponent user={worker} style={{ marginHorizontal: 0 }} />

@@ -18,6 +18,7 @@ import FinalScreen from "./final";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
+import { t } from "@/utils/translationHelper";
 
 const SignupScreen = () => {
   const [addService, setAddService] = useAtom(AddServiceAtom);
@@ -271,7 +272,7 @@ const SignupScreen = () => {
           headerShown: true,
           header: () => (
             <CustomHeader
-              title={addService?._id ? "Edit Service" : "Add Service"}
+              title={addService?._id ? t("editService") : t("addService")}
               left="back"
               onLeftAction={() => {
                 if (step > 2) {

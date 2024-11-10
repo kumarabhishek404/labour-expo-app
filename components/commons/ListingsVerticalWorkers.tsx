@@ -16,6 +16,7 @@ import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const ListingsVerticalWorkers = ({
   availableInterest,
@@ -35,7 +36,7 @@ const ListingsVerticalWorkers = ({
               pathname: `/screens/users/${item?._id}`,
               params: {
                 role: role,
-                title: "Worker Details",
+                title: t("workerDetails"),
                 type: "details",
               },
             })

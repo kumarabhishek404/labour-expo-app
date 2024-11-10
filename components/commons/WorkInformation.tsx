@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface WorkInformationProps {
   information: any;
@@ -13,7 +14,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
   return (
     <View style={styles?.container}>
       <CustomHeading textAlign="left" style={[style]}>
-        Work Information
+        {t("workInformation")}
       </CustomHeading>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
@@ -30,7 +31,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
               {information?.workDetails?.total || 0}
             </CustomHeading>
           </View>
-          <CustomText fontSize={14}>Total Tasks</CustomText>
+          <CustomText fontSize={14}>{t("totalTasks")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
@@ -38,7 +39,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
               {information?.workDetails?.completed || 0}
             </CustomHeading>
           </View>
-          <CustomText fontSize={14}>Completed</CustomText>
+          <CustomText fontSize={14}>{t("completed")}</CustomText>
         </View>
       </View>
       <View style={[styles.workInfoWrapper, { borderTopWidth: 0 }]}>
@@ -56,7 +57,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
               {information?.workDetails?.pending || 0}
             </CustomHeading>
           </View>
-          <CustomText fontSize={14}>Pending</CustomText>
+          <CustomText fontSize={14}>{t("pending")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
@@ -64,7 +65,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
               {information?.workDetails?.cancelled?.byWorker || 0}
             </CustomHeading>
           </View>
-          <CustomText fontSize={14}>Cancelled</CustomText>
+          <CustomText fontSize={14}>{t("cancelled")}</CustomText>
         </View>
       </View>
     </View>

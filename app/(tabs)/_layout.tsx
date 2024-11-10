@@ -17,12 +17,15 @@ import {
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
 import ProfileScreen from "./profile";
+import { useLocale } from "../context/locale";
+import { t } from "@/utils/translationHelper";
 
 export default function Layout() {
   const userDetails = useAtomValue(UserAtom);
   const isAccountInactive = useAtomValue(AccountStatusAtom);
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const isAddService = useAtomValue(AddServiceInProcess);
+  useLocale();
 
   if (!userDetails?.isAuth) {
     return <Login />;
@@ -64,7 +67,7 @@ export default function Layout() {
             },
           }}
           options={{
-            title: "Home",
+            title: t("home"), // Use translation function for text
             tabBarIcon: ({ color }: any) => (
               <Ionicons name="home" size={30} color={color} />
             ),
@@ -79,7 +82,9 @@ export default function Layout() {
           }}
           options={{
             title:
-              userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings",
+              userDetails?.role === "EMPLOYER"
+                ? t("myServices") // Translated text
+                : t("myBookings"), // Translated text
             tabBarIcon: ({ color }: any) => (
               <MaterialIcons name="calendar-month" size={30} color={color} />
             ),
@@ -89,7 +94,7 @@ export default function Layout() {
           <Tabs.Screen
             name="help"
             options={{
-              title: "Help",
+              title: t("help"), // Translated text
               tabBarIcon: ({ color }: any) => (
                 <Entypo name="help" size={30} color={color} />
               ),
@@ -103,17 +108,12 @@ export default function Layout() {
               title:
                 userDetails?.role === "EMPLOYER"
                   ? addService?._id
-                    ? "Edit Service"
-                    : "Add Service"
-                  : "Add Need",
+                    ? t("editService") // Translated text
+                    : t("addService") // Translated text
+                  : t("addNeed"), // Translated text
               tabBarIcon: ({ color }: any) => (
                 <View>
-                  <Entypo
-                    name="squared-plus"
-                    size={30}
-                    color={color}
-                    // style={styles.addIcon}
-                  />
+                  <Entypo name="squared-plus" size={30} color={color} />
                 </View>
               ),
             }}
@@ -127,7 +127,10 @@ export default function Layout() {
             },
           }}
           options={{
-            title: userDetails?.role === "EMPLOYER" ? "Workers" : "Services",
+            title:
+              userDetails?.role === "EMPLOYER"
+                ? t("workers") // Translated text
+                : t("services"), // Translated text
             tabBarIcon: ({ color }: any) => (
               <MaterialIcons name="work" size={30} color={color} />
             ),
@@ -141,7 +144,7 @@ export default function Layout() {
             },
           }}
           options={{
-            title: "My Profile",
+            title: t("myProfile"), // Translated text
             tabBarIcon: ({ color }: any) => (
               <FontAwesome name="user" size={30} color={color} />
             ),
@@ -150,7 +153,7 @@ export default function Layout() {
         <Tabs.Screen
           name={userDetails?.role === "WORKER" ? "addService" : "help"}
           options={{
-            title: "Add Service",
+            title: t("addService"), // Translated text
             headerShown: false,
             href: null,
             tabBarIcon: ({ color }: any) => (

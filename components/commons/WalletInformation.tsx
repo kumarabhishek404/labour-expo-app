@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { useTranslation } from "@/utils/i18n";
 
 interface WallletInformationProps {
   type: string;
@@ -15,12 +16,14 @@ const WallletInformation = ({
   wallet,
   style,
 }: WallletInformationProps) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles?.container}>
       {type === "spents" ? (
         <>
           <CustomHeading textAlign="left" style={[style]}>
-            Wallet
+            {t("wallet")}
           </CustomHeading>
           <View style={styles.infoBoxWrapper}>
             <View
@@ -35,20 +38,20 @@ const WallletInformation = ({
               <CustomHeading fontSize={20}>
                 ₹ {wallet?.spents?.work}
               </CustomHeading>
-              <CustomText fontSize={14}>Spents</CustomText>
+              <CustomText fontSize={14}>{t("spents")}</CustomText>
             </View>
             <View style={styles.infoBox}>
               <CustomHeading fontSize={20}>
                 ₹ {wallet?.spents?.tip}
               </CustomHeading>
-              <CustomText fontSize={14}>Tip</CustomText>
+              <CustomText fontSize={14}>{t("tip")}</CustomText>
             </View>
           </View>
         </>
       ) : (
         <>
           <CustomHeading textAlign="left" style={[style]}>
-            Wallet
+            {t("wallet")}
           </CustomHeading>
           <View style={styles.infoBoxWrapper}>
             <View
@@ -63,13 +66,13 @@ const WallletInformation = ({
               <CustomHeading fontSize={20}>
                 ₹ {wallet?.earnings?.work}
               </CustomHeading>
-              <CustomText fontSize={14}>Earnings</CustomText>
+              <CustomText fontSize={14}>{t("earnings")}</CustomText>
             </View>
             <View style={styles.infoBox}>
               <CustomHeading fontSize={20}>
                 ₹ {wallet?.earnings?.rewards}
               </CustomHeading>
-              <CustomText fontSize={14}>Rewards</CustomText>
+              <CustomText fontSize={14}>{t("rewards")}</CustomText>
             </View>
           </View>
         </>

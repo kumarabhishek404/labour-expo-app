@@ -1,4 +1,4 @@
-import { WORKERTYPES } from "@/constants";
+import {  WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";

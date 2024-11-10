@@ -19,6 +19,7 @@ import Loader from "./Loader";
 import { toast } from "@/app/hooks/toast";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const ProfileMenu = ({ disabled }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -68,7 +69,7 @@ const ProfileMenu = ({ disabled }: any) => {
 
   const menus = [
     {
-      title: "Your Team",
+      title: t("yourTeam"),
       icon: (
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
       ),
@@ -78,7 +79,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Requests",
+      title: t("requests"),
       icon: (
         <Ionicons name="hand-right-outline" size={28} color={Colors.primary} />
       ),
@@ -88,63 +89,64 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Saved Services",
+      title: t("savedServices"),
       icon: (
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
       ),
       onPress: () =>
         router?.push({
           pathname: "/screens/service",
-          params: { title: "Saved Services", type: "favourite" },
+          params: { title: t("savedServices"), type: "favourite" },
         }),
       roleCondition: userDetails?.role !== "EMPLOYER",
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Booked",
+      title: t("booked"),
       icon: (
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
       ),
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
-          params: { role: "workers", title: "Booked", type: "booked" },
+          params: { role: "workers", title: t("booked"), type: "booked" },
         }),
       roleCondition: userDetails?.role === "EMPLOYER",
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: `Your Favourites ${
-        userDetails?.role === "EMPLOYER" ? "Workers" : "Employers"
+      title: `${t("yourFavorites")} ${
+        userDetails?.role === "EMPLOYER"
+          ? t("workers")
+          : t("employers")
       }`,
       icon: <FontAwesome6 name="heart" size={24} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
           params: {
-            role: userDetails?.role === "EMPLOYER" ? "workers" : "employerss",
+            role: userDetails?.role === "EMPLOYER" ? "workers" : "employers",
             title:
               userDetails?.role === "EMPLOYER"
-                ? "Favourite Workers"
-                : "Favourite Employers",
+                ? t("favouriteWorkers")
+                : t("favouriteEmployers"),
             type: "favourite",
           },
         }),
-
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Your Favourite Mediators",
+      title: t("favouriteMediators"),
       icon: <FontAwesome6 name="heart" size={24} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
           params: {
             role: "mediators",
-            title: "Favourite Mediators",
+            title: t("favouriteMediators"),
             type: "favourite",
           },
         }),
@@ -154,14 +156,14 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Your Favourite Workers",
+      title: t("favouriteWorkers"),
       icon: <FontAwesome6 name="heart" size={24} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
           params: {
             role: "workers",
-            title: "Favourite Workers",
+            title: t("favouriteWorkers"),
             type: "favourite",
           },
         }),
@@ -171,29 +173,27 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Payment",
+      title: t("payment"),
       icon: <MaterialIcons name="payment" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/payments",
         }),
-
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Tell Your Friends",
+      title: t("tellFriends"),
       icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/shareApp",
         }),
-
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Support",
+      title: t("support"),
       icon: (
         <MaterialIcons name="support-agent" size={28} color={Colors.primary} />
       ),
@@ -201,12 +201,11 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/support",
         }),
-
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Change Language",
+      title: t("changeLanguage"),
       icon: <Entypo name="language" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
@@ -216,7 +215,9 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: isNotificationsEnabled ? "Notification On" : "Notification Off",
+      title: isNotificationsEnabled
+        ? t("notificationOn")
+        : t("notificationOff"),
       icon: (
         <MaterialIcons
           name="notifications-none"
@@ -231,7 +232,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Dark Mode",
+      title: t("darkMode"),
       icon: isDarkModeEnabled ? (
         <MaterialIcons name="dark-mode" size={28} color={Colors.primary} />
       ) : (
@@ -249,7 +250,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "App Feedback",
+      title: t("appFeedback"),
       icon: (
         <Ionicons name="chatbox-outline" size={28} color={Colors.primary} />
       ),
@@ -258,30 +259,30 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Reviews",
+      title: t("reviews"),
       icon: <AntDesign name="staro" size={28} color={Colors.primary} />,
       onPress: () => router?.push("/screens/reviews"),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Privacy Policy",
+      title: t("privacyPolicy"),
       icon: <Feather name="lock" size={28} color={Colors.primary} />,
       onPress: () => router?.push("/screens/privacyPolicy"),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Terms and Conditions",
+      title: t("termsAndConditions"),
       icon: (
-        <SimpleLineIcons name="notebook" size={28} color={Colors.primary} />
+        <SimpleLineIcons name="book-open" size={28} color={Colors.primary} />
       ),
       onPress: () => router?.push("/screens/terms&Conditions"),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: "Deactivate Account",
+      title: t("deactivateAccount"),
       icon: (
         <Ionicons name="close-circle-outline" size={28} color={Colors.danger} />
       ),
@@ -291,7 +292,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: "Delete Account",
+      title: t("deleteAccount"),
       icon: (
         <MaterialCommunityIcons
           name="delete-outline"
@@ -305,7 +306,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: false,
     },
     {
-      title: "Log Out",
+      title: t("logOut"),
       icon: (
         <AntDesign
           name="logout"

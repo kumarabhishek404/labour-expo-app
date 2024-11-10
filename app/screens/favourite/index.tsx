@@ -19,7 +19,7 @@ import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorker
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
-import { WORKERTYPES } from "@/constants";
+import {  SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 
@@ -44,6 +44,7 @@ const Favourite = (props: any) => {
         ? fetchAllLikedWorkers({ pageParam })
         : fetchAllLikedServices({ pageParam });
     },
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -98,7 +99,11 @@ const Favourite = (props: any) => {
         <SearchFilter data={response} setFilteredData={setFilteredData} />
 
         <CategoryButtons
-          type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
+          options={
+            userDetails?.role === "EMPLOYER"
+              ? WORKERS
+              : SERVICES
+          }
           onCagtegoryChanged={onCatChanged}
         />
 

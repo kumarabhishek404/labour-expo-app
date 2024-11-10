@@ -98,17 +98,17 @@
 
 // export default FourthScreen;
 
-
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Stepper from "./stepper";
-import { ADDSERVICESTEPS } from "@/constants";
 import moment from "moment";
 import { isEmptyObject } from "@/constants/functions";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
+import Stepper from "@/components/commons/Stepper";
+import { ADDSERVICESTEPS } from "@/constants";
+
 
 interface FinalScreenProps {
   setStep: any;

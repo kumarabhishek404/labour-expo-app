@@ -13,13 +13,14 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
-import { WORKERTYPES } from "@/constants";
+import {  SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
 import Header from "@/components/commons/Header";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
+import { t } from "@/utils/translationHelper";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -50,14 +51,16 @@ const Workers = () => {
         ? fetchAllWorkers({ ...payload, skill: category })
         : fetchAllServices({ ...payload, type: category });
     },
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
+      console.log("Last--", lastPage?.pagination);
+
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
-    retry: false,
     // refetchInterval: 5000
   });
 
@@ -100,6 +103,8 @@ const Workers = () => {
   };
 
   const loadMore = () => {
+    console.log("Load more--", hasNextPage, isFetchingNextPage);
+
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
@@ -124,10 +129,12 @@ const Workers = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
+              title={
+                userDetails?.role === "EMPLOYER" ? t("workers") : t("services")
+              }
               right="notification"
             />
-          )
+          ),
         }}
       />
       <View style={{ flex: 1 }}>
@@ -136,7 +143,11 @@ const Workers = () => {
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
           <CategoryButtons
-            type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
+            options={
+              userDetails?.role === "EMPLOYER"
+                ? WORKERS
+                : SERVICES
+            }
             onCagtegoryChanged={onCatChanged}
           />
 

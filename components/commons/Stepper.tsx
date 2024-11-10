@@ -1,6 +1,7 @@
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 import { Entypo } from "@expo/vector-icons";
 import React from "react";
 import { View, StyleSheet } from "react-native";
@@ -8,7 +9,7 @@ import { View, StyleSheet } from "react-native";
 interface StepperProps {
   currentStep: number;
   steps: Array<any>;
-  // steps?: Step[];
+  // staps?: Step[];
 }
 
 const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
@@ -16,7 +17,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
 
   return (
     <View style={styles.container}>
-      {steps.map((step: any, index: number) => (
+      {steps?.map((step: any, index: number) => (
         <View key={index} style={styles.stepContainer}>
           <View
             style={[
@@ -41,7 +42,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
             )}
           </View>
           <CustomText fontWeight="500" fontSize={10}>
-            {step.label}
+            {t(step.label)}
           </CustomText>
           <CustomText
             fontSize={10}
@@ -50,15 +51,15 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
               index < activeStep
                 ? Colors?.success
                 : index === activeStep
-                ? Colors?.progress
+                ? Colors?.primary
                 : Colors?.pending
             }
           >
             {index < activeStep
-              ? "Completed"
+              ? t("completed")
               : index === activeStep
-              ? "In Progress"
-              : "Pending"}
+              ? t("inProgress")
+              : t("pending")}
           </CustomText>
 
           {index < steps.length - 1 && (
@@ -100,13 +101,13 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   completedCircle: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: Colors?.success,
   },
   inProgressCircle: {
-    backgroundColor: "#2196F3",
+    backgroundColor: Colors?.primary,
   },
   pendingCircle: {
-    backgroundColor: "#ccc",
+    backgroundColor: Colors?.pending,
   },
   lineContainer: {
     position: "absolute",

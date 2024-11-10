@@ -7,37 +7,35 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const AboutCompany = () => {
   return (
     <View style={styles.container}>
-      <CustomHeading>ABOUT OUR COMPANY</CustomHeading>
+      {/* Replaced hardcoded text with t('key') */}
+      <CustomHeading>{t("aboutOurCompany")}</CustomHeading>
 
       <View style={styles.divider}></View>
 
       <CustomText fontSize={14}>
-        A tale of a fateful trip that started from this tropic port aboard this
-        tiny ship today still wanted by the government they survive as soldiers
-        of fortune to a deluxe apartment in the sky moving on up to the east
-        side a family.
+        {t("companyDescription1")}
       </CustomText>
 
       <CustomText fontSize={14}>
-        The government they survive as soldiers of fortune baby if you've ever
-        wondered the east side to a deluxe apartment.
+        {t("companyDescription2")}
       </CustomText>
 
       <View style={styles.iconsRow}>
         {/* Vision Icon */}
         <View style={styles.iconContainer}>
           <AntDesign name="staro" size={40} color="#1F3E72" />
-          <CustomHeading fontSize={14}>Vision</CustomHeading>
+          <CustomHeading fontSize={14}>{t("vision")}</CustomHeading>
         </View>
 
         {/* Missions Icon */}
         <View style={styles.iconContainer}>
           <FontAwesome6 name="medal" size={40} color="#1F3E72" />
-          <CustomHeading fontSize={14}>Missions</CustomHeading>
+          <CustomHeading fontSize={14}>{t("missions")}</CustomHeading>
         </View>
 
         {/* Goals Icon */}
@@ -47,7 +45,7 @@ const AboutCompany = () => {
             size={40}
             color="#1F3E72"
           />
-          <CustomHeading fontSize={14}>Goals</CustomHeading>
+          <CustomHeading fontSize={14}>{t("goals")}</CustomHeading>
         </View>
       </View>
     </View>

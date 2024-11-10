@@ -6,11 +6,12 @@ import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Gender from "@/components/inputs/Gender";
 import DateField from "@/components/inputs/DateField";
 import { Link } from "expo-router";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { REGISTERSTEPS } from "@/constants";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
+import Stepper from "@/components/commons/Stepper";
+import { REGISTERSTEPS } from "@/constants";
+
 
 interface FirstScreenProps {
   setStep: any;

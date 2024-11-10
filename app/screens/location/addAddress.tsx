@@ -12,12 +12,12 @@ import {
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import DropdownComponent from "@/components/inputs/Dropdown";
-import { STETESOFINDIA } from "@/constants";
 import { useAtom } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeader from "@/components/commons/Header";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
+import { STETESOFINDIA } from "@/constants";
 
 const AddCurrentLocation = () => {
   const navigation = useNavigation();

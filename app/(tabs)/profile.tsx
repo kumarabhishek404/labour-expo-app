@@ -27,7 +27,7 @@ import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import { addSkills } from "../api/workers";
 import { toast } from "../hooks/toast";
-import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import {  MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
@@ -37,8 +37,10 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
+import { useLocale } from "../context/locale";
 
 const ProfileScreen = () => {
+  useLocale()
   const isAccountInactive = useAtomValue(AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);

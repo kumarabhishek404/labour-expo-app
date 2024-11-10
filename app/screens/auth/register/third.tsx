@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
+import {  MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
 import SkillsSelector from "@/components/inputs/SelectSkills";
 import RoleSelection from "@/components/inputs/SelectRole";
 import { Controller, useForm } from "react-hook-form";
+import Stepper from "@/components/commons/Stepper";
 
 interface ThirdScreenProps {
   setStep: any;

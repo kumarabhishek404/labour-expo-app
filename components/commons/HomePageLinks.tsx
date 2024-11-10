@@ -14,30 +14,31 @@ import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 
 const HomePageLinks = () => {
   const userDetails = useAtomValue(UserAtom);
 
   const links = [
     {
-      title: userDetails?.role === "EMPLOYER" ? "Workers" : "Services",
-      subtitle: "Mobile, Fiber and AirFiber",
+      title: userDetails?.role === "EMPLOYER" ? t("workers") : t("services"),
+      subtitle: t("mobileFiberAirFiber"),
       path: {
         pathname: "/(tabs)/workers",
-        params: { role: "workers", title: "Workers", type: "all" },
+        params: { role: "workers", title: t("workers"), type: "all" },
       },
       image: Farmer3,
       style: [styles.largeBox, styles.serviceBox],
       big: true,
     },
     {
-      title: userDetails?.role === "MEDIATOR" ? "Workers" : "Mediators",
-      subtitle: "Mobile, Fiber and AirFiber",
+      title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
+      subtitle: t("mobileFiberAirFiber"),
       path: {
         pathname: "/screens/users",
         params: {
           role: userDetails?.role === "MEDIATOR" ? "workers" : "mediators",
-          title: userDetails?.role === "MEDIATOR" ? "Workers" : "Mediators",
+          title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
           type: "all",
         },
       },
@@ -46,15 +47,15 @@ const HomePageLinks = () => {
       big: true,
     },
     {
-      title: userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings",
-      subtitle: "Grocery, Fashion",
+      title: userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
+      subtitle: t("groceryFashion"),
       path: "/(tabs)/bookings",
       image: Farmer8,
       style: [styles.smallBox, styles.bookingBox],
     },
     {
-      title: "Guides / Helps",
-      subtitle: "Music, TV, Games",
+      title: t("guidesHelps"),
+      subtitle: t("musicTvGames"),
       path: "/screens/helps",
       image: Farmer6,
       style: [styles.smallBox, styles.helpBox],
@@ -110,8 +111,6 @@ const styles = StyleSheet.create({
     height: 176,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    // borderWidth: 1,
-    // borderColor: Colors?.secondaryText,
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "#000",
@@ -126,8 +125,6 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    // borderWidth: 1,
-    // borderColor: Colors?.secondaryText,
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "#000",

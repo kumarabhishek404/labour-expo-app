@@ -12,15 +12,13 @@ import Loader from "@/components/commons/Loader";
 import { fetchAllEmployers } from "../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
-import i18n from "@/utils/i18n";
-import { useLocale } from "../context/locale";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
-import { WORKERTYPES } from "@/constants";
+import {  SERVICES, WORKERTYPES } from "@/constants";
 import QuickContact from "@/components/commons/QuickContact";
 import TestimonialSlider from "@/components/commons/Testimonials";
 import PublicationsScreen from "@/components/commons/Publications";
@@ -31,9 +29,9 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
 import SpeechToText from "@/components/commons/VoiceToText";
 import AudioRecorder from "@/components/commons/AudioRecord";
+import { t } from "@/utils/translationHelper";
 
 const Page = () => {
-  useLocale();
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
@@ -146,11 +144,7 @@ const Page = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader
-              title=""
-              left="profile"
-              right="notification"
-            />
+            <CustomHeader title="" left="profile" right="notification" />
           ),
         }}
       />
@@ -177,7 +171,7 @@ const Page = () => {
               fontSize={24}
               style={{ marginBottom: 10 }}
             >
-              {i18n.t("welcome")} {userDetails?.firstName}
+              {t("welcome")} {userDetails?.firstName}
             </CustomHeading>
             <AudioRecorder />
             <BannerSlider />
@@ -189,7 +183,11 @@ const Page = () => {
             <View style={styles.divider}></View>
 
             <CategoryButtons
-              type={userDetails?.role === "EMPLOYER" ? "workers" : "services"}
+              options={
+                userDetails?.role === "EMPLOYER"
+                  ? WORKERTYPES
+                  : SERVICES
+              }
               onCagtegoryChanged={onCatChanged}
               stylesProp={styles.categoryContainer}
             />

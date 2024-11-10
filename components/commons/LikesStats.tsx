@@ -4,9 +4,11 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const StatsCard = () => {
   const userDetails = useAtomValue(UserAtom);
+
   return (
     <View style={styles.container}>
       <View>
@@ -16,14 +18,16 @@ const StatsCard = () => {
             : userDetails?.appliedServices?.length || 0}
         </CustomHeading>
         <CustomText>
-          MY {userDetails?.role === "EMPLOYER" ? "SERVICES" : "BOOKINGS"}
+          {t(
+            userDetails?.role === "EMPLOYER" ? "myServices" : "myBookings"
+          )}
         </CustomText>
       </View>
       <View>
         <CustomHeading fontSize={20}>
           {userDetails?.likedBy?.length || 0}
         </CustomHeading>
-        <CustomText>MY LIKES</CustomText>
+        <CustomText>{t("myLikes")}</CustomText>
       </View>
     </View>
   );

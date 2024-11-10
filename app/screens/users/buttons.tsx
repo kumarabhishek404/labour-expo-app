@@ -1,24 +1,20 @@
 import { Dimensions, StyleSheet } from "react-native";
 import React from "react";
-import {
-  useGlobalSearchParams,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
+import { useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import Colors from "@/constants/Colors";
 import Animated, { SlideInDown } from "react-native-reanimated";
+import { useMutation } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
+import { toast } from "@/app/hooks/toast";
+import Button from "@/components/inputs/Button";
+import Loader from "@/components/commons/Loader";
 import {
   bookWorker,
   likeWorker,
   removeBookedWorker,
   unlikeWorker,
 } from "../../api/workers";
-import { useMutation } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
-import { sendJoiningRequest } from "@/app/api/requests";
-import { toast } from "@/app/hooks/toast";
-import Button from "@/components/inputs/Button";
 import {
   bookMediator,
   likeMediator,
@@ -26,7 +22,8 @@ import {
   unlikeMediator,
 } from "@/app/api/mediator";
 import { likeEmployer, unlikeEmployer } from "@/app/api/employer";
-import Loader from "@/components/commons/Loader";
+import { t } from "@/utils/translationHelper";
+import { sendJoiningRequest } from "@/app/api/requests";
 
 const { width } = Dimensions.get("window");
 
@@ -54,24 +51,16 @@ const ButtonContainer = ({
     mutationFn: () => likeWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Worker added in favourites");
-      console.log("Response while liking a worker - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the worker ", err);
+      toast.success(t("workerAddedToFavourites"));
     },
   });
 
   const mutationUnLikeWorker = useMutation({
-    mutationKey: ["unlikeService", { id }],
+    mutationKey: ["unlikeWorker", { id }],
     mutationFn: () => unlikeWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Worker removed from favourites");
-      console.log("Response while unliking a worker - ", response);
-    },
-    onError: (err) => {
-      console.error("error while unliking the worker ", err);
+      toast.success(t("workerRemovedFromFavourites"));
     },
   });
 
@@ -80,11 +69,7 @@ const ButtonContainer = ({
     mutationFn: () => likeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Mediator added in favourites");
-      console.log("Response while liking a mediator - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the mediator ", err);
+      toast.success(t("mediatorAddedToFavourites"));
     },
   });
 
@@ -93,11 +78,7 @@ const ButtonContainer = ({
     mutationFn: () => unlikeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Mediator removed from favourites");
-      console.log("Response while unliking a mediator - ", response);
-    },
-    onError: (err) => {
-      console.error("error while unliking the mediator ", err);
+      toast.success(t("mediatorRemovedFromFavourites"));
     },
   });
 
@@ -106,11 +87,7 @@ const ButtonContainer = ({
     mutationFn: () => likeEmployer({ employerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Employer added in favourites");
-      console.log("Response while liking a employer - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the employer ", err);
+      toast.success(t("employerAddedToFavourites"));
     },
   });
 
@@ -119,11 +96,7 @@ const ButtonContainer = ({
     mutationFn: () => unlikeEmployer({ employerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Employer removed from favourites");
-      console.log("Response while unliking a employer - ", response);
-    },
-    onError: (err) => {
-      console.error("error while unliking the employer ", err);
+      toast.success(t("employerRemovedFromFavourites"));
     },
   });
 
@@ -132,27 +105,16 @@ const ButtonContainer = ({
     mutationFn: () => bookWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Worker booked in successfully");
-      console.log("Response while liking a worker - ", response);
-    },
-    onError: (err) => {
-      console.error("error while booking the worker ", err);
+      toast.success(t("workerBookedSuccessfully"));
     },
   });
 
   const mutationRemoveBookedWorker = useMutation({
-    mutationKey: ["removeBookedService", { id }],
+    mutationKey: ["removeBookedWorker", { id }],
     mutationFn: () => removeBookedWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Successfully cancel booking of the worker");
-      console.log(
-        "Response while canceling booking of this worker - ",
-        response
-      );
-    },
-    onError: (err) => {
-      console.error("error while canceling the booking of the worker ", err);
+      toast.success(t("bookingCancelledWorker"));
     },
   });
 
@@ -161,11 +123,7 @@ const ButtonContainer = ({
     mutationFn: () => bookMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Worker booked in successfully");
-      console.log("Response while liking a mediator - ", response);
-    },
-    onError: (err) => {
-      console.error("error while booking the mediator ", err);
+      toast.success(t("workerBookedSuccessfully"));
     },
   });
 
@@ -174,14 +132,7 @@ const ButtonContainer = ({
     mutationFn: () => removeBookedMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Successfully cancel booking of the mediator");
-      console.log(
-        "Response while canceling booking of this mediator - ",
-        response
-      );
-    },
-    onError: (err) => {
-      console.error("error while canceling the booking of the mediator ", err);
+      toast.success(t("mediatorBookingCancelled"));
     },
   });
 
@@ -195,8 +146,6 @@ const ButtonContainer = ({
       console.error("error while sending request to worker ", err);
     },
   });
-
-  console.log("roleo   --", role);
 
   const handleLikeFunction = () => {
     if (role === "workers") mutationLikeWorker?.mutate();
@@ -232,51 +181,42 @@ const ButtonContainer = ({
         loading={
           isLoading ||
           mutationLikeWorker?.isPending ||
-          mutationUnLikeWorker?.isPending ||
-          mutationSendRequest?.isPending ||
-          mutationBookWorker?.isPending ||
-          mutationRemoveBookedWorker?.isPending
+          mutationUnLikeWorker?.isPending
         }
       />
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
         {type === "applicant" && (
           <Button
             isPrimary={true}
-            title={isWorkerBooked ? "Selected" : "Select"}
+            title={isWorkerBooked ? t("selected") : t("select")}
             onPress={() => {}}
-            style={styles?.selectBtn}
           />
         )}
-
         {userDetails?.role === "EMPLOYER" &&
           (!type || type !== "applicant") && (
             <Button
               isPrimary={true}
-              title={isWorkerBooked ? "Already Booked" : "Book Now"}
+              title={isWorkerBooked ? t("alreadyBooked") : t("bookNow")}
               onPress={() =>
                 isWorkerBooked
                   ? handleRemoveBookedFunction()
                   : handleBookFunction()
               }
-              style={styles?.bookBtn}
             />
           )}
-
         {userDetails?.role === "MEDIATOR" && (
           <Button
             isPrimary={true}
-            title={isWorkerBooked ? "Already Added" : "Add In Your Team"}
+            title={isWorkerBooked ? t("alreadyAdded") : t("addInYourTeam")}
             onPress={() => handleSendFunction()}
-            style={[styles.footerBtn, styles.footerAddRequestBtn]}
           />
         )}
         <Button
           isPrimary={true}
-          title={isWorkerLiked ? "Unlike" : "Like"}
+          title={isWorkerLiked ? t("unlike") : t("like")}
           onPress={() =>
             isWorkerLiked ? handleUnLikeFunction() : handleLikeFunction()
           }
-          style={styles.footerBtn}
         />
       </Animated.View>
     </>

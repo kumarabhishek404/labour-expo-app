@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import React from "react";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { useTranslation } from "@/utils/i18n";
 
 interface UserInfoComponentProps {
   user: any;
@@ -9,6 +10,7 @@ interface UserInfoComponentProps {
 }
 
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
+  const { t } = useTranslation();
   return (
     <View style={[styles.userInfoTextWrapper, style]}>
       <View>
@@ -16,23 +18,23 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           style={[styles.row, user?.role === "EMPLOYER" && styles.firstBox]}
         >
           <CustomHeading fontSize={14} padding={12}>
-            <CustomText>Address</CustomText>
+            <CustomText>{t("address")}</CustomText>
             {"  "}
-            {user?.address || "Address not found"}
+            {user?.address || t("addressNotFound")}
           </CustomHeading>
         </View>
         <View style={styles.row}>
           <CustomHeading fontSize={14} padding={12}>
-            <CustomText>Mobile Number</CustomText>
+            <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
             {user?.mobileNumber ||
               user?.alternateMobileNumber ||
-              "Mobile not found"}
+              t("mobileNotFound")}
           </CustomHeading>
         </View>
         <View style={[styles.row, styles.lastBox]}>
           <CustomHeading fontSize={14} padding={12}>
-            <CustomText>Email Address</CustomText>
+            <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
             {user?.email}, {user?.alternateEmail}
           </CustomHeading>

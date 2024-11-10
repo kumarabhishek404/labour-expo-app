@@ -41,6 +41,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
+import { t } from "@/utils/translationHelper";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -94,6 +95,7 @@ const ServiceDetails = () => {
     queryFn: ({ pageParam }) => {
       return fetchMyApplicants({ pageParam, serviceId: id });
     },
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -115,6 +117,7 @@ const ServiceDetails = () => {
     queryFn: ({ pageParam }) => {
       return fetchSelectedCandidates({ pageParam, serviceId: id });
     },
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -226,14 +229,9 @@ const ServiceDetails = () => {
             <CustomHeading fontSize={26}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading>Are you sure?</CustomHeading>
-        <CustomHeading fontSize={14}>
-          You want to delete this service.
-        </CustomHeading>
-        <CustomText>
-          This action is irreversible and will lead to a loss of all your
-          created service.
-        </CustomText>
+        <CustomHeading>{t("areYouSure")}</CustomHeading>
+        <CustomHeading fontSize={14}>{t("wantToDeleteService")}</CustomHeading>
+        <CustomText>{t("irreversibleAction")}</CustomText>
       </View>
     );
   };
@@ -246,13 +244,11 @@ const ServiceDetails = () => {
             <CustomHeading fontSize={26}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading>Are you sure?</CustomHeading>
+        <CustomHeading>{t("areYouSure")}</CustomHeading>
         <CustomHeading fontSize={14}>
-          You want to mark this service as completed.
+          {t("wantToCompleteService")}
         </CustomHeading>
-        <CustomText>
-          You can restore your service again and start hiring.
-        </CustomText>
+        <CustomText>{t("restoreSerivceText")}</CustomText>
       </View>
     );
   };
@@ -263,7 +259,7 @@ const ServiceDetails = () => {
         options={{
           header: () => (
             <CustomHeader
-              title="Service Details"
+              title={t("serviceDetails")}
               left="back"
               right="notification"
             />
@@ -298,12 +294,10 @@ const ServiceDetails = () => {
               <View style={styles?.selectedWrapper}>
                 <View style={{ width: "100%" }}>
                   <CustomHeading color={Colors?.white} textAlign="left">
-                    This Service Is Cancelled
+                    {t("thisServiceIsCancelled")}
                   </CustomHeading>
                   <CustomText textAlign="left" color={Colors?.white}>
-                    (We apologize for the inconvenience, but due to unforeseen
-                    circumstances, we need to cancel this service. Thank you for
-                    your understanding)
+                    {t("apologyForInconvenience")}
                   </CustomText>
                 </View>
               </View>
@@ -312,19 +306,18 @@ const ServiceDetails = () => {
             {isSelected && service?.status !== "Cancelled" && (
               <View style={styles?.selectedWrapper}>
                 <CustomHeading color={Colors?.white} textAlign="left">
-                  You are Selected
+                  {t("youAreSelected")}
                 </CustomHeading>
                 <CustomText
                   textAlign="left"
                   color={Colors?.white}
                   style={{ marginBottom: 10 }}
                 >
-                  (Do your best work and get best rating. It will help you to
-                  get more work)
+                  {t("doYourBest")}
                 </CustomText>
                 <Button
                   isPrimary={true}
-                  title="Call Employer"
+                  title={t("callEmployer")}
                   onPress={() => {}}
                   icon={
                     <FontAwesome5
@@ -358,7 +351,7 @@ const ServiceDetails = () => {
                 style={{ alignSelf: "center" }}
               />
               <CustomText textAlign="left">
-                Start from {moment(service?.startDate).format("LL")}
+                {t("startFrom")} {moment(service?.startDate).format("LL")}
               </CustomText>
             </View>
 
@@ -420,7 +413,7 @@ const ServiceDetails = () => {
             {service?.isSelected ? (
               <Button
                 isPrimary={true}
-                title="Remove from Service"
+                title={t("removeFromService")}
                 onPress={() =>
                   isServiceApplied
                     ? mutationUnApplyService.mutate()
@@ -430,7 +423,7 @@ const ServiceDetails = () => {
             ) : (
               <Button
                 isPrimary={true}
-                title={isServiceApplied ? "Cancel Apply" : "Apply Now"}
+                title={isServiceApplied ? t("cancelApply") : t("applyNow")}
                 onPress={() =>
                   isServiceApplied
                     ? mutationUnApplyService.mutate()
@@ -441,7 +434,7 @@ const ServiceDetails = () => {
 
             <Button
               isPrimary={false}
-              title={isServiceLiked ? "Unlike" : "Like"}
+              title={isServiceLiked ? t("unlike") : t("like")}
               onPress={() =>
                 isServiceLiked
                   ? mutationUnLikeService.mutate()
@@ -463,7 +456,7 @@ const ServiceDetails = () => {
           >
             <Button
               isPrimary={true}
-              title="Delete Service"
+              title={t("deleteService")}
               onPress={() => setModalVisible(true)}
               style={styles?.deleteBtn}
             />
@@ -472,7 +465,7 @@ const ServiceDetails = () => {
             applicants?.pages[0]?.data?.length > 0 ? (
               <Button
                 isPrimary={false}
-                title="Complete Service"
+                title={t("completeService")}
                 onPress={() => setIsCompleteModalVisible(true)}
                 style={styles?.completeBtn}
                 textStyle={{
@@ -482,7 +475,7 @@ const ServiceDetails = () => {
             ) : (
               <Button
                 isPrimary={false}
-                title="Edit"
+                title={t("edit")}
                 onPress={() => {
                   router.push("/(tabs)/addService/");
                   setAddService(service);
@@ -504,7 +497,7 @@ const ServiceDetails = () => {
           >
             <Button
               isPrimary={false}
-              title="Restore Service"
+              title={t("restoreService")}
               onPress={() => mutationCompleteService?.mutate()}
               style={styles?.footerBtn}
               bgColor={Colors?.tertiery}
@@ -516,28 +509,28 @@ const ServiceDetails = () => {
         )}
 
       <ModalComponent
-        title="Complete Service"
+        title={t("completeService")}
         visible={isCompleteModalVisible}
         content={completeServiceModalContent}
         onClose={() => setIsCompleteModalVisible(false)}
         primaryButton={{
-          title: "Complete",
+          title: t("complete"),
           action: mutationCompleteService?.mutate,
         }}
         secondaryButton={{
-          title: "Cancel",
+          title: t("cancel"),
           styles: "",
           action: () => setIsCompleteModalVisible(false),
         }}
       />
 
       <ModalComponent
-        title="Delete Service"
+        title={t("deleteService")}
         visible={modalVisible}
         content={deleteModalContent}
         onClose={() => setModalVisible(false)}
         primaryButton={{
-          title: "Delete",
+          title: t("deleteService"),
           styles: {
             backgroundColor: "red",
             borderColor: "red",
@@ -545,7 +538,7 @@ const ServiceDetails = () => {
           action: handleDelete,
         }}
         secondaryButton={{
-          title: "Cancel",
+          title: t("cancel"),
           styles: "",
           action: () => setModalVisible(false),
         }}

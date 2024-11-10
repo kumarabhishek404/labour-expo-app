@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { StyleSheet, Image, View } from "react-native";
 import Colors from "@/constants/Colors";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { Ionicons } from "@expo/vector-icons";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { ADDSERVICESTEPS, STETESOFINDIA, WORKTYPES } from "@/constants";
+
 import { Controller, useForm } from "react-hook-form";
 import Step1 from "../../../assets/step1.jpg";
 import { useSetAtom } from "jotai";
 import { AddServiceInProcess } from "@/app/AtomStore/user";
-import TextAreaInputComponent from "@/components/inputs/TextArea";
-import CustomHeading from "@/components/commons/CustomHeading";
 import DropdownComponent from "@/components/inputs/Dropdown";
 import WorkRequirment from "@/components/inputs/WorkRequirements";
+import Stepper from "@/components/commons/Stepper";
+import { ADDSERVICESTEPS, WORKTYPES } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 interface FirstScreenProps {
   setStep: any;
@@ -66,7 +65,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <DropdownComponent
-            label="Work Type"
+            label={t("workType")}
             value={value}
             setValue={onChange}
             placeholder="Select State"
@@ -147,6 +146,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <WorkRequirment
+            label={t("workRequirements")}
             name="requirements"
             requirements={value}
             setRequirements={onChange}
@@ -157,55 +157,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         )}
       />
 
-      {/* <Controller
-        control={control}
-        name="description"
-        defaultValue=""
-        rules={{
-          required: "Work description is required",
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <DropdownComponent
-            label="Work Sub-Type"
-            value={value}
-            setValue={onChange}
-            placeholder="Select State"
-            options={WORKTYPES}
-            style={{ marginBottom: 10 }}
-            // containerStyle={errors?.title && styles.errorInput}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
-          />
-          // <TextAreaInputComponent
-          //   label="Work Description"
-          //   name="description"
-          //   value={value}
-          //   onBlur={onBlur}
-          //   onChangeText={onChange}
-          //   placeholder="Enter your work description"
-          //   containerStyle={errors?.description && styles.errorInput}
-          //   errors={errors}
-          //   icon={
-          //     <Ionicons
-          //       name={"mail-outline"}
-          //       size={30}
-          //       color={Colors.secondary}
-          //       style={{ paddingVertical: 10, paddingRight: 10 }}
-          //     />
-          //   }
-          // />
-        )}
-      /> */}
       <Button
         style={styles?.bottomButton}
         isPrimary={true}
-        title="Next"
+        title={t("next")}
         onPress={handleSubmit(onSubmit)}
       />
     </>

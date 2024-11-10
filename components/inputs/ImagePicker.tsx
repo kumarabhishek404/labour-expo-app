@@ -6,6 +6,7 @@ import { Entypo } from "@expo/vector-icons";
 import Button from "./Button";
 import CustomText from "../commons/CustomText";
 import CustomHeading from "../commons/CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 interface ImageUploadProps {
   name: string;
@@ -47,7 +48,7 @@ const ImageUpload = ({
 
   return (
     <View>
-      <CustomHeading textAlign="left">Work Images</CustomHeading>
+      <CustomHeading textAlign="left">{t("workImages")}</CustomHeading>
       <View style={[styles.container, errors[name] && styles?.errorInput]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />

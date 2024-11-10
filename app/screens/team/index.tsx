@@ -14,6 +14,8 @@ import PaginationString from "@/components/commons/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
+import { MEMBERS } from "@/constants";
+
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
@@ -29,6 +31,7 @@ const Members = () => {
   } = useInfiniteQuery({
     queryKey: ["members"],
     queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -78,7 +81,7 @@ const Members = () => {
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons type="members" onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons options={MEMBERS} onCagtegoryChanged={onCatChanged} />
 
           <PaginationString
             type="members"

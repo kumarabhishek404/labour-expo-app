@@ -1,32 +1,31 @@
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import Colors from "@/constants/Colors";
-import allCategories from "@/data/categories";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
 
 type Props = {
-  type: string;
+  options: any;
   onCagtegoryChanged: (category: string) => void;
   stylesProp?: object;
 };
 
-const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
+const CategoryButtons = ({
+  options,
+  onCagtegoryChanged,
+  stylesProp,
+}: Props) => {
   const userDetails = useAtomValue(UserAtom);
-  const [categories, setCategories] = useState(allCategories[type]);
+  const [categories, setCategories] = useState(options);
   const scrollRef: any = useRef<ScrollView>(null);
   const itemRef = useRef<TouchableOpacity[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    setCategories(allCategories[type]);
+    setCategories(options);
   }, [userDetails]);
 
   const handleSelectCategory = (index: number) => {
@@ -78,7 +77,7 @@ const CategoryButtons = ({ type, onCagtegoryChanged, stylesProp }: Props) => {
                   : styles.categoryBtnTxt
               }
             >
-              {item.label}
+              {t(item.label)}
             </CustomText>
           </TouchableOpacity>
         ))}

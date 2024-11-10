@@ -12,8 +12,10 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
+import { t } from "@/utils/translationHelper";
 
 interface WorkRequirmentProps {
+  label?: string;
   name: string;
   requirements: any;
   setRequirements: any;
@@ -23,6 +25,7 @@ interface WorkRequirmentProps {
 }
 
 const WorkRequirment = ({
+  label,
   name,
   requirements,
   setRequirements,
@@ -76,7 +79,7 @@ const WorkRequirment = ({
 
   return (
     <View style={styles.addRequirmentWrapper}>
-      <CustomHeading textAlign="left">Work Requirments</CustomHeading>
+      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       {requirements &&
         requirements.length > 0 &&
         requirements?.map((requirement: any, index: number) => {
@@ -164,7 +167,7 @@ const WorkRequirment = ({
           <View style={styles.addMoreBox}>
             <Entypo color={Colors?.white} name="plus" size={18} />
             <CustomHeading textAlign="left" color={Colors?.white}>
-              Add More
+              {t("addMore")}
             </CustomHeading>
           </View>
         </TouchableOpacity>

@@ -1,138 +1,200 @@
 export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
-  { label: "Andhra Pradesh", value: "andhrapradesh" },
-  { label: "Arunachal Pradesh", value: "arunachalpradesh" },
-  { label: "Assam", value: "assam" },
-  { label: "Bihar", value: "bihar" },
-  { label: "Chhattisgarh", value: "chhattisgarh" },
-  { label: "Goa", value: "goa" },
-  { label: "Gujarat", value: "gujarat" },
-  { label: "Haryana", value: "haryana" },
-  { label: "Himachal Pradesh", value: "himachalpradesh" },
-  { label: "Jharkhand", value: "jharkhand" },
-  { label: "Karnataka", value: "karnataka" },
-  { label: "Kerala", value: "kerala" },
-  { label: "Madhya Pradesh", value: "madhyapradesh" },
-  { label: "Maharashtra", value: "maharashtra" },
-  { label: "Manipur", value: "manipur" },
-  { label: "Meghalaya", value: "meghalaya" },
-  { label: "Mizoram", value: "mizoram" },
-  { label: "Nagaland", value: "nagaland" },
-  { label: "Odisha", value: "odisha" },
-  { label: "Punjab", value: "punjab" },
-  { label: "Rajasthan", value: "rajasthan" },
-  { label: "Sikkim", value: "sikkim" },
-  { label: "Tamil Nadu", value: "tamilnadu" },
-  { label: "Telangana", value: "telangana" },
-  { label: "Tripura", value: "tripura" },
-  { label: "Uttar Pradesh", value: "uttarpradesh" },
-  { label: "Uttarakhand", value: "uttarakhand" },
-  { label: "West Bengal", value: "westbengal" },
-];
-
-export const ADDSERVICESTEPS = [
-  {
-    label: "Title & Description",
-  },
-  {
-    label: "Address & Date",
-  },
-  {
-    label: "Requirements",
-  },
-  {
-    label: "Images",
-  },
-];
-
-export const REGISTERSTEPS = [
-  {
-    label: "Name",
-  },
-  {
-    label: "Contacts",
-  },
-  {
-    label: "Skills",
-  },
-  {
-    label: "Password",
-  },
-];
-
-export const WORKERSKILLS = [
-  "Mistri",
-  "Beldaar",
-  "Electrician",
-  "Plumber",
-  "Labour",
-  "Tractor Driver",
-  "Car Driver",
-  "Painter",
+  { label: "andhrapradesh", value: "andhrapradesh" },
+  { label: "arunachalpradesh", value: "arunachalpradesh" },
+  { label: "assam", value: "assam" },
+  { label: "bihar", value: "bihar" },
+  { label: "chhattisgarh", value: "chhattisgarh" },
+  { label: "goa", value: "goa" },
+  { label: "gujarat", value: "gujarat" },
+  { label: "haryana", value: "haryana" },
+  { label: "himachalpradesh", value: "himachalpradesh" },
+  { label: "jharkhand", value: "jharkhand" },
+  { label: "karnataka", value: "karnataka" },
+  { label: "kerala", value: "kerala" },
+  { label: "madhyapradesh", value: "madhyapradesh" },
+  { label: "maharashtra", value: "maharashtra" },
+  { label: "manipur", value: "manipur" },
+  { label: "meghalaya", value: "meghalaya" },
+  { label: "mizoram", value: "mizoram" },
+  { label: "nagaland", value: "nagaland" },
+  { label: "odisha", value: "odisha" },
+  { label: "punjab", value: "punjab" },
+  { label: "rajasthan", value: "rajasthan" },
+  { label: "sikkim", value: "sikkim" },
+  { label: "tamilnadu", value: "tamilnadu" },
+  { label: "telangana", value: "telangana" },
+  { label: "tripura", value: "tripura" },
+  { label: "uttarpradesh", value: "uttarpradesh" },
+  { label: "uttarakhand", value: "uttarakhand" },
+  { label: "westbengal", value: "westbengal" },
 ];
 
 export const COUNTRYPHONECODE = [
-  { label: "India", value: "+91" },
-  { label: "Canada", value: "+1" },
-  { label: "Belgium", value: "+32" },
-  { label: "Algeria", value: "+213" },
+  { label: "india", value: "+91" },
+  { label: "canada", value: "+1" },
+  { label: "belgium", value: "+32" },
+  { label: "algeria", value: "+213" },
+];
+
+export const REGISTERSTEPS = [
+  { label: "name" },
+  { label: "contacts" },
+  { label: "skills" },
+  { label: "password" },
+];
+
+export const ADDSERVICESTEPS = [
+  { label: "titleDescription" },
+  { label: "addressDate" },
+  { label: "requirements" },
+  { label: "images" },
 ];
 
 export const WORKERTYPES = [
-  { label: "Labour", value: "labour", iconName: "beach" },
-  { label: "Bricklayer", value: "bricklayer", iconName: "terrain" },
-  { label: "Stone Mason", value: "stoneMason", iconName: "city" },
-  { label: "Mistri", value: "mistri", iconName: "tree" },
-  { label: "Electrician", value: "electrician", iconName: "swim" },
+  { label: "labour", value: "labour", iconName: "beach" },
+  { label: "bricklayer", value: "bricklayer", iconName: "terrain" },
+  { label: "stoneMason", value: "stoneMason", iconName: "city" },
+  { label: "mistri", value: "mistri", iconName: "tree" },
+  { label: "electrician", value: "electrician", iconName: "swim" },
 ];
 
 export const MEDIATORTYPES = [
-  { label: "Construction", value: "construction", iconName: "beach" },
-  { label: "Dhan Buwai", value: "dhaanBuwai", iconName: "terrain" },
-  { label: "Dhaan Pitai", value: "dhaanPitai", iconName: "city" },
-  { label: "Aloo Buwai", value: "alooBuwai", iconName: "tree" },
-  { label: "Bazara Katai", value: "bazraaKatai", iconName: "swim" },
+  { label: "construction", value: "construction", iconName: "beach" },
+  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "terrain" },
+  { label: "dhaanPitai", value: "dhaanPitai", iconName: "city" },
+  { label: "alooBuwai", value: "alooBuwai", iconName: "tree" },
+  { label: "bazraaKatai", value: "bazraaKatai", iconName: "swim" },
 ];
 
-export const FAQS = [
+export const MYSERVICES = [
   {
-    question: "How to recharge a fastag?",
-    answer: [
-      "1. Add new fastag.",
-      "2. Go to Fastags.",
-      "3. Click on Recharge button, and enter amount.",
-      "4. Select payment method and pay.",
-    ],
+    label: "active",
+    value: "Hiring",
+    iconName: "hiking",
   },
   {
-    question: "Can I recharge fastags from different provider?",
-    answer: [
-      "Yes, you can recharge fastags from different providers using the app.",
-    ],
+    label: "completed",
+    value: "Completed",
+    iconName: "beach",
   },
   {
-    question: "Recharge failed but amount deducted from account?",
-    answer: [
-      "Please contact our support team, and we will assist you in resolving the issue.",
-    ],
+    label: "cancelled",
+    value: "Cancelled",
+    iconName: "terrain",
+  },
+];
+
+export const SERVICES = [
+  {
+    label: "active",
+    value: "Hiring",
+    iconName: "hiking",
   },
   {
-    question: "How to add credit or debit card for easy recharge?",
-    answer: [
-      "You can add your card details under the Payments section for easy recharges.",
-    ],
+    label: "cancelled",
+    value: "Cancelled",
+    iconName: "terrain",
+  },
+];
+
+export const MEMBERS = [
+  {
+    label: "all",
+    iconName: "hiking",
   },
   {
-    question: "Can I see tolls paid before I started using the app?",
-    answer: [
-      "Unfortunately, tolls paid before using the app cannot be viewed.",
-    ],
+    label: "construction",
+    iconName: "beach",
+  },
+  {
+    label: "farming",
+    iconName: "city",
+  },
+  {
+    label: "electrician",
+    iconName: "city",
+  },
+];
+
+export const WORKERS = [
+  {
+    label: "all",
+    value: "",
+    iconName: "hiking",
+  },
+  ...WORKERTYPES,
+];
+
+export const MEDIATOR = [
+  {
+    label: "all",
+    value: "all",
+    iconName: "hiking",
+  },
+  ...MEDIATORTYPES,
+];
+
+export const EMPLOYER = [
+  {
+    label: "all",
+    value: "all",
+    iconName: "hiking",
+  },
+  {
+    label: "active",
+    value: "Hiring",
+    iconName: "hiking",
+  },
+];
+
+export const MEDIATORREQUEST = [
+  {
+    label: "sentRequests",
+    value: "sentRequests",
+    iconName: "city",
+  },
+];
+
+export const WORKERREQUEST = [
+  {
+    label: "receivedRequests",
+    value: "recievedRequests",
+    iconName: "beach",
   },
 ];
 
 export const WORKTYPES = [
-  { label: "Construction", value: "construction" },
-  { label: "Farming", value: "farming" },
-  { label: "Helping", value: "helping" },
+  { label: "construction", value: "construction" },
+  { label: "farming", value: "farming" },
+  { label: "helping", value: "helping" },
+];
+
+export const FAQS = [
+  {
+    question: "faq_how_to_recharge_fastag_question",
+    answer: [
+      "faq_how_to_recharge_fastag_answer.0",
+      "faq_how_to_recharge_fastag_answer.1",
+      "faq_how_to_recharge_fastag_answer.2",
+      "faq_how_to_recharge_fastag_answer.3",
+    ],
+  },
+  {
+    question: "faq_recharge_different_provider_question",
+    answer: ["faq_recharge_different_provider_answer.0"],
+  },
+  {
+    question: "faq_recharge_failed_question",
+    answer: ["faq_recharge_failed_answer.0"],
+  },
+  {
+    question: "faq_add_card_question",
+    answer: ["faq_add_card_answer.0"],
+  },
+  {
+    question: "faq_view_tolls_question",
+    answer: ["faq_view_tolls_answer.0"],
+  },
 ];

@@ -5,12 +5,13 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import CustomHeader from "../commons/Header";
 import CustomHeading from "../commons/CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 interface DropdownComponentProps {
-  label: string;
+  label?: string;
   value: any;
   setValue: any;
-  placeholder: string;
+  placeholder?: string;
   options: any;
   icon: any;
   style?: any;
@@ -25,6 +26,11 @@ const DropdownComponent = ({
   icon,
   style,
 }: DropdownComponentProps) => {
+  const translatedOptions = options.map((option: any) => ({
+    ...option,
+    label: t(option.label),
+  }));
+
   return (
     <View style={styles.container}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
@@ -34,7 +40,7 @@ const DropdownComponent = ({
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={options}
+        data={translatedOptions}
         search
         maxHeight={300}
         labelField="label"
@@ -43,6 +49,8 @@ const DropdownComponent = ({
         searchPlaceholder="Search..."
         value={value}
         onChange={(item: any) => {
+          console.log("Item--", item);
+
           setValue(item.value);
         }}
         renderLeftIcon={() => (

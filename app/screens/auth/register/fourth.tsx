@@ -4,11 +4,12 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
 import { Entypo, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { REGISTERSTEPS } from "@/constants";
 import PasswordComponent from "@/components/inputs/Password";
 import { Controller, useForm } from "react-hook-form";
 import CustomText from "@/components/commons/CustomText";
+import Stepper from "@/components/commons/Stepper";
+import { REGISTERSTEPS } from "@/constants";
+
 
 interface FourthScreenProps {
   setStep: any;

@@ -16,6 +16,7 @@ import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 type Props = {
   availableInterest: any;
@@ -55,7 +56,11 @@ const ListingHorizontalWorkers = ({
         onPress={() =>
           router.push({
             pathname: `/screens/users/${item?._id}`,
-            params: { role: "workers", title: "Worker Details", type: "details" },
+            params: {
+              role: "workers",
+              title: t("workerDetails"),
+              type: "details",
+            },
           })
         }
       >
@@ -101,7 +106,7 @@ const ListingHorizontalWorkers = ({
                 size={12}
                 color={Colors.primary}
               />
-              <CustomText>{item?.address || "Address not found"}</CustomText>
+              <CustomText>{item?.address || t("addressNotFound")}</CustomText>
             </View>
             <View
               style={{
@@ -116,7 +121,8 @@ const ListingHorizontalWorkers = ({
               />
               <View style={styles.priceContainer}>
                 <CustomHeading>
-                  <FontAwesome name="rupee" size={14} /> {item?.price}/Day
+                  <FontAwesome name="rupee" size={14} /> {item?.price}/
+                  {t("perDay")}
                 </CustomHeading>
               </View>
             </View>

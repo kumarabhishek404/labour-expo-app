@@ -1,1 +1,0 @@
-declare module '@react-native-voice/voice';

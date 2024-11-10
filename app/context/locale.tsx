@@ -1,5 +1,11 @@
 import i18n, { setI18nLocale } from "@/utils/i18n";
-import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 import { LanguageAtom } from "../AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
 
@@ -30,7 +36,7 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const setLocale = async (locale: string) => {
     setI18nLocale(locale);
     setLocaleState(locale);
-    await setLanguage(locale); 
+    await setLanguage(locale);
   };
 
   return (

@@ -18,6 +18,7 @@ import { FAQS } from "@/constants";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
+import { t } from "@/utils/translationHelper";
 
 const SupportScreen = () => {
   const [activeSections, setActiveSections] = useState<number[]>([]);
@@ -83,7 +84,9 @@ const SupportScreen = () => {
                 style={styles.faqItem}
                 onPress={() => toggleSection(index)}
               >
-                <CustomHeading textAlign="left">{item.question}</CustomHeading>
+                <CustomHeading textAlign="left">
+                  {t(item.question)}
+                </CustomHeading>
                 <Feather
                   name={
                     activeSections.includes(index)
@@ -99,7 +102,7 @@ const SupportScreen = () => {
                 <View style={styles.faqAnswer}>
                   {item.answer.map((step, idx) => (
                     <CustomText key={idx} textAlign="left">
-                      {step}
+                      {t(step)}
                     </CustomText>
                   ))}
                 </View>

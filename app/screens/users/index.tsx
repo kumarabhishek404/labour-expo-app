@@ -23,18 +23,19 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
-import { WORKERTYPES } from "@/constants";
+import {  EMPLOYER, MEDIATOR, MEDIATORTYPES, WORKERS, WORKERTYPES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
 
 const Workers = () => {
+  const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { role, title, type } = useGlobalSearchParams();
-console.log("role --", role);
+  console.log("role --", role);
 
   const {
     data: response,
@@ -48,6 +49,7 @@ console.log("role --", role);
     queryKey: [handleQueryKey(role, type), category],
     queryFn: ({ pageParam }) =>
       handleQueryFunction(role, type, pageParam, category),
+    retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -114,7 +116,16 @@ console.log("role --", role);
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons type={role} onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons
+            options={
+              role === "workers"
+                ? WORKERS
+                : role === "mediators"
+                ? MEDIATOR
+                : EMPLOYER
+            }
+            onCagtegoryChanged={onCatChanged}
+          />
 
           <PaginationString
             type={role}
@@ -125,7 +136,11 @@ console.log("role --", role);
 
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
-              availableInterest={WORKERTYPES}
+              availableInterest={
+                userDetails?.role === "WORKER"
+                  ? WORKERTYPES
+                  : MEDIATORTYPES
+              }
               listings={memoizedData || []}
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPage}

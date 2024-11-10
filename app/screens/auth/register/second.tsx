@@ -3,13 +3,14 @@ import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import Stepper from "@/app/(tabs)/addService/stepper";
-import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
+
 import MobileNumberField from "@/components/inputs/MobileNumber";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import { isEmptyObject } from "@/constants/functions";
+import Stepper from "@/components/commons/Stepper";
+import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
 
 interface SecondScreenProps {
   setStep: any;

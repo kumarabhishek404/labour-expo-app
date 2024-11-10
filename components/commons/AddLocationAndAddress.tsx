@@ -8,8 +8,10 @@ import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface AddLocationAndAddressProps {
+  label: string;
   name: string;
   address: string;
   setAddress: any;
@@ -23,6 +25,7 @@ interface AddLocationAndAddressProps {
 }
 
 const AddLocationAndAddress = ({
+  label,
   name,
   address,
   setAddress,
@@ -86,7 +89,7 @@ const AddLocationAndAddress = ({
               <View style={styles.radioChecked} />
             )}
           </View>
-          <CustomHeading>Address</CustomHeading>
+          {label && <CustomHeading>{label}</CustomHeading>}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -98,7 +101,7 @@ const AddLocationAndAddress = ({
               <View style={styles.radioChecked} />
             )}
           </View>
-          <CustomHeading>Current Location</CustomHeading>
+          <CustomHeading>{t("currentLocation")}</CustomHeading>
         </TouchableOpacity>
       </View>
 
@@ -113,14 +116,14 @@ const AddLocationAndAddress = ({
           <View style={styles.locationContainer}>
             <Button
               isPrimary={true}
-              title="Get Current Location"
+              title={t("getCurrentLocation")}
               onPress={fetchCurrentLocation}
               loading={isLoading}
             />
 
             {location && (
               <View style={styles.locationText}>
-                <CustomText>Address: </CustomText>
+                <CustomText>{t("address")}: </CustomText>
                 {location ? (
                   <CustomText
                     style={{ width: "92%" }}
@@ -131,7 +134,7 @@ const AddLocationAndAddress = ({
                   </CustomText>
                 ) : (
                   <CustomText style={{ width: "92%" }} textAlign="left">
-                    Please fetch current location
+                    {t("pleaseFetchCurrentLocation")}
                   </CustomText>
                 )}
               </View>

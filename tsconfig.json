@@ -3,11 +3,9 @@
   "compilerOptions": {
     "jsx": "react",
     "strict": true,
-    "esModuleInterop": true,  // Add this line
+    "esModuleInterop": true, // Add this line
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -15,6 +13,8 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "images.d.ts"
-, "utils/i18n.js", "app/i18n.js"  ]
+    "images.d.ts",
+    "utils/i18n.js",
+    "app/i18n.js"
+  ]
 }

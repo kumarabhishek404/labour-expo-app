@@ -10,8 +10,6 @@ interface RequirementsProps {
 }
 
 const Requirements = ({ type, requirements }: RequirementsProps) => {
-  console.log("Requesr---", requirements);
-  
   return (
     <>
       {type === "highlights" ? (

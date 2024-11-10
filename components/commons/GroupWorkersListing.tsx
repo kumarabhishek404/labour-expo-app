@@ -13,6 +13,7 @@ import { Link, router } from "expo-router";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
 import CustomHeading from "./CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 type RenderItemTypes = {
   item: {
@@ -50,8 +51,8 @@ const GroupWorkersListing = ({
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: "/screens/users",
-            params: { role: "mediators", title: "Mediators", type: "all" },
+            pathname: `/screens/users/${item?._id}`,
+            params: { role: "workers", title: t("workerDetails"), type: "all" },
           })
         }
         style={styles?.container}

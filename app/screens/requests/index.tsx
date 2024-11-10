@@ -21,6 +21,8 @@ import ListingVerticalRequests from "@/components/commons/ListingVerticalRequest
 import PaginationString from "@/components/commons/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
+import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
+
 
 const Requests = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -145,10 +147,10 @@ const Requests = () => {
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
           <CategoryButtons
-            type={
+            options={
               userDetails?.role === "MEDIATOR"
-                ? "mediatorRequests"
-                : "workerRequests"
+                ? MEDIATORREQUEST
+                : WORKERREQUEST
             }
             onCagtegoryChanged={onCatChanged}
           />

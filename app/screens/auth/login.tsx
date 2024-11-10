@@ -16,7 +16,6 @@ import {
 } from "../../AtomStore/user";
 import { signIn, updateUserById } from "../../api/user";
 import { toast } from "../../hooks/toast";
-import i18n from "@/utils/i18n";
 import { useForm, Controller } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
@@ -24,8 +23,10 @@ import { fetchCurrentLocation } from "@/constants/functions";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
+import { useTranslation } from "@/utils/i18n";
 
 const LoginScreen = () => {
+  const { t } = useTranslation();
   const setUserDetails = useSetAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
   const setWorkDetails = useSetAtom(WorkAtom);
@@ -186,7 +187,7 @@ const LoginScreen = () => {
             Hello,
           </CustomHeading>
           <CustomHeading textAlign="left" fontSize={24}>
-            {i18n.t("welcome")}
+            {t("welcome")}
           </CustomHeading>
         </View>
         <View style={styles.formContainer}>

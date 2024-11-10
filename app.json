@@ -40,8 +40,7 @@
       "expo-font",
       "expo-localization",
       "@react-native-firebase/app",
-      "react-native-vision-camera",
-      "@react-native-voice/voice"
+      "react-native-vision-camera"
     ],
     "experiments": {
       "typedRoutes": true

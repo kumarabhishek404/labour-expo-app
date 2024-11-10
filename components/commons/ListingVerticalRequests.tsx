@@ -15,7 +15,7 @@ import { getTimeAgo } from "@/constants/functions";
 import CustomHeading from "./CustomHeading";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
-import { WORKERTYPES } from "@/constants";
+import {  WORKERTYPES } from "@/constants";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 

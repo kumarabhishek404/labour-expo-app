@@ -4,6 +4,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface ServiceInformationProps {
   information: any;
@@ -17,7 +18,7 @@ const ServiceInformation = ({
   return (
     <View style={styles?.container}>
       <CustomHeading textAlign="left" style={[style]}>
-        Service Information
+        {t("serviceInformation")}
       </CustomHeading>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
@@ -40,7 +41,9 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>Total Services</CustomText>
+          <CustomText fontSize={14}>
+            {t("totalServices")} {/* Translation for "Total Services" */}
+          </CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
@@ -53,7 +56,9 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>Completed</CustomText>
+          <CustomText fontSize={14}>
+            {t("completed")} {/* Translation for "Completed" */}
+          </CustomText>
         </View>
       </View>
       <View style={[styles.workInfoWrapper, { borderTopWidth: 0 }]}>
@@ -76,7 +81,7 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>Pending</CustomText>
+          <CustomText fontSize={14}>{t("pending")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
@@ -85,7 +90,7 @@ const ServiceInformation = ({
             </CustomHeading>
             <Fontisto name="close" size={24} color={Colors.primary} />
           </View>
-          <CustomText fontSize={14}>Cancelled</CustomText>
+          <CustomText fontSize={14}>{t("cancelled")}</CustomText>
         </View>
       </View>
     </View>
