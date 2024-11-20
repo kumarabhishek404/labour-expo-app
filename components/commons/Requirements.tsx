@@ -5,7 +5,7 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 
 interface RequirementsProps {
-  type: String;
+  type: string;
   requirements: any;
 }
 

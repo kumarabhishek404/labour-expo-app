@@ -41,7 +41,7 @@ type RenderItemTypes = {
     createdAt: Date;
     updatedAt: Date;
     coverImage: string;
-    images: Array<String>;
+    images: Array<string>;
     duration: string;
     name: string;
     location: any;
@@ -64,7 +64,7 @@ const ListingsVerticalServices = ({
 }: Props) => {
   const userDetails = useAtomValue(UserAtom);
 
-  const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
+  const RenderItem = React?.memo(({ item }: any) => {
     return (
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
@@ -201,6 +201,7 @@ const ListingsVerticalServices = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
@@ -209,7 +210,7 @@ const ListingsVerticalServices = ({
         data={listings}
         renderItem={renderItem}
         keyExtractor={(item, index) => index?.toString()}
-        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReached={debounce(loadMore, 200)} // Trigger load more when user scrolls to bottom
         onEndReachedThreshold={0.9}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
@@ -229,7 +230,7 @@ const ListingsVerticalServices = ({
         maxToRenderPerBatch={10}
         windowSize={15}
         removeClippedSubviews={false}
-        contentContainerStyle={{ paddingBottom: 180 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={refreshControl}
       />
     </View>

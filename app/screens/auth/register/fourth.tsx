@@ -58,14 +58,6 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
     setPasswordConditions(conditions);
   };
 
-  const handleNext = () => {
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    } else {
-    }
-  };
-
   const onSubmit = (data: any) => {
     setPassword(data?.password);
     setConfirmPassword(data?.confirmPassword);

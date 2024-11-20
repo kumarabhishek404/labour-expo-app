@@ -60,10 +60,10 @@ const SkillSelector = ({
       <>
         {skillsToShow?.map((skill) => (
           <View key={skill}>
-            {getWorkLabel(availableSkills, skill) && (
+            {getWorkLabel(availableSkills, "labour") && (
               <View style={[styles.skillBox, tagStyle]}>
                 <CustomText style={[tagTextStyle]}>
-                  {getWorkLabel(availableSkills, skill)}
+                  {getWorkLabel(availableSkills, "labour")}
                 </CustomText>
               </View>
             )}

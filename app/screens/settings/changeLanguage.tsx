@@ -16,23 +16,19 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import Animated, { SlideInDown } from "react-native-reanimated";
+import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 
 const { width } = Dimensions.get("window");
 interface Language {
-  code: string;
-  name: string;
+  value: string;
+  label: string;
 }
-
-// Define available languages
-const availableLanguages: Language[] = [
-  { code: "en", name: "English" },
-  { code: "hi", name: "Hindi" },
-  { code: "mr", name: "Marathi" },
-  { code: "rj", name: "Rajasthani" },
-];
 
 export default function LanguageSelectionScreen() {
   const { locale, setLocale } = useLocale();
+
+  console.log("locale --", locale);
+
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
 
   useEffect(() => {
@@ -41,19 +37,18 @@ export default function LanguageSelectionScreen() {
 
   const handleSave = async () => {
     setLocale(selectedLanguage);
-    await AsyncStorage.setItem("selectedLanguage", selectedLanguage);
+    await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
     router?.back();
   };
 
   // Filter the list to have selected language on the top
   const languages = [
     {
-      code: selectedLanguage,
-      name:
-        availableLanguages.find((lang) => lang.code === selectedLanguage)
-          ?.name || "",
+      value: selectedLanguage,
+      label:
+        LANGUAGES.find((lang) => lang.value === selectedLanguage)?.label || "",
     },
-    ...availableLanguages.filter((lang) => lang.code !== selectedLanguage),
+    ...LANGUAGES.filter((lang) => lang.value !== selectedLanguage),
   ];
 
   return (
@@ -68,44 +63,45 @@ export default function LanguageSelectionScreen() {
           Selected Language
         </CustomHeading>
         <FlatList
+          style={{ marginBottom: 30 }}
           data={[
             {
-              code: selectedLanguage,
-              name: availableLanguages.find(
-                (lang) => lang.code === selectedLanguage
-              )?.name,
+              value: selectedLanguage,
+              label: LANGUAGES.find((lang) => lang?.value === selectedLanguage)
+                ?.label,
             },
           ]}
           renderItem={({ item }) => (
             <View style={styles.languageItem}>
-              <CustomText fontSize={16}>{item?.name}</CustomText>
+              <CustomText fontSize={16}>{item?.label}</CustomText>
               <TouchableOpacity style={styles.radioSelected} />
             </View>
           )}
-          keyExtractor={(item) => item.code}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.value}
         />
 
         <CustomHeading textAlign="left" fontSize={18}>
           Available Languages
         </CustomHeading>
         <FlatList
-          data={availableLanguages}
+          data={LANGUAGES}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.languageItem}
-              onPress={() => setSelectedLanguage(item.code)}
+              onPress={() => setSelectedLanguage(item?.value)}
             >
-              <CustomText fontSize={16}>{item.name}</CustomText>
+              <CustomText fontSize={16}>{item.label}</CustomText>
               <View
                 style={
-                  selectedLanguage === item.code
+                  selectedLanguage === item?.value
                     ? styles.radioSelected
                     : styles.radioUnselected
                 }
               />
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.code}
+          keyExtractor={(item) => item?.value}
         />
 
         <Animated.View
@@ -123,6 +119,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingBottom: 80,
     justifyContent: "space-between",
   },
   languageItem: {
@@ -144,7 +141,7 @@ const styles = StyleSheet.create({
   radioUnselected: {
     width: 20,
     height: 20,
-    borderRadius: 8,
+    borderRadius: 30,
     borderWidth: 2,
     borderColor: "#999",
   },

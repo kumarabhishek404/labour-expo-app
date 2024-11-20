@@ -198,3 +198,23 @@ export const FAQS = [
     answer: ["faq_view_tolls_answer.0"],
   },
 ];
+
+// /constants/storageKeys.ts
+export const FIRST_LAUNCH_KEY = "isFirstLaunch";
+export const LANGUAGE_KEY = "selectedLanguage";
+
+export const LANGUAGES = [
+  { label: "English", value: "en" },
+  { label: "Hindi", value: "hi" },
+  { label: "Gujarati", value: "gu" },
+  { label: "Marathi", value: "mr" },
+  { label: "Bengali", value: "bn" },
+  { label: "Rajasthani", value: "rj" },
+  { label: "Punjabi", value: "pa" },
+  { label: "Tamil", value: "ta" },
+  { label: "Telugu", value: "te" },
+  { label: "Kannada", value: "kn" },
+  { label: "Malayalam", value: "ml" },
+  { label: "Kashmiri", value: "ks" },
+  { label: "Urdu", value: "ur" },
+];

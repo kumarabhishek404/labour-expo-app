@@ -14,7 +14,7 @@ import ProfilePicture from "./ProfilePicture";
 
 interface ApplicantsProps {
   applicants: any;
-  serviceId: String;
+  serviceId: string;
   refetchApplicants: any;
   refetchSelectedApplicants: any;
 }

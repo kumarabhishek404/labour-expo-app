@@ -27,7 +27,7 @@ import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import { addSkills } from "../api/workers";
 import { toast } from "../hooks/toast";
-import {  MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
@@ -38,9 +38,10 @@ import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage"
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { useLocale } from "../context/locale";
+import PendingApprovalMessage from "@/components/commons/pendingApprovalAccountMessage";
 
 const ProfileScreen = () => {
-  useLocale()
+  useLocale();
   const isAccountInactive = useAtomValue(AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);
@@ -69,8 +70,12 @@ const ProfileScreen = () => {
     const backAction = () => {
       if (isAccountInactive) {
         toast.error(
-          "Profile Suspended",
-          "You can't go back while your profile is suspended."
+          userDetails?.status === "inactive"
+            ? "Profile Suspended"
+            : "Approval Is Pending",
+          `You can't go back until your profile is ${
+            userDetails?.status === "inactive" ? "suspended" : "not approved"
+          }.`
         );
         return true;
       }
@@ -343,11 +348,12 @@ const ProfileScreen = () => {
         </View>
 
         {userDetails?.status === "inactive" && <InactiveAccountMessage />}
-
+        {userDetails?.status === "submitted" && <PendingApprovalMessage />}
         <View
           style={[
             styles?.changeRoleWrapper,
-            userDetails?.status === "inactive" && {
+            (userDetails?.status === "inactive" ||
+              userDetails?.status === "submitted") && {
               pointerEvents: "none",
               opacity: 0.5,
             },
@@ -370,7 +376,7 @@ const ProfileScreen = () => {
             isPrimary={true}
             title="Edit Profile"
             onPress={() => {
-              !isEditProfile && handleEditProfile();
+              return !isEditProfile && handleEditProfile();
             }}
           />
           <ModalComponent
@@ -390,7 +396,10 @@ const ProfileScreen = () => {
 
         {userDetails?.role !== "EMPLOYER" && (
           <SkillSelector
-            canAddSkills={userDetails?.status !== "inactive"}
+            canAddSkills={
+              userDetails?.status !== "inactive" &&
+              userDetails?.status !== "submitted"
+            }
             isShowLabel={true}
             style={styles?.skillsContainer}
             selectedSkills={selectedSkills}
@@ -434,7 +443,12 @@ const ProfileScreen = () => {
           </>
         )}
 
-        <ProfileMenu disabled={userDetails?.status === "inactive"} />
+        <ProfileMenu
+          disabled={
+            userDetails?.status === "inactive" ||
+            userDetails?.status === "submitted"
+          }
+        />
       </ScrollView>
     </>
   );

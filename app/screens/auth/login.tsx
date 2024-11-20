@@ -128,7 +128,7 @@ const LoginScreen = () => {
       });
 
       toast.success("Logged in successfully!");
-      if (user?.status === "inactive") {
+      if (user?.status === "inactive" || user?.status === "submitted") {
         setIsAccountInactive(true);
         router.replace("/(tabs)/profile");
       } else {
@@ -270,7 +270,7 @@ const LoginScreen = () => {
           />
 
           <View style={styles.footerContainer}>
-            <CustomText>Don't have an account?</CustomText>
+            <CustomText>Don&#39;t have an account?</CustomText>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
                 <CustomHeading color={Colors?.link}>Sign Up</CustomHeading>

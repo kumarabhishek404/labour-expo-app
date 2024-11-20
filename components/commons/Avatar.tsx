@@ -8,11 +8,12 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import CustomText from "./CustomText";
+import placeholderProfileImage from "../../assets/person-placeholder.jpg";
 
 type AvatarProps = {
-  isEditable: Boolean;
+  isEditable: boolean;
   isLoading?: boolean;
-  profileImage: String;
+  profileImage: string;
   onUpload?: any;
   style?: any
 };
@@ -49,7 +50,7 @@ const AvatarComponent = ({
           source={
             profileImage
               ? { uri: profileImage }
-              : require("../../assets/person-placeholder.jpg") // Placeholder image when no profile picture
+              : placeholderProfileImage // Placeholder image when no profile picture
           }
           style={styles.profilePicture}
         />

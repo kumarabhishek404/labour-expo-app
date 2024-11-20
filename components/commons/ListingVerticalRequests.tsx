@@ -15,7 +15,7 @@ import { getTimeAgo } from "@/constants/functions";
 import CustomHeading from "./CustomHeading";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
-import {  WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 
@@ -40,7 +40,7 @@ type RenderItemTypes = {
       lastName: string;
       coverImage: string;
       profilePicture: string;
-      email: String;
+      email: string;
       location: any;
       skills: string[];
       rating: string;
@@ -48,17 +48,18 @@ type RenderItemTypes = {
       price: string;
     };
     sender: {
-      _id: String;
+      _id: string;
       firstName: string;
       lastName: string;
       coverImage: string;
       profilePicture: string;
-      email: String;
+      email: string;
       location: any;
       skills: string[];
       rating: string;
       reviews: string;
       price: string;
+      address: string;
     };
   };
 };
@@ -73,13 +74,15 @@ const ListingVerticalRequests = ({
   onRejectRequest,
 }: Props) => {
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
-    const reciever = item?.receiver;
+    const sender = item?.sender;
+
+    console.log("sender--", sender);
 
     return (
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: `/screens/users/${reciever?._id}`,
+            pathname: `/screens/users/${sender?._id}`,
             params: { role: "workers", title: "Workers", type: "all" },
           })
         }
@@ -88,19 +91,19 @@ const ListingVerticalRequests = ({
         <View style={styles.requestContainer}>
           <Image
             source={
-              reciever?.coverImage || reciever?.profilePicture
-                ? { uri: reciever?.coverImage || reciever?.profilePicture }
+              sender?.coverImage || sender?.profilePicture
+                ? { uri: sender?.coverImage || sender?.profilePicture }
                 : coverImage
             }
             style={styles.profileImage}
           />
           <View style={styles.infoContainer}>
             <CustomHeading textAlign="left">
-              {reciever?.firstName} {reciever?.lastName}
+              {sender?.firstName} {sender?.lastName}
             </CustomHeading>
             <RatingAndReviews
-              rating={reciever?.rating || 4.5}
-              reviews={reciever?.reviews || 400}
+              rating={sender?.rating || 4.5}
+              reviews={sender?.reviews || 400}
             />
             <SkillSelector
               canAddSkills={false}
@@ -108,13 +111,11 @@ const ListingVerticalRequests = ({
               style={styles?.skillsContainer}
               tagStyle={styles?.skillTag}
               tagTextStyle={styles?.skillTagText}
-              userSkills={reciever?.skills || ["labour", "mistri"]}
-              availableSkills={WORKERTYPES}
+              userSkills={sender?.skills}
+              availableSkills={MEDIATORTYPES}
               count={2}
             />
-            <CustomText textAlign="left">
-              PX8X+V4 New York, United States #457, 2nd Floor
-            </CustomText>
+            <CustomText textAlign="left">{sender?.address}</CustomText>
           </View>
           <View style={styles.etaContainer}>
             <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
@@ -133,7 +134,6 @@ const ListingVerticalRequests = ({
               isPrimary={false}
               title="Cancel"
               onPress={() => onCancelRequest(item?._id)}
-              style={styles.declineButton}
             />
           )}
           {category === "recievedRequests" && (
@@ -142,13 +142,11 @@ const ListingVerticalRequests = ({
                 isPrimary={false}
                 title="Reject"
                 onPress={() => onRejectRequest(item?._id)}
-                style={styles.declineButton}
               />
               <Button
-                isPrimary={false}
+                isPrimary={true}
                 title="Accept"
                 onPress={() => onAcceptRequest(item?._id)}
-                style={styles.acceptButton}
               />
             </>
           )}
@@ -157,6 +155,7 @@ const ListingVerticalRequests = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (
@@ -261,17 +260,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 15,
-  },
-  declineButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  acceptButton: {
-    backgroundColor: "#4CAF50",
-    flexDirection: "row",
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    alignItems: "center",
   },
 });

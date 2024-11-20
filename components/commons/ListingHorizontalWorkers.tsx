@@ -132,6 +132,7 @@ const ListingHorizontalWorkers = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
 
   return (

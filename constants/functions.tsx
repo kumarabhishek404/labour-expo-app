@@ -12,7 +12,6 @@ import {
   fetchAllMediators,
 } from "@/app/api/mediator";
 import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
-import { t } from "@/utils/translationHelper";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days
@@ -75,8 +74,6 @@ export const isEmptyObject = (obj: object) => {
 
 export const getWorkLabel = (availableSkills: any, skill: string) => {
   let object = availableSkills?.filter((type: any) => type?.value === skill)[0];
-  console.log("Objes---", object, skill);
-  
   return object?.label;
 };
 

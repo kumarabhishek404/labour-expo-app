@@ -139,7 +139,7 @@ const EmailAddressField = ({
             <View style={styles.modalContent}>
               <CustomHeading fontSize={50}>✉️</CustomHeading>
               <CustomHeading>Please check your email</CustomHeading>
-              <CustomText>We've sent a code to contact@curfcode.com</CustomText>
+              <CustomText>We&#39;ve sent a code to contact@curfcode.com</CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (
@@ -150,7 +150,7 @@ const EmailAddressField = ({
                     maxLength={1}
                     onChangeText={(text) => handleChange(text, index)}
                     onKeyPress={({ nativeEvent }) => {
-                      nativeEvent.key === "Backspace"
+                      return nativeEvent.key === "Backspace"
                         ? handleBackspace("", index)
                         : null;
                     }}
@@ -164,7 +164,7 @@ const EmailAddressField = ({
                 style={styles?.resendContainer}
                 onPress={resendOtp}
               >
-                <CustomText>Didn't get the code?</CustomText>
+                <CustomText>Didn&#39;t get the code?</CustomText>
                 <CustomText color={Colors?.link}>Click to resend.</CustomText>
               </TouchableOpacity>
 

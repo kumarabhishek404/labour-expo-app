@@ -251,6 +251,7 @@ const HelpScreen = () => {
     setSelectedQuestion(null);
   };
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item, index }: any) => (
     <RenderItem index={index} item={item} />
   );

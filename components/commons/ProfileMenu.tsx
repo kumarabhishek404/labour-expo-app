@@ -336,9 +336,9 @@ const ProfileMenu = ({ disabled }: any) => {
         </CustomText>
         <CustomText>
           Deactivating your account will disable your Profile and remove your
-          name and photo from most things that you've shared. Some information
+          name and photo from most things that you&#39;ve shared. Some information
           may still be visible to others, such as your name in their friend list
-          and messages that you've sent.
+          and messages that you&#39;ve sent.
         </CustomText>
       </View>
     );

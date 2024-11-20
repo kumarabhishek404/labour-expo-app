@@ -57,6 +57,7 @@ const ModalComponent = ({
             >
               <Button
                 isPrimary={true}
+                disabled={primaryButton?.disabled}
                 title={primaryButton?.title ? primaryButton?.title : "Save"}
                 onPress={primaryButton?.action}
                 style={{

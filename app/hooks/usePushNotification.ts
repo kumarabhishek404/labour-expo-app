@@ -4,6 +4,7 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { registerDevice } from "../api/user";
+import { toast } from "./toast";
 
 export async function registerForPushNotificationsAsync() {
   // Configure Android notification settings
@@ -17,7 +18,7 @@ export async function registerForPushNotificationsAsync() {
   }
 
   function handleRegistrationError(errorMessage: string) {
-    alert(errorMessage);
+    toast?.error(errorMessage);
     throw new Error(errorMessage);
   }
 

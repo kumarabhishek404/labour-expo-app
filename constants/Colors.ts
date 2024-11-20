@@ -7,6 +7,7 @@ export default {
   white: "#FFFFFF",
   gray: "#D9D9D9",
   danger: "#FF0000",
+  warning: "#FF8C00",
 
   action: "#FF7A00",
   link: "#007BFF",

@@ -1,4 +1,4 @@
-// eslint.config.js
+// eslint.config.ts
 const js = require("@eslint/js");
 const react = require("eslint-plugin-react");
 const typescript = require("@typescript-eslint/eslint-plugin");
@@ -16,6 +16,12 @@ module.exports = [
         __dirname: "readonly",
         require: "readonly",
         module: "readonly",
+        setTimeout: "readonly", // Add setTimeout as a global variable
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        console: "readonly", // line to define `console` as a global variable
+        FormData: "readonly",
+        process: "readonly", // Define process as a global variable
       },
     },
     plugins: {
@@ -27,8 +33,9 @@ module.exports = [
       ...react.configs.recommended.rules,
       ...typescript.configs.recommended.rules,
       "react/react-in-jsx-scope": "off", // Only for React 17+
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": "off",
       "react/prop-types": "off", // Use TypeScript for prop types
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ];

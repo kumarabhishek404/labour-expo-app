@@ -72,12 +72,12 @@ const NotificationScreen = () => {
   );
 
   const checkPermission = async () => {
-    const { status } = await Notifications?.getPermissionsAsync();
+    const { status } = await Notifications.getPermissionsAsync();
     setHasPermission(status === "granted");
   };
 
   const requestPermission = async () => {
-    const { status } = await Notifications?.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync();
     setHasPermission(status === "granted");
   };
 
@@ -104,7 +104,7 @@ const NotificationScreen = () => {
         Get notifications about important things for you.
       </CustomHeading>
       <CustomText textAlign="left" style={{ marginBottom: 10 }}>
-        We'll notify you when
+        We&#39;ll notify you when
       </CustomText>
       <View style={styles.permissionItems}>
         <CustomText fontSize={14} textAlign="left">

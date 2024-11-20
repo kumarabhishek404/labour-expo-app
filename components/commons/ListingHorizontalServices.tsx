@@ -30,7 +30,7 @@ type RenderItemTypes = {
     createdAt: Date;
     updatedAt: Date;
     coverImage: string;
-    images: Array<String>;
+    images: Array<string>;
     duration: string;
     name: string;
     location: any;
@@ -120,6 +120,7 @@ const ListingHorizontalServices = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item, index }: RenderItemTypes) => (
     <RenderItem item={item} index={index} />
   );

@@ -8,14 +8,18 @@ const EmptyDatePlaceholder = ({ title }: any) => {
   return (
     <View
       style={{
-        height: "60%",
+        // height: "60%",
         justifyContent: "center",
         alignItems: "center",
         zIndex: -1,
+        margin: 30,
       }}
     >
-      <Image source={EmptyPlaceholder} />
-      <CustomText fontSize={20}>Not Found Any {title}</CustomText>
+      <Image
+        source={EmptyPlaceholder}
+        style={{ width: 100, height: 100, marginBottom: 10 }}
+      />
+      <CustomText fontSize={12}>Not Found Any {title}</CustomText>
     </View>
   );
 };

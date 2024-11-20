@@ -5,8 +5,8 @@ import CustomText from "../commons/CustomText";
 
 interface RoleSelectionProps {
   role: {
-    name: String;
-    type: String;
+    name: string;
+    type: string;
   };
   setRole: any;
   onBlur: any;

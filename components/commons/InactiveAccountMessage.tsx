@@ -10,6 +10,7 @@ import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
+import { t } from "@/utils/translationHelper";
 
 const InactiveAccountMessage = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -21,7 +22,7 @@ const InactiveAccountMessage = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      toast.success("Your account is activated successfully");
+      toast.success(t("successfullyActivateMessage"));
       setModalVisible(false);
       setIsAccountInactive(false);
       setUserDetails({
@@ -33,14 +34,8 @@ const InactiveAccountMessage = () => {
 
   const modalContent = () => (
     <View style={styles.modalContentContainer}>
-      <CustomHeading>
-        Are you sure you want to activate your account again?
-      </CustomHeading>
-      <CustomText fontSize={14}>
-        Welcome back! We will restore your profile, settings, and all associated
-        data. You'll be able to access your account as before. Thank you for
-        your patience.
-      </CustomText>
+      <CustomHeading>{t("inactiveModalHeading")}</CustomHeading>
+      <CustomText fontSize={14}>{t("inactiveModalMessage")}</CustomText>
     </View>
   );
 
@@ -51,15 +46,15 @@ const InactiveAccountMessage = () => {
         <View style={styles.gradientBackground}>
           <FontAwesome name="exclamation-circle" size={80} color="#fff" />
           <CustomHeading fontSize={20} color={Colors?.white}>
-            Account Suspended
+            {t("inactiveHeading")}
           </CustomHeading>
           <CustomText color={Colors?.white} fontSize={14}>
-            Your account has been suspended for violating our policies.
+            {t("inactiveMessage")}
           </CustomText>
 
           <Button
             isPrimary={true}
-            title="Request Account Restore"
+            title={t("restoreAccountButton")}
             onPress={() => setModalVisible(true)}
             style={{
               backgroundColor: Colors?.white,
@@ -71,16 +66,16 @@ const InactiveAccountMessage = () => {
 
         <ModalComponent
           visible={isModalVisible}
-          title="Restore Account"
+          title={t("inactiveModalTitle")}
           onClose={() => setModalVisible(false)}
           content={modalContent}
           primaryButton={{
-            title: "Activate Account",
+            title: t("activateAccountButton"),
             action: restoreAccount,
             styles: { paddingHorizontal: 0 },
           }}
           secondaryButton={{
-            title: "Cancel",
+            title: t("cancel"),
             action: () => setModalVisible(false),
             styles: { paddingHorizontal: 0 },
           }}

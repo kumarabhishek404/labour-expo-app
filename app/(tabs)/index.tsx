@@ -173,7 +173,7 @@ const Page = () => {
             >
               {t("welcome")} {userDetails?.firstName}
             </CustomHeading>
-            <AudioRecorder />
+            {/* <AudioRecorder /> */}
             <BannerSlider />
             <HomePageLinks />
 

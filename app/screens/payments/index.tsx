@@ -14,6 +14,11 @@ import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
+import CashImage from "../../../assets/cash.png";
+import MasterCardImage from "../../../assets/master-card.png";
+import VisaCardImage from "../../../assets/visa-card.png";
+import DebitCardImage from "../../../assets/debit-card.png";
+import BhimUPIImage from "../../../assets/bhim-upi.png";
 
 interface PaymentMethod {
   type: string;
@@ -42,34 +47,34 @@ const PaymentMethodsScreen = () => {
       type: "cash",
       label: "Cash Payment",
       isSelected: true,
-      icon: require("../../../assets/cash.png"), // Replace with the actual path of the icon
+      icon: CashImage, // Replace with the actual path of the icon
     },
     {
       type: "card",
       label: "MasterCard ****5967",
       expiry: "09/25",
       isSelected: false,
-      icon: require("../../../assets/master-card.png"), // Replace with the actual path of the icon
+      icon: MasterCardImage, // Replace with the actual path of the icon
     },
     {
       type: "visa",
       label: "Visa ****3802",
       expiry: "10/27",
       isSelected: false,
-      icon: require("../../../assets/visa-card.png"), // Replace with the actual path of the icon
+      icon: VisaCardImage, // Replace with the actual path of the icon
     },
     {
       type: "debit",
       label: "Debit ****1969",
       expiry: "10/27",
       isSelected: false,
-      icon: require("../../../assets/debit-card.png"), // Replace with the actual path of the icon
+      icon: DebitCardImage, // Replace with the actual path of the icon
     },
     {
       type: "upi",
       label: "UPI ****1234",
       isSelected: false,
-      icon: require("../../../assets/bhim-upi.png"), // Replace with the actual path of the icon
+      icon: BhimUPIImage, // Replace with the actual path of the icon
     },
   ]);
 

@@ -214,7 +214,7 @@ const Worker = () => {
               style={styles?.skillsContainer}
               userSkills={worker?.skills}
               availableSkills={
-                userDetails?.rol === "WORKER" ? WORKERTYPES : MEDIATORTYPES
+                worker?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
               }
             />
 

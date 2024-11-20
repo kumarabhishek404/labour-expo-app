@@ -1,11 +1,14 @@
 import {
+  ActivityIndicator,
   Dimensions,
+  FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Entypo, Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -19,6 +22,7 @@ import {
   fetchSelectedCandidates,
   getServiceById,
   likeService,
+  mediatorApplyService,
   unApplyService,
   unLikeService,
 } from "../../api/services";
@@ -39,9 +43,13 @@ import Highlights from "@/components/commons/Highlights";
 import ImageSlider from "@/components/commons/ImageSlider";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
+import CustomCheckbox from "@/components/commons/CustomCheckbox";
+import ProfilePicture from "@/components/commons/ProfilePicture";
+import { fetchAllMembers } from "@/app/api/mediator";
+import { debounce } from "lodash";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -49,6 +57,25 @@ const IMG_HEIGHT = 300;
 interface ImageAsset {
   uri: string;
 }
+
+const users = [
+  {
+    id: 1,
+    name: "John Doe",
+    profilePic:
+      "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
+    skills: ["React Native", "JavaScript", "CSS"],
+    address: "123, Main Street, New York",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    profilePic:
+      "https://plus.unsplash.com/premium_photo-1689977968861-9c91dbb16049?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3R1cmV8ZW58MHx8MHx8fDA%3D",
+    skills: ["Python", "Django", "Data Analysis"],
+    address: "456, Elm Street, Chicago",
+  },
+];
 
 const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -69,6 +96,9 @@ const ServiceDetails = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
+
+  const [isWorkerSelectModal, setIsWorkerSelectModal] = useState(false);
+  const [selectedWorkers, setSelectedWorkers]: any = useState([]);
 
   const {
     isLoading,
@@ -106,6 +136,27 @@ const ServiceDetails = () => {
   });
 
   const {
+    data: members,
+    isLoading: isMemberLoading,
+    isFetchingNextPage: isMemberFetchingNextPage,
+    fetchNextPage: memberFetchPage,
+    hasNextPage: hasMemberNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["members"],
+    queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
+    retry: false,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+
+  console.log("members---", members?.pages[0]);
+
+  const {
     data: selectedApplicants,
     isLoading: isSelectedApplicantLoading,
     // isFetchingNextPage,
@@ -126,6 +177,17 @@ const ServiceDetails = () => {
       return undefined;
     },
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // const totalData = members?.pages[0]?.pagination?.total;
+      // setTotalData(totalData);
+      const unsubscribe = setSelectedWorkers(
+        members?.pages.flatMap((page: any) => page.data || [])
+      );
+      return () => unsubscribe;
+    }, [members])
+  );
 
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
@@ -177,6 +239,19 @@ const ServiceDetails = () => {
     },
   });
 
+  const mutationMediatorApplyService = useMutation({
+    mutationKey: ["mediatorApplyService", { id }],
+    mutationFn: () =>
+      mediatorApplyService({ serviceID: id, worker: selectedWorkers }),
+    onSuccess: (response) => {
+      refetch();
+      console.log("Response while applying in the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while applying in the service ", err);
+    },
+  });
+
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
     mutationFn: () => completeService({ serviceID: id }),
@@ -221,6 +296,22 @@ const ServiceDetails = () => {
     mutationDeleteService.mutate();
   };
 
+  const handleApply = () => {
+    if (userDetails?.role === "MEDIATOR") {
+      setIsWorkerSelectModal(true);
+    } else {
+      mutationApplyService.mutate();
+    }
+  };
+
+  const toggleUserSelection = (userId: string) => {
+    setSelectedWorkers((prev: any) =>
+      prev.includes(userId)
+        ? prev.filter((id: string) => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
   const deleteModalContent = () => {
     return (
       <View style={styles.modalView}>
@@ -232,6 +323,78 @@ const ServiceDetails = () => {
         <CustomHeading>{t("areYouSure")}</CustomHeading>
         <CustomHeading fontSize={14}>{t("wantToDeleteService")}</CustomHeading>
         <CustomText>{t("irreversibleAction")}</CustomText>
+      </View>
+    );
+  };
+
+  const RenderMemberItem = ({ item }: any) => (
+    <View style={styles.userItem}>
+      <CustomCheckbox
+        isChecked={selectedWorkers.includes(item?.id)}
+        onToggle={() => toggleUserSelection(item?.id)}
+        containerStyle={{ marginRight: 8 }}
+      />
+      <ProfilePicture uri={item.profilePic} />
+      <View style={styles.userInfo}>
+        <CustomText style={styles.userName} textAlign="left">
+          {item.name}
+        </CustomText>
+        <CustomText style={styles.userSkills} textAlign="left">
+          Skills: {item.skills.join(", ")}
+        </CustomText>
+        <CustomText style={styles.userAddress}>{item.address}</CustomText>
+      </View>
+    </View>
+  );
+
+  const memoizedData = useMemo(
+    () => selectedWorkers?.flatMap((data: any) => data),
+    [selectedWorkers]
+  );
+
+  const loadMore = () => {
+    if (hasMemberNextPage && !isMemberFetchingNextPage) {
+      memberFetchPage();
+    }
+  };
+
+  RenderMemberItem.displayName = "RenderMemberItem";
+  const renderItem = ({ item }: any) => <RenderMemberItem item={item} />;
+
+  const mediatorModelContent = () => {
+    return (
+      <View style={styles.modalContent}>
+        {memoizedData && memoizedData?.length > 0 ? (
+          <FlatList
+            data={memoizedData ?? []}
+            renderItem={renderItem}
+            keyExtractor={(item) => item?._id?.toString()}
+            onEndReached={debounce(loadMore, 300)}
+            onEndReachedThreshold={0.9}
+            ListFooterComponent={() =>
+              isMemberFetchingNextPage ? (
+                <ActivityIndicator
+                  size="large"
+                  color={Colors?.primary}
+                  style={styles.loaderStyle}
+                />
+              ) : null
+            }
+            getItemLayout={(data, index) => ({
+              length: 200,
+              offset: 200 * index,
+              index,
+            })}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={3}
+            removeClippedSubviews={true}
+            contentContainerStyle={{ paddingBottom: 110 }}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          <EmptyDatePlaceholder title="Members" />
+        )}
       </View>
     );
   };
@@ -427,7 +590,7 @@ const ServiceDetails = () => {
                 onPress={() =>
                   isServiceApplied
                     ? mutationUnApplyService.mutate()
-                    : mutationApplyService.mutate()
+                    : handleApply()
                 }
               />
             )}
@@ -543,6 +706,27 @@ const ServiceDetails = () => {
           action: () => setModalVisible(false),
         }}
       />
+
+      <ModalComponent
+        title={t("selectWorkers")}
+        visible={isWorkerSelectModal}
+        content={mediatorModelContent}
+        onClose={() => setIsWorkerSelectModal(false)}
+        primaryButton={{
+          disabled: selectedWorkers?.length === 0,
+          title: t("applyNow"),
+          styles: {
+            backgroundColor: "red",
+            borderColor: "red",
+          },
+          action: mutationMediatorApplyService?.mutate,
+        }}
+        secondaryButton={{
+          title: t("cancel"),
+          styles: "",
+          action: () => setIsWorkerSelectModal(false),
+        }}
+      />
     </>
   );
 };
@@ -646,5 +830,48 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700", // Yellow circle
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  modalContent: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    // padding: 20,
+    // width: "90%",
+    // maxHeight: "80%",
+  },
+  userItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    gap: 4,
+    // marginVertical: 10,
+  },
+  profilePic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginHorizontal: 10,
+  },
+  userInfo: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  userSkills: {
+    fontSize: 14,
+    color: "#555",
+  },
+  userAddress: {
+    fontSize: 12,
+    color: "#888",
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });

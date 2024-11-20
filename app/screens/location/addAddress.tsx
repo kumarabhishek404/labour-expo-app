@@ -41,7 +41,7 @@ const AddCurrentLocation = () => {
     };
     const address = `${village}, ${post} ${city} ${pinCode} ${state} ${country}`;
     let tempUserDetails = userDetails;
-    tempUserDetails.serviceAddress = [...userDetails?.serviceAddress, address];
+    tempUserDetails.serviceAddress = [...userDetails.serviceAddress, address];
     setUserDetails(tempUserDetails);
     router.back();
     // navigation.navigate("LOGIN");

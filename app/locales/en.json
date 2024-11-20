@@ -220,5 +220,18 @@
   "count": "Count",
   "food": "Food",
   "living": "Living",
-  "esi/pf": "ESI / PF"
+  "esi/pf": "ESI / PF",
+
+  "pendingApprovalHeading": "Profile Approval Pending",
+  "pendingApprovalMessage": "Your profile is currently under review. Approval is required before you can access all features.",
+  "inactiveHeading": "Account Suspended",
+  "inactiveMessage": "Your account has been suspended for violating our policies.",
+  "inactiveModalTitle": "Restore Account",
+  "inactiveModalHeading": "Are you sure you want to activate your account again?",
+  "inactiveModalMessage": "Welcome back! We will restore your profile, settings, and all associated data. You&#39;ll be able to access your account as before. Thank you for your patience.",
+  "restoreAccountButton": "Request Account Restore",
+  "activateAccountButton": "Activate Account",
+  "successfullyActivateMessage": "Your account is activated successfully",
+
+  "selectWorkers": "Select members from your team"
 }

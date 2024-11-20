@@ -13,7 +13,7 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
-import {  SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -90,7 +90,7 @@ const Workers = () => {
     }, [response])
   );
 
-  const handleApply = (appliedFilters: React.SetStateAction<{}>) => {
+  const handleApply = (appliedFilters: React.SetStateAction<any>) => {
     // Apply filters to API call and close modal
     setFilters(appliedFilters);
     setFilterVisible(false); // Close the modal
@@ -142,14 +142,12 @@ const Workers = () => {
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons
-            options={
-              userDetails?.role === "EMPLOYER"
-                ? WORKERS
-                : SERVICES
-            }
-            onCagtegoryChanged={onCatChanged}
-          />
+          {userDetails?.role === "EMPLOYER" && (
+            <CategoryButtons
+              options={userDetails?.role === "EMPLOYER" ? WORKERS : SERVICES}
+              onCagtegoryChanged={onCatChanged}
+            />
+          )}
 
           <PaginationString
             type="services"

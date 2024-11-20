@@ -16,7 +16,7 @@ interface SecondScreenProps {
   setStep: any;
   address: string;
   setAddress: any;
-  location: Object;
+  location: object;
   setLocation: any;
   phoneNumber: string;
   setPhoneNumber: any;

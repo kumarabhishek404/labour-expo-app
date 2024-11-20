@@ -27,7 +27,6 @@ const ListingsVerticalWorkers = ({
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
     const { role } = useGlobalSearchParams();
-
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -94,11 +93,14 @@ const ListingsVerticalWorkers = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
+  const renderItem = ({ item }: any) => <RenderItem item={item} />;
+
   return (
     <View style={{ marginBottom: 110 }}>
       <FlatList
         data={listings ?? []}
-        renderItem={({ item }) => <RenderItem item={item} />}
+        renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
         onEndReached={debounce(loadMore, 300)}
         onEndReachedThreshold={0.9}

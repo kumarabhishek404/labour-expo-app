@@ -66,7 +66,7 @@ const AddLocationAndAddress = ({
       tempUserDetails = {
         ...userDetails,
         serviceAddress: [
-          ...(userDetails?.serviceAddress ? userDetails?.serviceAddress : []),
+          ...(userDetails?.serviceAddress ?? []),
           response[0]?.formattedAddress,
         ],
       };

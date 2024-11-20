@@ -50,9 +50,7 @@ const SignupScreen = () => {
     ]
   );
 
-  const [images, setImages]: any = useState(
-    addService?.images ? [...addService?.images] : []
-  );
+  const [images, setImages]: any = useState(addService?.images ?? []);
 
   const mutationAddService = useMutation({
     mutationKey: ["addService"],

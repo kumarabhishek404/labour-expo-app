@@ -14,6 +14,8 @@ import { NotificationProvider } from "./context/NotificationContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "react-native";
+import BhimUPIImage from "../assets/fonts/SpaceMono-Regular.ttf";
+import LanguageSelectionScreen from "./screens/settings/changeLanguage";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -39,7 +41,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const setIsAddService = useSetAtom(AddServiceInProcess);
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: BhimUPIImage,
     ...FontAwesome.font,
   });
 

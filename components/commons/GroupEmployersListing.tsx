@@ -92,6 +92,7 @@ const GroupEmployersListing = ({
     );
   });
 
+  RenderItem.displayName = "RenderItem";
   const renderItem = ({ item, index }: RenderItemTypes) => (
     <RenderItem item={item} index={index} />
   );

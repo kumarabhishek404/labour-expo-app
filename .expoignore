@@ -1,0 +1,28 @@
+# Node modules
+node_modules
+
+# Build folders
+build
+dist
+.web-build
+
+# IDE config and system files
+.vscode
+.idea
+.DS_Store
+
+# Expo-specific files
+.expo-shared
+
+# Testing files
+__tests__
+tests
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Large assets or unnecessary files
+assets/**/*.psd
+assets/**/*.pdf
+assets/**/*.zip

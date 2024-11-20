@@ -84,7 +84,7 @@ export const deleteServiceById = async (id: any) => {
 export const fetchAllServices = async ({ pageParam, type }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/all?page=${pageParam}&limit=10&type=${type}`
+      `/service/all?page=${pageParam}&limit=5&type=${type}`
     );
     return data.data;
   } catch (error: any) {
@@ -222,6 +222,26 @@ export const unApplyService = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while cancel apply service"
+    );
+    throw error;
+  }
+};
+
+
+export const mediatorApplyService = async (payload: any) => {
+  console.log("Payload ----", payload);
+  
+  try {
+    const data = await makePostRequest("/mediator/apply", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while applying service by mediator : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while applying service by mediator : "
     );
     throw error;
   }

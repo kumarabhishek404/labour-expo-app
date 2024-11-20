@@ -39,8 +39,7 @@
       "expo-router",
       "expo-font",
       "expo-localization",
-      "@react-native-firebase/app",
-      "react-native-vision-camera"
+      "@react-native-firebase/app"
     ],
     "experiments": {
       "typedRoutes": true
