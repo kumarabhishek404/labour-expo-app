@@ -15,6 +15,7 @@ import Loader from "./Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
+import { t } from "@/utils/translationHelper";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -47,7 +48,7 @@ const SelectedApplicants = ({
     <>
       <Loader loading={mutationCancelSelectedApplicant?.isPending} />
       <View style={styles.applicantContainer}>
-        <CustomHeading textAlign="left">Selected Worker</CustomHeading>
+        <CustomHeading textAlign="left">Selected {t("worker")}</CustomHeading>
         {selectedApplicants?.map((item: any, index: number) => {
           return (
             <View key={index} style={styles.productCard}>

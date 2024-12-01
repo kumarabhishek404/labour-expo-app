@@ -78,8 +78,8 @@ const SignupScreen = () => {
     formData.append("skills", skills);
     formData.append("password", password);
 
-    console.log("Form Date---", formData);
-    
+    console.log("Form Date---", formData, profilePicture, skills, gender);
+
     mutationRegister.mutate(formData);
   };
 

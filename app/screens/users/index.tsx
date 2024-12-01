@@ -23,10 +23,17 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
-import {  EMPLOYER, MEDIATOR, MEDIATORTYPES, WORKERS, WORKERTYPES } from "@/constants";
+import {
+  EMPLOYER,
+  MEDIATOR,
+  MEDIATORTYPES,
+  WORKERS,
+  WORKERTYPES,
+} from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
+import { t } from "@/utils/translationHelper";
 
 const Workers = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -136,9 +143,7 @@ const Workers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               availableInterest={
-                role === "WORKER"
-                  ? WORKERTYPES
-                  : MEDIATORTYPES
+                userDetails?.role === "WORKER" ? MEDIATORTYPES : WORKERTYPES
               }
               listings={memoizedData || []}
               loadMore={loadMore}
@@ -151,7 +156,7 @@ const Workers = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title={"Worker"} />
+            <EmptyDatePlaceholder title={t("worker")} />
           )}
         </View>
       </View>

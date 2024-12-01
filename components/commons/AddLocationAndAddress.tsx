@@ -9,6 +9,7 @@ import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { isEmptyObject } from "@/constants/functions";
 
 interface AddLocationAndAddressProps {
   label: string;
@@ -124,7 +125,7 @@ const AddLocationAndAddress = ({
             {location && (
               <View style={styles.locationText}>
                 <CustomText>{t("address")}: </CustomText>
-                {location ? (
+                {!isEmptyObject(location) ? (
                   <CustomText
                     style={{ width: "92%" }}
                     textAlign="left"
@@ -202,9 +203,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#f9f9f9",
   },
-  locationContainer: {
-    marginBottom: 10,
-  },
+  locationContainer: {},
   locationText: {
     marginTop: 10,
     fontSize: 16,

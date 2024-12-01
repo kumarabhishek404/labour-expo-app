@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
     alignItems: "center",
-    marginBottom: 10,
     borderWidth: 2,
     borderColor: "#DDD",
     width: "100%",
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    marginTop: 10
   },
   interestItem: {
     backgroundColor: "#EEE",

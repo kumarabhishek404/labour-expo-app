@@ -2,6 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface RoleSelectionProps {
   role: {
@@ -15,19 +16,19 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
   const roles = [
     {
       id: "WORKER",
-      title: "Worker",
+      title: t("worker"),
       description: "Find work of your skills and EARN.",
       price: "$0.00",
     },
     {
       id: "MEDIATOR",
-      title: "Mediator",
+      title: t("mediator"),
       description: "Make group of workers and EARN.",
       price: "$10.00",
     },
     {
       id: "EMPLOYER",
-      title: "Employer",
+      title: t("employer"),
       description: "Hire workers to COMPLETE your Tasks.",
       price: "$20.00",
     },

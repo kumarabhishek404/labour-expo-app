@@ -68,7 +68,10 @@ const BannerSlider = () => {
   };
 
   const handleBannerClick = (banner: any) => {
-    router?.push(`/screens/${banner?.type}/${banner?.id}`);
+    router.push({
+      pathname: "/screens/service/[id]",
+      params: { id: banner.id }
+    });
   };
 
   return (
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     borderRadius: 10,
-    overflow: "hidden", // Ensures rounded corners persist during slide
+    overflow: "hidden",
   },
   scrollView: {
     flexGrow: 0,

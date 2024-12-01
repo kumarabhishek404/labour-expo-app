@@ -174,7 +174,7 @@ const ServiceDetails = () => {
     mutationFn: () => likeService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Service added in favourites");
+      toast.success(t("serviceAddedInFavourites"));
       console.log("Response while liking a service - ", response);
     },
     onError: (err) => {
@@ -187,7 +187,7 @@ const ServiceDetails = () => {
     mutationFn: () => unLikeService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Service removed from favourites");
+      toast.success(t("serviceRemovedInFavourites"));
       console.log("Response while unliking a service - ", response);
     },
     onError: (err) => {
@@ -200,7 +200,7 @@ const ServiceDetails = () => {
     mutationFn: () => applyService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Service applied successfully");
+      toast.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
     onError: (err: any) => {
@@ -216,7 +216,7 @@ const ServiceDetails = () => {
     mutationFn: () => unApplyService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Your application cancelled successfully");
+      toast.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
     onError: (err: any) => {
@@ -245,7 +245,7 @@ const ServiceDetails = () => {
     mutationFn: () => completeService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success("Service completed successfully");
+      toast.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a service - ", response);
     },
     onError: (err) => {
@@ -328,7 +328,7 @@ const ServiceDetails = () => {
           {item.name}
         </CustomText>
         <CustomText style={styles.userSkills} textAlign="left">
-          Skills: {item.skills.join(", ")}
+          {t("skills")}: {item.skills.join(", ")}
         </CustomText>
         <CustomText style={styles.userAddress}>{item.address}</CustomText>
       </View>

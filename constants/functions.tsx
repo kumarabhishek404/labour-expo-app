@@ -75,6 +75,8 @@ export const isEmptyObject = (obj: object) => {
 
 export const getWorkLabel = (availableSkills: any, skill: string) => {
   let object = availableSkills?.filter((type: any) => type?.value === skill)[0];
+  console.log("Objes---", object);
+
   return t(object?.label);
 };
 
@@ -208,4 +210,11 @@ export const handleQueryFunction = async (
   } catch (err) {
     console.log("error while fetching users ", err);
   }
+};
+
+export const capitalizeWord = (word: string) => {
+  if (!word || typeof word !== "string") {
+    return "";
+  }
+  return word.charAt(0).toUpperCase() + word.slice(1);
 };

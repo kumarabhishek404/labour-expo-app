@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Switch } from "react-native";
 import {
   AntDesign,
@@ -20,11 +20,13 @@ import { toast } from "@/app/hooks/toast";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { registerForPushNotificationsAsync } from "@/app/hooks/usePushNotification";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileMenu = ({ disabled }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
+  // const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +51,9 @@ const ProfileMenu = ({ disabled }: any) => {
     router.navigate("/screens/auth/login");
   };
 
-  const toggleNotificationSwitch = () =>
-    setIsNotificationsEnabled(!isNotificationsEnabled);
+  // const toggleNotificationSwitch = () =>
+  //   setIsNotificationsEnabled(!isNotificationsEnabled);
+
   const toggleDarkModeSwitch = () => setIsDarkModeEnabled(!isDarkModeEnabled);
 
   const handleDeactivateAccount = () => {
@@ -65,6 +68,38 @@ const ProfileMenu = ({ disabled }: any) => {
         status: "inactive",
       });
     }, 3000);
+  };
+
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
+
+  useEffect(() => {
+    // Load notification preference from local storage
+    const loadPreference = async () => {
+      const savedPreference = await AsyncStorage.getItem("notificationsEnabled");
+      setIsNotificationsEnabled(savedPreference === "true");
+    };
+    loadPreference();
+  }, []);
+
+  const toggleSwitch = async () => {
+    const newValue = !isNotificationsEnabled;
+    setIsNotificationsEnabled(newValue);
+    await AsyncStorage.setItem("notificationsEnabled", newValue.toString());
+
+    if (newValue) {
+      // Enable notifications
+      try {
+        await registerForPushNotificationsAsync();
+        console.log("Notifications enabled");
+      } catch (err) {
+        console.error("Failed to enable notifications", err);
+        setIsNotificationsEnabled(false); // Reset switch if registration fails
+        await AsyncStorage.setItem("notificationsEnabled", "false");
+      }
+    } else {
+      // Disable notifications (Optional: Add logic to remove device registration if needed)
+      console.log("Notifications disabled");
+    }
   };
 
   const menus = [
@@ -225,7 +260,7 @@ const ProfileMenu = ({ disabled }: any) => {
       ),
       switch: true,
       switchValue: isNotificationsEnabled,
-      onSwitchToggle: toggleNotificationSwitch,
+      onSwitchToggle: toggleSwitch,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },

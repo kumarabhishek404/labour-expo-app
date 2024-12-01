@@ -84,7 +84,9 @@ const ListingsVerticalServices = ({
                   ]}
                 >
                   <Ionicons name="happy" size={20} color={Colors.white} />
-                  <CustomHeading color={Colors?.white}>{t("selected")}</CustomHeading>
+                  <CustomHeading color={Colors?.white}>
+                    {t("selected")}
+                  </CustomHeading>
                 </View>
               )}
 
@@ -173,7 +175,7 @@ const ListingsVerticalServices = ({
 
                 <View style={styles?.actionContainer}>
                   <CustomText>
-                    Duration{" "}
+                    {t("duration")}{" "}
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}
                   </CustomText>

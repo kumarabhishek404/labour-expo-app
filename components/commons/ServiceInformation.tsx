@@ -42,7 +42,7 @@ const ServiceInformation = ({
             />
           </View>
           <CustomText fontSize={14}>
-            {t("totalServices")} {/* Translation for "Total Services" */}
+            {t("totalServices")}
           </CustomText>
         </View>
         <View style={styles.workInfoBox}>

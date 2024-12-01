@@ -26,6 +26,8 @@ const ListingsVerticalWorkers = ({
   refreshControl,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
+    console.log(":Itemm skillsss---", item);
+    
     const { role } = useGlobalSearchParams();
     return (
       <View style={styles.container}>

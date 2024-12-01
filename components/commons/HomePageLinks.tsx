@@ -1,19 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { router } from "expo-router";
-import Farmer1 from "../../assets/farmer1.png";
-import Farmer2 from "../../assets/farmer2.png";
 import Farmer3 from "../../assets/farmer3.png";
-import Farmer4 from "../../assets/farmer4.png";
-import Farmer5 from "../../assets/farmer5.png";
 import Farmer6 from "../../assets/farmer6.png";
-import Farmer7 from "../../assets/farmer7.png";
 import Farmer8 from "../../assets/farmer8.png";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
-import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 
 const HomePageLinks = () => {
@@ -107,7 +101,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   largeBox: {
-    width: "48%", // Large box takes up 48% of the width
+    width: "48%",
     height: 176,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -118,10 +112,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
-    marginBottom: 8, // Space between large and below box
+    marginBottom: 8,
   },
   smallBox: {
-    width: "48%", // Small boxes take up 48% of the width
+    width: "48%",
     height: 80,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,

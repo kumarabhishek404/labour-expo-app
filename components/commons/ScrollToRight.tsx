@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Animated, Easing, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { t } from "@/utils/translationHelper";
 
 const ScrollHint = ({ style }: any) => {
   const animation = useRef(new Animated.Value(0)).current;
@@ -32,7 +33,7 @@ const ScrollHint = ({ style }: any) => {
   return (
     <View style={[styles.container, style]}>
       <Animated.Text style={[styles.text, { transform: [{ translateX }] }]}>
-        Scroll To Right
+        {t("scrollToRight")}
       </Animated.Text>
       <Animated.View style={{ transform: [{ translateX }] }}>
         <MaterialIcons name="arrow-forward" size={20} color="#1F3E72" />

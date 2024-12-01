@@ -51,8 +51,13 @@ const GroupWorkersListing = ({
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: `/screens/users/${item?._id}`,
-            params: { role: "workers", title: t("workerDetails"), type: "all" },
+            pathname: "/screens/users/[id]",
+            params: {
+              id: item?._id,
+              role: "workers",
+              title: t("workerDetails"),
+              type: "all",
+            },
           })
         }
         style={styles?.container}
@@ -87,7 +92,7 @@ const GroupWorkersListing = ({
 
   return (
     <View style={{ marginTop: 20 }}>
-      <CustomHeading textAlign="left">Top Rated Workers</CustomHeading>
+      <CustomHeading textAlign="left">{t("topRatedWorkers")}</CustomHeading>
       <View style={styles.divider}></View>
       <FlatList
         data={listings ?? []}

@@ -9,6 +9,7 @@ import { useAtomValue } from "jotai";
 import { getWorkLabel } from "@/constants/functions";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 interface SkillSelectorProps {
   canAddSkills: boolean;
@@ -56,7 +57,7 @@ const SkillSelector = ({
   const renderSkills = () => {
     const skillsToShow = count ? userSkills?.slice(0, count) : userSkills;
 
-    console.log("skillsToShow--", skillsToShow, getWorkLabel(availableSkills, "labour"));
+    console.log("skillsToShow--", userSkills, skillsToShow, availableSkills);
     
     return (
       <>
@@ -95,7 +96,7 @@ const SkillSelector = ({
             <View style={styles.highlightIcon}>
               <FontAwesome name="users" size={14} color={Colors.primary} />
             </View>
-            <CustomHeading>Skills</CustomHeading>
+            <CustomHeading>{t("skills")}</CustomHeading>
           </View>
         )}
         {canAddSkills && (

@@ -11,6 +11,7 @@ import { dateDifference } from "@/constants/functions";
 import { openGoogleMaps } from "@/app/hooks/map";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 const destination = {
   latitude: 40.758896,
@@ -28,7 +29,7 @@ const Highlights = ({ service }: any) => {
             <Ionicons name="time" size={18} color={Colors.primary} />
           </View>
           <View style={{ flex: 1 }}>
-            <CustomText textAlign="left">Duration</CustomText>
+            <CustomText textAlign="left">{t("duration")}</CustomText>
             <CustomHeading textAlign="left">
               {service?.duration ||
                 dateDifference(service?.startDate, service?.endDate)}
@@ -41,7 +42,7 @@ const Highlights = ({ service }: any) => {
             <FontAwesome name="users" size={18} color={Colors.primary} />
           </View>
           <View style={{ flex: 1 }}>
-            <CustomText textAlign="left">Travelling</CustomText>
+            <CustomText textAlign="left">{t("travelling")}</CustomText>
             <CustomHeading textAlign="left">Yes</CustomHeading>
           </View>
         </View>
@@ -64,7 +65,7 @@ const Highlights = ({ service }: any) => {
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <CustomText textAlign="left">Distance</CustomText>
+                <CustomText textAlign="left">{t("distance")}</CustomText>
                 <CustomHeading textAlign="left">Just 2 Kms</CustomHeading>
               </View>
             </View>

@@ -106,24 +106,17 @@ const EmailAddressField = ({
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View>
-        <View style={errors[name] && styles?.errorInput}>
-          <TextInputComponent
-            value={email}
-            onBlur={onBlur}
-            onChangeText={setEmail}
-            placeholder={placeholder}
-            label="Email Address"
-            name="firstName"
-            containerStyle={errors?.firstName && styles.errorInput}
-            errors={errors}
-            icon={icon && icon}
-          />
-        </View>
-        {errors[name] && (
-          <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
-            {errors[name]?.message || ""}
-          </CustomText>
-        )}
+        <TextInputComponent
+          value={email}
+          onBlur={onBlur}
+          onChangeText={setEmail}
+          placeholder={placeholder}
+          label="Email Address"
+          name={name}
+          containerStyle={errors[name] && styles.errorInput}
+          errors={errors}
+          icon={icon && icon}
+        />
       </View>
 
       {!errors[name] && (
@@ -139,7 +132,9 @@ const EmailAddressField = ({
             <View style={styles.modalContent}>
               <CustomHeading fontSize={50}>✉️</CustomHeading>
               <CustomHeading>Please check your email</CustomHeading>
-              <CustomText>We&#39;ve sent a code to contact@curfcode.com</CustomText>
+              <CustomText>
+                We&#39;ve sent a code to contact@curfcode.com
+              </CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (

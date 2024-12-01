@@ -147,30 +147,29 @@ const MobileNumberField = ({
         )}
       />
 
-      <View style={errors[name] && styles?.errorInput}>
-        <TextInputComponent
-          value={phoneNumber}
-          onBlur={onBlur}
-          onChangeText={setPhoneNumber}
-          placeholder={placeholder}
-          maxLength={10}
-          label=""
-          name="firstName"
-          containerStyle={errors?.firstName && styles.errorInput}
-          errors={errors}
-          icon={
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              {icon && icon}
-              <CustomHeading>{countryCode}</CustomHeading>
-            </View>
-          }
-        />
-      </View>
-      {errors[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      <TextInputComponent
+        value={phoneNumber}
+        onBlur={onBlur}
+        onChangeText={setPhoneNumber}
+        placeholder={placeholder}
+        maxLength={10}
+        label=""
+        name={name}
+        containerStyle={errors[name] && styles.errorInput}
+        errors={errors}
+        icon={
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginRight: 10,
+            }}
+          >
+            {icon && icon}
+            <CustomHeading>{countryCode}</CustomHeading>
+          </View>
+        }
+      />
 
       {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
         <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
@@ -184,7 +183,9 @@ const MobileNumberField = ({
             <View style={styles.modalContent}>
               <CustomHeading fontSize={50}>✉️</CustomHeading>
               <CustomHeading>Please check your email</CustomHeading>
-              <CustomText>We&#39;ve sent a code to contact@curfcode.com</CustomText>
+              <CustomText>
+                We&#39;ve sent a code to contact@curfcode.com
+              </CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (
@@ -281,8 +282,8 @@ const styles = StyleSheet.create({
   verifyBtn: {
     position: "absolute",
     right: 7,
-    bottom: 23,
-    backgroundColor: "#007bff",
+    bottom: 10,
+    backgroundColor: Colors?.primary,
     padding: 6,
     borderRadius: 8,
     alignItems: "center",

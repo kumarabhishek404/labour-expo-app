@@ -25,44 +25,36 @@ const PasswordComponent = ({
   onChangeText,
   onBlur,
   icon,
-  errors,
-  containerStyle,
+  errors
 }: TextInputProps) => {
   const [secureEntry, setSecureEntry] = useState(true);
 
   return (
     <View style={styles?.inputField}>
-      <View style={containerStyle}>
-        <TextInputComponent
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          secureTextEntry={secureEntry}
-          label={label}
-          name="firstName"
-          containerStyle={errors?.firstName && styles.errorInput}
-          errors={errors}
-          icon={icon && icon}
-          secondIcon={
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              onPress={() => setSecureEntry((prev) => !prev)}
-            >
-              <Feather
-                name={secureEntry ? "eye" : "eye-off"}
-                size={20}
-                color={Colors.secondary}
-              />
-            </TouchableOpacity>
-          }
-        />
-      </View>
-      {errors[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      <TextInputComponent
+        value={value}
+        onBlur={onBlur}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        secureTextEntry={secureEntry}
+        label={label}
+        name={name}
+        containerStyle={errors[name] && styles.errorInput}
+        errors={errors}
+        icon={icon && icon}
+        secondIcon={
+          <TouchableOpacity
+            style={{ marginRight: 10 }}
+            onPress={() => setSecureEntry((prev) => !prev)}
+          >
+            <Feather
+              name={secureEntry ? "eye" : "eye-off"}
+              size={20}
+              color={Colors.secondary}
+            />
+          </TouchableOpacity>
+        }
+      />
     </View>
   );
 };

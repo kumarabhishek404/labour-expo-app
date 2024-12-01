@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   dropdown: {
     height: 53,

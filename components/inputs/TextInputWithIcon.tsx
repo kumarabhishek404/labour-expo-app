@@ -58,11 +58,7 @@ const TextInputComponent = ({
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && (
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{ marginLeft: 10 }}
-            onPress={handleLabelPress}
-          >
+          <TouchableOpacity activeOpacity={1} onPress={handleLabelPress}>
             {icon}
           </TouchableOpacity>
         )}
@@ -103,6 +99,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
+    paddingLeft: 10,
   },
   input: {
     padding: 0,
@@ -110,7 +107,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     borderRadius: 8,
-    paddingLeft: 10,
   },
   icon: {
     marginRight: 10,

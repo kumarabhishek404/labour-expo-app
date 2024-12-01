@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import AvatarComponent from "./Avatar";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const EmployerCard = ({ service }: any) => {
   return (
@@ -33,7 +34,7 @@ const EmployerCard = ({ service }: any) => {
       >
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
-            <CustomHeading textAlign="left">Employer</CustomHeading>
+            <CustomHeading textAlign="left">{t("employer")}</CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>Name : </CustomText>
               {service?.employer?.firstName} {service?.employer?.lastName}
@@ -92,13 +93,17 @@ const EmployerCard = ({ service }: any) => {
           />
           <Button
             isPrimary={true}
-            title="View Details"
+            title={t("viewDetails")}
             onPress={() =>
               router.push({
-                pathname: `/screens/users/${service?.employer?._id}`,
-                params: { role: "employers", title: "Employer Details", type: "details" },
-              }
-                )
+                pathname: "/screens/users/[id]",
+                params: {
+                  id: service?.employer?._id,
+                  role: "employers",
+                  title: t("employerDetails"),
+                  type: "details",
+                },
+              })
             }
             icon={<AntDesign name="eye" size={18} color={Colors.white} />}
             style={{

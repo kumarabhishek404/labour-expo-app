@@ -14,7 +14,8 @@ import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
-import {  MYSERVICES, SERVICES } from "@/constants";
+import { MYSERVICES, SERVICES } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -95,7 +96,9 @@ const Services = () => {
           header: () => (
             <CustomHeader
               title={
-                userDetails?.role === "EMPLOYER" ? "My Services" : "My Bookings"
+                userDetails?.role === "EMPLOYER"
+                  ? t("myServices")
+                  : t("myBookings")
               }
               right="notification"
             />
@@ -109,7 +112,7 @@ const Services = () => {
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
           <CategoryButtons
-            options={userDetails?.role === "EMPLOYER" ? MYSERVICES : SERVICES}
+            options={MYSERVICES}
             onCagtegoryChanged={onCatChanged}
           />
 

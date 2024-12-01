@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { isEmptyObject } from "@/constants/functions";
 import Stepper from "@/components/commons/Stepper";
 import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 interface SecondScreenProps {
   setStep: any;
@@ -79,7 +80,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <AddLocationAndAddress
-              label=""
+              label={t("address")}
               name="address"
               address={value}
               setAddress={onChange}
@@ -151,7 +152,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
                   name={"mail-outline"}
                   size={30}
                   color={Colors.secondary}
-                  style={{ paddingVertical: 10 }}
+                  style={{ paddingVertical: 10, marginRight: 10 }}
                 />
               }
             />

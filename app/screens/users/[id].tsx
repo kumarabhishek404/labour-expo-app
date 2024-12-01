@@ -33,6 +33,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import ButtonContainer from "./buttons";
+import { t } from "@/utils/translationHelper";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -144,7 +145,11 @@ const Worker = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={title || "Details"} left="back" right="like" />
+            <CustomHeader
+              title={title || "User Details"}
+              left="back"
+              right="like"
+            />
           ),
         }}
       />
@@ -187,9 +192,9 @@ const Worker = () => {
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <CustomText textAlign="left">Price</CustomText>
+                  <CustomText textAlign="left">{t("price")}</CustomText>
                   <CustomHeading fontSize={14} textAlign="left">
-                    {worker?.duration || 0} Rs / Day
+                    {worker?.duration || 0} Rs / {t("perDay")}
                   </CustomHeading>
                 </View>
               </View>
@@ -198,7 +203,7 @@ const Worker = () => {
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
                 <View>
-                  <CustomText textAlign="left">Rating</CustomText>
+                  <CustomText textAlign="left">{t("rating")}</CustomText>
                   <CustomHeading fontSize={14} textAlign="left">
                     {worker?.rating || 0}
                   </CustomHeading>
@@ -208,15 +213,17 @@ const Worker = () => {
 
             <CustomText>{worker?.description}</CustomText>
 
-            <SkillSelector
-              canAddSkills={false}
-              isShowLabel={true}
-              style={styles?.skillsContainer}
-              userSkills={worker?.skills}
-              availableSkills={
-                worker?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
-              }
-            />
+            {role !== "employers" && (
+              <SkillSelector
+                canAddSkills={false}
+                isShowLabel={true}
+                style={styles?.skillsContainer}
+                userSkills={worker?.skills}
+                availableSkills={
+                  worker?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
+                }
+              />
+            )}
 
             <UserInfoComponent user={worker} style={{ marginHorizontal: 0 }} />
 

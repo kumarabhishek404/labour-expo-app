@@ -18,7 +18,7 @@ import HomePageLinks from "@/components/commons/HomePageLinks";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
-import {  SERVICES, WORKERTYPES } from "@/constants";
+import { SERVICES, WORKERTYPES } from "@/constants";
 import QuickContact from "@/components/commons/QuickContact";
 import TestimonialSlider from "@/components/commons/Testimonials";
 import PublicationsScreen from "@/components/commons/Publications";
@@ -27,8 +27,8 @@ import CompanySuccess from "@/components/commons/CompanySuccessStats";
 import ScrollHint from "@/components/commons/ScrollToRight";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
-import SpeechToText from "@/components/commons/VoiceToText";
-import AudioRecorder from "@/components/commons/AudioRecord";
+// import SpeechToText from "@/components/commons/VoiceToText";
+// import AudioRecorder from "@/components/commons/AudioRecord";
 import { t } from "@/utils/translationHelper";
 
 const Page = () => {
@@ -178,15 +178,13 @@ const Page = () => {
             <HomePageLinks />
 
             <CustomHeading textAlign="left">
-              {userDetails?.role === "EMPLOYER" ? "Workers" : "Services"}
+              {userDetails?.role === "EMPLOYER" ? t("workers") : t("services")}
             </CustomHeading>
             <View style={styles.divider}></View>
 
             <CategoryButtons
               options={
-                userDetails?.role === "EMPLOYER"
-                  ? WORKERTYPES
-                  : SERVICES
+                userDetails?.role === "EMPLOYER" ? WORKERTYPES : SERVICES
               }
               onCagtegoryChanged={onCatChanged}
               stylesProp={styles.categoryContainer}

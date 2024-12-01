@@ -38,11 +38,10 @@ const CustomHeading = ({
           textAlign,
           margin,
           padding,
-          // lineHeight: lineHeight || fontSize * 1.5,
         },
-        style, // Any extra styles passed in
+        style,
       ]}
-      {...restProps} // Pass through any extra props to Text
+      {...restProps}
     >
       {children}
     </Text>
@@ -50,9 +49,7 @@ const CustomHeading = ({
 };
 
 const styles = StyleSheet.create({
-  text: {
-    // Global styles can go here if needed
-  },
+  text: {},
 });
 
 export default CustomHeading;

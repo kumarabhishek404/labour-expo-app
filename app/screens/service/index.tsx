@@ -20,6 +20,7 @@ import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { SERVICES } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 
 const Services = () => {
@@ -118,7 +119,7 @@ const Services = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title={"Mediator"} />
+            <EmptyDatePlaceholder title={t("mediators")} />
           )}
         </View>
       </View>

@@ -55,8 +55,9 @@ const ListingHorizontalWorkers = ({
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: `/screens/users/${item?._id}`,
+            pathname: "/screens/users/[id]",
             params: {
+              id: item?._id,
               role: "workers",
               title: t("workerDetails"),
               type: "details",

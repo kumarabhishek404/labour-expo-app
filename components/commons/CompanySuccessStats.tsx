@@ -4,14 +4,14 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
+import { t } from "@/utils/translationHelper";
 
 const CompanySuccess = () => {
   return (
     <View style={styles.container}>
-      <CustomHeading>COMPANY SUCCESS</CustomHeading>
+      <CustomHeading>{t("companySuccess")}</CustomHeading>
       <View style={styles.divider}></View>
 
-      {/* Facts Row */}
       <View style={styles.factsRow}>
         <View style={styles.factContainer}>
           <CustomHeading fontSize={32}>30+</CustomHeading>

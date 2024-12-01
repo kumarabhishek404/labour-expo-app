@@ -9,11 +9,12 @@ import {
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 
 const PublicationsScreen = () => {
   return (
     <ScrollView style={styles.container}>
-      <CustomHeading>PUBLICATIONS</CustomHeading>
+      <CustomHeading>{t('publications')}</CustomHeading>
 
       <View style={styles.divider}></View>
 

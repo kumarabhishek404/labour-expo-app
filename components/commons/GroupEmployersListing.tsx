@@ -15,6 +15,7 @@ import { debounce } from "lodash";
 import CustomHeading from "./CustomHeading";
 import RatingAndReviews from "./RatingAndReviews";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 type RenderItemTypes = {
   item: {
@@ -82,7 +83,7 @@ const GroupEmployersListing = ({
                 color={Colors.primary}
               />
               <CustomHeading fontSize={14}>
-                {item.rating || "34 Services"}{" "}
+                {item.rating || `34 ${t("services")}`}{" "}
               </CustomHeading>
               <CustomText>({item.reviews || "5 Active"})</CustomText>
             </View>
@@ -99,7 +100,7 @@ const GroupEmployersListing = ({
 
   return (
     <View style={{ marginVertical: 20 }}>
-      <CustomHeading textAlign="left">Top Rated Employers</CustomHeading>
+      <CustomHeading textAlign="left">{t("topRatedEmployers")}</CustomHeading>
       <View style={styles.divider}></View>
       <FlatList
         data={listings ?? []}

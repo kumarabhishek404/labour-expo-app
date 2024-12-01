@@ -12,6 +12,7 @@ import { FontAwesome } from "@expo/vector-icons"; // For social media icons
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const { width } = Dimensions.get("window");
 
@@ -107,7 +108,7 @@ const TestimonialSlider = () => {
 
   return (
     <View style={styles.container}>
-      <CustomHeading>TESTIMONIALS</CustomHeading>
+      <CustomHeading>{t("testimonials")}</CustomHeading>
       <View style={styles.divider}></View>
       <ScrollView
         ref={scrollViewRef}

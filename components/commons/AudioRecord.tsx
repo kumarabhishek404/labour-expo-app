@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import { Button, View, Text } from "react-native";
 
 const AudioRecorder = () => {
-  const [recording, setRecording] = useState(null);
-  const [audioURI, setAudioURI] = useState(null);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [audioURI, setAudioURI] = useState<string | null>(null);
 
   const startRecording = async () => {
     try {
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
       const { recording } = await Audio.Recording.createAsync(
-        Audio?.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       setRecording(recording);
     } catch (error) {
@@ -21,14 +21,14 @@ const AudioRecorder = () => {
   };
 
   const stopRecording = async () => {
+    if (!recording) return;
+    
     setRecording(null);
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI();
     console.log("URI - ", uri);
     
     setAudioURI(uri);
-    // const transcription = await transcribeAudio(uri);
-    // console.log("Transcription:", transcription);
   };
 
   return (

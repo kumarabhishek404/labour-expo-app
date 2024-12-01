@@ -11,6 +11,7 @@ import Loader from "./Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
+import { t } from "@/utils/translationHelper";
 
 interface ApplicantsProps {
   applicants: any;
@@ -31,7 +32,7 @@ const Applicants = ({
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      toast.success("Worker selected successfully");
+      toast.success(t('workerSelectedSuccessfully'));
       console.log(
         "Response while seleting an applicant for service - ",
         response
@@ -66,9 +67,10 @@ const Applicants = ({
                   title="Details"
                   onPress={() =>
                     router?.push({
-                      pathname: `/screens/users/${item._id}`,
+                      pathname: "/screens/users/[id]",
                       params: {
-                        role: "workers",
+                        id: item._id,
+                        role: "workers", 
                         type: "applicant",
                       },
                     })

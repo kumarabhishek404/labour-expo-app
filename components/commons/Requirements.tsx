@@ -3,6 +3,8 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
+import { capitalizeWord } from "@/constants/functions";
 
 interface RequirementsProps {
   type: string;
@@ -10,6 +12,8 @@ interface RequirementsProps {
 }
 
 const Requirements = ({ type, requirements }: RequirementsProps) => {
+  console.log("requirements---", requirements);
+  
   return (
     <>
       {type === "highlights" ? (
@@ -21,10 +25,10 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                 color={Colors?.white}
                 style={{ textTransform: "capitalize" }}
               >
-                {requirement?.count} {requirement?.name}
+                {requirement?.count} {t(`${capitalizeWord(requirement?.name)}`)}
               </CustomHeading>
               <CustomText color={Colors?.white} fontSize={12}>
-                ₹ {requirement?.payPerDay} Per Day
+                ₹ {requirement?.payPerDay} {t("perDay")}
               </CustomText>
             </View>
           ))}
@@ -36,34 +40,34 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
               <View style={styles.card} key={index}>
                 <View style={styles.header}>
                   <CustomHeading style={{ textTransform: "capitalize" }}>
-                    {requirement?.name}
+                    {t(`${capitalizeWord(requirement?.name)}`)}
                   </CustomHeading>
                   <CustomText fontSize={14}>
-                    ₹ {requirement?.payPerDay} Per Day
+                    ₹ {requirement?.payPerDay} {t("perDay")}
                   </CustomText>
                 </View>
 
                 <View style={styles.details}>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">Count</CustomText>
+                    <CustomText fontWeight="700">{t("count")}</CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.count}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">Food</CustomText>
+                    <CustomText fontWeight="700">{t("food")}</CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.food ? "Yes" : "No"}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">Living</CustomText>
+                    <CustomText fontWeight="700">{t("living")}</CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.shelterProvider ? "Yes" : "No"}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">ESI / PF</CustomText>
+                    <CustomText fontWeight="700">{t("esi/pf")}</CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       No
                     </CustomText>
@@ -109,8 +113,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   tag: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
     backgroundColor: Colors?.tertiery,
     borderColor: Colors?.tertiery,
     borderRadius: 8,
