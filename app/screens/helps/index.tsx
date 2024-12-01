@@ -5,6 +5,7 @@ import CustomHeader from "@/components/commons/Header";
 import Button from "@/components/inputs/Button";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 import { Feather } from "@expo/vector-icons";
 import { Video } from "expo-av";
 import { Stack } from "expo-router";
@@ -308,8 +309,12 @@ const HelpScreen = () => {
                 style={styles.faqCard}
                 onPress={() => openModal(item)}
               >
-                <CustomHeading fontSize={30}>{item.icon}</CustomHeading>
-                <CustomText fontSize={14}>{item.question}</CustomText>
+                <CustomHeading fontSize={30} style={{ marginBottom: 10 }}>
+                  {item.icon}
+                </CustomHeading>
+                <CustomText textAlign="left" fontSize={14}>
+                  {item.question}
+                </CustomText>
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item?.id?.toString()}
@@ -431,7 +436,7 @@ const HelpScreen = () => {
         <View style={styles?.startConversation}>
           <Button
             isPrimary={true}
-            title="Start a conversation"
+            title={t("startAConversation")}
             onPress={() => setChatVisible(true)}
             style={styles.startConversationButton}
             textStyle={styles.startConversationText}

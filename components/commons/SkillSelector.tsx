@@ -56,14 +56,16 @@ const SkillSelector = ({
   const renderSkills = () => {
     const skillsToShow = count ? userSkills?.slice(0, count) : userSkills;
 
+    console.log("skillsToShow--", skillsToShow, getWorkLabel(availableSkills, "labour"));
+    
     return (
       <>
         {skillsToShow?.map((skill) => (
           <View key={skill}>
-            {getWorkLabel(availableSkills, "labour") && (
+            {getWorkLabel(availableSkills, skill) && (
               <View style={[styles.skillBox, tagStyle]}>
                 <CustomText style={[tagTextStyle]}>
-                  {getWorkLabel(availableSkills, "labour")}
+                  {getWorkLabel(availableSkills, skill)}
                 </CustomText>
               </View>
             )}

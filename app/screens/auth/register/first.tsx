@@ -69,8 +69,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="firstName"
           rules={{
-            required: false,
-            // required: "First Name is required"
+            required: "First Name is required"
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
@@ -90,8 +89,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="lastName"
           rules={{
-            required: false,
-            // required: "Last Name is required"
+            required: "Last Name is required"
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
@@ -111,8 +109,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="gender"
           rules={{
-            required: false,
-            // required: "Gender is required"
+            required: "Gender is required"
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Gender
@@ -136,20 +133,19 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           name="dateOfBirth"
           defaultValue={new Date()}
           rules={{
-            required: false,
-            // required: "Start date is required",
-            // validate: (value) => {
-            //   const selectedDate = new Date(value);
-            //   const today = new Date();
-            //   const eighteenYearsAgo = new Date();
-            //   eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+            required: "Start date is required",
+            validate: (value) => {
+              const selectedDate = new Date(value);
+              const today = new Date();
+              const eighteenYearsAgo = new Date();
+              eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
 
-            //   if (selectedDate > eighteenYearsAgo) {
-            //     return "You must be at least 18 years old";
-            //   } else {
-            //     return true;
-            //   }
-            // },
+              if (selectedDate > eighteenYearsAgo) {
+                return "You must be at least 18 years old";
+              } else {
+                return true;
+              }
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <DateField

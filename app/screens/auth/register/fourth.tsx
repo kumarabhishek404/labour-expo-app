@@ -76,12 +76,11 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         name="password"
         defaultValue=""
         rules={{
-          required: false,
-          // required: "Password is required",
-          // pattern: {
-          //   value: /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[a-z\d@$!%*?&]{8,}$/,
-          //   message: "You have to full fill all the following conditions",
-          // },
+          required: "Password is required",
+          pattern: {
+            value: /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[a-z\d@$!%*?&]{8,}$/,
+            message: "You have to full fill all the following conditions",
+          },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
@@ -161,10 +160,9 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         name="confirmPassword"
         defaultValue=""
         rules={{
-          required: false,
-          // required: "Please confirm your password",
-          // validate: (value) =>
-          //   value == watch("password") || "Passwords do not match",
+          required: "Please confirm your password",
+          validate: (value) =>
+            value == watch("password") || "Passwords do not match",
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <PasswordComponent

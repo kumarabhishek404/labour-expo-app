@@ -69,8 +69,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           control={control}
           name="role"
           rules={{
-            required: false,
-            // required: "Select at least one skill",
+            required: "Select at least one skill",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <RoleSelection role={value} setRole={onChange} onBlur={onBlur} />
@@ -83,8 +82,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             name="interest"
             defaultValue=""
             rules={{
-              required: false,
-              // required: "Select at least one skill",
+              required: "Select at least one skill",
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
@@ -105,8 +103,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             name="interest"
             defaultValue=""
             rules={{
-              required: false,
-              // required: "Select at least one option",
+              required: "Select at least one option",
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector

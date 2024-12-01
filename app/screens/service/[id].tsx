@@ -58,25 +58,6 @@ interface ImageAsset {
   uri: string;
 }
 
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    profilePic:
-      "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
-    skills: ["React Native", "JavaScript", "CSS"],
-    address: "123, Main Street, New York",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    profilePic:
-      "https://plus.unsplash.com/premium_photo-1689977968861-9c91dbb16049?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3R1cmV8ZW58MHx8MHx8fDA%3D",
-    skills: ["Python", "Django", "Data Analysis"],
-    address: "456, Elm Street, Chicago",
-  },
-];
-
 const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setAddService = useSetAtom(AddServiceAtom);
@@ -146,6 +127,7 @@ const ServiceDetails = () => {
     queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
     retry: false,
     initialPageParam: 1,
+    enabled: userDetails?.role === "MEDIATOR",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -153,8 +135,6 @@ const ServiceDetails = () => {
       return undefined;
     },
   });
-
-  console.log("members---", members?.pages[0]);
 
   const {
     data: selectedApplicants,
@@ -220,9 +200,13 @@ const ServiceDetails = () => {
     mutationFn: () => applyService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
+      toast.success("Service applied successfully");
       console.log("Response while applying in the service - ", response);
     },
-    onError: (err) => {
+    onError: (err: any) => {
+      toast.error(
+        `Error while applying in the service - ${err?.response?.data?.message}`
+      );
       console.error("error while applying in the service ", err);
     },
   });
@@ -232,9 +216,13 @@ const ServiceDetails = () => {
     mutationFn: () => unApplyService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
+      toast.success("Your application cancelled successfully");
       console.log("Response while unapplying the service - ", response);
     },
-    onError: (err) => {
+    onError: (err: any) => {
+      toast.error(
+        `Error while cancelling your application in the service - ${err?.response?.data?.message}`
+      );
       console.error("error while unapplying the service ", err);
     },
   });

@@ -100,18 +100,18 @@
   "removeFromService": "Remove From Service",
   "workRequirments": "Work Requirments",
 
-  "construction": "निर्माण",
-  "farming": "कृषि",
-  "helping": "सहायता",
-  "labour": "मजदूर",
-  "bricklayer": "मजदूरी पत्थर",
-  "stoneMason": "पत्थर मिस्त्री",
-  "mistri": "मिस्त्री",
-  "electrician": "बिजली मिस्त्री",
-  "dhaanBuwai": "धान बुवाई",
-  "dhaanPitai": "धान पिटाई",
-  "alooBuwai": "आलू बुवाई",
-  "bazraaKatai": "बाजरा काटाई",
+  "Construction": "निर्माण",
+  "Farming": "कृषि",
+  "Helping": "सहायता",
+  "Labour": "मजदूर",
+  "Brick Layer": "मजदूरी पत्थर",
+  "Stone Mason": "पत्थर मिस्त्री",
+  "Mistri": "मिस्त्री",
+  "Electrician": "बिजली मिस्त्री",
+  "Dhaan Buwai": "धान बुवाई",
+  "Dhaan Pitai": "धान पिटाई",
+  "Aloo Buwai": "आलू बुवाई",
+  "Bazraa Katai": "बाजरा काटाई",
 
   "home": "होम",
   "help": "सहायता",
@@ -230,5 +230,8 @@
   "inactiveModalMessage": "वापसी पर स्वागत है! हम आपकी प्रोफ़ाइल, सेटिंग्स, और सभी संबंधित डेटा को पुनर्स्थापित करेंगे। आप पहले की तरह अपने खाते का उपयोग कर सकेंगे। आपके धैर्य के लिए धन्यवाद।",
   "restoreAccountButton": "खाता पुनर्स्थापन का अनुरोध करें",
   "activateAccountButton": "खाता सक्रिय करें",
-  "successfullyActivateMessage": "आपका खाता सफलतापूर्वक सक्रिय हो गया है।"
+  "successfullyActivateMessage": "आपका खाता सफलतापूर्वक सक्रिय हो गया है।",
+
+  "selectWorkers": "Select members from your team",
+  "startAConversation": "Start A Conversation"
 }

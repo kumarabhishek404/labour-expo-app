@@ -75,11 +75,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="address"
           defaultValue=""
           rules={{
-            required: false,
-            // required: "Address is required",
+            required: "Address is required",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <AddLocationAndAddress
+              label=""
               name="address"
               address={value}
               setAddress={onChange}
@@ -98,12 +98,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="phoneNumber"
           defaultValue=""
           rules={{
-            required: false,
-            // required: "Mobile number is required",
-            // pattern: {
-            //   value: /^(\+91[\-\s]?)?[6-9]\d{9}$/,
-            //   message: "Enter a valid mobile number",
-            // },
+            required: "Mobile number is required",
+            pattern: {
+              value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
+              message: "Enter a valid mobile number",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <MobileNumberField
@@ -133,12 +132,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="email"
           defaultValue=""
           rules={{
-            required: false,
-            // required: "Email address is required",
-            // pattern: {
-            //   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-            //   message: "Enter a valid email address",
-            // },
+            required: "Email address is required",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Enter a valid email address",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <EmailAddressField

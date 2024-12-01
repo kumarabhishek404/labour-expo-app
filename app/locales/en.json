@@ -101,18 +101,18 @@
   "removeFromService": "Remove From Service",
   "workRequirments": "Work Requirments",
 
-  "construction": "Construction",
-  "farming": "Farming",
-  "helping": "Helping",
-  "labour": "Labour",
-  "bricklayer": "Bricklayer",
-  "stoneMason": "Stone Mason",
-  "mistri": "Mistri",
-  "electrician": "Electrician",
-  "dhaanBuwai": "Dhan Buwai",
-  "dhaanPitai": "Dhaan Pitai",
-  "alooBuwai": "Aloo Buwai",
-  "bazraaKatai": "Bazara Katai",
+  "Construction": "Construction",
+  "Farming": "Farming",
+  "Helping": "Helping",
+  "Labour": "Labour",
+  "Bricklayer": "Bricklayer",
+  "Stone Mason": "Stone Mason",
+  "Mistri": "Mistri",
+  "Electrician": "Electrician",
+  "Dhaan Buwai": "Dhan Buwai",
+  "Dhaan Pitai": "Dhaan Pitai",
+  "Aloo Buwai": "Aloo Buwai",
+  "Bazraa Katai": "Bazara Katai",
 
   "home": "Home",
   "help": "Help",
@@ -233,5 +233,6 @@
   "activateAccountButton": "Activate Account",
   "successfullyActivateMessage": "Your account is activated successfully",
 
-  "selectWorkers": "Select members from your team"
+  "selectWorkers": "Select members from your team",
+  "startAConversation": "Start A Conversation"
 }

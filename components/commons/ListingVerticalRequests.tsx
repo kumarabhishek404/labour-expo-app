@@ -76,8 +76,6 @@ const ListingVerticalRequests = ({
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     const sender = item?.sender;
 
-    console.log("sender--", sender);
-
     return (
       <TouchableOpacity
         onPress={() =>

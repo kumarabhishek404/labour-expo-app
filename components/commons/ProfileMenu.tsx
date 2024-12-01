@@ -118,9 +118,7 @@ const ProfileMenu = ({ disabled }: any) => {
     },
     {
       title: `${t("yourFavorites")} ${
-        userDetails?.role === "EMPLOYER"
-          ? t("workers")
-          : t("employers")
+        userDetails?.role === "EMPLOYER" ? t("workers") : t("employers")
       }`,
       icon: <FontAwesome6 name="heart" size={24} color={Colors.primary} />,
       onPress: () =>
@@ -336,9 +334,9 @@ const ProfileMenu = ({ disabled }: any) => {
         </CustomText>
         <CustomText>
           Deactivating your account will disable your Profile and remove your
-          name and photo from most things that you&#39;ve shared. Some information
-          may still be visible to others, such as your name in their friend list
-          and messages that you&#39;ve sent.
+          name and photo from most things that you&#39;ve shared. Some
+          information may still be visible to others, such as your name in their
+          friend list and messages that you&#39;ve sent.
         </CustomText>
       </View>
     );
@@ -365,7 +363,7 @@ const ProfileMenu = ({ disabled }: any) => {
               >
                 <View style={styles.settingLabel}>
                   {menu?.icon}
-                  <CustomHeading style={styles.menuItemText}>
+                  <CustomHeading style={[styles.menuItemText, menu?.textStyle]}>
                     {menu?.title}
                   </CustomHeading>
                 </View>

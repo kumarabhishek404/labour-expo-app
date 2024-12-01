@@ -53,19 +53,19 @@ export const ADDSERVICESTEPS = [
 ];
 
 export const WORKERTYPES = [
-  { label: "labour", value: "labour", iconName: "beach" },
-  { label: "bricklayer", value: "bricklayer", iconName: "terrain" },
-  { label: "stoneMason", value: "stoneMason", iconName: "city" },
-  { label: "mistri", value: "mistri", iconName: "tree" },
-  { label: "electrician", value: "electrician", iconName: "swim" },
+  { label: "Labour", value: "labour", iconName: "beach" },
+  { label: "Brick Layer", value: "bricklayer", iconName: "terrain" },
+  { label: "Stone Mason", value: "stoneMason", iconName: "city" },
+  { label: "Mistri", value: "mistri", iconName: "tree" },
+  { label: "Electrician", value: "electrician", iconName: "swim" },
 ];
 
 export const MEDIATORTYPES = [
-  { label: "construction", value: "construction", iconName: "beach" },
-  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "terrain" },
-  { label: "dhaanPitai", value: "dhaanPitai", iconName: "city" },
-  { label: "alooBuwai", value: "alooBuwai", iconName: "tree" },
-  { label: "bazraaKatai", value: "bazraaKatai", iconName: "swim" },
+  { label: "Construction", value: "construction", iconName: "beach" },
+  { label: "Dhaan Buwai", value: "dhaanBuwai", iconName: "terrain" },
+  { label: "Dhaan Pitai", value: "dhaanPitai", iconName: "city" },
+  { label: "Aloo Buwai", value: "alooBuwai", iconName: "tree" },
+  { label: "Bazraa Katai", value: "bazraaKatai", iconName: "swim" },
 ];
 
 export const MYSERVICES = [

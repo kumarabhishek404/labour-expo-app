@@ -35,7 +35,6 @@ const Workers = () => {
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { role, title, type } = useGlobalSearchParams();
-  console.log("role --", role);
 
   const {
     data: response,
@@ -137,7 +136,7 @@ const Workers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               availableInterest={
-                userDetails?.role === "WORKER"
+                role === "WORKER"
                   ? WORKERTYPES
                   : MEDIATORTYPES
               }

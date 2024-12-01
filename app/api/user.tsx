@@ -20,7 +20,7 @@ export const register = async (payload: any) => {
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding new user : `,
-      error
+      error?.response?.data?.message
     );
     toast.error(
       error?.response?.data?.message || "An error occurred while adding user"
