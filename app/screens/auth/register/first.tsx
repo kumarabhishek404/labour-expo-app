@@ -15,7 +15,6 @@ import { REGISTERSTEPS } from "@/constants";
 
 interface FirstScreenProps {
   setStep: any;
-  setProfilePicture: any;
   firstName: string;
   setFirstName: any;
   lastName: string;

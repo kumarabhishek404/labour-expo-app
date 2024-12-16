@@ -6,7 +6,7 @@ import ModalComponent from "./Modal";
 import MultiSelectDropdownComponent from "../inputs/MultiSelectDropdown";
 import { UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue } from "jotai";
-import { getWorkLabel } from "@/constants/functions";
+import { getWorkLabel, removeEmptyStrings } from "@/constants/functions";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
@@ -55,23 +55,27 @@ const SkillSelector = ({
   };
 
   const renderSkills = () => {
-    const skillsToShow = count ? userSkills?.slice(0, count) : userSkills;
+    const skillsToShow = count
+      ? removeEmptyStrings(userSkills)?.slice(0, count)
+      : removeEmptyStrings(userSkills);
 
-    console.log("skillsToShow--", userSkills, skillsToShow, availableSkills);
-    
     return (
       <>
-        {skillsToShow?.map((skill) => (
-          <View key={skill}>
-            {getWorkLabel(availableSkills, skill) && (
-              <View style={[styles.skillBox, tagStyle]}>
-                <CustomText style={[tagTextStyle]}>
-                  {getWorkLabel(availableSkills, skill)}
-                </CustomText>
-              </View>
-            )}
-          </View>
-        ))}
+        {skillsToShow?.length > 0 ? (
+          skillsToShow?.map((skill: any) => (
+            <View key={skill}>
+              {getWorkLabel(availableSkills, skill) && (
+                <View style={[styles.skillBox, tagStyle]}>
+                  <CustomText style={[tagTextStyle]}>
+                    {getWorkLabel(availableSkills, skill)}
+                  </CustomText>
+                </View>
+              )}
+            </View>
+          ))
+        ) : (
+          <CustomText fontSize={14}>{t("noSkillsFound")}</CustomText>
+        )}
 
         {count && count < userSkills?.length && (
           <CustomText color={Colors?.link} fontSize={18}>

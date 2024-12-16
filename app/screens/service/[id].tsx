@@ -18,13 +18,16 @@ import {
   applyService,
   completeService,
   deleteServiceById,
-  fetchMyApplicants,
-  fetchSelectedCandidates,
+  fetchMyAppliedWorkers,
+  fetchMyAppliedMediators,
   getServiceById,
   likeService,
   mediatorApplyService,
+  mediatorUnApplyService,
   unApplyService,
   unLikeService,
+  fetchSelectedWorkers,
+  fetchSelectedMediators,
 } from "../../api/services";
 import Loader from "@/components/commons/Loader";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
@@ -69,7 +72,11 @@ const ServiceDetails = () => {
     service?.likedBy?.includes(userDetails?._id) || false
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
-    service?.appliedBy?.includes(userDetails?._id) || false
+    userDetails?.role === "MEDIATOR"
+      ? service?.appliedMediators?.find(
+          (mediator: any) => mediator?.mediatorId === userDetails?._id
+        )
+      : service?.appliedBy?.includes(userDetails?._id) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selected?.includes(userDetails?._id) || false
@@ -79,7 +86,8 @@ const ServiceDetails = () => {
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
 
   const [isWorkerSelectModal, setIsWorkerSelectModal] = useState(false);
-  const [selectedWorkers, setSelectedWorkers]: any = useState([]);
+  const [workers, setWorkers]: any = useState([]);
+  const [selectedWorkersIds, setSelectedWorkersIds]: any = useState([]);
 
   const {
     isLoading,
@@ -95,16 +103,38 @@ const ServiceDetails = () => {
   });
 
   const {
-    data: applicants,
-    isLoading: isApplicantLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    refetch: refetchApplicants,
+    data: appliedWorkers,
+    isLoading: isAppliedWorkersLoading,
+    isFetchingNextPage: isAppliedWorkersFetchingNextPage,
+    fetchNextPage: appliedWorkersFetchPage,
+    hasNextPage: hasAppliedWorkersNextPage,
+    refetch: refetchAppliedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["applicants"],
+    queryKey: ["appliedWorkers"],
     queryFn: ({ pageParam }) => {
-      return fetchMyApplicants({ pageParam, serviceId: id });
+      return fetchMyAppliedWorkers({ pageParam, serviceId: id });
+    },
+    retry: false,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+
+  const {
+    data: appliedMediators,
+    isLoading: isAppliedMediatorsLoading,
+    isFetchingNextPage: isAppliedMediatorsFetchingNextPage,
+    fetchNextPage: appliedMediatorsFetchPage,
+    hasNextPage: hasAppliedMediatorsNextPage,
+    refetch: refetchAppliedMediators,
+  } = useInfiniteQuery({
+    queryKey: ["appliedMediators"],
+    queryFn: ({ pageParam }) => {
+      return fetchMyAppliedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -137,16 +167,38 @@ const ServiceDetails = () => {
   });
 
   const {
-    data: selectedApplicants,
-    isLoading: isSelectedApplicantLoading,
+    data: selectedWorkers,
+    isLoading: isSelectedWorkerLoading,
     // isFetchingNextPage,
     // fetchNextPage,
     // hasNextPage,
-    refetch: refetchSelectedApplicants,
+    refetch: refetchSelectedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["selectedApplicants"],
+    queryKey: ["selectedWorkers"],
     queryFn: ({ pageParam }) => {
-      return fetchSelectedCandidates({ pageParam, serviceId: id });
+      return fetchSelectedWorkers({ pageParam, serviceId: id });
+    },
+    retry: false,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+
+  const {
+    data: selectedMediators,
+    isLoading: isSelectedMediatorLoading,
+    // isFetchingNextPage,
+    // fetchNextPage,
+    // hasNextPage,
+    refetch: refetchSelectedMediators,
+  } = useInfiniteQuery({
+    queryKey: ["selectedMediators"],
+    queryFn: ({ pageParam }) => {
+      return fetchSelectedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -162,7 +214,7 @@ const ServiceDetails = () => {
     React.useCallback(() => {
       // const totalData = members?.pages[0]?.pagination?.total;
       // setTotalData(totalData);
-      const unsubscribe = setSelectedWorkers(
+      const unsubscribe = setWorkers(
         members?.pages.flatMap((page: any) => page.data || [])
       );
       return () => unsubscribe;
@@ -216,6 +268,7 @@ const ServiceDetails = () => {
     mutationFn: () => unApplyService({ serviceID: id }),
     onSuccess: (response) => {
       refetch();
+      setSelectedWorkersIds([]);
       toast.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
@@ -230,10 +283,26 @@ const ServiceDetails = () => {
   const mutationMediatorApplyService = useMutation({
     mutationKey: ["mediatorApplyService", { id }],
     mutationFn: () =>
-      mediatorApplyService({ serviceID: id, worker: selectedWorkers }),
+      mediatorApplyService({ serviceId: id, workers: selectedWorkersIds }),
     onSuccess: (response) => {
       refetch();
+      setIsWorkerSelectModal(false);
+      toast.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while applying in the service ", err);
+    },
+  });
+
+  const mutationMediatorUnApplyService = useMutation({
+    mutationKey: ["mediatorUnApplyService", { id }],
+    mutationFn: () => mediatorUnApplyService({ serviceId: id }),
+    onSuccess: (response) => {
+      refetch();
+      setIsWorkerSelectModal(false);
+      toast.success(t("yourApplicationCancelledSuccessfully"));
+      console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
       console.error("error while applying in the service ", err);
@@ -255,7 +324,11 @@ const ServiceDetails = () => {
 
   useEffect(() => {
     setIsServiceApplied(
-      service?.appliedBy?.includes(userDetails?._id) || false
+      userDetails?.role === "MEDIATOR"
+        ? service?.appliedMediators?.find(
+            (mediator: any) => mediator?.mediatorId === userDetails?._id
+          )
+        : service?.appliedBy?.includes(userDetails?._id) || false
     );
     setIsServiceLiked(service?.likedBy?.includes(userDetails?._id) || false);
     setIsSelected(service?.selected?.includes(userDetails?._id) || false);
@@ -263,6 +336,17 @@ const ServiceDetails = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      let appliedWorkers = response?.data?.appliedMediators?.filter(
+        (mediator: any) => {
+          if (
+            userDetails?.role === "MEDIATOR" &&
+            mediator?.mediatorId === userDetails?._id
+          ) {
+            return mediator?.workers;
+          }
+        }
+      );
+      setSelectedWorkersIds(appliedWorkers?.[0]?.workers || []);
       const unsubscribe = setService(response?.data);
       return () => unsubscribe;
     }, [response])
@@ -292,8 +376,16 @@ const ServiceDetails = () => {
     }
   };
 
+  const handleCancelApply = () => {
+    if (userDetails?.role === "MEDIATOR") {
+      setIsWorkerSelectModal(true);
+    } else {
+      mutationUnApplyService.mutate();
+    }
+  };
+
   const toggleUserSelection = (userId: string) => {
-    setSelectedWorkers((prev: any) =>
+    setSelectedWorkersIds((prev: any) =>
       prev.includes(userId)
         ? prev.filter((id: string) => id !== userId)
         : [...prev, userId]
@@ -315,29 +407,32 @@ const ServiceDetails = () => {
     );
   };
 
-  const RenderMemberItem = ({ item }: any) => (
-    <View style={styles.userItem}>
-      <CustomCheckbox
-        isChecked={selectedWorkers.includes(item?.id)}
-        onToggle={() => toggleUserSelection(item?.id)}
-        containerStyle={{ marginRight: 8 }}
-      />
-      <ProfilePicture uri={item.profilePic} />
-      <View style={styles.userInfo}>
-        <CustomText style={styles.userName} textAlign="left">
-          {item.name}
-        </CustomText>
-        <CustomText style={styles.userSkills} textAlign="left">
-          {t("skills")}: {item.skills.join(", ")}
-        </CustomText>
-        <CustomText style={styles.userAddress}>{item.address}</CustomText>
+  const RenderMemberItem = ({ item }: any) => {
+    return (
+      <View style={[styles.userItem]} key={item?._id}>
+        <CustomCheckbox
+          disabled={!!isServiceApplied}
+          isChecked={selectedWorkersIds?.includes(item?._id)}
+          onToggle={() => toggleUserSelection(item?._id)}
+          containerStyle={{ marginRight: 8 }}
+        />
+        <ProfilePicture uri={item?.profilePicture} />
+        <View style={styles.userInfo}>
+          <CustomText style={styles.userName} textAlign="left">
+            {item?.firstName} {item?.lastName}
+          </CustomText>
+          <CustomText style={styles.userSkills} textAlign="left">
+            {t("skills")}: {item?.skills?.join(", ")}
+          </CustomText>
+          <CustomText style={styles.userAddress}>{item?.address}</CustomText>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const memoizedData = useMemo(
-    () => selectedWorkers?.flatMap((data: any) => data),
-    [selectedWorkers]
+    () => workers?.flatMap((data: any) => data),
+    [workers]
   );
 
   const loadMore = () => {
@@ -425,7 +520,9 @@ const ServiceDetails = () => {
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
           mutationApplyService?.isPending ||
+          mutationMediatorApplyService?.isPending ||
           mutationUnApplyService?.isPending ||
+          mutationMediatorUnApplyService?.isPending ||
           mutationCompleteService?.isPending ||
           mutationDeleteService?.isPending
         }
@@ -518,23 +615,44 @@ const ServiceDetails = () => {
           </View>
 
           {service?.employer?._id === userDetails?._id &&
-            selectedApplicants?.pages[0]?.data &&
-            selectedApplicants?.pages[0]?.data?.length > 0 && (
+            selectedWorkers?.pages[0]?.data &&
+            selectedWorkers?.pages[0]?.data?.length > 0 && (
               <SelectedApplicants
-                selectedApplicants={selectedApplicants?.pages[0]?.data}
+                selectedApplicants={selectedWorkers?.pages[0]?.data}
                 serviceId={service?._id}
-                refetchSelectedApplicants={refetchSelectedApplicants}
+                refetchSelectedApplicants={refetchSelectedWorkers}
               />
             )}
 
           {service?.employer?._id === userDetails?._id &&
-            applicants?.pages[0]?.data &&
-            applicants?.pages[0]?.data?.length > 0 && (
-              <Applicants
-                applicants={applicants}
+            selectedMediators?.pages[0]?.data &&
+            selectedMediators?.pages[0]?.data?.length > 0 && (
+              <SelectedApplicants
+                selectedApplicants={selectedMediators?.pages[0]?.data}
                 serviceId={service?._id}
-                refetchApplicants={refetchApplicants}
-                refetchSelectedApplicants={refetchSelectedApplicants}
+                refetchSelectedApplicants={refetchSelectedMediators}
+              />
+            )}
+
+          {service?.employer?._id === userDetails?._id &&
+            appliedWorkers?.pages[0]?.data &&
+            appliedWorkers?.pages[0]?.data?.length > 0 && (
+              <Applicants
+                applicants={appliedWorkers}
+                serviceId={service?._id}
+                refetchApplicants={refetchAppliedWorkers}
+                refetchSelectedApplicants={refetchSelectedWorkers}
+              />
+            )}
+
+          {service?.employer?._id === userDetails?._id &&
+            appliedMediators?.pages[0]?.data &&
+            appliedMediators?.pages[0]?.data?.length > 0 && (
+              <Applicants
+                applicants={appliedMediators}
+                serviceId={service?._id}
+                refetchApplicants={refetchAppliedMediators}
+                refetchSelectedApplicants={refetchSelectedMediators}
               />
             )}
 
@@ -576,9 +694,7 @@ const ServiceDetails = () => {
                 isPrimary={true}
                 title={isServiceApplied ? t("cancelApply") : t("applyNow")}
                 onPress={() =>
-                  isServiceApplied
-                    ? mutationUnApplyService.mutate()
-                    : handleApply()
+                  isServiceApplied ? handleCancelApply() : handleApply()
                 }
               />
             )}
@@ -611,9 +727,9 @@ const ServiceDetails = () => {
               onPress={() => setModalVisible(true)}
               style={styles?.deleteBtn}
             />
-            {applicants &&
-            applicants?.pages[0]?.data &&
-            applicants?.pages[0]?.data?.length > 0 ? (
+            {appliedWorkers &&
+            appliedWorkers?.pages[0]?.data &&
+            appliedWorkers?.pages[0]?.data?.length > 0 ? (
               <Button
                 isPrimary={false}
                 title={t("completeService")}
@@ -696,18 +812,20 @@ const ServiceDetails = () => {
       />
 
       <ModalComponent
-        title={t("selectWorkers")}
+        title={isServiceApplied ? t("selectedWorkers") : t("selectWorkers")}
         visible={isWorkerSelectModal}
         content={mediatorModelContent}
         onClose={() => setIsWorkerSelectModal(false)}
         primaryButton={{
-          disabled: selectedWorkers?.length === 0,
-          title: t("applyNow"),
+          disabled: selectedWorkersIds?.length === 0,
+          title: isServiceApplied ? t("cancelApply") : t("applyNow"),
           styles: {
             backgroundColor: "red",
             borderColor: "red",
           },
-          action: mutationMediatorApplyService?.mutate,
+          action: isServiceApplied
+            ? mutationMediatorUnApplyService?.mutate
+            : mutationMediatorApplyService?.mutate,
         }}
         secondaryButton={{
           title: t("cancel"),
@@ -844,6 +962,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    gap: 2,
   },
   userName: {
     fontSize: 16,

@@ -53,19 +53,35 @@ export const ADDSERVICESTEPS = [
 ];
 
 export const WORKERTYPES = [
-  { label: "Labour", value: "labour", iconName: "beach" },
-  { label: "Brick Layer", value: "bricklayer", iconName: "terrain" },
-  { label: "Stone Mason", value: "stoneMason", iconName: "city" },
-  { label: "Mistri", value: "mistri", iconName: "tree" },
-  { label: "Electrician", value: "electrician", iconName: "swim" },
+  { label: "construction", value: "construction", iconName: "beach" },
+  { label: "labour", value: "labour", iconName: "beach" },
+  { label: "brickLayer", value: "brickLayer", iconName: "terrain" },
+  { label: "stoneMason", value: "stoneMason", iconName: "city" },
+  { label: "mistri", value: "mistri", iconName: "tree" },
+  { label: "mason", value: "mason", iconName: "swim" },
+  { label: "carpenter", value: "carpenter", iconName: "swim" },
+  { label: "electrician", value: "electrician", iconName: "swim" },
+  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "swim" },
+  { label: "dhaanPitai", value: "dhaanPitai", iconName: "swim" },
+  { label: "alooBuwai", value: "alooBuwai", iconName: "swim" },
+  { label: "bazraaKatai", value: "bazraaKatai", iconName: "swim" },
 ];
 
 export const MEDIATORTYPES = [
-  { label: "Construction", value: "construction", iconName: "beach" },
-  { label: "Dhaan Buwai", value: "dhaanBuwai", iconName: "terrain" },
-  { label: "Dhaan Pitai", value: "dhaanPitai", iconName: "city" },
-  { label: "Aloo Buwai", value: "alooBuwai", iconName: "tree" },
-  { label: "Bazraa Katai", value: "bazraaKatai", iconName: "swim" },
+  { label: "construction", value: "construction", iconName: "beach" },
+  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "terrain" },
+  { label: "dhaanPitai", value: "dhaanPitai", iconName: "city" },
+  { label: "alooBuwai", value: "alooBuwai", iconName: "tree" },
+  { label: "bazraaKatai", value: "bazraaKatai", iconName: "swim" },
+  { label: "farming", value: "farming", iconName: "swim" },
+  { label: "helping", value: "helping", iconName: "swim" },
+  { label: "labour", value: "labour", iconName: "swim" },
+  { label: "brickLayer", value: "brickLayer", iconName: "swim" },
+  { label: "stoneMason", value: "stoneMason", iconName: "swim" },
+  { label: "mistri", value: "mistri", iconName: "swim" },
+  { label: "mason", value: "mason", iconName: "swim" },
+  { label: "carpenter", value: "carpenter", iconName: "swim" },
+  { label: "electrician", value: "electrician", iconName: "swim" },
 ];
 
 export const MYSERVICES = [
@@ -93,30 +109,30 @@ export const SERVICES = [
     iconName: "hiking",
   },
   {
-    label: "cancelled",
-    value: "Cancelled",
+    label: "upcoming",
+    value: "Upcoming",
     iconName: "terrain",
   },
 ];
 
-export const MEMBERS = [
-  {
-    label: "all",
-    iconName: "hiking",
-  },
-  {
-    label: "construction",
-    iconName: "beach",
-  },
-  {
-    label: "farming",
-    iconName: "city",
-  },
-  {
-    label: "electrician",
-    iconName: "city",
-  },
-];
+// export const MEMBERS = [
+//   {
+//     label: "all",
+//     iconName: "hiking",
+//   },
+//   {
+//     label: "labour",
+//     iconName: "beach",
+//   },
+//   {
+//     label: "brickLayer",
+//     iconName: "city",
+//   },
+//   {
+//     label: "electrician",
+//     iconName: "city",
+//   },
+// ];
 
 export const WORKERS = [
   {
@@ -169,6 +185,17 @@ export const WORKTYPES = [
   { label: "construction", value: "construction" },
   { label: "farming", value: "farming" },
   { label: "helping", value: "helping" },
+  { label: "labour", value: "labour" },
+  { label: "brickLayer", value: "brickLayer" },
+  { label: "electrician", value: "electrician" },
+  { label: "mistri", value: "mistri" },
+  { label: "mason", value: "mason" },
+  { label: "carpenter", value: "carpenter" },
+  { label: "stoneMason", value: "stoneMason" },
+  { label: "dhaanBuwai", value: "dhaanBuwai" },
+  { label: "dhaanPitai", value: "dhaanPitai" },
+  { label: "alooBuwai", value: "alooBuwai" },
+  { label: "bazraaKatai", value: "bazraaKatai" },
 ];
 
 export const FAQS = [

@@ -73,11 +73,13 @@ export const isEmptyObject = (obj: object) => {
   return Object.entries(obj).length === 0 && obj.constructor === Object;
 };
 
+export const removeEmptyStrings = (arr: any) => {
+  return arr?.filter((item: any) => item !== "");
+};
+
 export const getWorkLabel = (availableSkills: any, skill: string) => {
   let object = availableSkills?.filter((type: any) => type?.value === skill)[0];
-  console.log("Objes---", object);
-
-  return t(object?.label);
+  return object?.label && t(object?.label);
 };
 
 export const calculateDistance = (
@@ -184,7 +186,6 @@ export const handleQueryFunction = async (
   pageParam: number,
   category: any
 ) => {
-  console.log("Role-- type --", role, type, pageParam);
   try {
     let data = {};
     if (role === "workers") {
@@ -217,4 +218,11 @@ export const capitalizeWord = (word: string) => {
     return "";
   }
   return word.charAt(0).toUpperCase() + word.slice(1);
+};
+
+export const toLowerCase = (text: string) => {
+  if (typeof text !== "string") {
+    return text;
+  }
+  return text.toLowerCase();
 };

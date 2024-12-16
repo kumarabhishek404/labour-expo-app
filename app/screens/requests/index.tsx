@@ -18,14 +18,17 @@ import {
   rejectJoiningRequest,
 } from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
-import PaginationString from "@/components/commons/PaginationString";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
-
+import { toast } from "@/app/hooks/toast";
+import { t } from "@/utils/translationHelper";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
 const Requests = () => {
   const userDetails = useAtomValue(UserAtom);
+  const { refreshUser } = useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
@@ -40,18 +43,11 @@ const Requests = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey:
-      category === "all"
-        ? ["requests"]
-        : category === "recievedRequests"
-        ? ["recievedRequests"]
-        : ["sentRequests"],
+    queryKey: ["requests"],
     queryFn: ({ pageParam }) =>
-      category === "all"
-        ? fetchAllRequests({ pageParam })
-        : category === "recievedRequests"
-        ? fetchRecievedRequests({ pageParam })
-        : fetchSentRequests({ pageParam }),
+      userDetails?.role === "MEDIATOR"
+        ? fetchSentRequests({ pageParam })
+        : fetchRecievedRequests({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -61,7 +57,7 @@ const Requests = () => {
     },
     retry: false,
   });
-
+  console.log("response---", filteredData);
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
@@ -90,6 +86,8 @@ const Requests = () => {
     mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
+      refreshUser(userDetails?._id);
+      toast.success(t("requestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
     // onError: (err) => {
@@ -148,9 +146,7 @@ const Requests = () => {
 
           <CategoryButtons
             options={
-              userDetails?.role === "MEDIATOR"
-                ? MEDIATORREQUEST
-                : WORKERREQUEST
+              userDetails?.role === "MEDIATOR" ? MEDIATORREQUEST : WORKERREQUEST
             }
             onCagtegoryChanged={onCatChanged}
           />

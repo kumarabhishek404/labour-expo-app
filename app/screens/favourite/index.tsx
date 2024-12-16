@@ -17,7 +17,7 @@ import { fetchAllLikedWorkers } from "../../api/workers";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import PaginationString from "@/components/commons/PaginationString";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import {  SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";

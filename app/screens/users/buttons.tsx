@@ -33,6 +33,7 @@ interface ButtonContainerProps {
   refetch: any;
   isWorkerBooked: boolean;
   isWorkerLiked: boolean;
+  isWorkerRequested: boolean;
 }
 
 const ButtonContainer = ({
@@ -41,7 +42,8 @@ const ButtonContainer = ({
   refetch,
   isWorkerBooked,
   isWorkerLiked,
-}: ButtonContainerProps) => {
+  isWorkerRequested,
+  }: ButtonContainerProps) => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
   const { role, type } = useGlobalSearchParams();
@@ -181,7 +183,16 @@ const ButtonContainer = ({
         loading={
           isLoading ||
           mutationLikeWorker?.isPending ||
-          mutationUnLikeWorker?.isPending
+          mutationUnLikeWorker?.isPending ||
+          mutationLikeMediator?.isPending ||
+          mutationUnLikeMediator?.isPending ||
+          mutationLikeEmployer?.isPending ||
+          mutationUnLikeEmployer?.isPending ||
+          mutationBookWorker?.isPending ||
+          mutationRemoveBookedWorker?.isPending ||
+          mutationBookMediator?.isPending ||
+          mutationRemoveBookedMediator?.isPending ||
+          mutationSendRequest?.isPending
         }
       />
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
@@ -207,7 +218,7 @@ const ButtonContainer = ({
         {userDetails?.role === "MEDIATOR" && (
           <Button
             isPrimary={true}
-            title={isWorkerBooked ? t("alreadyAdded") : t("addInYourTeam")}
+            title={isWorkerRequested ? t("alreadyAdded") : t("addInYourTeam")}
             onPress={() => handleSendFunction()}
           />
         )}

@@ -3,7 +3,7 @@ import { toast } from "../hooks/toast";
 
 export const getEmployerById = async (id: any) => {
   try {
-    const { data } = await makeGetRequest(`/employer/detail/${id}`);
+    const { data } = await makeGetRequest(`/user/detail/${id}`);
     return data;
   } catch (error: any) {
     console.error(
@@ -21,7 +21,7 @@ export const getEmployerById = async (id: any) => {
 export const fetchAllEmployers = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/employer/all?page=${pageParam}&limit=5`
+      `/user/all?page=${pageParam}&limit=5&role=EMPLOYER`
     );
     return data.data;
   } catch (error: any) {
@@ -40,7 +40,7 @@ export const fetchAllEmployers = async ({ pageParam }: any) => {
 export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/employer/all-liked?page=${pageParam}&limit=5`
+      `/user/all-liked/EMPLOYER?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -58,7 +58,7 @@ export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
 
 export const likeEmployer = async (payload: any) => {
   try {
-    const data = await makePostRequest("/employer/like", payload);
+    const data = await makePostRequest(`/user/like/${payload?.employerID}`);
     return data.data;
   } catch (error: any) {
     console.error(

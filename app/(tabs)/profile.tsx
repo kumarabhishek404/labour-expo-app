@@ -38,7 +38,8 @@ import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage"
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { useLocale } from "../context/locale";
-import PendingApprovalMessage from "@/components/commons/pendingApprovalAccountMessage";
+import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
+import TeamAdminCard from "@/components/commons/TeamAdminCard";
 
 const ProfileScreen = () => {
   useLocale();
@@ -53,6 +54,7 @@ const ProfileScreen = () => {
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
 
+  console.log("userDetails----", userDetails);
   const {
     control,
     handleSubmit,
@@ -70,11 +72,11 @@ const ProfileScreen = () => {
     const backAction = () => {
       if (isAccountInactive) {
         toast.error(
-          userDetails?.status === "inactive"
+          userDetails?.status === "SUSPENDED"
             ? "Profile Suspended"
             : "Approval Is Pending",
           `You can't go back until your profile is ${
-            userDetails?.status === "inactive" ? "suspended" : "not approved"
+            userDetails?.status === "SUSPENDED" ? "suspended" : "not approved"
           }.`
         );
         return true;
@@ -347,19 +349,20 @@ const ProfileScreen = () => {
           </View>
         </View>
 
-        {userDetails?.status === "inactive" && <InactiveAccountMessage />}
-        {userDetails?.status === "submitted" && <PendingApprovalMessage />}
+        {userDetails?.status === "SUSPENDED" && <InactiveAccountMessage />}
+        {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
         <View
           style={[
             styles?.changeRoleWrapper,
-            (userDetails?.status === "inactive" ||
-              userDetails?.status === "submitted") && {
+            (userDetails?.status === "SUSPENDED" ||
+              userDetails?.status === "PENDING") && {
               pointerEvents: "none",
               opacity: 0.5,
             },
           ]}
         >
           <Button
+            disabled={true}
             style={styles?.mediatorButton}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
@@ -397,8 +400,8 @@ const ProfileScreen = () => {
         {userDetails?.role !== "EMPLOYER" && (
           <SkillSelector
             canAddSkills={
-              userDetails?.status !== "inactive" &&
-              userDetails?.status !== "submitted"
+              userDetails?.status !== "SUSPENDED" &&
+              userDetails?.status !== "PENDING"
             }
             isShowLabel={true}
             style={styles?.skillsContainer}
@@ -443,10 +446,14 @@ const ProfileScreen = () => {
           </>
         )}
 
+        {userDetails?.employedBy && (
+          <TeamAdminCard admin={userDetails?.employedBy} />
+        )}
+
         <ProfileMenu
           disabled={
-            userDetails?.status === "inactive" ||
-            userDetails?.status === "submitted"
+            userDetails?.status === "SUSPENDED" ||
+            userDetails?.status === "PENDING"
           }
         />
       </ScrollView>

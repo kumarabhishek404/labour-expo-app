@@ -4,6 +4,7 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { Controller, useForm } from "react-hook-form";
 import SelfieScreen from "@/components/inputs/Selfie";
+import { toast } from "@/app/hooks/toast";
 
 interface FifthScreenProps {
   setStep: any;
@@ -30,8 +31,18 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
   });
 
   const onSubmit = (data: any) => {
-    setProfilePicture(data?.profilePicture);
-    handleRegister();
+    console.log("data", data);
+    if (
+      !data?.profilePicture ||
+      typeof data.profilePicture !== "string" ||
+      data.profilePicture.trim() === ""
+    ) {
+      toast.error("Please select a profile picture");
+      return;
+    }
+
+    setProfilePicture(data.profilePicture);
+    handleRegister(data);
   };
 
   return (

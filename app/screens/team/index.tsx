@@ -1,26 +1,22 @@
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useAtomValue } from "jotai";
+import { View, StyleSheet } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { fetchAllMembers } from "@/app/api/mediator";
-import { UserAtom } from "@/app/AtomStore/user";
-import { router, Stack } from "expo-router";
-import PaginationString from "@/components/commons/PaginationString";
+import { Stack } from "expo-router";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import { MEMBERS } from "@/constants";
-
+import { WORKERTYPES } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("Labour");
 
   const {
     data: response,
@@ -29,8 +25,8 @@ const Members = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["members"],
-    queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
+    queryKey: ["members", category],
+    queryFn: ({ pageParam }) => fetchAllMembers({ pageParam, category }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -72,7 +68,11 @@ const Members = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title="Team" left="back" right="notification" />
+            <CustomHeader
+              title={t("members")}
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
@@ -81,7 +81,10 @@ const Members = () => {
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons options={MEMBERS} onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons
+            options={WORKERTYPES}
+            onCagtegoryChanged={onCatChanged}
+          />
 
           <PaginationString
             type="members"
@@ -95,6 +98,7 @@ const Members = () => {
             category="workers"
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
+            availableInterest={WORKERTYPES}
           />
         </View>
       </View>

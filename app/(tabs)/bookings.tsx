@@ -4,12 +4,16 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Stack, useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "../AtomStore/user";
-import { fetchMyAppliedServices, fetchMyServices } from "../api/services";
+import {
+  fetchMyAppliedServicesMediator,
+  fetchMyAppliedServicesWorker,
+  fetchMyServices,
+} from "../api/services";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import Loader from "@/components/commons/Loader";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/PaginationString";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import Header from "@/components/commons/Header";
@@ -36,7 +40,9 @@ const Services = () => {
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
         ? fetchMyServices({ pageParam, type: category })
-        : fetchMyAppliedServices({ pageParam });
+        : userDetails?.role === "MEDIATOR"
+          ? fetchMyAppliedServicesMediator({ pageParam })
+          : fetchMyAppliedServicesWorker({ pageParam });
     },
     retry: false,
     initialPageParam: 1,

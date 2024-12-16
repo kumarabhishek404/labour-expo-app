@@ -5,14 +5,10 @@ import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
 
 interface RoleSelectionProps {
-  role: {
-    name: string;
-    type: string;
-  };
+  role: string;
   setRole: any;
-  onBlur: any;
 }
-const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
+const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
   const roles = [
     {
       id: "WORKER",
@@ -35,9 +31,7 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
   ];
 
   const handleSelectRole = (selectedRole: any) => {
-    setRole({
-      name: selectedRole?.id,
-    });
+    setRole(selectedRole?.id);
   };
 
   return (
@@ -49,7 +43,7 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
             key={index}
             style={[
               styles.roleBox,
-              role?.name === selectedRole.id && styles.selectedRoleBox,
+              role === selectedRole.id && styles.selectedRoleBox,
             ]}
             onPress={() => handleSelectRole(selectedRole)}
           >
@@ -62,7 +56,7 @@ const RoleSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
             <View
               style={[
                 styles.radioCircle,
-                role?.name === selectedRole.id && styles.selectedRadio,
+                role === selectedRole.id && styles.selectedRadio,
               ]}
             />
           </TouchableOpacity>

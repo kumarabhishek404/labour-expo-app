@@ -115,12 +115,12 @@ const Applicants = ({
                     textAlign="left"
                     style={{ textTransform: "capitalize" }}
                   >
-                    {item.skills.join(", ")}
+                    {item?.skills?.join(", ")}
                   </CustomText>
                 </View>
                 <View style={styles.recommendationContainer}>
                   <Ionicons name="location" size={14} color="gray" />
-                  <CustomText textAlign="left">{item.address}</CustomText>
+                  <CustomText textAlign="left">{item?.address}</CustomText>
                 </View>
               </View>
             </View>

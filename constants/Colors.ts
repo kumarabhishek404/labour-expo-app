@@ -19,6 +19,8 @@ export default {
   success: "#4CAF50",
   progress: "#2196F3",
   pending: "#ccc",
+  disabled: "#ccc",
+  disabledText: "#999",
 };
 
 export const green = "#2BB789";

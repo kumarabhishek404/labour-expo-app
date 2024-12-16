@@ -199,23 +199,18 @@ export default function Layout() {
   const isAddService = useAtomValue(AddServiceInProcess);
   useLocale();
 
-  // Check if this is the first app launch or if language has not been selected
   const isFirstLaunch = useFirstTimeLaunch();
 
-  // Show language selection screen on the first launch or if no language is selected
   if (isFirstLaunch === null) {
-    // Optionally, you could show a loading indicator here
     return null;
   } else if (isFirstLaunch) {
     return <LanguageSelectionScreen />;
   }
 
-  // Render login screen if the user is not authenticated
   if (!userDetails?.isAuth) {
     return <Login />;
   }
 
-  // Render account suspension screen if the account is inactive
   if (isAccountInactive) {
     return <ProfileScreen />;
   }

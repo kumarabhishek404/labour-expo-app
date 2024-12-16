@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import CustomText from "./CustomText";
+import CustomText from "../CustomText";
 
 interface PaginationStringProps {
   type: string;

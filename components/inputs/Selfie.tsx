@@ -58,6 +58,7 @@ const SelfieScreen = ({
         );
 
         setLoading(false);
+        console.log("manipulatedPhoto--123", manipulatedPhoto);
         setProfilePicture(manipulatedPhoto?.uri);
       } catch (err) {
         console.log("error while capturing image ", err);

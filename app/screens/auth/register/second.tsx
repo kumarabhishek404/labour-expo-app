@@ -115,7 +115,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               setPhoneNumber={onChange}
               onBlur={onBlur}
               errors={errors}
-              placeholder="Entet mobile number"
+              placeholder="Enter mobile number"
               icon={
                 <Feather
                   name={"phone"}

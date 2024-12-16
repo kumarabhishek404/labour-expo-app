@@ -11,7 +11,7 @@ import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/PaginationString";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";

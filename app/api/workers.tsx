@@ -3,7 +3,7 @@ import { toast } from "../hooks/toast";
 
 export const getWorkerById = async (id: any) => {
   try {
-    const { data } = await makeGetRequest(`/worker/detail/${id}`);
+    const { data } = await makeGetRequest(`/user/detail/${id}`);
     return data;
   } catch (error: any) {
     console.error(
@@ -20,7 +20,9 @@ export const getWorkerById = async (id: any) => {
 
 export const fetchAllWorkers = async ({ pageParam, skill }: any) => {
   try {
-    const data = await makeGetRequest(`/worker/all?page=${pageParam}&limit=5&skill=${skill}`);
+    const data = await makeGetRequest(
+      `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=WORKER`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -38,7 +40,7 @@ export const fetchAllWorkers = async ({ pageParam, skill }: any) => {
 export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/worker/all-liked?page=${pageParam}&limit=5`
+      `/user/all-liked/WORKER?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -56,7 +58,7 @@ export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
 
 export const likeWorker = async (payload: any) => {
   try {
-    const data = await makePostRequest("/worker/like", payload);
+    const data = await makePostRequest(`/user/like/${payload?.workerID}`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -73,7 +75,7 @@ export const likeWorker = async (payload: any) => {
 
 export const unlikeWorker = async ({ workerID }: any) => {
   try {
-    const data = await makeDeleteRequest(`/worker/remove-liked/${workerID}`);
+    const data = await makeDeleteRequest(`/user/remove-liked/${workerID}`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -145,8 +147,8 @@ export const removeBookedWorker = async (payload: any) => {
 };
 
 export const addSkills = async (payload: any) => {
-  console.log("Skisll-",payload);
-  
+  console.log("Skisll-", payload);
+
   try {
     const data = await makePostRequest("/worker/add-skills", payload);
     return data.data;

@@ -3,7 +3,7 @@ import { toast } from "../hooks/toast";
 
 export const getMediatorById = async (id: any) => {
   try {
-    const { data } = await makeGetRequest(`/mediator/detail/${id}`);
+    const { data } = await makeGetRequest(`/user/detail/${id}`);
     return data;
   } catch (error: any) {
     console.error(
@@ -18,29 +18,10 @@ export const getMediatorById = async (id: any) => {
   }
 };
 
-export const fetchAllMembers = async ({ pageParam }: any) => {
-  try {
-    const data = await makeGetRequest(
-      `/mediator/members?page=${pageParam}&limit=3`
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while fetching all members : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching all members"
-    );
-    throw error;
-  }
-};
-
 export const fetchAllMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all?page=${pageParam}&limit=5&skill=${skill}`
+      `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=MEDIATOR`
     );
     return data.data;
   } catch (error: any) {
@@ -114,8 +95,9 @@ export const removeBookedMediator = async (payload: any) => {
 };
 
 export const likeMediator = async (payload: any) => {
+  console.log("Payload---", payload);
   try {
-    const data = await makePostRequest("/mediator/like", payload);
+    const data = await makePostRequest(`/user/like/${payload?.mediatorID}`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -130,7 +112,7 @@ export const likeMediator = async (payload: any) => {
   }
 };
 
-export const unlikeMediator = async ({mediatorID}: any) => {
+export const unlikeMediator = async ({ mediatorID }: any) => {
   try {
     const data = await makeDeleteRequest(
       `/mediator/remove-liked/${mediatorID}`
@@ -152,17 +134,53 @@ export const unlikeMediator = async ({mediatorID}: any) => {
 export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/mediator/all-liked?page=${pageParam}&limit=5&skill=${skill}`
+      `/user/all-liked/MEDIATOR?page=${pageParam}&limit=5&skill=${skill}`
     );
+    console.log("Data---", data);
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching liked employers : `,
+      `[userService] An error occurred while fetching liked mediators : `,
       error?.response?.data?.message
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching employers"
+        "An error occurred while fetching liked mediators"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllMembers = async ({ pageParam, category }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/mediator/members?page=${pageParam}&limit=3&category=${category}`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching all members : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching all members"
+    );
+    throw error;
+  }
+};
+
+export const leaveTeam = async () => {
+  try {
+    const data = await makePostRequest(`/user/leave-org`);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while leaving team : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while leaving team"
     );
     throw error;
   }

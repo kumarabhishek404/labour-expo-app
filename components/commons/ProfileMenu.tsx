@@ -65,7 +65,7 @@ const ProfileMenu = ({ disabled }: any) => {
       setIsAccountInactive(true);
       setUserDetails({
         ...userDetails,
-        status: "inactive",
+        status: "SUSPENDED",
       });
     }, 3000);
   };

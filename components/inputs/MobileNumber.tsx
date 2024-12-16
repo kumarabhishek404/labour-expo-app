@@ -19,9 +19,9 @@ import auth from "@react-native-firebase/auth";
 
 interface MobileNumberFieldProps {
   name: string;
-  countriesPhoneCode: Array<any>;
-  countryCode: string;
-  setCountryCode: any;
+  countriesPhoneCode?: Array<any>;
+  countryCode?: string;
+  setCountryCode?: any;
   phoneNumber: string;
   setPhoneNumber: any;
   onBlur: any;
@@ -127,29 +127,32 @@ const MobileNumberField = ({
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <CustomHeading textAlign="left">Phone Number</CustomHeading>
-      <Dropdown
-        style={[styles.dropdown, isFocus && styles?.focusStyle]}
-        data={countriesPhoneCode}
-        selectedTextStyle={styles.selectedTextStyle}
-        containerStyle={isFocus && styles?.containerStyle}
-        labelField="label"
-        valueField="value"
-        placeholder="Select country"
-        value={countryCode}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={(item) => setCountryCode(item.value)}
-        showsVerticalScrollIndicator={true}
-        renderLeftIcon={() => (
-          <CustomHeading textAlign="left" fontSize={14}>
-            Country Code
-          </CustomHeading>
-        )}
-      />
+      {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
+        <Dropdown
+          style={[styles.dropdown, isFocus && styles?.focusStyle]}
+          data={countriesPhoneCode}
+          selectedTextStyle={styles.selectedTextStyle}
+          containerStyle={isFocus && styles?.containerStyle}
+          labelField="label"
+          valueField="value"
+          placeholder="Select country"
+          value={countryCode}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item) => setCountryCode(item.value)}
+          showsVerticalScrollIndicator={true}
+          renderLeftIcon={() => (
+            <CustomHeading textAlign="left" fontSize={14}>
+              Country Code
+            </CustomHeading>
+          )}
+        />
+      )}
 
       <TextInputComponent
         value={phoneNumber}
         onBlur={onBlur}
+        type="number"
         onChangeText={setPhoneNumber}
         placeholder={placeholder}
         maxLength={10}
@@ -162,7 +165,7 @@ const MobileNumberField = ({
             style={{
               flexDirection: "row",
               alignItems: "center",
-              marginRight: 10,
+              marginRight: countryCode ? 10 : 0,
             }}
           >
             {icon && icon}
@@ -236,7 +239,7 @@ const MobileNumberField = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
     gap: 5,
   },

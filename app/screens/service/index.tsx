@@ -13,7 +13,7 @@ import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/PaginationString";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { fetchAllLikedServices, fetchAllServices } from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";

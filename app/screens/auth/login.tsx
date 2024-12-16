@@ -97,6 +97,7 @@ const LoginScreen = () => {
         appliedServices: user?.appliedServices || [],
         likedBy: user?.likedBy || [],
         bookedBy: user?.bookedBy || [],
+        employedBy: user?.employedBy || null,
         myServices: user?.myServices || [],
         myBookings: user?.myBookings || [],
         booked: user?.booked || [],
@@ -128,7 +129,7 @@ const LoginScreen = () => {
       });
 
       toast.success("Logged in successfully!");
-      if (user?.status === "inactive" || user?.status === "submitted") {
+      if (user?.status === "SUSPENDED" || user?.status === "PENDING") {
         setIsAccountInactive(true);
         router.replace("/(tabs)/profile");
       } else {
@@ -137,20 +138,19 @@ const LoginScreen = () => {
       }
       // Condition to fetch location if location key is empty or has latitude 0
       if (
-        !user?.location ||
-        // isEmptyObject(user?.location) ||
-        user?.location?.latitude === 0
+        !user?.location?.latitude || 
+        !user?.location?.longitude ||
+        user?.location?.latitude === 0 ||
+        user?.location?.longitude === 0
       ) {
         const locationData = await fetchCurrentLocation();
         if (locationData) {
           setUserDetails((prevDetails: any) => ({
             ...prevDetails,
             location: locationData.location,
-            // address: locationData.address,
           }));
           mutationUpdateProfileInfo?.mutate({
             location: locationData.location,
-            // address: locationData.address,
           });
         }
       }
@@ -190,7 +190,41 @@ const LoginScreen = () => {
             {t("welcome")}
           </CustomHeading>
         </View>
+
         <View style={styles.formContainer}>
+          {/* <Controller
+            control={control}
+            name="phoneNumber"
+            defaultValue=""
+            rules={{
+              required: "Mobile number is required",
+              pattern: {
+                value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
+                message: "Enter a valid mobile number",
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <MobileNumberField
+                name="phoneNumber"
+                // countriesPhoneCode={COUNTRYPHONECODE}
+                // countryCode={countryCode}
+                // setCountryCode={setCountryCode}
+                phoneNumber={value}
+                setPhoneNumber={onChange}
+                onBlur={onBlur}
+                errors={errors}
+                placeholder="Enter mobile number"
+                icon={
+                  <Feather
+                    name={"phone"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          /> */}
           <Controller
             control={control}
             name="email"

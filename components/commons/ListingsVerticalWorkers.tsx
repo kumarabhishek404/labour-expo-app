@@ -26,16 +26,16 @@ const ListingsVerticalWorkers = ({
   refreshControl,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
-    console.log(":Itemm skillsss---", item);
-    
     const { role } = useGlobalSearchParams();
+    
     return (
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: `/screens/users/${item?._id}`,
+              pathname: "/screens/users/[id]",
               params: {
+                id: item?._id,
                 role: role,
                 title: t("workerDetails"),
                 type: "details",

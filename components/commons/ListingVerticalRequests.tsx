@@ -18,6 +18,9 @@ import SkillSelector from "./SkillSelector";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
+import { t } from "@/utils/translationHelper";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 type Props = {
   listings: any[];
@@ -46,6 +49,7 @@ type RenderItemTypes = {
       rating: string;
       reviews: string;
       price: string;
+      address: string;
     };
     sender: {
       _id: string;
@@ -73,15 +77,22 @@ const ListingVerticalRequests = ({
   onAcceptRequest,
   onRejectRequest,
 }: Props) => {
+  const userDetails = useAtomValue(UserAtom);
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
-    const sender = item?.sender;
+    const user =
+      userDetails?.role === "MEDIATOR" ? item?.receiver : item?.sender;
 
     return (
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: `/screens/users/${sender?._id}`,
-            params: { role: "workers", title: "Workers", type: "all" },
+            pathname: "/screens/users/[id]",
+            params: {
+              id: user?._id,
+              role: "workers",
+              title: "Workers",
+              type: "all",
+            },
           })
         }
         style={styles.card}
@@ -89,19 +100,19 @@ const ListingVerticalRequests = ({
         <View style={styles.requestContainer}>
           <Image
             source={
-              sender?.coverImage || sender?.profilePicture
-                ? { uri: sender?.coverImage || sender?.profilePicture }
+              user?.coverImage || user?.profilePicture
+                ? { uri: user?.coverImage || user?.profilePicture }
                 : coverImage
             }
             style={styles.profileImage}
           />
           <View style={styles.infoContainer}>
             <CustomHeading textAlign="left">
-              {sender?.firstName} {sender?.lastName}
+              {user?.firstName} {user?.lastName}
             </CustomHeading>
             <RatingAndReviews
-              rating={sender?.rating || 4.5}
-              reviews={sender?.reviews || 400}
+              rating={user?.rating || 4.5}
+              reviews={user?.reviews || 400}
             />
             <SkillSelector
               canAddSkills={false}
@@ -109,11 +120,11 @@ const ListingVerticalRequests = ({
               style={styles?.skillsContainer}
               tagStyle={styles?.skillTag}
               tagTextStyle={styles?.skillTagText}
-              userSkills={sender?.skills}
+              userSkills={user?.skills}
               availableSkills={MEDIATORTYPES}
               count={2}
             />
-            <CustomText textAlign="left">{sender?.address}</CustomText>
+            <CustomText textAlign="left">{user?.address}</CustomText>
           </View>
           <View style={styles.etaContainer}>
             <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
@@ -143,7 +154,7 @@ const ListingVerticalRequests = ({
               />
               <Button
                 isPrimary={true}
-                title="Accept"
+                title={t("accept")}
                 onPress={() => onAcceptRequest(item?._id)}
               />
             </>
@@ -162,7 +173,7 @@ const ListingVerticalRequests = ({
         data={listings ?? []}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
+        onEndReached={debounce(loadMore, 300)}
         onEndReachedThreshold={0.9}
         ListFooterComponent={() =>
           isFetchingNextPage ? (

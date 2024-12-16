@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { capitalizeWord } from "@/constants/functions";
+import { capitalizeWord, toLowerCase } from "@/constants/functions";
 
 interface RequirementsProps {
   type: string;
@@ -12,8 +12,6 @@ interface RequirementsProps {
 }
 
 const Requirements = ({ type, requirements }: RequirementsProps) => {
-  console.log("requirements---", requirements);
-  
   return (
     <>
       {type === "highlights" ? (
@@ -25,7 +23,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                 color={Colors?.white}
                 style={{ textTransform: "capitalize" }}
               >
-                {requirement?.count} {t(`${capitalizeWord(requirement?.name)}`)}
+                {requirement?.count} {t(`${toLowerCase(requirement?.name)}`)}
               </CustomHeading>
               <CustomText color={Colors?.white} fontSize={12}>
                 ₹ {requirement?.payPerDay} {t("perDay")}
@@ -40,7 +38,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
               <View style={styles.card} key={index}>
                 <View style={styles.header}>
                   <CustomHeading style={{ textTransform: "capitalize" }}>
-                    {t(`${capitalizeWord(requirement?.name)}`)}
+                    {t(`${toLowerCase(requirement?.name)}`)}
                   </CustomHeading>
                   <CustomText fontSize={14}>
                     ₹ {requirement?.payPerDay} {t("perDay")}
@@ -86,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
+    gap: 5,
     paddingVertical: 6,
   },
   requirmentContainer: {
@@ -118,9 +117,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors?.tertiery,
     borderColor: Colors?.tertiery,
     borderRadius: 8,
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-    marginRight: 5,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
     borderWidth: 1,
   },
 });

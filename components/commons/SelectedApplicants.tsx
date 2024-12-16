@@ -68,9 +68,10 @@ const SelectedApplicants = ({
                   title="Details"
                   onPress={() =>
                     router?.push({
-                      pathname: `/screens/users/${item._id}`,
+                      pathname: "/screens/users/[id]",
                       params: {
-                        role: 'workers',
+                        id: item._id,
+                        role: "workers",
                         type: "applicant",
                       },
                     })
@@ -160,7 +161,7 @@ const SelectedApplicants = ({
                 </View>
                 <View style={styles.recommendationContainer}>
                   <Ionicons name="location" size={14} color="gray" />
-                  <CustomText textAlign="left">{item.address}</CustomText>
+                  <CustomText textAlign="left">{item?.address}</CustomText>
                 </View>
               </View>
             </View>

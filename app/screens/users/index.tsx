@@ -1,5 +1,3 @@
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import {
   View,
@@ -13,15 +11,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import {
-  fetchAllBookedWorkers,
-  fetchAllLikedWorkers,
-  fetchAllWorkers,
-} from "@/app/api/workers";
 import { UserAtom } from "@/app/AtomStore/user";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import { router, Stack, useGlobalSearchParams } from "expo-router";
-import PaginationString from "@/components/commons/PaginationString";
+import { Stack, useGlobalSearchParams } from "expo-router";
+import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import {
   EMPLOYER,
@@ -35,7 +28,7 @@ import CustomHeader from "@/components/commons/Header";
 import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
 
-const Workers = () => {
+const Users = () => {
   const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
@@ -67,10 +60,10 @@ const Workers = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      const totalData = response?.pages[0]?.pagination?.total;
+      const totalData = (response?.pages[0] as any)?.pagination?.total;
       setTotalData(totalData);
       const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page.data || [])
+        response?.pages.flatMap((page: any) => page?.data || [])
       );
       return () => unsubscribe;
     }, [response])
@@ -134,7 +127,7 @@ const Workers = () => {
           />
 
           <PaginationString
-            type={role}
+            type={Array.isArray(role) ? role[0] : role}
             isLoading={isLoading}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
@@ -143,7 +136,7 @@ const Workers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalWorkers
               availableInterest={
-                userDetails?.role === "WORKER" ? MEDIATORTYPES : WORKERTYPES
+                role === "workers" ? WORKERTYPES : MEDIATORTYPES
               }
               listings={memoizedData || []}
               loadMore={loadMore}
@@ -172,4 +165,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Workers;
+export default Users;

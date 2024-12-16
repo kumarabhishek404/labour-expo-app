@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, Platform } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -15,26 +15,20 @@ import CustomHeading from "@/components/commons/CustomHeading";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
-  const [profilePicture, setProfilePicture] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
-
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState<any>({});
   const [countryCode, setCountryCode] = useState("+91");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-
-  const [role, setRole]: any = useState({
-    name: "WORKER",
-    type: "ONE",
-  });
+  const [role, setRole]: any = useState("WORKER");
   const [skills, setSkills]: any = useState([]);
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");
 
   const mutationRegister = useMutation({
     mutationKey: ["register"],
@@ -44,43 +38,63 @@ const SignupScreen = () => {
       setFirstName("");
       setLastName("");
       setAddress("");
-      setLocation("");
-      setCountryCode("");
+      setLocation({});
+      setCountryCode("+91");
       setPhoneNumber("");
       setEmail("");
       setRole("WORKER");
-      setSkills("");
+      setSkills([]);
       setPassword("");
       setConfirmPassword("");
-      setStep(5);
+      setGender("");
+      setDateOfBirth(new Date());
+      setStep(1);
     },
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (data: any) => {
     const formData: any = new FormData();
-    const imageName = profilePicture.split("/").pop();
-    formData.append("profileImage", {
-      uri: profilePicture,
-      type: "image/jpeg",
-      name: imageName,
-    });
+    if (data?.profilePicture) {
+      const imageName = data?.profilePicture.split("/").pop();
+      try {
+        formData.append("profileImage", {
+          uri:
+            Platform.OS === "android"
+              ? data?.profilePicture
+              : data?.profilePicture.replace("file://", ""),
+          type: "image/jpeg",
+          name: imageName || "photo.jpg",
+        });
+      } catch (error) {
+        console.error("Error appending image:", error);
+      }
+    }
+
+    const cleanLocation = location
+      ? {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        }
+      : {};
 
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("address", address);
-    formData.append("location", JSON.stringify(location ?? {}));
+    formData.append("location", JSON.stringify(cleanLocation));
     formData.append("countryCode", countryCode);
     formData.append("mobile", phoneNumber);
     formData.append("email", email);
-    formData.append("role", role?.name);
+    formData.append("role", role);
     formData.append("gender", gender);
     formData.append("dateOfBirth", moment(dateOfBirth).format("DD-MM-YYYY"));
-    formData.append("skills", skills);
+    formData.append("skills", JSON.stringify(skills));
     formData.append("password", password);
 
-    console.log("Form Date---", formData, profilePicture, skills, gender);
-
-    mutationRegister.mutate(formData);
+    try {
+      mutationRegister.mutate(formData);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
   };
 
   const renderFormComponents = () => {
@@ -89,7 +103,6 @@ const SignupScreen = () => {
         return (
           <FirstScreen
             setStep={setStep}
-            setProfilePicture={setProfilePicture}
             firstName={firstName}
             setFirstName={setFirstName}
             lastName={lastName}

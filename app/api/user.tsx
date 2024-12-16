@@ -196,3 +196,59 @@ export const registerDevice = async (payload: any) => {
     throw error;
   }
 };
+
+
+export const getUserById = async (id: any) => {
+  try {
+    const { data } = await makeGetRequest(`/user/detail/${id}`);
+    return data;
+  } catch (error: any) {
+    console.error(
+      `[Users] [userService] An error occurred while fetching user details : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while getting user details"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllUsers = async ({ pageParam, role }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/user/all?page=${pageParam}&limit=5&role=${role}`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching users : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching users"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllLikedUsers = async ({ pageParam, role }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/user/all-liked/${role}?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching liked users : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching liked users"
+    );
+    throw error;
+  }
+};

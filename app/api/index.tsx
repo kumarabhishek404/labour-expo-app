@@ -97,7 +97,7 @@ export const makeGetRequest = async (
 
 export const makePostRequest = async (
   url: string,
-  body: object,
+  body?: object,
   headers?: { [key: string]: string }
 ): Promise<AxiosResponse> => {
   const response = await api.post(url, body, {

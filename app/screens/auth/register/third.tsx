@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import {  MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
 import SkillsSelector from "@/components/inputs/SelectSkills";
 import RoleSelection from "@/components/inputs/SelectRole";
 import { Controller, useForm } from "react-hook-form";
@@ -10,7 +10,7 @@ import Stepper from "@/components/commons/Stepper";
 
 interface ThirdScreenProps {
   setStep: any;
-  role: any;
+  role: string;
   setRole: any;
   selectedInterests: any;
   setSelectedInterests: any;
@@ -36,21 +36,14 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     },
   });
 
-  const [previousRole, setPreviousRole] = useState({
-    name: "",
-    type: "",
-  });
+  const [previousRole, setPreviousRole] = useState("WORKER");
   React.useEffect(() => {
-    if (
-      previousRole?.name !== watch("role")?.name ||
-      (previousRole?.name === watch("role")?.name &&
-        previousRole?.type !== watch("role")?.type)
-    ) {
+    if (previousRole !== watch("role")) {
       setValue("interest", []);
     } else {
       setValue("interest", [...selectedInterests]);
     }
-    setPreviousRole({ ...watch("role") });
+    setPreviousRole(watch("role"));
   }, [watch("role")]);
 
   const onSubmit = (data: any) => {
@@ -71,12 +64,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           rules={{
             required: "Select at least one skill",
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <RoleSelection role={value} setRole={onChange} onBlur={onBlur} />
+          render={({ field: { onChange, value } }) => (
+            <RoleSelection role={value} setRole={onChange} />
           )}
         />
 
-        {watch("role")?.name === "WORKER" && (
+        {watch("role") === "WORKER" && (
           <Controller
             control={control}
             name="interest"
@@ -97,7 +90,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           />
         )}
 
-        {watch("role")?.name === "MEDIATOR" && (
+        {watch("role") === "MEDIATOR" && (
           <Controller
             control={control}
             name="interest"
