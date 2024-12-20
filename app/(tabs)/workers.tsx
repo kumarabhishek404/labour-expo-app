@@ -13,7 +13,7 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
-import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { MYSERVICES, SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -27,7 +27,7 @@ const Workers = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
-    userDetails?.role === "EMPLOYER" ? "" : "Hiring"
+    userDetails?.role === "EMPLOYER" ? "" : "HIRING"
   );
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({}); // Store applied filters here
@@ -49,12 +49,12 @@ const Workers = () => {
       };
       return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ ...payload, skill: category })
-        : fetchAllServices({ ...payload, type: category });
+        : fetchAllServices({ ...payload, status: category });
     },
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
-      console.log("Last--", lastPage?.pagination);
+      // console.log("Last--", lastPage?.pagination);
 
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -144,7 +144,7 @@ const Workers = () => {
 
           {userDetails?.role === "EMPLOYER" && (
             <CategoryButtons
-              options={userDetails?.role === "EMPLOYER" ? WORKERS : SERVICES}
+              options={WORKERS}
               onCagtegoryChanged={onCatChanged}
             />
           )}

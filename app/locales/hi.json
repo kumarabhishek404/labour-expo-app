@@ -306,5 +306,23 @@
   "leaveThisTeamQuestion": "क्या आप सुनिश्चित हैं?",
   "leaveThisTeamSubHeading": "क्या आप इस टीम को छोड़ना चाहते हैं?",
   "leaveThisTeamSubText": "यह क्रिया अपरिवर्तनीय है और आपकी सभी टीम को छोड़ने के कारण आपको टीम के अवसरों का नुकसान होगा।",
-  "leave": "छोड़ें"
+  "leave": "छोड़ें",
+  "selectedSkills": "चुने गए कौशल",
+  "noSkillsSelected": "कोई कौशल नहीं चुना",
+  "noNotificationsYet": "कोई नोटिफिकेशन नहीं है",
+  "goToHistoricalNotifications": "इतिहासिक नोटिफिकेशन देखें।",
+  "noReviewsYet": "कोई समीक्षा नहीं है",
+  "loading": "लोडिंग...",
+  "refreshing": "रीफ्रेशिंग...",
+  "totalReviews": "कुल समीक्षाएं",
+  "averageRating": "औसत रेटिंग",
+  "thisServiceIsCompleted": "यह सेवा पूर्ण है",
+  "thankYouForUsingOurService": "हमारी सेवा का उपयोग करने के लिए धन्यवाद। हम उम्मीद करते हैं कि आपका अनुभव बहुत अच्छा था। हम आपको फिर से सेवा प्रदान करने को आना होगा।",
+  "mediatorSelectedSuccessfully": "मिडिएटर सफलतापूर्वक चुना गया",
+  "cancelSelectedWorkerSuccess": "चुने गए कामगार सफलतापूर्वक रद्द कर दिया गया",
+  "cancelSelectedMediatorSuccess": "चुने गए मिडिएटर सफलतापूर्वक रद्द कर दिया गया",
+  "workerRejectedSuccessfully": "कामगार सफलतापूर्वक रद्द कर दिया गया",
+  "mediatorRejectedSuccessfully": "मिडिएटर सफलतापूर्वक रद्द कर दिया गया",
+  "yourSelectionCancelledSuccessfully": "आपका चयन सफलतापूर्वक रद्द कर दिया गया"
 }
+

@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import {
   Feather,
   FontAwesome,
@@ -10,68 +9,228 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { router, Stack } from "expo-router";
 import DropdownComponent from "@/components/inputs/Dropdown";
-import { useAtom } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
-import CustomHeader from "@/components/commons/Header";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { STETESOFINDIA } from "@/constants";
+import { toast } from "@/app/hooks/toast";
+import ModalComponent from "@/components/commons/Modal";
+import { UserAtom } from "@/app/AtomStore/user";
+import { useAtom } from "jotai";
+import { Controller, useForm } from "react-hook-form";
 
-const AddCurrentLocation = () => {
-  const navigation = useNavigation();
-  const [secureEntery, setSecureEntery] = useState(true);
+const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const [village, setVillage] = useState("");
-  const [post, setPost] = useState("");
-  const [city, setCity] = useState("");
-  const [pinCode, setPinCode] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("India");
+  const {
+    control,
+    watch,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      village: "",
+      post: "",
+      city: "",
+      pinCode: "",
+      state: "",
+      country: "India",
+    },
+  });
 
-  const handleAddService = () => {
-    let payload = {
-      village: village,
-      post: post,
-      city: city,
-      pinCode: pinCode,
-      state: state,
-      country: country,
-    };
-    const address = `${village}, ${post} ${city} ${pinCode} ${state} ${country}`;
-    let tempUserDetails = userDetails;
-    tempUserDetails.serviceAddress = [...userDetails.serviceAddress, address];
-    setUserDetails(tempUserDetails);
-    router.back();
-    // navigation.navigate("LOGIN");
+  const onSubmit = (data: any) => {
+    const address = `${data?.village}, ${data?.post} ${data?.city} ${data?.pinCode} ${data?.state} ${data?.country}`;
+
+    if (userDetails?.serviceAddress?.includes(address)) {
+      toast.error("Address already exists");
+      return;
+    }
+
+    setAddress({
+      address,
+      selected: true,
+    });
+
+    setUserDetails({
+      ...userDetails,
+      serviceAddress: [...(userDetails?.serviceAddress || []), address],
+    });
+    reset();
+    onClose();
+    toast.success("Address added successfully");
   };
 
-  return (
-    <>
-      <Stack.Screen
-        options={{
-          header: () => <CustomHeader title="Add Address" left="back" />,
-        }}
-      />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+  const modalContent = () => {
+    return (
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
-          <TextInputComponent
-            value={village}
-            style={styles.textInput}
-            placeholder="Village"
-            onChangeText={setVillage}
-            label="Village"
+          <Controller
+            control={control}
             name="village"
-            icon={
-              <Fontisto
-                name="holiday-village"
-                size={20}
-                color={Colors.secondary}
+            rules={{
+              required: "Village is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                value={value}
+                style={styles.textInput}
+                placeholder="Village"
+                onChangeText={onChange}
+                label="Village"
+                name="village"
+                containerStyle={errors?.village && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Fontisto
+                    name="holiday-village"
+                    style={styles.icon}
+                    size={22}
+                    color={Colors.secondary}
+                  />
+                }
               />
-            }
+            )}
           />
-          <TextInputComponent
+
+          <Controller
+            control={control}
+            name="post"
+            rules={{
+              required: "Post is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                value={value}
+                style={styles.textInput}
+                placeholder="Post"
+                onChangeText={onChange}
+                label="Post"
+                name="post"
+                containerStyle={errors?.post && styles.errorInput}
+                errors={errors}
+                icon={
+                  <MaterialIcons
+                    name="local-post-office"
+                    style={styles.icon}
+                    size={22}
+                    color={Colors.secondary}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="city"
+            rules={{
+              required: "City is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                value={value}
+                style={styles.textInput}
+                placeholder="City"
+                onChangeText={onChange}
+                label="City"
+                name="city"
+                containerStyle={errors?.city && styles.errorInput}
+                errors={errors}
+                icon={
+                  <FontAwesome5
+                    name="city"
+                    style={styles.icon}
+                    size={22}
+                    color={Colors.secondary}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="pinCode"
+            rules={{
+              required: "Pin Code is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                value={value}
+                style={styles.textInput}
+                placeholder="Pin Code"
+                onChangeText={onChange}
+                label="Pin Code"
+                name="pinCode"
+                containerStyle={errors?.pinCode && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Feather
+                    name="map-pin"
+                    style={styles.icon}
+                    size={22}
+                    color={Colors.secondary}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="state"
+            rules={{
+              required: "State is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                label="State"
+                value={value}
+                setValue={onChange}
+                placeholder="Select State"
+                options={STETESOFINDIA}
+                icon={
+                  <FontAwesome6
+                    style={styles.icon}
+                    color="black"
+                    name="map-location"
+                    size={20}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="country"
+            rules={{
+              required: "Country is required",
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                value={value}
+                style={styles.textInput}
+                placeholder="Country"
+                onChangeText={onChange}
+                label="Country"
+                name="country"
+                containerStyle={errors?.country && styles.errorInput}
+                errors={errors}
+                icon={
+                  <FontAwesome
+                    name="flag"
+                    style={styles.icon}
+                    size={22}
+                    color={Colors.secondary}
+                  />
+                }
+              />
+            )}
+          />
+
+          {/* <TextInputComponent
             value={post}
             style={styles.textInput}
             placeholder="Post"
@@ -81,6 +240,7 @@ const AddCurrentLocation = () => {
             icon={
               <MaterialIcons
                 name="local-post-office"
+                style={styles.icon}
                 size={28}
                 color={Colors.secondary}
               />
@@ -94,7 +254,12 @@ const AddCurrentLocation = () => {
             label="City"
             name="city"
             icon={
-              <FontAwesome5 name="city" size={20} color={Colors.secondary} />
+              <FontAwesome5
+                name="city"
+                style={styles.icon}
+                size={20}
+                color={Colors.secondary}
+              />
             }
           />
           <TextInputComponent
@@ -104,7 +269,14 @@ const AddCurrentLocation = () => {
             onChangeText={setPinCode}
             label="Pin Code"
             name="pinCode"
-            icon={<Feather name="map-pin" size={22} color={Colors.secondary} />}
+            icon={
+              <Feather
+                name="map-pin"
+                style={styles.icon}
+                size={22}
+                color={Colors.secondary}
+              />
+            }
           />
 
           <DropdownComponent
@@ -130,153 +302,52 @@ const AddCurrentLocation = () => {
             label="Country"
             name="country"
             icon={
-              <FontAwesome name="flag" size={22} color={Colors.secondary} />
+              <FontAwesome
+                name="flag"
+                style={styles.icon}
+                size={22}
+                color={Colors.secondary}
+              />
             }
-          />
-
-          <Button
-            isPrimary={true}
-            title="Save Address"
-            onPress={handleAddService}
-            style={{marginTop: 10}}
-          />
+          /> */}
         </View>
       </ScrollView>
-    </>
+    );
+  };
+
+  return (
+    <ModalComponent
+      visible={visible}
+      onClose={onClose}
+      title="Add Address"
+      content={modalContent}
+      primaryButton={{
+        action: handleSubmit(onSubmit),
+      }}
+      secondaryButton={{
+        action: onClose,
+      }}
+    />
   );
 };
 
-export default AddCurrentLocation;
+export default AddAddressModal;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-    paddingHorizontal: 20,
-  },
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: Colors.gray,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textContainer: {
-    marginVertical: 20,
-  },
-  headingText: {
-    fontSize: 32,
-    color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
-  },
   formContainer: {
-    marginTop: 20,
     gap: 10,
-  },
-  inputContainer: {
-    height: 53,
-    borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontWeight: "bold",
-    marginBottom: 4,
+    padding: 16,
   },
   textInput: {
     flex: 1,
   },
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
-    marginVertical: 10,
-  },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
-    marginTop: 20,
-    marginBottom: 60,
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    // fontFamily: fonts.SemiBold,
-    textAlign: "center",
-    padding: 10,
-  },
-  signupButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
-    // marginTop: 20,
-  },
-  continueText: {
-    textAlign: "center",
-    marginVertical: 20,
-    fontSize: 14,
-    // fontFamily: fonts.Regular,
-    color: Colors.primary,
-  },
-  googleButtonContainer: {
-    flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    gap: 10,
-  },
-  googleImage: {
-    height: 20,
-    width: 20,
-  },
-  googleText: {
-    fontSize: 20,
-    // fontFamily: fonts.SemiBold,
-  },
-  footerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-    gap: 5,
-  },
-  accountText: {
-    color: Colors.primary,
-    // fontFamily: fonts.Regular,
-  },
-  redirectButtonWrapper: {
-    // width: '100%',
-    // display: 'flex',
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 18,
-    marginVertical: 20,
-  },
-  loginButton: {
-    flexDirection: "row",
-    borderWidth: 2,
-    height: 50,
-    borderColor: Colors.primary,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 3,
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-  signupText: {
-    color: Colors.primary,
-  },
   icon: {
     marginRight: 10,
     color: Colors.secondary,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
   },
 });

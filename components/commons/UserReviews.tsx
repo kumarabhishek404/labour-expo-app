@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,10 +13,14 @@ import { usePagination } from "@/app/hooks/usePagination";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import { toast } from "@/app/hooks/toast";
-import { addReview, deleteReview } from "@/app/api/rating";
-import { useMutation } from "@tanstack/react-query";
+import { addReview, deleteReview, getAllReviews } from "@/app/api/rating";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { t } from "@/utils/translationHelper";
+import { getTimeAgo } from "@/constants/functions";
+import CustomText from "./CustomText";
+import { FontAwesome } from "@expo/vector-icons";
+import Loader from "./Loader";
 
 type Review = {
   id: string;
@@ -26,44 +30,89 @@ type Review = {
   rating: number;
   comment: string;
   avatar: string;
+  reviewer: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    profilePicture: string;
+  };
   type: "Positive" | "Negative";
 };
 
 type UserReviewsProps = {
   onLayout?: (event: any) => void;
   workerId: string;
-  reviews: Review[];
-  onEditReview?: (review: Review) => void;
-  onDeleteReview?: (review: Review) => void;
+  setHasUserReviewed: (hasUserReviewed: boolean) => void;
+};
+
+const StarRating = ({ rating }: any) => {
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 !== 0;
+  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+  return (
+    <View style={styles.starsContainer}>
+      {[...Array(fullStars)].map((_, index) => (
+        <FontAwesome
+          key={`full-${index}`}
+          name="star"
+          size={18}
+          color="#FFD700"
+        />
+      ))}
+      {halfStar && (
+        <FontAwesome name="star-half-full" size={18} color="#FFD700" />
+      )}
+      {[...Array(emptyStars)].map((_, index) => (
+        <FontAwesome
+          key={`empty-${index}`}
+          name="star-o"
+          size={18}
+          color="#FFD700"
+        />
+      ))}
+    </View>
+  );
 };
 
 const UserReviews = forwardRef(
-  (
-    {
-      reviews,
-      onEditReview,
-      onDeleteReview,
-      onLayout,
-      workerId,
-    }: UserReviewsProps,
-    ref: any
-  ) => {
+  ({ setHasUserReviewed, onLayout, workerId }: UserReviewsProps, ref: any) => {
     const userDetails = useAtomValue(UserAtom);
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<"Positive" | "Negative">(
       "Positive"
     );
     const itemsPerPage = 2;
 
+    const {
+      data: reviews,
+      isLoading,
+      isRefetching,
+      refetch,
+    } = useQuery({
+      queryKey: ["reviews", workerId],
+      queryFn: () => getAllReviews({ id: workerId }),
+    });
+
     const sortReviews = (reviews: Review[]) => {
       return reviews.sort((a, b) => {
-        if (a.userId === userDetails?._id) return -1;
-        if (b.userId === userDetails?._id) return 1;
+        if (a?.reviewer?._id === userDetails?._id) return -1;
+        if (b?.reviewer?._id === userDetails?._id) return 1;
         return 0;
       });
     };
 
+    useEffect(() => {
+      if (reviews?.data && userDetails?._id) {
+        const userReview = reviews?.data.find(
+          (review: Review) => review?.reviewer?._id === userDetails._id
+        );
+        setHasUserReviewed(!!userReview);
+      }
+    }, [reviews?.data, userDetails?._id]);
+
     const filteredReviews = sortReviews(
-      reviews?.filter((review) => review.type === activeTab) || []
+      reviews?.data?.filter((review: any) => review) || []
     );
 
     const {
@@ -79,7 +128,6 @@ const UserReviews = forwardRef(
     });
 
     const handleReviewAction = (review: Review) => {
-      console.log("Review -- ", review);
       router?.push({
         pathname: "/screens/reviews/addReview/[id]",
         params: {
@@ -88,13 +136,6 @@ const UserReviews = forwardRef(
           type: "edit",
           data: JSON.stringify(review),
         },
-      });
-    };
-
-    const handleViewProfile = (review: Review) => {
-      router?.push({
-        pathname: "/screens/users/[id]",
-        params: { id: review?.userId },
       });
     };
 
@@ -107,7 +148,13 @@ const UserReviews = forwardRef(
         }),
       onSuccess: (response) => {
         toast.success(t("reviewDeletedSuccessfully"));
-        router.back();
+        refetch();
+        queryClient.invalidateQueries({
+          queryKey: ["userDetails", workerId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["tops"],
+        });
         console.log("Response while deleting review - ", response);
       },
       onError: (err) => {
@@ -115,13 +162,18 @@ const UserReviews = forwardRef(
       },
     });
 
-    const renderReview = ({ item }: { item: Review }) => (
-      <View style={styles.reviewCard}>
-        <Image source={{ uri: item?.avatar }} style={styles.avatar} />
+    const renderReview = ({ item }: { item: any }) => (
+      <View key={item?.id} style={styles.reviewCard}>
+        <Image
+          source={{ uri: item?.reviewer?.profilePicture }}
+          style={styles.avatar}
+        />
         <View style={styles.textContainer}>
           <View style={styles.headerContainer}>
-            <Text style={styles.name}>{item?.name}</Text>
-            {item.userId === userDetails?._id ? (
+            <Text style={styles.name}>
+              {item?.reviewer?.firstName} {item?.reviewer?.lastName}
+            </Text>
+            {item?.reviewer?._id === userDetails?._id && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.actionButton}
@@ -140,23 +192,17 @@ const UserReviews = forwardRef(
                   </Text>
                 </TouchableOpacity>
               </View>
-            ) : (
-              <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => handleViewProfile(item)}
-                >
-                  <Text style={styles.actionButtonText}>View Profile</Text>
-                </TouchableOpacity>
-              </View>
             )}
           </View>
-          <Text style={styles.date}>{item?.date}</Text>
+          <Text style={styles.date}>{getTimeAgo(item?.createdAt)}</Text>
           <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>{item?.rating.toFixed(1)}</Text>
-            <Text style={styles.star}>⭐</Text>
+            <Text style={styles.rating}>{item?.rating}</Text>
+            <StarRating rating={item?.rating} />
           </View>
-          <Text style={styles.comment}>{item?.comment}</Text>
+          <CustomText textAlign="left" fontSize={14} fontWeight="600">
+            {t(item?.ratingType)}
+          </CustomText>
+          <CustomText textAlign="left">{item?.comment}</CustomText>
         </View>
       </View>
     );
@@ -171,10 +217,13 @@ const UserReviews = forwardRef(
 
     return (
       <View style={styles.container} ref={ref} onLayout={onLayout}>
+        <Loader
+          loading={isLoading || isRefetching || mutationDeleteReview.isPending}
+        />
         {reviews?.length > 0 && (
           <>
             <CustomHeading textAlign="left" fontSize={18}>
-              Reviews
+              {t("reviews")}
             </CustomHeading>
             <View style={styles.tabContainer}>
               <TouchableOpacity
@@ -184,7 +233,7 @@ const UserReviews = forwardRef(
                 ]}
                 onPress={() => {
                   setActiveTab("Positive");
-                  setCurrentPage(1); // Reset to first page
+                  setCurrentPage(1);
                 }}
               >
                 <Text
@@ -277,6 +326,9 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: "#fff",
   },
+  starsContainer: {
+    flexDirection: "row",
+  },
   reviewCard: {
     flexDirection: "row",
     padding: 16,
@@ -312,9 +364,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rating: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "600",
-    color: "#FFA500",
+    marginRight: 4,
+    color: "#FFD700",
   },
   star: {
     marginLeft: 4,

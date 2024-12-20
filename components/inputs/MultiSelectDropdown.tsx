@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
 import CustomHeading from "../commons/CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 const MultiSelectDropdownComponent = ({
   value,
@@ -30,20 +31,25 @@ const MultiSelectDropdownComponent = ({
   const availableOptions = options.filter(
     (option: any) =>
       !value?.some((item: { value: any }) => item.value === option.value)
-  );
+  ).map((option: any) => ({
+    ...option,
+    label: t(option.label)
+  }));
 
   return (
     <View style={styles.container}>
       <View style={styles.selectedContainer}>
         <View style={{ flexDirection: "column", gap: 4 }}>
           <CustomHeading textAlign="left">
-            Selected Skill
+            {t('selectedSkills')}
           </CustomHeading>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
             {value && value?.length > 0 ? (
               value.map((item: any, index: number) => (
                 <View key={index} style={styles.selectedItem}>
-                  <CustomHeading fontSize={14} color={Colors?.white} style={{marginRight: 5}}>{item.label}</CustomHeading>
+                  <CustomHeading fontSize={14} color={Colors?.white} style={{marginRight: 5}}>
+                    {t(item.label)}
+                  </CustomHeading>
                   <TouchableOpacity onPress={() => handleRemoveItem(item)}>
                     <Ionicons
                       name="close-circle"
@@ -55,7 +61,7 @@ const MultiSelectDropdownComponent = ({
               ))
             ) : (
               <CustomText color={Colors?.secondary}>
-                No one skill is selected
+                {t('noSkillsSelected')}
               </CustomText>
             )}
           </View>
@@ -68,7 +74,7 @@ const MultiSelectDropdownComponent = ({
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={availableOptions} // Show only available options
+        data={availableOptions}
         search
         maxHeight={300}
         labelField="label"

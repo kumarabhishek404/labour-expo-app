@@ -53,8 +53,7 @@ const ProfileScreen = () => {
     userDetails?.profilePicture
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
-
-  console.log("userDetails----", userDetails);
+  
   const {
     control,
     handleSubmit,

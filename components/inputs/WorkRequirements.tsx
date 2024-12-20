@@ -58,6 +58,8 @@ const WorkRequirment = ({
   const handleRequirementTypeChange = (index: number, name: string) => {
     let tempRequirments = [...requirements];
     tempRequirments[index].name = name;
+    console.log("tempRequirments", tempRequirments[index]?.name);
+    
     setRequirements(tempRequirments);
   };
 

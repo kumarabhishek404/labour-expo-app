@@ -11,41 +11,52 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import ReasoneSelection from "./reasons";
 import { t } from "@/utils/translationHelper";
-import { useMutation } from "@tanstack/react-query";
-import { selectFromApplicant } from "@/app/api/services";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/hooks/toast";
-import { addReview, deleteReview, editReview } from "@/app/api/rating";
+import { addReview, editReview } from "@/app/api/rating";
 import Loader from "@/components/commons/Loader";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 const AddReview = () => {
   const { id, type, data }: any = useLocalSearchParams();
+  const userDetails = useAtomValue(UserAtom);
+  const queryClient = useQueryClient();
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      rating: JSON.parse(data)?.rating || 0,
-      feedbackType: JSON.parse(data)?.comment || "",
-      feedback: JSON.parse(data)?.feedback || "",
+      rating: data ? JSON.parse(data)?.rating : 0,
+      feedbackType: data ? JSON.parse(data)?.ratingType : "",
+      comment: data ? JSON.parse(data)?.comment : "",
     },
   });
 
-  console.log("Data -- ", data);
-
   const mutationAddReview = useMutation({
     mutationKey: ["addReview", { id }],
-    mutationFn: (data: any) =>
+    mutationFn: (reviewData: any) =>
       addReview({
         id,
         data: {
-          score: data.rating,
-          comment: data.feedbackType,
+          rating: reviewData.rating,
+          comment: reviewData?.comment,
+          reviewedUserRole: userDetails?.role,
+          ratingType: reviewData?.feedbackType,
         },
       }),
     onSuccess: (response) => {
       toast.success(t("reviewAddedSuccessfully"));
+      queryClient.invalidateQueries({ queryKey: ["reviews", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["userDetails", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["tops"],
+      });
       router.back();
+
       console.log("Response while adding review - ", response);
     },
     onError: (err) => {
@@ -57,15 +68,23 @@ const AddReview = () => {
     mutationKey: ["editReview", { id }],
     mutationFn: (reviewData: any) =>
       editReview({
-        id,
-        reviewId: JSON.parse(data)?.id,
+        id: JSON.parse(data)?.reviewee,
         data: {
-          score: reviewData.rating,
-          comment: reviewData.feedbackType,
+          rating: reviewData.rating,
+          comment: reviewData?.comment,
+          reviewedUserRole: userDetails?.role,
+          ratingType: reviewData?.feedbackType,
         },
       }),
     onSuccess: (response) => {
       toast.success(t("reviewEditedSuccessfully"));
+      queryClient.invalidateQueries({ queryKey: ["reviews", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["userDetails", JSON.parse(data)?.reviewee],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["tops"],
+      });
       router.back();
       console.log("Response while editing review - ", response);
     },
@@ -78,7 +97,12 @@ const AddReview = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title={t("addReview")} left="back" />,
+          header: () => (
+            <CustomHeader
+              title={type === "add" ? t("addReview") : t("editReview")}
+              left="back"
+            />
+          ),
         }}
       />
       <ScrollView style={styles.container}>
@@ -93,6 +117,7 @@ const AddReview = () => {
           rules={{
             required: t("ratingIsRequired"),
             min: { value: 1, message: t("ratingIsRequired") },
+            max: { value: 5, message: t("ratingIsRequired") },
           }}
           render={({ field: { value, onChange } }) => (
             <View style={styles.starContainer}>
@@ -105,10 +130,14 @@ const AddReview = () => {
                 }}
               >
                 {[1, 2, 3, 4, 5].map((num) => (
-                  <TouchableOpacity key={num} onPress={() => onChange(num)}>
+                  <TouchableOpacity
+                    key={num}
+                    onPress={() => onChange(num)}
+                    style={{ marginHorizontal: 2 }}
+                  >
                     <FontAwesome
                       name={num <= value ? "star" : "star-o"}
-                      size={35}
+                      size={45}
                       color={num <= value ? Colors?.primary : "#b3b3b3"}
                     />
                   </TouchableOpacity>
@@ -150,7 +179,7 @@ const AddReview = () => {
 
         <Controller
           control={control}
-          name="feedback"
+          name="comment"
           rules={
             {
               // required: t("feedbackIsRequired"),
@@ -163,12 +192,12 @@ const AddReview = () => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextAreaInputComponent
               label={t("whatWouldYouLike")}
-              name="feedback"
+              name="comment"
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("weWouldLoveToGiveYou")}
-              containerStyle={errors?.feedback && styles.errorInput}
+              containerStyle={errors?.comment && styles.errorInput}
               errors={errors}
               icon={
                 <MaterialIcons
@@ -184,7 +213,7 @@ const AddReview = () => {
 
         <Button
           isPrimary={true}
-          title={t("addReview")}
+          title={type === "add" ? t("addReview") : t("editReview")}
           onPress={handleSubmit((reviewData) =>
             type === "add"
               ? mutationAddReview.mutate(reviewData)
@@ -209,8 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginBottom: 20,
-    marginTop: 10,
+    marginVertical: 30,
   },
   errorInput: {
     borderWidth: 1,

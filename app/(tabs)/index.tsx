@@ -35,7 +35,7 @@ const Page = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
-    userDetails?.role === "EMPLOYER" ? "" : "Hiring"
+    userDetails?.role === "EMPLOYER" ? "" : "HIRING"
   );
 
   const {
@@ -51,7 +51,7 @@ const Page = () => {
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ pageParam, skill: category })
-        : fetchAllServices({ pageParam, type: category });
+        : fetchAllServices({ pageParam, status: category });
     },
     initialPageParam: 1,
     retry: false,
@@ -75,8 +75,8 @@ const Page = () => {
     queryKey: ["tops", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ pageParam, skill: category })
-        : fetchAllEmployers({ pageParam, type: category });
+        ? fetchAllWorkers({ pageParam, skill: category, top: true })
+        : fetchAllEmployers({ pageParam, type: category, top: true });
     },
     initialPageParam: 1,
     retry: false,
@@ -183,9 +183,7 @@ const Page = () => {
             <View style={styles.divider}></View>
 
             <CategoryButtons
-              options={
-                userDetails?.role === "EMPLOYER" ? WORKERTYPES : SERVICES
-              }
+              options={WORKERTYPES}
               onCagtegoryChanged={onCatChanged}
               stylesProp={styles.categoryContainer}
             />

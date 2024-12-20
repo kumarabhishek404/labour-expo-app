@@ -49,8 +49,8 @@ const CategoryButtons = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           gap: 20,
-          paddingVertical: 10,
-          marginBottom: 10,
+          paddingVertical: 6,
+          marginBottom: 3,
         }}
       >
         {categories?.map((item: any, index: number) => (

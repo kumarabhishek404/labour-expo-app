@@ -135,7 +135,7 @@
   "dhaanPitai": "Dhaan Pitai",
   "alooBuwai": "Aloo Buwai",
   "bazraaKatai": "Bazara Katai",
-  
+
   "home": "Home",
   "help": "Help",
   "editService": "Edit Service",
@@ -275,6 +275,7 @@
   "whatWouldYouLike": "What would you like to add next?",
   "weWouldLoveToGiveYou": "We'd love to give you the full experience :)",
   "addReview": "Add Review",
+  "editReview": "Edit Review",
   "viewReview": "View Review",
   "behaviorsIsGood": "Behaviors is good",
   "workerIsNotGood": "Worker is not good",
@@ -306,5 +307,22 @@
   "leaveThisTeamQuestion": "Are you sure?",
   "leaveThisTeamSubHeading": "You want to leave this team?",
   "leaveThisTeamSubText": "This action is irreversible and will lead to a loss of all your team opportunities.",
-  "leave": "Leave"
+  "leave": "Leave",
+  "selectedSkills": "Selected Skills",
+  "noSkillsSelected": "No one skill is selected",
+  "noNotificationsYet": "No notifications yet",
+  "goToHistoricalNotifications": "Go to historical notifications.",
+  "noReviewsYet": "No reviews yet",
+  "loading": "Loading...",
+  "refreshing": "Refreshing...",
+  "totalReviews": "Total Reviews",
+  "averageRating": "Average Rating",
+  "thisServiceIsCompleted": "This Service Is Completed",
+  "thankYouForUsingOurService": "Thank you for using our service. We hope you had a great experience with our service. We will be happy to serve you again.",
+  "mediatorSelectedSuccessfully": "Mediator selected successfully",
+  "cancelSelectedWorkerSuccess": "Cancel selected worker successfully",
+  "cancelSelectedMediatorSuccess": "Cancel selected mediator successfully",
+  "workerRejectedSuccessfully": "Worker rejected successfully",
+  "mediatorRejectedSuccessfully": "Mediator rejected successfully",
+  "yourSelectionCancelledSuccessfully": "Your selection cancelled successfully"
 }

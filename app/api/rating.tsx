@@ -1,11 +1,16 @@
-import { makeDeleteRequest, makePostRequest, makePutRequest } from ".";
+import {
+  makeDeleteRequest,
+  makeGetRequest,
+  makePostRequest,
+  makePutRequest,
+} from ".";
 import { toast } from "../hooks/toast";
 
 export const addReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
     const data = await makePostRequest(
-      `/user/rating/${payload?.id}`,
+      `/review/add/${payload?.id}`,
       payload?.data
     );
     toast.success("Review added successfully");
@@ -26,7 +31,7 @@ export const editReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
     const data = await makePutRequest(
-      `/user/rating/${payload?.id}/${payload?.reviewId}`,
+      `/review/update/${payload?.id}`,
       payload?.data
     );
     toast.success("Review edited successfully");
@@ -46,9 +51,7 @@ export const editReview = async (payload: any) => {
 export const deleteReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
-    const data = await makeDeleteRequest(
-      `/user/rating/${payload?.id}/${payload?.reviewId}`
-    );
+    const data = await makeDeleteRequest(`/review/delete/${payload?.id}`);
     toast.success("Review deleted successfully");
     return data.data;
   } catch (error: any) {
@@ -59,6 +62,19 @@ export const deleteReview = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while deleting review"
+    );
+    throw error;
+  }
+};
+
+export const getAllReviews = async (payload: any) => {
+  try {
+    const data = await makeGetRequest(`/review/all/${payload?.id}`);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching reviews : `,
+      error?.response?.data?.message
     );
     throw error;
   }

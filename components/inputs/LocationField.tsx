@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Colors from "@/constants/Colors";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "../commons/CustomHeading";
+import AddAddressModal from "@/app/screens/location/addAddress";
 
 interface LocationFieldProps {
   address: string;
@@ -20,28 +21,47 @@ const LocationField = ({
   isError,
 }: LocationFieldProps) => {
   const [isFocus, setIsFocus] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const userDetails = useAtomValue(UserAtom);
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     { label: "Add New Address", value: "addAddress" },
   ]);
+  const dropdownRef = useRef<any>(null);
 
   useEffect(() => {
-    let addresses =
-      userDetails?.serviceAddress &&
-      userDetails?.serviceAddress?.map((address: any) => {
-        return {
-          label: address,
-          value: address,
-        };
-      });
+    console.log("useEffect called", userDetails?.serviceAddress);
+    if (userDetails?.serviceAddress) {
+      // Remove duplicates and create unique address objects
+      const uniqueAddresses = Array.from(
+        new Set(userDetails.serviceAddress)
+      ).map((address) => ({
+        label: address as string,
+        value: address as string,
+      }));
 
-    if (addresses && addresses?.length > 0)
-      setAllSavedAddresses([...addresses, ...allSavedAddresses]);
+      // Add the "Add New Address" option at the end
+      setAllSavedAddresses([
+        ...uniqueAddresses,
+        { label: "Add New Address", value: "addAddress" },
+      ]);
+
+      // Auto-select the newly added address if it exists in serviceAddress
+      // but isn't currently selected
+      if (
+        userDetails.serviceAddress.includes(address) === false &&
+        userDetails.serviceAddress.length > 0
+      ) {
+        setAddress(
+          userDetails.serviceAddress[userDetails.serviceAddress.length - 1]
+        );
+      }
+    }
   }, [userDetails?.serviceAddress]);
 
   return (
     <View style={styles.container}>
       <Dropdown
+        ref={dropdownRef}
         style={[
           styles.dropdown,
           isFocus && styles?.focusStyle,
@@ -60,19 +80,26 @@ const LocationField = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
+          if (item.value === "addAddress") {
+            setIsModalVisible(true);
+            return;
+          }
           setAddress(item.value);
+          setIsFocus(false);
         }}
         renderItem={(item: any) => {
           if (item?.value === "addAddress") {
             return (
-              <Link href="/screens/location/addAddress" asChild>
-                <TouchableOpacity style={styles.actionItemWrapper}>
-                  <CustomHeading color={Colors?.link}>
-                    {item.label}
-                  </CustomHeading>
-                  <Entypo name="link" size={20} color={Colors?.link} />
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity
+                style={styles.actionItemWrapper}
+                onPress={() => {
+                  dropdownRef.current?.close();
+                  setIsModalVisible(true);
+                }}
+              >
+                <CustomHeading color={Colors?.link}>{item.label}</CustomHeading>
+                <Entypo name="link" size={20} color={Colors?.link} />
+              </TouchableOpacity>
             );
           } else {
             return (
@@ -94,6 +121,14 @@ const LocationField = ({
             size={20}
           />
         )}
+      />
+      <AddAddressModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        setAddress={(address: any) => {
+          setAddress(address);
+          setIsFocus(false);
+        }}
       />
     </View>
   );
@@ -165,5 +200,11 @@ const styles = StyleSheet.create({
   },
   actionItem: {
     color: "blue",
+  },
+  dropdownOpen: {
+    borderColor: "blue",
+  },
+  dropdownClosed: {
+    borderColor: "gray",
   },
 });

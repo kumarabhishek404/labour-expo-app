@@ -87,17 +87,17 @@ export const MEDIATORTYPES = [
 export const MYSERVICES = [
   {
     label: "active",
-    value: "Hiring",
+    value: "HIRING",
     iconName: "hiking",
   },
   {
     label: "completed",
-    value: "Completed",
+    value: "COMPLETED",
     iconName: "beach",
   },
   {
     label: "cancelled",
-    value: "Cancelled",
+    value: "CANCELLED",
     iconName: "terrain",
   },
 ];
@@ -146,7 +146,7 @@ export const WORKERS = [
 export const MEDIATOR = [
   {
     label: "all",
-    value: "all",
+    value: "",
     iconName: "hiking",
   },
   ...MEDIATORTYPES,
@@ -155,12 +155,12 @@ export const MEDIATOR = [
 export const EMPLOYER = [
   {
     label: "all",
-    value: "all",
+    value: "",
     iconName: "hiking",
   },
   {
     label: "active",
-    value: "Hiring",
+    value: "HIRING",
     iconName: "hiking",
   },
 ];
@@ -244,4 +244,27 @@ export const LANGUAGES = [
   { label: "Malayalam", value: "ml" },
   { label: "Kashmiri", value: "ks" },
   { label: "Urdu", value: "ur" },
+];
+
+export const REASONS = [
+  {
+    label: "behaviorsIsGood",
+    value: "positive",
+  },
+  {
+    label: "empatheticCommunication",
+    value: "empatheticCommunication",
+  },
+  {
+    label: "punctuality",
+    value: "punctuality",
+  },
+  {
+    label: "qualityOfWork",
+    value: "qualityOfWork",
+  },
+  {
+    label: "cleanliness",
+    value: "cleanliness",
+  },
 ];

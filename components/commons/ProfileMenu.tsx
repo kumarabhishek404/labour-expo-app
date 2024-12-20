@@ -75,7 +75,9 @@ const ProfileMenu = ({ disabled }: any) => {
   useEffect(() => {
     // Load notification preference from local storage
     const loadPreference = async () => {
-      const savedPreference = await AsyncStorage.getItem("notificationsEnabled");
+      const savedPreference = await AsyncStorage.getItem(
+        "notificationsEnabled"
+      );
       setIsNotificationsEnabled(savedPreference === "true");
     };
     loadPreference();
@@ -137,20 +139,20 @@ const ProfileMenu = ({ disabled }: any) => {
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
-    {
-      title: t("booked"),
-      icon: (
-        <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
-      ),
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/users",
-          params: { role: "workers", title: t("booked"), type: "booked" },
-        }),
-      roleCondition: userDetails?.role === "EMPLOYER",
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
+    // {
+    //   title: t("booked"),
+    //   icon: (
+    //     <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
+    //   ),
+    //   onPress: () =>
+    //     router?.push({
+    //       pathname: "/screens/users",
+    //       params: { role: "workers", title: t("booked"), type: "booked" },
+    //     }),
+    //   roleCondition: userDetails?.role === "EMPLOYER",
+    //   style: [styles?.menuItem],
+    //   isSuspended: disabled,
+    // },
     {
       title: `${t("yourFavorites")} ${
         userDetails?.role === "EMPLOYER" ? t("workers") : t("employers")
@@ -183,7 +185,6 @@ const ProfileMenu = ({ disabled }: any) => {
             type: "favourite",
           },
         }),
-
       roleCondition: userDetails?.role !== "MEDIATOR",
       style: [styles?.menuItem],
       isSuspended: disabled,
@@ -200,21 +201,20 @@ const ProfileMenu = ({ disabled }: any) => {
             type: "favourite",
           },
         }),
-
       roleCondition: userDetails?.role === "MEDIATOR",
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
-    {
-      title: t("payment"),
-      icon: <MaterialIcons name="payment" size={28} color={Colors.primary} />,
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/payments",
-        }),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
+    // {
+    //   title: t("payment"),
+    //   icon: <MaterialIcons name="payment" size={28} color={Colors.primary} />,
+    //   onPress: () =>
+    //     router?.push({
+    //       pathname: "/screens/payments",
+    //     }),
+    //   style: [styles?.menuItem],
+    //   isSuspended: disabled,
+    // },
     {
       title: t("tellFriends"),
       icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
@@ -264,24 +264,24 @@ const ProfileMenu = ({ disabled }: any) => {
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
-    {
-      title: t("darkMode"),
-      icon: isDarkModeEnabled ? (
-        <MaterialIcons name="dark-mode" size={28} color={Colors.primary} />
-      ) : (
-        <Feather
-          name="sun"
-          size={28}
-          color={Colors.primary}
-          style={{ marginBottom: 2 }}
-        />
-      ),
-      switch: true,
-      switchValue: isDarkModeEnabled,
-      onSwitchToggle: () => toggleDarkModeSwitch(),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
+    // {
+    //   title: t("darkMode"),
+    //   icon: isDarkModeEnabled ? (
+    //     <MaterialIcons name="dark-mode" size={28} color={Colors.primary} />
+    //   ) : (
+    //     <Feather
+    //       name="sun"
+    //       size={28}
+    //       color={Colors.primary}
+    //       style={{ marginBottom: 2 }}
+    //     />
+    //   ),
+    //   switch: true,
+    //   switchValue: isDarkModeEnabled,
+    //   onSwitchToggle: () => toggleDarkModeSwitch(),
+    //   style: [styles?.menuItem],
+    //   isSuspended: disabled,
+    // },
     {
       title: t("appFeedback"),
       icon: (

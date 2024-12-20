@@ -134,7 +134,7 @@ export const unlikeMediator = async ({ mediatorID }: any) => {
 export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/user/all-liked/MEDIATOR?page=${pageParam}&limit=5&skill=${skill}`
+      `/user/all-liked?role=MEDIATOR&page=${pageParam}&limit=5&skill=${skill}`
     );
     console.log("Data---", data);
     return data.data;

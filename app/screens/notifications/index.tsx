@@ -22,6 +22,7 @@ import { useSetAtom } from "jotai";
 import { hasNewNotificationAtom } from "@/app/AtomStore/user";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import CustomHeader from "@/components/commons/Header";
+import { t } from "@/utils/translationHelper";
 
 const NotificationScreen = () => {
   const [hasPermission, setHasPermission] = useState(false);
@@ -198,12 +199,12 @@ const NotificationScreen = () => {
                     }}
                   >
                     <CustomText color={Colors?.link} margin={10}>
-                      Go to historical notifications.
+                      {t("goToHistoricalNotifications")}
                     </CustomText>
                   </TouchableOpacity>
                 ) : (
                   <CustomText margin={10}>
-                    Not found any notifications old than above
+                    {t("noNotificationsYet")}
                   </CustomText>
                 )}
               </>

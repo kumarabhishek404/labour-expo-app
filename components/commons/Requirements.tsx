@@ -4,7 +4,6 @@ import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { capitalizeWord, toLowerCase } from "@/constants/functions";
 
 interface RequirementsProps {
   type: string;
@@ -23,7 +22,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                 color={Colors?.white}
                 style={{ textTransform: "capitalize" }}
               >
-                {requirement?.count} {t(`${toLowerCase(requirement?.name)}`)}
+                {requirement?.count} {t(`${requirement?.name}`)}
               </CustomHeading>
               <CustomText color={Colors?.white} fontSize={12}>
                 ₹ {requirement?.payPerDay} {t("perDay")}
@@ -38,7 +37,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
               <View style={styles.card} key={index}>
                 <View style={styles.header}>
                   <CustomHeading style={{ textTransform: "capitalize" }}>
-                    {t(`${toLowerCase(requirement?.name)}`)}
+                    {t(`${requirement?.name}`)}
                   </CustomHeading>
                   <CustomText fontSize={14}>
                     ₹ {requirement?.payPerDay} {t("perDay")}

@@ -36,124 +36,28 @@ import ButtonContainer from "./buttons";
 import { t } from "@/utils/translationHelper";
 import Button from "@/components/inputs/Button";
 import UserReviews from "@/components/commons/UserReviews";
-import { Review } from "@/app/types/review";
 import { getUserById } from "@/app/api/user";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-const reviews = [
-  {
-    id: "1",
-    userId: "674d585e47dc62b22234be2d",
-    name: "Allison Dorwart",
-    date: "19 May 2024",
-    rating: 4.5,
-    comment:
-      "Dr. Stanton was thorough, attentive, and took the time to answer all my questions in detail.",
-    avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-    type: "Positive",
-  },
-  {
-    id: "2",
-    name: "Nuraiz Donin",
-    date: "19 May 2024",
-    rating: 4.5,
-    comment:
-      "Dr. Stanton was attentive, listened carefully to my concerns, and offered helpful advice.",
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-    type: "Positive",
-  },
-  {
-    id: "3",
-    name: "John Doe 1",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "6754817d80957e069ee47764",
-    userId: "67164f9029db9563ef967d7d",
-    name: "Abhishek Kumar",
-    date: "19 May 2024",
-    rating: 2,
-    comment: "positive",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "5",
-    name: "John Doe 3",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "6",
-    name: "John Doe 4",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "7",
-    name: "John Doe 5",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "8",
-    name: "John Doe 6",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Positive",
-  },
-  {
-    id: "9",
-    name: "John Doe 7",
-    date: "19 May 2024",
-    rating: 2.0,
-    comment:
-      "Not a great experience, the doctor was not attentive to my concerns.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    type: "Negative",
-  },
-];
-
-const Worker = () => {
+const User = () => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
-  const [worker, setWorker]: any = useState({});
+  const [user, setUser]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
-  const [isWorkerBooked, setIsWorkerBooked] = useState(
-    worker?.bookedBy || false
+  const [isUserBooked, setIsUserBooked] = useState(user?.bookedBy || false);
+  const [isUserLiked, setIsUserLiked] = useState(
+    user?.likedBy?.includes(userDetails?._id)
   );
-  const [isWorkerLiked, setIsWorkerLiked] = useState(
-    worker?.likedBy?.includes(userDetails?._id) || false
+  const [isUserRequested, setIsUserRequested] = useState(
+    user?.requestedBy?.includes(userDetails?._id)
   );
-  const [isWorkerRequested, setIsWorkerRequested] = useState(
-    worker?.requestedBy?.includes(userDetails?._id) || false
-  );
-
-  console.log("worker--", worker, userDetails?._id);
+  const reviewsSectionRef = useRef<View>(null);
+  const [hasUserReviewed, setHasUserReviewed] = useState(false);
+  const [reviewsPosition, setReviewsPosition] = useState(0);
 
   const { role, title } = useGlobalSearchParams();
 
@@ -163,21 +67,21 @@ const Worker = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["userDetails"],
+    queryKey: ["userDetails", id],
     queryFn: () => getUserById(id),
     retry: 0,
     enabled: !!id,
   });
 
   useEffect(() => {
-    setIsWorkerLiked(worker?.likedBy?.includes(userDetails?._id) || false);
-    setIsWorkerBooked(worker?.bookedBy?.includes(userDetails?._id) || false);
-    setIsWorkerRequested(worker?.requestedBy?.includes(userDetails?._id) || false);
-  }, [worker]);
+    setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
+    setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
+    setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
+  }, [user]);
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setWorker(response?.data);
+      const unsubscribe = setUser(response?.data);
       return () => unsubscribe;
     }, [response])
   );
@@ -203,19 +107,6 @@ const Worker = () => {
     };
   });
 
-  const reviewsSectionRef = useRef<View>(null);
-  const [hasUserReviewed, setHasUserReviewed] = useState(false);
-  const [reviewsPosition, setReviewsPosition] = useState(0);
-
-  useEffect(() => {
-    if (worker?.ratings && userDetails?._id) {
-      const userReview = reviews.find(
-        (review) => (review as Review).userId === userDetails._id
-      );
-      setHasUserReviewed(!!userReview);
-    }
-  }, [worker?.ratings, userDetails?._id]);
-
   const scrollToReviews = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ y: reviewsPosition, animated: true });
@@ -229,7 +120,7 @@ const Worker = () => {
       router?.push({
         pathname: "/screens/reviews/addReview/[id]",
         params: {
-          id: worker?._id,
+          id: user?._id,
           role: "workers",
           type: "add",
           data: undefined,
@@ -257,22 +148,20 @@ const Worker = () => {
           contentContainerStyle={{ paddingBottom: 150 }}
         >
           <Animated.Image
-            source={
-              worker?.coverImage ? { uri: worker?.coverImage } : CoverImage
-            }
+            source={user?.coverImage ? { uri: user?.coverImage } : CoverImage}
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
             <Image
               source={
-                worker?.profilePicture
-                  ? { uri: worker?.profilePicture }
+                user?.profilePicture
+                  ? { uri: user?.profilePicture }
                   : profileImage
               }
               style={styles.workerImage}
             />
             <CustomHeading textAlign="left" fontSize={20}>
-              {worker?.firstName} {worker?.lastName}
+              {user?.firstName} {user?.lastName}
             </CustomHeading>
 
             <View style={styles.listingLocationWrapper}>
@@ -281,7 +170,7 @@ const Worker = () => {
                 size={14}
                 color={Colors.primary}
               />
-              <CustomText>{worker?.address || "Address not found"}</CustomText>
+              <CustomText>{user?.address || "Address not found"}</CustomText>
             </View>
 
             <View style={styles.highlightWrapper}>
@@ -292,7 +181,7 @@ const Worker = () => {
                 <View>
                   <CustomText textAlign="left">{t("price")}</CustomText>
                   <CustomHeading fontSize={14} textAlign="left">
-                    {worker?.duration || 0} Rs / {t("perDay")}
+                    {user?.duration || 0} Rs / {t("perDay")}
                   </CustomHeading>
                 </View>
               </View>
@@ -304,7 +193,7 @@ const Worker = () => {
                   <View style={{ flexDirection: "column" }}>
                     <CustomText textAlign="left">{t("rating")}</CustomText>
                     <CustomHeading fontSize={14} textAlign="left">
-                      {worker?.rating || 0}
+                      {user?.rating?.average || 0}
                     </CustomHeading>
                   </View>
                   <Button
@@ -324,25 +213,25 @@ const Worker = () => {
               </View>
             </View>
 
-            <CustomText>{worker?.description}</CustomText>
+            <CustomText>{user?.description}</CustomText>
 
             {role !== "employers" && (
               <SkillSelector
                 canAddSkills={false}
                 isShowLabel={true}
                 style={styles?.skillsContainer}
-                userSkills={worker?.skills}
+                userSkills={user?.skills}
                 availableSkills={
-                  worker?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
+                  user?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
                 }
               />
             )}
 
-            <UserInfoComponent user={worker} style={{ marginHorizontal: 0 }} />
+            <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
 
-            <WallletInformation type="earnings" wallet={worker} />
+            <WallletInformation type="earnings" wallet={user} />
 
-            <WorkInformation information={worker} />
+            <WorkInformation information={user} />
 
             <UserReviews
               ref={reviewsSectionRef}
@@ -350,12 +239,8 @@ const Worker = () => {
                 const { y } = event.nativeEvent.layout;
                 setReviewsPosition(y);
               }}
-              workerId={"674d585e47dc62b22234be2d"}
-              reviews={reviews.map((review) => ({
-                ...review,
-                userId: review.userId || "",
-                type: review.type as "Positive" | "Negative",
-              }))}
+              setHasUserReviewed={setHasUserReviewed}
+              workerId={id as string}
             />
           </View>
         </Animated.ScrollView>
@@ -363,17 +248,17 @@ const Worker = () => {
 
       <ButtonContainer
         isLoading={isLoading || isRefetching}
-        worker={worker}
+        user={user}
         refetch={refetch}
-        isWorkerBooked={isWorkerBooked}
-        isWorkerLiked={isWorkerLiked}
-        isWorkerRequested={isWorkerRequested}
+        isUserBooked={isUserBooked}
+        isUserLiked={isUserLiked}
+        isUserRequested={isUserRequested}
       />
     </>
   );
 };
 
-export default Worker;
+export default User;
 
 const styles = StyleSheet.create({
   container: {

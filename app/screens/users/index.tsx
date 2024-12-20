@@ -110,48 +110,45 @@ const Users = () => {
           ),
         }}
       />
-      <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
-        <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+      <Loader loading={isLoading || isRefetching} />
+      <View style={styles.container}>
+        <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          <CategoryButtons
-            options={
-              role === "workers"
-                ? WORKERS
-                : role === "mediators"
-                ? MEDIATOR
-                : EMPLOYER
+        <CategoryButtons
+          options={
+            role === "workers"
+              ? WORKERS
+              : role === "mediators"
+              ? MEDIATOR
+              : EMPLOYER
+          }
+          onCagtegoryChanged={onCatChanged}
+        />
+
+        <PaginationString
+          type={Array.isArray(role) ? role[0] : role}
+          isLoading={isLoading}
+          totalFetchedData={memoizedData?.length}
+          totalData={totalData}
+        />
+
+        {memoizedData && memoizedData?.length > 0 ? (
+          <ListingsVerticalWorkers
+            style={styles.listContainer}
+            availableInterest={role === "workers" ? WORKERTYPES : MEDIATORTYPES}
+            listings={memoizedData || []}
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
             }
-            onCagtegoryChanged={onCatChanged}
           />
-
-          <PaginationString
-            type={Array.isArray(role) ? role[0] : role}
-            isLoading={isLoading}
-            totalFetchedData={memoizedData?.length}
-            totalData={totalData}
-          />
-
-          {memoizedData && memoizedData?.length > 0 ? (
-            <ListingsVerticalWorkers
-              availableInterest={
-                role === "workers" ? WORKERTYPES : MEDIATORTYPES
-              }
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetching && refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            />
-          ) : (
-            <EmptyDatePlaceholder title={t("worker")} />
-          )}
-        </View>
+        ) : (
+          <EmptyDatePlaceholder title={t("worker")} />
+        )}
       </View>
     </>
   );
@@ -162,6 +159,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  listContainer: {
+    flexGrow: 1,
   },
 });
 

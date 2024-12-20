@@ -53,8 +53,9 @@ const SignupScreen = () => {
   const [images, setImages]: any = useState(addService?.images ?? []);
 
   const mutationAddService = useMutation({
-    mutationKey: ["addService"],
-    mutationFn: () => (addService?._id ? handleEditSubmit() : handleSubmit()),
+    mutationKey: [addService?._id ? "editService" : "addService"],
+    mutationFn: () =>
+      addService?._id ? handleEditSubmit(addService?._id) : handleSubmit(),
     onSuccess: () => {
       toast?.success(
         addService?._id
@@ -87,27 +88,35 @@ const SignupScreen = () => {
       router?.push("/(tabs)/bookings");
     },
     onError: (err: any) => {
-      console.error("Error while posting the service - ", err);
-      toast.error(err?.response?.data?.message);
+      console.error("Error details:", {
+        message: err?.response?.data?.message,
+        status: err?.response?.status,
+        data: err?.response?.data,
+        error: err,
+      });
+
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to update service. Please try again."
+      );
     },
   });
 
   const handleSubmit = async () => {
+    if (!type || !address || !startDate || !endDate || !requirements) {
+      throw new Error("Required fields are missing");
+    }
+
     const formData: any = new FormData();
-    // const imageUri: any = images[0];
-    // const imageName = imageUri.split("/").pop();
-    // formData.append("coverImage", {
-    //   uri: imageUri,
-    //   type: "image/jpeg",
-    //   name: imageName,
-    // });
 
     images.forEach((imageUri: string, index: number) => {
+      if (imageUri.startsWith("http")) return;
+
       const imageName = imageUri.split("/").pop();
       formData.append("images", {
         uri: imageUri,
         type: "image/jpeg",
-        name: imageName,
+        name: imageName || `image_${index}.jpg`,
       });
     });
 
@@ -128,59 +137,66 @@ const SignupScreen = () => {
     return response?.data;
   };
 
-  const handleEditSubmit = async () => {
-    const formData: any = new FormData();
-    // const imageUri: any = images[0];
-    // const imageName = imageUri.split("/").pop();
-    // formData.append("coverImage", {
-    //   uri: imageUri,
-    //   type: "image/jpeg",
-    //   name: imageName,
-    // });
+  const handleEditSubmit = async (id: any) => {
+    try {
+      if (!id) {
+        throw new Error("Service ID is required for editing");
+      }
 
-    images.forEach((imageUri: string, index: number) => {
-      const imageName = imageUri.split("/").pop();
-      formData.append("images", {
-        uri: imageUri,
-        type: "image/jpeg",
-        name: imageName,
+      console.log("Submitting service update with data:", {
+        id,
+        type,
+        description,
+        address,
+        requirements,
+        imageCount: images.length,
       });
-    });
 
-    formData.append("name", type);
-    formData.append("description", description);
-    formData.append("address", address);
-    formData.append("location", JSON.stringify(location || {}));
-    formData.append("city", "Jalesar");
-    formData.append("state", "Uttar Predesh");
-    formData.append("pinCode", "207302");
-    formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
-    formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
-    formData.append("requirements", JSON.stringify(requirements));
+      const formData: any = new FormData();
 
-    console.log("form Data --", formData);
+      images.forEach((imageUri: string, index: number) => {
+        if (imageUri.startsWith("http")) return;
 
-    const response: any = await editService(formData);
-    return response?.data;
-    // let payload = {
-    //   _id: addService?._id,
-    //   name: title,
-    //   description: description,
-    //   startDate: startDate,
-    //   endDate: endDate,
-    //   location: location,
-    //   city: "city",
-    //   state: "state",
-    //   pinCode: "pinCode",
-    //   address: address,
-    //   requirements: requirements,
-    //   images: images,
-    // };
+        const imageName = imageUri.split("/").pop();
+        formData.append("images", {
+          uri: imageUri,
+          type: "image/jpeg",
+          name: imageName || `image_${index}.jpg`,
+        });
+      });
 
-    // console.log("payload- --", payload);
+      const existingImages = images.filter((img: string) =>
+        img.startsWith("http")
+      );
+      if (existingImages.length) {
+        formData.append("existingImages", JSON.stringify(existingImages));
+      }
 
-    // const response: any = await editService(payload);
-    // return response?.data;
+      formData.append("serviceId", id);
+      formData.append("name", type);
+      formData.append("description", description);
+      formData.append("address", address);
+      formData.append("location", JSON.stringify(location || {}));
+      formData.append("city", "Jalesar");
+      formData.append("state", "Uttar Predesh");
+      formData.append("pinCode", "207302");
+      formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
+      formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
+      formData.append("requirements", JSON.stringify(requirements));
+
+      console.log("form Data --", formData);
+
+      const response: any = await editService(formData);
+
+      if (!response?.data) {
+        throw new Error("No data received from server");
+      }
+
+      return response?.data;
+    } catch (error: any) {
+      console.error("Error in handleEditSubmit:", error);
+      throw error; // Re-throw to be handled by mutation
+    }
   };
 
   const renderFormComponents = () => {

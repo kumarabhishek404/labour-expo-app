@@ -17,11 +17,11 @@ const RatingAndReviews = ({ rating, reviews }: RatingAndReviewsProps) => {
             key={index}
             name="star"
             size={12}
-            color={index < Math.floor(rating || 4) ? "#FFA41C" : "#E0E0E0"}
+            color={index < Math.floor(rating || 0) ? "#FFA41C" : "#E0E0E0"}
           />
         ))}
         <CustomText style={styles?.reviews}>
-          ({reviews >= 50 ? "50+" : reviews || 23})
+          ({reviews >= 50 ? "50+" : reviews || 0})
         </CustomText>
       </View>
     </View>

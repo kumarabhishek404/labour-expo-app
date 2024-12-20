@@ -111,7 +111,7 @@ const ForgetPasswordScreen = () => {
           </CustomHeading>
         </View>
         <View>
-          {!isResetCodeSent ? (
+          {isResetCodeSent ? (
             <>
               <Controller
                 control={control}

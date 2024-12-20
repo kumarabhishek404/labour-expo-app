@@ -37,10 +37,10 @@ export const fetchAllWorkers = async ({ pageParam, skill }: any) => {
   }
 };
 
-export const fetchAllLikedWorkers = async ({ pageParam }: any) => {
+export const fetchAllLikedWorkers = async ({ pageParam, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/user/all-liked/WORKER?page=${pageParam}&limit=5`
+      `/user/all-liked?role=WORKER&skill=${skill}&page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -74,8 +74,9 @@ export const likeWorker = async (payload: any) => {
 };
 
 export const unlikeWorker = async ({ workerID }: any) => {
+  console.log("Worker ID---", workerID);
   try {
-    const data = await makeDeleteRequest(`/user/remove-liked/${workerID}`);
+    const data = await makeDeleteRequest(`/user/unlike/${workerID}`);
     return data.data;
   } catch (error: any) {
     console.error(

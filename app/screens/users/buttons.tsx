@@ -29,21 +29,21 @@ const { width } = Dimensions.get("window");
 
 interface ButtonContainerProps {
   isLoading: boolean;
-  worker: any;
+  user: any;
   refetch: any;
-  isWorkerBooked: boolean;
-  isWorkerLiked: boolean;
-  isWorkerRequested: boolean;
+  isUserBooked: boolean;
+  isUserLiked: boolean;
+  isUserRequested: boolean;
 }
 
 const ButtonContainer = ({
   isLoading,
-  worker,
+  user,
   refetch,
-  isWorkerBooked,
-  isWorkerLiked,
-  isWorkerRequested,
-  }: ButtonContainerProps) => {
+  isUserBooked,
+  isUserLiked,
+  isUserRequested,
+}: ButtonContainerProps) => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
   const { role, type } = useGlobalSearchParams();
@@ -199,34 +199,34 @@ const ButtonContainer = ({
         {type === "applicant" && (
           <Button
             isPrimary={true}
-            title={isWorkerBooked ? t("selected") : t("select")}
+            title={isUserBooked ? t("selected") : t("select")}
             onPress={() => {}}
           />
         )}
-        {userDetails?.role === "EMPLOYER" &&
+        {/* {userDetails?.role === "EMPLOYER" &&
           (!type || type !== "applicant") && (
             <Button
               isPrimary={true}
-              title={isWorkerBooked ? t("alreadyBooked") : t("bookNow")}
+              title={isUserBooked ? t("alreadyBooked") : t("bookNow")}
               onPress={() =>
-                isWorkerBooked
+                isUserBooked
                   ? handleRemoveBookedFunction()
                   : handleBookFunction()
               }
             />
-          )}
+          )} */}
         {userDetails?.role === "MEDIATOR" && (
           <Button
             isPrimary={true}
-            title={isWorkerRequested ? t("alreadyAdded") : t("addInYourTeam")}
+            title={isUserRequested ? t("alreadyAdded") : t("addInYourTeam")}
             onPress={() => handleSendFunction()}
           />
         )}
         <Button
           isPrimary={true}
-          title={isWorkerLiked ? t("unlike") : t("like")}
+          title={isUserLiked ? t("unlike") : t("like")}
           onPress={() =>
-            isWorkerLiked ? handleUnLikeFunction() : handleLikeFunction()
+            isUserLiked ? handleUnLikeFunction() : handleLikeFunction()
           }
         />
       </Animated.View>

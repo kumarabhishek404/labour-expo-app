@@ -27,7 +27,10 @@ type RenderItemTypes = {
     location: any;
     profilePicture: string;
     skills: string[];
-    rating: string;
+    rating: {
+      average: number;
+      count: number;
+    };
     reviews: string;
     price: string;
     isBookmarked: boolean;
@@ -53,8 +56,13 @@ const GroupEmployersListing = ({
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: "/screens/users",
-            params: { role: "employers", title: "Employers", type: "top" },
+            pathname: "/screens/users/[id]",
+            params: {
+              id: item?._id,
+              role: "employers",
+              title: "Employer Details",
+              type: "top",
+            },
           })
         }
       >
@@ -72,8 +80,8 @@ const GroupEmployersListing = ({
               {item.firstName} {item.lastName}
             </CustomHeading>
             <RatingAndReviews
-              rating={item?.rating || 4.5}
-              reviews={item?.reviews || 400}
+              rating={item?.rating?.average}
+              reviews={item?.rating?.count}
             />
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <MaterialCommunityIcons
@@ -83,9 +91,9 @@ const GroupEmployersListing = ({
                 color={Colors.primary}
               />
               <CustomHeading fontSize={14}>
-                {item.rating || `34 ${t("services")}`}{" "}
+                {`${30} ${t("services")}`}{" "}
               </CustomHeading>
-              <CustomText>({item.reviews || "5 Active"})</CustomText>
+              <CustomText>{`${10} ${t("active")}`}</CustomText>
             </View>
           </View>
         </View>

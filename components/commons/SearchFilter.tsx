@@ -55,7 +55,8 @@ const styles = StyleSheet.create({
   },
   searchSectionWrapper: {
     flexDirection: "row",
-    marginVertical: 20,
+    marginTop: 20,
+    marginBottom: 10,
   },
   searchBar: {
     flex: 1,

@@ -5,6 +5,8 @@ import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { useAtom } from "jotai";
+import { ServiceAtom } from "@/app/AtomStore/user";
 
 interface ServiceInformationProps {
   information: any;
@@ -15,6 +17,8 @@ const ServiceInformation = ({
   information,
   style,
 }: ServiceInformationProps) => {
+  const [serviceDetails, setServiceDetails] = useAtom(ServiceAtom);
+  console.log("serviceDetails--", serviceDetails);
   return (
     <View style={styles?.container}>
       <CustomHeading textAlign="left" style={[style]}>
@@ -32,7 +36,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.serviceDetails?.total || 0}
+              {serviceDetails?.total || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               style={{ transform: "rotate(90deg)" }}
@@ -41,14 +45,12 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>
-            {t("totalServices")}
-          </CustomText>
+          <CustomText fontSize={14}>{t("totalServices")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.serviceDetails?.completed || 0}
+              {serviceDetails?.completed || 0}
             </CustomHeading>
             <Ionicons
               name="checkmark-done-circle-outline"
@@ -73,7 +75,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.serviceDetails?.pending || 0}
+              {serviceDetails?.pending || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               name="clock-outline"
@@ -86,7 +88,7 @@ const ServiceInformation = ({
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.serviceDetails?.cancelled?.byWorker || 0}
+              {serviceDetails?.cancelled || 0}
             </CustomHeading>
             <Fontisto name="close" size={24} color={Colors.primary} />
           </View>

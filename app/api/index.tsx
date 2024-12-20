@@ -13,7 +13,7 @@ const getHeaders = async (retries = 3, delay = 500) => {
         Authorization: `Bearer ${parsedUser.token}`,
       };
     } else if (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, delay)); // Wait before retrying
+      await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
       return getHeaders(retries - 1, delay); // Retry after delay
     } else {
       return {
@@ -53,7 +53,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.log("error.response.statusText--", error);
-    
+
     if (error.response) {
       if (
         (error.response.status === 400 &&
@@ -134,7 +134,7 @@ export const makePutRequest = async (
   const response = await api.put(url, body, {
     headers: {
       // ...api.defaults.headers.common,
-      ...(await getHeaders())
+      ...(await getHeaders()),
       // ...headers,
     },
   });
@@ -150,7 +150,7 @@ export const makePutRequestFormData = async (
     headers: {
       // ...api.defaults.headers.common,
       ...(await getHeaders()),
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
       // ...headers,
     },
   });
@@ -194,7 +194,7 @@ export const makeDeleteRequest = async (
 ): Promise<AxiosResponse> => {
   const response = await api.delete(url, {
     headers: {
-      ...(await getHeaders())
+      ...(await getHeaders()),
     },
   });
   return response;

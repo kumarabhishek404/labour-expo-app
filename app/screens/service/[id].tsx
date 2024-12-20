@@ -28,6 +28,8 @@ import {
   unLikeService,
   fetchSelectedWorkers,
   fetchSelectedMediators,
+  cancelServiceByMediatorAfterSelection,
+  cancelServiceByWorkerAfterSelection,
 } from "../../api/services";
 import Loader from "@/components/commons/Loader";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
@@ -69,18 +71,27 @@ const ServiceDetails = () => {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const [isServiceLiked, setIsServiceLiked] = useState(
-    service?.likedBy?.includes(userDetails?._id) || false
+    service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     userDetails?.role === "MEDIATOR"
       ? service?.appliedMediators?.find(
-          (mediator: any) => mediator?.mediatorId === userDetails?._id
+          (mediator: any) => mediator?.mediator?._id === userDetails?._id
         )
-      : service?.appliedBy?.includes(userDetails?._id) || false
+      : service?.appliedWorkers?.find(
+          (worker: any) => worker?._id === userDetails?._id
+        ) || false
   );
   const [isSelected, setIsSelected] = useState(
-    service?.selected?.includes(userDetails?._id) || false
+    userDetails?.role === "MEDIATOR"
+      ? service?.selectedMediators?.find(
+          (mediator: any) => mediator?.mediator?._id === userDetails?._id
+        )
+      : service?.selectedWorkers?.find(
+          (worker: any) => worker?._id === userDetails?._id
+        ) || false
   );
+  console.log("service?.selectedMediators", service?.selectedMediators);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
@@ -88,6 +99,8 @@ const ServiceDetails = () => {
   const [isWorkerSelectModal, setIsWorkerSelectModal] = useState(false);
   const [workers, setWorkers]: any = useState([]);
   const [selectedWorkersIds, setSelectedWorkersIds]: any = useState([]);
+  const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
+  const [applicants, setApplicants] = useState<any[]>([]);
 
   const {
     isLoading,
@@ -169,9 +182,9 @@ const ServiceDetails = () => {
   const {
     data: selectedWorkers,
     isLoading: isSelectedWorkerLoading,
-    // isFetchingNextPage,
-    // fetchNextPage,
-    // hasNextPage,
+    isFetchingNextPage: isSelectedWorkerFetchingNextPage,
+    fetchNextPage: selectedWorkersFetchPage,
+    hasNextPage: hasSelectedWorkersNextPage,
     refetch: refetchSelectedWorkers,
   } = useInfiniteQuery({
     queryKey: ["selectedWorkers"],
@@ -191,9 +204,9 @@ const ServiceDetails = () => {
   const {
     data: selectedMediators,
     isLoading: isSelectedMediatorLoading,
-    // isFetchingNextPage,
-    // fetchNextPage,
-    // hasNextPage,
+    isFetchingNextPage: isSelectedMediatorFetchingNextPage,
+    fetchNextPage: selectedMediatorsFetchPage,
+    hasNextPage: hasSelectedMediatorsNextPage,
     refetch: refetchSelectedMediators,
   } = useInfiniteQuery({
     queryKey: ["selectedMediators"],
@@ -223,7 +236,7 @@ const ServiceDetails = () => {
 
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
-    mutationFn: () => likeService({ serviceID: id }),
+    mutationFn: () => likeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
       toast.success(t("serviceAddedInFavourites"));
@@ -236,7 +249,7 @@ const ServiceDetails = () => {
 
   const mutationUnLikeService = useMutation({
     mutationKey: ["unlikeService", { id }],
-    mutationFn: () => unLikeService({ serviceID: id }),
+    mutationFn: () => unLikeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
       toast.success(t("serviceRemovedInFavourites"));
@@ -309,6 +322,32 @@ const ServiceDetails = () => {
     },
   });
 
+  const mutationCancelServiceByWorkerAfterSelection = useMutation({
+    mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
+    mutationFn: () => cancelServiceByWorkerAfterSelection({ serviceId: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success(t("yourSelectionCancelledSuccessfully"));
+      console.log("Response while unapplying in the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while applying in the service ", err);
+    },
+  });
+
+  const mutationCancelServiceByMediatorAfterSelection = useMutation({
+    mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
+    mutationFn: () => cancelServiceByMediatorAfterSelection({ serviceId: id }),
+    onSuccess: (response) => {
+      refetch();
+      toast.success(t("yourSelectionCancelledSuccessfully"));
+      console.log("Response while unapplying in the service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while applying in the service ", err);
+    },
+  });
+
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
     mutationFn: () => completeService({ serviceID: id }),
@@ -326,37 +365,66 @@ const ServiceDetails = () => {
     setIsServiceApplied(
       userDetails?.role === "MEDIATOR"
         ? service?.appliedMediators?.find(
-            (mediator: any) => mediator?.mediatorId === userDetails?._id
+            (mediator: any) => mediator?.mediator?._id === userDetails?._id
           )
-        : service?.appliedBy?.includes(userDetails?._id) || false
+        : service?.appliedWorkers?.find(
+            (worker: any) => worker?._id === userDetails?._id
+          ) || false
     );
-    setIsServiceLiked(service?.likedBy?.includes(userDetails?._id) || false);
-    setIsSelected(service?.selected?.includes(userDetails?._id) || false);
+    setIsServiceLiked(
+      service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
+    );
+    setIsSelected(
+      userDetails?.role === "MEDIATOR"
+        ? service?.selectedMediators?.find(
+            (mediator: any) => mediator?.mediator?._id === userDetails?._id
+          )
+        : service?.selectedWorkers?.find(
+            (worker: any) => worker?._id === userDetails?._id
+          ) || false
+    );
   }, [service]);
 
   useFocusEffect(
     React.useCallback(() => {
       let appliedWorkers = response?.data?.appliedMediators?.filter(
         (mediator: any) => {
-          if (
-            userDetails?.role === "MEDIATOR" &&
-            mediator?.mediatorId === userDetails?._id
-          ) {
+          if (mediator?.mediator?._id === userDetails?._id) {
             return mediator?.workers;
           }
         }
       );
-      setSelectedWorkersIds(appliedWorkers?.[0]?.workers || []);
+
+      // Extract just the worker IDs if workers are objects, otherwise use as-is
+      const workerIds =
+        appliedWorkers?.[0]?.workers?.map((worker: any) =>
+          typeof worker === "object" ? worker._id : worker
+        ) || [];
+
+      setSelectedWorkersIds(workerIds);
       const unsubscribe = setService(response?.data);
       return () => unsubscribe;
     }, [response])
   );
+
+  useEffect(() => {
+    const workers = selectedWorkers?.pages[0]?.data || [];
+    const mediators = selectedMediators?.pages[0]?.data || [];
+    setSelectedApplicants([...workers, ...mediators]);
+  }, [selectedWorkers?.pages, selectedMediators?.pages]);
+
+  useEffect(() => {
+    const workers = appliedWorkers?.pages[0]?.data || [];
+    const mediators = appliedMediators?.pages[0]?.data || [];
+    setApplicants([...workers, ...mediators]);
+  }, [appliedWorkers?.pages, appliedMediators?.pages]);
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteService", { id }],
     mutationFn: () => deleteServiceById(id),
     onSuccess: (response) => {
       setModalVisible(false);
+      refetch();
       console.log("Response while deleting a service - ", response);
     },
     onError: (err) => {
@@ -499,6 +567,12 @@ const ServiceDetails = () => {
     );
   };
 
+  console.log(
+    "service",
+    appliedWorkers?.pages[0]?.data,
+    appliedMediators?.pages[0]?.data
+  );
+
   return (
     <>
       <Stack.Screen
@@ -524,7 +598,19 @@ const ServiceDetails = () => {
           mutationUnApplyService?.isPending ||
           mutationMediatorUnApplyService?.isPending ||
           mutationCompleteService?.isPending ||
-          mutationDeleteService?.isPending
+          mutationDeleteService?.isPending ||
+          mutationCancelServiceByWorkerAfterSelection?.isPending ||
+          mutationCancelServiceByMediatorAfterSelection?.isPending ||
+          isAppliedWorkersLoading ||
+          isAppliedWorkersFetchingNextPage ||
+          isAppliedMediatorsLoading ||
+          isAppliedMediatorsFetchingNextPage ||
+          isMemberLoading ||
+          isMemberFetchingNextPage ||
+          isSelectedWorkerLoading ||
+          isSelectedWorkerFetchingNextPage ||
+          isSelectedMediatorLoading ||
+          isSelectedMediatorFetchingNextPage
         }
       />
 
@@ -538,7 +624,7 @@ const ServiceDetails = () => {
           )}
 
           <View style={styles.contentWrapper}>
-            {service?.status === "Cancelled" && (
+            {service?.status === "CANCELLED" && (
               <View style={styles?.selectedWrapper}>
                 <View style={{ width: "100%" }}>
                   <CustomHeading color={Colors?.white} textAlign="left">
@@ -551,7 +637,20 @@ const ServiceDetails = () => {
               </View>
             )}
 
-            {isSelected && service?.status !== "Cancelled" && (
+            {service?.status === "COMPLETED" && (
+              <View style={styles?.selectedWrapper}>
+                <View style={{ width: "100%" }}>
+                  <CustomHeading color={Colors?.white} textAlign="left">
+                    {t("thisServiceIsCompleted")}
+                  </CustomHeading>
+                  <CustomText textAlign="left" color={Colors?.white}>
+                    {t("thankYouForUsingOurService")}
+                  </CustomText>
+                </View>
+              </View>
+            )}
+
+            {isSelected && service?.status !== "CANCELLED" && (
               <View style={styles?.selectedWrapper}>
                 <CustomHeading color={Colors?.white} textAlign="left">
                   {t("youAreSelected")}
@@ -614,47 +713,70 @@ const ServiceDetails = () => {
             )}
           </View>
 
-          {service?.employer?._id === userDetails?._id &&
-            selectedWorkers?.pages[0]?.data &&
-            selectedWorkers?.pages[0]?.data?.length > 0 && (
-              <SelectedApplicants
-                selectedApplicants={selectedWorkers?.pages[0]?.data}
-                serviceId={service?._id}
-                refetchSelectedApplicants={refetchSelectedWorkers}
-              />
-            )}
+          {/* Selected Applicants */}
+          {service?.employer?._id === userDetails?._id && (
+            <View style={styles.applicantContainer}>
+              <CustomHeading textAlign="left">
+                Selected Applicants
+              </CustomHeading>
+              {selectedApplicants.length > 0 ? (
+                <SelectedApplicants
+                  selectedApplicants={selectedApplicants}
+                  serviceId={service?._id}
+                  refetchSelectedApplicants={() => {
+                    refetchSelectedWorkers();
+                    refetchSelectedMediators();
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    marginBottom: 20,
+                    paddingHorizontal: 10,
+                    paddingVertical: 20,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: Colors.gray,
+                  }}
+                >
+                  <EmptyDatePlaceholder title="Selected Applicants" />
+                </View>
+              )}
+            </View>
+          )}
 
-          {service?.employer?._id === userDetails?._id &&
-            selectedMediators?.pages[0]?.data &&
-            selectedMediators?.pages[0]?.data?.length > 0 && (
-              <SelectedApplicants
-                selectedApplicants={selectedMediators?.pages[0]?.data}
-                serviceId={service?._id}
-                refetchSelectedApplicants={refetchSelectedMediators}
-              />
-            )}
-
-          {service?.employer?._id === userDetails?._id &&
-            appliedWorkers?.pages[0]?.data &&
-            appliedWorkers?.pages[0]?.data?.length > 0 && (
-              <Applicants
-                applicants={appliedWorkers}
-                serviceId={service?._id}
-                refetchApplicants={refetchAppliedWorkers}
-                refetchSelectedApplicants={refetchSelectedWorkers}
-              />
-            )}
-
-          {service?.employer?._id === userDetails?._id &&
-            appliedMediators?.pages[0]?.data &&
-            appliedMediators?.pages[0]?.data?.length > 0 && (
-              <Applicants
-                applicants={appliedMediators}
-                serviceId={service?._id}
-                refetchApplicants={refetchAppliedMediators}
-                refetchSelectedApplicants={refetchSelectedMediators}
-              />
-            )}
+          {/* Applicants */}
+          {service?.employer?._id === userDetails?._id && (
+            <View style={styles.applicantContainer}>
+              <CustomHeading textAlign="left">Applicants</CustomHeading>
+              {applicants.length > 0 ? (
+                <Applicants
+                  applicants={applicants}
+                  serviceId={service?._id}
+                  refetchApplicants={() => {
+                    refetchAppliedWorkers();
+                    refetchAppliedMediators();
+                  }}
+                  refetchSelectedApplicants={() => {
+                    refetchSelectedWorkers();
+                    refetchSelectedMediators();
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 20,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: Colors.gray,
+                  }}
+                >
+                  <EmptyDatePlaceholder title="Applicants" />
+                </View>
+              )}
+            </View>
+          )}
 
           {/* First Make Google Maps API Key Then Uncomment It */}
           {/* {service?.location && service?.location?.latitude && (
@@ -674,19 +796,19 @@ const ServiceDetails = () => {
       </ScrollView>
 
       {service?.employer?._id !== userDetails?._id &&
-        service?.status === "Hiring" && (
+        service?.status === "HIRING" && (
           <Animated.View
             style={styles.footer}
             entering={SlideInDown.delay(200)}
           >
-            {service?.isSelected ? (
+            {isSelected ? (
               <Button
                 isPrimary={true}
                 title={t("removeFromService")}
                 onPress={() =>
-                  isServiceApplied
-                    ? mutationUnApplyService.mutate()
-                    : mutationApplyService.mutate()
+                  userDetails?.role === "WORKER"
+                    ? mutationCancelServiceByWorkerAfterSelection.mutate()
+                    : mutationCancelServiceByMediatorAfterSelection.mutate()
                 }
               />
             ) : (
@@ -716,7 +838,7 @@ const ServiceDetails = () => {
         )}
 
       {service?.employer?._id === userDetails?._id &&
-        service?.status !== "Cancelled" && (
+        service?.status !== "CANCELLED" && (
           <Animated.View
             style={styles.footer}
             entering={SlideInDown.delay(200)}
@@ -757,7 +879,7 @@ const ServiceDetails = () => {
         )}
 
       {service?.employer?._id === userDetails?._id &&
-        service?.status === "Cancelled" && (
+        service?.status === "CANCELLED" && (
           <Animated.View
             style={styles.footer}
             entering={SlideInDown.delay(200)}
@@ -980,5 +1102,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingLeft: 20,
     paddingBottom: 10,
+  },
+  applicantContainer: {
+    paddingHorizontal: 10,
+    backgroundColor: Colors.white,
+    gap: 5,
   },
 });

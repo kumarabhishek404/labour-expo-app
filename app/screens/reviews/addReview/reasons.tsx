@@ -1,4 +1,5 @@
 import CustomText from "@/components/commons/CustomText";
+import { REASONS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
@@ -9,28 +10,6 @@ interface RoleSelectionProps {
   onBlur: any;
 }
 const ReasoneSelection = ({ reason, setReason, onBlur }: RoleSelectionProps) => {
-  const reasons = [
-    {
-      label: t("behaviorsIsGood"),
-      value: "positive",
-    },
-    {
-      label: t("empatheticCommunication"),
-      value: "empatheticCommunication",
-    },
-    {
-      label: t("punctuality"),
-      value: "punctuality",
-    },
-    {
-      label: t("qualityOfWork"),
-      value: "qualityOfWork",
-    },
-    {
-      label: t("cleanliness"),
-      value: "cleanliness",
-    },
-  ];
 
   const handleSelectReason = (selectedReason: any) => {
     setReason(selectedReason?.value);
@@ -39,7 +18,7 @@ const ReasoneSelection = ({ reason, setReason, onBlur }: RoleSelectionProps) => 
   return (
     <View style={styles.container}>
       <View style={styles.roleContainer}>
-        {reasons.map((selectedReason, index) => (
+        {REASONS.map((selectedReason, index) => (
           <TouchableOpacity
             key={index}
             style={[
@@ -48,7 +27,7 @@ const ReasoneSelection = ({ reason, setReason, onBlur }: RoleSelectionProps) => 
             ]}
             onPress={() => handleSelectReason(selectedReason)}
           >
-            <CustomText fontSize={14}>{selectedReason.label}</CustomText>
+            <CustomText fontSize={14}>{t(selectedReason?.label)}</CustomText>
             <View
               style={[
                 styles.radioCircle,

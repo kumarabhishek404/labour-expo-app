@@ -1,49 +1,25 @@
-import React from "react";
-import { View, StyleSheet, Image, FlatList } from "react-native";
+import React, { useMemo } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  FlatList,
+  RefreshControl,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-
-const reviews = [
-  {
-    id: "1",
-    name: "Haylie Aminoff",
-    timeAgo: "32 minutes ago",
-    rating: 4.5,
-    reviewText:
-      "Lorem ipsum dolor sit amet, consectetur sadi sspcsing elit, sed diam nonumy",
-    imageUrl: "https://randomuser.me/api/portraits/women/1.jpg",
-  },
-  {
-    id: "2",
-    name: "Carla Septimus",
-    timeAgo: "54 minutes ago",
-    rating: 4.5,
-    reviewText:
-      "Lorem ipsum dolor sit amet, consectetur sadi sspcsing elit, sed diam nonumy",
-    imageUrl: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-  {
-    id: "3",
-    name: "Carla George",
-    timeAgo: "2 days ago",
-    rating: 3.2,
-    reviewText:
-      "Lorem ipsum dolor sit amet, consectetur sadi sspcsing elit, sed diam nonumy",
-    imageUrl: "https://randomuser.me/api/portraits/women/3.jpg",
-  },
-  {
-    id: "4",
-    name: "Maren Kenter",
-    timeAgo: "3 months ago",
-    rating: 2.1,
-    reviewText:
-      "Lorem ipsum dolor sit amet, consectetur sadi sspcsing elit, sed diam nonumy",
-    imageUrl: "https://randomuser.me/api/portraits/women/4.jpg",
-  },
-];
+import { t } from "@/utils/translationHelper";
+import { useQuery } from "@tanstack/react-query";
+import { getAllReviews } from "@/app/api/rating";
+import { UserAtom } from "@/app/AtomStore/user";
+import { useAtomValue } from "jotai";
+import Loader from "@/components/commons/Loader";
+import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import { getTimeAgo } from "@/constants/functions";
+import EmptyPlaceholder from "@/assets/empty-placeholder.png";
 
 const StarRating = ({ rating }: any) => {
   const fullStars = Math.floor(rating);
@@ -76,37 +52,113 @@ const StarRating = ({ rating }: any) => {
 };
 
 const ReviewScreen = () => {
-  const renderReview = ({ item }: any) => (
-    <View style={styles.reviewCard}>
-      <View style={styles.profileSection}>
-        <Image source={{ uri: item.imageUrl }} style={styles.profileImage} />
-        <View style={styles.userInfo}>
-          <CustomHeading>{item.name}</CustomHeading>
-          <CustomText textAlign="left">{item.timeAgo}</CustomText>
+  const userDetails = useAtomValue(UserAtom);
+
+  const { data, isLoading, refetch, isRefetching } = useQuery({
+    queryKey: ["reviews", userDetails?._id],
+    queryFn: () => getAllReviews({ id: userDetails?._id }),
+    enabled: !!userDetails?._id,
+  });
+
+  const RenderItem = React.memo(({ item }: any) => {
+    return (
+      <View key={item?._id} style={styles.reviewCard}>
+        <View style={styles.profileSection}>
+          <View style={styles.profileImageContainer}>
+            <Image
+              source={{ uri: item?.reviewer?.profilePicture }}
+              style={styles.profileImage}
+            />
+            <View style={styles.userInfo}>
+              <CustomHeading>
+                {item?.reviewer?.firstName} {item?.reviewer?.lastName}
+              </CustomHeading>
+              <CustomText textAlign="left">
+                {getTimeAgo(item?.createdAt)}
+              </CustomText>
+            </View>
+          </View>
+          <View style={styles.ratingSection}>
+            <CustomHeading>{item?.rating}</CustomHeading>
+            <StarRating rating={item?.rating} />
+          </View>
         </View>
+
+        <CustomText textAlign="left" fontWeight="bold" fontSize={14}>
+          {t(item?.ratingType)}
+        </CustomText>
+        <CustomText textAlign="left">{item?.comment}</CustomText>
       </View>
-      <View style={styles.ratingSection}>
-        <CustomHeading>{item.rating}</CustomHeading>
-        <StarRating rating={item.rating} />
-      </View>
-      <CustomText textAlign="left">{item.reviewText}</CustomText>
-    </View>
+    );
+  });
+
+  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+    await refetch();
+  });
+
+  RenderItem.displayName = "RenderItem";
+  const renderItem = ({ item }: any) => <RenderItem item={item} />;
+
+  const memoizedData = useMemo(
+    () => data?.data?.flatMap((data: any) => data),
+    [data]
   );
+
+  const stats = useMemo(() => {
+    if (!memoizedData?.length) return { average: 0, total: 0 };
+    const total = memoizedData.length;
+    const sum = memoizedData.reduce(
+      (acc: number, curr: any) => acc + curr.rating,
+      0
+    );
+    return {
+      average: Number((sum / total).toFixed(1)),
+      total,
+    };
+  }, [memoizedData]);
 
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Reviews" left="back" />,
+          header: () => <CustomHeader title={t("reviews")} left="back" />,
         }}
       />
+      <Loader loading={isLoading || isRefetching} />
       <View style={styles.container}>
+        {memoizedData?.length > 0 && (
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <CustomHeading fontSize={24}>{stats.average}</CustomHeading>
+              <StarRating rating={stats.average} />
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <CustomHeading fontSize={24}>{stats.total}</CustomHeading>
+              <CustomText>{t("totalReviews")}</CustomText>
+            </View>
+          </View>
+        )}
         <FlatList
-          data={reviews}
-          renderItem={renderReview}
+          data={memoizedData}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={!isRefetching && refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Image source={EmptyPlaceholder} style={styles.emptyImage} />
+              <CustomText fontSize={16} fontWeight="bold">
+                {t("noReviewsYet")}
+              </CustomText>
+            </View>
+          )}
         />
       </View>
     </>
@@ -143,8 +195,13 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 10,
+  },
+  profileImageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   profileImage: {
     width: 50,
@@ -167,6 +224,7 @@ const styles = StyleSheet.create({
   ratingSection: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
     marginBottom: 10,
     gap: 5,
   },
@@ -182,6 +240,41 @@ const styles = StyleSheet.create({
   reviewText: {
     fontSize: 14,
     color: "#666",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 50,
+    gap: 10,
+  },
+  emptyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: "#E0E0E0",
+    marginHorizontal: 15,
   },
 });
 

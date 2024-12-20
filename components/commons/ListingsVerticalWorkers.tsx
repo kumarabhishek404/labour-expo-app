@@ -78,8 +78,8 @@ const ListingsVerticalWorkers = ({
               </View>
               <View style={styles.ratingPriceContainer}>
                 <RatingAndReviews
-                  rating={item?.rating || 4.5}
-                  reviews={item?.reviews || 400}
+                  rating={item?.rating?.average}
+                  reviews={item?.rating?.count}
                 />
                 <View style={styles.priceContainer}>
                   <CustomHeading>
@@ -116,8 +116,8 @@ const ListingsVerticalWorkers = ({
           ) : null
         }
         getItemLayout={(data, index) => ({
-          length: 200,
-          offset: 200 * index,
+          length: 100,
+          offset: 100 * index,
           index,
         })}
         initialNumToRender={10}

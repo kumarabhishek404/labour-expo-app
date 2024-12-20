@@ -8,6 +8,8 @@ import {
   fetchMyAppliedServicesMediator,
   fetchMyAppliedServicesWorker,
   fetchMyServices,
+  fetchServicesInWhichSelectedMediator,
+  fetchServicesInWhichSelectedWorker,
 } from "../api/services";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
@@ -24,9 +26,11 @@ import { t } from "@/utils/translationHelper";
 const Services = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
+  const [filteredDataSelected, setFilteredDataSelected]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
-  const [category, setCategory] = useState("Hiring");
+  const [category, setCategory] = useState("HIRING");
+
   const {
     data: response,
     isLoading,
@@ -39,11 +43,37 @@ const Services = () => {
     queryKey: ["myServices", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchMyServices({ pageParam, type: category })
+        ? fetchMyServices({ pageParam, status: category })
         : userDetails?.role === "MEDIATOR"
-          ? fetchMyAppliedServicesMediator({ pageParam })
-          : fetchMyAppliedServicesWorker({ pageParam });
+        ? fetchMyAppliedServicesMediator({ pageParam })
+        : fetchMyAppliedServicesWorker({ pageParam });
     },
+    retry: false,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
+
+  const {
+    data: responseSelected,
+    isLoading: isLoadingSelected,
+    isRefetching: isRefetchingSelected,
+    isFetchingNextPage: isFetchingNextPageSelected,
+    fetchNextPage: fetchNextPageSelected,
+    hasNextPage: hasNextPageSelected,
+    refetch: refetchSelected,
+  } = useInfiniteQuery({
+    queryKey: ["myServicesSelected", category],
+    queryFn: ({ pageParam }) => {
+      return userDetails?.role === "MEDIATOR"
+        ? fetchServicesInWhichSelectedMediator({ pageParam })
+        : fetchServicesInWhichSelectedWorker({ pageParam });
+    },
+    enabled: userDetails?.role === "MEDIATOR" || userDetails?.role === "WORKER",
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -68,11 +98,25 @@ const Services = () => {
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
       setTotalData(totalData);
-      const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page.data || [])
-      );
-      return () => unsubscribe;
-    }, [response])
+
+      if (userDetails?.role === "EMPLOYER") {
+        // For employers, keep existing behavior
+        setFilteredData(
+          response?.pages.flatMap((page: any) => page.data || [])
+        );
+      } else {
+        console.log("response", response?.pages[0]?.data);
+        console.log("responseSelected", responseSelected?.pages[0]?.services);
+        // For mediators and workers, combine both responses
+        const appliedServices =
+          response?.pages?.flatMap((page: any) => page.data || []) || [];
+        const selectedServices =
+          responseSelected?.pages?.flatMap(
+            (page: any) => page.services || []
+          ) || [];
+        setFilteredData([...appliedServices, ...selectedServices]);
+      }
+    }, [response, responseSelected, userDetails?.role])
   );
 
   const loadMore = () => {
@@ -82,7 +126,7 @@ const Services = () => {
   };
 
   const memoizedData = useMemo(
-    () => filteredData?.flatMap((data: any) => data),
+    () => filteredData?.flatMap((data: any) => data) || [],
     [filteredData]
   );
 
@@ -113,7 +157,16 @@ const Services = () => {
       />
 
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
+        <Loader
+          loading={
+            isLoading ||
+            isRefetching ||
+            isLoadingSelected ||
+            isRefetchingSelected ||
+            isFetchingNextPage ||
+            isFetchingNextPageSelected
+          }
+        />
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
@@ -157,6 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
+    marginBottom: 100,
   },
 });
 
