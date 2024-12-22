@@ -27,7 +27,7 @@ const Workers = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
-    userDetails?.role === "EMPLOYER" ? "" : "HIRING"
+    userDetails?.role === "EMPLOYER" ? "" : ""
   );
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({}); // Store applied filters here
@@ -49,10 +49,11 @@ const Workers = () => {
       };
       return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ ...payload, skill: category })
-        : fetchAllServices({ ...payload, status: category });
+        : fetchAllServices({ ...payload, status: "HIRING", skill: category });
     },
     retry: false,
     initialPageParam: 1,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
       // console.log("Last--", lastPage?.pagination);
 
@@ -142,12 +143,10 @@ const Workers = () => {
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
-          {userDetails?.role === "EMPLOYER" && (
-            <CategoryButtons
-              options={WORKERS}
-              onCagtegoryChanged={onCatChanged}
-            />
-          )}
+          <CategoryButtons
+            options={WORKERS}
+            onCagtegoryChanged={onCatChanged}
+          />
 
           <PaginationString
             type="services"

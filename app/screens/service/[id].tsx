@@ -55,6 +55,7 @@ import ProfilePicture from "@/components/commons/ProfilePicture";
 import { fetchAllMembers } from "@/app/api/mediator";
 import { debounce } from "lodash";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -101,6 +102,7 @@ const ServiceDetails = () => {
   const [selectedWorkersIds, setSelectedWorkersIds]: any = useState([]);
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [applicants, setApplicants] = useState<any[]>([]);
+  const { refreshUser, isLoading: isRefreshLoading } = useRefreshUser();
 
   const {
     isLoading,
@@ -263,8 +265,9 @@ const ServiceDetails = () => {
   const mutationApplyService = useMutation({
     mutationKey: ["applyService", { id }],
     mutationFn: () => applyService({ serviceID: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       toast.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
@@ -279,8 +282,9 @@ const ServiceDetails = () => {
   const mutationUnApplyService = useMutation({
     mutationKey: ["unapplyService", { id }],
     mutationFn: () => unApplyService({ serviceID: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       setSelectedWorkersIds([]);
       toast.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
@@ -297,8 +301,9 @@ const ServiceDetails = () => {
     mutationKey: ["mediatorApplyService", { id }],
     mutationFn: () =>
       mediatorApplyService({ serviceId: id, workers: selectedWorkersIds }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       setIsWorkerSelectModal(false);
       toast.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
@@ -311,8 +316,9 @@ const ServiceDetails = () => {
   const mutationMediatorUnApplyService = useMutation({
     mutationKey: ["mediatorUnApplyService", { id }],
     mutationFn: () => mediatorUnApplyService({ serviceId: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       setIsWorkerSelectModal(false);
       toast.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
@@ -325,8 +331,9 @@ const ServiceDetails = () => {
   const mutationCancelServiceByWorkerAfterSelection = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
     mutationFn: () => cancelServiceByWorkerAfterSelection({ serviceId: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       toast.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
@@ -338,8 +345,9 @@ const ServiceDetails = () => {
   const mutationCancelServiceByMediatorAfterSelection = useMutation({
     mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
     mutationFn: () => cancelServiceByMediatorAfterSelection({ serviceId: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       toast.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
@@ -351,13 +359,28 @@ const ServiceDetails = () => {
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
     mutationFn: () => completeService({ serviceID: id }),
-    onSuccess: (response) => {
-      refetch();
+    onSuccess: async (response) => {
+      await refetch();
+      await refreshUser();
       toast.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a service - ", response);
     },
     onError: (err) => {
       console.error("error while completing the service ", err);
+    },
+  });
+
+  const mutationDeleteService = useMutation({
+    mutationKey: ["deleteService", { id }],
+    mutationFn: () => deleteServiceById(id),
+    onSuccess: async (response) => {
+      setModalVisible(false);
+      await refetch();
+      await refreshUser();
+      console.log("Response while deleting a service - ", response);
+    },
+    onError: (err) => {
+      console.error("error while deleting a service ", err);
     },
   });
 
@@ -418,19 +441,6 @@ const ServiceDetails = () => {
     const mediators = appliedMediators?.pages[0]?.data || [];
     setApplicants([...workers, ...mediators]);
   }, [appliedWorkers?.pages, appliedMediators?.pages]);
-
-  const mutationDeleteService = useMutation({
-    mutationKey: ["deleteService", { id }],
-    mutationFn: () => deleteServiceById(id),
-    onSuccess: (response) => {
-      setModalVisible(false);
-      refetch();
-      console.log("Response while deleting a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while deleting a service ", err);
-    },
-  });
 
   const handleDelete = () => {
     mutationDeleteService.mutate();

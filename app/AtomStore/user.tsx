@@ -16,6 +16,12 @@ export const EarningAtom = atomWithStorage<any>("earnings", {}, asyncStorage);
 
 export const SpentAtom = atomWithStorage<any>("spents", {}, asyncStorage);
 
+export const NotificationConsentAtom = atomWithStorage<any>(
+  "notificationConsent",
+  true,
+  asyncStorage
+);
+
 export const LocationAtom = atomWithStorage<any>("location", {}, asyncStorage);
 
 export const AddServiceInProcess = atom<boolean>(false);

@@ -2,10 +2,12 @@ import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
 import { toast } from "../hooks/toast";
 
 export const fetchAllNotifications = async ({ pageParam }: any) => {
-    console.log("Page param ---", pageParam);
-    
+  console.log("Page param ---", pageParam);
+
   try {
-    const data = await makeGetRequest(`/notification/all?page=${pageParam}&limit=10`);
+    const data = await makeGetRequest(
+      `/notification/all?page=${pageParam}&limit=10`
+    );
     return data.data;
   } catch (error: any) {
     console.error(

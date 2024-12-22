@@ -8,6 +8,18 @@ import {
 } from ".";
 import { toast } from "../hooks/toast";
 
+// Helper function for consistent error handling
+const handleServiceError = (error: any, operation: string) => {
+  const errorMessage =
+    error?.response?.data?.message || `Failed to ${operation}`;
+  console.error(`[ServiceAPI] ${operation} failed:`, {
+    error: error?.response?.data || error,
+    operation,
+  });
+  toast.error(errorMessage);
+  throw error;
+};
+
 export const addNewService = async (payload: any) => {
   try {
     const data = await makePostRequestFormData(
@@ -17,14 +29,7 @@ export const addNewService = async (payload: any) => {
     toast.success("Service added successfully");
     return data?.data;
   } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while adding new service : `,
-      error?.response?.data
-    );
-    toast.error(
-      error?.response?.data?.message || "An error occurred while adding service"
-    );
-    throw error;
+    handleServiceError(error, "add new service");
   }
 };
 
@@ -87,22 +92,14 @@ export const deleteServiceById = async (id: any) => {
   }
 };
 
-export const fetchAllServices = async ({ pageParam, status }: any) => {
+export const fetchAllServices = async ({ pageParam, status, skill }: any) => {
   try {
     const data = await makeGetRequest(
-      `/service/all?status=${status}&page=${pageParam}&limit=5`
+      `/service/all?status=${status}&skill=${skill}&page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while fetching services : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching services"
-    );
-    throw error;
+    handleServiceError(error, "fetch services");
   }
 };
 
@@ -130,15 +127,7 @@ export const likeService = async (payload: any) => {
     const data = await makePostRequest("/user/like-service", payload);
     return data.data;
   } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while liking service : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching services"
-    );
-    throw error;
+    handleServiceError(error, "like service");
   }
 };
 
@@ -358,11 +347,7 @@ export const mediatorUnApplyService = async (payload: any) => {
     const data = await makePostRequest("/mediator/cancel-apply", payload);
     return data.data;
   } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while unapplying service by mediator : `,
-      error?.response?.data?.message
-    );
-    throw error;
+    handleServiceError(error, "cancel mediator application");
   }
 };
 
@@ -415,15 +400,7 @@ export const selectWorker = async (payload: any) => {
     const data = await makePostRequest("employer/worker/select", payload);
     return data.data;
   } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while selecting worker : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while selecting worker"
-    );
-    throw error;
+    handleServiceError(error, "select worker");
   }
 };
 

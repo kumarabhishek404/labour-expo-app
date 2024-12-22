@@ -5,8 +5,8 @@ import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { useAtom } from "jotai";
-import { ServiceAtom } from "@/app/AtomStore/user";
+import { useAtom, useAtomValue } from "jotai";
+import { ServiceAtom, UserAtom } from "@/app/AtomStore/user";
 
 interface ServiceInformationProps {
   information: any;
@@ -17,8 +17,6 @@ const ServiceInformation = ({
   information,
   style,
 }: ServiceInformationProps) => {
-  const [serviceDetails, setServiceDetails] = useAtom(ServiceAtom);
-  console.log("serviceDetails--", serviceDetails);
   return (
     <View style={styles?.container}>
       <CustomHeading textAlign="left" style={[style]}>
@@ -36,7 +34,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {serviceDetails?.total || 0}
+              {information?.total || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               style={{ transform: "rotate(90deg)" }}
@@ -50,7 +48,7 @@ const ServiceInformation = ({
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {serviceDetails?.completed || 0}
+              {information?.completed || 0}
             </CustomHeading>
             <Ionicons
               name="checkmark-done-circle-outline"
@@ -75,7 +73,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {serviceDetails?.pending || 0}
+              {information?.pending || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               name="clock-outline"
@@ -88,7 +86,7 @@ const ServiceInformation = ({
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {serviceDetails?.cancelled || 0}
+              {information?.cancelled || 0}
             </CustomHeading>
             <Fontisto name="close" size={24} color={Colors.primary} />
           </View>

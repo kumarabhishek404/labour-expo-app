@@ -70,10 +70,10 @@ const ReviewScreen = () => {
               style={styles.profileImage}
             />
             <View style={styles.userInfo}>
-              <CustomHeading>
+              <CustomHeading style={styles.userName}>
                 {item?.reviewer?.firstName} {item?.reviewer?.lastName}
               </CustomHeading>
-              <CustomText textAlign="left">
+              <CustomText textAlign="left" fontSize={12}>
                 {getTimeAgo(item?.createdAt)}
               </CustomText>
             </View>
@@ -142,7 +142,7 @@ const ReviewScreen = () => {
         <FlatList
           data={memoizedData}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -198,10 +198,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 10,
+    minHeight: 50,
   },
   profileImageContainer: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
+    marginRight: 10,
   },
   profileImage: {
     width: 50,
@@ -211,11 +214,11 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     justifyContent: "center",
+    flex: 1,
   },
   userName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+    width: "100%",
+    textAlign: "left",
   },
   timeAgo: {
     fontSize: 12,
@@ -223,10 +226,11 @@ const styles = StyleSheet.create({
   },
   ratingSection: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
     marginBottom: 10,
     gap: 5,
+    minWidth: 100,
   },
   ratingText: {
     fontSize: 14,

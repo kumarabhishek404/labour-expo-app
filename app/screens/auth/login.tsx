@@ -9,6 +9,7 @@ import Loader from "@/components/commons/Loader";
 import {
   AccountStatusAtom,
   EarningAtom,
+  NotificationConsentAtom,
   ServiceAtom,
   SpentAtom,
   UserAtom,
@@ -29,11 +30,11 @@ const LoginScreen = () => {
   const { t } = useTranslation();
   const setUserDetails = useSetAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
-  const setWorkDetails = useSetAtom(WorkAtom);
-  const setServiceDetails = useSetAtom(ServiceAtom);
-  const setEarnings = useSetAtom(EarningAtom);
-  const setSpents = useSetAtom(SpentAtom);
-
+  // const setWorkDetails = useSetAtom(WorkAtom);
+  // const setServiceDetails = useSetAtom(ServiceAtom);
+  // const setEarnings = useSetAtom(EarningAtom);
+  // const setSpents = useSetAtom(SpentAtom);
+  // const setNotificationConsent = useSetAtom(NotificationConsentAtom);
   const {
     control,
     handleSubmit,
@@ -59,73 +60,10 @@ const LoginScreen = () => {
     mutationFn: (data) => signIn(data),
     onSuccess: async (response) => {
       let user = response?.user;
-      let work = user?.workDetails;
-      let service = user?.serviceDetails;
-      let earnings = user?.earnings;
-      let spents = user?.spent;
-
-      // Set user details in global state
       setUserDetails({
         isAuth: true,
-        _id: user?._id,
-        status: user?.status || "",
-        firstName: user?.firstName,
-        middleName: user?.middleName,
-        lastName: user?.lastName,
-        mobileNumber: user?.mobileNumber,
-        email: user?.email,
-        gender: user?.gender || "",
-        dateOfBirth: user?.dateOfBirth || "",
-        skills: user?.skills,
-        location: user?.location || {},
-        address: user?.address,
-        profilePicture: user?.profilePicture,
-        coverPicture: user?.coverPicture || "",
-        role: user?.role,
-        description: user?.description || "",
         token: response?.token,
-        rating: user?.rating || "",
-        reviews: user?.reviews || {},
-        alternateMobile: user?.alternateMobile || "",
-        alternateEmail: user?.alternateEmail || "",
-        savedAddresses: user?.savedAddresses || [],
-        savedLocation: user?.savedLocation || [],
-        likedServices: user?.likedJobs || [],
-        likedEmployers: user?.likedEmployers || [],
-        likedWorkers: user?.bookmarkedWorkers || [],
-        likedMediators: user?.likedMediators || [],
-        appliedServices: user?.appliedServices || [],
-        likedBy: user?.likedBy || [],
-        bookedBy: user?.bookedBy || [],
-        employedBy: user?.employedBy || null,
-        myServices: user?.myServices || [],
-        myBookings: user?.myBookings || [],
-        booked: user?.booked || [],
-        createdAt: user?.createdAt || "",
-        updatedAt: user?.updatedAt || "",
-      });
-
-      setWorkDetails({
-        total: work?.total,
-        completed: work?.completed,
-        cancelled: work?.cancelled?.byEmployer + work?.cancelled?.byWorker,
-        upcoming: work?.upcoming || 0,
-      });
-
-      setServiceDetails({
-        total: service?.total,
-        completed: service?.completed,
-        cancelled: work?.cancelled?.byEmployer + work?.cancelled?.byWorker,
-      });
-
-      setEarnings({
-        work: earnings?.work,
-        rewards: earnings?.rewards,
-      });
-
-      setSpents({
-        work: spents?.work,
-        tip: spents?.tip,
+        ...user,
       });
 
       toast.success("Logged in successfully!");
@@ -138,12 +76,12 @@ const LoginScreen = () => {
       }
       // Condition to fetch location if location key is empty or has latitude 0
       if (
-        !user?.location?.latitude || 
-        !user?.location?.longitude ||
-        user?.location?.latitude === 0 ||
-        user?.location?.longitude === 0
+        !user?.location ||
+        Object.keys(user?.location).length === 0 ||
+        (!user?.location?.latitude && !user?.location?.longitude)
       ) {
         const locationData = await fetchCurrentLocation();
+        console.log("Location data - ", locationData);
         if (locationData) {
           setUserDetails((prevDetails: any) => ({
             ...prevDetails,
@@ -184,7 +122,7 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <CustomHeading textAlign="left" fontSize={24}>
-            Hello,
+            {t("hello")},
           </CustomHeading>
           <CustomHeading textAlign="left" fontSize={24}>
             {t("welcome")}
@@ -230,20 +168,20 @@ const LoginScreen = () => {
             name="email"
             defaultValue=""
             rules={{
-              required: "Email is required",
+              required: t("emailIsRequired"),
               pattern: {
                 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: "Enter a valid email address",
+                message: t("enterAValidEmailAddress"),
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
-                label="Email"
+                label={t("email")}
                 name="email"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Enter your email"
+                placeholder={t("enterYourEmail")}
                 containerStyle={errors?.email && styles.errorInput}
                 errors={errors}
                 icon={
@@ -262,15 +200,15 @@ const LoginScreen = () => {
             control={control}
             name="password"
             defaultValue=""
-            rules={{ required: "Password is required" }}
+            rules={{ required: t("passwordIsRequired") }}
             render={({ field: { onChange, onBlur, value } }) => (
               <PasswordComponent
-                label="Password"
+                label={t("password")}
                 name="password"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Enter your password"
+                placeholder={t("enterYourPassword")}
                 containerStyle={errors?.password && styles.errorInput}
                 errors={errors}
                 icon={
@@ -291,23 +229,25 @@ const LoginScreen = () => {
               onPress={handleForgotPassword}
             >
               <CustomHeading fontWeight="normal" color={Colors?.link}>
-                Forgot Password?
+                {t("forgotPassword")}
               </CustomHeading>
             </TouchableOpacity>
           </View>
 
           <Button
             isPrimary={true}
-            title="Login"
+            title={t("login")}
             onPress={handleSubmit(onSubmit)}
             style={styles.loginButtonWrapper}
           />
 
           <View style={styles.footerContainer}>
-            <CustomText>Don&#39;t have an account?</CustomText>
+            <CustomText>{t("dontHaveAnAccount")}</CustomText>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
-                <CustomHeading color={Colors?.link}>Sign Up</CustomHeading>
+                <CustomHeading color={Colors?.link}>
+                  {t("signUp")}
+                </CustomHeading>
               </TouchableOpacity>
             </Link>
           </View>

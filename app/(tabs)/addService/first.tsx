@@ -61,17 +61,18 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         name="title"
         defaultValue=""
         rules={{
-          required: "Work title is required",
+          required: t("workTitleIsRequired"),
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <DropdownComponent
+            name="title"
             label={t("workType")}
             value={value}
             setValue={onChange}
-            placeholder="Select State"
+            placeholder={t("selectWorkType")}
             options={WORKTYPES}
-            style={{ marginBottom: 10 }}
-            // containerStyle={errors?.title && styles.errorInput}
+            errors={errors}
+            containerStyle={errors?.title && styles.errorInput}
             icon={
               <Ionicons
                 name={"mail-outline"}
@@ -89,10 +90,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         name="requirements"
         defaultValue=""
         rules={{
-          required: "Requirements is required",
+          required: t("workRequirementsIsRequired"),
           validate: (value) => {
             if (!value || value.length === 0) {
-              return "At least one requirement is needed";
+              return t("atLeastOneRequirementIsNeeded");
             }
 
             for (let i = 0; i < value.length; i++) {
@@ -102,39 +103,43 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                   index: i,
                   name: "dropdown",
                 });
-                return `Requirement #${i + 1}: Select a worker`;
+                return `${t("requirement")} #${i + 1}: ${t("selectAWorker")}`;
               }
               if (!item?.payPerDay) {
                 setErrorField({
                   index: i,
                   name: "price",
                 });
-                return `Requirement #${i + 1}: Pay per day is required`;
+                return `${t("requirement")} #${i + 1}: ${t(
+                  "payPerDayIsRequired"
+                )}`;
               }
               if (isNaN(parseInt(item?.payPerDay))) {
                 setErrorField({
                   index: i,
                   name: "price",
                 });
-                return `Requirement #${i + 1}: Pay per day should be in number`;
+                return `${t("requirement")} #${i + 1}: ${t(
+                  "payPerDayShouldBeInNumber"
+                )}`;
               }
               if (item?.payPerDay === 0 || !item?.payPerDay) {
                 setErrorField({
                   index: i,
                   name: "price",
                 });
-                return `Requirement #${
-                  i + 1
-                }: Pay per day must be greater than 0`;
+                return `${t("requirement")} #${i + 1}: ${t(
+                  "payPerDayMustBeGreaterThan0"
+                )}`;
               }
               if (item?.count === 0 || !item?.count) {
                 setErrorField({
                   index: i,
                   name: "counter",
                 });
-                return `Requirement #${
-                  i + 1
-                }: Total required must be greater than 0`;
+                return `${t("requirement")} #${i + 1}: ${t(
+                  "totalRequiredMustBeGreaterThan0"
+                )}`;
               }
             }
             setErrorField({

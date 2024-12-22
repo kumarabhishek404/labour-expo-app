@@ -55,6 +55,7 @@ const Page = () => {
     },
     initialPageParam: 1,
     retry: false,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -80,6 +81,7 @@ const Page = () => {
     },
     initialPageParam: 1,
     retry: false,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -188,7 +190,7 @@ const Page = () => {
               stylesProp={styles.categoryContainer}
             />
 
-            <View style={{ paddingBottom: 30 }}>
+            <View style={{ paddingBottom: 30, paddingTop: 5 }}>
               {userDetails?.role === "EMPLOYER" ? (
                 <ListingHorizontalWorkers
                   availableInterest={WORKERTYPES}

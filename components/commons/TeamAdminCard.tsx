@@ -32,7 +32,7 @@ const TeamAdminCard = ({ admin }: any) => {
     onSuccess: (response) => {
       setModalVisible(false);
       toast.success(t("leftTeamSuccessfully"));
-      refreshUser(userDetails?._id);
+      refreshUser();
     },
     onError: (error) => {
       setModalVisible(false);

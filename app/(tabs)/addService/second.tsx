@@ -13,7 +13,6 @@ import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 
-
 interface SecondScreenProps {
   setStep: any;
   address: string;
@@ -76,11 +75,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="address"
           defaultValue=""
           rules={{
-            required: "Address is required",
+            required: t("addressIsRequired"),
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <AddLocationAndAddress
-            label={t("address")}
+              label={t("address")}
               name="address"
               address={value}
               setAddress={onChange}
@@ -99,12 +98,12 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="startDate"
           defaultValue={new Date()}
           rules={{
-            required: "Start date is required",
+            required: t("startDateIsRequired"),
             validate: (value) => {
               if (new Date(value) < new Date()) {
-                return "Start date cannot be earlier than today";
+                return t("startDateNotEarlierThanToday");
               } else if (new Date(value) > new Date(watch("endDate"))) {
-                return "Start date cannot be later than End date";
+                return t("startDateNotLaterThanEndDate");
               } else {
                 return true;
               }
@@ -127,12 +126,12 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="endDate"
           defaultValue={new Date()}
           rules={{
-            required: "End date is required",
+            required: t("endDateIsRequired"),
             validate: (value) => {
               if (new Date(value) <= new Date()) {
-                return "End date cannot be earlier than today";
+                return t("endDateNotEarlierThanToday");
               } else if (new Date(value) < new Date(watch("startDate"))) {
-                return "End date cannot be earlier than Start date";
+                return t("endDateNotEarlierThanStartDate");
               } else {
                 return true;
               }

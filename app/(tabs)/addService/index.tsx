@@ -6,8 +6,12 @@ import Loader from "@/components/commons/Loader";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
 import { Feather } from "@expo/vector-icons";
-import { useAtom } from "jotai";
-import { AddServiceAtom, AddServiceInProcess } from "@/app/AtomStore/user";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  AddServiceAtom,
+  AddServiceInProcess,
+  UserAtom,
+} from "@/app/AtomStore/user";
 import SecondScreen from "./second";
 import moment from "moment";
 import ThirdScreen from "./third";
@@ -19,8 +23,11 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
 const SignupScreen = () => {
+  const userDetails = useAtomValue(UserAtom);
+  const { refreshUser } = useRefreshUser();
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
   const [step, setStep] = useState(1);
@@ -57,6 +64,7 @@ const SignupScreen = () => {
     mutationFn: () =>
       addService?._id ? handleEditSubmit(addService?._id) : handleSubmit(),
     onSuccess: () => {
+      refreshUser();
       toast?.success(
         addService?._id
           ? "Service updated successfully!"

@@ -182,11 +182,11 @@ const AddReview = () => {
           name="comment"
           rules={
             {
-              // required: t("feedbackIsRequired"),
-              // minLength: {
-              //   value: 10,
-              //   message: t("feedbackIsRequired"),
-              // },
+              required: t("feedbackIsRequired"),
+              minLength: {
+                value: 10,
+                message: t("feedbackShouldBeAtLeast10Characters"),
+              },
             }
           }
           render={({ field: { onChange, onBlur, value } }) => (
@@ -219,7 +219,7 @@ const AddReview = () => {
               ? mutationAddReview.mutate(reviewData)
               : mutationEditReview.mutate(reviewData)
           )}
-          style={{ marginTop: 20 }}
+          style={{ marginVertical: 20 }}
         />
       </ScrollView>
     </>
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f7fa",
-    padding: 20,
+    paddingHorizontal: 20
   },
   starContainer: {
     flexDirection: "column",

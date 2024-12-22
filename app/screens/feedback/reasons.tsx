@@ -1,53 +1,39 @@
 import CustomText from "@/components/commons/CustomText";
+import { APP_FEEDBACK_REASONS } from "@/constants";
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 interface RoleSelectionProps {
-  role: string;
-  setRole: any;
+  selectedReason: string;
+  setSelectedReason: any;
   onBlur: any;
 }
-const ReasoneSelection = ({ role, setRole, onBlur }: RoleSelectionProps) => {
-  const roles = [
-    {
-      label: "Screen capture feedback",
-      value: "screen_capture",
-    },
-    {
-      label: "In-app customer surveys",
-      value: "in_app_surveys",
-    },
-    {
-      label: "Feedback menu for websites",
-      value: "feedback_menu",
-    },
-    {
-      label: "Collaboration dashboard",
-      value: "collaboration_dashboard",
-    },
-  ];
-
-  const handleSelectRole = (selectedRole: any) => {
-    setRole(selectedRole?.value);
+const ReasoneSelection = ({
+  selectedReason,
+  setSelectedReason,
+  onBlur,
+}: RoleSelectionProps) => {
+  const handleSelectReason = (reason: any) => {
+    setSelectedReason(reason?.value);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.roleContainer}>
-        {roles.map((selectedRole, index) => (
+        {APP_FEEDBACK_REASONS.map((reason, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.roleBox,
-              role === selectedRole.value && styles.selectedRoleBox,
+              selectedReason === reason.value && styles.selectedRoleBox,
             ]}
-            onPress={() => handleSelectRole(selectedRole)}
+            onPress={() => handleSelectReason(reason)}
           >
-            <CustomText fontSize={14}>{selectedRole.label}</CustomText>
+            <CustomText fontSize={14}>{reason.label}</CustomText>
             <View
               style={[
                 styles.radioCircle,
-                role === selectedRole.value && styles.selectedRadio,
+                selectedReason === reason.value && styles.selectedRadio,
               ]}
             />
           </TouchableOpacity>

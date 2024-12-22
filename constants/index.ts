@@ -232,18 +232,18 @@ export const LANGUAGE_KEY = "selectedLanguage";
 
 export const LANGUAGES = [
   { label: "English", value: "en" },
-  { label: "Hindi", value: "hi" },
-  { label: "Gujarati", value: "gu" },
-  { label: "Marathi", value: "mr" },
-  { label: "Bengali", value: "bn" },
-  { label: "Rajasthani", value: "rj" },
-  { label: "Punjabi", value: "pa" },
-  { label: "Tamil", value: "ta" },
-  { label: "Telugu", value: "te" },
-  { label: "Kannada", value: "kn" },
-  { label: "Malayalam", value: "ml" },
-  { label: "Kashmiri", value: "ks" },
-  { label: "Urdu", value: "ur" },
+  { label: "हिंदी", value: "hi" },
+  { label: "ગુજરાતી", value: "gu" },
+  { label: "मराठी", value: "mr" },
+  { label: "বাংলা", value: "bn" },
+  { label: "राजस्थानी", value: "rj" },
+  { label: "ਪੰਜਾਬੀ", value: "pa" },
+  { label: "தமிழ்", value: "ta" },
+  { label: "తెలుగు", value: "te" },
+  { label: "ಕನ್ನಡ", value: "kn" },
+  { label: "മലയാളം", value: "ml" },
+  { label: "कश्मीरी", value: "ks" },
+  { label: "اردو", value: "ur" },
 ];
 
 export const REASONS = [
@@ -267,4 +267,109 @@ export const REASONS = [
     label: "cleanliness",
     value: "cleanliness",
   },
+  {
+    label: "empatheticCommunication",
+    value: "empatheticCommunication",
+  },
+  {
+    label: "punctuality",
+    value: "punctuality",
+  },
+  {
+    label: "qualityOfWork",
+    value: "qualityOfWork",
+  },
+  {
+    label: "cleanliness",
+    value: "cleanliness",
+  },
+  {
+    label: "empatheticCommunication",
+    value: "empatheticCommunication",
+  },
+  {
+    label: "punctuality",
+    value: "punctuality",
+  },
+  {
+    label: "qualityOfWork",
+    value: "qualityOfWork",
+  },
+  {
+    label: "cleanliness",
+    value: "cleanliness",
+  },
+  {
+    label: "empatheticCommunication",
+    value: "empatheticCommunication",
+  },
+  {
+    label: "punctuality",
+    value: "punctuality",
+  },
+  {
+    label: "qualityOfWork",
+    value: "qualityOfWork",
+  },
+  {
+    label: "cleanliness",
+    value: "cleanliness",
+  },
+  {
+    label: "empatheticCommunication",
+    value: "empatheticCommunication",
+  },
+  {
+    label: "punctuality",
+    value: "punctuality",
+  },
+  {
+    label: "qualityOfWork",
+    value: "qualityOfWork",
+  },
+  {
+    label: "cleanliness",
+    value: "cleanliness",
+  },
 ];
+
+export const APP_FEEDBACK_REASONS = [
+  {
+    label: "Bug",
+    value: "BUG",
+  },
+  {
+    label: "Feature request",
+    value: "FEATURE_REQUEST",
+  },
+  {
+    label: "Improvement",
+    value: "IMPROVEMENT",
+  },
+  {
+    label: "General feedback",
+    value: "GENERAL",
+  }, // enum: ["BUG", "FEATURE_REQUEST", "IMPROVEMENT", "GENERAL"],
+];
+
+const obj = {
+  total: 0,
+  applied: 0,
+  selected: 0,
+  cancelledApply: {
+    byMySelf: 0,
+    byEmployer: 0,
+  },
+  cancelledSelection: {
+    byMySelf: 0,
+    byEmployer: 0,
+  },
+  completed: 0,
+};
+
+const obj2 = {
+  total: 0,
+  pending: 0,
+  cancelled: 0,
+  completed: 0,
+};

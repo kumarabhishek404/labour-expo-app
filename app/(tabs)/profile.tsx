@@ -40,6 +40,8 @@ import CustomText from "@/components/commons/CustomText";
 import { useLocale } from "../context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
+import { useRefreshUser } from "../hooks/useRefreshUser";
+import { t } from "@/utils/translationHelper";
 
 const ProfileScreen = () => {
   useLocale();
@@ -53,7 +55,7 @@ const ProfileScreen = () => {
     userDetails?.profilePicture
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
-  
+
   const {
     control,
     handleSubmit,
@@ -66,6 +68,8 @@ const ProfileScreen = () => {
       address: userDetails?.address,
     },
   });
+
+  const { refreshUser, isLoading } = useRefreshUser();
 
   useEffect(() => {
     const backAction = () => {
@@ -298,6 +302,19 @@ const ProfileScreen = () => {
     mutationUpdateProfileInfo?.mutate(payload);
   };
 
+  const handleChangeRole = async () => {
+    router?.push("/screens/profile/changeRole");
+  };
+
+  const handleRefreshUser = async () => {
+    try {
+      await refreshUser();
+    } catch (error) {
+      console.error("Error while refreshing user - ", error);
+      toast.error("Error while refreshing user");
+    }
+  };
+
   return (
     <>
       <StatusBar backgroundColor="transparent" barStyle="dark-content" />
@@ -310,7 +327,9 @@ const ProfileScreen = () => {
 
       <Loader
         loading={
-          mutationUpdateProfileInfo?.isPending || mutationAddSkills?.isPending
+          mutationUpdateProfileInfo?.isPending ||
+          mutationAddSkills?.isPending ||
+          isLoading
         }
       />
       <ScrollView style={styles.container}>
@@ -360,13 +379,22 @@ const ProfileScreen = () => {
             },
           ]}
         >
-          <Button
-            disabled={true}
+          {/* <Button
+            disabled={false}
             style={styles?.mediatorButton}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
             title="Change Role"
-            onPress={() => router?.push("/screens/profile/changeRole")}
+            onPress={handleChangeRole}
+          /> */}
+
+          <Button
+            disabled={false}
+            style={styles?.mediatorButton}
+            textStyle={styles?.mediatorButtonText}
+            isPrimary={true}
+            title={t("refreshUser")}
+            onPress={handleRefreshUser}
           />
           <Button
             style={{
@@ -420,11 +448,11 @@ const ProfileScreen = () => {
           <>
             <WallletInformation
               type="spents"
-              wallet={{ spents }}
+              wallet={userDetails?.spent}
               style={{ marginLeft: 20 }}
             />
             <ServiceInformation
-              information={userDetails}
+              information={userDetails?.serviceDetails}
               style={{ marginLeft: 20 }}
             />
           </>
@@ -439,7 +467,7 @@ const ProfileScreen = () => {
               style={{ marginLeft: 20 }}
             />
             <WorkInformation
-              information={userDetails}
+              information={userDetails?.workDetails}
               style={{ marginLeft: 20 }}
             />
           </>
@@ -494,7 +522,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6ecdd",
   },
   mediatorButton: {
-    width: "48%",
+    width: "auto",
     borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",

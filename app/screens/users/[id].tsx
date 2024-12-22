@@ -37,6 +37,7 @@ import { t } from "@/utils/translationHelper";
 import Button from "@/components/inputs/Button";
 import UserReviews from "@/components/commons/UserReviews";
 import { getUserById } from "@/app/api/user";
+import ServiceInformation from "@/components/commons/ServiceInformation";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -229,9 +230,27 @@ const User = () => {
 
             <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
 
-            <WallletInformation type="earnings" wallet={user} />
+            <WallletInformation
+              type={
+                user?.role === "EMPLOYER"
+                  ? "spents"
+                  : user?.role === "WORKER"
+                  ? "earnings"
+                  : "both"
+              }
+              wallet={user?.wallet}
+            />
 
-            <WorkInformation information={user} />
+            {user?.role === "EMPLOYER" ? (
+              <ServiceInformation information={user?.serviceDetails} />
+            ) : user?.role === "WORKER" ? (
+              <WorkInformation information={user?.workDetails} />
+            ) : (
+              <View style={{ flexDirection: "column", gap: 20 }}>
+                <WorkInformation information={user?.workDetails} />
+                <ServiceInformation information={user?.serviceDetails} />
+              </View>
+            )}
 
             <UserReviews
               ref={reviewsSectionRef}

@@ -124,7 +124,7 @@ export const fetchSentRequests = async ({ pageParam }: any) => {
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching recieved requests"
+        "An error occurred while fetching sent requests"
     );
     throw error;
   }

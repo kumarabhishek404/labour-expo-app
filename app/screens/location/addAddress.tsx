@@ -18,6 +18,7 @@ import ModalComponent from "@/components/commons/Modal";
 import { UserAtom } from "@/app/AtomStore/user";
 import { useAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
+import { t } from "@/utils/translationHelper";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -43,7 +44,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     const address = `${data?.village}, ${data?.post} ${data?.city} ${data?.pinCode} ${data?.state} ${data?.country}`;
 
     if (userDetails?.serviceAddress?.includes(address)) {
-      toast.error("Address already exists");
+      toast.error(t("addressAlreadyExists"));
       return;
     }
 
@@ -58,7 +59,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     });
     reset();
     onClose();
-    toast.success("Address added successfully");
+    toast.success(t("addressAddedSuccessfully"));
   };
 
   const modalContent = () => {
@@ -69,15 +70,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="village"
             rules={{
-              required: "Village is required",
+              required: t("villageIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
                 value={value}
                 style={styles.textInput}
-                placeholder="Village"
+                placeholder={t("village")}
                 onChangeText={onChange}
-                label="Village"
+                label={t("village")}
                 name="village"
                 containerStyle={errors?.village && styles.errorInput}
                 errors={errors}
@@ -97,15 +98,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="post"
             rules={{
-              required: "Post is required",
+              required: t("postIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
                 value={value}
                 style={styles.textInput}
-                placeholder="Post"
+                placeholder={t("post")}
                 onChangeText={onChange}
-                label="Post"
+                label={t("post")}
                 name="post"
                 containerStyle={errors?.post && styles.errorInput}
                 errors={errors}
@@ -125,15 +126,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="city"
             rules={{
-              required: "City is required",
+              required: t("cityIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
                 value={value}
                 style={styles.textInput}
-                placeholder="City"
+                placeholder={t("city")}
                 onChangeText={onChange}
-                label="City"
+                label={t("city")}
                 name="city"
                 containerStyle={errors?.city && styles.errorInput}
                 errors={errors}
@@ -153,16 +154,17 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="pinCode"
             rules={{
-              required: "Pin Code is required",
+              required: t("pinCodeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
                 value={value}
                 style={styles.textInput}
-                placeholder="Pin Code"
+                placeholder={t("pinCode")}
                 onChangeText={onChange}
-                label="Pin Code"
+                label={t("pinCode")}
                 name="pinCode"
+                type="number"
                 containerStyle={errors?.pinCode && styles.errorInput}
                 errors={errors}
                 icon={
@@ -181,14 +183,17 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="state"
             rules={{
-              required: "State is required",
+              required: t("stateIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <DropdownComponent
-                label="State"
+                name="state"
+                label={t("state")}
                 value={value}
                 setValue={onChange}
-                placeholder="Select State"
+                placeholder={t("selectState")}
+                errors={errors}
+                containerStyle={errors?.state && styles.errorInput}
                 options={STETESOFINDIA}
                 icon={
                   <FontAwesome6
@@ -206,15 +211,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             control={control}
             name="country"
             rules={{
-              required: "Country is required",
+              required: t("countryIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
                 value={value}
                 style={styles.textInput}
-                placeholder="Country"
+                placeholder={t("country")}
                 onChangeText={onChange}
-                label="Country"
+                label={t("country")}
                 name="country"
                 containerStyle={errors?.country && styles.errorInput}
                 errors={errors}
@@ -229,87 +234,6 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               />
             )}
           />
-
-          {/* <TextInputComponent
-            value={post}
-            style={styles.textInput}
-            placeholder="Post"
-            onChangeText={setPost}
-            label="Post"
-            name="post"
-            icon={
-              <MaterialIcons
-                name="local-post-office"
-                style={styles.icon}
-                size={28}
-                color={Colors.secondary}
-              />
-            }
-          />
-          <TextInputComponent
-            value={city}
-            style={styles.textInput}
-            placeholder="City"
-            onChangeText={setCity}
-            label="City"
-            name="city"
-            icon={
-              <FontAwesome5
-                name="city"
-                style={styles.icon}
-                size={20}
-                color={Colors.secondary}
-              />
-            }
-          />
-          <TextInputComponent
-            value={pinCode}
-            style={styles.textInput}
-            placeholder="Pin Code"
-            onChangeText={setPinCode}
-            label="Pin Code"
-            name="pinCode"
-            icon={
-              <Feather
-                name="map-pin"
-                style={styles.icon}
-                size={22}
-                color={Colors.secondary}
-              />
-            }
-          />
-
-          <DropdownComponent
-            label="State"
-            value={state}
-            setValue={(state: any) => setState(state)}
-            placeholder="Select State"
-            options={STETESOFINDIA}
-            icon={
-              <FontAwesome6
-                style={styles.icon}
-                color="black"
-                name="map-location"
-                size={20}
-              />
-            }
-          />
-          <TextInputComponent
-            value={country}
-            style={styles.textInput}
-            placeholder="Country"
-            onChangeText={() => {}}
-            label="Country"
-            name="country"
-            icon={
-              <FontAwesome
-                name="flag"
-                style={styles.icon}
-                size={22}
-                color={Colors.secondary}
-              />
-            }
-          /> */}
         </View>
       </ScrollView>
     );
@@ -319,7 +243,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     <ModalComponent
       visible={visible}
       onClose={onClose}
-      title="Add Address"
+      title={t("addAddress")}
       content={modalContent}
       primaryButton={{
         action: handleSubmit(onSubmit),

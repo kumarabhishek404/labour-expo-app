@@ -12,15 +12,22 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
-import { useAtom, useSetAtom } from "jotai";
-import { AccountStatusAtom, UserAtom } from "@/app/AtomStore/user";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  AccountStatusAtom,
+  NotificationConsentAtom,
+  UserAtom,
+} from "@/app/AtomStore/user";
 import ModalComponent from "./Modal";
 import Loader from "./Loader";
 import { toast } from "@/app/hooks/toast";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { registerForPushNotificationsAsync } from "@/app/hooks/usePushNotification";
+import {
+  registerForPushNotificationsAsync,
+  unregisterPushNotifications,
+} from "@/app/hooks/usePushNotification";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileMenu = ({ disabled }: any) => {
@@ -30,7 +37,11 @@ const ProfileMenu = ({ disabled }: any) => {
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [notificationConsent, setNotificationConsent] = useAtom(
+    NotificationConsentAtom
+  );
 
+  console.log("notificationConsent - ", notificationConsent);
   const handleLogout = () => {
     setUserDetails({
       isAuth: false,
@@ -70,37 +81,34 @@ const ProfileMenu = ({ disabled }: any) => {
     }, 3000);
   };
 
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
+  // useEffect(() => {
+  //   // Load notification preference from local storage
+  //   const loadPreference = async () => {
+  //     const savedPreference = await AsyncStorage.getItem(
+  //       "notificationsEnabled"
+  //     );
+  //     setNotificationConsent(savedPreference === "true");
+  //   };
+  //   loadPreference();
+  // }, []);
 
-  useEffect(() => {
-    // Load notification preference from local storage
-    const loadPreference = async () => {
-      const savedPreference = await AsyncStorage.getItem(
-        "notificationsEnabled"
-      );
-      setIsNotificationsEnabled(savedPreference === "true");
-    };
-    loadPreference();
-  }, []);
+  const registerNotification = async () => {
+    try {
+      await registerForPushNotificationsAsync();
+      setNotificationConsent(true);
+      console.log("Notifications enabled");
+    } catch (err) {
+      console.error("Failed to enable notifications", err);
+    }
+  };
 
-  const toggleSwitch = async () => {
-    const newValue = !isNotificationsEnabled;
-    setIsNotificationsEnabled(newValue);
-    await AsyncStorage.setItem("notificationsEnabled", newValue.toString());
-
-    if (newValue) {
-      // Enable notifications
-      try {
-        await registerForPushNotificationsAsync();
-        console.log("Notifications enabled");
-      } catch (err) {
-        console.error("Failed to enable notifications", err);
-        setIsNotificationsEnabled(false); // Reset switch if registration fails
-        await AsyncStorage.setItem("notificationsEnabled", "false");
-      }
-    } else {
-      // Disable notifications (Optional: Add logic to remove device registration if needed)
+  const unregisterNotification = async () => {
+    try {
+      await unregisterPushNotifications();
       console.log("Notifications disabled");
+      setNotificationConsent(false);
+    } catch (err) {
+      console.error("Failed to disable notifications", err);
     }
   };
 
@@ -248,9 +256,7 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: isNotificationsEnabled
-        ? t("notificationOn")
-        : t("notificationOff"),
+      title: notificationConsent ? t("notificationOn") : t("notificationOff"),
       icon: (
         <MaterialIcons
           name="notifications-none"
@@ -259,8 +265,10 @@ const ProfileMenu = ({ disabled }: any) => {
         />
       ),
       switch: true,
-      switchValue: isNotificationsEnabled,
-      onSwitchToggle: toggleSwitch,
+      switchValue: notificationConsent,
+      onSwitchToggle: notificationConsent
+        ? unregisterNotification
+        : registerNotification,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },

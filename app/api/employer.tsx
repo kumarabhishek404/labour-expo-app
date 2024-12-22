@@ -40,7 +40,7 @@ export const fetchAllEmployers = async ({ pageParam }: any) => {
 export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/user/all-liked/EMPLOYER?page=${pageParam}&limit=5`
+      `/user/all-liked?role=EMPLOYER&page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -75,9 +75,7 @@ export const likeEmployer = async (payload: any) => {
 
 export const unlikeEmployer = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(
-      `/employer/remove-liked/${payload?.employerID}`
-    );
+    const data = await makeDeleteRequest(`/user/unlike/${payload?.employerID}`);
     return data.data;
   } catch (error: any) {
     console.error(

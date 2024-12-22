@@ -86,7 +86,7 @@ const Requests = () => {
     mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
-      refreshUser(userDetails?._id);
+      refreshUser();
       toast.success(t("requestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },

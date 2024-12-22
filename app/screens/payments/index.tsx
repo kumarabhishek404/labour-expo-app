@@ -29,7 +29,7 @@ interface PaymentMethod {
 }
 
 interface Transaction {
-  id: string;
+  _id: string;
   description: string;
   date: string;
 }
@@ -79,12 +79,12 @@ const PaymentMethodsScreen = () => {
   ]);
 
   const transactionHistory: Transaction[] = [
-    { id: "1", description: "Paid $50 via Mastercard", date: "09/01/2024" },
-    { id: "2", description: "Paid $75 via UPI", date: "08/28/2024" },
-    { id: "3", description: "Paid $100 in Cash", date: "08/15/2024" },
-    { id: "4", description: "Paid $100 in Cash", date: "08/15/2024" },
-    { id: "5", description: "Paid $100 in Cash", date: "08/15/2024" },
-    { id: "6", description: "Paid $100 in Cash", date: "08/15/2024" },
+    { _id: "1", description: "Paid $50 via Mastercard", date: "09/01/2024" },
+    { _id: "2", description: "Paid $75 via UPI", date: "08/28/2024" },
+    { _id: "3", description: "Paid $100 in Cash", date: "08/15/2024" },
+    { _id: "4", description: "Paid $100 in Cash", date: "08/15/2024" },
+    { _id: "5", description: "Paid $100 in Cash", date: "08/15/2024" },
+    { _id: "6", description: "Paid $100 in Cash", date: "08/15/2024" },
   ];
 
   //   const selectPaymentMethod = (type: string) => {
@@ -174,7 +174,7 @@ const PaymentMethodsScreen = () => {
           scrollEnabled={false}
           data={transactionHistory}
           renderItem={renderTransaction}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
         />
       </ScrollView>
     </>

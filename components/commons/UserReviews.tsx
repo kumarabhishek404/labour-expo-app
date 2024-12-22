@@ -23,7 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import Loader from "./Loader";
 
 type Review = {
-  id: string;
+  _id: string;
   userId: string;
   name: string;
   date: string;
@@ -170,9 +170,11 @@ const UserReviews = forwardRef(
         />
         <View style={styles.textContainer}>
           <View style={styles.headerContainer}>
-            <Text style={styles.name}>
-              {item?.reviewer?.firstName} {item?.reviewer?.lastName}
-            </Text>
+            <View style={styles.nameContainer}>
+              <Text style={styles.name} numberOfLines={2}>
+                {item?.reviewer?.firstName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName}
+              </Text>
+            </View>
             {item?.reviewer?._id === userDetails?._id && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity
@@ -271,7 +273,7 @@ const UserReviews = forwardRef(
         <FlatList
           scrollEnabled={false}
           data={paginatedReviews}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           renderItem={renderReview}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={EmptyListComponent}
@@ -353,6 +355,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "bold",
+    flexWrap: "wrap",
   },
   date: {
     fontSize: 12,
@@ -380,13 +383,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  nameContainer: {
+    flex: 1,
+    marginRight: 8,
   },
   actionButtons: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
+    flexShrink: 0,
   },
   actionButton: {
     paddingHorizontal: 12,

@@ -113,10 +113,9 @@ export const likeMediator = async (payload: any) => {
 };
 
 export const unlikeMediator = async ({ mediatorID }: any) => {
+  console.log("Payload---", mediatorID);
   try {
-    const data = await makeDeleteRequest(
-      `/mediator/remove-liked/${mediatorID}`
-    );
+    const data = await makeDeleteRequest(`/user/unlike/${mediatorID}`);
     return data.data;
   } catch (error: any) {
     console.error(

@@ -121,7 +121,7 @@ const WorkRequirment = ({
                     label=""
                     name="payPerDay"
                     value={requirement?.payPerDay.toString()}
-                    placeholder="Rate per day"
+                    placeholder={t("ratePerDay")}
                     type="numeric"
                     maxLength={4}
                     onChangeText={(payPerDay: string) => {

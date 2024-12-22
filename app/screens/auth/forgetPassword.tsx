@@ -17,6 +17,7 @@ import PasswordComponent from "@/components/inputs/Password";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
+import { t } from "@/utils/translationHelper";
 
 const ForgetPasswordScreen = () => {
   const {
@@ -101,13 +102,13 @@ const ForgetPasswordScreen = () => {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <CustomHeading textAlign="left" fontSize={24}>
-            Hey,
+            {t("hey")}
           </CustomHeading>
           <CustomHeading textAlign="left" fontSize={24}>
-            Reset Your
+            {t("resetYour")}
           </CustomHeading>
           <CustomHeading textAlign="left" fontSize={24}>
-            Password
+            {t("password")}
           </CustomHeading>
         </View>
         <View>
@@ -117,16 +118,16 @@ const ForgetPasswordScreen = () => {
                 control={control}
                 name="resetToken"
                 defaultValue=""
-                rules={{ required: "Reset code is required" }}
+                rules={{ required: t("resetCodeIsRequired") }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputComponent
-                    label="Reset Password Code"
+                    label={t("resetPasswordCode")}
                     name="resetToken"
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     style={{ marginBottom: 15 }}
-                    placeholder="Enter your reset password code"
+                    placeholder={t("enterYourResetPasswordCode")}
                     containerStyle={errors?.resetToken && styles.errorInput}
                     errors={errors}
                     icon={
@@ -146,18 +147,17 @@ const ForgetPasswordScreen = () => {
                 name="password"
                 defaultValue=""
                 rules={{
-                  required: "Password is required",
+                  required: t("passwordIsRequired"),
                   pattern: {
                     value:
                       /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    message:
-                      "You have to full fill all the following conditions",
+                    message: t("youHaveToFullFillAllTheFollowingConditions"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
                     <PasswordComponent
-                      label="Password"
+                      label={t("password")}
                       name="password"
                       value={value}
                       onBlur={onBlur}
@@ -165,7 +165,7 @@ const ForgetPasswordScreen = () => {
                         onChange(text);
                         checkPasswordConditions(text);
                       }}
-                      placeholder="Enter your password"
+                      placeholder={t("enterYourPassword")}
                       containerStyle={errors?.password && styles.errorInput}
                       errors={errors}
                       icon={
@@ -190,7 +190,7 @@ const ForgetPasswordScreen = () => {
                         ) : (
                           <Entypo name="cross" size={16} />
                         )}{" "}
-                        Use at least one number (0-9)
+                        {t("useAtLeastOneNumber")}
                       </CustomText>
                       <CustomText
                         textAlign="left"
@@ -205,7 +205,7 @@ const ForgetPasswordScreen = () => {
                         ) : (
                           <Entypo name="cross" size={16} />
                         )}{" "}
-                        Use at least one lower-case letter (a-z)
+                        {t("useAtLeastOneLowerCaseLetter")}
                       </CustomText>
                       <CustomText
                         textAlign="left"
@@ -219,7 +219,7 @@ const ForgetPasswordScreen = () => {
                         ) : (
                           <Entypo name="cross" size={16} />
                         )}{" "}
-                        Use at least one symbol (e.g., !@#$%^&*)
+                        {t("useAtLeastOneSymbol")}
                       </CustomText>
                       <CustomText
                         textAlign="left"
@@ -234,7 +234,7 @@ const ForgetPasswordScreen = () => {
                         ) : (
                           <Entypo name="cross" size={16} />
                         )}{" "}
-                        Be at least 8 characters long
+                        {t("beAtLeast8CharactersLong")}
                       </CustomText>
                     </View>
                   </>
@@ -245,18 +245,18 @@ const ForgetPasswordScreen = () => {
                 name="confirmPassword"
                 defaultValue=""
                 rules={{
-                  required: "Please confirm your password",
+                  required: t("pleaseConfirmYourPassword"),
                   validate: (value) =>
-                    value == watch("password") || "Passwords do not match",
+                    value == watch("password") || t("passwordsDoNotMatch"),
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <PasswordComponent
-                    label="Confirm Password"
+                    label={t("confirmPassword")}
                     name="confirmPassword"
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="Re Enter your password"
+                    placeholder={t("reEnterYourPassword")}
                     containerStyle={
                       errors?.confirmPassword && styles.errorInput
                     }
@@ -279,20 +279,20 @@ const ForgetPasswordScreen = () => {
               name="email"
               defaultValue=""
               rules={{
-                required: "Email is required",
+                required: t("emailIsRequired"),
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                  message: "Enter a valid email address",
+                  message: t("enterAValidEmailAddress"),
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInputComponent
-                  label="Email"
+                  label={t("email")}
                   name="email"
                   value={value}
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder="Enter your email"
+                  placeholder={t("enterYourEmail")}
                   containerStyle={errors?.email && styles.errorInput}
                   errors={errors}
                   icon={
@@ -311,18 +311,18 @@ const ForgetPasswordScreen = () => {
           <Button
             isPrimary={true}
             title={
-              isResetCodeSent ? "Set New Passwords" : "Reset Password Link"
+              isResetCodeSent ? t("setNewPasswords") : t("resetPasswordLink")
             }
             style={styles.forgetButtonWrapper}
             onPress={handleSubmit(onSubmit)}
           />
 
           <View style={styles.footerContainer}>
-            <CustomText>If you knew your password?</CustomText>
+            <CustomText>{t("ifYouKnewYourPassword")}</CustomText>
             <TouchableOpacity
               onPress={() => router.push("/screens/auth/login")}
             >
-              <CustomHeading color={Colors?.link}>Sign In</CustomHeading>
+              <CustomHeading color={Colors?.link}>{t("signIn")}</CustomHeading>
             </TouchableOpacity>
           </View>
         </View>

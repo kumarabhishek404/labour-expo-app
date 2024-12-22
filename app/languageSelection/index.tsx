@@ -9,6 +9,7 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { useLocale } from "../context/locale";
+import { t } from "@/utils/translationHelper";
 
 const LanguageSelectionScreen = () => {
     const { locale, setLocale } = useLocale();
@@ -25,7 +26,7 @@ const LanguageSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <CustomHeading fontSize={20}>Your preferred language is?</CustomHeading>
+      <CustomHeading fontSize={20}>कृपया अपनी भाषा चुनें</CustomHeading>
       <View style={styles.languageList}>
         {LANGUAGES.map((language) => (
           <TouchableOpacity
@@ -49,7 +50,7 @@ const LanguageSelectionScreen = () => {
         ))}
       </View>
       <View style={styles.saveButton}>
-        <Button isPrimary={true} title="Save" onPress={handleSave} />
+        <Button isPrimary={true} title="सहेजें" onPress={handleSave} />
       </View>
     </View>
   );

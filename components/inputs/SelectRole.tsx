@@ -13,19 +13,19 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
     {
       id: "WORKER",
       title: t("worker"),
-      description: "Find work of your skills and EARN.",
+      description: t("workerDescription"),
       price: "$0.00",
     },
     {
       id: "MEDIATOR",
       title: t("mediator"),
-      description: "Make group of workers and EARN.",
+      description: t("mediatorDescription"),
       price: "$10.00",
     },
     {
       id: "EMPLOYER",
       title: t("employer"),
-      description: "Hire workers to COMPLETE your Tasks.",
+      description: t("employerDescription"),
       price: "$20.00",
     },
   ];

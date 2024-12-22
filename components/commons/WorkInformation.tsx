@@ -28,7 +28,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.workDetails?.total || 0}
+              {information?.total || 0}
             </CustomHeading>
           </View>
           <CustomText fontSize={14}>{t("totalTasks")}</CustomText>
@@ -36,7 +36,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.workDetails?.completed || 0}
+              {information?.completed || 0}
             </CustomHeading>
           </View>
           <CustomText fontSize={14}>{t("completed")}</CustomText>
@@ -54,7 +54,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.workDetails?.pending || 0}
+              {information?.pending || 0}
             </CustomHeading>
           </View>
           <CustomText fontSize={14}>{t("pending")}</CustomText>
@@ -62,7 +62,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading fontSize={26}>
-              {information?.workDetails?.cancelled?.byWorker || 0}
+              {information?.cancelled || 0}
             </CustomHeading>
           </View>
           <CustomText fontSize={14}>{t("cancelled")}</CustomText>

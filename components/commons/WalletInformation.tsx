@@ -18,63 +18,64 @@ const WallletInformation = ({
 }: WallletInformationProps) => {
   const { t } = useTranslation();
 
+  const renderSpentsSection = () => (
+    <View style={styles.infoBoxWrapper}>
+      <View
+        style={[
+          styles.infoBox,
+          {
+            borderRightColor: "#dddddd",
+            borderRightWidth: 1,
+          },
+        ]}
+      >
+        <CustomHeading fontSize={20}>₹ {wallet?.work || 0}</CustomHeading>
+        <CustomText fontSize={14}>{t("spents")}</CustomText>
+      </View>
+      <View style={styles.infoBox}>
+        <CustomHeading fontSize={20}>₹ {wallet?.tip || 0}</CustomHeading>
+        <CustomText fontSize={14}>{t("tip")}</CustomText>
+      </View>
+    </View>
+  );
+
+  const renderEarningsSection = () => (
+    <View style={styles.infoBoxWrapper}>
+      <View
+        style={[
+          styles.infoBox,
+          {
+            borderRightColor: "#dddddd",
+            borderRightWidth: 1,
+          },
+        ]}
+      >
+        <CustomHeading fontSize={20}>₹ {wallet?.work || 0}</CustomHeading>
+        <CustomText fontSize={14}>{t("earnings")}</CustomText>
+      </View>
+      <View style={styles.infoBox}>
+        <CustomHeading fontSize={20}>₹ {wallet?.rewards || 0}</CustomHeading>
+        <CustomText fontSize={14}>{t("rewards")}</CustomText>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles?.container}>
-      {type === "spents" ? (
+      {(type === "spents" || type === "both") && (
         <>
           <CustomHeading textAlign="left" style={[style]}>
-            {t("wallet")}
+            {t("spents")}
           </CustomHeading>
-          <View style={styles.infoBoxWrapper}>
-            <View
-              style={[
-                styles.infoBox,
-                {
-                  borderRightColor: "#dddddd",
-                  borderRightWidth: 1,
-                },
-              ]}
-            >
-              <CustomHeading fontSize={20}>
-                ₹ {wallet?.spents?.work}
-              </CustomHeading>
-              <CustomText fontSize={14}>{t("spents")}</CustomText>
-            </View>
-            <View style={styles.infoBox}>
-              <CustomHeading fontSize={20}>
-                ₹ {wallet?.spents?.tip}
-              </CustomHeading>
-              <CustomText fontSize={14}>{t("tip")}</CustomText>
-            </View>
-          </View>
+          {renderSpentsSection()}
         </>
-      ) : (
+      )}
+      {(type === "earnings" || type === "both") && (
         <>
           <CustomHeading textAlign="left" style={[style]}>
-            {t("wallet")}
+            {t("earnings")}
           </CustomHeading>
-          <View style={styles.infoBoxWrapper}>
-            <View
-              style={[
-                styles.infoBox,
-                {
-                  borderRightColor: "#dddddd",
-                  borderRightWidth: 1,
-                },
-              ]}
-            >
-              <CustomHeading fontSize={20}>
-                ₹ {wallet?.earnings?.work}
-              </CustomHeading>
-              <CustomText fontSize={14}>{t("earnings")}</CustomText>
-            </View>
-            <View style={styles.infoBox}>
-              <CustomHeading fontSize={20}>
-                ₹ {wallet?.earnings?.rewards}
-              </CustomHeading>
-              <CustomText fontSize={14}>{t("rewards")}</CustomText>
-            </View>
-          </View>
+          {renderEarningsSection()}
         </>
       )}
     </View>

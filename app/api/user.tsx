@@ -197,10 +197,26 @@ export const registerDevice = async (payload: any) => {
   }
 };
 
-
 export const getUserById = async (id: any) => {
   try {
     const { data } = await makeGetRequest(`/user/detail/${id}`);
+    return data;
+  } catch (error: any) {
+    console.error(
+      `[Users] [userService] An error occurred while fetching user details : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while getting user details"
+    );
+    throw error;
+  }
+};
+
+export const getUserInfo = async () => {
+  try {
+    const { data } = await makeGetRequest(`/user/info`);
     return data;
   } catch (error: any) {
     console.error(
@@ -227,8 +243,7 @@ export const fetchAllUsers = async ({ pageParam, role }: any) => {
       error?.response?.data?.message
     );
     toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching users"
+      error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;
   }
@@ -248,6 +263,24 @@ export const fetchAllLikedUsers = async ({ pageParam, role }: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while fetching liked users"
+    );
+    throw error;
+  }
+};
+
+export const addAppFeedback = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/feedback/submit", payload);
+    toast.success("Feedback submitted successfully");
+    return data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while adding app feedback : `,
+      error?.response?.data?.data?.errors
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while adding app feedback"
     );
     throw error;
   }

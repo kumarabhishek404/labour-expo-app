@@ -5,6 +5,7 @@ import { Modal, View, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import CustomHeading from "./CustomHeading";
 import Button from "../inputs/Button";
+import { t } from "@/utils/translationHelper";
 
 const ModalComponent = ({
   title,
@@ -29,7 +30,7 @@ const ModalComponent = ({
             style={styles.header}
           >
             <CustomHeading fontSize={18} color={Colors?.white} textAlign="left">
-              {title ? title : "Edit Profile"}
+              {title ? title : t("title")}
             </CustomHeading>
             <TouchableOpacity onPress={onClose} style={styles.headerButton}>
               <Entypo name="cross" size={28} color="#FFF" />
@@ -44,7 +45,7 @@ const ModalComponent = ({
           <View style={styles.footer}>
             <Button
               isPrimary={false}
-              title={secondaryButton?.title ? secondaryButton?.title : "Cancel"}
+              title={secondaryButton?.title ? secondaryButton?.title : t("cancel")}
               onPress={secondaryButton?.action}
             />
             <LinearGradient
@@ -58,7 +59,7 @@ const ModalComponent = ({
               <Button
                 isPrimary={true}
                 disabled={primaryButton?.disabled}
-                title={primaryButton?.title ? primaryButton?.title : "Save"}
+                title={primaryButton?.title ? primaryButton?.title : t("save")}
                 onPress={primaryButton?.action}
                 style={{
                   backgroundColor: "transparent",

@@ -6,25 +6,32 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomHeader from "../commons/Header";
 import CustomHeading from "../commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
+import CustomText from "../commons/CustomText";
 
 interface DropdownComponentProps {
+  name?: any;
   label?: string;
   value: any;
   setValue: any;
   placeholder?: string;
   options: any;
+  errors?: any;
   icon: any;
   style?: any;
+  containerStyle?: any;
 }
 
 const DropdownComponent = ({
+  name,
   label,
   value,
   setValue,
   placeholder,
+  errors,
   options,
   icon,
   style,
+  containerStyle,
 }: DropdownComponentProps) => {
   const translatedOptions = options.map((option: any) => ({
     ...option,
@@ -32,10 +39,10 @@ const DropdownComponent = ({
   }));
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <Dropdown
-        style={[styles.dropdown, style]}
+        style={[styles.dropdown, style, containerStyle]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -45,12 +52,10 @@ const DropdownComponent = ({
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={placeholder || "Select item"}
-        searchPlaceholder="Search..."
+        placeholder={placeholder || t("selectItem")}
+        searchPlaceholder={t("search")}
         value={value}
         onChange={(item: any) => {
-          console.log("Item--", item);
-
           setValue(item.value);
         }}
         renderLeftIcon={() => (
@@ -72,6 +77,11 @@ const DropdownComponent = ({
           </View>
         )}
       />
+      {errors?.[name] && (
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {errors[name]?.message || ""}
+        </CustomText>
+      )}
     </View>
   );
 };

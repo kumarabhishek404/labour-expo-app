@@ -5,6 +5,8 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { registerDevice } from "../api/user";
 import { toast } from "./toast";
+import { useSetAtom } from "jotai";
+import { NotificationConsentAtom } from "../AtomStore/user";
 
 export async function registerForPushNotificationsAsync() {
   // Configure Android notification settings
@@ -49,7 +51,9 @@ export async function registerForPushNotificationsAsync() {
       ).data;
       console.log("push token - ", pushTokenString);
       try {
-        await registerDevice({ pushToken: pushTokenString });
+        await registerDevice({
+          pushToken: pushTokenString,
+        });
       } catch (err) {
         console.log("An error occurred while registering user device", err);
       }
@@ -60,5 +64,32 @@ export async function registerForPushNotificationsAsync() {
     }
   } else {
     handleRegistrationError("Must use physical device for push notifications");
+  }
+}
+
+export async function unregisterPushNotifications() {
+  try {
+    // Remove all scheduled notifications
+    await Notifications.cancelAllScheduledNotificationsAsync();
+
+    // Remove permission for notifications
+    if (Platform.OS === "ios") {
+      // On iOS, we can only prompt to go to settings since permissions can't be programmatically revoked
+      return false;
+    } else {
+      // On Android, we can directly disable the notifications
+      await Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: false,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+        }),
+      });
+      return true;
+    }
+  } catch (error) {
+    toast?.error("Failed to disable notifications");
+    console.error("Error disabling notifications:", error);
+    return false;
   }
 }
