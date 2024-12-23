@@ -20,6 +20,8 @@ import Loader from "@/components/commons/Loader";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
 import EmptyPlaceholder from "@/assets/empty-placeholder.png";
+import PlaceholderPerson from "@/assets/images/placeholder-person.jpg";
+import ProfilePicture from "@/components/commons/ProfilePicture";
 
 const StarRating = ({ rating }: any) => {
   const fullStars = Math.floor(rating);
@@ -65,8 +67,8 @@ const ReviewScreen = () => {
       <View key={item?._id} style={styles.reviewCard}>
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
-            <Image
-              source={{ uri: item?.reviewer?.profilePicture }}
+            <ProfilePicture
+              uri={item?.reviewer?.profilePicture}
               style={styles.profileImage}
             />
             <View style={styles.userInfo}>
@@ -226,10 +228,9 @@ const styles = StyleSheet.create({
   },
   ratingSection: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginBottom: 10,
-    gap: 5,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 6,
     minWidth: 100,
   },
   ratingText: {

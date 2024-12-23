@@ -12,6 +12,8 @@ import { useMutation } from "@tanstack/react-query";
 import FifthScreen from "./fifth";
 import moment from "moment";
 import CustomHeading from "@/components/commons/CustomHeading";
+import { toast } from "@/app/hooks/toast";
+import { t } from "@/utils/translationHelper";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
@@ -76,7 +78,17 @@ const SignupScreen = () => {
           longitude: location.longitude,
         }
       : {};
-
+    if (
+      !firstName ||
+      !lastName ||
+      !address ||
+      !phoneNumber ||
+      !email ||
+      !profilePicture
+    ) {
+      toast.error(t("pleaseFillAllFields"));
+      return;
+    }
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("address", address);

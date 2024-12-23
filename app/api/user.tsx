@@ -10,6 +10,7 @@ import {
 } from ".";
 import { toast } from "../hooks/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { t } from "@/utils/translationHelper";
 
 export const register = async (payload: any) => {
   try {
@@ -95,7 +96,7 @@ export const signIn = async (payload: any) => {
 export const updateUserById = async (payload: any) => {
   try {
     const response = await makePatchRequest(`/user/info`, payload);
-    toast.success("User updated successfully");
+    toast.success(t("profileUpdatedSuccessfully"));
     return response;
   } catch (error: any) {
     console.error(

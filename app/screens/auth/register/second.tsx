@@ -76,7 +76,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="address"
           defaultValue=""
           rules={{
-            required: "Address is required",
+            required: t("addressIsRequired"),
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <AddLocationAndAddress
@@ -99,10 +99,10 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="phoneNumber"
           defaultValue=""
           rules={{
-            required: "Mobile number is required",
+            required: t("mobileNumberIsRequired"),
             pattern: {
               value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
-              message: "Enter a valid mobile number",
+              message: t("enterAValidMobileNumber"),
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -115,7 +115,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               setPhoneNumber={onChange}
               onBlur={onBlur}
               errors={errors}
-              placeholder="Enter mobile number"
+              placeholder={t("enterYourMobileNumber")}
               icon={
                 <Feather
                   name={"phone"}
@@ -133,10 +133,10 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           name="email"
           defaultValue=""
           rules={{
-            required: "Email address is required",
+            required: t("emailAddressIsRequired"),
             pattern: {
               value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "Enter a valid email address",
+              message: t("enterAValidEmailAddress"),
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -146,7 +146,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               setEmail={onChange}
               onBlur={onBlur}
               errors={errors}
-              placeholder="Enter email address"
+              placeholder={t("enterYourEmailAddress")}
               icon={
                 <Ionicons
                   name={"mail-outline"}
@@ -160,10 +160,14 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         />
       </View>
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title="Back" onPress={() => setStep(1)} />
+        <Button
+          isPrimary={false}
+          title={t("back")}
+          onPress={() => setStep(1)}
+        />
         <Button
           isPrimary={true}
-          title="Save and Next"
+          title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
         />
       </View>

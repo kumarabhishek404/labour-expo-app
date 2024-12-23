@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -28,27 +24,31 @@ const MultiSelectDropdownComponent = ({
     setValue(value?.filter((i: { value: any }) => i.value !== item.value));
   };
 
-  const availableOptions = options.filter(
-    (option: any) =>
-      !value?.some((item: { value: any }) => item.value === option.value)
-  ).map((option: any) => ({
-    ...option,
-    label: t(option.label)
-  }));
+  const availableOptions = options
+    .filter(
+      (option: any) =>
+        !value?.some((item: { value: any }) => item.value === option.value)
+    )
+    .map((option: any) => ({
+      ...option,
+      label: t(option.label),
+    }));
 
   return (
     <View style={styles.container}>
       <View style={styles.selectedContainer}>
         <View style={{ flexDirection: "column", gap: 4 }}>
-          <CustomHeading textAlign="left">
-            {t('selectedSkills')}
-          </CustomHeading>
+          <CustomHeading textAlign="left">{t("selectedSkills")}</CustomHeading>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
             {value && value?.length > 0 ? (
               value.map((item: any, index: number) => (
                 <View key={index} style={styles.selectedItem}>
-                  <CustomHeading fontSize={14} color={Colors?.white} style={{marginRight: 5}}>
-                    {t(item.label)}
+                  <CustomHeading
+                    fontSize={14}
+                    color={Colors?.white}
+                    style={{ marginRight: 5 }}
+                  >
+                    {t(item.value)}
                   </CustomHeading>
                   <TouchableOpacity onPress={() => handleRemoveItem(item)}>
                     <Ionicons
@@ -61,7 +61,7 @@ const MultiSelectDropdownComponent = ({
               ))
             ) : (
               <CustomText color={Colors?.secondary}>
-                {t('noSkillsSelected')}
+                {t("noSkillsSelected")}
               </CustomText>
             )}
           </View>
@@ -79,8 +79,8 @@ const MultiSelectDropdownComponent = ({
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={placeholder || "Select item"}
-        searchPlaceholder="Search..."
+        placeholder={placeholder || t("selectSkill")}
+        searchPlaceholder={t("search")}
         value={null} // Reset the value to allow multiple selections
         onChange={(item: any) => {
           handleSelectItem(item);

@@ -4,8 +4,6 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import ModalComponent from "./Modal";
 import MultiSelectDropdownComponent from "../inputs/MultiSelectDropdown";
-import { UserAtom } from "@/app/AtomStore/user";
-import { useAtomValue } from "jotai";
 import { getWorkLabel, removeEmptyStrings } from "@/constants/functions";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
@@ -36,9 +34,8 @@ const SkillSelector = ({
   userSkills,
   availableSkills,
   handleAddSkill,
-  count, // Optional count parameter
+  count,
 }: SkillSelectorProps) => {
-  const userDetails = useAtomValue(UserAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -106,7 +103,7 @@ const SkillSelector = ({
         {canAddSkills && (
           <TouchableOpacity onPress={toggleModal}>
             <CustomHeading color={Colors?.link} fontWeight="bold">
-              Add New Skills
+              {t("addNewSkills")}
             </CustomHeading>
           </TouchableOpacity>
         )}
@@ -115,31 +112,29 @@ const SkillSelector = ({
       <View style={styles.skillContainer}>{renderSkills()}</View>
 
       <ModalComponent
-        title="Add New Skills"
+        title={t("addNewSkills")}
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         content={() => (
-          <View style={{ paddingVertical: 20 }}>
-            <MultiSelectDropdownComponent
-              value={selectedSkills}
-              setValue={(state: any) => setSelectedSkills(state)}
-              placeholder="Search and select skills..."
-              options={availableSkills?.filter(
-                (type: any) => !userSkills?.includes(type?.value)
-              )}
-              icon={
-                <MaterialCommunityIcons
-                  style={styles.icon}
-                  color="black"
-                  name="hammer-sickle"
-                  size={30}
-                />
-              }
-            />
-          </View>
+          <MultiSelectDropdownComponent
+            value={selectedSkills}
+            setValue={(state: any) => setSelectedSkills(state)}
+            placeholder={t("searchAndSelectSkills")}
+            options={availableSkills?.filter(
+              (type: any) => !userSkills?.includes(type?.value)
+            )}
+            icon={
+              <MaterialCommunityIcons
+                style={styles.icon}
+                color="black"
+                name="hammer-sickle"
+                size={30}
+              />
+            }
+          />
         )}
         primaryButton={{
-          title: "Add Skill",
+          title: t("addSkill"),
           action: onAddSkills,
           disabled: selectedSkills?.length === 0,
         }}
@@ -164,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors?.white,
     borderRadius: 20,
     paddingVertical: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     marginRight: 8,
     marginVertical: 6,
   },

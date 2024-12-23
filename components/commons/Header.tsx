@@ -1,20 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Animated,
   StatusBar,
-  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { hasNewNotificationAtom, UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue } from "jotai";
-import profileImage from "../../assets/images/placeholder-person.jpg";
 import CustomHeading from "./CustomHeading";
+import ProfilePicture from "./ProfilePicture";
 
 interface CustomHeaderProps {
   title?: string;
@@ -64,14 +62,8 @@ const CustomHeader = ({
             onPress={() => router.push("/(tabs)/profile")}
             // style={{ marginLeft: 20 }}
           >
-            <Image
-              source={
-                userDetails?.profilePicture
-                  ? {
-                      uri: userDetails?.profilePicture,
-                    }
-                  : profileImage
-              }
+            <ProfilePicture
+              uri={userDetails?.profilePicture}
               style={{ width: 40, height: 40, borderRadius: 4 }}
             />
           </TouchableOpacity>

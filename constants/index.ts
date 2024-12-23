@@ -1,3 +1,5 @@
+import { t } from "@/utils/translationHelper";
+
 export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
@@ -32,10 +34,10 @@ export const STETESOFINDIA = [
 ];
 
 export const COUNTRYPHONECODE = [
-  { label: "India", value: "+91" },
-  { label: "Canada", value: "+1" },
-  { label: "Belgium", value: "+32" },
-  { label: "Algeria", value: "+213" },
+  { label: "india", value: "+91" },
+  { label: "canada", value: "+1" },
+  { label: "belgium", value: "+32" },
+  { label: "algeria", value: "+213" },
 ];
 
 export const REGISTERSTEPS = [
@@ -134,6 +136,47 @@ export const SERVICES = [
 //   },
 // ];
 
+export const USERS = [
+  {
+    label: "active",
+    value: "ACTIVE",
+    iconName: "hiking",
+  },
+  {
+    label: "pending",
+    value: "PENDING",
+    iconName: "hiking",
+  },
+  {
+    label: "suspended",
+    value: "SUSPENDED",
+    iconName: "hiking",
+  },
+  {
+    label: "disabled",
+    value: "DISABLED",
+    iconName: "hiking",
+  },
+];
+
+export const ROLES = [
+  {
+    label: "worker",
+    value: "WORKER",
+    iconName: "hiking",
+  },
+  {
+    label: "employer",
+    value: "EMPLOYER",
+    iconName: "hiking",
+  },
+  {
+    label: "mediator",
+    value: "MEDIATOR",
+    iconName: "hiking",
+  },
+];
+
 export const WORKERS = [
   {
     label: "all",
@@ -165,18 +208,41 @@ export const EMPLOYER = [
   },
 ];
 
+export const ADMINREQUEST = [
+  {
+    label: "pending",
+    value: "PENDING",
+    iconName: "beach",
+  },
+  {
+    label: "accepted",
+    value: "ACCEPTED",
+    iconName: "city",
+  },
+  {
+    label: "rejected",
+    value: "REJECTED",
+    iconName: "city",
+  },
+  {
+    label: "cancelled",
+    value: "CANCELLED",
+    iconName: "city",
+  },
+];
+
 export const MEDIATORREQUEST = [
   {
-    label: "sentRequests",
-    value: "sentRequests",
+    label: "sent",
+    value: "SENT",
     iconName: "city",
   },
 ];
 
 export const WORKERREQUEST = [
   {
-    label: "receivedRequests",
-    value: "recievedRequests",
+    label: "received",
+    value: "RECEIVED",
     iconName: "beach",
   },
 ];

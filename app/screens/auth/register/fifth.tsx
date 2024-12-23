@@ -5,6 +5,7 @@ import Button from "@/components/inputs/Button";
 import { Controller, useForm } from "react-hook-form";
 import SelfieScreen from "@/components/inputs/Selfie";
 import { toast } from "@/app/hooks/toast";
+import { t } from "@/utils/translationHelper";
 
 interface FifthScreenProps {
   setStep: any;
@@ -37,7 +38,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
       typeof data.profilePicture !== "string" ||
       data.profilePicture.trim() === ""
     ) {
-      toast.error("Please select a profile picture");
+      toast.error(t("pleaseSelectAProfilePicture"));
       return;
     }
 
@@ -52,7 +53,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
         name="profilePicture"
         defaultValue=""
         rules={{
-          required: "Profile picture is required",
+          required: t("profilePictureIsRequired"),
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <SelfieScreen
@@ -65,10 +66,10 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
         )}
       />
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title="Back" onPress={() => setStep(4)} />
+        <Button isPrimary={false} title={t("back")} onPress={() => setStep(4)} />
         <Button
           isPrimary={true}
-          title="Save Profile Picture"
+          title={t("saveProfilePicture")}
           onPress={handleSubmit(onSubmit)}
         />
       </View>

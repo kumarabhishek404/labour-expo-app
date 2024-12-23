@@ -17,7 +17,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         <View
           style={[styles.row, user?.role === "EMPLOYER" && styles.firstBox]}
         >
-          <CustomHeading fontSize={14} padding={12}>
+          <CustomHeading textAlign="left" fontSize={14} padding={12}>
             <CustomText>{t("address")}</CustomText>
             {"  "}
             {user?.address || t("addressNotFound")}

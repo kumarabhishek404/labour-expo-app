@@ -92,7 +92,6 @@ const ServiceDetails = () => {
           (worker: any) => worker?._id === userDetails?._id
         ) || false
   );
-  console.log("service?.selectedMediators", service?.selectedMediators);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
@@ -103,6 +102,8 @@ const ServiceDetails = () => {
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [applicants, setApplicants] = useState<any[]>([]);
   const { refreshUser, isLoading: isRefreshLoading } = useRefreshUser();
+
+  const [isAdmin] = useState(userDetails?.role === "ADMIN");
 
   const {
     isLoading,
@@ -502,7 +503,9 @@ const ServiceDetails = () => {
           <CustomText style={styles.userSkills} textAlign="left">
             {t("skills")}: {item?.skills?.join(", ")}
           </CustomText>
-          <CustomText style={styles.userAddress}>{item?.address}</CustomText>
+          <CustomText style={styles.userAddress} textAlign="left">
+            {item?.address}
+          </CustomText>
         </View>
       </View>
     );
@@ -576,12 +579,6 @@ const ServiceDetails = () => {
       </View>
     );
   };
-
-  console.log(
-    "service",
-    appliedWorkers?.pages[0]?.data,
-    appliedMediators?.pages[0]?.data
-  );
 
   return (
     <>
@@ -724,7 +721,7 @@ const ServiceDetails = () => {
           </View>
 
           {/* Selected Applicants */}
-          {service?.employer?._id === userDetails?._id && (
+          {(service?.employer?._id === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">
                 Selected Applicants
@@ -739,16 +736,7 @@ const ServiceDetails = () => {
                   }}
                 />
               ) : (
-                <View
-                  style={{
-                    marginBottom: 20,
-                    paddingHorizontal: 10,
-                    paddingVertical: 20,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: Colors.gray,
-                  }}
-                >
+                <View style={styles.emptyContainer}>
                   <EmptyDatePlaceholder title="Selected Applicants" />
                 </View>
               )}
@@ -756,7 +744,7 @@ const ServiceDetails = () => {
           )}
 
           {/* Applicants */}
-          {service?.employer?._id === userDetails?._id && (
+          {(service?.employer?._id === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">Applicants</CustomHeading>
               {applicants.length > 0 ? (
@@ -773,15 +761,7 @@ const ServiceDetails = () => {
                   }}
                 />
               ) : (
-                <View
-                  style={{
-                    paddingHorizontal: 10,
-                    paddingVertical: 20,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: Colors.gray,
-                  }}
-                >
+                <View style={styles.emptyContainer}>
                   <EmptyDatePlaceholder title="Applicants" />
                 </View>
               )}
@@ -965,6 +945,26 @@ const ServiceDetails = () => {
           action: () => setIsWorkerSelectModal(false),
         }}
       />
+
+      {isAdmin && service?.status !== "CANCELLED" && (
+        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+          <Button
+            isPrimary={true}
+            title={t("deleteService")}
+            onPress={() => setModalVisible(true)}
+            style={styles.deleteBtn}
+          />
+          <Button
+            isPrimary={false}
+            title={t("completeService")}
+            onPress={() => setIsCompleteModalVisible(true)}
+            style={styles.completeBtn}
+            textStyle={{
+              color: Colors?.white,
+            }}
+          />
+        </Animated.View>
+      )}
     </>
   );
 };
@@ -1117,5 +1117,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: Colors.white,
     gap: 5,
+  },
+  emptyContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.gray,
   },
 });

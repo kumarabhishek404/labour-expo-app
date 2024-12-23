@@ -12,6 +12,7 @@ import { router, Stack } from "expo-router";
 import {
   acceptJoiningRequest,
   cancelJoiningRequest,
+  fetchAllRequests,
   fetchRecievedRequests,
   fetchSentRequests,
   rejectJoiningRequest,
@@ -20,19 +21,18 @@ import ListingVerticalRequests from "@/components/commons/ListingVerticalRequest
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
+import { ADMINREQUEST, MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
 import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import { fetchAllRequestsForAdmin } from "@/app/api/admin";
 
 const Requests = () => {
   const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState(
-    userDetails?.role === "MEDIATOR" ? "sentRequests" : "recievedRequests"
-  );
+  const [category, setCategory] = useState("recievedRequests");
 
   const {
     data: response,
@@ -42,11 +42,9 @@ const Requests = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["requests"],
+    queryKey: ["requests", category],
     queryFn: ({ pageParam }) =>
-      userDetails?.role === "MEDIATOR"
-        ? fetchSentRequests({ pageParam })
-        : fetchRecievedRequests({ pageParam }),
+      fetchAllRequestsForAdmin({ pageParam, type: category }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -67,18 +65,6 @@ const Requests = () => {
     }, [response])
   );
 
-  const mutationCancelRequest = useMutation({
-    mutationKey: ["cancelRequest"],
-    mutationFn: (id) => cancelJoiningRequest({ requestId: id }),
-    onSuccess: (response) => {
-      refetch();
-      console.log("Response while liking a worker - ", response);
-    },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
-  });
-
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
     mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
@@ -86,11 +72,7 @@ const Requests = () => {
       refetch();
       refreshUser();
       toast.success(t("requestAcceptedSuccessfully"));
-      console.log("Response while accepting a request - ", response);
     },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
   });
 
   const mutationRejectRequest = useMutation({
@@ -98,11 +80,7 @@ const Requests = () => {
     mutationFn: (id) => rejectJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
-      console.log("Response while rejecting request - ", response);
     },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
   });
 
   const loadMore = () => {
@@ -118,7 +96,6 @@ const Requests = () => {
 
   const onCatChanged = (category: string) => {
     setCategory(category);
-    refetch();
   };
 
   return (
@@ -134,7 +111,6 @@ const Requests = () => {
         <Loader
           loading={
             isLoading ||
-            mutationCancelRequest?.isPending ||
             mutationAcceptRequest?.isPending ||
             mutationRejectRequest?.isPending
           }
@@ -143,9 +119,7 @@ const Requests = () => {
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
           <CategoryButtons
-            options={
-              userDetails?.role === "MEDIATOR" ? MEDIATORREQUEST : WORKERREQUEST
-            }
+            options={ADMINREQUEST}
             onCagtegoryChanged={onCatChanged}
           />
 
@@ -158,10 +132,9 @@ const Requests = () => {
 
           <ListingVerticalRequests
             listings={memoizedData || []}
-            requestType={category}
+            category={category}
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
-            onCancelRequest={mutationCancelRequest?.mutate}
             onAcceptRequest={mutationAcceptRequest?.mutate}
             onRejectRequest={mutationRejectRequest?.mutate}
           />

@@ -105,9 +105,7 @@ const Users = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => (
-            <CustomHeader title={`${title}`} left="back" right="like" />
-          ),
+          header: () => <CustomHeader title={`${title}`} left="back" />,
         }}
       />
       <Loader loading={isLoading || isRefetching} />

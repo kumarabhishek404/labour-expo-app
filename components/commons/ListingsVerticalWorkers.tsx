@@ -27,7 +27,7 @@ const ListingsVerticalWorkers = ({
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
     const { role } = useGlobalSearchParams();
-    
+
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -37,7 +37,12 @@ const ListingsVerticalWorkers = ({
               params: {
                 id: item?._id,
                 role: role,
-                title: t("workerDetails"),
+                title:
+                  role === "workers"
+                    ? t("workerDetails")
+                    : role === "employers"
+                    ? t("employerDetails")
+                    : t("mediatorDetails"),
                 type: "details",
               },
             })
@@ -46,8 +51,8 @@ const ListingsVerticalWorkers = ({
           <View style={styles.item}>
             <Image
               source={
-                item?.coverImage || item?.profilePicture
-                  ? { uri: item?.coverImage || item?.profilePicture }
+                item?.profilePicture
+                  ? { uri: item?.profilePicture }
                   : coverImage
               }
               style={styles.image}

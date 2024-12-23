@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomText from "../CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface PaginationStringProps {
   type: string;
@@ -19,8 +20,10 @@ const PaginationString = ({
     <View style={styles.totalData}>
       <CustomText textAlign="left">
         {isLoading
-          ? "Loading..."
-          : `Fetched ${totalFetchedData || 0} from ${totalData || 0} ${type}`}
+          ? t("loading")
+          : `${t("fetched")} ${totalFetchedData || 0} ${t("from")} ${
+              totalData || 0
+            } ${type}`}
       </CustomText>
     </View>
   );

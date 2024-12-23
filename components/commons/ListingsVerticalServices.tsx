@@ -76,27 +76,30 @@ const ListingsVerticalServices = ({
                 }
                 style={styles.image}
               />
-              {item?.selected?.includes(userDetails?._id) && (
-                <View
-                  style={[
-                    styles.applicants,
-                    { backgroundColor: Colors?.tertiery },
-                  ]}
-                >
-                  <Ionicons name="happy" size={20} color={Colors.white} />
-                  <CustomHeading color={Colors?.white}>
-                    {t("selected")}
-                  </CustomHeading>
-                </View>
-              )}
+              {(item?.selectedWorkers || item?.selectedMediators) &&
+                (item?.selectedWorkers?.includes(userDetails?._id) ||
+                  item?.selectedMediators?.includes(userDetails?._id)) && (
+                  <View
+                    style={[
+                      styles.applicants,
+                      { backgroundColor: Colors?.tertiery },
+                    ]}
+                  >
+                    <Ionicons name="happy" size={20} color={Colors.white} />
+                    <CustomHeading color={Colors?.white}>
+                      {t("selected")}
+                    </CustomHeading>
+                  </View>
+                )}
 
-              {item?.appliedBy &&
-                item?.appliedBy?.length > 0 &&
-                !item?.appliedBy?.includes(userDetails?._id) && (
+              {(item?.appliedWorkers || item?.appliedMediators) &&
+                (item?.appliedWorkers?.length > 0 ||
+                  item?.appliedMediators?.length > 0) && (
                   <View style={styles.applicants}>
                     <Fontisto name="persons" size={18} color={Colors.white} />
                     <CustomHeading color={Colors?.white}>
-                      {item?.appliedBy?.length}
+                      {item?.appliedWorkers?.length +
+                        item?.appliedMediators?.length}
                     </CustomHeading>
                     <CustomHeading color={Colors?.white}>
                       {t("proposals")}
@@ -212,7 +215,7 @@ const ListingsVerticalServices = ({
         data={listings}
         renderItem={renderItem}
         keyExtractor={(item, index) => index?.toString()}
-        onEndReached={debounce(loadMore, 200)} // Trigger load more when user scrolls to bottom
+        onEndReached={debounce(loadMore, 200)}
         onEndReachedThreshold={0.9}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
@@ -224,15 +227,15 @@ const ListingsVerticalServices = ({
           ) : null
         }
         getItemLayout={(data, index) => ({
-          length: 200,
-          offset: 200 * index,
+          length: 100,
+          offset: 100 * index,
           index,
         })}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
-        windowSize={15}
-        removeClippedSubviews={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        windowSize={3}
+        removeClippedSubviews={true}
+        contentContainerStyle={{ paddingBottom: 150 }}
         refreshControl={refreshControl}
       />
     </View>

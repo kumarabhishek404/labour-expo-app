@@ -13,6 +13,7 @@ import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import ProfilePicture from "./ProfilePicture";
 
 const { width } = Dimensions.get("window");
 
@@ -123,8 +124,8 @@ const TestimonialSlider = () => {
         {testimonials.map((item, index) => (
           <View style={styles.slide} key={index}>
             <View style={styles.iconContainer}>
-              <Image
-                source={{ uri: item.profileImage }}
+              <ProfilePicture
+                uri={item?.profileImage}
                 style={styles.profileImage}
               />
             </View>

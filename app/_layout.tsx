@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -13,9 +14,7 @@ import { LocaleProvider } from "./context/locale";
 import { NotificationProvider } from "./context/NotificationContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
-import { StatusBar } from "react-native";
-import BhimUPIImage from "../assets/fonts/SpaceMono-Regular.ttf";
-import LanguageSelectionScreen from "./screens/settings/changeLanguage";
+import SpaceMono from "../assets/fonts/SpaceMono-Regular.ttf";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,7 +40,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const setIsAddService = useSetAtom(AddServiceInProcess);
   const [loaded, error] = useFonts({
-    SpaceMono: BhimUPIImage,
+    SpaceMono: SpaceMono,
     ...FontAwesome.font,
   });
 

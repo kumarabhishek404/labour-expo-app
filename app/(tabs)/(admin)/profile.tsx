@@ -14,10 +14,9 @@ import {
   EarningAtom,
   SpentAtom,
   UserAtom,
-} from "../AtomStore/user";
+} from "../../AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
-import { updateUserById, uploadFile } from "../api/user";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
@@ -25,8 +24,7 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { addSkills } from "../api/workers";
-import { toast } from "../hooks/toast";
+import { toast } from "../../hooks/toast";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
@@ -37,11 +35,13 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import { useLocale } from "../context/locale";
+import { useLocale } from "../../context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
-import { useRefreshUser } from "../hooks/useRefreshUser";
+import { useRefreshUser } from "../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
+import { updateUserById, uploadFile } from "@/app/api/user";
+import { addSkills } from "@/app/api/workers";
 
 const ProfileScreen = () => {
   useLocale();
@@ -154,7 +154,7 @@ const ProfileScreen = () => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      toast.success("Skills added successfully");
+      toast.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
@@ -194,93 +194,94 @@ const ProfileScreen = () => {
             onUpload={mutationUploadProfileImage?.mutate}
           />
         </View>
+        <View style={{ flexDirection: "column", gap: 10 }}>
+          <Controller
+            control={control}
+            name="firstName"
+            defaultValue=""
+            rules={{
+              required: t("firstNameIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                label={t("firstName")}
+                name="firstName"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder={t("enterYourFirstName")}
+                containerStyle={errors?.firstName && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Ionicons
+                    name="person"
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="firstName"
-          defaultValue=""
-          rules={{
-            required: "First Name is required",
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputComponent
-              label="First Name"
-              name="firstName"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder="Enter your First Name"
-              containerStyle={errors?.firstName && styles.errorInput}
-              errors={errors}
-              icon={
-                <Ionicons
-                  name="person"
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="lastName"
+            defaultValue=""
+            rules={{
+              required: t("lastNameIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                label={t("lastName")}
+                name="lastName"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder={t("enterYourLastName")}
+                containerStyle={errors?.lastName && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Ionicons
+                    name="person"
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="lastName"
-          defaultValue=""
-          rules={{
-            required: "First Name is required",
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputComponent
-              label="Last Name"
-              name="lastName"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder="Enter your Last Name"
-              containerStyle={errors?.lastName && styles.errorInput}
-              errors={errors}
-              icon={
-                <Ionicons
-                  name="person"
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="address"
-          defaultValue=""
-          rules={{
-            required: "Address is required",
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputComponent
-              label="Address"
-              name="address"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder="Enter your Address"
-              containerStyle={errors?.lastName && styles.errorInput}
-              errors={errors}
-              icon={
-                <Entypo
-                  name="location"
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="address"
+            defaultValue=""
+            rules={{
+              required: t("addressIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInputComponent
+                label={t("address")}
+                name="address"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder={t("enterYourAddress")}
+                containerStyle={errors?.lastName && styles.errorInput}
+                errors={errors}
+                icon={
+                  <Entypo
+                    name="location"
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
+        </View>
       </View>
     );
   };
@@ -390,7 +391,7 @@ const ProfileScreen = () => {
 
           <Button
             disabled={false}
-            style={styles?.mediatorButton}
+            style={{ ...styles?.mediatorButton, width: "54%" }}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
             title={t("refreshUser")}
@@ -399,6 +400,7 @@ const ProfileScreen = () => {
           <Button
             style={{
               ...styles?.mediatorButton,
+              width: "40%",
               backgroundColor: Colors?.black,
               borderColor: Colors?.black,
             }}
@@ -411,6 +413,7 @@ const ProfileScreen = () => {
           />
           <ModalComponent
             visible={isEditProfile}
+            title={t("editProfile")}
             onClose={() => setIsEditProfile(false)}
             content={modalContent}
             primaryButton={{
@@ -522,7 +525,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6ecdd",
   },
   mediatorButton: {
-    width: "auto",
     borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",
@@ -535,7 +537,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   formContainer: {
-    marginTop: 20,
+    marginTop: 10,
   },
   inputContainer: {
     height: 53,

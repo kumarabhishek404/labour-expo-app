@@ -59,7 +59,12 @@ const ListingHorizontalWorkers = ({
             params: {
               id: item?._id,
               role: "workers",
-              title: t("workerDetails"),
+              title:
+                category === "workers"
+                  ? t("workerDetails")
+                  : category === "employers"
+                  ? t("employerDetails")
+                  : t("mediatorDetails"),
               type: "details",
             },
           })

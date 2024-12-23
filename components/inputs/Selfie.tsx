@@ -12,6 +12,8 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { toast } from "@/app/hooks/toast";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
+import ProfilePicture from "../commons/ProfilePicture";
 
 interface SelfieScreenProps {
   name: string;
@@ -64,7 +66,7 @@ const SelfieScreen = ({
         console.log("error while capturing image ", err);
         setLoading(false);
         setProfilePicture("");
-        toast?.error("Failed to capture image, Retry again!");
+        toast?.error(t("failedToCaptureImageRetryAgain"));
       }
     } else {
       setLoading(false);
@@ -79,7 +81,7 @@ const SelfieScreen = ({
     return (
       <View style={styles.container}>
         <CustomHeading fontWeight="normal">
-          Requesting Camera Permission...
+          {t("requestingCameraPermission")}
         </CustomHeading>
       </View>
     );
@@ -88,7 +90,7 @@ const SelfieScreen = ({
   if (hasPermission === false) {
     return (
       <View style={styles.container}>
-        <CustomHeading>No access to camera</CustomHeading>
+        <CustomHeading>{t("noAccessToCamera")}</CustomHeading>
       </View>
     );
   }
@@ -103,7 +105,7 @@ const SelfieScreen = ({
             alignItems: "center",
           }}
         >
-          <Image source={{ uri: profilePicture }} style={styles.previewImage} />
+          <ProfilePicture uri={profilePicture} style={styles.previewImage} />
           <TouchableOpacity
             style={[
               styles.captureButton,
@@ -115,10 +117,10 @@ const SelfieScreen = ({
             ]}
             onPress={handleRetakeSelfie}
           >
-            <CustomHeading color={Colors?.white}>RETAKE</CustomHeading>
+            <CustomHeading color={Colors?.white}>{t("retake")}</CustomHeading>
           </TouchableOpacity>
           <View style={styles.instructionContainer}>
-            <CustomText>If you want to click more better selfie?</CustomText>
+            <CustomText>{t("ifYouWantToClickMoreBetterSelfie")}</CustomText>
             {errors[name] && (
               <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
                 {errors[name]?.message || ""}
@@ -150,7 +152,7 @@ const SelfieScreen = ({
                 <ActivityIndicator
                   style={styles.loading}
                   size="large"
-                  color="#fff"
+                  color={Colors?.white}
                 />
               )}
             </View>
@@ -161,16 +163,16 @@ const SelfieScreen = ({
               <ActivityIndicator
                 style={styles.circleButton}
                 size="large"
-                color="#0000ff"
+                color={Colors?.white}
               />
             </View>
           ) : (
             <TouchableOpacity style={styles.captureButton} onPress={takeSelfie}>
-              <CustomHeading color={Colors?.white}>PRESS</CustomHeading>
+              <CustomHeading color={Colors?.white}>{t("press")}</CustomHeading>
             </TouchableOpacity>
           )}
           <View style={styles.instructionContainer}>
-            <CustomText>Position your face in the oval above</CustomText>
+            <CustomText>{t("positionYourFaceInTheOvalAbove")}</CustomText>
             {errors[name] && (
               <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
                 {errors[name]?.message || ""}

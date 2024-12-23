@@ -5,6 +5,7 @@ import { getWorkLabel } from "@/constants/functions";
 import CustomHeading from "../commons/CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface SkillsSelectorProps {
   name: string;
@@ -39,7 +40,7 @@ const SkillsSelector = ({
 
   return (
     <View style={styles.container}>
-      <CustomHeading textAlign="left">Select Any 3 Skills</CustomHeading>
+      <CustomHeading textAlign="left">{t("selectAnySkills")}</CustomHeading>
       <View
         style={[styles.selectedContainer, errors[name] && styles?.errorInput]}
       >
@@ -55,7 +56,7 @@ const SkillsSelector = ({
             </View>
           ))
         ) : (
-          <CustomText fontSize={14}>What you can do?</CustomText>
+          <CustomText fontSize={14}>{t("whatYouCanDo")}</CustomText>
         )}
       </View>
 
@@ -75,7 +76,7 @@ const SkillsSelector = ({
               style={styles.interestItem}
               onPress={() => handleSelect(interest)}
             >
-              <CustomHeading>+ {interest?.label}</CustomHeading>
+              <CustomHeading>+ {t(interest?.label)}</CustomHeading>
             </TouchableOpacity>
           ))}
       </View>
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginTop: 10
+    marginTop: 10,
   },
   interestItem: {
     backgroundColor: "#EEE",

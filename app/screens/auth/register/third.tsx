@@ -7,6 +7,7 @@ import SkillsSelector from "@/components/inputs/SelectSkills";
 import RoleSelection from "@/components/inputs/SelectRole";
 import { Controller, useForm } from "react-hook-form";
 import Stepper from "@/components/commons/Stepper";
+import { t } from "@/utils/translationHelper";
 
 interface ThirdScreenProps {
   setStep: any;
@@ -62,7 +63,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           control={control}
           name="role"
           rules={{
-            required: "Select at least one skill",
+            required: t("selectAtLeastOneSkill"),
           }}
           render={({ field: { onChange, value } }) => (
             <RoleSelection role={value} setRole={onChange} />
@@ -75,7 +76,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             name="interest"
             defaultValue=""
             rules={{
-              required: "Select at least one skill",
+              required: t("selectAtLeastOneSkill"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
@@ -96,7 +97,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             name="interest"
             defaultValue=""
             rules={{
-              required: "Select at least one option",
+              required: t("selectAtLeastOneSkill"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
@@ -112,10 +113,10 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         )}
       </View>
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title="Back" onPress={() => setStep(2)} />
+        <Button isPrimary={false} title={t("back")} onPress={() => setStep(2)} />
         <Button
           isPrimary={true}
-          title="Save And Next"
+          title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
         />
       </View>

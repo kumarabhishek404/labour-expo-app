@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import Colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,6 +23,7 @@ const CategoryButtons = ({
   const scrollRef: any = useRef<ScrollView>(null);
   const itemRef = useRef<TouchableOpacity[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { width } = Dimensions.get("window");
 
   useEffect(() => {
     setCategories(options);
@@ -33,7 +34,7 @@ const CategoryButtons = ({
     setActiveIndex(index);
     selected?.measureLayout(scrollRef?.current?.getInnerViewRef(), (x, y) => {
       scrollRef.current.scrollTo({
-        x,
+        x: x - width/2,
         animated: true,
       });
     });

@@ -1,16 +1,17 @@
 import React from "react";
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, StyleProp, ImageStyle } from "react-native";
 import profileImage from "../../assets/person-placeholder.jpg";
 
 interface ProfilePictureProps {
   uri: string;
+  style?: StyleProp<ImageStyle>;
 }
 
-const ProfilePicture = ({ uri }: ProfilePictureProps) => {
+const ProfilePicture = ({ uri, style }: ProfilePictureProps) => {
   return (
     <Image
       source={uri ? { uri: uri } : profileImage}
-      style={styles.productImage}
+      style={[styles.productImage, style]}
     />
   );
 };

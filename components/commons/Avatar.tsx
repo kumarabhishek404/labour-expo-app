@@ -9,13 +9,16 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import CustomText from "./CustomText";
 import placeholderProfileImage from "../../assets/person-placeholder.jpg";
+import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
+import ProfilePicture from "./ProfilePicture";
 
 type AvatarProps = {
   isEditable: boolean;
   isLoading?: boolean;
   profileImage: string;
   onUpload?: any;
-  style?: any
+  style?: any;
 };
 
 const AvatarComponent = ({
@@ -23,7 +26,7 @@ const AvatarComponent = ({
   isLoading,
   profileImage,
   onUpload,
-  style
+  style,
 }: AvatarProps) => {
   const pickImage = async () => {
     let result: any = await ImagePicker.launchImageLibraryAsync({
@@ -46,24 +49,17 @@ const AvatarComponent = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.avatarWrapper}>
-        <Image
-          source={
-            profileImage
-              ? { uri: profileImage }
-              : placeholderProfileImage // Placeholder image when no profile picture
-          }
-          style={styles.profilePicture}
-        />
+        <ProfilePicture uri={profileImage} style={styles.profilePicture} />
 
         {isLoading && (
           <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#ffffff" />
+            <ActivityIndicator size="large" color={Colors?.white} />
           </View>
         )}
       </View>
       {isEditable && (
         <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
-          <CustomText>Upload New Image</CustomText>
+          <CustomText>{t("uploadNewImage")}</CustomText>
         </TouchableOpacity>
       )}
     </View>

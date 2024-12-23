@@ -8,6 +8,7 @@ import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "../commons/CustomHeading";
 import AddAddressModal from "@/app/screens/location/addAddress";
+import { t } from "@/utils/translationHelper";
 
 interface LocationFieldProps {
   address: string;
@@ -24,7 +25,7 @@ const LocationField = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const userDetails = useAtomValue(UserAtom);
   const [allSavedAddresses, setAllSavedAddresses] = useState([
-    { label: "Add New Address", value: "addAddress" },
+    { label: t("addNewAddress"), value: "addAddress" },
   ]);
   const dropdownRef = useRef<any>(null);
 
@@ -42,7 +43,7 @@ const LocationField = ({
       // Add the "Add New Address" option at the end
       setAllSavedAddresses([
         ...uniqueAddresses,
-        { label: "Add New Address", value: "addAddress" },
+        { label: t("addNewAddress"), value: "addAddress" },
       ]);
 
       // Auto-select the newly added address if it exists in serviceAddress
@@ -75,7 +76,7 @@ const LocationField = ({
         data={allSavedAddresses}
         labelField="label"
         valueField="value"
-        placeholder="Select item"
+        placeholder={t("selectAddress")}
         value={address}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}

@@ -5,20 +5,20 @@ import Colors from "@/constants/Colors";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../AtomStore/user";
-import { fetchAllWorkers } from "../api/workers";
-import { fetchAllServices } from "../api/services";
+import { UserAtom } from "../../AtomStore/user";
+import { fetchAllWorkers } from "../../api/workers";
+import { fetchAllServices } from "../../api/services";
 import Loader from "@/components/commons/Loader";
-import { fetchAllEmployers } from "../api/employer";
+import { fetchAllEmployers } from "../../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
-import { usePullToRefresh } from "../hooks/usePullToRefresh";
+import { usePullToRefresh } from "../../hooks/usePullToRefresh";
 import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
-import { SERVICES, WORKERTYPES } from "@/constants";
+import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import QuickContact from "@/components/commons/QuickContact";
 import TestimonialSlider from "@/components/commons/Testimonials";
 import PublicationsScreen from "@/components/commons/Publications";
@@ -30,13 +30,12 @@ import CustomHeader from "@/components/commons/Header";
 // import SpeechToText from "@/components/commons/VoiceToText";
 // import AudioRecorder from "@/components/commons/AudioRecord";
 import { t } from "@/utils/translationHelper";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const Page = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState(
-    userDetails?.role === "EMPLOYER" ? "" : "HIRING"
-  );
+  const [category, setCategory] = useState("");
 
   const {
     data: response,
@@ -51,7 +50,7 @@ const Page = () => {
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
         ? fetchAllWorkers({ pageParam, skill: category })
-        : fetchAllServices({ pageParam, status: category });
+        : fetchAllServices({ pageParam, status: "HIRING", skill: category });
     },
     initialPageParam: 1,
     retry: false,
@@ -63,6 +62,8 @@ const Page = () => {
       return undefined;
     },
   });
+
+  console.log("response", response?.pages[0]?.data);
 
   const {
     data: secondResponse,
@@ -185,29 +186,42 @@ const Page = () => {
             <View style={styles.divider}></View>
 
             <CategoryButtons
-              options={WORKERTYPES}
+              options={WORKERS}
               onCagtegoryChanged={onCatChanged}
               stylesProp={styles.categoryContainer}
             />
 
             <View style={{ paddingBottom: 30, paddingTop: 5 }}>
-              {userDetails?.role === "EMPLOYER" ? (
-                <ListingHorizontalWorkers
-                  availableInterest={WORKERTYPES}
-                  category={category}
-                  listings={memoizedData || []}
-                  loadMore={loadMore}
-                  isFetchingNextPage={isFetchingNextPage}
-                />
+              {memoizedData && memoizedData?.length > 0 ? (
+                userDetails?.role === "EMPLOYER" ? (
+                  <>
+                    <ListingHorizontalWorkers
+                      availableInterest={WORKERTYPES}
+                      category={category}
+                      listings={memoizedData || []}
+                      loadMore={loadMore}
+                      isFetchingNextPage={isFetchingNextPage}
+                    />
+                    <ScrollHint />
+                  </>
+                ) : (
+                  <>
+                    <ListingHorizontalServices
+                      category={category}
+                      listings={memoizedData || []}
+                      loadMore={loadMore}
+                      isFetchingNextPage={isFetchingNextPage}
+                    />
+                    <ScrollHint />
+                  </>
+                )
               ) : (
-                <ListingHorizontalServices
-                  category={category}
-                  listings={memoizedData || []}
-                  loadMore={loadMore}
-                  isFetchingNextPage={isFetchingNextPage}
+                <EmptyDatePlaceholder
+                  title={
+                    userDetails?.role === "EMPLOYER" ? "Worker" : "Service"
+                  }
                 />
               )}
-              <ScrollHint />
             </View>
 
             <View style={{ marginBottom: 40 }}>

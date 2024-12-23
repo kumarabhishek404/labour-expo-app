@@ -88,7 +88,7 @@ const Services = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={`${title}`} left="back" right="like" />
+            <CustomHeader title={`${title}`} left="back" />
           ),
         }}
       />

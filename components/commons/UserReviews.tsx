@@ -21,6 +21,7 @@ import { getTimeAgo } from "@/constants/functions";
 import CustomText from "./CustomText";
 import { FontAwesome } from "@expo/vector-icons";
 import Loader from "./Loader";
+import ProfilePicture from "./ProfilePicture";
 
 type Review = {
   _id: string;
@@ -164,15 +165,12 @@ const UserReviews = forwardRef(
 
     const renderReview = ({ item }: { item: any }) => (
       <View key={item?.id} style={styles.reviewCard}>
-        <Image
-          source={{ uri: item?.reviewer?.profilePicture }}
-          style={styles.avatar}
-        />
+        <ProfilePicture uri={item?.reviewer?.profilePicture} />
         <View style={styles.textContainer}>
           <View style={styles.headerContainer}>
             <View style={styles.nameContainer}>
               <Text style={styles.name} numberOfLines={2}>
-                {item?.reviewer?.firstName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName} {item?.reviewer?.lastName}
+                {item?.reviewer?.firstName} {item?.reviewer?.lastName}
               </Text>
             </View>
             {item?.reviewer?._id === userDetails?._id && (
@@ -383,16 +381,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   nameContainer: {
     flex: 1,
     marginRight: 8,
   },
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     flexShrink: 0,
   },

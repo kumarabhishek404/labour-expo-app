@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import CustomText from "@/components/commons/CustomText";
 import Stepper from "@/components/commons/Stepper";
 import { REGISTERSTEPS } from "@/constants";
-
+import { t } from "@/utils/translationHelper";
 
 interface FourthScreenProps {
   setStep: any;
@@ -76,16 +76,16 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         name="password"
         defaultValue=""
         rules={{
-          required: "Password is required",
+          required: t("passwordIsRequired"),
           pattern: {
             value: /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[a-z\d@$!%*?&]{8,}$/,
-            message: "You have to full fill all the following conditions",
+            message: t("youHaveToFullFillAllTheFollowingConditions"),
           },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
             <PasswordComponent
-              label="Password"
+              label={t("password")}
               name="password"
               value={value}
               onBlur={onBlur}
@@ -93,7 +93,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 onChange(text);
                 checkPasswordConditions(text);
               }}
-              placeholder="Enter your password"
+              placeholder={t("enterYourPassword")}
               containerStyle={errors?.password && styles.errorInput}
               errors={errors}
               icon={
@@ -115,7 +115,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 ) : (
                   <Entypo name="cross" size={16} />
                 )}{" "}
-                Use at least one number (0-9)
+                {t("useAtLeastOneNumber")}
               </CustomText>
               <CustomText
                 textAlign="left"
@@ -126,7 +126,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 ) : (
                   <Entypo name="cross" size={16} />
                 )}{" "}
-                Use at least one lower-case letter (a-z)
+                {t("useAtLeastOneLowerCaseLetter")}
               </CustomText>
               <CustomText
                 textAlign="left"
@@ -137,7 +137,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 ) : (
                   <Entypo name="cross" size={16} />
                 )}{" "}
-                Use at least one symbol (e.g., !@#$%^&*)
+                {t("useAtLeastOneSymbol")}
               </CustomText>
               <CustomText
                 textAlign="left"
@@ -148,7 +148,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 ) : (
                   <Entypo name="cross" size={16} />
                 )}{" "}
-                Be at least 8 characters long
+                {t("beAtLeast8CharactersLong")}
               </CustomText>
             </View>
           </>
@@ -160,18 +160,18 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         name="confirmPassword"
         defaultValue=""
         rules={{
-          required: "Please confirm your password",
+          required: t("pleaseConfirmYourPassword"),
           validate: (value) =>
-            value == watch("password") || "Passwords do not match",
+            value == watch("password") || t("passwordsDoNotMatch"),
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <PasswordComponent
-            label="Confirm Password"
+            label={t("confirmPassword")}
             name="confirmPassword"
             value={value}
             onBlur={onBlur}
             onChangeText={onChange}
-            placeholder="Enter your confirm password"
+            placeholder={t("enterYourConfirmPassword")}
             containerStyle={errors?.confirmPassword && styles.errorInput}
             errors={errors}
             icon={
@@ -187,10 +187,14 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
       />
 
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title="Back" onPress={() => setStep(3)} />
+        <Button
+          isPrimary={false}
+          title={t("back")}
+          onPress={() => setStep(3)}
+        />
         <Button
           isPrimary={true}
-          title="Save All Details"
+          title={t("saveAllDetails")}
           onPress={handleSubmit(onSubmit)}
         />
       </View>

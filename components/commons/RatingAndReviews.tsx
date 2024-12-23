@@ -6,11 +6,12 @@ import CustomText from "./CustomText";
 interface RatingAndReviewsProps {
   rating: any;
   reviews: any;
+  style?: any;
 }
 
-const RatingAndReviews = ({ rating, reviews }: RatingAndReviewsProps) => {
+const RatingAndReviews = ({ rating, reviews, style }: RatingAndReviewsProps) => {
   return (
-    <View>
+    <View style={style}>
       <View style={styles.ratingContainer}>
         {[...Array(5)].map((_, index) => (
           <FontAwesome

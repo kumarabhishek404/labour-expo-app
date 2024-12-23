@@ -15,6 +15,7 @@ import CustomText from "../commons/CustomText";
 import CustomHeading from "../commons/CustomHeading";
 import TextInputComponent from "./TextInputWithIcon";
 import Button from "./Button";
+import { t } from "@/utils/translationHelper";
 
 interface EmailAddressFieldProps {
   name: string;
@@ -39,7 +40,7 @@ const EmailAddressField = ({
   const [isModalVisible, setModalVisible] = useState(false);
 
   const validateEmailAddress = (email: any) => {
-    const emailRegex = /[a-zA-Z0-9._%+-]+(\+1)?@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
       setIsEmailValid(true);
       setEmail(email);
@@ -51,18 +52,18 @@ const EmailAddressField = ({
   const handleSendOtp = () => {
     if (isEmailValid) {
       setModalVisible(true);
-      toast.success("OTP sent to", `${email}`);
+      toast.success(t("otpSentTo"), `${email}`);
     } else {
-      Alert.alert("Error", "Please enter a valid phone address.");
+      toast.error(t("pleaseEnterAValidEmailAddress"));
     }
   };
 
   const handleVerifyOtp = () => {
     if (otp.join("") === "1234") {
-      Alert.alert("Success", "Email address verified successfully.");
+      toast.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      Alert.alert("Error", "Incorrect OTP. Try again.");
+      toast.error(t("incorrectOTPTryAgain"));
     }
   };
 
@@ -92,15 +93,15 @@ const EmailAddressField = ({
 
   const handleVerify = () => {
     if (otp.join("") === "1234") {
-      toast.success("Success", "Email address verified successfully.");
+      toast.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      toast.error("Error", "Incorrect OTP. Try again.");
+      toast.error(t("incorrectOTPTryAgain"));
     }
   };
 
   const resendOtp = () => {
-    console.log("OTP Resent");
+    toast.success(t("otpResent"));
   };
 
   return (
@@ -111,7 +112,7 @@ const EmailAddressField = ({
           onBlur={onBlur}
           onChangeText={setEmail}
           placeholder={placeholder}
-          label="Email Address"
+          label={t("emailAddress")}
           name={name}
           containerStyle={errors[name] && styles.errorInput}
           errors={errors}
@@ -122,7 +123,7 @@ const EmailAddressField = ({
       {!errors[name] && (
         <Button
           isPrimary={true}
-          title="Verify Email Address"
+          title={t("verifyEmailAddress")}
           onPress={handleSendOtp}
         />
       )}
@@ -131,10 +132,8 @@ const EmailAddressField = ({
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <CustomHeading fontSize={50}>✉️</CustomHeading>
-              <CustomHeading>Please check your email</CustomHeading>
-              <CustomText>
-                We&#39;ve sent a code to contact@curfcode.com
-              </CustomText>
+              <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
+              <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (
@@ -159,19 +158,21 @@ const EmailAddressField = ({
                 style={styles?.resendContainer}
                 onPress={resendOtp}
               >
-                <CustomText>Didn&#39;t get the code?</CustomText>
-                <CustomText color={Colors?.link}>Click to resend.</CustomText>
+                <CustomText>{t("didntGetTheCode")}</CustomText>
+                <CustomText color={Colors?.link}>
+                  {t("clickToResend")}
+                </CustomText>
               </TouchableOpacity>
 
               <View style={styles.buttonContainer}>
                 <Button
                   isPrimary={false}
-                  title="Cancel"
+                  title={t("cancel")}
                   onPress={() => setModalVisible(false)}
                 />
                 <Button
                   isPrimary={true}
-                  title="Verify"
+                  title={t("verify")}
                   onPress={handleVerify}
                 />
               </View>

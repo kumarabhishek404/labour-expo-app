@@ -16,6 +16,7 @@ import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
 import Button from "./Button";
 import auth from "@react-native-firebase/auth";
+import { t } from "@/utils/translationHelper";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -65,9 +66,9 @@ const MobileNumberField = ({
         "+916397308499"
       );
       // setConfirm(confirmation);
-      toast.success("OTP sent to", confirmation);
+      toast.success(t("otpSentTo"), confirmation);
     } catch (err) {
-      console.log("Error while sending code", err);
+      toast.error(t("errorWhileSendingCode"));
     }
     // if (isPhoneValid) {
     //   setModalVisible(true);
@@ -79,10 +80,10 @@ const MobileNumberField = ({
 
   const handleVerifyOtp = () => {
     if (otp?.join() === "1234") {
-      toast?.success("Mobile number verified successfully.");
+      toast?.success(t("mobileNumberVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      toast?.error("Incorrect OTP. Try again.");
+      toast?.error(t("incorrectOTPTryAgain"));
     }
   };
 
@@ -113,29 +114,32 @@ const MobileNumberField = ({
 
   const handleVerify = () => {
     if (otp.join("") === "1234") {
-      toast.success("Success", "Mobile number verified successfully.");
+      toast.success(t("mobileNumberVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      toast.error("Error", "Incorrect OTP. Try again.");
+      toast.error(t("incorrectOTPTryAgain"));
     }
   };
 
   const resendOtp = () => {
-    console.log("OTP Resent");
+    toast.success(t("otpResent"));
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <CustomHeading textAlign="left">Phone Number</CustomHeading>
+      <CustomHeading textAlign="left">{t("phoneNumber")}</CustomHeading>
       {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
         <Dropdown
           style={[styles.dropdown, isFocus && styles?.focusStyle]}
-          data={countriesPhoneCode}
+          data={countriesPhoneCode?.map((item: any) => ({
+            label: t(item?.label),
+            value: item?.value,
+          }))}
           selectedTextStyle={styles.selectedTextStyle}
           containerStyle={isFocus && styles?.containerStyle}
           labelField="label"
           valueField="value"
-          placeholder="Select country"
+          placeholder={t("selectCountry")}
           value={countryCode}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
@@ -143,7 +147,7 @@ const MobileNumberField = ({
           showsVerticalScrollIndicator={true}
           renderLeftIcon={() => (
             <CustomHeading textAlign="left" fontSize={14}>
-              Country Code
+              {t("countryCode")}
             </CustomHeading>
           )}
         />
@@ -176,7 +180,9 @@ const MobileNumberField = ({
 
       {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
         <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
-          <CustomHeading color={Colors?.white}>Verify Mobile</CustomHeading>
+          <CustomHeading color={Colors?.white}>
+            {t("verifyMobile")}
+          </CustomHeading>
         </TouchableOpacity>
       )}
 
@@ -185,10 +191,8 @@ const MobileNumberField = ({
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <CustomHeading fontSize={50}>✉️</CustomHeading>
-              <CustomHeading>Please check your email</CustomHeading>
-              <CustomText>
-                We&#39;ve sent a code to contact@curfcode.com
-              </CustomText>
+              <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
+              <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
               <View style={styles.otpform}>
                 {otp?.map((digit: string | undefined, index: any) => (
@@ -213,19 +217,21 @@ const MobileNumberField = ({
                 style={styles?.resendContainer}
                 onPress={resendOtp}
               >
-                <CustomText>Didn&#39;t get the code?</CustomText>
-                <CustomText color={Colors?.link}>Click to resend.</CustomText>
+                <CustomText>{t("didntGetTheCode")}</CustomText>
+                <CustomText color={Colors?.link}>
+                  {t("clickToResend")}
+                </CustomText>
               </TouchableOpacity>
 
               <View style={styles.buttonContainer}>
                 <Button
                   isPrimary={false}
-                  title="Cancel"
+                  title={t("cancel")}
                   onPress={() => setModalVisible(false)}
                 />
                 <Button
                   isPrimary={true}
-                  title="Verify"
+                  title={t("verify")}
                   onPress={handleVerify}
                 />
               </View>

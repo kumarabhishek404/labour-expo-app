@@ -11,6 +11,7 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Stepper from "@/components/commons/Stepper";
 import { REGISTERSTEPS } from "@/constants";
+import { t } from "@/utils/translationHelper";
 
 
 interface FirstScreenProps {
@@ -68,16 +69,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="firstName"
           rules={{
-            required: "First Name is required"
+            required: t("firstNameIsRequired")
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
               name="firstName"
-              label="First Name"
+              label={t("firstName")}
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder="Enter your First Name"
+              placeholder={t("enterYourFirstName")}
               containerStyle={errors?.firstName && styles.errorInput}
               errors={errors}
             />
@@ -88,16 +89,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="lastName"
           rules={{
-            required: "Last Name is required"
+            required: t("lastNameIsRequired")
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
               name="lastName"
-              label="Last Name"
+              label={t("lastName")}
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder="Enter your Last Name"
+              placeholder={t("enterYourLastName")}
               containerStyle={errors?.lastName && styles.errorInput}
               errors={errors}
             />
@@ -108,16 +109,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="gender"
           rules={{
-            required: "Gender is required"
+            required: t("genderIsRequired")
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Gender
               name="gender"
-              label="What's your gender?"
+              label={t("whatIsYourGender")}
               options={[
-                { title: "Male", value: "male", icon: "👩‍🦰" },
-                { title: "Female", value: "female", icon: "👨" },
-                { title: "Other", value: "other", icon: "✨" },
+                { title: t("male"), value: "male", icon: "👩‍🦰" },
+                { title: t("female"), value: "female", icon: "👨" },
+                { title: t("other"), value: "other", icon: "✨" },
               ]}
               gender={value}
               setGender={onChange}
@@ -132,7 +133,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           name="dateOfBirth"
           defaultValue={new Date()}
           rules={{
-            required: "Start date is required",
+            required: t("dateOfBirthIsRequired"),
             validate: (value) => {
               const selectedDate = new Date(value);
               const today = new Date();
@@ -140,7 +141,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
 
               if (selectedDate > eighteenYearsAgo) {
-                return "You must be at least 18 years old";
+                return t("youMustBeAtLeast18YearsOld");
               } else {
                 return true;
               }
@@ -148,7 +149,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <DateField
-              title="Date Of Birth"
+              title={t("dateOfBirth")}
               name="dateOfBirth"
               date={value}
               setDate={onChange}
@@ -160,16 +161,16 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       </View>
       <Button
         isPrimary={true}
-        title="Save and Next"
+        title={t("saveAndNext")}
         onPress={handleSubmit(onSubmit)}
         style={styles.submitButton}
       />
 
       <View style={styles.footerContainer}>
-        <CustomText fontSize={14}>Already have an account?</CustomText>
+        <CustomText fontSize={14}>{t("alreadyHaveAnAccount")}</CustomText>
         <Link href="/screens/auth/login" asChild>
           <TouchableOpacity>
-            <CustomHeading color={Colors?.link}>Sign In</CustomHeading>
+            <CustomHeading color={Colors?.link}>{t("signIn")}</CustomHeading>
           </TouchableOpacity>
         </Link>
       </View>

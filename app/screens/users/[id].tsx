@@ -38,6 +38,7 @@ import Button from "@/components/inputs/Button";
 import UserReviews from "@/components/commons/UserReviews";
 import { getUserById } from "@/app/api/user";
 import ServiceInformation from "@/components/commons/ServiceInformation";
+import ProfilePicture from "@/components/commons/ProfilePicture";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -138,7 +139,6 @@ const User = () => {
             <CustomHeader
               title={Array.isArray(title) ? title[0] : title}
               left="back"
-              right="like"
             />
           ),
         }}
@@ -153,12 +153,8 @@ const User = () => {
             style={[styles.image, imageAnimatedStyle]}
           />
           <View style={styles.contentWrapper}>
-            <Image
-              source={
-                user?.profilePicture
-                  ? { uri: user?.profilePicture }
-                  : profileImage
-              }
+            <ProfilePicture
+              uri={user?.profilePicture}
               style={styles.workerImage}
             />
             <CustomHeading textAlign="left" fontSize={20}>
@@ -190,7 +186,13 @@ const User = () => {
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
-                <View style={{ flexDirection: "row", gap: 10 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    gap: 10,
+                  }}
+                >
                   <View style={{ flexDirection: "column" }}>
                     <CustomText textAlign="left">{t("rating")}</CustomText>
                     <CustomHeading fontSize={14} textAlign="left">
@@ -202,7 +204,7 @@ const User = () => {
                     title={hasUserReviewed ? t("viewReview") : t("addReview")}
                     onPress={handleReviewAction}
                     style={{
-                      width: 90,
+                      width: "60%",
                       paddingVertical: 4,
                       paddingHorizontal: 6,
                       backgroundColor: "#fa6400",
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
     columnGap: 2,
   },
   highlightBox: {
-    width: "48%",
+    width: "45%",
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
