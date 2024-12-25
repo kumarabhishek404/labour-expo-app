@@ -504,5 +504,14 @@
   "payments": "Payments",
   "serviceManagement": "Service Management",
   "workerManagement": "Worker Management",
-  "systemSettings": "System Settings"
+  "systemSettings": "System Settings",
+  "suspend": "Suspend",
+  "delete": "Delete",
+  "restore": "Restore",
+  "activate": "Activate",
+  "workHistory": "Work History",
+  "days": "Days",
+  "noWorkHistory": "No work history found",
+  "description": "Description",
+  "experience": "Experience"
 }

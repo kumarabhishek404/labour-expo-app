@@ -69,9 +69,10 @@ const LoginScreen = () => {
       toast.success("Logged in successfully!");
       if (user?.status === "SUSPENDED" || user?.status === "PENDING") {
         setIsAccountInactive(true);
-        router.replace("/(tabs)/profile");
+        router.replace("/(tabs)/fifth");
       } else {
         setIsAccountInactive(false);
+        console.log("user?.role", user?.role);
         router.replace("/(tabs)");
       }
       // Condition to fetch location if location key is empty or has latitude 0

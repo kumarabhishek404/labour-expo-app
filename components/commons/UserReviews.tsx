@@ -164,7 +164,7 @@ const UserReviews = forwardRef(
     });
 
     const renderReview = ({ item }: { item: any }) => (
-      <View key={item?.id} style={styles.reviewCard}>
+      <View style={styles.reviewCard}>
         <ProfilePicture uri={item?.reviewer?.profilePicture} />
         <View style={styles.textContainer}>
           <View style={styles.headerContainer}>
@@ -220,58 +220,55 @@ const UserReviews = forwardRef(
         <Loader
           loading={isLoading || isRefetching || mutationDeleteReview.isPending}
         />
+        <CustomHeading
+          textAlign="left"
+          fontSize={18}
+          style={{ marginBottom: 10 }}
+        >
+          {t("reviews")}
+        </CustomHeading>
+
         {reviews?.length > 0 && (
-          <>
-            <CustomHeading textAlign="left" fontSize={18}>
-              {t("reviews")}
-            </CustomHeading>
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === "Positive" && styles.activeTab]}
+              onPress={() => {
+                setActiveTab("Positive");
+                setCurrentPage(1);
+              }}
+            >
+              <Text
                 style={[
-                  styles.tab,
-                  activeTab === "Positive" && styles.activeTab,
+                  styles.tabText,
+                  activeTab === "Positive" && styles.activeTabText,
                 ]}
-                onPress={() => {
-                  setActiveTab("Positive");
-                  setCurrentPage(1);
-                }}
               >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeTab === "Positive" && styles.activeTabText,
-                  ]}
-                >
-                  Positive
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+                Positive
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === "Negative" && styles.activeTab]}
+              onPress={() => {
+                setActiveTab("Negative");
+                setCurrentPage(1);
+              }}
+            >
+              <Text
                 style={[
-                  styles.tab,
-                  activeTab === "Negative" && styles.activeTab,
+                  styles.tabText,
+                  activeTab === "Negative" && styles.activeTabText,
                 ]}
-                onPress={() => {
-                  setActiveTab("Negative");
-                  setCurrentPage(1); // Reset to first page
-                }}
               >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeTab === "Negative" && styles.activeTabText,
-                  ]}
-                >
-                  Negative
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </>
+                Negative
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         <FlatList
           scrollEnabled={false}
           data={paginatedReviews}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => item._id.toString()}
           renderItem={renderReview}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={EmptyListComponent}
@@ -306,7 +303,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 4,
     marginTop: 10,
-    marginBottom: 16,
+    marginBottom: 10,
   },
   tab: {
     flex: 1,
@@ -331,15 +328,15 @@ const styles = StyleSheet.create({
   },
   reviewCard: {
     flexDirection: "row",
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     backgroundColor: "#f9f9f9",
-    marginBottom: 16,
+    marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 0.5,
+    elevation: 1,
   },
   avatar: {
     width: 50,

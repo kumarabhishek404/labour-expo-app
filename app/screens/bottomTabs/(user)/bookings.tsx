@@ -3,13 +3,13 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Stack, useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../../AtomStore/user";
+import { UserAtom } from "../../../AtomStore/user";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import Loader from "@/components/commons/Loader";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
@@ -17,7 +17,7 @@ import { MYSERVICES, SERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { fetchMyAppliedServicesMediator, fetchMyAppliedServicesWorker, fetchMyServices, fetchServicesInWhichSelectedMediator, fetchServicesInWhichSelectedWorker } from "@/app/api/services";
 
-const Services = () => {
+const UserBookingsAndMyServices = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [filteredDataSelected, setFilteredDataSelected]: any = useState([]);
@@ -99,8 +99,6 @@ const Services = () => {
           response?.pages.flatMap((page: any) => page.data || [])
         );
       } else {
-        console.log("response", response?.pages[0]?.data);
-        console.log("responseSelected", responseSelected?.pages[0]?.services);
         // For mediators and workers, combine both responses
         const appliedServices =
           response?.pages?.flatMap((page: any) => page.data || []) || [];
@@ -207,4 +205,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Services;
+export default UserBookingsAndMyServices;

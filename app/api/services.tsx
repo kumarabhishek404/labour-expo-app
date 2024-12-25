@@ -543,3 +543,13 @@ export const completeService = async (payload: any) => {
     throw error;
   }
 };
+
+export const restoreService = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/employer/restore-service", payload);
+    return data.data;
+  } catch (error: any) {
+    handleServiceError(error, "restore service");
+  }
+};
+  

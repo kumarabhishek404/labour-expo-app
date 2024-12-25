@@ -14,10 +14,9 @@ import {
   EarningAtom,
   SpentAtom,
   UserAtom,
-} from "../../AtomStore/user";
+} from "../../../AtomStore/user";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
-import { updateUserById, uploadFile } from "../../api/user";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
@@ -25,8 +24,7 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { addSkills } from "../../api/workers";
-import { toast } from "../../hooks/toast";
+import { toast } from "../../../hooks/toast";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
@@ -37,13 +35,15 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import { useLocale } from "../../context/locale";
+import { useLocale } from "../../../context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
-import { useRefreshUser } from "../../hooks/useRefreshUser";
+import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
+import { updateUserById, uploadFile } from "@/app/api/user";
+import { addSkills } from "@/app/api/workers";
 
-const ProfileScreen = () => {
+const AdminProfile = () => {
   useLocale();
   const isAccountInactive = useAtomValue(AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -491,7 +491,7 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default AdminProfile;
 
 const styles = StyleSheet.create({
   container: {

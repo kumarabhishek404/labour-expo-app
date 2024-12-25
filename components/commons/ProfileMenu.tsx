@@ -224,6 +224,16 @@ const ProfileMenu = ({ disabled }: any) => {
     //   isSuspended: disabled,
     // },
     {
+      title: t("experience"),
+      icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
+      onPress: () =>
+        router?.push({
+          pathname: "/screens/experience",
+        }),
+      style: [styles?.menuItem],
+      isSuspended: disabled,
+    },
+    {
       title: t("tellFriends"),
       icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
       onPress: () =>

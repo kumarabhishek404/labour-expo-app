@@ -56,6 +56,7 @@ import { fetchAllMembers } from "@/app/api/mediator";
 import { debounce } from "lodash";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import ServiceActionButtons from "./actionButtons";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -237,154 +238,6 @@ const ServiceDetails = () => {
     }, [members])
   );
 
-  const mutationLikeService = useMutation({
-    mutationKey: ["likeService", { id }],
-    mutationFn: () => likeService({ serviceId: id }),
-    onSuccess: (response) => {
-      refetch();
-      toast.success(t("serviceAddedInFavourites"));
-      console.log("Response while liking a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while liking the service ", err);
-    },
-  });
-
-  const mutationUnLikeService = useMutation({
-    mutationKey: ["unlikeService", { id }],
-    mutationFn: () => unLikeService({ serviceId: id }),
-    onSuccess: (response) => {
-      refetch();
-      toast.success(t("serviceRemovedInFavourites"));
-      console.log("Response while unliking a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while unliking the service ", err);
-    },
-  });
-
-  const mutationApplyService = useMutation({
-    mutationKey: ["applyService", { id }],
-    mutationFn: () => applyService({ serviceID: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      toast.success(t("serviceAppliedSuccessfully"));
-      console.log("Response while applying in the service - ", response);
-    },
-    onError: (err: any) => {
-      toast.error(
-        `Error while applying in the service - ${err?.response?.data?.message}`
-      );
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationUnApplyService = useMutation({
-    mutationKey: ["unapplyService", { id }],
-    mutationFn: () => unApplyService({ serviceID: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      setSelectedWorkersIds([]);
-      toast.success(t("yourApplicationCancelledSuccessfully"));
-      console.log("Response while unapplying the service - ", response);
-    },
-    onError: (err: any) => {
-      toast.error(
-        `Error while cancelling your application in the service - ${err?.response?.data?.message}`
-      );
-      console.error("error while unapplying the service ", err);
-    },
-  });
-
-  const mutationMediatorApplyService = useMutation({
-    mutationKey: ["mediatorApplyService", { id }],
-    mutationFn: () =>
-      mediatorApplyService({ serviceId: id, workers: selectedWorkersIds }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      setIsWorkerSelectModal(false);
-      toast.success(t("serviceAppliedSuccessfully"));
-      console.log("Response while applying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationMediatorUnApplyService = useMutation({
-    mutationKey: ["mediatorUnApplyService", { id }],
-    mutationFn: () => mediatorUnApplyService({ serviceId: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      setIsWorkerSelectModal(false);
-      toast.success(t("yourApplicationCancelledSuccessfully"));
-      console.log("Response while unapplying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationCancelServiceByWorkerAfterSelection = useMutation({
-    mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () => cancelServiceByWorkerAfterSelection({ serviceId: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      toast.success(t("yourSelectionCancelledSuccessfully"));
-      console.log("Response while unapplying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationCancelServiceByMediatorAfterSelection = useMutation({
-    mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
-    mutationFn: () => cancelServiceByMediatorAfterSelection({ serviceId: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      toast.success(t("yourSelectionCancelledSuccessfully"));
-      console.log("Response while unapplying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationCompleteService = useMutation({
-    mutationKey: ["completeService", { id }],
-    mutationFn: () => completeService({ serviceID: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      toast.success(t("serviceCompletedSuccessfully"));
-      console.log("Response while completing a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while completing the service ", err);
-    },
-  });
-
-  const mutationDeleteService = useMutation({
-    mutationKey: ["deleteService", { id }],
-    mutationFn: () => deleteServiceById(id),
-    onSuccess: async (response) => {
-      setModalVisible(false);
-      await refetch();
-      await refreshUser();
-      console.log("Response while deleting a service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while deleting a service ", err);
-    },
-  });
-
   useEffect(() => {
     setIsServiceApplied(
       userDetails?.role === "MEDIATOR"
@@ -443,143 +296,6 @@ const ServiceDetails = () => {
     setApplicants([...workers, ...mediators]);
   }, [appliedWorkers?.pages, appliedMediators?.pages]);
 
-  const handleDelete = () => {
-    mutationDeleteService.mutate();
-  };
-
-  const handleApply = () => {
-    if (userDetails?.role === "MEDIATOR") {
-      setIsWorkerSelectModal(true);
-    } else {
-      mutationApplyService.mutate();
-    }
-  };
-
-  const handleCancelApply = () => {
-    if (userDetails?.role === "MEDIATOR") {
-      setIsWorkerSelectModal(true);
-    } else {
-      mutationUnApplyService.mutate();
-    }
-  };
-
-  const toggleUserSelection = (userId: string) => {
-    setSelectedWorkersIds((prev: any) =>
-      prev.includes(userId)
-        ? prev.filter((id: string) => id !== userId)
-        : [...prev, userId]
-    );
-  };
-
-  const deleteModalContent = () => {
-    return (
-      <View style={styles.modalView}>
-        <View style={styles.iconContainer}>
-          <View style={styles.iconCircle}>
-            <CustomHeading fontSize={26}>?</CustomHeading>
-          </View>
-        </View>
-        <CustomHeading>{t("areYouSure")}</CustomHeading>
-        <CustomHeading fontSize={14}>{t("wantToDeleteService")}</CustomHeading>
-        <CustomText>{t("irreversibleAction")}</CustomText>
-      </View>
-    );
-  };
-
-  const RenderMemberItem = ({ item }: any) => {
-    return (
-      <View style={[styles.userItem]} key={item?._id}>
-        <CustomCheckbox
-          disabled={!!isServiceApplied}
-          isChecked={selectedWorkersIds?.includes(item?._id)}
-          onToggle={() => toggleUserSelection(item?._id)}
-          containerStyle={{ marginRight: 8 }}
-        />
-        <ProfilePicture uri={item?.profilePicture} />
-        <View style={styles.userInfo}>
-          <CustomText style={styles.userName} textAlign="left">
-            {item?.firstName} {item?.lastName}
-          </CustomText>
-          <CustomText style={styles.userSkills} textAlign="left">
-            {t("skills")}: {item?.skills?.join(", ")}
-          </CustomText>
-          <CustomText style={styles.userAddress} textAlign="left">
-            {item?.address}
-          </CustomText>
-        </View>
-      </View>
-    );
-  };
-
-  const memoizedData = useMemo(
-    () => workers?.flatMap((data: any) => data),
-    [workers]
-  );
-
-  const loadMore = () => {
-    if (hasMemberNextPage && !isMemberFetchingNextPage) {
-      memberFetchPage();
-    }
-  };
-
-  RenderMemberItem.displayName = "RenderMemberItem";
-  const renderItem = ({ item }: any) => <RenderMemberItem item={item} />;
-
-  const mediatorModelContent = () => {
-    return (
-      <View style={styles.modalContent}>
-        {memoizedData && memoizedData?.length > 0 ? (
-          <FlatList
-            data={memoizedData ?? []}
-            renderItem={renderItem}
-            keyExtractor={(item) => item?._id?.toString()}
-            onEndReached={debounce(loadMore, 300)}
-            onEndReachedThreshold={0.9}
-            ListFooterComponent={() =>
-              isMemberFetchingNextPage ? (
-                <ActivityIndicator
-                  size="large"
-                  color={Colors?.primary}
-                  style={styles.loaderStyle}
-                />
-              ) : null
-            }
-            getItemLayout={(data, index) => ({
-              length: 200,
-              offset: 200 * index,
-              index,
-            })}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={3}
-            removeClippedSubviews={true}
-            contentContainerStyle={{ paddingBottom: 110 }}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (
-          <EmptyDatePlaceholder title="Members" />
-        )}
-      </View>
-    );
-  };
-
-  const completeServiceModalContent = () => {
-    return (
-      <View style={styles.modalView}>
-        <View style={styles.iconContainer}>
-          <View style={styles.iconCircle}>
-            <CustomHeading fontSize={26}>?</CustomHeading>
-          </View>
-        </View>
-        <CustomHeading>{t("areYouSure")}</CustomHeading>
-        <CustomHeading fontSize={14}>
-          {t("wantToCompleteService")}
-        </CustomHeading>
-        <CustomText>{t("restoreSerivceText")}</CustomText>
-      </View>
-    );
-  };
-
   return (
     <>
       <Stack.Screen
@@ -598,16 +314,6 @@ const ServiceDetails = () => {
         loading={
           isLoading ||
           isRefetching ||
-          mutationLikeService?.isPending ||
-          mutationUnLikeService?.isPending ||
-          mutationApplyService?.isPending ||
-          mutationMediatorApplyService?.isPending ||
-          mutationUnApplyService?.isPending ||
-          mutationMediatorUnApplyService?.isPending ||
-          mutationCompleteService?.isPending ||
-          mutationDeleteService?.isPending ||
-          mutationCancelServiceByWorkerAfterSelection?.isPending ||
-          mutationCancelServiceByMediatorAfterSelection?.isPending ||
           isAppliedWorkersLoading ||
           isAppliedWorkersFetchingNextPage ||
           isAppliedMediatorsLoading ||
@@ -785,186 +491,30 @@ const ServiceDetails = () => {
         </Animated.ScrollView>
       </ScrollView>
 
-      {service?.employer?._id !== userDetails?._id &&
-        service?.status === "HIRING" && (
-          <Animated.View
-            style={styles.footer}
-            entering={SlideInDown.delay(200)}
-          >
-            {isSelected ? (
-              <Button
-                isPrimary={true}
-                title={t("removeFromService")}
-                onPress={() =>
-                  userDetails?.role === "WORKER"
-                    ? mutationCancelServiceByWorkerAfterSelection.mutate()
-                    : mutationCancelServiceByMediatorAfterSelection.mutate()
-                }
-              />
-            ) : (
-              <Button
-                isPrimary={true}
-                title={isServiceApplied ? t("cancelApply") : t("applyNow")}
-                onPress={() =>
-                  isServiceApplied ? handleCancelApply() : handleApply()
-                }
-              />
-            )}
-
-            <Button
-              isPrimary={false}
-              title={isServiceLiked ? t("unlike") : t("like")}
-              onPress={() =>
-                isServiceLiked
-                  ? mutationUnLikeService.mutate()
-                  : mutationLikeService.mutate()
-              }
-              style={styles?.footerBtn}
-              textStyle={{
-                color: Colors?.white,
-              }}
-            />
-          </Animated.View>
-        )}
-
-      {service?.employer?._id === userDetails?._id &&
-        service?.status !== "CANCELLED" && (
-          <Animated.View
-            style={styles.footer}
-            entering={SlideInDown.delay(200)}
-          >
-            <Button
-              isPrimary={true}
-              title={t("deleteService")}
-              onPress={() => setModalVisible(true)}
-              style={styles?.deleteBtn}
-            />
-            {appliedWorkers &&
-            appliedWorkers?.pages[0]?.data &&
-            appliedWorkers?.pages[0]?.data?.length > 0 ? (
-              <Button
-                isPrimary={false}
-                title={t("completeService")}
-                onPress={() => setIsCompleteModalVisible(true)}
-                style={styles?.completeBtn}
-                textStyle={{
-                  color: Colors?.white,
-                }}
-              />
-            ) : (
-              <Button
-                isPrimary={false}
-                title={t("edit")}
-                onPress={() => {
-                  router.push("/(tabs)/addService/");
-                  setAddService(service);
-                }}
-                style={styles?.footerBtn}
-                textStyle={{
-                  color: Colors?.white,
-                }}
-              />
-            )}
-          </Animated.View>
-        )}
-
-      {service?.employer?._id === userDetails?._id &&
-        service?.status === "CANCELLED" && (
-          <Animated.View
-            style={styles.footer}
-            entering={SlideInDown.delay(200)}
-          >
-            <Button
-              isPrimary={false}
-              title={t("restoreService")}
-              onPress={() => mutationCompleteService?.mutate()}
-              style={styles?.footerBtn}
-              bgColor={Colors?.tertiery}
-              textStyle={{
-                color: Colors?.white,
-              }}
-            />
-          </Animated.View>
-        )}
-
-      <ModalComponent
-        title={t("completeService")}
-        visible={isCompleteModalVisible}
-        content={completeServiceModalContent}
-        onClose={() => setIsCompleteModalVisible(false)}
-        primaryButton={{
-          title: t("complete"),
-          action: mutationCompleteService?.mutate,
-        }}
-        secondaryButton={{
-          title: t("cancel"),
-          styles: "",
-          action: () => setIsCompleteModalVisible(false),
-        }}
+      <ServiceActionButtons
+        service={service}
+        members={workers}
+        userDetails={userDetails}
+        isAdmin={isAdmin}
+        isSelected={isSelected}
+        isServiceApplied={isServiceApplied}
+        isServiceLiked={isServiceLiked}
+        id={id as string}
+        refetch={refetch}
+        refreshUser={refreshUser}
+        selectedWorkersIds={selectedWorkersIds}
+        setSelectedWorkersIds={setSelectedWorkersIds}
+        setIsWorkerSelectModal={setIsWorkerSelectModal}
+        setModalVisible={setModalVisible}
+        setIsCompleteModalVisible={setIsCompleteModalVisible}
+        hasMemberNextPage={hasMemberNextPage}
+        isMemberFetchingNextPage={isMemberFetchingNextPage}
+        memberFetchPage={memberFetchPage}
+        setAddService={setAddService}
+        isCompleteModalVisible={isCompleteModalVisible}
+        modalVisible={modalVisible}
+        isWorkerSelectModal={isWorkerSelectModal}
       />
-
-      <ModalComponent
-        title={t("deleteService")}
-        visible={modalVisible}
-        content={deleteModalContent}
-        onClose={() => setModalVisible(false)}
-        primaryButton={{
-          title: t("deleteService"),
-          styles: {
-            backgroundColor: "red",
-            borderColor: "red",
-          },
-          action: handleDelete,
-        }}
-        secondaryButton={{
-          title: t("cancel"),
-          styles: "",
-          action: () => setModalVisible(false),
-        }}
-      />
-
-      <ModalComponent
-        title={isServiceApplied ? t("selectedWorkers") : t("selectWorkers")}
-        visible={isWorkerSelectModal}
-        content={mediatorModelContent}
-        onClose={() => setIsWorkerSelectModal(false)}
-        primaryButton={{
-          disabled: selectedWorkersIds?.length === 0,
-          title: isServiceApplied ? t("cancelApply") : t("applyNow"),
-          styles: {
-            backgroundColor: "red",
-            borderColor: "red",
-          },
-          action: isServiceApplied
-            ? mutationMediatorUnApplyService?.mutate
-            : mutationMediatorApplyService?.mutate,
-        }}
-        secondaryButton={{
-          title: t("cancel"),
-          styles: "",
-          action: () => setIsWorkerSelectModal(false),
-        }}
-      />
-
-      {isAdmin && service?.status !== "CANCELLED" && (
-        <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-          <Button
-            isPrimary={true}
-            title={t("deleteService")}
-            onPress={() => setModalVisible(true)}
-            style={styles.deleteBtn}
-          />
-          <Button
-            isPrimary={false}
-            title={t("completeService")}
-            onPress={() => setIsCompleteModalVisible(true)}
-            style={styles.completeBtn}
-            textStyle={{
-              color: Colors?.white,
-            }}
-          />
-        </Animated.View>
-      )}
     </>
   );
 };

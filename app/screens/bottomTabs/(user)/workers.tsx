@@ -3,14 +3,14 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { UserAtom } from "../../AtomStore/user";
+import { UserAtom } from "../../../AtomStore/user";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import { MYSERVICES, SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
@@ -21,7 +21,7 @@ import { t } from "@/utils/translationHelper";
 import { fetchAllWorkers } from "@/app/api/workers";
 import { fetchAllServices } from "@/app/api/services";
 
-const Workers = () => {
+const UserWorkers = () => {
   const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
@@ -207,4 +207,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Workers;
+export default UserWorkers;

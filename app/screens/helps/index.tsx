@@ -261,7 +261,7 @@ const HelpScreen = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Helps" left="back" />,
+          header: () => <CustomHeader title="Helps" left="back" right="notification" />,
         }}
       />
       <View style={styles.container}>

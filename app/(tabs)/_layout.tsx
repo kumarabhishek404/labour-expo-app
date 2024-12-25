@@ -1,9 +1,11 @@
-import { View, Platform, StatusBar } from "react-native";
+import { Platform } from "react-native";
 import React from "react";
-import { Tabs, Redirect } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import {
   Entypo,
   FontAwesome,
+  FontAwesome5,
+  FontAwesome6,
   Ionicons,
   MaterialIcons,
 } from "@expo/vector-icons";
@@ -20,7 +22,7 @@ import useFirstTimeLaunch from "../hooks/useFirstTimeLaunch";
 import { useLocale } from "../context/locale";
 import { t } from "@/utils/translationHelper";
 import LanguageSelectionScreen from "../languageSelection";
-import ProfileScreen from "./(user)/profile";
+import ProfileScreen from "../screens/bottomTabs/(user)/profile";
 
 export default function Layout() {
   const userDetails = useAtomValue(UserAtom);
@@ -28,7 +30,9 @@ export default function Layout() {
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const isAddService = useAtomValue(AddServiceInProcess);
   useLocale();
+  const pathname = usePathname();
 
+  console.log("userDetails", pathname);
   const isFirstLaunch = useFirstTimeLaunch();
 
   if (isFirstLaunch === null) {
@@ -47,284 +51,149 @@ export default function Layout() {
 
   return (
     <>
-      {/* <StatusBar backgroundColor={Colors?.primary} barStyle="light-content" /> */}
-      {userDetails?.role === "ADMIN" ? (
-        <Tabs
-          screenOptions={{
-            tabBarStyle: {
-              backgroundColor: Colors.bgColor,
-              borderTopWidth: 0,
-              padding: 0,
-              height: 66,
-              paddingTop: 6,
-              paddingBottom: Platform.OS === "ios" ? 18 : 6,
-            },
-            tabBarLabelStyle: {
-              fontSize: 10,
-            },
-            tabBarShowLabel: true,
-            tabBarActiveTintColor: Colors?.secondaryText,
-            tabBarInactiveTintColor: "#999",
-            headerTintColor: Colors?.heading,
+      <Tabs
+        screenOptions={{
+          tabBarStyle: {
+            display: isAddService ? "none" : "flex",
+            backgroundColor: Colors.bgColor,
+            borderTopWidth: 0,
+            padding: 0,
+            height: 66,
+            paddingTop: 6,
+            paddingBottom: Platform.OS === "ios" ? 18 : 6,
+          },
+          tabBarLabelStyle: {
+            fontSize: 10,
+          },
+          tabBarShowLabel: true,
+          tabBarActiveTintColor: Colors?.secondaryText,
+          tabBarInactiveTintColor: "#999",
+          headerTintColor: Colors?.heading,
+        }}
+      >
+        <Tabs.Screen
+          name="index"
+          listeners={{
+            tabPress: () => setAddService({}),
           }}
-        >
-          <Tabs.Screen
-            name="(admin)/index"
-            listeners={{
-              tabPress: () => {
-                setAddService({});
-              },
-            }}
-            options={{
-              title: t("services"),
-              tabBarIcon: ({ color }: any) => (
+          options={{
+            title: userDetails?.role === "ADMIN" ? t("services") : t("home"),
+            tabBarIcon: ({ color }) =>
+              userDetails?.role === "ADMIN" ? (
+                <MaterialIcons name="work" size={32} color={color} />
+              ) : (
+                <Ionicons name="home" size={30} color={color} />
+              ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="second"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            title:
+              userDetails?.role === "ADMIN"
+                ? t("users")
+                : userDetails?.role === "EMPLOYER"
+                ? t("myServices")
+                : t("myBookings"),
+            tabBarIcon: ({ color }) =>
+              userDetails?.role === "ADMIN" ? (
+                <FontAwesome6 name="people-group" size={32} color={color} />
+              ) : (
                 <MaterialIcons
-                  name="miscellaneous-services"
+                  name={
+                    userDetails?.role === "ADMIN" ? "people" : "calendar-month"
+                  }
+                  size={34}
+                  color={color}
+                />
+              ),
+          }}
+        />
+
+        <Tabs.Screen
+          name={
+            userDetails?.role === "ADMIN" || userDetails?.role === "WORKER"
+              ? "third"
+              : "addService"
+          }
+          options={{
+            headerShown:
+              userDetails?.role === "ADMIN" || userDetails?.role === "WORKER"
+                ? true
+                : false,
+            title:
+              userDetails?.role === "ADMIN"
+                ? t("settings")
+                : userDetails?.role === "WORKER"
+                ? t("help")
+                : addService?._id
+                ? t("editService")
+                : t("addService"),
+            tabBarIcon: ({ color }) =>
+              userDetails?.role === "ADMIN" ? (
+                <Ionicons name="settings" size={30} color={color} />
+              ) : userDetails?.role === "WORKER" ? (
+                <MaterialIcons name="help" size={34} color={color} />
+              ) : (
+                <Entypo name="squared-plus" size={30} color={color} />
+              ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="fourth"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            title:
+              userDetails?.role === "ADMIN"
+                ? t("requests")
+                : userDetails?.role === "EMPLOYER"
+                ? t("workers")
+                : t("services"),
+            tabBarIcon: ({ color }) =>
+              userDetails?.role === "ADMIN" ? (
+                <FontAwesome5 name="praying-hands" size={28} color={color} />
+              ) : (
+                <MaterialIcons
+                  name={userDetails?.role === "EMPLOYER" ? "people" : "work"}
                   size={30}
                   color={color}
                 />
               ),
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/users"
-            listeners={{
-              tabPress: () => {
-                setAddService({});
-              },
-            }}
-            options={{
-              title: t("users"),
-              tabBarIcon: ({ color }: any) => (
-                <MaterialIcons name="work" size={30} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/settings"
-            listeners={{
-              tabPress: () => {
-                setAddService({});
-              },
-            }}
-            options={{
-              title: t("settings"),
-              tabBarIcon: ({ color }: any) => (
-                <FontAwesome name="users" size={30} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/requests"
-            listeners={{
-              tabPress: () => {
-                setAddService({});
-              },
-            }}
-            options={{
-              title: t("requests"),
-              tabBarIcon: ({ color }: any) => (
-                <MaterialIcons name="business" size={30} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/profile"
-            listeners={{
-              tabPress: () => {
-                setAddService({});
-              },
-            }}
-            options={{
-              title: t("myProfile"),
-              headerTitle: t("myProfile"),
-              tabBarIcon: ({ color }: any) => (
-                <FontAwesome name="user" size={30} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/index"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/bookings"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/help"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/workers"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/profile"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="addService"
-            options={{
-              href: null,
-            }}
-          />
-        </Tabs>
-      ) : (
-        <Tabs
-          screenOptions={{
-            tabBarStyle: {
-              display: isAddService ? "none" : "flex",
-              backgroundColor: Colors.bgColor,
-              borderTopWidth: 0,
-              padding: 0,
-              height: 66,
-              paddingTop: 6,
-              paddingBottom: Platform.OS === "ios" ? 18 : 6,
-            },
-            tabBarLabelStyle: {
-              fontSize: 10,
-            },
-            tabBarShowLabel: true,
-            tabBarActiveTintColor: Colors?.secondaryText,
-            tabBarInactiveTintColor: "#999",
-            headerTintColor: Colors?.heading,
           }}
-        >
-          <Tabs.Screen
-            name="(admin)/index"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/users"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/settings"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/requests"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(admin)/profile"
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name={userDetails?.role === "WORKER" ? "addService" : "(user)/help"}
-            options={{
-              href: null,
-            }}
-          />
-          <Tabs.Screen
-            name="(user)/index"
-            listeners={{
-              tabPress: () => setAddService({}),
-            }}
-            options={{
-              title: t("home"),
-              tabBarIcon: ({ color }) => (
-                <Ionicons name="home" size={30} color={color} />
-              ),
-            }}
-          />
+        />
 
-          <Tabs.Screen
-            name="(user)/bookings"
-            listeners={{
-              tabPress: () => setAddService({}),
-            }}
-            options={{
-              title:
-                userDetails?.role === "EMPLOYER"
-                  ? t("myServices")
-                  : t("myBookings"),
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name="calendar-month" size={30} color={color} />
-              ),
-            }}
-          />
+        <Tabs.Screen
+          name="fifth"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            title: t("myProfile"),
+            headerTitle: t("myProfile"),
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name="user" size={30} color={color} />
+            ),
+          }}
+        />
 
-          {userDetails?.role === "WORKER" ? (
-            <Tabs.Screen
-              name="(user)/help"
-              options={{
-                title: t("help"),
-                tabBarIcon: ({ color }) => (
-                  <Entypo name="help" size={30} color={color} />
-                ),
-              }}
-            />
-          ) : (
-            <Tabs.Screen
-              name="addService"
-              listeners={{
-                tabPress: () => setAddService({}),
-              }}
-              options={{
-                headerTitle:
-                  userDetails?.role === "EMPLOYER"
-                    ? addService?._id
-                      ? t("editService")
-                      : t("addService")
-                    : t("addNeed"),
-                tabBarIcon: ({ color }) => (
-                  <Entypo name="squared-plus" size={30} color={color} />
-                ),
-              }}
-            />
-          )}
-
-          <Tabs.Screen
-            name="(user)/workers"
-            listeners={{
-              tabPress: () => setAddService({}),
-            }}
-            options={{
-              title:
-                userDetails?.role === "EMPLOYER" ? t("workers") : t("services"),
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name="work" size={30} color={color} />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="(user)/profile"
-            listeners={{
-              tabPress: () => setAddService({}),
-            }}
-            options={{
-              title: t("myProfile"),
-              headerTitle: t("myProfile"),
-              tabBarIcon: ({ color }) => (
-                <FontAwesome name="user" size={30} color={color} />
-              ),
-            }}
-          />
-        </Tabs>
-      )}
+        <Tabs.Screen
+          name={
+            userDetails?.role === "ADMIN" || userDetails?.role === "WORKER"
+              ? "addService"
+              : "third"
+          }
+          options={{
+            href: null,
+          }}
+        />
+      </Tabs>
     </>
   );
 }

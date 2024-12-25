@@ -39,6 +39,7 @@ import UserReviews from "@/components/commons/UserReviews";
 import { getUserById } from "@/app/api/user";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import ProfilePicture from "@/components/commons/ProfilePicture";
+import WorkHistory from "@/components/commons/WorkHistory";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -252,6 +253,10 @@ const User = () => {
                 <WorkInformation information={user?.workDetails} />
                 <ServiceInformation information={user?.serviceDetails} />
               </View>
+            )}
+
+            {user?.role !== 'EMPLOYER' && (
+              <WorkHistory workHistory={user?.workHistory} />
             )}
 
             <UserReviews

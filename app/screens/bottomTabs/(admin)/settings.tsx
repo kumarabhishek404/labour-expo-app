@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useAtomValue } from "jotai";
 import { Stack } from "expo-router";
-import { UserAtom } from "../../AtomStore/user";
+import { UserAtom } from "../../../AtomStore/user";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import { Ionicons } from "@expo/vector-icons";

@@ -27,7 +27,7 @@ import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import { fetchAllRequestsForAdmin } from "@/app/api/admin";
 
-const Requests = () => {
+const AdminRequests = () => {
   const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [totalData, setTotalData] = useState(0);
@@ -103,7 +103,7 @@ const Requests = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title="Requests" left="back" right="notification" />
+            <CustomHeader title={t("requests")} right="notification" />
           ),
         }}
       />
@@ -132,7 +132,7 @@ const Requests = () => {
 
           <ListingVerticalRequests
             listings={memoizedData || []}
-            category={category}
+            requestType={category}
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
             onAcceptRequest={mutationAcceptRequest?.mutate}
@@ -152,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Requests;
+export default AdminRequests;

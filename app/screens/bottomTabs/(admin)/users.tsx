@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
+import { useAtomValue } from "jotai";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
+import { UserAtom } from "../../../AtomStore/user";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../hooks/usePullToRefresh";
-import { MYSERVICES, SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
+import { ROLES, USERS, WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -16,18 +18,18 @@ import Header from "@/components/commons/Header";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { fetchAllWorkers } from "@/app/api/workers";
-import { fetchAllServices } from "@/app/api/services";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { activateUser, fetchAllUsers, suspendUser } from "@/app/api/admin";
+import ListingsVerticalUsersAdmin from "@/components/commons/ListingsVerticalUsersAdmin";
+import { toast } from "@/app/hooks/toast";
 
-const Services = () => {
+const AdminUsers = () => {
+  const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("HIRING");
-  const [secondaryCategory, setSecondaryCategory] = useState("");
-
+  const [status, setStatus] = useState("ACTIVE");
+  const [role, setRole] = useState("WORKER");
   const [isFilterVisible, setFilterVisible] = useState(false);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({}); // Store applied filters here
 
   const {
     data: response,
@@ -38,26 +40,27 @@ const Services = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["services", category, secondaryCategory, filters],
+    queryKey: ["users", status, role, filters], // Add filters to queryKey to refetch when they change
     queryFn: ({ pageParam }) => {
       const payload = {
         pageParam,
-        ...filters,
+        ...filters, // Add filters to the API request payload
       };
-      return fetchAllServices({
-        ...payload,
-        status: category,
-        skill: secondaryCategory,
-      });
+      return fetchAllUsers({ ...payload, role: role, status: status });
     },
     retry: false,
     initialPageParam: 1,
+    refetchOnMount: true,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
+      // console.log("Last--", lastPage?.pagination);
+
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
+    // refetchInterval: 5000
   });
 
   useEffect(() => {
@@ -86,6 +89,36 @@ const Services = () => {
     }, [response])
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
+
+  const mutationSuspendUser = useMutation({
+    mutationKey: ["suspendUser"],
+    mutationFn: (payload: any) => suspendUser(payload),
+    onSuccess: () => {
+      toast.success("User suspended successfully");
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "An error occurred while suspending user");
+    },
+  });
+
+  const mutationActivateUser = useMutation({
+    mutationKey: ["activateUser"],
+    mutationFn: (payload: any) => activateUser(payload),
+    onSuccess: () => {
+      toast.success("User activated successfully");
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "An error occurred while activating user");
+    },
+  });
+
   const handleApply = (appliedFilters: React.SetStateAction<any>) => {
     // Apply filters to API call and close modal
     setFilters(appliedFilters);
@@ -111,12 +144,12 @@ const Services = () => {
     [filteredData]
   );
 
-  const onCatChanged = (category: React.SetStateAction<string>) => {
-    setCategory(category);
+  const onStatusChanged = (status: React.SetStateAction<string>) => {
+    setStatus(status);
   };
 
-  const onSecondaryCatChanged = (category: React.SetStateAction<string>) => {
-    setSecondaryCategory(category);
+  const onRoleChanged = (role: React.SetStateAction<string>) => {
+    setRole(role);
   };
 
   const { refreshing, onRefresh } = usePullToRefresh(async () => {
@@ -128,35 +161,43 @@ const Services = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("services")} right="notification" />
+            <CustomHeader title={t("users")} right="notification" />
           ),
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
+        <Loader
+          loading={
+            isLoading ||
+            mutationActivateUser?.isPending ||
+            mutationSuspendUser?.isPending
+          }
+        />
         <View style={styles.container}>
           <SearchFilter data={response} setFilteredData={setFilteredData} />
 
           <CategoryButtons
-            options={MYSERVICES}
-            onCagtegoryChanged={onCatChanged}
+            options={USERS}
+            onCagtegoryChanged={onStatusChanged}
           />
 
-          <CategoryButtons
-            options={WORKERS}
-            onCagtegoryChanged={onSecondaryCatChanged}
-          />
+          <CategoryButtons options={ROLES} onCagtegoryChanged={onRoleChanged} />
+
           <PaginationString
             type="services"
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />
 
           {memoizedData && memoizedData?.length > 0 ? (
-            <ListingsVerticalServices
+            <ListingsVerticalUsersAdmin
+              type="worker"
+              availableInterest={WORKERTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}
+              onSuspendUser={mutationSuspendUser.mutate}
+              onActivateUser={mutationActivateUser.mutate}
               isFetchingNextPage={isFetchingNextPage}
               refreshControl={
                 <RefreshControl
@@ -166,7 +207,7 @@ const Services = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title="Service" />
+            <EmptyDatePlaceholder title="Worker" />
           )}
         </View>
 
@@ -188,4 +229,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Services;
+export default AdminUsers;

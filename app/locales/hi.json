@@ -521,5 +521,14 @@
   "payments": "भुगतान",
   "serviceManagement": "सेवा प्रबंधन",
   "workerManagement": "कामगार प्रबंधन",
-  "systemSettings": "सिस्टम सेटिंग्स"
+  "systemSettings": "सिस्टम सेटिंग्स",
+  "suspend": "बंद करें",
+  "delete": "हटाएं",
+  "restore": "पुनर्स्थापित करें",
+  "activate": "सक्रिय करें",
+  "workHistory": "काम इतिहास",
+  "days": "दिन",
+  "noWorkHistory": "कोई काम इतिहास नहीं मिला",
+  "description": "विवरण",
+  "experience": "अनुभव"
 }

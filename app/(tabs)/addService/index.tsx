@@ -25,7 +25,7 @@ import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
-const SignupScreen = () => {
+const AddServiceScreen = () => {
   const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [addService, setAddService] = useAtom(AddServiceAtom);
@@ -93,7 +93,7 @@ const SignupScreen = () => {
       );
       setImages([]);
       setStep(1);
-      router?.push("/(tabs)/bookings");
+      router?.push("/(tabs)/second");
     },
     onError: (err: any) => {
       console.error("Error details:", {
@@ -352,7 +352,7 @@ const SignupScreen = () => {
   );
 };
 
-export default SignupScreen;
+export default AddServiceScreen;
 
 const styles = StyleSheet.create({
   container: {

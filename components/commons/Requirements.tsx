@@ -30,6 +30,18 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
             </View>
           ))}
         </View>
+      ) : type === "small" ? (
+        <View style={styles.smallContainer}>
+          {requirements?.map((requirement: any, index: number) => (
+            <View key={index} style={styles.smallTag}>
+              <CustomText style={styles.smallRequirementText}>
+                {requirement.count} {t(requirement.name)} • ₹
+                {requirement.payPerDay}
+                /day
+              </CustomText>
+            </View>
+          ))}
+        </View>
       ) : (
         <View style={styles.requirmentContainer}>
           {requirements?.map((requirement: any, index: number) => {
@@ -119,6 +131,22 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 6,
     borderWidth: 1,
+  },
+  smallContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginVertical: 8,
+  },
+  smallTag: {
+    backgroundColor: Colors.tertiery,
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  smallRequirementText: {
+    color: Colors.white,
+    fontSize: 12,
   },
 });
 

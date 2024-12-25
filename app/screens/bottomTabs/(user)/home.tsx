@@ -5,17 +5,17 @@ import Colors from "@/constants/Colors";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../../AtomStore/user";
-import { fetchAllWorkers } from "../../api/workers";
-import { fetchAllServices } from "../../api/services";
+import { UserAtom } from "../../../AtomStore/user";
+import { fetchAllWorkers } from "../../../api/workers";
+import { fetchAllServices } from "../../../api/services";
 import Loader from "@/components/commons/Loader";
-import { fetchAllEmployers } from "../../api/employer";
+import { fetchAllEmployers } from "../../../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
-import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
 import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
@@ -32,7 +32,7 @@ import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
-const Page = () => {
+const UserHome = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
@@ -62,8 +62,6 @@ const Page = () => {
       return undefined;
     },
   });
-
-  console.log("response", response?.pages[0]?.data);
 
   const {
     data: secondResponse,
@@ -255,7 +253,7 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default UserHome;
 
 const styles = StyleSheet.create({
   container: {
