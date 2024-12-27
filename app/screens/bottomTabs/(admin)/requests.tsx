@@ -1,34 +1,22 @@
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useAtomValue } from "jotai";
+import { View, StyleSheet } from "react-native";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { UserAtom } from "@/app/AtomStore/user";
-import { router, Stack } from "expo-router";
-import {
-  acceptJoiningRequest,
-  cancelJoiningRequest,
-  fetchAllRequests,
-  fetchRecievedRequests,
-  fetchSentRequests,
-  rejectJoiningRequest,
-} from "@/app/api/requests";
+import { Stack } from "expo-router";
+import { acceptJoiningRequest, rejectJoiningRequest } from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { ADMINREQUEST, MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
+import { ADMINREQUEST} from "@/constants";
 import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import { fetchAllRequestsForAdmin } from "@/app/api/admin";
 
 const AdminRequests = () => {
-  const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
@@ -116,7 +104,7 @@ const AdminRequests = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={ADMINREQUEST}

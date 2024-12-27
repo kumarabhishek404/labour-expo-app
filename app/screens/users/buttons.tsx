@@ -23,14 +23,13 @@ import {
 } from "@/app/api/mediator";
 import { likeEmployer, unlikeEmployer } from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
-import { sendJoiningRequest } from "@/app/api/requests";
 import {
-  activateUser,
-  suspendUser,
-  deleteUser,
-  editUser,
-} from "@/app/api/admin";
-
+  cancelJoiningRequest,
+  leaveFromTeam,
+  sendJoiningRequest,
+} from "@/app/api/requests";
+import { activateUser, suspendUser } from "@/app/api/admin";
+import { deleteUserById } from "@/app/api/user";
 const { width } = Dimensions.get("window");
 
 interface ButtonContainerProps {
@@ -40,6 +39,7 @@ interface ButtonContainerProps {
   isUserBooked: boolean;
   isUserLiked: boolean;
   isUserRequested: boolean;
+  isInYourTeam: boolean;
 }
 
 const ButtonContainer = ({
@@ -49,6 +49,7 @@ const ButtonContainer = ({
   isUserBooked,
   isUserLiked,
   isUserRequested,
+  isInYourTeam,
 }: ButtonContainerProps) => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
@@ -148,7 +149,8 @@ const ButtonContainer = ({
     mutationKey: ["sendRequest", { id }],
     mutationFn: () => sendJoiningRequest({ userId: id }),
     onSuccess: (response) => {
-      console.log("Response while sending a request to worker - ", response);
+      refetch();
+      toast.success(t("requestSentSuccessfully"));
     },
     onError: (err) => {
       console.error("error while sending request to worker ", err);
@@ -173,14 +175,38 @@ const ButtonContainer = ({
     },
   });
 
-  const mutationDeleteUser = useMutation({
-    mutationKey: ["deleteUser", { id }],
-    mutationFn: () => deleteUser({ userId: id }),
+  const mutationCancelRequest = useMutation({
+    mutationKey: ["cancelRequest"],
+    mutationFn: () => cancelJoiningRequest({ userId: id }),
     onSuccess: () => {
       refetch();
-      toast.success(t("userDeleted"));
+      toast.success(t("requestCancelledSuccessfully"));
+    },
+    onError: (err) => {
+      console.error("error while cancelling request to worker ", err);
     },
   });
+
+  const mutationLeaveFromTeam = useMutation({
+    mutationKey: ["leaveFromTeam", { id }],
+    mutationFn: () => leaveFromTeam({ userId: id }),
+    onSuccess: () => {
+      refetch();
+      toast.success(t("successfullyLeftFromTeam"));
+    },
+    onError: (err) => {
+      console.error("error while leaving from team ", err);
+    },
+  });
+
+  // const mutationDeleteUser = useMutation({
+  //   mutationKey: ["deleteUser", { id }],
+  //   mutationFn: () => deleteUserById(id),
+  //   onSuccess: () => {
+  //     refetch();
+  //     toast.success(t("userDeleted"));
+  //   },
+  // });
 
   const handleLikeFunction = () => {
     if (role === "workers") mutationLikeWorker?.mutate();
@@ -192,22 +218,6 @@ const ButtonContainer = ({
     if (role === "workers") mutationUnLikeWorker?.mutate();
     else if (role === "mediators") mutationUnLikeMediator?.mutate();
     else mutationUnLikeEmployer?.mutate();
-  };
-
-  const handleBookFunction = () => {
-    if (role === "workers") mutationBookWorker?.mutate();
-    else if (role === "mediators") mutationBookMediator?.mutate();
-    else mutationLikeWorker?.mutate();
-  };
-
-  const handleRemoveBookedFunction = () => {
-    if (role === "workers") mutationRemoveBookedWorker?.mutate();
-    else if (role === "mediators") mutationRemoveBookedMediator?.mutate();
-    else mutationLikeWorker?.mutate();
-  };
-
-  const handleSendFunction = () => {
-    mutationSendRequest?.mutate();
   };
 
   return (
@@ -228,7 +238,9 @@ const ButtonContainer = ({
           mutationSendRequest?.isPending ||
           mutationActivateUser?.isPending ||
           mutationSuspendUser?.isPending ||
-          mutationDeleteUser?.isPending
+          mutationCancelRequest?.isPending ||
+          mutationLeaveFromTeam?.isPending
+          // mutationDeleteUser?.isPending
         }
       />
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
@@ -242,8 +254,25 @@ const ButtonContainer = ({
         {userDetails?.role === "MEDIATOR" && (
           <Button
             isPrimary={true}
-            title={isUserRequested ? t("alreadyAdded") : t("addInYourTeam")}
-            onPress={() => handleSendFunction()}
+            bgColor={
+              isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
+            }
+            title={
+              isInYourTeam
+                ? t("leaveFromTeam")
+                : isUserRequested
+                ? t("removeRequest")
+                : t("addInYourTeam")
+            }
+            onPress={() => {
+              if (isInYourTeam) {
+                mutationLeaveFromTeam?.mutate();
+              } else if (isUserRequested) {
+                mutationCancelRequest?.mutate();
+              } else {
+                mutationSendRequest?.mutate();
+              }
+            }}
           />
         )}
         {userDetails?.role !== "ADMIN" && (
@@ -275,7 +304,7 @@ const ButtonContainer = ({
                 <Button
                   isPrimary={true}
                   title={t("delete")}
-                  onPress={() => mutationDeleteUser.mutate()}
+                  onPress={() => {}}
                   style={styles.deleteButton}
                 />
               </>
@@ -302,7 +331,7 @@ const ButtonContainer = ({
                 <Button
                   isPrimary={true}
                   title={t("delete")}
-                  onPress={() => mutationDeleteUser.mutate()}
+                  onPress={() => {}}
                   style={styles.deleteButton}
                 />
               </>
@@ -326,13 +355,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 30,
     width: width,
-  },
-  footerBtn: {
-    width: "48%",
-    backgroundColor: Colors.black,
-    padding: 20,
-    borderRadius: 8,
-    alignItems: "center",
   },
   footerBookBtn: {
     flex: 2,

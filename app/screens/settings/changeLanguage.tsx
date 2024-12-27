@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocale } from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
-import { Feather } from "@expo/vector-icons";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
@@ -18,21 +11,13 @@ import Button from "@/components/inputs/Button";
 import Animated, { SlideInDown } from "react-native-reanimated";
 import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 
-const { width } = Dimensions.get("window");
-interface Language {
-  value: string;
-  label: string;
-}
-
 export default function LanguageSelectionScreen() {
   const { locale, setLocale } = useLocale();
-
-  console.log("locale --", locale);
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
 
   useEffect(() => {
-    setSelectedLanguage(locale); // Pre-select the already selected language
+    setSelectedLanguage(locale);
   }, [locale]);
 
   const handleSave = async () => {

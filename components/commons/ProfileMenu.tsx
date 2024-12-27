@@ -28,7 +28,6 @@ import {
   registerForPushNotificationsAsync,
   unregisterPushNotifications,
 } from "@/app/hooks/usePushNotification";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileMenu = ({ disabled }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -41,7 +40,8 @@ const ProfileMenu = ({ disabled }: any) => {
     NotificationConsentAtom
   );
 
-  console.log("notificationConsent - ", notificationConsent);
+  console.log("notificationConsent--", notificationConsent);
+
   const handleLogout = () => {
     setUserDetails({
       isAuth: false,
@@ -96,6 +96,7 @@ const ProfileMenu = ({ disabled }: any) => {
     try {
       await registerForPushNotificationsAsync();
       setNotificationConsent(true);
+      toast.success("Notifications enabled");
       console.log("Notifications enabled");
     } catch (err) {
       console.error("Failed to enable notifications", err);
@@ -105,12 +106,57 @@ const ProfileMenu = ({ disabled }: any) => {
   const unregisterNotification = async () => {
     try {
       await unregisterPushNotifications();
+      toast.success("Notifications disabled");
       console.log("Notifications disabled");
       setNotificationConsent(false);
     } catch (err) {
       console.error("Failed to disable notifications", err);
     }
   };
+
+  const [isNotificationModalVisible, setNotificationModalVisible] =
+    useState(false);
+  const [isEnabling, setIsEnabling] = useState(false); // Track enable/disable action
+
+  const handleNotificationToggle = (isEnable: boolean) => {
+    console.log("isEnable--", isEnable);
+    setIsEnabling(!isEnable);
+    setNotificationModalVisible(true);
+  };
+
+  const confirmNotificationChange = async () => {
+    setNotificationModalVisible(false);
+    try {
+      if (isEnabling) {
+        await registerNotification();
+      } else {
+        await unregisterNotification();
+      }
+    } catch (err) {
+      toast.error("Failed to change notification preference");
+      console.error(err);
+    }
+  };
+
+  const notificationModalContent = () => (
+    <View style={styles.modalView}>
+      <MaterialIcons
+        name="notifications-none"
+        size={50}
+        color={Colors.primary}
+      />
+      <View style={styles.modalTextContainer}>
+        <CustomHeading style={styles.modalTitle}>
+          {isEnabling ? "Enable Notifications" : "Disable Notifications"}
+        </CustomHeading>
+        <CustomText style={styles.modalMessage}>
+          {isEnabling
+            ? "Do you want to turn on notifications for this app?"
+            : "Are you sure you want to turn off notifications?"}
+        </CustomText>
+      </View>
+    </View>
+  );
 
   const menus = [
     {
@@ -225,7 +271,7 @@ const ProfileMenu = ({ disabled }: any) => {
     // },
     {
       title: t("experience"),
-      icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
+      icon: <Entypo name="text-document" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/experience",
@@ -276,9 +322,7 @@ const ProfileMenu = ({ disabled }: any) => {
       ),
       switch: true,
       switchValue: notificationConsent,
-      onSwitchToggle: notificationConsent
-        ? unregisterNotification
-        : registerNotification,
+      onSwitchToggle: () => handleNotificationToggle(notificationConsent),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -455,6 +499,24 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }}
       />
+
+      <ModalComponent
+        visible={isNotificationModalVisible}
+        title={isEnabling ? "Enable Notifications" : "Disable Notifications"}
+        onClose={() => setNotificationModalVisible(false)}
+        content={notificationModalContent}
+        primaryButton={{
+          title: isEnabling ? "Enable" : "Disable",
+          action: confirmNotificationChange,
+          styles: {
+            backgroundColor: isEnabling ? Colors.primary : Colors.danger,
+            borderColor: isEnabling ? Colors.primary : Colors.danger,
+          },
+        }}
+        secondaryButton={{
+          action: () => setNotificationModalVisible(false),
+        }}
+      />
     </>
   );
 };
@@ -515,5 +577,18 @@ const styles = StyleSheet.create({
   },
   copyright: {
     marginTop: 20,
+  },
+  modalTextContainer: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  modalMessage: {
+    fontSize: 14,
+    textAlign: "center",
   },
 });

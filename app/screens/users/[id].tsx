@@ -58,6 +58,9 @@ const User = () => {
   const [isUserRequested, setIsUserRequested] = useState(
     user?.requestedBy?.includes(userDetails?._id)
   );
+  const [isInYourTeam, setIsInYourTeam] = useState(
+    user?.employedBy?.includes(userDetails?._id)
+  );
   const reviewsSectionRef = useRef<View>(null);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
   const [reviewsPosition, setReviewsPosition] = useState(0);
@@ -80,6 +83,7 @@ const User = () => {
     setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
     setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
     setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
+    setIsInYourTeam(user?.employedBy?.includes(userDetails?._id));
   }, [user]);
 
   useFocusEffect(
@@ -172,7 +176,7 @@ const User = () => {
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={styles?.highlightBox}>
+              <View style={[styles?.highlightBox, { width: "42%" }]}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="time" size={18} color={Colors.primary} />
                 </View>
@@ -183,7 +187,7 @@ const User = () => {
                   </CustomHeading>
                 </View>
               </View>
-              <View style={styles?.highlightBox}>
+              <View style={[styles?.highlightBox, { width: "58%" }]}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>
@@ -191,6 +195,7 @@ const User = () => {
                   style={{
                     flexDirection: "row",
                     justifyContent: "flex-start",
+                    alignItems: "center",
                     gap: 10,
                   }}
                 >
@@ -205,13 +210,12 @@ const User = () => {
                     title={hasUserReviewed ? t("viewReview") : t("addReview")}
                     onPress={handleReviewAction}
                     style={{
-                      width: "60%",
-                      paddingVertical: 4,
+                      paddingVertical: 3,
                       paddingHorizontal: 6,
                       backgroundColor: "#fa6400",
                       borderColor: "#fa6400",
                     }}
-                    textStyle={{ fontSize: 13 }}
+                    textStyle={{ fontSize: 12 }}
                   />
                 </View>
               </View>
@@ -255,7 +259,7 @@ const User = () => {
               </View>
             )}
 
-            {user?.role !== 'EMPLOYER' && (
+            {user?.role !== "EMPLOYER" && (
               <WorkHistory workHistory={user?.workHistory} />
             )}
 
@@ -279,6 +283,7 @@ const User = () => {
         isUserBooked={isUserBooked}
         isUserLiked={isUserLiked}
         isUserRequested={isUserRequested}
+        isInYourTeam={isInYourTeam}
       />
     </>
   );
@@ -324,7 +329,6 @@ const styles = StyleSheet.create({
     columnGap: 2,
   },
   highlightBox: {
-    width: "45%",
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",

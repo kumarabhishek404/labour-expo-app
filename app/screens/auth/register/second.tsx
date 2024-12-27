@@ -112,7 +112,15 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               countryCode={countryCode}
               setCountryCode={setCountryCode}
               phoneNumber={value}
-              setPhoneNumber={onChange}
+              setPhoneNumber={(val: any) => {
+                const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
+                if (val.length < 10) {
+                  onChange(val);
+                } else if (val.length === 10 && regex.test(val)) {
+                  onChange(val);
+                }
+                return;
+              }}
               onBlur={onBlur}
               errors={errors}
               placeholder={t("enterYourMobileNumber")}

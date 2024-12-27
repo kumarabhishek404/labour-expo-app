@@ -308,7 +308,7 @@ const RequestCardUser = React.memo(
             <Button
               isPrimary={false}
               title="Cancel"
-              onPress={() => onCancelRequest?.(item?._id)}
+              onPress={() => onCancelRequest?.(item?.receiver?._id)}
             />
           )}
           {isReceiver && (

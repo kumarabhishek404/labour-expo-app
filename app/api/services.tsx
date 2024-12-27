@@ -353,6 +353,7 @@ export const mediatorUnApplyService = async (payload: any) => {
 
 // Applicants
 export const fetchMyAppliedWorkers = async ({ pageParam, serviceId }: any) => {
+  console.log("Service ID --", serviceId);
   try {
     const data = await makeGetRequest(
       `/service/${serviceId}/applied/workers?page=${pageParam}&limit=5`
@@ -375,6 +376,7 @@ export const fetchMyAppliedMediators = async ({
   pageParam,
   serviceId,
 }: any) => {
+  console.log("Service ID --", serviceId);
   try {
     const data = await makeGetRequest(
       `/service/${serviceId}/applied/mediators?page=${pageParam}&limit=5`
@@ -490,6 +492,7 @@ export const cancelSelectedMediator = async (payload: any) => {
 };
 
 export const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
+  console.log("Service ID --", serviceId);
   try {
     const data = await makeGetRequest(
       `/service/${serviceId}/selected/workers?page=${pageParam}&limit=5`
@@ -509,6 +512,7 @@ export const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
 };
 
 export const fetchSelectedMediators = async ({ pageParam, serviceId }: any) => {
+  console.log("Service ID --", serviceId);
   try {
     const data = await makeGetRequest(
       `/service/${serviceId}/selected/mediators?page=${pageParam}&limit=5`
@@ -552,4 +556,3 @@ export const restoreService = async (payload: any) => {
     handleServiceError(error, "restore service");
   }
 };
-  

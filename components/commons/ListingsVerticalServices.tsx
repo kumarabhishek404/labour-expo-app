@@ -264,8 +264,8 @@ const styles = StyleSheet.create({
   },
   applicants: {
     position: "absolute",
-    top: 180,
-    right: 6,
+    top: 173,
+    right: 0,
     backgroundColor: Colors.primary,
     paddingVertical: 6,
     paddingHorizontal: 8,

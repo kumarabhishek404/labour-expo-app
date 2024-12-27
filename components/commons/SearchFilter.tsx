@@ -5,22 +5,34 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import TextInputComponent from "../inputs/TextInputWithIcon";
 
 interface SearchFilterProps {
+  type: string;
   data: any;
   setFilteredData: any;
 }
 
-const SearchFilter = ({ data, setFilteredData }: SearchFilterProps) => {
+const SearchFilter = ({ type, data, setFilteredData }: SearchFilterProps) => {
   const [searchText, setSearchText] = useState("");
 
-  const handleSearch = (text: any) => {
+  const handleUsersSearch = (text: any) => {
     setSearchText(text);
-    let workers = data?.pages.flatMap((page: any) => page.data || []);
+    let workers = data.flatMap((page: any) => page.data || []);
     const filtered: any = workers?.filter(
       (item: any) =>
-        item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase())
-      // item.location.toLowerCase().includes(text.toLowerCase()) ||
-      // item.category.toLowerCase().includes(text.toLowerCase())
+        item?.firstName?.toLowerCase().includes(text.toLowerCase()) ||
+        item?.lastName?.toLowerCase().includes(text.toLowerCase()) ||
+        item?.address?.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleServicesSearch = (text: any) => {
+    setSearchText(text);
+    let workers = data.flatMap((page: any) => page.data || []);
+    const filtered: any = workers?.filter(
+      (item: any) =>
+        item?.name?.toLowerCase().includes(text.toLowerCase()) ||
+        item?.description?.toLowerCase().includes(text.toLowerCase()) ||
+        item?.address?.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -30,12 +42,19 @@ const SearchFilter = ({ data, setFilteredData }: SearchFilterProps) => {
       <View style={styles.searchBar}>
         <TextInputComponent
           value={searchText}
-          onChangeText={handleSearch}
+          onChangeText={
+            type === "users" ? handleUsersSearch : handleServicesSearch
+          }
           placeholder="Search in your services..."
           label=""
           name="search"
           icon={
-            <Ionicons name="search" size={28} color={Colors?.secondaryText} />
+            <Ionicons
+              name="search"
+              size={28}
+              color={Colors?.secondaryText}
+              style={{ marginRight: 10 }}
+            />
           }
         />
       </View>

@@ -36,6 +36,7 @@ const SignupScreen = () => {
     mutationKey: ["register"],
     mutationFn: (payload: any) => register(payload),
     onSuccess: () => {
+      console.log("onSuccess----");
       setProfilePicture("");
       setFirstName("");
       setLastName("");
@@ -83,8 +84,7 @@ const SignupScreen = () => {
       !lastName ||
       !address ||
       !phoneNumber ||
-      !email ||
-      !profilePicture
+      !email
     ) {
       toast.error(t("pleaseFillAllFields"));
       return;
@@ -101,7 +101,8 @@ const SignupScreen = () => {
     formData.append("dateOfBirth", moment(dateOfBirth).format("DD-MM-YYYY"));
     formData.append("skills", JSON.stringify(skills));
     formData.append("password", password);
-
+    console.log("formData----", formData);
+    
     try {
       mutationRegister.mutate(formData);
     } catch (error) {

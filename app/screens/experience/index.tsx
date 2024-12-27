@@ -1,24 +1,18 @@
 import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, FlatList } from "react-native";
 import { useAtomValue } from "jotai";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
-import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { UserAtom } from "@/app/AtomStore/user";
 import { router, Stack } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
-import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import CustomText from "@/components/commons/CustomText";
 import Requirements from "@/components/commons/Requirements";
 import CustomHeading from "@/components/commons/CustomHeading";
+import { UserAtom } from "@/app/AtomStore/user";
 
 const Experience = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -30,10 +24,10 @@ const Experience = () => {
   // Combine work and service history
   useFocusEffect(
     React.useCallback(() => {
-      const combinedHistory = [
-        ...(userDetails?.workHistory || []),
-        ...(userDetails?.serviceHistory || []),
-      ];
+      const combinedHistory =
+        userDetails?.role === "WORKER"
+          ? [...(userDetails?.workHistory || [])]
+          : [...(userDetails?.serviceHistory || [])];
       setFilteredData(combinedHistory);
       setIsLoading(false);
     }, [userDetails])
@@ -109,13 +103,15 @@ const Experience = () => {
     );
   };
 
+  console.log("filteredData", filteredData);
+
   return (
     <>
       <Stack.Screen
         options={{
           header: () => (
             <CustomHeader
-              title="Work Experience"
+              title={t("workExperience")}
               left="back"
               right="notification"
             />
@@ -125,7 +121,7 @@ const Experience = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter data={filteredData} setFilteredData={setFilteredData} />
+          <SearchFilter type="services" data={filteredData} setFilteredData={setFilteredData} />
 
           <PaginationString
             type="requests"

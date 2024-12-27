@@ -16,7 +16,7 @@ import { t } from "@/utils/translationHelper";
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("Labour");
+  const [category, setCategory] = useState("");
 
   const {
     data: response,
@@ -79,7 +79,7 @@ const Members = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={WORKERTYPES}

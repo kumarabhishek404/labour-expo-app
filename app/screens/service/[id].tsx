@@ -1,44 +1,29 @@
 import {
   ActivityIndicator,
   Dimensions,
-  FlatList,
-  Image,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Entypo, Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { SlideInDown, useAnimatedRef } from "react-native-reanimated";
+import Animated, { useAnimatedRef } from "react-native-reanimated";
 import Map from "@/components/commons/ViewMap";
 import {
-  applyService,
-  completeService,
-  deleteServiceById,
   fetchMyAppliedWorkers,
   fetchMyAppliedMediators,
   getServiceById,
-  likeService,
-  mediatorApplyService,
-  mediatorUnApplyService,
-  unApplyService,
-  unLikeService,
   fetchSelectedWorkers,
   fetchSelectedMediators,
-  cancelServiceByMediatorAfterSelection,
-  cancelServiceByWorkerAfterSelection,
 } from "../../api/services";
 import Loader from "@/components/commons/Loader";
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtom, useSetAtom } from "jotai";
 import { AddServiceAtom, UserAtom } from "../../AtomStore/user";
-import { toast } from "../../hooks/toast";
 import Button from "@/components/inputs/Button";
-import ModalComponent from "@/components/commons/Modal";
 import moment from "moment";
 import Applicants from "@/components/commons/Applicants";
 import SelectedApplicants from "@/components/commons/SelectedApplicants";
@@ -50,13 +35,10 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import CustomCheckbox from "@/components/commons/CustomCheckbox";
-import ProfilePicture from "@/components/commons/ProfilePicture";
-import { fetchAllMembers } from "@/app/api/mediator";
-import { debounce } from "lodash";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import ServiceActionButtons from "./actionButtons";
+import { fetchAllMembers } from "@/app/api/mediator";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -106,6 +88,7 @@ const ServiceDetails = () => {
 
   const [isAdmin] = useState(userDetails?.role === "ADMIN");
 
+  // console.log("User ID --", userDetails?._id, service?.employer);
   const {
     isLoading,
     isError,
@@ -127,12 +110,13 @@ const ServiceDetails = () => {
     hasNextPage: hasAppliedWorkersNextPage,
     refetch: refetchAppliedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["appliedWorkers"],
+    queryKey: ["appliedWorkers", service],
     queryFn: ({ pageParam }) => {
       return fetchMyAppliedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
+    enabled: userDetails?._id === service?.employer?._id || isAdmin,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -149,12 +133,13 @@ const ServiceDetails = () => {
     hasNextPage: hasAppliedMediatorsNextPage,
     refetch: refetchAppliedMediators,
   } = useInfiniteQuery({
-    queryKey: ["appliedMediators"],
+    queryKey: ["appliedMediators", service],
     queryFn: ({ pageParam }) => {
       return fetchMyAppliedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
+    enabled: userDetails?._id === service?.employer?._id || isAdmin,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -174,7 +159,9 @@ const ServiceDetails = () => {
     queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?.role === "MEDIATOR",
+    enabled:
+      userDetails?.role === "MEDIATOR" &&
+      userDetails?._id !== service?.employer?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -191,12 +178,13 @@ const ServiceDetails = () => {
     hasNextPage: hasSelectedWorkersNextPage,
     refetch: refetchSelectedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["selectedWorkers"],
+    queryKey: ["selectedWorkers", service],
     queryFn: ({ pageParam }) => {
       return fetchSelectedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
+    enabled: userDetails?._id === service?.employer?._id || isAdmin,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -213,12 +201,13 @@ const ServiceDetails = () => {
     hasNextPage: hasSelectedMediatorsNextPage,
     refetch: refetchSelectedMediators,
   } = useInfiniteQuery({
-    queryKey: ["selectedMediators"],
+    queryKey: ["selectedMediators", service],
     queryFn: ({ pageParam }) => {
       return fetchSelectedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
+    enabled: userDetails?._id === service?.employer?._id || isAdmin,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -310,22 +299,7 @@ const ServiceDetails = () => {
         }}
       />
 
-      <Loader
-        loading={
-          isLoading ||
-          isRefetching ||
-          isAppliedWorkersLoading ||
-          isAppliedWorkersFetchingNextPage ||
-          isAppliedMediatorsLoading ||
-          isAppliedMediatorsFetchingNextPage ||
-          isMemberLoading ||
-          isMemberFetchingNextPage ||
-          isSelectedWorkerLoading ||
-          isSelectedWorkerFetchingNextPage ||
-          isSelectedMediatorLoading ||
-          isSelectedMediatorFetchingNextPage
-        }
-      />
+      <Loader loading={isLoading || isRefetching} />
 
       <ScrollView style={styles.container}>
         <Animated.ScrollView
@@ -443,7 +417,18 @@ const ServiceDetails = () => {
                 />
               ) : (
                 <View style={styles.emptyContainer}>
-                  <EmptyDatePlaceholder title="Selected Applicants" />
+                  {isSelectedWorkerLoading ||
+                  isSelectedMediatorLoading ||
+                  isSelectedWorkerFetchingNextPage ||
+                  isSelectedMediatorFetchingNextPage ? (
+                    <ActivityIndicator
+                      style={{ marginLeft: 10, paddingVertical: 60 }}
+                      color={Colors?.primary}
+                      animating={true}
+                    />
+                  ) : (
+                    <EmptyDatePlaceholder title="Selected Applicants" />
+                  )}
                 </View>
               )}
             </View>
@@ -468,7 +453,18 @@ const ServiceDetails = () => {
                 />
               ) : (
                 <View style={styles.emptyContainer}>
-                  <EmptyDatePlaceholder title="Applicants" />
+                  {isAppliedWorkersLoading ||
+                  isAppliedMediatorsLoading ||
+                  isAppliedWorkersFetchingNextPage ||
+                  isAppliedMediatorsFetchingNextPage ? (
+                    <ActivityIndicator
+                      style={{ marginLeft: 10, paddingVertical: 60 }}
+                      color={Colors?.primary}
+                      animating={true}
+                    />
+                  ) : (
+                    <EmptyDatePlaceholder title="Applicants" />
+                  )}
                 </View>
               )}
             </View>
@@ -494,6 +490,8 @@ const ServiceDetails = () => {
       <ServiceActionButtons
         service={service}
         members={workers}
+        isMemberLoading={isMemberLoading}
+        isMemberFetchingNextPage={isMemberFetchingNextPage}
         userDetails={userDetails}
         isAdmin={isAdmin}
         isSelected={isSelected}
@@ -508,7 +506,6 @@ const ServiceDetails = () => {
         setModalVisible={setModalVisible}
         setIsCompleteModalVisible={setIsCompleteModalVisible}
         hasMemberNextPage={hasMemberNextPage}
-        isMemberFetchingNextPage={isMemberFetchingNextPage}
         memberFetchPage={memberFetchPage}
         setAddService={setAddService}
         isCompleteModalVisible={isCompleteModalVisible}

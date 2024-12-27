@@ -15,11 +15,24 @@ const HomePageLinks = () => {
 
   const links = [
     {
-      title: userDetails?.role === "EMPLOYER" ? t("workers") : t("services"),
+      title:
+        userDetails?.role === "EMPLOYER"
+          ? t("workers")
+          : userDetails?.role === "MEDIATOR"
+          ? t("myServices")
+          : t("services"),
       subtitle: t("mobileFiberAirFiber"),
       path: {
-        pathname: "/(tabs)/workers",
-        params: { role: "workers", title: t("workers"), type: "all" },
+        pathname:
+          userDetails?.role === "MEDIATOR"
+            ? "/screens/service"
+            : "/(tabs)/fourth",
+        params: {
+          role: userDetails?.role === "MEDIATOR" ? "services" : "workers",
+          title:
+            userDetails?.role === "MEDIATOR" ? t("services") : t("workers"),
+          type: userDetails?.role === "MEDIATOR" ? "myServices" : "all",
+        },
       },
       image: Farmer3,
       style: [styles.largeBox, styles.serviceBox],
@@ -32,7 +45,8 @@ const HomePageLinks = () => {
         pathname: "/screens/users",
         params: {
           role: userDetails?.role === "MEDIATOR" ? "workers" : "mediators",
-          title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
+          title:
+            userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
           type: "all",
         },
       },
@@ -41,9 +55,10 @@ const HomePageLinks = () => {
       big: true,
     },
     {
-      title: userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
+      title:
+        userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
       subtitle: t("groceryFashion"),
-      path: "/(tabs)/bookings",
+      path: "/(tabs)/second",
       image: Farmer8,
       style: [styles.smallBox, styles.bookingBox],
     },

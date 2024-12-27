@@ -69,7 +69,7 @@ const Requests = () => {
 
   const mutationCancelRequest = useMutation({
     mutationKey: ["cancelRequest"],
-    mutationFn: (id) => cancelJoiningRequest({ requestId: id }),
+    mutationFn: (id) => cancelJoiningRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
       console.log("Response while liking a worker - ", response);
@@ -140,7 +140,7 @@ const Requests = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={

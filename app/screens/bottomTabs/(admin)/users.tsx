@@ -6,15 +6,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import { UserAtom } from "../../../AtomStore/user";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
-import { ROLES, USERS, WORKERS, WORKERTYPES } from "@/constants";
+import { ROLES, USERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
-import Header from "@/components/commons/Header";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
@@ -174,7 +172,7 @@ const AdminUsers = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={USERS}
@@ -185,7 +183,7 @@ const AdminUsers = () => {
 
           <PaginationString
             type="services"
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

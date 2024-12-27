@@ -1,8 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 import { router } from "expo-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { UserAtom } from "../AtomStore/user";
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {

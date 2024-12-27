@@ -1,10 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from "react-native";
+import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
@@ -50,6 +45,7 @@ const Users = () => {
       handleQueryFunction(role, type, pageParam, category),
     retry: false,
     initialPageParam: 1,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -68,19 +64,6 @@ const Users = () => {
       return () => unsubscribe;
     }, [response])
   );
-
-  const handleSearch = (text: any) => {
-    setSearchText(text);
-    let workers = response?.pages.flatMap((page: any) => page.data || []);
-    const filtered: any = workers?.filter(
-      (item: any) =>
-        item.name.toLowerCase().includes(text.toLowerCase()) ||
-        item.description.toLowerCase().includes(text.toLowerCase())
-      // item.location.toLowerCase().includes(text.toLowerCase()) ||
-      // item.category.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
 
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -108,9 +91,13 @@ const Users = () => {
           header: () => <CustomHeader title={`${title}`} left="back" />,
         }}
       />
-      <Loader loading={isLoading || isRefetching} />
+      <Loader loading={isLoading} />
       <View style={styles.container}>
-        <SearchFilter data={response} setFilteredData={setFilteredData} />
+        <SearchFilter
+          type="users"
+          data={response?.pages}
+          setFilteredData={setFilteredData}
+        />
 
         <CategoryButtons
           options={
@@ -125,7 +112,7 @@ const Users = () => {
 
         <PaginationString
           type={Array.isArray(role) ? role[0] : role}
-          isLoading={isLoading}
+          isLoading={isLoading || isRefetching}
           totalFetchedData={memoizedData?.length}
           totalData={totalData}
         />

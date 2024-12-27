@@ -120,13 +120,13 @@ const EmailAddressField = ({
         />
       </View>
 
-      {!errors[name] && (
+      {/* {!errors[name] && (
         <Button
           isPrimary={true}
           title={t("verifyEmailAddress")}
           onPress={handleSendOtp}
         />
-      )}
+      )} */}
       <Modal visible={isEmailValid} transparent={true} animationType="slide">
         <View style={styles.otpContainer}>
           <View style={styles.modalContainer}>

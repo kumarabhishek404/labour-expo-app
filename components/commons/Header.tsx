@@ -59,7 +59,7 @@ const CustomHeader = ({
       <View style={styles.headerContainer}>
         {left === "profile" && (
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/profile")}
+            onPress={() => router.push("/(tabs)/fifth")}
             // style={{ marginLeft: 20 }}
           >
             <ProfilePicture

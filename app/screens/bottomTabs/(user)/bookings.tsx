@@ -11,16 +11,14 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
-import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
-import { MYSERVICES, SERVICES } from "@/constants";
+import { MYSERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { fetchMyAppliedServicesMediator, fetchMyAppliedServicesWorker, fetchMyServices, fetchServicesInWhichSelectedMediator, fetchServicesInWhichSelectedWorker } from "@/app/api/services";
 
 const UserBookingsAndMyServices = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [filteredDataSelected, setFilteredDataSelected]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
   const [category, setCategory] = useState("HIRING");
@@ -152,15 +150,13 @@ const UserBookingsAndMyServices = () => {
         <Loader
           loading={
             isLoading ||
-            isRefetching ||
             isLoadingSelected ||
-            isRefetchingSelected ||
             isFetchingNextPage ||
             isFetchingNextPageSelected
           }
         />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="services" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={MYSERVICES}
@@ -169,7 +165,7 @@ const UserBookingsAndMyServices = () => {
 
           <PaginationString
             type="services"
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching || isRefetchingSelected}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

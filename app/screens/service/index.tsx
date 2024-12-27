@@ -1,32 +1,28 @@
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from "react-native";
+import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { router, Stack, useGlobalSearchParams } from "expo-router";
+import { Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { fetchAllLikedServices, fetchAllServices } from "@/app/api/services";
+import {
+  fetchAllLikedServices,
+  fetchAllServices,
+  fetchMyServices,
+} from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { SERVICES } from "@/constants";
+import { MYSERVICES, SERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
-
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("HIRING");
   const { title, type } = useGlobalSearchParams();
 
   const {
@@ -38,10 +34,19 @@ const Services = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: [type === "favourite" ? "savedServices" : "services"],
+    queryKey: [
+      type === "favourite"
+        ? "savedServices"
+        : type === "myServices"
+        ? "myServices"
+        : "services",
+      category,
+    ],
     queryFn: ({ pageParam }) =>
       type === "favourite"
         ? fetchAllLikedServices({ pageParam })
+        : type === "myServices"
+        ? fetchMyServices({ pageParam, status: category })
         : fetchAllServices({ pageParam }),
     initialPageParam: 1,
     retry: false,
@@ -87,21 +92,26 @@ const Services = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => (
-            <CustomHeader title={`${title}`} left="back" />
-          ),
+          header: () => <CustomHeader title={`${title}`} left="back" />,
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
+        <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="services"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
-          <CategoryButtons options={SERVICES} onCagtegoryChanged={onCatChanged} />
+          <CategoryButtons
+            options={type === "myServices" ? MYSERVICES : SERVICES}
+            onCagtegoryChanged={onCatChanged}
+          />
 
           <PaginationString
             type="services"
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

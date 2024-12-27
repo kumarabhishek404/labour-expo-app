@@ -8,7 +8,6 @@ import {
 import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import { FontAwesome5 } from "@expo/vector-icons";
 import Animated, { SlideInDown } from "react-native-reanimated";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
@@ -39,6 +38,8 @@ import { router } from "expo-router";
 interface ServiceActionButtonsProps {
   service: any;
   members: any;
+  isMemberLoading: boolean;
+  isMemberFetchingNextPage: boolean;
   userDetails: any;
   isAdmin: boolean;
   isSelected: boolean;
@@ -53,7 +54,6 @@ interface ServiceActionButtonsProps {
   setModalVisible: (modal: boolean) => void;
   setIsCompleteModalVisible: (modal: boolean) => void;
   hasMemberNextPage: boolean;
-  isMemberFetchingNextPage: boolean;
   memberFetchPage: () => void;
   setAddService: (service: any) => void;
   isCompleteModalVisible: boolean;
@@ -67,6 +67,8 @@ const IMG_HEIGHT = 300;
 const ServiceActionButtons = ({
   service,
   members,
+  isMemberLoading,
+  isMemberFetchingNextPage,
   userDetails,
   isAdmin,
   isSelected,
@@ -81,7 +83,6 @@ const ServiceActionButtons = ({
   setModalVisible,
   setIsCompleteModalVisible,
   hasMemberNextPage,
-  isMemberFetchingNextPage,
   memberFetchPage,
   setAddService,
   isCompleteModalVisible,
@@ -467,7 +468,17 @@ const ServiceActionButtons = ({
             showsVerticalScrollIndicator={false}
           />
         ) : (
-          <EmptyDatePlaceholder title="Members" />
+          <View style={styles.emptyContainer}>
+            {isMemberLoading ? (
+              <ActivityIndicator
+                style={{ marginLeft: 10, paddingVertical: 60 }}
+                color={Colors?.primary}
+                animating={true}
+              />
+            ) : (
+              <EmptyDatePlaceholder title="Members" />
+            )}
+          </View>
         )}
       </View>
     );
@@ -722,11 +733,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   emptyContainer: {
-    marginBottom: 20,
     paddingHorizontal: 10,
     paddingVertical: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.gray,
   },
 });

@@ -4,7 +4,6 @@ import { toast } from "../hooks/toast";
 export const sendJoiningRequest = async (payload: any) => {
   try {
     const data = await makePostRequest("/request/request-joining", payload);
-    toast.success("Request sent successfully");
     return data.data;
   } catch (error: any) {
     console.error(
@@ -125,6 +124,23 @@ export const fetchSentRequests = async ({ pageParam }: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while fetching sent requests"
+    );
+    throw error;
+  }
+};
+
+export const leaveFromTeam = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/request/leave-team", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while leaving from team : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while leaving from team"
     );
     throw error;
   }

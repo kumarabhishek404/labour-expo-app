@@ -8,10 +8,6 @@ export const UserAtom = atomWithStorage<any>("user", {}, asyncStorage);
 
 export const LanguageAtom = atomWithStorage<any>("language", "", asyncStorage);
 
-export const WorkAtom = atomWithStorage<any>("works", {}, asyncStorage);
-
-export const ServiceAtom = atomWithStorage<any>("service", {}, asyncStorage);
-
 export const EarningAtom = atomWithStorage<any>("earnings", {}, asyncStorage);
 
 export const SpentAtom = atomWithStorage<any>("spents", {}, asyncStorage);

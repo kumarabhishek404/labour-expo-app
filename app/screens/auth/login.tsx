@@ -8,12 +8,7 @@ import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
 import {
   AccountStatusAtom,
-  EarningAtom,
-  NotificationConsentAtom,
-  ServiceAtom,
-  SpentAtom,
   UserAtom,
-  WorkAtom,
 } from "../../AtomStore/user";
 import { signIn, updateUserById } from "../../api/user";
 import { toast } from "../../hooks/toast";
@@ -30,16 +25,16 @@ const LoginScreen = () => {
   const { t } = useTranslation();
   const setUserDetails = useSetAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
-  // const setWorkDetails = useSetAtom(WorkAtom);
-  // const setServiceDetails = useSetAtom(ServiceAtom);
-  // const setEarnings = useSetAtom(EarningAtom);
-  // const setSpents = useSetAtom(SpentAtom);
-  // const setNotificationConsent = useSetAtom(NotificationConsentAtom);
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      mobile: "",
+      password: "",
+    },
+  });
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
@@ -60,20 +55,22 @@ const LoginScreen = () => {
     mutationFn: (data) => signIn(data),
     onSuccess: async (response) => {
       let user = response?.user;
+      console.log("user after login", user);
       setUserDetails({
         isAuth: true,
         token: response?.token,
         ...user,
       });
+      console.log("user?.status", user?.status);
 
       toast.success("Logged in successfully!");
-      if (user?.status === "SUSPENDED" || user?.status === "PENDING") {
-        setIsAccountInactive(true);
-        router.replace("/(tabs)/fifth");
-      } else {
+      if (user?.status === "ACTIVE") {
         setIsAccountInactive(false);
         console.log("user?.role", user?.role);
-        router.replace("/(tabs)");
+        router.push("/(tabs)");
+      } else {
+        setIsAccountInactive(true);
+        router.push("/(tabs)/fifth");
       }
       // Condition to fetch location if location key is empty or has latitude 0
       if (
@@ -131,63 +128,30 @@ const LoginScreen = () => {
         </View>
 
         <View style={styles.formContainer}>
-          {/* <Controller
-            control={control}
-            name="phoneNumber"
-            defaultValue=""
-            rules={{
-              required: "Mobile number is required",
-              pattern: {
-                value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
-                message: "Enter a valid mobile number",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <MobileNumberField
-                name="phoneNumber"
-                // countriesPhoneCode={COUNTRYPHONECODE}
-                // countryCode={countryCode}
-                // setCountryCode={setCountryCode}
-                phoneNumber={value}
-                setPhoneNumber={onChange}
-                onBlur={onBlur}
-                errors={errors}
-                placeholder="Enter mobile number"
-                icon={
-                  <Feather
-                    name={"phone"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          /> */}
           <Controller
             control={control}
-            name="email"
+            name="mobile"
             defaultValue=""
             rules={{
-              required: t("emailIsRequired"),
+              required: t("mobileIsRequired"),
               pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: t("enterAValidEmailAddress"),
+                value: /^[0-9]{10}$/,
+                message: t("enterAValidMobileNumber"),
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
-                label={t("email")}
-                name="email"
+                label={t("mobile")}
+                name="mobile"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder={t("enterYourEmail")}
-                containerStyle={errors?.email && styles.errorInput}
+                placeholder={t("enterYourMobile")}
+                containerStyle={errors?.mobile && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
-                    name={"mail-outline"}
+                    name={"call-outline"}
                     size={30}
                     color={Colors.secondary}
                     style={{ paddingVertical: 10, paddingRight: 10 }}

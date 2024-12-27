@@ -5,8 +5,6 @@ import { StyleSheet, View } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { useAtom, useAtomValue } from "jotai";
-import { ServiceAtom, UserAtom } from "@/app/AtomStore/user";
 
 interface ServiceInformationProps {
   information: any;

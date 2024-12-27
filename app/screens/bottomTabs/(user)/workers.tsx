@@ -11,7 +11,7 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
-import { MYSERVICES, SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { WORKERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -101,8 +101,6 @@ const UserWorkers = () => {
   };
 
   const loadMore = () => {
-    console.log("Load more--", hasNextPage, isFetchingNextPage);
-
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
@@ -136,9 +134,9 @@ const UserWorkers = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
+        <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={WORKERS}
@@ -147,7 +145,7 @@ const UserWorkers = () => {
 
           <PaginationString
             type="services"
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

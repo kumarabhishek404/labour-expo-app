@@ -87,7 +87,7 @@ const Applicants = ({
   const mutationRejectMediator = useMutation({
     mutationKey: ["rejectMediator", { serviceId }],
     mutationFn: (mediatorId) =>
-      rejectMediator({ serviceId: serviceId, mediatorId: mediatorId }),
+      rejectMediator({ serviceId: serviceId, mediator: mediatorId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
       refetchApplicants();
@@ -99,19 +99,18 @@ const Applicants = ({
     },
   });
 
-  const [expandedItems, setExpandedItems] = React.useState<{
-    [key: string]: boolean;
-  }>({});
   const animatedHeights = React.useRef<{ [key: string]: Animated.Value }>({});
 
-  const toggleAccordion = (itemId: string) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [itemId]: !prev[itemId],
-    }));
+  const [expandedItem, setExpandedItem] = React.useState<string | null>(null);
 
+  console.log("expandedItem", expandedItem);
+
+  const toggleAccordion = (itemId: string) => {
+    const isExpanded = expandedItem === itemId;
+    setExpandedItem(isExpanded ? null : itemId);
+  
     Animated.timing(animatedHeights.current[itemId], {
-      toValue: expandedItems[itemId] ? 0 : 1,
+      toValue: isExpanded ? 0 : 1,
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -125,7 +124,8 @@ const Applicants = ({
     });
   }, [applicants]);
 
-  console.log("applicants", applicants);
+  console.log("animatedHeights", animatedHeights);
+
   return (
     <>
       <Loader
@@ -138,7 +138,8 @@ const Applicants = ({
       />
       <View style={styles.applicantContainer}>
         {applicants?.map((item: any, index: number) => {
-          console.log("item", item);
+          console.log("item", item?._id, expandedItem);
+
           return (
             <View key={index} style={styles.mediatorCard}>
               <View style={styles.productCard}>
@@ -300,7 +301,7 @@ const Applicants = ({
                     </Animated.View>
                   </TouchableOpacity>
 
-                  {expandedItems[item._id] && (
+                  {expandedItem === item._id && (
                     <Animated.View
                       style={[
                         styles.workersGrid,

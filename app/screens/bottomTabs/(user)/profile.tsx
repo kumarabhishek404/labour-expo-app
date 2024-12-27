@@ -42,6 +42,8 @@ import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountM
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
+import { isEmptyObject } from "@/constants/functions";
 
 const UserProfile = () => {
   useLocale();
@@ -55,6 +57,9 @@ const UserProfile = () => {
     userDetails?.profilePicture
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(
+    !isEmptyObject(userDetails?.location) ? "currentLocation" : "address"
+  );
 
   const {
     control,
@@ -115,7 +120,6 @@ const UserProfile = () => {
         ...userDetails,
         firstName: user?.firstName,
         lastName: user?.lastName,
-        address: user?.address,
       });
     },
     onError: (err) => {
@@ -253,7 +257,30 @@ const UserProfile = () => {
             )}
           />
 
-          <Controller
+          {/* <Controller
+            control={control}
+            name="address"
+            defaultValue=""
+            rules={{
+              required: t("addressIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AddLocationAndAddress
+                label={t("address")}
+                name="address"
+                address={value}
+                setAddress={onChange}
+                onBlur={onBlur}
+                location={userDetails?.location}
+                setLocation={() => {}}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                errors={errors}
+              />
+            )}
+          /> */}
+
+          {/* <Controller
             control={control}
             name="address"
             defaultValue=""
@@ -280,7 +307,7 @@ const UserProfile = () => {
                 }
               />
             )}
-          />
+          /> */}
         </View>
       </View>
     );
@@ -301,10 +328,6 @@ const UserProfile = () => {
     };
     console.log("Payload---", payload);
     mutationUpdateProfileInfo?.mutate(payload);
-  };
-
-  const handleChangeRole = async () => {
-    router?.push("/screens/profile/changeRole");
   };
 
   const handleRefreshUser = async () => {

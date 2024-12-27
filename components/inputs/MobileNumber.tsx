@@ -15,8 +15,11 @@ import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
 import Button from "./Button";
-import auth from "@react-native-firebase/auth";
 import { t } from "@/utils/translationHelper";
+import { signInWithPhoneNumber, verifyCode } from "@/app/api/firebase";
+import ModalComponent from "../commons/Modal";
+import { useMutation } from "@tanstack/react-query";
+import Loader from "../commons/Loader";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -43,52 +46,53 @@ const MobileNumberField = ({
   placeholder,
   icon,
 }: MobileNumberFieldProps) => {
-  const [isPhoneValid, setPhoneValid] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputs: any = useRef([]);
+  const [confirmation, setConfirmation] = useState(null);
 
-  const validatePhoneNumber = (number: any) => {
-    const regex = /[6-9]\d{9}/;
-    if (regex.test(number)) {
-      setPhoneValid(true);
-    } else {
-      setPhoneValid(false);
-    }
-    setPhoneNumber(number);
-  };
+  const mutationSendOtp = useMutation({
+    mutationKey: ["signInWithPhoneNumber"],
+    mutationFn: (payload: any) => signInWithPhoneNumber(payload),
+    onSuccess: (data: any) => {
+      toast.success(t("otpSentTo"), data);
+      setConfirmation(data);
+      setModalVisible(true);
+    },
+    onError: (error: any) => {
+      toast.error(t("errorWhileSendingCode"), error?.message);
+    },
+  });
+
+  const mutationVerifyCode = useMutation({
+    mutationKey: ["verifyCode"],
+    mutationFn: (payload: any) =>
+      verifyCode(payload?.confirmation, payload?.otp),
+    onSuccess: (data: any) => {
+      toast.success(t("mobileNumberVerifiedSuccessfully"));
+      setModalVisible(false);
+    },
+    onError: (error: any) => {
+      toast.error(t("incorrectOTPTryAgain"));
+    },
+  });
 
   const handleSendOtp = async () => {
     try {
-      const confirmation: any = await auth().signInWithPhoneNumber(
-        "+916397308499"
-      );
-      // setConfirm(confirmation);
-      toast.success(t("otpSentTo"), confirmation);
+      mutationSendOtp.mutate(`${countryCode}${phoneNumber}`);
     } catch (err) {
       toast.error(t("errorWhileSendingCode"));
     }
-    // if (isPhoneValid) {
-    //   setModalVisible(true);
-    //   toast.success("OTP sent to", `${countryCode} ${phoneNumber}`);
-    // } else {
-    //   Alert.alert("Error", "Please enter a valid phone number.");
-    // }
   };
 
-  const handleVerifyOtp = () => {
-    if (otp?.join() === "1234") {
-      toast?.success(t("mobileNumberVerifiedSuccessfully"));
-      setModalVisible(false);
+  const handleVerifyOtp = async () => {
+    if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
+      mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
     } else {
       toast?.error(t("incorrectOTPTryAgain"));
     }
-  };
-
-  const handleLabelPress = () => {
-    setDropdownVisible(!dropdownVisible); // Toggle dropdown when label is clicked
   };
 
   const handleChange = (text: any, index: any) => {
@@ -112,134 +116,126 @@ const MobileNumberField = ({
     setOtp(newOtp);
   };
 
-  const handleVerify = () => {
-    if (otp.join("") === "1234") {
-      toast.success(t("mobileNumberVerifiedSuccessfully"));
-      setModalVisible(false);
-    } else {
-      toast.error(t("incorrectOTPTryAgain"));
-    }
-  };
-
   const resendOtp = () => {
+    handleSendOtp();
     toast.success(t("otpResent"));
   };
 
-  return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <CustomHeading textAlign="left">{t("phoneNumber")}</CustomHeading>
-      {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
-        <Dropdown
-          style={[styles.dropdown, isFocus && styles?.focusStyle]}
-          data={countriesPhoneCode?.map((item: any) => ({
-            label: t(item?.label),
-            value: item?.value,
-          }))}
-          selectedTextStyle={styles.selectedTextStyle}
-          containerStyle={isFocus && styles?.containerStyle}
-          labelField="label"
-          valueField="value"
-          placeholder={t("selectCountry")}
-          value={countryCode}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={(item) => setCountryCode(item.value)}
-          showsVerticalScrollIndicator={true}
-          renderLeftIcon={() => (
-            <CustomHeading textAlign="left" fontSize={14}>
-              {t("countryCode")}
-            </CustomHeading>
-          )}
-        />
-      )}
+  const modalContent = () => (
+    <View>
+      <CustomHeading fontSize={50}>✉️</CustomHeading>
+      <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
+      <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
-      <TextInputComponent
-        value={phoneNumber}
-        onBlur={onBlur}
-        type="number"
-        onChangeText={setPhoneNumber}
-        placeholder={placeholder}
-        maxLength={10}
-        label=""
-        name={name}
-        containerStyle={errors[name] && styles.errorInput}
-        errors={errors}
-        icon={
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginRight: countryCode ? 10 : 0,
+      <View style={styles.otpform}>
+        {otp?.map((digit: string | undefined, index: any) => (
+          <TextInput
+            key={index}
+            style={styles.otpInput}
+            keyboardType="numeric"
+            maxLength={1}
+            onChangeText={(text) => handleChange(text, index)}
+            onKeyPress={({ nativeEvent }) => {
+              return nativeEvent.key === "Backspace"
+                ? handleBackspace("", index)
+                : null;
             }}
-          >
-            {icon && icon}
-            <CustomHeading>{countryCode}</CustomHeading>
-          </View>
-        }
+            value={digit}
+            ref={(input) => (inputs.current[index] = input)}
+          />
+        ))}
+      </View>
+
+      <TouchableOpacity style={styles?.resendContainer} onPress={resendOtp}>
+        <CustomText>{t("didntGetTheCode")}</CustomText>
+        <CustomText color={Colors?.link}>{t("clickToResend")}</CustomText>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <>
+      <Loader
+        loading={mutationSendOtp.isPending || mutationVerifyCode.isPending}
       />
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <CustomHeading textAlign="left">{t("phoneNumber")}</CustomHeading>
+        {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
+          <Dropdown
+            style={[styles.dropdown, isFocus && styles?.focusStyle]}
+            data={countriesPhoneCode?.map((item: any) => ({
+              label: t(item?.label),
+              value: item?.value,
+            }))}
+            selectedTextStyle={styles.selectedTextStyle}
+            containerStyle={isFocus && styles?.containerStyle}
+            labelField="label"
+            valueField="value"
+            placeholder={t("selectCountry")}
+            value={countryCode}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={(item) => setCountryCode(item.value)}
+            showsVerticalScrollIndicator={true}
+            renderLeftIcon={() => (
+              <CustomHeading textAlign="left" fontSize={14}>
+                {t("countryCode")}
+              </CustomHeading>
+            )}
+          />
+        )}
 
-      {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
-        <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
-          <CustomHeading color={Colors?.white}>
-            {t("verifyMobile")}
-          </CustomHeading>
-        </TouchableOpacity>
-      )}
-
-      <Modal visible={isPhoneValid} transparent={true} animationType="slide">
-        <View style={styles.otpContainer}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <CustomHeading fontSize={50}>✉️</CustomHeading>
-              <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
-              <CustomText>{t("weVeSentACodeTo")}</CustomText>
-
-              <View style={styles.otpform}>
-                {otp?.map((digit: string | undefined, index: any) => (
-                  <TextInput
-                    key={index}
-                    style={styles.otpInput}
-                    keyboardType="numeric"
-                    maxLength={1}
-                    onChangeText={(text) => handleChange(text, index)}
-                    onKeyPress={({ nativeEvent }) => {
-                      return nativeEvent.key === "Backspace"
-                        ? handleBackspace("", index)
-                        : null;
-                    }}
-                    value={digit}
-                    ref={(input) => (inputs.current[index] = input)} // Reference each input
-                  />
-                ))}
-              </View>
-
-              <TouchableOpacity
-                style={styles?.resendContainer}
-                onPress={resendOtp}
-              >
-                <CustomText>{t("didntGetTheCode")}</CustomText>
-                <CustomText color={Colors?.link}>
-                  {t("clickToResend")}
-                </CustomText>
-              </TouchableOpacity>
-
-              <View style={styles.buttonContainer}>
-                <Button
-                  isPrimary={false}
-                  title={t("cancel")}
-                  onPress={() => setModalVisible(false)}
-                />
-                <Button
-                  isPrimary={true}
-                  title={t("verify")}
-                  onPress={handleVerify}
-                />
-              </View>
+        <TextInputComponent
+          value={phoneNumber}
+          onBlur={onBlur}
+          type="number"
+          onChangeText={setPhoneNumber}
+          placeholder={placeholder}
+          maxLength={10}
+          label=""
+          name={name}
+          containerStyle={errors[name] && styles.errorInput}
+          errors={errors}
+          icon={
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginRight: countryCode ? 10 : 0,
+              }}
+            >
+              {icon && icon}
+              <CustomHeading>{countryCode}</CustomHeading>
             </View>
-          </View>
-        </View>
-      </Modal>
-    </KeyboardAvoidingView>
+          }
+        />
+
+        {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
+          <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
+            <CustomHeading color={Colors?.white}>
+              {t("verify")}
+            </CustomHeading>
+          </TouchableOpacity>
+        )}
+
+        <ModalComponent
+          visible={isModalVisible}
+          content={modalContent}
+          transparent={true}
+          animationType="slide"
+          title={t("verifyMobile")}
+          onClose={() => setModalVisible(false)}
+          primaryButton={{
+            title: t("verify"),
+            action: handleVerifyOtp,
+          }}
+          secondaryButton={{
+            title: t("cancel"),
+            action: () => setModalVisible(false),
+          }}
+        />
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
@@ -297,19 +293,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  modalContainer: {
-    // flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "80%",
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    alignItems: "center",
-    gap: 5,
-  },
   icon: {
     fontSize: 60,
     color: "#4CAF50",
@@ -341,6 +324,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 20,
+    marginTop: 20,
     gap: 5,
   },
   buttonContainer: {

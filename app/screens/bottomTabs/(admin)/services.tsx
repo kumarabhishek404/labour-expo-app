@@ -3,20 +3,17 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
-import { MYSERVICES, SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { MYSERVICES, WORKERS } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
-import Header from "@/components/commons/Header";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { fetchAllWorkers } from "@/app/api/workers";
 import { fetchAllServices } from "@/app/api/services";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
@@ -92,12 +89,6 @@ const AdminServices = () => {
     setFilterVisible(false); // Close the modal
   };
 
-  const handleClear = () => {
-    // Clear all filters and refetch data
-    setFilters({});
-    setFilterVisible(false);
-  };
-
   const loadMore = () => {
     console.log("Load more--", hasNextPage, isFetchingNextPage);
 
@@ -133,9 +124,9 @@ const AdminServices = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
+        <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter data={response} setFilteredData={setFilteredData} />
+          <SearchFilter type="services" data={response?.pages} setFilteredData={setFilteredData} />
 
           <CategoryButtons
             options={MYSERVICES}
@@ -148,7 +139,7 @@ const AdminServices = () => {
           />
           <PaginationString
             type="services"
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

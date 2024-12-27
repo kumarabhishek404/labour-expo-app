@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 import React from "react";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs } from "expo-router";
 import {
   Entypo,
   FontAwesome,
@@ -30,9 +30,6 @@ export default function Layout() {
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const isAddService = useAtomValue(AddServiceInProcess);
   useLocale();
-  const pathname = usePathname();
-
-  console.log("userDetails", pathname);
   const isFirstLaunch = useFirstTimeLaunch();
 
   if (isFirstLaunch === null) {

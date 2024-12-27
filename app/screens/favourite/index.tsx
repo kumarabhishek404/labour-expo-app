@@ -94,9 +94,9 @@ const Favourite = (props: any) => {
         }}
       />
 
-      <Loader loading={isLoading || isRefetching} />
+      <Loader loading={isLoading} />
       <View style={styles.container}>
-        <SearchFilter data={response} setFilteredData={setFilteredData} />
+        <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
 
         <CategoryButtons
           options={
@@ -109,7 +109,7 @@ const Favourite = (props: any) => {
 
         <PaginationString
           type="services"
-          isLoading={isLoading}
+          isLoading={isLoading || isRefetching}
           totalFetchedData={memoizedData?.length}
           totalData={totalData}
         />
