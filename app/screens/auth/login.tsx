@@ -145,6 +145,8 @@ const LoginScreen = () => {
                 name="mobile"
                 value={value}
                 onBlur={onBlur}
+                type="number"
+                maxLength={10}
                 onChangeText={onChange}
                 placeholder={t("enterYourMobile")}
                 containerStyle={errors?.mobile && styles.errorInput}

@@ -5,8 +5,17 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCompanyStats } from "@/app/api/home";
 
 const CompanySuccess = () => {
+  const { data: companyStats } = useQuery({
+    queryKey: ["companySuccessStats"],
+    queryFn: () => fetchCompanyStats(),
+    refetchOnMount: true,
+    retry: false,
+  });
+  console.log("data", companyStats);
   return (
     <View style={styles.container}>
       <CustomHeading>{t("companySuccess")}</CustomHeading>
@@ -14,26 +23,27 @@ const CompanySuccess = () => {
 
       <View style={styles.factsRow}>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>30+</CustomHeading>
-          <CustomText>Years of Excellence</CustomText>
+          <CustomHeading fontSize={32}>{companyStats?.workers}</CustomHeading>
+          <CustomText>{t("workers")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>100%</CustomHeading>
-          <CustomText>Client Satisfaction</CustomText>
+          <CustomHeading fontSize={32}>{companyStats?.employers}</CustomHeading>
+          <CustomText>{t("employers")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>53k</CustomHeading>
-          <CustomText>Cases Completed</CustomText>
+          <CustomHeading fontSize={32}>{companyStats?.mediators}</CustomHeading>
+          <CustomText>{t("mediators")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>24</CustomHeading>
-          <CustomText>Consultants</CustomText>
+          <CustomHeading fontSize={32}>{companyStats?.services}</CustomHeading>
+          <CustomText>{t("services")}</CustomText>
         </View>
       </View>
 
       {/* Button */}
       <Button
         isPrimary={true}
+        disabled={true}
         title="VIEW CASE STUDIES"
         onPress={() => {}}
         style={styles.button}
@@ -73,6 +83,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 5,
     marginBottom: 10,
+    opacity: 0.4,
   },
 });
 

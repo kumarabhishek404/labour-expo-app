@@ -179,9 +179,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   image: {
-    width: "100%",
-    height: 245,
+    width: "80%",
+    height: 210,
     resizeMode: "cover",
+    alignSelf: "center",
   },
   errorInput: {
     borderWidth: 1,

@@ -2,7 +2,6 @@ import moment from "moment";
 import * as Location from "expo-location";
 import { toast } from "@/app/hooks/toast";
 import {
-  fetchAllBookedWorkers,
   fetchAllLikedWorkers,
   fetchAllWorkers,
 } from "@/app/api/workers";
@@ -13,6 +12,7 @@ import {
 } from "@/app/api/mediator";
 import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
+import { fetchAllBookedWorkers } from "@/app/api/booking";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days

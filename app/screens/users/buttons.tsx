@@ -1,5 +1,11 @@
-import { Dimensions, StyleSheet } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  View,
+} from "react-native";
+import React, { useState } from "react";
 import { useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import Colors from "@/constants/Colors";
 import Animated, { SlideInDown } from "react-native-reanimated";
@@ -9,16 +15,12 @@ import { UserAtom } from "@/app/AtomStore/user";
 import { toast } from "@/app/hooks/toast";
 import Button from "@/components/inputs/Button";
 import Loader from "@/components/commons/Loader";
-import {
-  bookWorker,
-  likeWorker,
-  removeBookedWorker,
-  unlikeWorker,
-} from "../../api/workers";
+import { likeWorker, unlikeWorker } from "../../api/workers";
 import {
   bookMediator,
   likeMediator,
   removeBookedMediator,
+  removeMemberFromTeam,
   unlikeMediator,
 } from "@/app/api/mediator";
 import { likeEmployer, unlikeEmployer } from "@/app/api/employer";
@@ -30,6 +32,20 @@ import {
 } from "@/app/api/requests";
 import { activateUser, suspendUser } from "@/app/api/admin";
 import { deleteUserById } from "@/app/api/user";
+import {
+  addBookingRequest,
+  cancelBooking,
+  cancelBookingRequest,
+  removeBookedWorker,
+} from "@/app/api/booking";
+import ModalComponent from "@/components/commons/Modal";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import { Controller } from "react-hook-form";
+import DropdownComponent from "@/components/inputs/Dropdown";
+import { WORKTYPES } from "@/constants";
+import { Ionicons } from "@expo/vector-icons";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
+import AddBookingDetails from "./addBookingDetails";
 const { width } = Dimensions.get("window");
 
 interface ButtonContainerProps {
@@ -40,6 +56,8 @@ interface ButtonContainerProps {
   isUserLiked: boolean;
   isUserRequested: boolean;
   isInYourTeam: boolean;
+  isWorkerBookingRequested: boolean;
+  isWorkerBooked: boolean;
 }
 
 const ButtonContainer = ({
@@ -50,10 +68,14 @@ const ButtonContainer = ({
   isUserLiked,
   isUserRequested,
   isInYourTeam,
+  isWorkerBookingRequested,
+  isWorkerBooked,
 }: ButtonContainerProps) => {
   const userDetails = useAtomValue(UserAtom);
   const { id } = useLocalSearchParams();
   const { role, type } = useGlobalSearchParams();
+
+  const [isAddBookingModal, setIsAddBookingModal] = useState(false);
 
   const mutationLikeWorker = useMutation({
     mutationKey: ["likeWorker", { id }],
@@ -109,18 +131,18 @@ const ButtonContainer = ({
     },
   });
 
-  const mutationBookWorker = useMutation({
-    mutationKey: ["bookWorker", { id }],
-    mutationFn: () => bookWorker({ workerID: id }),
+  const mutationCancelBookingRequest = useMutation({
+    mutationKey: ["cancelBookingRequest", { id }],
+    mutationFn: () => cancelBookingRequest({ bookingID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("workerBookedSuccessfully"));
+      toast.success(t("bookingCancelledWorker"));
     },
   });
 
   const mutationRemoveBookedWorker = useMutation({
     mutationKey: ["removeBookedWorker", { id }],
-    mutationFn: () => removeBookedWorker({ workerID: id }),
+    mutationFn: () => removeBookedWorker({ bookingID: id }),
     onSuccess: (response) => {
       refetch();
       toast.success(t("bookingCancelledWorker"));
@@ -187,9 +209,9 @@ const ButtonContainer = ({
     },
   });
 
-  const mutationLeaveFromTeam = useMutation({
-    mutationKey: ["leaveFromTeam", { id }],
-    mutationFn: () => leaveFromTeam({ userId: id }),
+  const mutationRemoveMemberFromTeam = useMutation({
+    mutationKey: ["removeMemberFromTeam", { id }],
+    mutationFn: () => removeMemberFromTeam({ memberID: id }),
     onSuccess: () => {
       refetch();
       toast.success(t("successfullyLeftFromTeam"));
@@ -231,7 +253,7 @@ const ButtonContainer = ({
           mutationUnLikeMediator?.isPending ||
           mutationLikeEmployer?.isPending ||
           mutationUnLikeEmployer?.isPending ||
-          mutationBookWorker?.isPending ||
+          mutationCancelBookingRequest?.isPending ||
           mutationRemoveBookedWorker?.isPending ||
           mutationBookMediator?.isPending ||
           mutationRemoveBookedMediator?.isPending ||
@@ -239,7 +261,7 @@ const ButtonContainer = ({
           mutationActivateUser?.isPending ||
           mutationSuspendUser?.isPending ||
           mutationCancelRequest?.isPending ||
-          mutationLeaveFromTeam?.isPending
+          mutationRemoveMemberFromTeam?.isPending
           // mutationDeleteUser?.isPending
         }
       />
@@ -266,7 +288,7 @@ const ButtonContainer = ({
             }
             onPress={() => {
               if (isInYourTeam) {
-                mutationLeaveFromTeam?.mutate();
+                mutationRemoveMemberFromTeam?.mutate();
               } else if (isUserRequested) {
                 mutationCancelRequest?.mutate();
               } else {
@@ -275,6 +297,34 @@ const ButtonContainer = ({
             }}
           />
         )}
+
+        {userDetails?.role === "EMPLOYER" && (
+          <Button
+            isPrimary={true}
+            bgColor={
+              isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
+            }
+            title={
+              isWorkerBooked
+                ? t("cancelBooking")
+                : isWorkerBookingRequested
+                ? t("cancelBookingRequest")
+                : user?.role === "MEDIATOR"
+                ? t("bookMediator")
+                : t("bookWorker")
+            }
+            onPress={() => {
+              if (isWorkerBooked) {
+                mutationRemoveBookedWorker?.mutate();
+              } else if (isWorkerBookingRequested) {
+                mutationCancelBookingRequest?.mutate();
+              } else {
+                setIsAddBookingModal(true);
+              }
+            }}
+          />
+        )}
+
         {userDetails?.role !== "ADMIN" && (
           <Button
             isPrimary={true}
@@ -339,6 +389,13 @@ const ButtonContainer = ({
           </Animated.View>
         )}
       </Animated.View>
+
+      <AddBookingDetails
+        refetch={refetch}
+        id={id}
+        isAddBookingModal={isAddBookingModal}
+        setIsAddBookingModal={setIsAddBookingModal}
+      />
     </>
   );
 };
@@ -409,5 +466,9 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: Colors.danger,
     borderColor: Colors.danger,
+  },
+  modalContent: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
   },
 });

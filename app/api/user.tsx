@@ -149,12 +149,12 @@ export const deleteUserById = () => {
 
 export const uploadFile = async (file: any) => {
   console.log(
-    "[userService] Uploading file with API /upload/file and file payload  : ",
+    "[userService] Uploading file with API /user/upload-pic and file payload  : ",
     file
   );
   try {
-    const data = await makePatchRequestFormData("/user/upload", file);
-    toast.success("File uploaded successfully");
+    const data = await makePostRequestFormData("/user/upload-pic", file);
+    toast.success(t("fileUploadedSuccessfully"));
     console.log(
       "[userService] File uploaded successfully with file location",
       data?.data
@@ -270,9 +270,10 @@ export const fetchAllLikedUsers = async ({ pageParam, role }: any) => {
 };
 
 export const addAppFeedback = async (payload: any) => {
+  console.log("Payload --", payload);
   try {
     const data = await makePostRequest("/feedback/submit", payload);
-    toast.success("Feedback submitted successfully");
+    toast.success(t("feedbackSubmittedSuccessfully"));
     return data;
   } catch (error: any) {
     console.error(
@@ -282,6 +283,22 @@ export const addAppFeedback = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while adding app feedback"
+    );
+    throw error;
+  }
+};
+
+export const leaveTeam = async () => {
+  try {
+    const data = await makePostRequest(`/user/leave-org`);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while leaving team : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while leaving team"
     );
     throw error;
   }

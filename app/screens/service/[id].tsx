@@ -156,7 +156,11 @@ const ServiceDetails = () => {
     hasNextPage: hasMemberNextPage,
   } = useInfiniteQuery({
     queryKey: ["members"],
-    queryFn: ({ pageParam }) => fetchAllMembers({ pageParam }),
+    queryFn: ({ pageParam }) =>
+      fetchAllMembers({
+        mediatorID: userDetails?._id,
+        pageParam,
+      }),
     retry: false,
     initialPageParam: 1,
     enabled:

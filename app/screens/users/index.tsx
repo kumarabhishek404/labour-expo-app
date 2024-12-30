@@ -123,6 +123,7 @@ const Users = () => {
             availableInterest={role === "workers" ? WORKERTYPES : MEDIATORTYPES}
             listings={memoizedData || []}
             loadMore={loadMore}
+            type={role === "workers" ? "worker" : role === "mediators" ? "mediator" : "employer"}
             isFetchingNextPage={isFetchingNextPage}
             refreshControl={
               <RefreshControl

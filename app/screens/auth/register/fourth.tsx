@@ -39,20 +39,22 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
   });
 
   const [passwordConditions, setPasswordConditions] = useState({
-    hasNumber: false,
-    hasUpperCase: false,
-    hasLowerCase: false,
-    hasSymbol: false,
-    isLongEnough: false,
+    hasFourDigits: false,
+    // hasNumber: false,
+    // hasUpperCase: false,
+    // hasLowerCase: false,
+    // hasSymbol: false,
+    // isLongEnough: false,
   });
 
   const checkPasswordConditions = (password: any) => {
     const conditions = {
-      hasNumber: /\d/.test(password),
-      hasUpperCase: /[A-Z]/.test(password),
-      hasLowerCase: /[a-z]/.test(password),
-      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      isLongEnough: password.length >= 8,
+      hasFourDigits: password.length === 4,
+      // hasNumber: /\d/.test(password),
+      // hasUpperCase: /[A-Z]/.test(password),
+      // hasLowerCase: /[a-z]/.test(password),
+      // hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      // isLongEnough: password.length >= 8,
     };
 
     setPasswordConditions(conditions);
@@ -66,7 +68,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
   };
 
   return (
-    <>
+    <View style={{ gap: 15 }}>
       <View style={{ marginBottom: 20 }}>
         <Stepper currentStep={4} steps={REGISTERSTEPS} />
       </View>
@@ -78,8 +80,8 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         rules={{
           required: t("passwordIsRequired"),
           pattern: {
-            value: /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[a-z\d@$!%*?&]{8,}$/,
-            message: t("youHaveToFullFillAllTheFollowingConditions"),
+            value: /^\d{4}$/,
+            message: t("passwordMustBe4Digits"),
           },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
@@ -105,7 +107,19 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 />
               }
             />
-            <View style={{ marginBottom: 15 }}>
+            <CustomText
+              textAlign="left"
+              style={[passwordConditions.hasFourDigits && styles?.successText]}
+            >
+              {passwordConditions.hasFourDigits ? (
+                <Entypo name={"check"} size={16} />
+              ) : (
+                <Entypo name="cross" size={16} />
+              )}{" "}
+              {t("passwordMustBe4Digits")}
+            </CustomText>
+            {/* Do not remove this comment */}
+            {/* <View style={{ marginBottom: 15 }}>
               <CustomText
                 textAlign="left"
                 style={[passwordConditions.hasNumber && styles?.successText]}
@@ -150,7 +164,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 )}{" "}
                 {t("beAtLeast8CharactersLong")}
               </CustomText>
-            </View>
+            </View> */}
           </>
         )}
       />
@@ -198,7 +212,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
           onPress={handleSubmit(onSubmit)}
         />
       </View>
-    </>
+    </View>
   );
 };
 
@@ -238,7 +252,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
+    marginVertical: 10,
   },
   buttonText: {
     color: Colors?.white,
@@ -250,7 +264,6 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     textAlign: "right",
     color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
@@ -263,7 +276,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
-    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },

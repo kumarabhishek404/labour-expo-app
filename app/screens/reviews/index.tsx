@@ -20,7 +20,6 @@ import Loader from "@/components/commons/Loader";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
 import EmptyPlaceholder from "@/assets/empty-placeholder.png";
-import PlaceholderPerson from "@/assets/images/placeholder-person.jpg";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 
 const StarRating = ({ rating }: any) => {

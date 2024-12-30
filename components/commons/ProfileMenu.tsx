@@ -39,8 +39,11 @@ const ProfileMenu = ({ disabled }: any) => {
   const [notificationConsent, setNotificationConsent] = useAtom(
     NotificationConsentAtom
   );
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  console.log("notificationConsent--", notificationConsent);
+  useEffect(() => {
+    setIsAdmin(userDetails?.role === "ADMIN");
+  }, [userDetails?.role]);
 
   const handleLogout = () => {
     setUserDetails({
@@ -62,11 +65,6 @@ const ProfileMenu = ({ disabled }: any) => {
     router.navigate("/screens/auth/login");
   };
 
-  // const toggleNotificationSwitch = () =>
-  //   setIsNotificationsEnabled(!isNotificationsEnabled);
-
-  const toggleDarkModeSwitch = () => setIsDarkModeEnabled(!isDarkModeEnabled);
-
   const handleDeactivateAccount = () => {
     setIsLoading(true);
     setTimeout(() => {
@@ -80,17 +78,6 @@ const ProfileMenu = ({ disabled }: any) => {
       });
     }, 3000);
   };
-
-  // useEffect(() => {
-  //   // Load notification preference from local storage
-  //   const loadPreference = async () => {
-  //     const savedPreference = await AsyncStorage.getItem(
-  //       "notificationsEnabled"
-  //     );
-  //     setNotificationConsent(savedPreference === "true");
-  //   };
-  //   loadPreference();
-  // }, []);
 
   const registerNotification = async () => {
     try {
@@ -165,7 +152,7 @@ const ProfileMenu = ({ disabled }: any) => {
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
       ),
       onPress: () => router?.push({ pathname: "/screens/team" }),
-      roleCondition: userDetails?.role === "MEDIATOR",
+      roleCondition: userDetails?.role === "MEDIATOR" && !isAdmin,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -175,7 +162,21 @@ const ProfileMenu = ({ disabled }: any) => {
         <Ionicons name="hand-right-outline" size={28} color={Colors.primary} />
       ),
       onPress: () => router?.push({ pathname: "/screens/requests" }),
-      roleCondition: userDetails?.role !== "EMPLOYER",
+      roleCondition: userDetails?.role !== "EMPLOYER" && !isAdmin,
+      style: [styles?.menuItem],
+      isSuspended: disabled,
+    },
+    {
+      title: t("bookings"),
+      icon: (
+        <Ionicons name="hand-right-outline" size={28} color={Colors.primary} />
+      ),
+      onPress: () =>
+        router?.push({
+          pathname: "/screens/bookings",
+        }),
+      roleCondition:
+        userDetails?.role === "EMPLOYER" || userDetails?.role === "WORKER",
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -193,20 +194,6 @@ const ProfileMenu = ({ disabled }: any) => {
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
-    // {
-    //   title: t("booked"),
-    //   icon: (
-    //     <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
-    //   ),
-    //   onPress: () =>
-    //     router?.push({
-    //       pathname: "/screens/users",
-    //       params: { role: "workers", title: t("booked"), type: "booked" },
-    //     }),
-    //   roleCondition: userDetails?.role === "EMPLOYER",
-    //   style: [styles?.menuItem],
-    //   isSuspended: disabled,
-    // },
     {
       title: `${t("yourFavorites")} ${
         userDetails?.role === "EMPLOYER" ? t("workers") : t("employers")
@@ -276,6 +263,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/experience",
         }),
+      roleCondition: !isAdmin,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -349,7 +337,7 @@ const ProfileMenu = ({ disabled }: any) => {
       icon: (
         <Ionicons name="chatbox-outline" size={28} color={Colors.primary} />
       ),
-      onPress: () => router?.push("/screens/feedback"),
+      onPress: () => router?.push("/screens/feedback/addAppFeedback"),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -382,6 +370,7 @@ const ProfileMenu = ({ disabled }: any) => {
         <Ionicons name="close-circle-outline" size={28} color={Colors.danger} />
       ),
       onPress: () => setModalVisible(true),
+      roleCondition: !isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
       isSuspended: disabled,
@@ -396,6 +385,7 @@ const ProfileMenu = ({ disabled }: any) => {
         />
       ),
       onPress: () => router?.push("/screens/profile/deleteProfile"),
+      roleCondition: !isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
       isSuspended: false,

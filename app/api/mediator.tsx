@@ -150,10 +150,15 @@ export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   }
 };
 
-export const fetchAllMembers = async ({ pageParam, category }: any) => {
+export const fetchAllMembers = async ({
+  mediatorId,
+  pageParam,
+  category,
+}: any) => {
+  console.log("mediatorId----", mediatorId);
   try {
     const data = await makeGetRequest(
-      `/mediator/members?page=${pageParam}&limit=3&category=${category}`
+      `/mediator/${mediatorId}/members?page=${pageParam}&limit=3&category=${category}`
     );
     return data.data;
   } catch (error: any) {
@@ -169,17 +174,20 @@ export const fetchAllMembers = async ({ pageParam, category }: any) => {
   }
 };
 
-export const leaveTeam = async () => {
+export const removeMemberFromTeam = async (payload: any) => {
   try {
-    const data = await makePostRequest(`/user/leave-org`);
+    const data = await makeDeleteRequest(
+      `/mediator/remove-member/${payload?.memberID}`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while leaving team : `,
+      `[mediatorService] An error occurred while removing member : `,
       error?.response?.data?.message
     );
     toast.error(
-      error?.response?.data?.message || "An error occurred while leaving team"
+      error?.response?.data?.message ||
+        "An error occurred while removing member from team"
     );
     throw error;
   }

@@ -27,7 +27,7 @@ const ForgetPasswordScreen = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
+      mobile: "",
       resetToken: "",
       password: "",
       confirmPassword: "",
@@ -80,11 +80,11 @@ const ForgetPasswordScreen = () => {
   const onSubmit = (data: any) => {
     if (isResetCodeSent)
       mutationSetPassword.mutate({
-        email: data?.email,
+        mobile: data?.mobile,
         resetToken: data?.resetToken,
         password: data?.password,
       });
-    else mutationForgetPassword.mutate({ email: data?.email });
+    else mutationForgetPassword.mutate({ mobile: data?.mobile });
   };
 
   return (
@@ -276,28 +276,29 @@ const ForgetPasswordScreen = () => {
           ) : (
             <Controller
               control={control}
-              name="email"
+              name="mobile"
               defaultValue=""
               rules={{
-                required: t("emailIsRequired"),
+                required: t("mobileIsRequired"),
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                  message: t("enterAValidEmailAddress"),
+                  value: /^[0-9]{10}$/,
+                  message: t("enterAValidMobileNumber"),
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInputComponent
-                  label={t("email")}
-                  name="email"
+                  label={t("mobile")}
+                  name="mobile"
                   value={value}
                   onBlur={onBlur}
+                  type="number"
                   onChangeText={onChange}
-                  placeholder={t("enterYourEmail")}
-                  containerStyle={errors?.email && styles.errorInput}
+                  placeholder={t("enterYourMobile")}
+                  containerStyle={errors?.mobile && styles.errorInput}
                   errors={errors}
                   icon={
                     <Ionicons
-                      name={"mail-outline"}
+                      name={"call-outline"}
                       size={30}
                       color={Colors.secondary}
                       style={{ paddingVertical: 10, paddingRight: 10 }}

@@ -24,10 +24,10 @@ const ListingsVerticalWorkers = ({
   loadMore,
   isFetchingNextPage,
   refreshControl,
+  type,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
-    const { role } = useGlobalSearchParams();
-
+    console.log("role", type);
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -36,14 +36,8 @@ const ListingsVerticalWorkers = ({
               pathname: "/screens/users/[id]",
               params: {
                 id: item?._id,
-                role: role,
-                title:
-                  role === "workers"
-                    ? t("workerDetails")
-                    : role === "employers"
-                    ? t("employerDetails")
-                    : t("mediatorDetails"),
-                type: "details",
+                role: type,
+                title: `${t(type)} ${t("details")}`,
               },
             })
           }

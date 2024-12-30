@@ -7,24 +7,38 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import AvatarComponent from "./Avatar";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { useMutation } from "@tanstack/react-query";
-import { leaveTeam } from "@/app/api/mediator";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { leaveTeam } from "@/app/api/user";
 import { toast } from "@/app/hooks/toast";
 import Loader from "./Loader";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import { useAtom } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import ModalComponent from "./Modal";
+import { getUserById } from "@/app/api/user";
 
 const TeamAdminCard = ({ admin }: any) => {
   const [userDetails] = useAtom(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [adminDetails, setAdminDetails] = useState<any>(null);
+
+  const {
+    isLoading,
+    data: response,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["adminDetails", admin],
+    queryFn: () => getUserById(admin),
+    retry: 0,
+    enabled: !!admin,
+  });
 
   const mutationLeaveTeam = useMutation({
     mutationKey: ["leaveTeam"],
@@ -39,6 +53,15 @@ const TeamAdminCard = ({ admin }: any) => {
       toast.error(error?.message || "An error occurred while leaving team");
     },
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setAdminDetails(response?.data);
+      return () => unsubscribe;
+    }, [response])
+  );
+
+  console.log("admin", adminDetails, response);
 
   const modalContent = () => {
     return (
@@ -97,12 +120,16 @@ const TeamAdminCard = ({ admin }: any) => {
           <View style={{ gap: 2 }}>
             <CustomHeading textAlign="left">{t("teamAdmin")}</CustomHeading>
             <CustomText textAlign="left">
-              <CustomText style={styles?.employerLabel}>Name : </CustomText>
-              {admin?.firstName} {admin?.lastName}
+              <CustomText style={styles?.employerLabel}>
+                {t("name")} :{" "}
+              </CustomText>
+              {adminDetails?.firstName} {adminDetails?.lastName}
             </CustomText>
             <CustomText textAlign="left">
-              <CustomText style={styles?.employerLabel}>Address : </CustomText>
-              {admin?.address}
+              <CustomText style={styles?.employerLabel}>
+                {t("address")} :{" "}
+              </CustomText>
+              {adminDetails?.address}
             </CustomText>
           </View>
 
@@ -154,7 +181,7 @@ const TeamAdminCard = ({ admin }: any) => {
         >
           <AvatarComponent
             isEditable={false}
-            profileImage={admin?.profilePicture}
+            profileImage={adminDetails?.profilePicture}
           />
           <Button
             isPrimary={true}
@@ -163,8 +190,8 @@ const TeamAdminCard = ({ admin }: any) => {
               router.push({
                 pathname: "/screens/users/[id]",
                 params: {
-                  id: admin?.id,
-                  role: "mediator",
+                  id: adminDetails?._id,
+                  role: adminDetails?.role,
                   title: t("teamAdminDetails"),
                   type: "details",
                 },

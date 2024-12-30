@@ -247,6 +247,32 @@ export const WORKERREQUEST = [
   },
 ];
 
+export const EMPLOYERBOOKINGS = [
+  {
+    label: "bookedWorker",
+    value: "booking",
+    iconName: "city",
+  },
+  {
+    label: "sentRequest",
+    value: "request",
+    iconName: "city",
+  },
+];
+
+export const WORKERBOOKINGS = [
+  {
+    label: "myBookings",
+    value: "booking",
+    iconName: "city",
+  },
+  {
+    label: "receivedRequest",
+    value: "request",
+    iconName: "city",
+  },
+];
+
 export const WORKTYPES = [
   { label: "construction", value: "construction" },
   { label: "farming", value: "farming" },

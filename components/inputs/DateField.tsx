@@ -58,7 +58,12 @@ const DateField: React.FC<DateFieldProps> = ({
         )}
       </TouchableOpacity>
       {errors[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+        <CustomText
+          textAlign="left"
+          fontSize={10}
+          color={Colors?.danger}
+          style={{ marginTop: 5 }}
+        >
           {errors[name]?.message || ""}
         </CustomText>
       )}
@@ -77,8 +82,7 @@ const styles = StyleSheet.create({
     height: 53,
     padding: 10,
     borderColor: Colors?.secondary,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 8
   },
   dateItem: {
     width: "100%",

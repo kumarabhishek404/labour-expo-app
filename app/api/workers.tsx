@@ -91,62 +91,6 @@ export const unlikeWorker = async ({ workerID }: any) => {
   }
 };
 
-export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
-  try {
-    const data = await makeGetRequest(
-      `/worker/all-booked?page=${pageParam}&limit=5`
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while fetching booked workers : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching booked workers"
-    );
-    throw error;
-  }
-};
-
-export const bookWorker = async (payload: any) => {
-  try {
-    const data = await makePostRequest("/worker/book", payload);
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while booking worker : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message || "An error occurred while booking worker"
-    );
-    throw error;
-  }
-};
-
-export const removeBookedWorker = async (payload: any) => {
-  console.log("Payload---", payload);
-
-  try {
-    const data = await makeDeleteRequest(
-      `/worker/remove-booked/${payload?.workerID}`
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while removing booked worker : `,
-      error?.response?.data?.message
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        "An error occurred while removing booked worker"
-    );
-    throw error;
-  }
-};
-
 export const addSkills = async (payload: any) => {
   console.log("Skisll-", payload);
 

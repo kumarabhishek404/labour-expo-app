@@ -7,8 +7,12 @@ import Button from "../inputs/Button";
 import Colors from "@/constants/Colors";
 import { toast } from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
-import { verifyEmail, verifyEmailCode } from "@/app/api/firebase";
+import { sendEmailCode, verifyEmailCode } from "@/app/api/firebase";
 import ModalComponent from "./Modal";
+import Loader from "./Loader";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import { UserAtom } from "@/app/AtomStore/user";
+import { useAtomValue } from "jotai";
 
 interface UserInfoComponentProps {
   user: any;
@@ -16,12 +20,14 @@ interface UserInfoComponentProps {
 }
 
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
+  const { refreshUser, isLoading } = useRefreshUser();
+  const userDetails = useAtomValue(UserAtom);
+  
   const mutationSendOtp = useMutation({
     mutationKey: ["verifyEmail"],
-    mutationFn: (payload: any) => verifyEmail(payload),
+    mutationFn: (payload: any) => sendEmailCode(payload),
     onSuccess: (data: any) => {
       toast.success(t("otpSentTo"), data);
-      // setConfirmation(data);
       setModalVisible(true);
     },
     onError: (error: any) => {
@@ -31,11 +37,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
 
   const mutationVerifyCode = useMutation({
     mutationKey: ["verifyEmailCode"],
-    mutationFn: (payload: any) =>
-      verifyEmailCode(payload?.confirmation, payload?.otp),
+    mutationFn: (payload: any) => verifyEmailCode(payload?.code),
     onSuccess: (data: any) => {
       toast.success(t("emailVerifiedSuccessfully"));
       setModalVisible(false);
+      refreshUser();
     },
     onError: (error: any) => {
       toast.error(t("incorrectOTPTryAgain"));
@@ -44,12 +50,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputs: any = useRef([]);
-  const [confirmation, setConfirmation] = useState(null);
   const { t } = useTranslation();
 
   const handleSendOtp = async () => {
     try {
-      // mutationSendOtp.mutate(user?.email);
+      await mutationSendOtp.mutateAsync(user?.email?.value);
       setModalVisible(true);
     } catch (err) {
       toast.error(t("errorWhileSendingCode"));
@@ -57,8 +62,9 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
   };
 
   const handleVerifyOtp = async () => {
-    if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
-      mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
+    if (otp?.join("") && otp?.join("")?.length === 4) {
+      await mutationVerifyCode.mutateAsync({ code: otp?.join("") });
+      setOtp(["", "", "", ""]);
     } else {
       toast?.error(t("incorrectOTPTryAgain"));
     }
@@ -122,9 +128,13 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
     </View>
   );
 
-  console.log(user?.email);
   return (
     <View style={[styles.userInfoTextWrapper, style]}>
+      <Loader
+        loading={
+          mutationSendOtp.isPending || mutationVerifyCode.isPending || isLoading
+        }
+      />
       <View>
         <View
           style={[styles.row, user?.role === "EMPLOYER" && styles.firstBox]}
@@ -151,13 +161,15 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
             {user?.email?.value || user?.alternateEmail || t("emailNotFound")}
-            {user?.email && !user?.email?.isVerified && (
-              <TouchableOpacity onPress={handleSendOtp}>
-                <CustomText color={Colors?.link} style={styles.verifyEmailBtn}>
-                  , {t("verify")}
-                </CustomText>
-              </TouchableOpacity>
-            )}
+            {user?._id === userDetails?._id &&
+              user?.email &&
+              !user?.email?.isVerified && (
+                <TouchableOpacity onPress={handleSendOtp}>
+                  <CustomText color={Colors?.link} style={styles.verifyEmailBtn}>
+                    , {t("verify")}
+                  </CustomText>
+                </TouchableOpacity>
+              )}
           </CustomHeading>
         </View>
       </View>
@@ -170,6 +182,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         title={t("verifyEmail")}
         onClose={() => setModalVisible(false)}
         primaryButton={{
+          disabled: otp?.join("")?.length !== 4,
           title: t("verify"),
           action: handleVerifyOtp,
         }}
@@ -205,6 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 0,
   },
   verifyEmailBtn: {
     fontSize: 14,

@@ -687,9 +687,6 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    // padding: 20,
-    // width: "90%",
-    // maxHeight: "80%",
   },
   userItem: {
     flexDirection: "row",

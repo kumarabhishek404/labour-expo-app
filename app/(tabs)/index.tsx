@@ -22,7 +22,7 @@ export default function BookingsScreen() {
 
 // import React, { useState } from 'react';
 // import { View, TextInput, Button, StyleSheet, Text, Alert } from 'react-native';
-// import { signInWithPhoneNumber, verifyCode } from './FirebaseService';
+// import { signInWithPhoneNumber, verifyCode } from '../api/firebase';
 
 // const OTPVerificationScreen = () => {
 //     const [phoneNumber, setPhoneNumber] = useState('');

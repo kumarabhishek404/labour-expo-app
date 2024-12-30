@@ -15,12 +15,7 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import ViewMap from "@/components/commons/ViewMap";
-import { getWorkerById } from "../../api/workers";
-import { getMediatorById } from "@/app/api/mediator";
-import { getEmployerById } from "@/app/api/employer";
 import { useQuery } from "@tanstack/react-query";
-import profileImage from "../../../assets/images/placeholder-person.jpg";
 import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
@@ -40,6 +35,8 @@ import { getUserById } from "@/app/api/user";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
+import TeamDetails from "../team/teamDetails";
+import TeamAdminCard from "@/components/commons/TeamAdminCard";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -60,6 +57,12 @@ const User = () => {
   );
   const [isInYourTeam, setIsInYourTeam] = useState(
     user?.employedBy?.includes(userDetails?._id)
+  );
+  const [isWorkerBookingRequested, setIsWorkerBookingRequested] = useState(
+    user?.bookingRequests?.includes(userDetails?._id)
+  );
+  const [isWorkerBooked, setIsWorkerBooked] = useState(
+    user?.bookedBy?.includes(userDetails?._id)
   );
   const reviewsSectionRef = useRef<View>(null);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
@@ -84,6 +87,10 @@ const User = () => {
     setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
     setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
     setIsInYourTeam(user?.employedBy?.includes(userDetails?._id));
+    setIsWorkerBookingRequested(
+      user?.bookingRequests?.includes(userDetails?._id)
+    );
+    setIsWorkerBooked(user?.bookedBy?.includes(userDetails?._id));
   }, [user]);
 
   useFocusEffect(
@@ -237,26 +244,20 @@ const User = () => {
 
             <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
 
+            {(user?.role === "MEDIATOR" ||
+              (user?.role === "WORKER" && user?.employedBy)) && (
+              <TeamDetails type={user?.role} user={user} />
+            )}
+
             <WallletInformation
-              type={
-                user?.role === "EMPLOYER"
-                  ? "spents"
-                  : user?.role === "WORKER"
-                  ? "earnings"
-                  : "both"
-              }
+              type={user?.role === "EMPLOYER" ? "spents" : "earnings"}
               wallet={user?.wallet}
             />
 
             {user?.role === "EMPLOYER" ? (
               <ServiceInformation information={user?.serviceDetails} />
-            ) : user?.role === "WORKER" ? (
-              <WorkInformation information={user?.workDetails} />
             ) : (
-              <View style={{ flexDirection: "column", gap: 20 }}>
-                <WorkInformation information={user?.workDetails} />
-                <ServiceInformation information={user?.serviceDetails} />
-              </View>
+              <WorkInformation information={user?.workDetails} />
             )}
 
             {user?.role !== "EMPLOYER" && (
@@ -284,6 +285,8 @@ const User = () => {
         isUserLiked={isUserLiked}
         isUserRequested={isUserRequested}
         isInYourTeam={isInYourTeam}
+        isWorkerBookingRequested={isWorkerBookingRequested}
+        isWorkerBooked={isWorkerBooked}
       />
     </>
   );

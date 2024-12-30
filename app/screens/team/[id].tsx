@@ -5,18 +5,22 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { fetchAllMembers } from "@/app/api/mediator";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import { WORKERTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
+
+  const { id } = useLocalSearchParams();
 
   const {
     data: response,
@@ -25,8 +29,13 @@ const Members = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["members", category],
-    queryFn: ({ pageParam }) => fetchAllMembers({ pageParam, category }),
+    queryKey: ["members", category, id],
+    queryFn: ({ pageParam }) =>
+      fetchAllMembers({
+        mediatorId: id,
+        pageParam,
+        category,
+      }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -42,7 +51,7 @@ const Members = () => {
       const totalData = response?.pages[0]?.pagination?.total;
       setTotalData(totalData);
       const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page.data || [])
+        response?.pages.flatMap((page: any) => page?.data[0]?.workers || [])
       );
       return () => unsubscribe;
     }, [response])
@@ -79,7 +88,11 @@ const Members = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={WORKERTYPES}
@@ -99,6 +112,7 @@ const Members = () => {
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
             availableInterest={WORKERTYPES}
+            type="member"
           />
         </View>
       </View>

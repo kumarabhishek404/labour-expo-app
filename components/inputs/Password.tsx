@@ -25,7 +25,7 @@ const PasswordComponent = ({
   onChangeText,
   onBlur,
   icon,
-  errors
+  errors,
 }: TextInputProps) => {
   const [secureEntry, setSecureEntry] = useState(true);
 
@@ -37,8 +37,10 @@ const PasswordComponent = ({
         onChangeText={onChangeText}
         placeholder={placeholder}
         secureTextEntry={secureEntry}
+        type="number"
         label={label}
         name={name}
+        maxLength={4}
         containerStyle={errors[name] && styles.errorInput}
         errors={errors}
         icon={icon && icon}

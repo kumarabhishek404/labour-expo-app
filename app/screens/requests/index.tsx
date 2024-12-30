@@ -56,6 +56,7 @@ const Requests = () => {
     },
     retry: false,
   });
+  
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;

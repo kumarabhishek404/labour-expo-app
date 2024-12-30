@@ -27,8 +27,6 @@ import CompanySuccess from "@/components/commons/CompanySuccessStats";
 import ScrollHint from "@/components/commons/ScrollToRight";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
-// import SpeechToText from "@/components/commons/VoiceToText";
-// import AudioRecorder from "@/components/commons/AudioRecord";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
@@ -54,7 +52,7 @@ const UserHome = () => {
     },
     initialPageParam: 1,
     retry: false,
-    enabled: !!userDetails?._id,
+    enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -222,7 +220,7 @@ const UserHome = () => {
               )}
             </View>
 
-            <View style={{ marginBottom: 40 }}>
+            {/* <View style={{ marginBottom: 40 }}>
               {userDetails?.role === "EMPLOYER" ? (
                 <GroupWorkersListing
                   category={category}
@@ -239,11 +237,11 @@ const UserHome = () => {
                 />
               )}
               <ScrollHint />
-            </View>
+            </View> */}
           </View>
 
           <AboutCompany />
-          <PublicationsScreen />
+          {/* <PublicationsScreen /> */}
           <CompanySuccess />
           <TestimonialSlider />
           <QuickContact />

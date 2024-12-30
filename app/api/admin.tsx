@@ -77,3 +77,19 @@ export const activateUser = async (payload: any) => {
     throw error;
   }
 };
+
+export const fetchAllFeedbacks = async () => {
+  try {
+    const data = await makeGetRequest("/feedback/all");
+    return data?.data;
+  } catch (error: any) {
+    console.error(
+      `[adminService] An error occurred while fetching feedbacks : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message || "An error occurred while fetching users"
+    );
+    throw error;
+  }
+};

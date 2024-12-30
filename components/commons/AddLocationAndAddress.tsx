@@ -23,6 +23,7 @@ interface AddLocationAndAddressProps {
   onBlur: any;
   errors: any;
   icon?: any;
+  style?: any;
 }
 
 const AddLocationAndAddress = ({
@@ -36,6 +37,7 @@ const AddLocationAndAddress = ({
   setSelectedOption,
   onBlur,
   errors,
+  style,
 }: AddLocationAndAddressProps) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +81,7 @@ const AddLocationAndAddress = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
         <TouchableOpacity
           style={styles.radioButton}
@@ -158,6 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
     gap: 5,
+    height: 100,
   },
   title: {
     fontSize: 22,

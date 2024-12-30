@@ -16,6 +16,13 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
+    ],
     "ios": {
       "jsEngine": "jsc",
       "supportsTablet": true,
@@ -35,12 +42,6 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-localization",
-      "@react-native-firebase/app"
-    ],
     "experiments": {
       "typedRoutes": true
     },

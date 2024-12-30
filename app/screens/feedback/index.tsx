@@ -1,207 +1,153 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
-import { router, Stack } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
-import TextAreaInputComponent from "@/components/inputs/TextArea";
-import Button from "@/components/inputs/Button";
-import ReasoneSelection from "./reasons";
-import CustomHeading from "@/components/commons/CustomHeading";
+import { fetchAllFeedbacks } from "@/app/api/admin";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
-import { t } from "@/utils/translationHelper";
-import { useMutation } from "@tanstack/react-query";
-import { addAppFeedback } from "@/app/api/user";
-import { toast } from "@/app/hooks/toast";
+import { useQuery } from "@tanstack/react-query";
+import { router, Stack, useFocusEffect } from "expo-router";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import FeedbackRatingBreakdown from "./ratingBreakdown";
 import Loader from "@/components/commons/Loader";
+import ProfilePicture from "@/components/commons/ProfilePicture";
+import { getTimeAgo } from "@/constants/functions";
+import { t } from "@/utils/translationHelper";
+import Button from "@/components/inputs/Button";
 
-const FeedbackForm = () => {
+const FeedbackScreen = () => {
+  const [filteredFeedbacks, setFilteredFeedbacks]: any = useState([]);
+
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      rating: 0,
-      feedbackType: "",
-      description: "",
-    },
+    data: response,
+    isLoading,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["feedbacks"],
+    queryFn: () => fetchAllFeedbacks(),
+    refetchOnMount: true,
+    retry: false,
   });
 
-  const mutateAddAppFeedback = useMutation({
-    mutationKey: ["addAppFeedback"],
-    mutationFn: (data: any) => addAppFeedback(data),
-    onSuccess: () => {
-      router.back();
-      toast.success("Feedback submitted successfully");
-    },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "An error occurred");
-    },
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      setFilteredFeedbacks(response?.data?.feedback || []);
+    }, [response])
+  );
 
-  const onSubmit = (data: any) => {
-    console.log("Submitted Data:", data);
-    mutateAddAppFeedback.mutate(data);
+  const renderStars = (rating: any) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Text
+          key={i}
+          style={[styles.star, { color: i <= rating ? "#FFD700" : "#C0C0C0" }]}
+        >
+          ★
+        </Text>
+      );
+    }
+    return <View style={{ flexDirection: "row" }}>{stars}</View>;
   };
+
+  const renderFeedback = ({ item }: any) => (
+    <View style={styles.feedbackCard}>
+      <ProfilePicture
+        uri={item?.sender?.profilePicture}
+        style={styles.profileImage}
+      />
+      <View style={styles.feedbackDetails}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <CustomText textAlign="left" style={styles.userName}>
+            {item?.sender?.firstName} {item?.sender?.lastName}
+          </CustomText>
+          <CustomText textAlign="left" color="#757575" fontSize={12}>
+            {getTimeAgo(item?.createdAt)}
+          </CustomText>
+        </View>
+        {renderStars(item?.rating)}
+        <CustomText textAlign="left" fontWeight="bold">
+          {item?.feedbackType}
+        </CustomText>
+        <CustomText textAlign="left" fontSize={14}>
+          {item?.description}
+        </CustomText>
+      </View>
+    </View>
+  );
 
   return (
     <>
+      <Loader loading={isLoading || isRefetching} />
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Feedback" left="back" />,
+          header: () => (
+            <CustomHeader title="Feedback" left="back" right="notification" />
+          ),
         }}
       />
-      <Loader loading={mutateAddAppFeedback.isPending} />
-      <ScrollView style={styles.container}>
-        <View style={styles.formContainer}>
-          <CustomHeading textAlign="left" style={styles.sectionHeading}>
-            {t("howIsYourFirstImpressionOfTheProduct")}
-          </CustomHeading>
+      <View style={styles.container}>
+        {filteredFeedbacks && (
+          <FeedbackRatingBreakdown feedbacks={filteredFeedbacks} />
+        )}
 
-          <Controller
-            control={control}
-            name="rating"
-            rules={{
-              required: t("ratingIsRequired"),
-              min: { value: 1, message: t("ratingIsRequired") },
-            }}
-            render={({ field: { value, onChange } }) => (
-              <View style={styles.starContainer}>
-                <View style={styles.starsWrapper}>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <TouchableOpacity
-                      key={num}
-                      onPress={() => onChange(num)}
-                      style={styles.starButton}
-                    >
-                      <FontAwesome
-                        name={num <= value ? "star" : "star-o"}
-                        size={35}
-                        color={num <= value ? Colors?.primary : "#b3b3b3"}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                {errors?.rating && (
-                  <CustomText
-                    textAlign="left"
-                    fontSize={10}
-                    color={Colors?.danger}
-                    style={styles.errorText}
-                  >
-                    {errors.rating.message}
-                  </CustomText>
-                )}
-              </View>
-            )}
-          />
-
-          <CustomHeading textAlign="left" style={styles.sectionHeading}>
-            {t("whatDidYouLikeTheMost")}
-          </CustomHeading>
-
-          <Controller
-            control={control}
-            name="feedbackType"
-            rules={{ required: t("feedbackTypeIsRequired") }}
-            render={({ field: { onChange, value, onBlur } }) => (
-              <ReasoneSelection
-                selectedReason={value}
-                setSelectedReason={onChange}
-                onBlur={onBlur}
-              />
-            )}
-          />
-
-          {errors?.feedbackType && (
-            <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
-              {errors.feedbackType.message}
-            </CustomText>
-          )}
-
-          <Controller
-            control={control}
-            name="description"
-            rules={{
-              required: t("feedbackIsRequired"),
-              minLength: {
-                value: 10,
-                message: t("feedbackMustBeAtLeast10Characters"),
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextAreaInputComponent
-                label={t("whatWouldYouLikeToExploreNext")}
-                name="description"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("weDLoveToGiveYouTheFullExperience")}
-                containerStyle={errors?.description && styles.errorInput}
-                errors={errors}
-                icon={
-                  <MaterialIcons
-                    name={"feedback"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
-        </View>
-
+        <FlatList
+          data={filteredFeedbacks || []}
+          keyExtractor={(item: any) => item._id.toString()}
+          renderItem={renderFeedback}
+          style={styles.feedbackList}
+          showsVerticalScrollIndicator={false}
+        />
         <Button
           isPrimary={true}
-          title={t("sendFeedback")}
-          onPress={handleSubmit(onSubmit)}
-          style={styles.submitButton}
+          title={t("writeAReview")}
+          style={styles.buttonText}
+          onPress={() => router?.back()}
         />
-      </ScrollView>
+      </View>
     </>
   );
 };
 
-export default FeedbackForm;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f7fa",
-  },
-  formContainer: {
-    padding: 20,
-    gap: 10,
-  },
-  sectionHeading: {},
-  starContainer: {
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginBottom: 10,
-  },
-  starsWrapper: {
-    width: "100%",
+  container: { flex: 1, padding: 15, backgroundColor: "#F5F5F5" },
+  breakdownRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    marginVertical: 5,
   },
-  starButton: {
-    padding: 8,
+  breakdownLabel: { flex: 1, fontSize: 14 },
+  progressBarContainer: {
+    flex: 3,
+    height: 8,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 4,
+    overflow: "hidden",
   },
-  errorText: {
-    marginTop: 0,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: Colors.danger,
+  progressBar: { height: "100%", backgroundColor: "#4CAF50" },
+  feedbackList: { marginVertical: 10 },
+  feedbackCard: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    padding: 10,
     borderRadius: 8,
+    marginVertical: 5,
   },
-  submitButton: {
-    marginHorizontal: 20,
+  profileImage: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
+  feedbackDetails: { flex: 1 },
+  userName: { fontSize: 16, fontWeight: "bold" },
+  reviewButton: {
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
     marginVertical: 10,
   },
+  buttonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
+  star: { fontSize: 20, marginRight: 2 },
 });
+
+export default FeedbackScreen;

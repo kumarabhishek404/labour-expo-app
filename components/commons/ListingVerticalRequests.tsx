@@ -95,6 +95,7 @@ type Props = {
   requestType: any;
   loadMore: () => void;
   isFetchingNextPage: boolean;
+  refreshControl: any;
   onCancelRequest?: any;
   onAcceptRequest?: any;
   onRejectRequest?: any;
@@ -341,6 +342,7 @@ const ListingVerticalRequests = ({
   onCancelRequest,
   onAcceptRequest,
   onRejectRequest,
+  refreshControl
 }: Props) => {
   const userDetails = useAtomValue(UserAtom);
 
@@ -402,6 +404,7 @@ const ListingVerticalRequests = ({
             onCancelRequest={onCancelRequest}
           />
         )}
+        refreshControl={refreshControl}
       />
     );
   };

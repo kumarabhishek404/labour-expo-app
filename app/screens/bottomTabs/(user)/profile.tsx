@@ -42,7 +42,6 @@ import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountM
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { isEmptyObject } from "@/constants/functions";
 
 const UserProfile = () => {
@@ -50,7 +49,6 @@ const UserProfile = () => {
   const isAccountInactive = useAtomValue(AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const [earnings, setEarnings] = useAtom(EarningAtom);
-  const [spents, setSpents] = useAtom(SpentAtom);
 
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
@@ -429,7 +427,7 @@ const UserProfile = () => {
             }}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
-            title="Edit Profile"
+            title={t("editProfile")}
             onPress={() => {
               return !isEditProfile && handleEditProfile();
             }}

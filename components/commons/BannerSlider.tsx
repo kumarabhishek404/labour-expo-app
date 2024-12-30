@@ -9,21 +9,12 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import CustomHeading from "./CustomHeading";
+import Banner1 from "../../assets/banners/banner1.png";
 
 const BannerSlider = () => {
   const images = [
     {
-      url: "https://static.vecteezy.com/system/resources/thumbnails/022/536/549/small/modern-banner-background-colorful-blue-and-purple-gradations-circles-eps-10-free-vector.jpg",
-      type: "service",
-      id: "671eed51103cc59dfe906a8d",
-    },
-    {
-      url: "https://marketplace.canva.com/EAE7AbabFNY/1/0/1600w/canva-blue-gold-elegant-minimalist-digital-marketer-linkedin-banner-yFznKtTfH0U.jpg",
-      type: "service",
-      id: "671eed51103cc59dfe906a8d",
-    },
-    {
-      url: "https://png.pngtree.com/thumb_back/fw800/background/20240322/pngtree-modern-background-banner-designe-vector-image_15650757.jpg",
+      url: Banner1,
       type: "service",
       id: "671eed51103cc59dfe906a8d",
     },
@@ -34,7 +25,7 @@ const BannerSlider = () => {
   const scrollViewRef: any = useRef(null);
   const [active, setActive] = useState(0);
 
-  let autoSlideInterval: any = useRef(null); // Ref to store the interval ID
+  let autoSlideInterval: any = useRef(null);
 
   const startAutoSlide = () => {
     autoSlideInterval.current = setInterval(() => {
@@ -44,7 +35,7 @@ const BannerSlider = () => {
         animated: true,
       });
       setActive(nextIndex);
-    }, 3000); // Slide every 3 seconds
+    }, 3000);
   };
 
   const stopAutoSlide = () => {
@@ -70,7 +61,7 @@ const BannerSlider = () => {
   const handleBannerClick = (banner: any) => {
     router.push({
       pathname: "/screens/service/[id]",
-      params: { id: banner.id }
+      params: { id: banner.id },
     });
   };
 
@@ -96,7 +87,7 @@ const BannerSlider = () => {
               onPressOut={startAutoSlide} // Resume sliding on touch end
               style={{ width: width - containerPadding, height: width * 0.3 }}
             >
-              <Image source={{ uri: image.url }} style={styles.image} />
+              <Image source={image.url} style={styles.image} />
             </TouchableOpacity>
           ))}
         </ScrollView>
