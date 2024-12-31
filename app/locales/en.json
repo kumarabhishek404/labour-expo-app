@@ -98,8 +98,17 @@
   "unlike": "Unlike",
   "like": "Like",
   "aboutOurCompany": "ABOUT OUR COMPANY",
-  "companyDescription1": "A tale of a fateful trip that started from this tropic port aboard this tiny ship today still wanted by the government they survive as soldiers of fortune to a deluxe apartment in the sky moving on up to the east side a family.",
-  "companyDescription2": "The government they survive as soldiers of fortune baby if you've ever wondered the east side to a deluxe apartment.",
+  "companyDescription1": "Welcome to our app—a platform designed to bridge the gap between employers, workers, and mediators, creating a seamless experience for rural communities to connect and collaborate effectively. Our app is not just a digital solution; it’s a mission-driven initiative to empower the rural workforce and provide opportunities to enhance livelihoods while addressing the essential needs of employers.",
+  "companyDescription2": "In today’s fast-paced world, finding skilled workers for specific jobs, especially in rural areas, can be challenging. At the same time, many talented individuals in villages struggle to find consistent work despite their expertise. This gap inspired us to create a platform that acts as the vital link between employers looking for services, workers ready to take on tasks, and mediators who play a pivotal role in ensuring smooth collaboration.",
+  "howAppWorks": "HOW APP WORKS?",
+  "howAppWorkEmployer": "Whether you need help with home construction, farming, electrical repairs, plumbing, or any other skilled labor, you can easily post a service request. You can define your needs, set timelines, and communicate directly with available workers or mediators.",
+  "howAppWorkWorker": "Skilled laborers can browse available jobs, apply for services that match their expertise, and work confidently, knowing they have a reliable platform to support them.",
+  "howAppWorkMediator": "Acting as a bridge, mediators ensure that services are completed successfully, guiding workers and assisting employers throughout the process. They play a vital role in communication and quality assurance.",
+  "missionOurCompany": "Our Mission",
+  "ourMissonDescription1": "Our mission is simple yet impactful: to create opportunities, build trust, and improve the quality of life for rural communities. We believe in the potential of every individual and aim to be the catalyst that brings employers and workers together in a mutually beneficial way.",
+  "ourMissonDescription2": "By leveraging technology, we are creating more than just an app; we are building a community where people can rely on each other, achieve their goals, and uplift their livelihoods. Join us on this journey to transform rural employment and make meaningful connections that matter.",
+  "ourVision": "Our Vision",
+  "ourVisionDescription": "Our vision is to create a world where rural talent is not overlooked but celebrated and utilized to its fullest potential. By connecting employers and workers through a reliable and transparent platform, we aim to transform rural employment dynamics and contribute to the growth and self-reliance of communities.",
   "vision": "Vision",
   "missions": "Missions",
   "goals": "Goals",
@@ -554,5 +563,6 @@
   "fileUploadedSuccessfully": "File uploaded successfully",
   "feedbackSubmittedSuccessfully": "Feedback submitted successfully",
   "userActivated": "User activated successfully",
-  "bookMediator": "Book Mediator"
+  "bookMediator": "Book Mediator",
+  "loggedInSuccessfully": "Logged in successfully!"
 }

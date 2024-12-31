@@ -63,7 +63,7 @@ const LoginScreen = () => {
       });
       console.log("user?.status", user?.status);
 
-      toast.success("Logged in successfully!");
+      toast.success(t("loggedInSuccessfully"));
       if (user?.status === "ACTIVE") {
         setIsAccountInactive(false);
         console.log("user?.role", user?.role);

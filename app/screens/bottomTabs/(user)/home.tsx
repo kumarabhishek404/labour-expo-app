@@ -29,6 +29,9 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import HowAppWorks from "@/components/commons/HowAppWorks";
+import OurMission from "@/components/commons/OurMission";
+import OurVision from "@/components/commons/OurVision";
 
 const UserHome = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -241,8 +244,11 @@ const UserHome = () => {
           </View>
 
           <AboutCompany />
-          {/* <PublicationsScreen /> */}
           <CompanySuccess />
+          <HowAppWorks />
+          <OurMission />
+          <OurVision />
+          {/* <PublicationsScreen /> */}
           <TestimonialSlider />
           <QuickContact />
         </ScrollView>

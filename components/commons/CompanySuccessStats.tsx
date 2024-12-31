@@ -23,19 +23,27 @@ const CompanySuccess = () => {
 
       <View style={styles.factsRow}>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>{companyStats?.workers}</CustomHeading>
+          <CustomHeading fontSize={32}>
+            {companyStats?.workers ?? 0}
+          </CustomHeading>
           <CustomText>{t("workers")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>{companyStats?.employers}</CustomHeading>
+          <CustomHeading fontSize={32}>
+            {companyStats?.employers ?? 0}
+          </CustomHeading>
           <CustomText>{t("employers")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>{companyStats?.mediators}</CustomHeading>
+          <CustomHeading fontSize={32}>
+            {companyStats?.mediators ?? 0}
+          </CustomHeading>
           <CustomText>{t("mediators")}</CustomText>
         </View>
         <View style={styles.factContainer}>
-          <CustomHeading fontSize={32}>{companyStats?.services}</CustomHeading>
+          <CustomHeading fontSize={32}>
+            {companyStats?.services ?? 0}
+          </CustomHeading>
           <CustomText>{t("services")}</CustomText>
         </View>
       </View>

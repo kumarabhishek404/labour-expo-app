@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import CustomHeading from "./CustomHeading";
-import Banner1 from "../../assets/banners/banner1.png";
+import Banner1 from "../../assets/banners/banner1.jpg";
 
 const BannerSlider = () => {
   const images = [

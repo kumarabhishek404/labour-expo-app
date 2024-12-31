@@ -45,7 +45,7 @@ const Highlights = ({ service }: any) => {
             <CustomText textAlign="left">{t("travelling")}</CustomText>
             <CustomHeading textAlign="left">Yes</CustomHeading>
           </View>
-        </View>
+        </View>   
       </View>
 
       <View style={[styles.highlightWrapper, {}]}>
