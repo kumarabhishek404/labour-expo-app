@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
     gap: 5,
-    height: 100,
+    // height: 90,
   },
   title: {
     fontSize: 22,

@@ -13,11 +13,14 @@ import WorkRequirment from "@/components/inputs/WorkRequirements";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import { filterSubCategories } from "@/constants/functions";
 
 interface FirstScreenProps {
   setStep: any;
   type: string;
   setType: any;
+  subType: string;
+  setSubType: any;
   requirements: any;
   setRequirements: any;
 }
@@ -26,16 +29,20 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
   type,
   setType,
+  subType,
+  setSubType,
   requirements,
   setRequirements,
 }: FirstScreenProps) => {
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: type,
+      type: type,
+      subType: subType,
       requirements: requirements,
     },
   });
@@ -43,7 +50,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   const [errorField, setErrorField] = useState({});
 
   const onSubmit = (data: any) => {
-    setType(data?.title);
+    setType(data?.type);
+    setSubType(data?.subType);
     setRequirements(data?.requirements);
     setIsAddService(true);
     setStep(2);
@@ -51,116 +59,153 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
   return (
     <>
-      <Image source={Step1} style={styles.image} />
+      {/* <Image source={Step1} style={styles.image} /> */}
       <View style={{ marginVertical: 30 }}>
         <Stepper currentStep={1} steps={ADDSERVICESTEPS} />
       </View>
 
-      <Controller
-        control={control}
-        name="title"
-        defaultValue=""
-        rules={{
-          required: t("workTitleIsRequired"),
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <DropdownComponent
-            name="title"
-            label={t("workType")}
-            value={value}
-            setValue={onChange}
-            placeholder={t("selectWorkType")}
-            options={WORKTYPES}
-            errors={errors}
-            containerStyle={errors?.title && styles.errorInput}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
-          />
-        )}
-      />
+      <View style={{ gap: 10 }}>
+        <Controller
+          control={control}
+          name="type"
+          defaultValue=""
+          rules={{
+            required: t("workTypeIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DropdownComponent
+              name="type"
+              label={t("workType")}
+              value={value}
+              setValue={onChange}
+              placeholder={t("selectWorkType")}
+              emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
+              options={WORKTYPES}
+              errors={errors}
+              containerStyle={errors?.type && styles.errorInput}
+              search={false}
+              icon={
+                <Ionicons
+                  name={"mail-outline"}
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="requirements"
-        defaultValue=""
-        rules={{
-          required: t("workRequirementsIsRequired"),
-          validate: (value) => {
-            if (!value || value.length === 0) {
-              return t("atLeastOneRequirementIsNeeded");
-            }
+        <Controller
+          control={control}
+          name="subType"
+          defaultValue=""
+          rules={{
+            required: t("workSubTypeIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DropdownComponent
+              name="subType"
+              label={t("workSubType")}
+              value={value}
+              setValue={onChange}
+              placeholder={t("selectWorkSubType")}
+              emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
+              options={filterSubCategories(watch("type"))}
+              errors={errors}
+              containerStyle={errors?.subType && styles.errorInput}
+              search={false}
+              icon={
+                <Ionicons
+                  name={"mail-outline"}
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
 
-            for (let i = 0; i < value.length; i++) {
-              const item = value[i];
-              if (!item?.name) {
-                setErrorField({
-                  index: i,
-                  name: "dropdown",
-                });
-                return `${t("requirement")} #${i + 1}: ${t("selectAWorker")}`;
+        <Controller
+          control={control}
+          name="requirements"
+          defaultValue=""
+          rules={{
+            required: t("workRequirementsIsRequired"),
+            validate: (value) => {
+              if (!value || value.length === 0) {
+                return t("atLeastOneRequirementIsNeeded");
               }
-              if (!item?.payPerDay) {
-                setErrorField({
-                  index: i,
-                  name: "price",
-                });
-                return `${t("requirement")} #${i + 1}: ${t(
-                  "payPerDayIsRequired"
-                )}`;
+
+              for (let i = 0; i < value.length; i++) {
+                const item = value[i];
+                if (!item?.name) {
+                  setErrorField({
+                    index: i,
+                    name: "dropdown",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t("selectAWorker")}`;
+                }
+                if (!item?.payPerDay) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayIsRequired"
+                  )}`;
+                }
+                if (isNaN(parseInt(item?.payPerDay))) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayShouldBeInNumber"
+                  )}`;
+                }
+                if (item?.payPerDay === 0 || !item?.payPerDay) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayMustBeGreaterThan0"
+                  )}`;
+                }
+                if (item?.count === 0 || !item?.count) {
+                  setErrorField({
+                    index: i,
+                    name: "counter",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "totalRequiredMustBeGreaterThan0"
+                  )}`;
+                }
               }
-              if (isNaN(parseInt(item?.payPerDay))) {
-                setErrorField({
-                  index: i,
-                  name: "price",
-                });
-                return `${t("requirement")} #${i + 1}: ${t(
-                  "payPerDayShouldBeInNumber"
-                )}`;
-              }
-              if (item?.payPerDay === 0 || !item?.payPerDay) {
-                setErrorField({
-                  index: i,
-                  name: "price",
-                });
-                return `${t("requirement")} #${i + 1}: ${t(
-                  "payPerDayMustBeGreaterThan0"
-                )}`;
-              }
-              if (item?.count === 0 || !item?.count) {
-                setErrorField({
-                  index: i,
-                  name: "counter",
-                });
-                return `${t("requirement")} #${i + 1}: ${t(
-                  "totalRequiredMustBeGreaterThan0"
-                )}`;
-              }
-            }
-            setErrorField({
-              index: -1,
-              name: "",
-            });
-            return true;
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <WorkRequirment
-            label={t("workRequirements")}
-            name="requirements"
-            requirements={value}
-            setRequirements={onChange}
-            onBlur={onBlur}
-            errors={errors}
-            errorField={errorField}
-          />
-        )}
-      />
+              setErrorField({
+                index: -1,
+                name: "",
+              });
+              return true;
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <WorkRequirment
+              label={t("workRequirements")}
+              name="requirements"
+              type={watch("type") ?? ""}
+              subType={watch("subType") ?? ""}
+              requirements={value}
+              setRequirements={onChange}
+              onBlur={onBlur}
+              errors={errors}
+              errorField={errorField}
+            />
+          )}
+        />
+      </View>
 
       <Button
         style={styles?.bottomButton}

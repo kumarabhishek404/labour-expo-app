@@ -1,5 +1,3 @@
-import { t } from "@/utils/translationHelper";
-
 export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
@@ -116,25 +114,6 @@ export const SERVICES = [
     iconName: "terrain",
   },
 ];
-
-// export const MEMBERS = [
-//   {
-//     label: "all",
-//     iconName: "hiking",
-//   },
-//   {
-//     label: "labour",
-//     iconName: "beach",
-//   },
-//   {
-//     label: "brickLayer",
-//     iconName: "city",
-//   },
-//   {
-//     label: "electrician",
-//     iconName: "city",
-//   },
-// ];
 
 export const USERS = [
   {
@@ -274,20 +253,118 @@ export const WORKERBOOKINGS = [
 ];
 
 export const WORKTYPES = [
-  { label: "construction", value: "construction" },
-  { label: "farming", value: "farming" },
-  { label: "helping", value: "helping" },
-  { label: "labour", value: "labour" },
-  { label: "brickLayer", value: "brickLayer" },
-  { label: "electrician", value: "electrician" },
-  { label: "mistri", value: "mistri" },
-  { label: "mason", value: "mason" },
-  { label: "carpenter", value: "carpenter" },
-  { label: "stoneMason", value: "stoneMason" },
-  { label: "dhaanBuwai", value: "dhaanBuwai" },
-  { label: "dhaanPitai", value: "dhaanPitai" },
-  { label: "alooBuwai", value: "alooBuwai" },
-  { label: "bazraaKatai", value: "bazraaKatai" },
+  {
+    label: "buildingAndRenovation",
+    value: "buildingAndRenovation",
+    subTypes: [
+      {
+        label: "homeConstruction",
+        value: "homeConstruction",
+        workerTypes: [
+          {
+            label: "mason",
+            value: "mason",
+          },
+          {
+            label: "laborers",
+            value: "laborers",
+          },
+          {
+            label: "carpenter",
+            value: "carpenter",
+          },
+          {
+            label: "plumber",
+            value: "plumber",
+          },
+          {
+            label: "electrician",
+            value: "electrician",
+          },
+          {
+            label: "steelFixer",
+            value: "steelFixer",
+          },
+        ],
+      },
+      {
+        label: "wallPainting",
+        value: "wallPainting",
+        workerTypes: [
+          {
+            label: "painter",
+            value: "painter",
+          },
+          {
+            label: "wallPlasteringWorker",
+            value: "wallPlasteringWorker",
+          },
+          {
+            label: "scaffoldingLaborer",
+            value: "scaffoldingLaborer",
+          },
+        ],
+      },
+      {
+        label: "roofRepair",
+        value: "roofRepair",
+        workerTypes: [
+          {
+            label: "roofMason",
+            value: "roofMason",
+          },
+          {
+            label: "waterproofingExpert",
+            value: "waterproofingExpert",
+          },
+          {
+            label: "laborers",
+            value: "laborers",
+          },
+          {
+            label: "thatcher",
+            value: "thatcher",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "plumbingServices",
+    value: "plumbingServices",
+    subTypes: [
+      {
+        label: "fixingLeaks",
+        value: "fixingLeaks",
+        workerTypes: [
+          {
+            label: "roofMason",
+            value: "roofMason",
+          },
+        ],
+      },
+      {
+        label: "pipeInstallations",
+        value: "pipeInstallations",
+        workerTypes: [
+          {
+            label: "roofMason",
+            value: "roofMason",
+          },
+        ],
+      },
+      {
+        label: "repairingWaterTanks",
+        value: "repairingWaterTanks",
+        workerTypes: [
+          {
+            label: "roofMason",
+            value: "roofMason",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export const FAQS = [
@@ -375,25 +452,3 @@ export const APP_FEEDBACK_REASONS = [
     value: "GENERAL",
   }, // enum: ["BUG", "FEATURE_REQUEST", "IMPROVEMENT", "GENERAL"],
 ];
-
-const obj = {
-  total: 0,
-  applied: 0,
-  selected: 0,
-  cancelledApply: {
-    byMySelf: 0,
-    byEmployer: 0,
-  },
-  cancelledSelection: {
-    byMySelf: 0,
-    byEmployer: 0,
-  },
-  completed: 0,
-};
-
-const obj2 = {
-  total: 0,
-  pending: 0,
-  cancelled: 0,
-  completed: 0,
-};

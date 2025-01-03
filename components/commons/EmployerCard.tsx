@@ -36,11 +36,15 @@ const EmployerCard = ({ service }: any) => {
           <View style={{ gap: 2 }}>
             <CustomHeading textAlign="left">{t("employer")}</CustomHeading>
             <CustomText textAlign="left">
-              <CustomText style={styles?.employerLabel}>Name : </CustomText>
+              <CustomText style={styles?.employerLabel}>
+                {t("name")} :{" "}
+              </CustomText>
               {service?.employer?.firstName} {service?.employer?.lastName}
             </CustomText>
             <CustomText textAlign="left">
-              <CustomText style={styles?.employerLabel}>Address : </CustomText>
+              <CustomText style={styles?.employerLabel}>
+                {t("address")} :{" "}
+              </CustomText>
               {service?.employer?.address}
             </CustomText>
           </View>

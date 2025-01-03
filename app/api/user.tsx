@@ -303,3 +303,30 @@ export const leaveTeam = async () => {
     throw error;
   }
 };
+
+export const checkMobileExistance = async (payload: any) => {
+  try {
+    const response: any = await makePostRequest(`/user/check-mobile`, payload);
+
+    // Display success message when mobile number check is successful
+    if (response?.data?.exists) {
+      toast.success("Mobile number is registered in the system.");
+    } else {
+      toast.error("Mobile number is not registered in the system.");
+    }
+
+    return response;
+  } catch (error: any) {
+    console.log(
+      `[Check Mobile] [userService] An error occurred while checking mobile number existence: `,
+      error
+    );
+
+    // Display error message if the API call fails
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while checking mobile number existence."
+    );
+    throw error;
+  }
+};

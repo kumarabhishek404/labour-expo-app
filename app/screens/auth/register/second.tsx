@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import { Feather, Ionicons } from "@expo/vector-icons";
-
-import MobileNumberField from "@/components/inputs/MobileNumber";
+import { Ionicons } from "@expo/vector-icons";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
 import { isEmptyObject } from "@/constants/functions";
 import Stepper from "@/components/commons/Stepper";
-import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
+import { REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import DateField from "@/components/inputs/DateField";
+import Gender from "@/components/inputs/Gender";
 
 interface SecondScreenProps {
   setStep: any;
@@ -19,12 +19,12 @@ interface SecondScreenProps {
   setAddress: any;
   location: object;
   setLocation: any;
-  phoneNumber: string;
-  setPhoneNumber: any;
-  countryCode: string;
-  setCountryCode: any;
   email: string;
   setEmail: any;
+  dateOfBirth: Date;
+  setDateOfBirth: any;
+  gender: string;
+  setGender: any;
 }
 
 const SecondScreen: React.FC<SecondScreenProps> = ({
@@ -33,12 +33,12 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
   setAddress,
   location,
   setLocation,
-  phoneNumber,
-  setPhoneNumber,
-  countryCode,
-  setCountryCode,
   email,
   setEmail,
+  dateOfBirth,
+  setDateOfBirth,
+  gender,
+  setGender,
 }: SecondScreenProps) => {
   const {
     control,
@@ -48,9 +48,9 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
     defaultValues: {
       address: address,
       location: location,
-      countryCode: countryCode,
-      phoneNumber: phoneNumber,
       email: email,
+      dateOfBirth: new Date(dateOfBirth),
+      gender: gender,
     },
   });
   const [selectedOption, setSelectedOption] = useState(
@@ -59,9 +59,9 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
 
   const onSubmit = (data: any) => {
     setAddress(data?.address);
-    setCountryCode(data?.countryCode);
-    setPhoneNumber(data?.phoneNumber);
     setEmail(data?.email);
+    setDateOfBirth(data?.dateOfBirth);
+    setGender(data?.gender);
     setStep(3);
   };
 
@@ -70,7 +70,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       <View style={{ marginBottom: 20 }}>
         <Stepper currentStep={2} steps={REGISTERSTEPS} />
       </View>
-      <View style={{ flexDirection: "column", gap: 15 }}>
+
+      <View style={{ flexDirection: "column", gap: 20 }}>
         <Controller
           control={control}
           name="address"
@@ -90,48 +91,6 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
               setSelectedOption={setSelectedOption}
               onBlur={onBlur}
               errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="phoneNumber"
-          defaultValue=""
-          rules={{
-            required: t("mobileNumberIsRequired"),
-            pattern: {
-              value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
-              message: t("enterAValidMobileNumber"),
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <MobileNumberField
-              name="phoneNumber"
-              countriesPhoneCode={COUNTRYPHONECODE}
-              countryCode={countryCode}
-              setCountryCode={setCountryCode}
-              phoneNumber={value}
-              setPhoneNumber={(val: any) => {
-                const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
-                if (val.length < 10) {
-                  onChange(val);
-                } else if (val.length === 10 && regex.test(val)) {
-                  onChange(val);
-                }
-                return;
-              }}
-              onBlur={onBlur}
-              errors={errors}
-              placeholder={t("enterYourMobileNumber")}
-              icon={
-                <Feather
-                  name={"phone"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
             />
           )}
         />
@@ -166,7 +125,62 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             />
           )}
         />
+
+        <Controller
+          control={control}
+          name="dateOfBirth"
+          defaultValue={new Date()}
+          rules={{
+            required: t("dateOfBirthIsRequired"),
+            validate: (value) => {
+              const selectedDate = new Date(value);
+              const today = new Date();
+              const eighteenYearsAgo = new Date();
+              eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+              if (selectedDate > eighteenYearsAgo) {
+                return t("youMustBeAtLeast18YearsOld");
+              } else {
+                return true;
+              }
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <DateField
+              title={t("dateOfBirth")}
+              name="dateOfBirth"
+              date={value}
+              setDate={onChange}
+              onBlur={onBlur}
+              errors={errors}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="gender"
+          rules={{
+            required: t("genderIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Gender
+              name="gender"
+              label={t("whatIsYourGender")}
+              options={[
+                { title: t("male"), value: "male", icon: "👩‍🦰" },
+                { title: t("female"), value: "female", icon: "👨" },
+                { title: t("other"), value: "other", icon: "✨" },
+              ]}
+              gender={value}
+              setGender={onChange}
+              containerStyle={errors?.gender && styles.errorInput}
+              errors={errors}
+            />
+          )}
+        />
       </View>
+
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
@@ -244,6 +258,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     padding: 10,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
+    color: "red",
   },
 });
 

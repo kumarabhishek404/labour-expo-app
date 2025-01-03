@@ -149,7 +149,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           <CustomHeading fontSize={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
-            {user?.mobile || user?.alternateMobile || t("mobileNotFound")}
+            {user?._id === userDetails?._id ? user?.mobile || user?.alternateMobile || t("mobileNotFound") : "**********"}
           </CustomHeading>
         </View>
         <View style={[styles.row, styles.lastBox]}>

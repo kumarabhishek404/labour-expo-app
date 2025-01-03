@@ -370,7 +370,7 @@ const ServiceDetails = () => {
             )}
 
             <CustomHeading fontSize={18} textAlign="left">
-              {service?.name}
+              {t(service?.type)} - {t(service?.subType)}
             </CustomHeading>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5

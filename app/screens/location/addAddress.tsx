@@ -192,8 +192,10 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
                 value={value}
                 setValue={onChange}
                 placeholder={t("selectState")}
+                emptyPlaceholder={t("pleaseSelectAnyState")}
                 errors={errors}
                 containerStyle={errors?.state && styles.errorInput}
+                search={false}
                 options={STETESOFINDIA}
                 icon={
                   <FontAwesome6

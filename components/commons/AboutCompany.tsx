@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingVertical: 30,
+    paddingVertical: 60,
     backgroundColor: "#F0F4FA",
   },
   divider: {

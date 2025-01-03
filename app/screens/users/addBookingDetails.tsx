@@ -77,9 +77,11 @@ const AddBookingDetails = ({
                 value={value}
                 setValue={onChange}
                 placeholder={t("selectWorkType")}
+                emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
                 options={WORKTYPES}
                 errors={errors}
                 containerStyle={errors?.title && styles.errorInput}
+                search={false}
                 icon={
                   <Ionicons
                     name={"mail-outline"}

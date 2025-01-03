@@ -16,6 +16,7 @@ import Requirements from "./Requirements";
 import { dateDifference, getTimeAgo } from "@/constants/functions";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 type Props = {
   listings: any[];
@@ -32,7 +33,8 @@ type RenderItemTypes = {
     coverImage: string;
     images: Array<string>;
     duration: string;
-    name: string;
+    type: string;
+    subType: string;
     location: any;
     price: string;
     address: string;
@@ -73,7 +75,9 @@ const ListingHorizontalServices = ({
 
             <Requirements type="highlights" requirements={item?.requirements} />
 
-            <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+            <CustomHeading textAlign="left">
+              {t(item?.type)} - {t(item?.subType)}
+            </CustomHeading>
             <View
               style={{
                 width: "100%",

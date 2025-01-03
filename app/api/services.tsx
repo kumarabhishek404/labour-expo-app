@@ -1,3 +1,4 @@
+import { t } from "@/utils/translationHelper";
 import {
   makeDeleteRequest,
   makeGetRequest,
@@ -40,7 +41,7 @@ export const editService = async (payload: any) => {
       "/employer/update-service",
       payload
     );
-    toast.success("Service updated successfully");
+    toast.success(t("serviceUpdatedSuccessfully"));
     return data?.data;
   } catch (error: any) {
     console.error(
@@ -77,7 +78,7 @@ export const deleteServiceById = async (id: any) => {
     const data = await makePostRequest(`/employer/cancel-service`, {
       serviceId: id,
     });
-    toast.success("Service deleted successfully");
+    toast.success(t("serviceDeletedSuccessfully"));
     return data.data;
   } catch (error: any) {
     console.error(
@@ -169,6 +170,25 @@ export const fetchMyServices = async ({ pageParam, status }: any) => {
 };
 
 // Apply
+export const fetchAllMyBookingsWorker = async ({ pageParam, status }: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/worker/my-bookings?status=${status}&page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching my applied services : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching my applied services"
+    );
+    throw error;
+  }
+};
+
 export const fetchMyAppliedServicesWorker = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
@@ -210,6 +230,8 @@ export const fetchServicesInWhichSelectedWorker = async ({
 };
 
 export const applyService = async (payload: any) => {
+  console.log("Payload ----", payload);
+
   try {
     const data = await makePostRequest("/worker/apply", payload);
     return data.data;
@@ -278,6 +300,28 @@ export const cancelServiceByMediatorAfterSelection = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while removing mediator after selection"
+    );
+    throw error;
+  }
+};
+
+export const fetchAllMyBookingsMediator = async ({
+  pageParam,
+  status,
+}: any) => {
+  try {
+    const data = await makeGetRequest(
+      `/mediator/my-bookings?status=${status}&page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching all my bookings services : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching all my bookings services"
     );
     throw error;
   }
@@ -532,6 +576,8 @@ export const fetchSelectedMediators = async ({ pageParam, serviceId }: any) => {
 };
 
 export const completeService = async (payload: any) => {
+  console.log("Payload --", payload);
+
   try {
     const data = await makePostRequest(`/employer/complete-service`, payload);
     return data.data;

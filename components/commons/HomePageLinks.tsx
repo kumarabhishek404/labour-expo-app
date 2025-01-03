@@ -21,7 +21,12 @@ const HomePageLinks = () => {
           : userDetails?.role === "MEDIATOR"
           ? t("myServices")
           : t("services"),
-      subtitle: t("mobileFiberAirFiber"),
+      subtitle:
+        userDetails?.role === "EMPLOYER"
+          ? t("aboutWorkers")
+          : userDetails?.role === "MEDIATOR"
+          ? t("aboutMyServices")
+          : t("aboutServices"),
       path: {
         pathname:
           userDetails?.role === "MEDIATOR"
@@ -40,7 +45,7 @@ const HomePageLinks = () => {
     },
     {
       title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
-      subtitle: t("mobileFiberAirFiber"),
+      subtitle: userDetails?.role === "MEDIATOR" ? t("aboutWorkers") : t("aboutMediators"),
       path: {
         pathname: "/screens/users",
         params: {
@@ -57,14 +62,14 @@ const HomePageLinks = () => {
     {
       title:
         userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
-      subtitle: t("groceryFashion"),
+      subtitle: userDetails?.role === "EMPLOYER" ? t("aboutMyServices") : t("aboutMyBookings"),
       path: "/(tabs)/second",
       image: Farmer8,
       style: [styles.smallBox, styles.bookingBox],
     },
     {
       title: t("guidesHelps"),
-      subtitle: t("musicTvGames"),
+      subtitle: t("aboutGuidesHelps"),
       path: "/screens/helps",
       image: Farmer6,
       style: [styles.smallBox, styles.helpBox],

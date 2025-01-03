@@ -14,7 +14,15 @@ import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MYSERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
-import { fetchMyAppliedServicesMediator, fetchMyAppliedServicesWorker, fetchMyServices, fetchServicesInWhichSelectedMediator, fetchServicesInWhichSelectedWorker } from "@/app/api/services";
+import {
+  fetchAllMyBookingsMediator,
+  fetchAllMyBookingsWorker,
+  fetchMyAppliedServicesMediator,
+  fetchMyAppliedServicesWorker,
+  fetchMyServices,
+  fetchServicesInWhichSelectedMediator,
+  fetchServicesInWhichSelectedWorker,
+} from "@/app/api/services";
 
 const UserBookingsAndMyServices = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -37,35 +45,9 @@ const UserBookingsAndMyServices = () => {
       return userDetails?.role === "EMPLOYER"
         ? fetchMyServices({ pageParam, status: category })
         : userDetails?.role === "MEDIATOR"
-        ? fetchMyAppliedServicesMediator({ pageParam })
-        : fetchMyAppliedServicesWorker({ pageParam });
+        ? fetchAllMyBookingsMediator({ pageParam, status: category })
+        : fetchAllMyBookingsWorker({ pageParam, status: category });
     },
-    retry: false,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
-  });
-
-  const {
-    data: responseSelected,
-    isLoading: isLoadingSelected,
-    isRefetching: isRefetchingSelected,
-    isFetchingNextPage: isFetchingNextPageSelected,
-    fetchNextPage: fetchNextPageSelected,
-    hasNextPage: hasNextPageSelected,
-    refetch: refetchSelected,
-  } = useInfiniteQuery({
-    queryKey: ["myServicesSelected", category],
-    queryFn: ({ pageParam }) => {
-      return userDetails?.role === "MEDIATOR"
-        ? fetchServicesInWhichSelectedMediator({ pageParam })
-        : fetchServicesInWhichSelectedWorker({ pageParam });
-    },
-    enabled: userDetails?.role === "MEDIATOR" || userDetails?.role === "WORKER",
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -100,13 +82,10 @@ const UserBookingsAndMyServices = () => {
         // For mediators and workers, combine both responses
         const appliedServices =
           response?.pages?.flatMap((page: any) => page.data || []) || [];
-        const selectedServices =
-          responseSelected?.pages?.flatMap(
-            (page: any) => page.services || []
-          ) || [];
-        setFilteredData([...appliedServices, ...selectedServices]);
+
+        setFilteredData([...appliedServices]);
       }
-    }, [response, responseSelected, userDetails?.role])
+    }, [response, userDetails?.role])
   );
 
   const loadMore = () => {
@@ -147,16 +126,13 @@ const UserBookingsAndMyServices = () => {
       />
 
       <View style={{ flex: 1 }}>
-        <Loader
-          loading={
-            isLoading ||
-            isLoadingSelected ||
-            isFetchingNextPage ||
-            isFetchingNextPageSelected
-          }
-        />
+        <Loader loading={isLoading || isFetchingNextPage} />
         <View style={styles.container}>
-          <SearchFilter type="services" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="services"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={MYSERVICES}
@@ -165,7 +141,7 @@ const UserBookingsAndMyServices = () => {
 
           <PaginationString
             type="services"
-            isLoading={isLoading || isRefetching || isRefetchingSelected}
+            isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedData?.length}
             totalData={totalData}
           />

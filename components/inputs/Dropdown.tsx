@@ -14,9 +14,11 @@ interface DropdownComponentProps {
   value: any;
   setValue: any;
   placeholder?: string;
+  emptyPlaceholder: string;
   options: any;
   errors?: any;
   icon: any;
+  search?: boolean;
   style?: any;
   containerStyle?: any;
 }
@@ -27,13 +29,15 @@ const DropdownComponent = ({
   value,
   setValue,
   placeholder,
+  emptyPlaceholder,
   errors,
   options,
   icon,
+  search,
   style,
   containerStyle,
 }: DropdownComponentProps) => {
-  const translatedOptions = options.map((option: any) => ({
+  const translatedOptions = options?.map((option: any) => ({
     ...option,
     label: t(option.label),
   }));
@@ -47,8 +51,12 @@ const DropdownComponent = ({
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={translatedOptions}
-        search
+        data={
+          translatedOptions?.length > 0
+            ? translatedOptions
+            : [{ label: emptyPlaceholder, value: "" }]
+        }
+        search={search}
         maxHeight={300}
         labelField="label"
         valueField="value"

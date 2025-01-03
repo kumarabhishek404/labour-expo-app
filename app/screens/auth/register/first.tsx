@@ -3,39 +3,38 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
-import Gender from "@/components/inputs/Gender";
-import DateField from "@/components/inputs/DateField";
 import { Link } from "expo-router";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Stepper from "@/components/commons/Stepper";
-import { REGISTERSTEPS } from "@/constants";
+import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
-
+import MobileNumberField from "@/components/inputs/MobileNumber";
+import { Feather } from "@expo/vector-icons";
 
 interface FirstScreenProps {
   setStep: any;
+  phoneNumber: string;
+  setPhoneNumber: any;
+  countryCode: string;
+  setCountryCode: any;
   firstName: string;
   setFirstName: any;
   lastName: string;
   setLastName: any;
-  gender: string;
-  setGender: any;
-  dateOfBirth: Date;
-  setDateOfBirth: any;
 }
 
 const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
+  phoneNumber,
+  setPhoneNumber,
+  countryCode,
+  setCountryCode,
   firstName,
   setFirstName,
   lastName,
   setLastName,
-  gender,
-  setGender,
-  dateOfBirth,
-  setDateOfBirth,
 }: FirstScreenProps) => {
   const {
     control,
@@ -44,18 +43,18 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
+      countryCode: countryCode,
+      phoneNumber: phoneNumber,
       firstName: firstName,
       lastName: lastName,
-      gender: gender,
-      dateOfBirth: new Date(dateOfBirth),
     },
   });
 
   const onSubmit = (data: any) => {
+    setCountryCode(data?.countryCode);
+    setPhoneNumber(data?.phoneNumber);
     setFirstName(data?.firstName);
     setLastName(data?.lastName);
-    setGender(data?.gender);
-    setDateOfBirth(data?.dateOfBirth);
     setStep(2);
   };
 
@@ -64,12 +63,55 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       <View style={{ marginBottom: 20 }}>
         <Stepper currentStep={1} steps={REGISTERSTEPS} />
       </View>
+
       <View style={{ gap: 15, marginBottom: 15 }}>
+        <Controller
+          control={control}
+          name="phoneNumber"
+          defaultValue=""
+          rules={{
+            required: t("mobileNumberIsRequired"),
+            pattern: {
+              value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
+              message: t("enterAValidMobileNumber"),
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <MobileNumberField
+              name="phoneNumber"
+              countriesPhoneCode={COUNTRYPHONECODE}
+              countryCode={countryCode}
+              setCountryCode={setCountryCode}
+              phoneNumber={value}
+              setPhoneNumber={(val: any) => {
+                const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
+                if (val.length < 10) {
+                  onChange(val);
+                } else if (val.length === 10 && regex.test(val)) {
+                  onChange(val);
+                }
+                return;
+              }}
+              onBlur={onBlur}
+              errors={errors}
+              placeholder={t("enterYourMobileNumber")}
+              icon={
+                <Feather
+                  name={"phone"}
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+
         <Controller
           control={control}
           name="firstName"
           rules={{
-            required: t("firstNameIsRequired")
+            required: t("firstNameIsRequired"),
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
@@ -89,7 +131,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           control={control}
           name="lastName"
           rules={{
-            required: t("lastNameIsRequired")
+            required: t("lastNameIsRequired"),
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
@@ -100,60 +142,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               onChangeText={onChange}
               placeholder={t("enterYourLastName")}
               containerStyle={errors?.lastName && styles.errorInput}
-              errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="gender"
-          rules={{
-            required: t("genderIsRequired")
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Gender
-              name="gender"
-              label={t("whatIsYourGender")}
-              options={[
-                { title: t("male"), value: "male", icon: "👩‍🦰" },
-                { title: t("female"), value: "female", icon: "👨" },
-                { title: t("other"), value: "other", icon: "✨" },
-              ]}
-              gender={value}
-              setGender={onChange}
-              containerStyle={errors?.gender && styles.errorInput}
-              errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="dateOfBirth"
-          defaultValue={new Date()}
-          rules={{
-            required: t("dateOfBirthIsRequired"),
-            validate: (value) => {
-              const selectedDate = new Date(value);
-              const today = new Date();
-              const eighteenYearsAgo = new Date();
-              eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
-
-              if (selectedDate > eighteenYearsAgo) {
-                return t("youMustBeAtLeast18YearsOld");
-              } else {
-                return true;
-              }
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("dateOfBirth")}
-              name="dateOfBirth"
-              date={value}
-              setDate={onChange}
-              onBlur={onBlur}
               errors={errors}
             />
           )}

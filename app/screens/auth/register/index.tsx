@@ -79,13 +79,7 @@ const SignupScreen = () => {
           longitude: location.longitude,
         }
       : {};
-    if (
-      !firstName ||
-      !lastName ||
-      !address ||
-      !phoneNumber ||
-      !email
-    ) {
+    if (!firstName || !lastName || !address || !phoneNumber || !email) {
       toast.error(t("pleaseFillAllFields"));
       return;
     }
@@ -102,7 +96,7 @@ const SignupScreen = () => {
     formData.append("skills", JSON.stringify(skills));
     formData.append("password", password);
     console.log("formData----", formData);
-    
+
     try {
       mutationRegister.mutate(formData);
     } catch (error) {
@@ -116,14 +110,16 @@ const SignupScreen = () => {
         return (
           <FirstScreen
             setStep={setStep}
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+            countryCode={countryCode}
+            setCountryCode={setCountryCode}
             firstName={firstName}
             setFirstName={setFirstName}
             lastName={lastName}
             setLastName={setLastName}
             gender={gender}
             setGender={setGender}
-            dateOfBirth={dateOfBirth}
-            setDateOfBirth={setDateOfBirth}
           />
         );
       case 2:
@@ -134,12 +130,10 @@ const SignupScreen = () => {
             setAddress={setAddress}
             location={location}
             setLocation={setLocation}
-            phoneNumber={phoneNumber}
-            setPhoneNumber={setPhoneNumber}
-            countryCode={countryCode}
-            setCountryCode={setCountryCode}
             email={email}
             setEmail={setEmail}
+            dateOfBirth={dateOfBirth}
+            setDateOfBirth={setDateOfBirth}
           />
         );
       case 3:

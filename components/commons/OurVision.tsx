@@ -19,7 +19,7 @@ const OurVision = () => {
 
       <CustomText fontSize={14}>{t("ourVisionDescription")}</CustomText>
 
-      <View style={styles.iconsRow}>
+      {/* <View style={styles.iconsRow}>
         <View style={styles.iconContainer}>
           <AntDesign name="staro" size={40} color="#1F3E72" />
           <CustomHeading fontSize={14}>{t("vision")}</CustomHeading>
@@ -38,7 +38,7 @@ const OurVision = () => {
           />
           <CustomHeading fontSize={14}>{t("goals")}</CustomHeading>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingVertical: 30,
+    paddingVertical: 80,
     backgroundColor: Colors?.white,
   },
   divider: {

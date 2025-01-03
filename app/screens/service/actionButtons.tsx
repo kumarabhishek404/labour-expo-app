@@ -117,7 +117,7 @@ const ServiceActionButtons = ({
 
   const mutationApplyService = useMutation({
     mutationKey: ["applyService", { id }],
-    mutationFn: () => applyService({ serviceID: id }),
+    mutationFn: () => applyService({ _id: userDetails?._id, serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -211,7 +211,7 @@ const ServiceActionButtons = ({
 
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
-    mutationFn: () => completeService({ serviceID: id }),
+    mutationFn: () => completeService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -318,7 +318,8 @@ const ServiceActionButtons = ({
         );
 
       case service.employer?._id === userDetails?._id &&
-        service.status !== "CANCELLED":
+        service.status !== "CANCELLED" &&
+        service.status !== "COMPLETED":
         return (
           <>
             <Button
@@ -327,7 +328,10 @@ const ServiceActionButtons = ({
               onPress={mutationDeleteService.mutate}
               style={styles.deleteBtn}
             />
-            {service?.appliedWorkers?.length > 0 ? (
+            {service?.appliedWorkers?.length > 0 ||
+            service?.selectedWorkers?.length > 0 ||
+            service?.selectedWorkers?.length > 0 ||
+            service?.selectedMediators?.length > 0 ? (
               <Button
                 isPrimary={false}
                 title={t("completeService")}

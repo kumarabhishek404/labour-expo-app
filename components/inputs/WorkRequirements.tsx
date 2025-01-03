@@ -1,6 +1,4 @@
 import Counter from "@/components/inputs/Counter";
-import Dropdown from "@/components/inputs/Dropdown";
-import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import {
   Entypo,
@@ -13,10 +11,14 @@ import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
 import { t } from "@/utils/translationHelper";
+import { filterWorkerTypes } from "@/constants/functions";
+import DropdownComponent from "@/components/inputs/Dropdown";
 
 interface WorkRequirmentProps {
   label?: string;
   name: string;
+  type: string;
+  subType: string;
   requirements: any;
   setRequirements: any;
   onBlur: any;
@@ -27,12 +29,18 @@ interface WorkRequirmentProps {
 const WorkRequirment = ({
   label,
   name,
+  type,
+  subType,
   requirements,
   setRequirements,
   onBlur,
   errors,
   errorField,
 }: WorkRequirmentProps) => {
+  console.log("type - ", type);
+  console.log("subType - ", subType);
+  console.log("options - - ", filterWorkerTypes(type, subType));
+  
   const addRequirments = () => {
     let tempRequirements = [...requirements];
     tempRequirements[requirements?.length] = {
@@ -88,7 +96,7 @@ const WorkRequirment = ({
           return (
             <View style={{ width: "100%" }} key={index}>
               <View style={styles.addRequirment}>
-                <Dropdown
+                <DropdownComponent
                   style={
                     errorField?.index === index &&
                     errorField?.name === "dropdown" &&
@@ -98,7 +106,8 @@ const WorkRequirment = ({
                   setValue={(name: any) =>
                     handleRequirementTypeChange(index, name)
                   }
-                  options={WORKERTYPES}
+                  emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
+                  options={filterWorkerTypes(type, subType) ?? []}
                   icon={
                     <CustomHeading fontSize={20} color={Colors?.secondary}>
                       {index + 1}
@@ -183,7 +192,6 @@ export default WorkRequirment;
 const styles = StyleSheet.create({
   addRequirmentWrapper: {
     width: "100%",
-    marginVertical: 10,
     gap: 5,
   },
   addRequirment: {

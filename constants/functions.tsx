@@ -1,10 +1,7 @@
 import moment from "moment";
 import * as Location from "expo-location";
 import { toast } from "@/app/hooks/toast";
-import {
-  fetchAllLikedWorkers,
-  fetchAllWorkers,
-} from "@/app/api/workers";
+import { fetchAllLikedWorkers, fetchAllWorkers } from "@/app/api/workers";
 import {
   fetchAllBookedMediators,
   fetchAllLikedMediators,
@@ -13,6 +10,7 @@ import {
 import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
 import { fetchAllBookedWorkers } from "@/app/api/booking";
+import { WORKTYPES } from ".";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days
@@ -225,4 +223,31 @@ export const toLowerCase = (text: string) => {
     return text;
   }
   return text.toLowerCase();
+};
+
+export const filterSubCategories = (workTypeValue: string) => {
+  // Find the object matching the provided value
+  const selectedWorkType = WORKTYPES.find(
+    (workType) => workType.value === workTypeValue
+  );
+
+  // Return the subTypes if the object is found, otherwise return an empty array
+  return selectedWorkType ? selectedWorkType.subTypes : [];
+};
+
+export const filterWorkerTypes = (
+  workTypeValue: string,
+  subTypeValue: string
+) => {
+  console.log("workTypeValue", workTypeValue);
+  console.log("subTypeValue", subTypeValue);
+  
+  // Find the work type matching the given workTypeValue
+  const workType = WORKTYPES.find((type) => type.value === workTypeValue);
+
+  // Find the subType matching the given subTypeValue
+  const subType = workType?.subTypes.find((type) => type.value === subTypeValue);
+
+  // Return the workerTypes of the selected subType
+  return subType?.workerTypes ?? [];
 };

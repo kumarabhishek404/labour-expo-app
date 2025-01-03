@@ -58,9 +58,9 @@ const SearchFilter = ({ type, data, setFilteredData }: SearchFilterProps) => {
           }
         />
       </View>
-      <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
+      {/* <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
         <Ionicons name="options" size={28} color={Colors.white} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

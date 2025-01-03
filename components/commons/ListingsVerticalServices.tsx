@@ -43,7 +43,8 @@ type RenderItemTypes = {
     coverImage: string;
     images: Array<string>;
     duration: string;
-    name: string;
+    type: string;
+    subType: string;
     location: any;
     price: string;
     address: string;
@@ -124,7 +125,7 @@ const ListingsVerticalServices = ({
                     textAlign="left"
                     style={{ textTransform: "capitalize" }}
                   >
-                    {item.name}
+                    {t(item?.type)} - {t(item?.subType)}
                   </CustomHeading>
                 </View>
                 <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>

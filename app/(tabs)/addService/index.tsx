@@ -24,14 +24,15 @@ import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import { add } from "lodash";
 
 const AddServiceScreen = () => {
-  const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [addService, setAddService] = useAtom(AddServiceAtom);
   const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
   const [step, setStep] = useState(1);
-  const [type, setType] = useState(addService?.name ?? "");
+  const [type, setType] = useState(addService?.type ?? "");
+  const [subType, setSubType] = useState(addService?.subType ?? "");
   const [description, setDescription] = useState(addService?.description ?? "");
 
   const [address, setAddress] = useState(addService?.address ?? "");
@@ -42,6 +43,9 @@ const AddServiceScreen = () => {
   const [endDate, setEndDate] = useState(
     moment(addService?.endDate).toDate() ?? new Date()
   );
+
+  console.log("addService --", addService?.type, addService?.subType);
+  
 
   const [requirements, setRequirements]: any = useState(
     addService?.requirements || [
@@ -67,8 +71,8 @@ const AddServiceScreen = () => {
       refreshUser();
       toast?.success(
         addService?._id
-          ? "Service updated successfully!"
-          : "Service posted successfully!"
+          ? t("serviceUpdatedSuccessfully!")
+          : t("servicePostedSuccessfully!")
       );
       setAddService({});
       setIsAddService(false);
@@ -128,7 +132,8 @@ const AddServiceScreen = () => {
       });
     });
 
-    formData.append("name", type);
+    formData.append("type", type);
+    formData.append("subType", subType);
     formData.append("description", description);
     formData.append("address", address);
     formData.append("location", JSON.stringify(location || {}));
@@ -181,7 +186,8 @@ const AddServiceScreen = () => {
       }
 
       formData.append("serviceId", id);
-      formData.append("name", type);
+      formData.append("type", type);
+      formData.append("subType", subType);
       formData.append("description", description);
       formData.append("address", address);
       formData.append("location", JSON.stringify(location || {}));
@@ -215,6 +221,8 @@ const AddServiceScreen = () => {
             setStep={setStep}
             type={type}
             setType={setType}
+            subType={subType}
+            setSubType={setSubType}
             requirements={requirements}
             setRequirements={setRequirements}
           />
@@ -259,6 +267,8 @@ const AddServiceScreen = () => {
             setStep={setStep}
             type={type}
             setType={setType}
+            subType={subType}
+            setSubType={setSubType}
             description={description}
             setDescription={setDescription}
             address={address}

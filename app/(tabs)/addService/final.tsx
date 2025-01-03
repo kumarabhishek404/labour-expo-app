@@ -14,6 +14,8 @@ interface FinalScreenProps {
   setStep: any;
   type: string;
   setType: any;
+  subType: string;
+  setSubType: any;
   description: string;
   setDescription: any;
   address: string;
@@ -34,6 +36,7 @@ interface FinalScreenProps {
 const FinalScreen: React.FC<FinalScreenProps> = ({
   setStep,
   type,
+  subType,
   description,
   address,
   location,
@@ -47,6 +50,8 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
     handleOnSubmit();
   };
 
+  console.log("tye - ", type);
+  
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -62,7 +67,17 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                 style={[styles.value, { textTransform: "capitalize" }]}
                 textAlign="left"
               >
-                {type}
+                {t(type)}
+              </CustomText>
+            </View>
+
+            <View style={styles.row}>
+              <CustomHeading>{t("workSubType")}</CustomHeading>
+              <CustomText
+                style={[styles.value, { textTransform: "capitalize" }]}
+                textAlign="left"
+              >
+                {t(subType)}
               </CustomText>
             </View>
 
