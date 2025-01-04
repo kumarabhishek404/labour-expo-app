@@ -32,7 +32,6 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
   });
 
   const onSubmit = (data: any) => {
-    console.log("data", data);
     if (
       !data?.profilePicture ||
       typeof data.profilePicture !== "string" ||

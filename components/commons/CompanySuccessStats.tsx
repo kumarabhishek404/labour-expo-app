@@ -15,7 +15,7 @@ const CompanySuccess = () => {
     refetchOnMount: true,
     retry: false,
   });
-  console.log("data", companyStats);
+  
   return (
     <View style={styles.container}>
       <CustomHeading>{t("companySuccess")}</CustomHeading>

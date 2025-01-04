@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import Colors from "@/constants/Colors";
@@ -12,6 +12,8 @@ import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import MobileNumberField from "@/components/inputs/MobileNumber";
 import { Feather } from "@expo/vector-icons";
+import ModalComponent from "@/components/commons/Modal";
+import { set } from "lodash";
 
 interface FirstScreenProps {
   setStep: any;
@@ -36,6 +38,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   lastName,
   setLastName,
 }: FirstScreenProps) => {
+  const [mobileIsVerified, setMobileIsVerified] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
   const {
     control,
     watch,
@@ -55,8 +59,27 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     setPhoneNumber(data?.phoneNumber);
     setFirstName(data?.firstName);
     setLastName(data?.lastName);
+    setModalVisible(true);
+  };
+
+  const onConfirmMobilerNumber = () => {
+    setModalVisible(false);
     setStep(2);
   };
+
+  const modalContent = () => (
+    <View style={{ padding: 10 }}>
+      <CustomText fontSize={18} fontWeight="bold">
+        {t("confirmYourMobileNumber")}
+      </CustomText>
+      <CustomText fontSize={16} color="#555">
+        {t("isYourCorrectNumber")}
+      </CustomText>
+      <CustomText fontSize={24} fontWeight="bold" color={Colors?.primary} style={{letterSpacing: 1}}>
+        {watch("countryCode")} {watch("phoneNumber")}
+      </CustomText>
+    </View>
+  );
 
   return (
     <>
@@ -121,6 +144,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourFirstName")}
+              textStyles={{ fontSize: 18 }}
               containerStyle={errors?.firstName && styles.errorInput}
               errors={errors}
             />
@@ -141,6 +165,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourLastName")}
+              textStyles={{ fontSize: 18 }}
               containerStyle={errors?.lastName && styles.errorInput}
               errors={errors}
             />
@@ -162,6 +187,23 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           </TouchableOpacity>
         </Link>
       </View>
+
+      <ModalComponent
+        visible={isModalVisible}
+        content={modalContent}
+        transparent={true}
+        animationType="slide"
+        title={t("checkYourMobileNumber")}
+        onClose={() => setModalVisible(false)}
+        primaryButton={{
+          title: t("yesProceed"),
+          action: onConfirmMobilerNumber,
+        }}
+        secondaryButton={{
+          title: t("noEdit"),
+          action: () => setModalVisible(false),
+        }}
+      />
     </>
   );
 };
@@ -178,6 +220,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     borderRadius: 30,
+    marginTop: 10,
   },
   footerContainer: {
     flexDirection: "row",
@@ -185,6 +228,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
     gap: 5,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 20,
+  },
+  confirmButton: {
+    backgroundColor: Colors.primary,
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 5,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: Colors.danger,
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 5,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

@@ -9,6 +9,7 @@ import { UserAtom } from "@/app/AtomStore/user";
 import CustomHeading from "../commons/CustomHeading";
 import AddAddressModal from "@/app/screens/location/addAddress";
 import { t } from "@/utils/translationHelper";
+import { convertToLabelValueArray } from "@/constants/functions";
 
 interface LocationFieldProps {
   address: string;
@@ -24,17 +25,25 @@ const LocationField = ({
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const userDetails = useAtomValue(UserAtom);
+
+  console.log(
+    "userDetails?.savedAddresses",
+    userDetails?.savedAddresses,
+    convertToLabelValueArray(userDetails?.savedAddresses)
+  );
+
   const [allSavedAddresses, setAllSavedAddresses] = useState([
+    ...convertToLabelValueArray(userDetails?.savedAddresses),
     { label: t("addNewAddress"), value: "addAddress" },
   ]);
   const dropdownRef = useRef<any>(null);
 
   useEffect(() => {
-    console.log("useEffect called", userDetails?.serviceAddress);
-    if (userDetails?.serviceAddress) {
+    console.log("useEffect called", userDetails?.savedAddresses);
+    if (userDetails?.savedAddresses) {
       // Remove duplicates and create unique address objects
       const uniqueAddresses = Array.from(
-        new Set(userDetails.serviceAddress)
+        new Set(userDetails.savedAddresses)
       ).map((address) => ({
         label: address as string,
         value: address as string,
@@ -46,18 +55,18 @@ const LocationField = ({
         { label: t("addNewAddress"), value: "addAddress" },
       ]);
 
-      // Auto-select the newly added address if it exists in serviceAddress
+      // Auto-select the newly added address if it exists in savedAddresses
       // but isn't currently selected
       if (
-        userDetails.serviceAddress.includes(address) === false &&
-        userDetails.serviceAddress.length > 0
+        userDetails.savedAddresses.includes(address) === false &&
+        userDetails.savedAddresses.length > 0
       ) {
         setAddress(
-          userDetails.serviceAddress[userDetails.serviceAddress.length - 1]
+          userDetails.savedAddresses[userDetails.savedAddresses.length - 1]
         );
       }
     }
-  }, [userDetails?.serviceAddress]);
+  }, [userDetails?.savedAddresses]);
 
   return (
     <View style={styles.container}>

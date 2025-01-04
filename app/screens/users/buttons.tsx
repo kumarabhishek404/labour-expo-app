@@ -360,9 +360,7 @@ const ButtonContainer = ({
               </>
             )}
 
-            {(user?.status === "SUSPENDED" ||
-              user?.status === "PENDING" ||
-              user?.status === "DISABLED") && (
+            {(user?.status !== "ACTIVE") && (
               <>
                 <Button
                   isPrimary={true}

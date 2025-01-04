@@ -22,7 +22,7 @@ interface UserInfoComponentProps {
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
   const { refreshUser, isLoading } = useRefreshUser();
   const userDetails = useAtomValue(UserAtom);
-  
+
   const mutationSendOtp = useMutation({
     mutationKey: ["verifyEmail"],
     mutationFn: (payload: any) => sendEmailCode(payload),
@@ -149,7 +149,9 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           <CustomHeading fontSize={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
-            {user?._id === userDetails?._id ? user?.mobile || user?.alternateMobile || t("mobileNotFound") : "**********"}
+            {user?._id === userDetails?._id
+              ? user?.mobile || user?.alternateMobile || t("mobileNotFound")
+              : "**********"}
           </CustomHeading>
         </View>
         <View style={[styles.row, styles.lastBox]}>
@@ -162,10 +164,14 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             {"  "}
             {user?.email?.value || user?.alternateEmail || t("emailNotFound")}
             {user?._id === userDetails?._id &&
+              userDetails?.status === "ACTIVE" &&
               user?.email &&
               !user?.email?.isVerified && (
                 <TouchableOpacity onPress={handleSendOtp}>
-                  <CustomText color={Colors?.link} style={styles.verifyEmailBtn}>
+                  <CustomText
+                    color={Colors?.link}
+                    style={styles.verifyEmailBtn}
+                  >
                     , {t("verify")}
                   </CustomText>
                 </TouchableOpacity>

@@ -155,7 +155,7 @@ export const makePutRequestFormData = async (
 
 export const makePatchRequest = async (
   url: string,
-  body: object,
+  body?: object,
   headers?: { [key: string]: string }
 ): Promise<AxiosResponse> => {
   const response = await api.patch(url, body, {

@@ -32,10 +32,7 @@ export const STETESOFINDIA = [
 ];
 
 export const COUNTRYPHONECODE = [
-  { label: "india", value: "+91" },
-  { label: "canada", value: "+1" },
-  { label: "belgium", value: "+32" },
-  { label: "algeria", value: "+213" },
+  { label: "india", value: "+91" }
 ];
 
 export const REGISTERSTEPS = [

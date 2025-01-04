@@ -42,7 +42,6 @@ export default function Layout() {
     return <Login />;
   }
 
-  console.log("isAccountInactive----", isAccountInactive);
   if (isAccountInactive) {
     return <ProfileScreen />;
   }

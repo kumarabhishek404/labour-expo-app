@@ -45,7 +45,6 @@ const AddServiceScreen = () => {
   );
 
   console.log("addService --", addService?.type, addService?.subType);
-  
 
   const [requirements, setRequirements]: any = useState(
     addService?.requirements || [
@@ -71,8 +70,8 @@ const AddServiceScreen = () => {
       refreshUser();
       toast?.success(
         addService?._id
-          ? t("serviceUpdatedSuccessfully!")
-          : t("servicePostedSuccessfully!")
+          ? t("serviceUpdatedSuccessfully")
+          : t("servicePostedSuccessfully")
       );
       setAddService({});
       setIsAddService(false);

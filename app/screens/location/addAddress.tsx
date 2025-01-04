@@ -19,6 +19,10 @@ import { UserAtom } from "@/app/AtomStore/user";
 import { useAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
+import { convertToLabelValueArray } from "@/constants/functions";
+import { useMutation } from "@tanstack/react-query";
+import { updateUserById } from "@/app/api/user";
+import Loader from "@/components/commons/Loader";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -40,10 +44,24 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     },
   });
 
+  const mutationUpdateProfileInfo = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) => updateUserById(payload),
+    onSuccess: (response) => {
+      console.log(
+        "Response while updating the profile - ",
+        response?.data?.data
+      );
+    },
+    onError: (err) => {
+      console.error("error while updating the profile ", err);
+    },
+  });
+
   const onSubmit = (data: any) => {
     const address = `${data?.village}, ${data?.post} ${data?.city} ${data?.pinCode} ${data?.state} ${data?.country}`;
 
-    if (userDetails?.serviceAddress?.includes(address)) {
+    if (userDetails?.savedAddresses?.includes(address)) {
       toast.error(t("addressAlreadyExists"));
       return;
     }
@@ -55,7 +73,10 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
 
     setUserDetails({
       ...userDetails,
-      serviceAddress: [...(userDetails?.serviceAddress || []), address],
+      savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
+    });
+    mutationUpdateProfileInfo.mutate({
+      savedAddresses: address,
     });
     reset();
     onClose();
@@ -65,7 +86,38 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const modalContent = () => {
     return (
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Loader loading={mutationUpdateProfileInfo?.isPending} />
         <View style={styles.formContainer}>
+          <Controller
+            control={control}
+            name="state"
+            rules={{
+              required: t("stateIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                name="state"
+                label={t("state")}
+                value={value}
+                setValue={onChange}
+                placeholder={t("selectState")}
+                emptyPlaceholder={t("pleaseSelectAnyState")}
+                errors={errors}
+                containerStyle={errors?.state && styles.errorInput}
+                search={false}
+                options={STETESOFINDIA}
+                icon={
+                  <FontAwesome6
+                    style={styles.icon}
+                    color="black"
+                    name="map-location"
+                    size={20}
+                  />
+                }
+              />
+            )}
+          />
+
           <Controller
             control={control}
             name="village"
@@ -179,37 +231,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
             )}
           />
 
-          <Controller
-            control={control}
-            name="state"
-            rules={{
-              required: t("stateIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                name="state"
-                label={t("state")}
-                value={value}
-                setValue={onChange}
-                placeholder={t("selectState")}
-                emptyPlaceholder={t("pleaseSelectAnyState")}
-                errors={errors}
-                containerStyle={errors?.state && styles.errorInput}
-                search={false}
-                options={STETESOFINDIA}
-                icon={
-                  <FontAwesome6
-                    style={styles.icon}
-                    color="black"
-                    name="map-location"
-                    size={20}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
+          {/* <Controller
             control={control}
             name="country"
             rules={{
@@ -235,7 +257,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
                 }
               />
             )}
-          />
+          /> */}
         </View>
       </ScrollView>
     );
@@ -262,7 +284,6 @@ export default AddAddressModal;
 const styles = StyleSheet.create({
   formContainer: {
     gap: 10,
-    padding: 16,
   },
   textInput: {
     flex: 1,

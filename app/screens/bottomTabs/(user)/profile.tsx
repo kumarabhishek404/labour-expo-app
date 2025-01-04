@@ -78,11 +78,15 @@ const UserProfile = () => {
     const backAction = () => {
       if (isAccountInactive) {
         toast.error(
-          userDetails?.status === "SUSPENDED"
+          userDetails?.status === "SUSPENDED" ||
+            userDetails?.status === "DISABLED"
             ? "Profile Suspended"
             : "Approval Is Pending",
           `You can't go back until your profile is ${
-            userDetails?.status === "SUSPENDED" ? "suspended" : "not approved"
+            userDetails?.status === "SUSPENDED" ||
+            userDetails?.status === "DISABLED"
+              ? "suspended"
+              : "not approved"
           }.`
         );
         return true;
@@ -389,13 +393,13 @@ const UserProfile = () => {
           </View>
         </View>
 
-        {userDetails?.status === "SUSPENDED" && <InactiveAccountMessage />}
+        {(userDetails?.status === "SUSPENDED" ||
+          userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
         {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
         <View
           style={[
             styles?.changeRoleWrapper,
-            (userDetails?.status === "SUSPENDED" ||
-              userDetails?.status === "PENDING") && {
+            userDetails?.status !== "ACTIVE" && {
               pointerEvents: "none",
               opacity: 0.5,
             },
@@ -450,10 +454,7 @@ const UserProfile = () => {
 
         {userDetails?.role !== "EMPLOYER" && (
           <SkillSelector
-            canAddSkills={
-              userDetails?.status !== "SUSPENDED" &&
-              userDetails?.status !== "PENDING"
-            }
+            canAddSkills={userDetails?.status === "ACTIVE"}
             isShowLabel={true}
             style={styles?.skillsContainer}
             selectedSkills={selectedSkills}
@@ -502,10 +503,7 @@ const UserProfile = () => {
         )}
 
         <ProfileMenu
-          disabled={
-            userDetails?.status === "SUSPENDED" ||
-            userDetails?.status === "PENDING"
-          }
+          disabled={userDetails?.status !== "ACTIVE"}
         />
       </ScrollView>
     </>

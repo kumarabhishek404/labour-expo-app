@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import ModalComponent from "./Modal";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AccountStatusAtom, UserAtom } from "@/app/AtomStore/user";
 import { toast } from "@/app/hooks/toast";
 import Loader from "./Loader";
@@ -11,26 +11,30 @@ import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
+import { enableAccount } from "@/app/api/user";
+import { useMutation } from "@tanstack/react-query";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
 const InactiveAccountMessage = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const { refreshUser } = useRefreshUser();
+  const userDetails = useAtomValue(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const restoreAccount = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success(t("successfullyActivateMessage"));
+  const mutationRestoreAccount = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: () => enableAccount(),
+    onSuccess: (response) => {
+      toast.success(t("successActivatedMessage"));
+      refreshUser();
       setModalVisible(false);
       setIsAccountInactive(false);
-      setUserDetails({
-        ...userDetails,
-        status: "active",
-      });
-    }, 3000);
-  };
+    },
+    onError: (err) => {
+      console.error("error while deactivatibg the profile ", err);
+    },
+  });
 
   const modalContent = () => (
     <View style={styles.modalContentContainer}>
@@ -41,7 +45,7 @@ const InactiveAccountMessage = () => {
 
   return (
     <>
-      <Loader loading={isLoading} />
+      <Loader loading={isLoading || mutationRestoreAccount?.isPending} />
       <View style={styles.container}>
         <View style={styles.gradientBackground}>
           <FontAwesome name="exclamation-circle" size={80} color="#fff" />
@@ -52,16 +56,29 @@ const InactiveAccountMessage = () => {
             {t("inactiveMessage")}
           </CustomText>
 
-          <Button
-            isPrimary={true}
-            title={t("restoreAccountButton")}
-            onPress={() => setModalVisible(true)}
-            style={{
-              backgroundColor: Colors?.white,
-              borderColor: Colors?.white,
-            }}
-            textColor={Colors?.danger}
-          />
+          {userDetails?.status === "DISABLED" ? (
+            <Button
+              isPrimary={true}
+              title={t("activateAccountButton")}
+              onPress={() => setModalVisible(true)}
+              style={{
+                backgroundColor: Colors?.white,
+                borderColor: Colors?.white,
+              }}
+              textColor={Colors?.danger}
+            />
+          ) : (
+            <Button
+              isPrimary={true}
+              title={t("requestActivationButton")}
+              onPress={() => {}}
+              style={{
+                backgroundColor: Colors?.white,
+                borderColor: Colors?.white,
+              }}
+              textColor={Colors?.danger}
+            />
+          )}
         </View>
 
         <ModalComponent
@@ -71,7 +88,7 @@ const InactiveAccountMessage = () => {
           content={modalContent}
           primaryButton={{
             title: t("activateAccountButton"),
-            action: restoreAccount,
+            action: mutationRestoreAccount.mutate,
             styles: { paddingHorizontal: 0 },
           }}
           secondaryButton={{

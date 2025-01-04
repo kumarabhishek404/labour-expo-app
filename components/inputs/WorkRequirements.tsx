@@ -17,6 +17,7 @@ import DropdownComponent from "@/components/inputs/Dropdown";
 interface WorkRequirmentProps {
   label?: string;
   name: string;
+  watch: any;
   type: string;
   subType: string;
   requirements: any;
@@ -29,6 +30,7 @@ interface WorkRequirmentProps {
 const WorkRequirment = ({
   label,
   name,
+  watch,
   type,
   subType,
   requirements,
@@ -106,7 +108,8 @@ const WorkRequirment = ({
                   setValue={(name: any) =>
                     handleRequirementTypeChange(index, name)
                   }
-                  emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
+                  placeholder={watch('subType') ? t("selectWorkRequirementType") : t("pleaseSelectWorkTypeAndSubTypeFirst")}
+                  // emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
                   options={filterWorkerTypes(type, subType) ?? []}
                   icon={
                     <CustomHeading fontSize={20} color={Colors?.secondary}>
@@ -131,7 +134,7 @@ const WorkRequirment = ({
                     name="payPerDay"
                     value={requirement?.payPerDay.toString()}
                     placeholder={t("ratePerDay")}
-                    type="numeric"
+                    type="number"
                     maxLength={4}
                     onChangeText={(payPerDay: string) => {
                       const tempPayPerDay = payPerDay;

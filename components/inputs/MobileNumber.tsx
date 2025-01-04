@@ -79,79 +79,79 @@ const MobileNumberField = ({
     },
   });
 
-  const handleSendOtp = async () => {
-    try {
-      mutationSendOtp.mutate(`${countryCode}${phoneNumber}`);
-    } catch (err) {
-      toast.error(t("errorWhileSendingCode"));
-    }
-  };
+  // const handleSendOtp = async () => {
+  //   try {
+  //     mutationSendOtp.mutate(`${countryCode}${phoneNumber}`);
+  //   } catch (err) {
+  //     toast.error(t("errorWhileSendingCode"));
+  //   }
+  // };
 
-  const handleVerifyOtp = async () => {
-    if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
-      mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
-    } else {
-      toast?.error(t("incorrectOTPTryAgain"));
-    }
-  };
+  // const handleVerifyOtp = async () => {
+  //   if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
+  //     mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
+  //   } else {
+  //     toast?.error(t("incorrectOTPTryAgain"));
+  //   }
+  // };
 
-  const handleChange = (text: any, index: any) => {
-    let newOtp = [...otp];
-    newOtp[index] = text;
+  // const handleChange = (text: any, index: any) => {
+  //   let newOtp = [...otp];
+  //   newOtp[index] = text;
 
-    if (text && index < 3) {
-      inputs.current[index + 1].focus();
-    }
+  //   if (text && index < 3) {
+  //     inputs.current[index + 1].focus();
+  //   }
 
-    setOtp(newOtp);
-  };
+  //   setOtp(newOtp);
+  // };
 
-  const handleBackspace = (text: any, index: any) => {
-    if (!text && index > 0) {
-      inputs.current[index - 1].focus();
-    }
+  // const handleBackspace = (text: any, index: any) => {
+  //   if (!text && index > 0) {
+  //     inputs.current[index - 1].focus();
+  //   }
 
-    let newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-  };
+  //   let newOtp = [...otp];
+  //   newOtp[index] = text;
+  //   setOtp(newOtp);
+  // };
 
-  const resendOtp = () => {
-    handleSendOtp();
-    toast.success(t("otpResent"));
-  };
+  // const resendOtp = () => {
+  //   handleSendOtp();
+  //   toast.success(t("otpResent"));
+  // };
 
-  const modalContent = () => (
-    <View>
-      <CustomHeading fontSize={50}>✉️</CustomHeading>
-      <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
-      <CustomText>{t("weVeSentACodeTo")}</CustomText>
+  // const modalContent = () => (
+  //   <View>
+  //     <CustomHeading fontSize={50}>✉️</CustomHeading>
+  //     <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
+  //     <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
-      <View style={styles.otpform}>
-        {otp?.map((digit: string | undefined, index: any) => (
-          <TextInput
-            key={index}
-            style={styles.otpInput}
-            keyboardType="numeric"
-            maxLength={1}
-            onChangeText={(text) => handleChange(text, index)}
-            onKeyPress={({ nativeEvent }) => {
-              return nativeEvent.key === "Backspace"
-                ? handleBackspace("", index)
-                : null;
-            }}
-            value={digit}
-            ref={(input) => (inputs.current[index] = input)}
-          />
-        ))}
-      </View>
+  //     <View style={styles.otpform}>
+  //       {otp?.map((digit: string | undefined, index: any) => (
+  //         <TextInput
+  //           key={index}
+  //           style={styles.otpInput}
+  //           keyboardType="numeric"
+  //           maxLength={1}
+  //           onChangeText={(text) => handleChange(text, index)}
+  //           onKeyPress={({ nativeEvent }) => {
+  //             return nativeEvent.key === "Backspace"
+  //               ? handleBackspace("", index)
+  //               : null;
+  //           }}
+  //           value={digit}
+  //           ref={(input) => (inputs.current[index] = input)}
+  //         />
+  //       ))}
+  //     </View>
 
-      <TouchableOpacity style={styles?.resendContainer} onPress={resendOtp}>
-        <CustomText>{t("didntGetTheCode")}</CustomText>
-        <CustomText color={Colors?.link}>{t("clickToResend")}</CustomText>
-      </TouchableOpacity>
-    </View>
-  );
+  //     <TouchableOpacity style={styles?.resendContainer} onPress={resendOtp}>
+  //       <CustomText>{t("didntGetTheCode")}</CustomText>
+  //       <CustomText color={Colors?.link}>{t("clickToResend")}</CustomText>
+  //     </TouchableOpacity>
+  //   </View>
+  // );
 
   return (
     <>
@@ -185,6 +185,30 @@ const MobileNumberField = ({
           />
         )}
 
+        <View
+          style={{
+            marginBottom: 10,
+            flexDirection: "row",
+            alignItems: "flex-start",
+          }}
+        >
+          <CustomHeading
+            textAlign="left"
+            fontSize={16}
+            color={Colors?.secondaryText}
+          >
+            {t("note")}
+            {"  "}
+            <CustomText
+              textAlign="left"
+              fontSize={15}
+              color={Colors?.secondaryText}
+            >
+              {t("enterActiveNumber")}
+            </CustomText>
+          </CustomHeading>
+        </View>
+
         <TextInputComponent
           value={phoneNumber}
           onBlur={onBlur}
@@ -196,6 +220,8 @@ const MobileNumberField = ({
           name={name}
           containerStyle={errors[name] && styles.errorInput}
           errors={errors}
+          style={{ fontSize: 20 }}
+          textStyles={{ fontSize: 16 }}
           icon={
             <View
               style={{
@@ -205,20 +231,18 @@ const MobileNumberField = ({
               }}
             >
               {icon && icon}
-              <CustomHeading>{countryCode}</CustomHeading>
+              <CustomHeading fontSize={22}>{countryCode}</CustomHeading>
             </View>
           }
         />
 
-        {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
+        {/* {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
           <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
-            <CustomHeading color={Colors?.white}>
-              {t("verify")}
-            </CustomHeading>
+            <CustomHeading color={Colors?.white}>{t("verify")}</CustomHeading>
           </TouchableOpacity>
-        )}
+        )} */}
 
-        <ModalComponent
+        {/* <ModalComponent
           visible={isModalVisible}
           content={modalContent}
           transparent={true}
@@ -233,7 +257,7 @@ const MobileNumberField = ({
             title: t("cancel"),
             action: () => setModalVisible(false),
           }}
-        />
+        /> */}
       </KeyboardAvoidingView>
     </>
   );

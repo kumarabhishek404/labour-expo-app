@@ -11,6 +11,7 @@
       }
     },
     "development": {
+      "resourceClass": "large",
       "developmentClient": true,
       "distribution": "internal",
       "env": {

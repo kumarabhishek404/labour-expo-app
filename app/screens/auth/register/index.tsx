@@ -118,8 +118,6 @@ const SignupScreen = () => {
             setFirstName={setFirstName}
             lastName={lastName}
             setLastName={setLastName}
-            gender={gender}
-            setGender={setGender}
           />
         );
       case 2:
@@ -134,6 +132,8 @@ const SignupScreen = () => {
             setEmail={setEmail}
             dateOfBirth={dateOfBirth}
             setDateOfBirth={setDateOfBirth}
+            gender={gender}
+            setGender={setGender}
           />
         );
       case 3:

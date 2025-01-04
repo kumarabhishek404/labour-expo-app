@@ -330,3 +330,37 @@ export const checkMobileExistance = async (payload: any) => {
     throw error;
   }
 };
+
+export const disableAccount = async () => {
+  try {
+    const data = await makeDeleteRequest(`/user/disable-account`);
+    return data;
+  } catch (error: any) {
+    console.log(
+      `[Forget Password] [userService] An error occured while disabling account : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while disabling account"
+    );
+    throw error;
+  }
+};
+
+export const enableAccount = async () => {
+  try {
+    const data = await makePatchRequest(`/user/enable-account`);
+    return data;
+  } catch (error: any) {
+    console.log(
+      `[Forget Password] [userService] An error occured while enabling account : `,
+      error
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while enabling account"
+    );
+    throw error;
+  }
+};

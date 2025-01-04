@@ -68,8 +68,8 @@ const AddLocationAndAddress = ({
       let tempUserDetails = { ...userDetails };
       tempUserDetails = {
         ...userDetails,
-        serviceAddress: [
-          ...(userDetails?.serviceAddress ?? []),
+        savedAddresses: [
+          ...(userDetails?.savedAddresses ?? []),
           response[0]?.formattedAddress,
         ],
       };

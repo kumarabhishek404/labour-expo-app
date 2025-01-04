@@ -43,7 +43,7 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
           textAlign="left"
           style={styles.serviceName}
         >
-          {work.serviceName}
+          {work?.type} - {work?.subType}
         </CustomHeading>
         <CustomText style={styles.date}>
           {new Date(work.startDate).toLocaleDateString()}

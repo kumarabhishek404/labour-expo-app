@@ -28,8 +28,12 @@ import {
   registerForPushNotificationsAsync,
   unregisterPushNotifications,
 } from "@/app/hooks/usePushNotification";
+import { disableAccount } from "@/app/api/user";
+import { useMutation } from "@tanstack/react-query";
+import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 
 const ProfileMenu = ({ disabled }: any) => {
+  const { refreshUser } = useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
   // const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
@@ -41,6 +45,20 @@ const ProfileMenu = ({ disabled }: any) => {
   );
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const mutationDeactivateAccount = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: () => disableAccount(),
+    onSuccess: (response) => {
+      toast.success(t("successDeactivatedMessage"));
+      refreshUser();
+      setModalVisible(false);
+      setIsAccountInactive(true);
+    },
+    onError: (err) => {
+      console.error("error while deactivatibg the profile ", err);
+    },
+  });
+
   useEffect(() => {
     setIsAdmin(userDetails?.role === "ADMIN");
   }, [userDetails?.role]);
@@ -49,34 +67,9 @@ const ProfileMenu = ({ disabled }: any) => {
     setUserDetails({
       isAuth: false,
       _id: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      mobileNumber: "",
-      likedJobs: "",
-      likedEmployees: "",
-      email: "",
-      address: "",
-      profilePicture: "",
-      role: "",
       token: "",
-      serviceAddress: [],
     });
     router.navigate("/screens/auth/login");
-  };
-
-  const handleDeactivateAccount = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Your account is deactivated successfully");
-      setModalVisible(false);
-      setIsAccountInactive(true);
-      setUserDetails({
-        ...userDetails,
-        status: "SUSPENDED",
-      });
-    }, 3000);
   };
 
   const registerNotification = async () => {
@@ -151,7 +144,11 @@ const ProfileMenu = ({ disabled }: any) => {
       icon: (
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
       ),
-      onPress: () => router?.push({ pathname: "/screens/team" }),
+      onPress: () =>
+        router?.push({
+          pathname: "/screens/team/[id]",
+          params: { id: userDetails?._id },
+        }),
       roleCondition: userDetails?.role === "MEDIATOR" && !isAdmin,
       style: [styles?.menuItem],
       isSuspended: disabled,
@@ -415,23 +412,16 @@ const ProfileMenu = ({ disabled }: any) => {
             <CustomHeading fontSize={34}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading fontSize={20}>Are you sure?</CustomHeading>
-        <CustomText fontSize={14}>
-          You want to deactivate your account?
-        </CustomText>
-        <CustomText>
-          Deactivating your account will disable your Profile and remove your
-          name and photo from most things that you&#39;ve shared. Some
-          information may still be visible to others, such as your name in their
-          friend list and messages that you&#39;ve sent.
-        </CustomText>
+        <CustomHeading fontSize={20}>{t("areYouSure")}</CustomHeading>
+        <CustomText fontSize={14}>{t("deactivateMessage")}</CustomText>
+        <CustomText>{t("deactivateMessageText")}</CustomText>
       </View>
     );
   };
 
   return (
     <>
-      <Loader loading={isLoading} />
+      <Loader loading={isLoading || mutationDeactivateAccount?.isPending} />
       <View style={styles.menuWrapper}>
         {menus.map(
           (menu, index) =>
@@ -476,7 +466,7 @@ const ProfileMenu = ({ disabled }: any) => {
         content={modalContent}
         primaryButton={{
           title: "Deactivate",
-          action: handleDeactivateAccount,
+          action: mutationDeactivateAccount.mutate,
           styles: {
             backgroundColor: "red",
             borderColor: "red",

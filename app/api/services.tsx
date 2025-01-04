@@ -27,7 +27,6 @@ export const addNewService = async (payload: any) => {
       "/employer/add-service",
       payload
     );
-    toast.success("Service added successfully");
     return data?.data;
   } catch (error: any) {
     handleServiceError(error, "add new service");

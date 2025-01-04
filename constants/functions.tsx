@@ -241,13 +241,22 @@ export const filterWorkerTypes = (
 ) => {
   console.log("workTypeValue", workTypeValue);
   console.log("subTypeValue", subTypeValue);
-  
+
   // Find the work type matching the given workTypeValue
   const workType = WORKTYPES.find((type) => type.value === workTypeValue);
 
   // Find the subType matching the given subTypeValue
-  const subType = workType?.subTypes.find((type) => type.value === subTypeValue);
+  const subType = workType?.subTypes.find(
+    (type) => type.value === subTypeValue
+  );
 
   // Return the workerTypes of the selected subType
   return subType?.workerTypes ?? [];
+};
+
+export const convertToLabelValueArray = (stringArray: string[]) => {
+  return stringArray.map((str) => ({
+    label: str,
+    value: str,
+  }));
 };

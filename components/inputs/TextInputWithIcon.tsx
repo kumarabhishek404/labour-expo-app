@@ -19,6 +19,8 @@ type TextInputProps = {
   secondIcon?: any;
   errors?: any;
   style?: any;
+  textStyles?: any;
+  disabled?: boolean
   containerStyle?: any;
 };
 
@@ -36,9 +38,11 @@ const TextInputComponent = ({
   secondIcon,
   errors,
   style,
+  textStyles,
+  disabled,
   containerStyle,
 }: TextInputProps) => {
-  const inputRef = useRef(null);
+  const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleLabelPress = () => {
@@ -54,7 +58,7 @@ const TextInputComponent = ({
   const handleBlur = () => setIsFocused(false);
 
   return (
-    <View style={[styles?.inputField, style]}>
+    <View style={[styles?.inputField, style, disabled && styles?.disabledInput]}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && (
@@ -64,7 +68,7 @@ const TextInputComponent = ({
         )}
         <TextInput
           ref={inputRef}
-          style={styles?.input}
+          style={[styles?.input, textStyles]}
           keyboardType={type === "number" ? "numeric" : "ascii-capable"}
           maxLength={maxLength}
           value={value}
@@ -91,6 +95,10 @@ export default TextInputComponent;
 const styles = StyleSheet.create({
   inputField: {
     gap: 5,
+  },
+  disabledInput: {
+    opacity: 0.5,
+    pointerEvents: "none",
   },
   inputContainer: {
     height: 53,
