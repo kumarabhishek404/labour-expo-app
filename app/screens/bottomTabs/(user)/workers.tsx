@@ -24,6 +24,7 @@ import { fetchAllServices } from "@/app/api/services";
 const UserWorkers = () => {
   const userDetails = useAtomValue(UserAtom);
   const [totalData, setTotalData] = useState(0);
+  const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -52,14 +53,11 @@ const UserWorkers = () => {
     initialPageParam: 1,
     enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
-      // console.log("Last--", lastPage?.pagination);
-
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
       }
       return undefined;
     },
-    // refetchInterval: 5000
   });
 
   useEffect(() => {
@@ -76,6 +74,16 @@ const UserWorkers = () => {
       // setLocation(currentLocation);
     })();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -136,7 +144,11 @@ const UserWorkers = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={WORKERS}

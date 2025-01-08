@@ -19,7 +19,6 @@ import { UserAtom } from "@/app/AtomStore/user";
 import { useAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
-import { convertToLabelValueArray } from "@/constants/functions";
 import { useMutation } from "@tanstack/react-query";
 import { updateUserById } from "@/app/api/user";
 import Loader from "@/components/commons/Loader";
@@ -58,7 +57,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     const address = `${data?.village}, ${data?.post} ${data?.city} ${data?.pinCode} ${data?.state} ${data?.country}`;
 
     if (userDetails?.savedAddresses?.includes(address)) {
@@ -75,7 +74,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
       ...userDetails,
       savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
     });
-    mutationUpdateProfileInfo.mutate({
+    await mutationUpdateProfileInfo.mutate({
       savedAddresses: address,
     });
     reset();

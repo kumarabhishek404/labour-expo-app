@@ -138,8 +138,6 @@ const Applicants = ({
       />
       <View style={styles.applicantContainer}>
         {applicants?.map((item: any, index: number) => {
-          console.log("item", item?._id, expandedItem);
-
           return (
             <View key={index} style={styles.mediatorCard}>
               <View style={styles.productCard}>

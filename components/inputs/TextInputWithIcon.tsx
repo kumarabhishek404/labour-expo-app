@@ -1,4 +1,10 @@
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useRef, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -18,9 +24,11 @@ type TextInputProps = {
   secureTextEntry?: any;
   secondIcon?: any;
   errors?: any;
+  isMobileNumberExist?: boolean|null;
   style?: any;
   textStyles?: any;
-  disabled?: boolean
+  disabled?: boolean|null;
+  loading?: boolean;
   containerStyle?: any;
 };
 
@@ -37,9 +45,11 @@ const TextInputComponent = ({
   secureTextEntry,
   secondIcon,
   errors,
+  isMobileNumberExist,
   style,
   textStyles,
   disabled,
+  loading,
   containerStyle,
 }: TextInputProps) => {
   const inputRef = useRef<TextInput>(null);
@@ -58,7 +68,9 @@ const TextInputComponent = ({
   const handleBlur = () => setIsFocused(false);
 
   return (
-    <View style={[styles?.inputField, style, disabled && styles?.disabledInput]}>
+    <View
+      style={[styles?.inputField, style, disabled && styles?.disabledInput]}
+    >
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && (
@@ -80,7 +92,19 @@ const TextInputComponent = ({
           placeholderTextColor={Colors.secondary}
         />
         {secondIcon && secondIcon}
+        {loading && (
+          <ActivityIndicator
+            style={{ marginRight: 10 }}
+            color={Colors?.primary}
+            animating={true}
+          />
+        )}
       </View>
+      {isMobileNumberExist && !errors?.[name] && (
+        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          {loading ? "Wait..." : "Mobile number already exists"}
+        </CustomText>
+      )}
       {errors?.[name] && (
         <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
           {errors[name]?.message || ""}

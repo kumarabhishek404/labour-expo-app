@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // You need to install this or use a cross icon from other libraries
+import { Ionicons } from "@expo/vector-icons"; // Requires @expo/vector-icons or similar icon library
 import { getWorkLabel } from "@/constants/functions";
 import CustomHeading from "../commons/CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
+import ModalComponent from "../commons/Modal";
+import TextInputComponent from "./TextInputWithIcon";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "@/app/hooks/toast";
 
 interface SkillsSelectorProps {
   name: string;
+  isPricePerDayNeeded: boolean;
   selectedInterests: Array<any>;
   setSelectedInterests: any;
   availableOptions: Array<any>;
@@ -19,41 +24,149 @@ interface SkillsSelectorProps {
 
 const SkillsSelector = ({
   name,
+  isPricePerDayNeeded,
   selectedInterests,
   setSelectedInterests,
   availableOptions,
   onBlur,
   errors,
 }: SkillsSelectorProps) => {
-  const handleSelect = (interest: any) => {
-    if (selectedInterests.length < 10) {
-      setSelectedInterests([...selectedInterests, interest?.value]);
+  const [pricePopupVisible, setPricePopupVisible] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false); // Flag for edit mode
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors: priceErrors },
+  } = useForm({
+    defaultValues: {
+      pricePerDay: "",
+    },
+  });
+
+  const handleSelect = (skill: any) => {
+    if (selectedInterests.length >= 5) {
+      toast?.error(t("skillLimitReached")); // Limit to 5 skills
+      return;
+    }
+
+    if (isPricePerDayNeeded) {
+      setSelectedSkill(skill);
+      setIsEditMode(false); // Ensure edit mode is off
+      setPricePopupVisible(true); // Show popup for price input
+    } else {
+      // Add skill without price
+      setSelectedInterests([
+        ...selectedInterests,
+        { skill: skill.value, price: null },
+      ]);
     }
   };
 
-  const handleRemove = (interest: any) => {
+  const handleAddSkill = (data: any) => {
+    const newSkill = {
+      skill: selectedSkill?.value,
+      price: isPricePerDayNeeded ? data.pricePerDay : null,
+    };
+
+    if (isEditMode) {
+      const updatedInterests = selectedInterests.map((item) =>
+        item.skill === selectedSkill.value ? newSkill : item
+      );
+      setSelectedInterests(updatedInterests);
+    } else {
+      setSelectedInterests([...selectedInterests, newSkill]);
+    }
+
+    reset({ pricePerDay: "" });
+    setPricePopupVisible(false);
+  };
+
+  const handleRemove = (skill: any) => {
     const updatedInterests = selectedInterests.filter(
-      (item: any) => item !== interest
+      (item: any) => item.skill !== skill
     );
     setSelectedInterests(updatedInterests);
+  };
+
+  const handleEdit = (skill: any) => {
+    const existingSkill = selectedInterests.find(
+      (item) => item.skill === skill
+    );
+
+    setSelectedSkill({
+      value: skill,
+      label: getWorkLabel(availableOptions, skill),
+    });
+
+    if (isPricePerDayNeeded) {
+      setIsEditMode(true);
+      reset({ pricePerDay: existingSkill?.price || "" });
+      setPricePopupVisible(true);
+    } else {
+      toast?.error(t("priceEditNotAllowed")); // Optional toast for feedback
+    }
+  };
+
+  const modalContent = () => {
+    if (!isPricePerDayNeeded) return null;
+
+    return (
+      <View style={{ paddingVertical: 10 }}>
+        <Controller
+          control={control}
+          name="pricePerDay"
+          defaultValue=""
+          rules={{ required: t("priceIsRequired") }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              name="pricePerDay"
+              label={t("pricePerDay")}
+              type="number"
+              maxLength={4}
+              placeholder={t("enterPricePerDay")}
+              value={value}
+              containerStyle={priceErrors?.pricePerDay && styles.errorInput}
+              errors={priceErrors}
+              textStyles={{ fontSize: 16 }}
+              onChangeText={onChange}
+            />
+          )}
+        />
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
       <CustomHeading textAlign="left">{t("selectAnySkills")}</CustomHeading>
+
+      {/* Selected Skills */}
       <View
         style={[styles.selectedContainer, errors[name] && styles?.errorInput]}
       >
         {selectedInterests && selectedInterests?.length > 0 ? (
           selectedInterests.map((interest: any, index: number) => (
-            <View key={index} style={styles.selectedItem}>
+            <TouchableOpacity
+              key={index}
+              style={styles.selectedItem}
+              onPress={() => handleEdit(interest.skill)}
+            >
               <CustomHeading color={Colors?.white}>
-                {getWorkLabel(availableOptions, interest)}
+                {getWorkLabel(availableOptions, interest.skill)}{" "}
+                {isPricePerDayNeeded && interest.price
+                  ? `- ₹ ${interest.price} / ${t("perDay")}`
+                  : ""}
               </CustomHeading>
-              <TouchableOpacity onPress={() => handleRemove(interest)}>
+              <TouchableOpacity
+                onPress={() => handleRemove(interest.skill)}
+                style={{ marginLeft: 8 }}
+              >
                 <Ionicons name="close-circle" size={20} color="white" />
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           ))
         ) : (
           <CustomText fontSize={14}>{t("whatYouCanDo")}</CustomText>
@@ -66,10 +179,13 @@ const SkillsSelector = ({
         </CustomText>
       )}
 
-      {/* Display available interests */}
+      {/* Available Skills */}
       <View style={styles.interestsContainer}>
         {availableOptions
-          .filter((interest) => !selectedInterests.includes(interest?.value)) // Filter out selected interests
+          .filter(
+            (interest) =>
+              !selectedInterests.find((item) => item.skill === interest?.value)
+          ) // Filter out already selected skills
           .map((interest, index) => (
             <TouchableOpacity
               key={index}
@@ -80,6 +196,34 @@ const SkillsSelector = ({
             </TouchableOpacity>
           ))}
       </View>
+
+      {isPricePerDayNeeded && (
+        <ModalComponent
+          visible={pricePopupVisible}
+          content={modalContent}
+          transparent={true}
+          animationType="slide"
+          title={
+            (isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")) +
+            ` (${selectedSkill?.label})`
+          }
+          onClose={() => {
+            setPricePopupVisible(false);
+            reset();
+          }}
+          primaryButton={{
+            title: isEditMode ? t("updateSkillPrice") : t("addSkillPrice"),
+            action: handleSubmit(handleAddSkill),
+          }}
+          secondaryButton={{
+            title: t("cancel"),
+            action: () => {
+              setPricePopupVisible(false);
+              reset();
+            },
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -101,12 +245,6 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: 110,
     padding: 6,
-  },
-  placeholderText: {
-    color: "#333",
-    opacity: 0.7,
-    fontSize: 16,
-    marginRight: 5,
   },
   selectedItem: {
     backgroundColor: "#FF6B6B",

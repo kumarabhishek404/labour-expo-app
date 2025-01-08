@@ -436,6 +436,7 @@ const AdminProfile = () => {
             canAddSkills={
               userDetails?.status === "ACTIVE"
             }
+            role={userDetails?.role}
             isShowLabel={true}
             style={styles?.skillsContainer}
             selectedSkills={selectedSkills}

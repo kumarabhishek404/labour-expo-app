@@ -25,7 +25,7 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { addSkills } from "../../../api/workers";
+import { addSkills, removeSkill } from "../../../api/workers";
 import { toast } from "../../../hooks/toast";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
@@ -155,7 +155,7 @@ const UserProfile = () => {
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skills: Array<string>) => addSkills({ skills: skills }),
+    mutationFn: (skill: any) => addSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -165,6 +165,21 @@ const UserProfile = () => {
     },
     onError: (err) => {
       console.error("error while adding new skills in a worker ", err);
+    },
+  });
+
+  const mutationRemoveSkill = useMutation({
+    mutationKey: ["removeSkills"],
+    mutationFn: (skill: string) => removeSkill({ skillName: skill }),
+    onSuccess: (response) => {
+      let user = response?.data;
+      setUserDetails({ ...userDetails, skills: user?.skills });
+      setSelectedSkills([]);
+      toast.success(t("skillRemovedSuccessfully"));
+      console.log("Response while removing skill from the worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while removing skill from the worker ", err);
     },
   });
 
@@ -315,13 +330,6 @@ const UserProfile = () => {
     );
   };
 
-  const handleAddSkills = () => {
-    const skills = selectedSkills?.map((skill: any) => {
-      return skill?.value;
-    });
-    mutationAddSkills?.mutate(skills);
-  };
-
   const onSubmit = (data: any) => {
     let payload = {
       firstName: data?.firstName,
@@ -355,6 +363,7 @@ const UserProfile = () => {
         loading={
           mutationUpdateProfileInfo?.isPending ||
           mutationAddSkills?.isPending ||
+          mutationRemoveSkill?.isPending ||
           isLoading
         }
       />
@@ -455,12 +464,14 @@ const UserProfile = () => {
         {userDetails?.role !== "EMPLOYER" && (
           <SkillSelector
             canAddSkills={userDetails?.status === "ACTIVE"}
+            role={userDetails?.role}
             isShowLabel={true}
             style={styles?.skillsContainer}
             selectedSkills={selectedSkills}
             setSelectedSkills={setSelectedSkills}
             userSkills={userDetails?.skills}
-            handleAddSkill={handleAddSkills}
+            handleAddSkill={mutationAddSkills?.mutate}
+            handleRemoveSkill={mutationRemoveSkill?.mutate}
             availableSkills={
               userDetails?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
             }
@@ -502,9 +513,7 @@ const UserProfile = () => {
           <TeamAdminCard admin={userDetails?.employedBy} />
         )}
 
-        <ProfileMenu
-          disabled={userDetails?.status !== "ACTIVE"}
-        />
+        <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
       </ScrollView>
     </>
   );

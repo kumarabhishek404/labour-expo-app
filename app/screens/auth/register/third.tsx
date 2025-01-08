@@ -53,6 +53,9 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     setStep(4);
   };
 
+  console.log("interests", selectedInterests);
+  
+
   return (
     <>
       <View style={{ marginBottom: 20 }}>
@@ -81,6 +84,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
                 name="interest"
+                isPricePerDayNeeded={true}
                 selectedInterests={value}
                 setSelectedInterests={onChange}
                 availableOptions={WORKERTYPES}
@@ -102,6 +106,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
                 name="interest"
+                isPricePerDayNeeded={false}
                 selectedInterests={value}
                 setSelectedInterests={onChange}
                 availableOptions={MEDIATORTYPES}
@@ -113,7 +118,11 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         )}
       </View>
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title={t("back")} onPress={() => setStep(2)} />
+        <Button
+          isPrimary={false}
+          title={t("back")}
+          onPress={() => setStep(2)}
+        />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}

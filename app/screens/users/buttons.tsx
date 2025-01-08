@@ -132,11 +132,11 @@ const ButtonContainer = ({
   });
 
   const mutationCancelBookingRequest = useMutation({
-    mutationKey: ["cancelBookingRequest", { id }],
-    mutationFn: () => cancelBookingRequest({ bookingID: id }),
+    mutationKey: ["cancelBookingRequest"],
+    mutationFn: () => cancelBookingRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("bookingCancelledWorker"));
+      toast.success(t("bookingRequestCancelledSuccessfully"));
     },
   });
 
@@ -231,14 +231,14 @@ const ButtonContainer = ({
   // });
 
   const handleLikeFunction = () => {
-    if (role === "workers") mutationLikeWorker?.mutate();
-    else if (role === "mediators") mutationLikeMediator?.mutate();
+    if (role === "worker") mutationLikeWorker?.mutate();
+    else if (role === "mediator") mutationLikeMediator?.mutate();
     else mutationLikeEmployer?.mutate();
   };
 
   const handleUnLikeFunction = () => {
-    if (role === "workers") mutationUnLikeWorker?.mutate();
-    else if (role === "mediators") mutationUnLikeMediator?.mutate();
+    if (role === "worker") mutationUnLikeWorker?.mutate();
+    else if (role === "mediator") mutationUnLikeMediator?.mutate();
     else mutationUnLikeEmployer?.mutate();
   };
 
@@ -262,7 +262,6 @@ const ButtonContainer = ({
           mutationSuspendUser?.isPending ||
           mutationCancelRequest?.isPending ||
           mutationRemoveMemberFromTeam?.isPending
-          // mutationDeleteUser?.isPending
         }
       />
       <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
@@ -360,7 +359,7 @@ const ButtonContainer = ({
               </>
             )}
 
-            {(user?.status !== "ACTIVE") && (
+            {user?.status !== "ACTIVE" && (
               <>
                 <Button
                   isPrimary={true}
@@ -391,6 +390,7 @@ const ButtonContainer = ({
       <AddBookingDetails
         refetch={refetch}
         id={id}
+        role={user?.role}
         isAddBookingModal={isAddBookingModal}
         setIsAddBookingModal={setIsAddBookingModal}
       />

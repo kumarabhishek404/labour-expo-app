@@ -13,31 +13,38 @@ import { Link, router, useGlobalSearchParams } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
-import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import Button from "../inputs/Button";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
-const ListingsVerticalWorkers = ({
+const ListingsVerticalBookings = ({
   availableInterest,
   listings,
   loadMore,
   isFetchingNextPage,
+  onCancelBooking,
   refreshControl,
   type,
 }: any) => {
+  const userDetails = useAtomValue(UserAtom);
+
   const RenderItem = React.memo(({ item }: any) => {
-    console.log("role", type);
+    console.log("Item", item);
+    const employer = item?.employer;
     return (
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: "/screens/users/[id]",
+              pathname: "/screens/bookings/[id]",
               params: {
                 id: item?._id,
                 role: type,
                 title: `${t(type)} ${t("details")}`,
+                data: JSON.stringify(item),
               },
             })
           }
@@ -45,8 +52,8 @@ const ListingsVerticalWorkers = ({
           <View style={styles.item}>
             <Image
               source={
-                item?.profilePicture
-                  ? { uri: item?.profilePicture }
+                employer?.profilePicture
+                  ? { uri: employer?.profilePicture }
                   : coverImage
               }
               style={styles.image}
@@ -59,36 +66,45 @@ const ListingsVerticalWorkers = ({
 
             <View style={styles.itemInfo}>
               <View>
-                <SkillSelector
-                  canAddSkills={false}
-                  role={item?.role}
-                  isShowLabel={false}
-                  style={styles?.skillsContainer}
-                  tagStyle={styles?.skillTag}
-                  userSkills={item?.skills}
-                  availableSkills={availableInterest}
-                  count={5}
-                />
-
                 <CustomHeading textAlign="left">
-                  {item?.firstName} {item?.middleName} {item?.lastName}
+                  {item?.type} - {item?.subType}
                 </CustomHeading>
 
-                <CustomText textAlign="left">{item?.address}</CustomText>
+                <CustomText textAlign="left">
+                  Address - {item?.address}
+                </CustomText>
+                <CustomText textAlign="left">
+                  Start Date - {item?.startingDate}
+                </CustomText>
+                <CustomText textAlign="left">
+                  Duration - {item?.duration}
+                </CustomText>
+                <CustomText textAlign="left">
+                  Emmployer - {employer?.firstName} {employer?.lastName}
+                </CustomText>
+                <CustomText textAlign="left">{item?.description}</CustomText>
               </View>
               <View style={styles.ratingPriceContainer}>
                 <RatingAndReviews
-                  rating={item?.rating?.average}
-                  reviews={item?.rating?.count}
+                  rating={employer?.rating?.average}
+                  reviews={employer?.rating?.count}
                 />
-                {item?.role === "WORKER" && (
-                  <View style={styles.priceContainer}>
-                    <CustomHeading>
-                      <FontAwesome name="rupee" size={14} />{" "}
-                      {item?.price || "350"}/Day
-                    </CustomHeading>
-                  </View>
-                )}
+                <View style={styles.priceContainer}>
+                  <CustomHeading>
+                    {/* <FontAwesome name="rupee" size={14} /> {item?.duration} */}
+                    <Button
+                      isPrimary={false}
+                      title="Cancel"
+                      onPress={() =>
+                        onCancelBooking(
+                          userDetails?.role === "EMPLOYER"
+                            ? item?.worker?._id
+                            : item?._id
+                        )
+                      }
+                    />
+                  </CustomHeading>
+                </View>
               </View>
             </View>
           </View>
@@ -134,7 +150,7 @@ const ListingsVerticalWorkers = ({
   );
 };
 
-export default ListingsVerticalWorkers;
+export default ListingsVerticalBookings;
 
 const styles = StyleSheet.create({
   container: {

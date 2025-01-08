@@ -14,6 +14,8 @@ import MobileNumberField from "@/components/inputs/MobileNumber";
 import { Feather } from "@expo/vector-icons";
 import ModalComponent from "@/components/commons/Modal";
 import { set } from "lodash";
+import { useMutation } from "@tanstack/react-query";
+import { checkMobileExistance } from "@/app/api/user";
 
 interface FirstScreenProps {
   setStep: any;
@@ -38,7 +40,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   lastName,
   setLastName,
 }: FirstScreenProps) => {
-  const [mobileIsVerified, setMobileIsVerified] = useState(false);
+  const [isMobileNumberExist, setIsMobileNumberExist] = useState<boolean|null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const {
     control,
@@ -59,13 +61,31 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     setPhoneNumber(data?.phoneNumber);
     setFirstName(data?.firstName);
     setLastName(data?.lastName);
-    setModalVisible(true);
+    if (!isMobileNumberExist) {
+      setModalVisible(true);
+    }
   };
 
   const onConfirmMobilerNumber = () => {
     setModalVisible(false);
     setStep(2);
   };
+
+  const mutationCheckMobileNumber = useMutation({
+    mutationKey: ["checkMobileNumber"],
+    mutationFn: (payload: any) => checkMobileExistance(payload),
+    onSuccess: (response) => {
+      console.log("Response while checking the mobile number - ", response);
+      if (response?.data?.data?.exists) {
+        setIsMobileNumberExist(true);
+      } else {
+        setIsMobileNumberExist(false);
+      }
+    },
+    onError: (err) => {
+      console.error("error while deactivatibg the profile ", err);
+    },
+  });
 
   const modalContent = () => (
     <View style={{ padding: 10 }}>
@@ -75,7 +95,12 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       <CustomText fontSize={16} color="#555">
         {t("isYourCorrectNumber")}
       </CustomText>
-      <CustomText fontSize={24} fontWeight="bold" color={Colors?.primary} style={{letterSpacing: 1}}>
+      <CustomText
+        fontSize={20}
+        fontWeight="bold"
+        color={Colors?.primary}
+        style={{ letterSpacing: 1 }}
+      >
         {watch("countryCode")} {watch("phoneNumber")}
       </CustomText>
     </View>
@@ -106,18 +131,24 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               countryCode={countryCode}
               setCountryCode={setCountryCode}
               phoneNumber={value}
-              setPhoneNumber={(val: any) => {
+              setPhoneNumber={async (val: any) => {
                 const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
                 if (val.length < 10) {
                   onChange(val);
+                  setIsMobileNumberExist(true);
                 } else if (val.length === 10 && regex.test(val)) {
                   onChange(val);
+                  await mutationCheckMobileNumber.mutate({
+                    mobile: val,
+                  });
                 }
                 return;
               }}
               onBlur={onBlur}
               errors={errors}
+              isMobileNumberExist={isMobileNumberExist}
               placeholder={t("enterYourMobileNumber")}
+              loading={mutationCheckMobileNumber.isPending}
               icon={
                 <Feather
                   name={"phone"}
@@ -144,9 +175,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourFirstName")}
-              textStyles={{ fontSize: 18 }}
+              textStyles={{ fontSize: 16 }}
               containerStyle={errors?.firstName && styles.errorInput}
               errors={errors}
+              disabled={isMobileNumberExist}
             />
           )}
         />
@@ -165,9 +197,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourLastName")}
-              textStyles={{ fontSize: 18 }}
+              textStyles={{ fontSize: 16 }}
               containerStyle={errors?.lastName && styles.errorInput}
               errors={errors}
+              disabled={isMobileNumberExist}
             />
           )}
         />

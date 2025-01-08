@@ -255,7 +255,7 @@ export const filterWorkerTypes = (
 };
 
 export const convertToLabelValueArray = (stringArray: string[]) => {
-  return stringArray.map((str) => ({
+  return stringArray?.map((str) => ({
     label: str,
     value: str,
   }));

@@ -51,7 +51,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
   };
 
   console.log("tye - ", type);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -169,10 +169,10 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             <View style={styles.row}>
               <CustomHeading>{t("location")}</CustomHeading>
               <CustomText style={styles.value} textAlign="left">
-                {!isEmptyObject(location) ? (
+                {isEmptyObject(location) ? (
                   JSON?.stringify(location)
                 ) : (
-                  <CustomText>{t("checkServiceDetails")}</CustomText>
+                  <CustomText>{t("locationNotFound")}</CustomText>
                 )}
               </CustomText>
             </View>
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 20,
+    gap: 10,
   },
   value: {
     width: "60%",

@@ -9,17 +9,9 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 
-const EmployerCard = ({ employer }: any) => {
+const WorkerCard = ({ worker }: any) => {
   return (
-    <View
-      style={[
-        styles.employerContainer,
-        {
-          marginVertical: 10,
-          marginHorizontal: 10,
-        },
-      ]}
-    >
+    <View style={[styles.employerContainer]}>
       <View
         style={[
           styles.card,
@@ -34,18 +26,18 @@ const EmployerCard = ({ employer }: any) => {
       >
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
-            <CustomHeading textAlign="left">{t("employer")}</CustomHeading>
+            <CustomHeading textAlign="left">{t("worker")}</CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
               </CustomText>
-              {employer?.firstName} {employer?.lastName}
+              {worker?.firstName} {worker?.lastName}
             </CustomText>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("address")} :{" "}
               </CustomText>
-              {employer?.address}
+              {worker?.address}
             </CustomText>
           </View>
 
@@ -93,7 +85,7 @@ const EmployerCard = ({ employer }: any) => {
         >
           <AvatarComponent
             isEditable={false}
-            profileImage={employer?.profilePicture}
+            profileImage={worker?.profilePicture}
           />
           <Button
             isPrimary={true}
@@ -102,7 +94,7 @@ const EmployerCard = ({ employer }: any) => {
               router.push({
                 pathname: "/screens/users/[id]",
                 params: {
-                  id: employer?._id,
+                  id: worker?._id,
                   role: "employers",
                   title: t("employerDetails"),
                   type: "details",
@@ -127,8 +119,8 @@ const EmployerCard = ({ employer }: any) => {
 
 const styles = StyleSheet.create({
   employerContainer: {
-    marginVertical: 10,
     backgroundColor: "#e1e8e5",
+    marginHorizontal: 10,
     borderRadius: 8,
   },
   card: {
@@ -149,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmployerCard;
+export default WorkerCard;

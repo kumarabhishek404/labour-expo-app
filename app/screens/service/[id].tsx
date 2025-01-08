@@ -486,7 +486,7 @@ const ServiceDetails = () => {
           )} */}
 
           {service && service?.employer?._id !== userDetails?._id && (
-            <EmployerCard service={service} />
+            <EmployerCard employer={service?.employer} />
           )}
         </Animated.ScrollView>
       </ScrollView>

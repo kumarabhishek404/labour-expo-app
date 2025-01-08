@@ -19,6 +19,7 @@ export const getWorkerById = async (id: any) => {
 };
 
 export const fetchAllWorkers = async ({ pageParam, skill }: any) => {
+  console.log("skill", skill);
   try {
     const data = await makeGetRequest(
       `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=WORKER`
@@ -92,10 +93,10 @@ export const unlikeWorker = async ({ workerID }: any) => {
 };
 
 export const addSkills = async (payload: any) => {
-  console.log("Skisll-", payload);
-
+  console.log("payloet--",payload);
+  
   try {
-    const data = await makePostRequest("/worker/add-skills", payload);
+    const data = await makePostRequest("/user/add-skill", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -105,6 +106,23 @@ export const addSkills = async (payload: any) => {
     toast.error(
       error?.response?.data?.message ||
         "An error occurred while adding skills in the worker"
+    );
+    throw error;
+  }
+};
+
+export const removeSkill = async (payload: any) => {
+  try {
+    const data = await makePostRequest("/user/remove-skill", payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while remove skill from the user profile : `,
+      error?.response?.data?.message
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        "An error occurred while remove skill from the user profile"
     );
     throw error;
   }

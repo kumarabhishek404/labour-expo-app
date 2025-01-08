@@ -6,6 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import CustomDatePicker from "./CustomDatePicker";
 
 interface DateFieldProps {
   title: string;
@@ -26,7 +27,9 @@ const DateField: React.FC<DateFieldProps> = ({
 }: DateFieldProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const onDateChange = (event: any, selectedDate: any) => {
+  const onDateChange = (selectedDate: any) => {
+    console.log("selectedDate", selectedDate);
+
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
@@ -47,14 +50,21 @@ const DateField: React.FC<DateFieldProps> = ({
           </View>
         </View>
         {showDatePicker && (
-          <DateTimePicker
-            testID="startDatePicker"
-            value={date || new Date()}
-            mode="date"
-            is24Hour={true}
-            display="default"
-            onChange={onDateChange}
+          <CustomDatePicker
+            visible={true}
+            selectedDate={date || new Date()}
+            onClose={() => setShowDatePicker(false)}
+            onDateSelect={(date: any) => onDateChange(date)}
           />
+          // <DateTimePicker
+          //   testID="startDatePicker"
+          //   value={date || new Date()}
+          //   mode="date"
+          //   // is24Hour={true}
+          //   display="default"
+          //   locale="hi-IN"
+          //   onChange={onDateChange}
+          // />
         )}
       </TouchableOpacity>
       {errors[name] && (
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
     height: 53,
     padding: 10,
     borderColor: Colors?.secondary,
-    borderRadius: 8
+    borderRadius: 8,
   },
   dateItem: {
     width: "100%",

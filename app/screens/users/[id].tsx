@@ -59,16 +59,25 @@ const User = () => {
     user?.employedBy?.includes(userDetails?._id)
   );
   const [isWorkerBookingRequested, setIsWorkerBookingRequested] = useState(
-    user?.bookingRequests?.includes(userDetails?._id)
+    user?.bookingRequestedBy?.includes(userDetails?._id)
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
-    user?.bookedBy?.includes(userDetails?._id)
+    user?.bookedBy?.find((item: any) => item?.employer === userDetails?._id) ||
+      false
   );
   const reviewsSectionRef = useRef<View>(null);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
   const [reviewsPosition, setReviewsPosition] = useState(0);
 
   const { role, title } = useGlobalSearchParams();
+
+  console.log(
+    "userDetails",
+    user?.bookedBy,
+    user?.bookingRequestedBy,
+    userDetails?._id,
+    isWorkerBooked
+  );
 
   const {
     isLoading,
@@ -88,9 +97,13 @@ const User = () => {
     setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
     setIsInYourTeam(user?.employedBy?.includes(userDetails?._id));
     setIsWorkerBookingRequested(
-      user?.bookingRequests?.includes(userDetails?._id)
+      user?.bookingRequestedBy?.includes(userDetails?._id)
     );
-    setIsWorkerBooked(user?.bookedBy?.includes(userDetails?._id));
+    setIsWorkerBooked(
+      user?.bookedBy?.find(
+        (item: any) => item?.employer === userDetails?._id
+      ) || false
+    );
   }, [user]);
 
   useFocusEffect(
@@ -183,17 +196,19 @@ const User = () => {
             </View>
 
             <View style={styles.highlightWrapper}>
-              <View style={[styles?.highlightBox, { width: "42%" }]}>
-                <View style={styles.highlightIcon}>
-                  <Ionicons name="time" size={18} color={Colors.primary} />
+              {user?.role === "WORKER" && (
+                <View style={[styles?.highlightBox, { width: "42%" }]}>
+                  <View style={styles.highlightIcon}>
+                    <Ionicons name="time" size={18} color={Colors.primary} />
+                  </View>
+                  <View>
+                    <CustomText textAlign="left">{t("price")}</CustomText>
+                    <CustomHeading fontSize={14} textAlign="left">
+                      {user?.duration || 0} Rs / {t("perDay")}
+                    </CustomHeading>
+                  </View>
                 </View>
-                <View>
-                  <CustomText textAlign="left">{t("price")}</CustomText>
-                  <CustomHeading fontSize={14} textAlign="left">
-                    {user?.duration || 0} Rs / {t("perDay")}
-                  </CustomHeading>
-                </View>
-              </View>
+              )}
               <View style={[styles?.highlightBox, { width: "58%" }]}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
@@ -233,6 +248,7 @@ const User = () => {
             {role !== "employers" && (
               <SkillSelector
                 canAddSkills={false}
+                role={user?.role}
                 isShowLabel={true}
                 style={styles?.skillsContainer}
                 userSkills={user?.skills}

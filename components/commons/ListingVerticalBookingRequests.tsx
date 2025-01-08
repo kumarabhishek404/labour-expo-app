@@ -45,7 +45,7 @@ type RequestCardProps = {
     createdAt: Date;
     updatedAt: Date;
     status: string;
-    sender: UserType;
+    employer: UserType;
     receiver: UserType;
   };
   requestType: any;
@@ -74,7 +74,7 @@ type RenderItemTypes = {
       price: string;
       address: string;
     };
-    sender: {
+    employer: {
       _id: string;
       firstName: string;
       lastName: string;
@@ -117,7 +117,7 @@ const getStatusColor = (status: string): string => {
 };
 
 const RequestCardAdmin = React.memo(({ item }: RequestCardProps) => {
-  const sender = item?.sender;
+  const sender = item?.employer;
   const receiver = item?.receiver;
   const status = item?.status;
 
@@ -252,11 +252,13 @@ const RequestCardUser = React.memo(
     onAcceptRequest,
     onRejectRequest,
     onCancelRequest,
-  }: RequestCardProps & { userDetails: UserType }) => {
-    const isSender = item?.sender?._id === userDetails?._id;
-    const isReceiver = item?.receiver?._id === userDetails?._id;
+  }: any) => {
+    const isSender = item?.employer === userDetails?._id;
+    const isReceiver = item?.receiver === userDetails?._id;
 
-    const user = isSender ? item?.receiver : item?.sender;
+    console.log("item", item);
+
+    const user = isSender ? item?.receiver : item?.employer;
 
     return (
       <TouchableOpacity
@@ -283,8 +285,8 @@ const RequestCardUser = React.memo(
               {user?.firstName} {user?.lastName}
             </CustomHeading>
             <RatingAndReviews
-              rating={user?.rating || 4.5}
-              reviews={user?.reviews || 400}
+              rating={user?.rating || 0}
+              reviews={user?.count || 0}
             />
             <SkillSelector
               canAddSkills={false}
@@ -294,7 +296,7 @@ const RequestCardUser = React.memo(
               tagStyle={styles?.skillTag}
               tagTextStyle={styles?.skillTagText}
               userSkills={user?.skills}
-              availableSkills={MEDIATORTYPES}
+              availableSkills={WORKERTYPES}
               count={2}
             />
             <CustomText textAlign="left">{user?.address}</CustomText>
@@ -304,32 +306,52 @@ const RequestCardUser = React.memo(
           </View>
         </View>
 
-        <View
-          style={
-            isSender ? styles.actionContainer : styles?.sentActionContainer
-          }
-        >
-          {isSender && (
-            <Button
-              isPrimary={false}
-              title="Cancel"
-              onPress={() => onCancelRequest?.(item?.receiver?._id)}
-            />
-          )}
-          {isReceiver && (
-            <>
+        <View style={styles.serviceContainerWrapper}>
+          <View style={styles.serviceContainer}>
+            <CustomHeading textAlign="left">
+              {t(item?.type)} - {t(item?.subType)} ({item?.duration} {t("days")}
+              )
+            </CustomHeading>
+            {item?.description && (
+              <CustomText textAlign="left">{item?.description}</CustomText>
+            )}
+            <CustomText textAlign="left">
+              {t("address")} - {user?.address}
+            </CustomText>
+          </View>
+          <View
+            style={
+              isSender ? styles.actionContainer : styles?.sentActionContainer
+            }
+          >
+            {isSender && (
               <Button
                 isPrimary={false}
-                title="Reject"
-                onPress={() => onRejectRequest?.(item?._id)}
+                title="Cancel"
+                onPress={() => onCancelRequest(item?.receiver?._id)}
+                style={styles?.btn}
+                textStyle={styles?.btnText}
               />
-              <Button
-                isPrimary={true}
-                title={t("accept")}
-                onPress={() => onAcceptRequest?.(item?._id)}
-              />
-            </>
-          )}
+            )}
+            {isReceiver && (
+              <>
+                <Button
+                  isPrimary={false}
+                  title={t("reject")}
+                  onPress={() => onRejectRequest(item?._id)}
+                  style={styles?.btn}
+                  textStyle={styles?.btnText}
+                />
+                <Button
+                  isPrimary={true}
+                  title={t("accept")}
+                  onPress={() => onAcceptRequest(item?._id)}
+                  style={styles?.btn}
+                  textStyle={styles?.btnText}
+                />
+              </>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -338,7 +360,7 @@ const RequestCardUser = React.memo(
 
 RequestCardUser.displayName = "RequestCardUser";
 
-const ListingVerticalRequests = ({
+const ListingVerticalBookingRequests = ({
   listings,
   requestType,
   loadMore,
@@ -416,7 +438,7 @@ const ListingVerticalRequests = ({
   return <View style={styles.container}>{renderContent()}</View>;
 };
 
-export default ListingVerticalRequests;
+export default ListingVerticalBookingRequests;
 
 const styles = StyleSheet.create({
   container: {
@@ -426,7 +448,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     padding: 16,
-    marginHorizontal: 5,
     marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -568,6 +589,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   actionContainer: {
+    width: "30%",
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 10,
@@ -586,8 +608,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sentActionContainer: {
+    width: "30%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  serviceContainerWrapper: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
+    borderTopColor: Colors.secondary,
+    borderTopWidth: 0.3,
     marginTop: 15,
+    paddingTop: 10,
+  },
+  serviceContainer: {
+    width: "70%",
+  },
+  btn: {
+    alignSelf: "flex-end",
+    width: "80%",
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  btnText: {
+    fontSize: 14,
   },
 });

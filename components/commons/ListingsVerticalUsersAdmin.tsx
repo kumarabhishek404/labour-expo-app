@@ -143,6 +143,7 @@ const ListingsVerticalUsersAdmin = ({
               <View>
                 <SkillSelector
                   canAddSkills={false}
+                  role={item?.role}
                   isShowLabel={false}
                   style={styles?.skillsContainer}
                   tagStyle={styles?.skillTag}

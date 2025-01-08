@@ -172,8 +172,8 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/bookings",
         }),
-      roleCondition:
-        userDetails?.role === "EMPLOYER" || userDetails?.role === "WORKER",
+      // roleCondition:
+      //   userDetails?.role === "EMPLOYER" || userDetails?.role === "WORKER",
       style: [styles?.menuItem],
       isSuspended: disabled,
     },

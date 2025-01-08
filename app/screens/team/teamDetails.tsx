@@ -50,7 +50,7 @@ const TeamDetails = ({ type, user }: any) => {
                 {t("team")}
               </CustomHeading>
               <CustomText color={Colors?.white}>
-                ({t(user?.teamDetails?.status.toLowerCase())})
+                ({t(user?.teamDetails?.status)})
               </CustomText>
             </View>
             <CustomText color={Colors?.white}>

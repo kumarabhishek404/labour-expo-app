@@ -20,6 +20,7 @@ import { signInWithPhoneNumber, verifyCode } from "@/app/api/firebase";
 import ModalComponent from "../commons/Modal";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "../commons/Loader";
+import { checkMobileExistance } from "@/app/api/user";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -30,7 +31,9 @@ interface MobileNumberFieldProps {
   setPhoneNumber: any;
   onBlur: any;
   errors: any;
+  isMobileNumberExist?: boolean|null;
   placeholder: string;
+  loading: boolean;
   icon?: any;
 }
 
@@ -43,7 +46,9 @@ const MobileNumberField = ({
   setPhoneNumber,
   onBlur,
   errors,
+  isMobileNumberExist,
   placeholder,
+  loading,
   icon,
 }: MobileNumberFieldProps) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -218,10 +223,12 @@ const MobileNumberField = ({
           maxLength={10}
           label=""
           name={name}
-          containerStyle={errors[name] && styles.errorInput}
+          containerStyle={(errors[name] || isMobileNumberExist) && styles.errorInput}
+          isMobileNumberExist={isMobileNumberExist}
           errors={errors}
-          style={{ fontSize: 20 }}
-          textStyles={{ fontSize: 16 }}
+          loading={loading}
+          style={{ fontSize: 18 }}
+          textStyles={{ fontSize: 18 }}
           icon={
             <View
               style={{
@@ -231,7 +238,7 @@ const MobileNumberField = ({
               }}
             >
               {icon && icon}
-              <CustomHeading fontSize={22}>{countryCode}</CustomHeading>
+              <CustomHeading fontSize={18}>{countryCode}</CustomHeading>
             </View>
           }
         />

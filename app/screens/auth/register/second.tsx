@@ -12,6 +12,7 @@ import { REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import DateField from "@/components/inputs/DateField";
 import Gender from "@/components/inputs/Gender";
+import CustomDatePicker from "@/components/inputs/CustomDatePicker";
 
 interface SecondScreenProps {
   setStep: any;
@@ -99,13 +100,13 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           control={control}
           name="email"
           defaultValue=""
-          rules={{
-            required: t("emailAddressIsRequired"),
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: t("enterAValidEmailAddress"),
-            },
-          }}
+          // rules={{
+          //   required: t("emailAddressIsRequired"),
+          //   pattern: {
+          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+          //     message: t("enterAValidEmailAddress"),
+          //   },
+          // }}
           render={({ field: { onChange, onBlur, value } }) => (
             <EmailAddressField
               name="email"

@@ -26,14 +26,8 @@ const LocationField = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const userDetails = useAtomValue(UserAtom);
 
-  console.log(
-    "userDetails?.savedAddresses",
-    userDetails?.savedAddresses,
-    convertToLabelValueArray(userDetails?.savedAddresses)
-  );
-
   const [allSavedAddresses, setAllSavedAddresses] = useState([
-    ...convertToLabelValueArray(userDetails?.savedAddresses),
+    ...(userDetails?.savedAddresses?.length > 0 ? convertToLabelValueArray(userDetails?.savedAddresses) : []),
     { label: t("addNewAddress"), value: "addAddress" },
   ]);
   const dropdownRef = useRef<any>(null);

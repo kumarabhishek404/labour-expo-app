@@ -1,10 +1,16 @@
-import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
+import {
+  makeDeleteRequest,
+  makeGetRequest,
+  makePostRequest,
+  makePostRequestFormData,
+} from ".";
 import { toast } from "../hooks/toast";
 
 export const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
+  console.log("pageParam", pageParam);
   try {
     const data = await makeGetRequest(
-      `/booking/all-sent-booking-requests?page=${pageParam}&limit=5`
+      `/employer/invitations/sent?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -23,17 +29,17 @@ export const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
 export const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/booking/all-received-booking-requests?page=${pageParam}&limit=5`
+      `/user/invitation/received?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching recieved bookings : `,
+      `[userService] An error occurred while fetching recieved booking requests : `,
       error?.response?.data?.message
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching recieved bookings"
+        "An error occurred while fetching recieved booking requests"
     );
     throw error;
   }
@@ -42,7 +48,7 @@ export const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
 export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/booking/all-booked-workers?page=${pageParam}&limit=5`
+      `/employer/bookings/all?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -61,7 +67,7 @@ export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
 export const fetchAllMyBookings = async ({ pageParam }: any) => {
   try {
     const data = await makeGetRequest(
-      `/booking/all-my-bookings?page=${pageParam}&limit=5`
+      `/user/booked/all?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -79,26 +85,29 @@ export const fetchAllMyBookings = async ({ pageParam }: any) => {
 
 export const addBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/booking/add-booking-request", payload);
+    const data = await makePostRequestFormData(
+      "/employer/invitations/send",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while adding booking request : `,
+      `[userService] An error occurred while sending booking request : `,
       error?.response?.data?.message
     );
     toast.error(
       error?.response?.data?.message ||
-        "An error occurred while adding booking request"
+        "An error occurred while sending booking request"
     );
     throw error;
   }
 };
 
 export const cancelBookingRequest = async (payload: any) => {
+  console.log("payload", payload);
+
   try {
-    const data = await makeDeleteRequest(
-      `/booking/cancel-booking-request/${payload?.workerID}`
-    );
+    const data = await makePostRequest("/employer/invitations/cancel", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -115,9 +124,7 @@ export const cancelBookingRequest = async (payload: any) => {
 
 export const acceptBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest(
-      `/booking/accept-booking-request/${payload?.workerID}`
-    );
+    const data = await makePostRequest("/user/invitation/accept", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -134,9 +141,7 @@ export const acceptBookingRequest = async (payload: any) => {
 
 export const rejectBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest(
-      `/booking/reject-booking-request/${payload?.workerID}`
-    );
+    const data = await makePostRequest("/user/invitation/reject", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -153,9 +158,7 @@ export const rejectBookingRequest = async (payload: any) => {
 
 export const removeBookedWorker = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(
-      `/booking/remove-booked-worker/${payload?.workerID}`
-    );
+    const data = await makePostRequest("/employer/bookings/remove", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -172,9 +175,7 @@ export const removeBookedWorker = async (payload: any) => {
 
 export const cancelBooking = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(
-      `/booking/cancel-booking/${payload?.bookingID}`
-    );
+    const data = await makePostRequest("/user/booked/cancel", payload);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -191,9 +192,7 @@ export const cancelBooking = async (payload: any) => {
 
 export const completeBooking = async (payload: any) => {
   try {
-    const data = await makePostRequest(
-      `/booking/complete-booking/${payload?.bookingID}`
-    );
+    const data = await makePostRequest("/employer/invitations/complete", payload);
     return data.data;
   } catch (error: any) {
     console.error(

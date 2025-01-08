@@ -17,6 +17,8 @@ import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { useAtomValue } from "jotai";
+import { UserAtom } from "@/app/AtomStore/user";
 
 type Props = {
   availableInterest: any;
@@ -39,6 +41,7 @@ type RenderItemTypes = {
     rating: number;
     reviews: number;
     price: string;
+    role: string;
     isBookmarked: boolean;
   };
 };
@@ -50,6 +53,7 @@ const ListingHorizontalWorkers = ({
   loadMore,
   isFetchingNextPage,
 }: Props) => {
+  const userDetails = useAtomValue(UserAtom)
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <TouchableOpacity
@@ -58,13 +62,8 @@ const ListingHorizontalWorkers = ({
             pathname: "/screens/users/[id]",
             params: {
               id: item?._id,
-              role: "workers",
-              title:
-                category === "workers"
-                  ? t("workerDetails")
-                  : category === "employers"
-                  ? t("employerDetails")
-                  : t("mediatorDetails"),
+              role: "worker",
+              title: t("workerDetails"),
               type: "details",
             },
           })
@@ -85,6 +84,7 @@ const ListingHorizontalWorkers = ({
 
           <SkillSelector
             canAddSkills={false}
+            role={item?.role}
             isShowLabel={false}
             style={styles?.skillsContainer}
             tagStyle={styles?.skillTag}

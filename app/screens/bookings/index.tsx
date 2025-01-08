@@ -29,19 +29,26 @@ import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
 import {
   acceptBookingRequest,
+  cancelBooking,
   cancelBookingRequest,
   fetchAllBookedWorkers,
   fetchAllBookingReceivedRequests,
   fetchAllBookingSentRequests,
+  fetchAllMyBookings,
   rejectBookingRequest,
+  removeBookedWorker,
 } from "@/app/api/booking";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import ListingVerticalBookingRequests from "@/components/commons/ListingVerticalBookingRequests";
+import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 
 const Bookings = () => {
   const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
-  const [totalData, setTotalData] = useState(0);
+  const firstTimeRef = React.useRef(true);
+  const [totalBookingsData, setTotalBookingsData] = useState(0);
+  const [totalRequestsData, setTotalRequestsData] = useState(0);
   const [filteredBookedWorkers, setFilteredBookedWorkers]: any = useState([]);
   const [filteredReceivedRequests, setFilteredReceivedRequests]: any = useState(
     []
@@ -55,14 +62,15 @@ const Bookings = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    refetch,
+    refetch: refetchBookings,
   } = useInfiniteQuery({
     queryKey: ["bookings"],
     queryFn: ({ pageParam }) =>
       userDetails?.role === "EMPLOYER"
         ? fetchAllBookedWorkers({ pageParam })
-        : fetchAllBookedWorkers({ pageParam }),
+        : fetchAllMyBookings({ pageParam }),
     initialPageParam: 1,
+    enabled: category === "booking",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -87,6 +95,7 @@ const Bookings = () => {
         ? fetchAllBookingSentRequests({ pageParam })
         : fetchAllBookingReceivedRequests({ pageParam }),
     initialPageParam: 1,
+    enabled: category === "request",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -98,8 +107,19 @@ const Bookings = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      if (category === "booking") refetchBookings();
+      else refetchRequests();
+    }, [refetchRequests])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
       const totalData = responseBookings?.pages[0]?.pagination?.total;
-      setTotalData(totalData);
+      setTotalBookingsData(totalData);
       const unsubscribe = setFilteredBookedWorkers(
         responseBookings?.pages?.flatMap((page: any) => page.data || [])
       );
@@ -110,7 +130,7 @@ const Bookings = () => {
   useFocusEffect(
     React.useCallback(() => {
       const totalData = responseRequests?.pages[0]?.pagination?.total;
-      setTotalData(totalData);
+      setTotalRequestsData(totalData);
       const unsubscribe = setFilteredReceivedRequests(
         responseRequests?.pages?.flatMap((page: any) => page.data || [])
       );
@@ -118,32 +138,53 @@ const Bookings = () => {
     }, [responseRequests])
   );
 
-  const mutationCancelRequest = useMutation({
+  const mutationCancelBookingRequest = useMutation({
     mutationKey: ["cancelBookingRequest"],
-    mutationFn: (id) => cancelBookingRequest({ bookingId: id }),
+    mutationFn: (id: string) => cancelBookingRequest({ userId: id }),
     onSuccess: (response) => {
-      refetch();
-      console.log("Response while liking a worker - ", response);
+      refetchRequests();
+      toast.success(t("bookingRequestCancelledSuccessfully"));
+    },
+  });
+
+  const mutationRemoveBookedWorker = useMutation({
+    mutationKey: ["removeBookedWorkerOrMediator"],
+    mutationFn: (id: string) => removeBookedWorker({ userId: id }),
+    onSuccess: (response) => {
+      refetchBookings();
+      toast.success(t("removeBookedWorkerOrMediatorSuccessfully"));
     },
   });
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptBookingRequest"],
-    mutationFn: (id) => acceptBookingRequest({ bookingId: id }),
+    mutationFn: (id) => acceptBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
-      refetch();
-      refreshUser();
-      toast.success(t("requestAcceptedSuccessfully"));
+      refetchRequests();
+      toast.success(t("bookingRequestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
   });
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectBookingRequest"],
-    mutationFn: (id) => rejectBookingRequest({ requestId: id }),
+    mutationFn: (id) => rejectBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
-      refetch();
+      refetchRequests();
+      toast.success(t("bookingRequestRejectedSuccessfully"));
       console.log("Response while rejecting request - ", response);
+    },
+  });
+
+  const mutationCancelBooking = useMutation({
+    mutationKey: ["cancelBooking"],
+    mutationFn: (id: string) => cancelBooking({ bookingId: id }),
+    onSuccess: () => {
+      refetchBookings();
+      toast.success(t("bookingCancelledSuccessfully"));
+    },
+    onError: (err) => {
+      console.error("error while cancelling request to worker ", err);
     },
   });
 
@@ -165,11 +206,20 @@ const Bookings = () => {
 
   const onCatChanged = (category: string) => {
     setCategory(category);
-    refetch();
+    // Explicitly call the refetch function for the current query
+    if (category === "booking") {
+      refetchBookings();
+    } else if (category === "request") {
+      refetchRequests();
+    }
   };
 
   const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    await refetch();
+    if (category === "booking") {
+      await refetchBookings();
+    } else if (category === "request") {
+      await refetchRequests();
+    }
   });
 
   return (
@@ -186,9 +236,11 @@ const Bookings = () => {
           loading={
             isLoading ||
             isLoadingRequests ||
-            mutationCancelRequest?.isPending ||
+            mutationCancelBookingRequest?.isPending ||
             mutationAcceptRequest?.isPending ||
-            mutationRejectRequest?.isPending
+            mutationRejectRequest?.isPending ||
+            mutationCancelBooking?.isPending ||
+            mutationRemoveBookedWorker?.isPending
           }
         />
         <View style={styles.container}>
@@ -216,23 +268,30 @@ const Bookings = () => {
           />
 
           <PaginationString
-            type="requests"
+            type="request"
             isLoading={isLoading || isRefetching || isRefetchingRequests}
             totalFetchedData={
-              userDetails?.role === "EMPLOYER"
+              category === "booking"
                 ? memoizedBookedWorkers?.length
                 : memoizedReceivedRequests?.length
             }
-            totalData={totalData}
+            totalData={
+              category === "booking" ? totalBookingsData : totalRequestsData
+            }
           />
           {category === "booking" ? (
-            <ListingsVerticalWorkers
+            <ListingsVerticalBookings
               style={{ flexGrow: 1 }}
               availableInterest={WORKERTYPES}
               listings={memoizedBookedWorkers || []}
               loadMore={loadMore}
-              type="worker"
+              type="booking"
               isFetchingNextPage={isFetchingNextPage}
+              onCancelBooking={
+                userDetails?.role === "EMPLOYER"
+                  ? mutationRemoveBookedWorker?.mutate
+                  : mutationCancelBooking?.mutate
+              }
               refreshControl={
                 <RefreshControl
                   refreshing={!isRefetching && refreshing}
@@ -241,12 +300,12 @@ const Bookings = () => {
               }
             />
           ) : (
-            <ListingVerticalRequests
+            <ListingVerticalBookingRequests
               listings={memoizedReceivedRequests || []}
               requestType={category}
               loadMore={loadMore}
               isFetchingNextPage={isFetchingNextPageRequests}
-              onCancelRequest={mutationCancelRequest?.mutate}
+              onCancelRequest={mutationCancelBookingRequest?.mutate}
               onAcceptRequest={mutationAcceptRequest?.mutate}
               onRejectRequest={mutationRejectRequest?.mutate}
               refreshControl={

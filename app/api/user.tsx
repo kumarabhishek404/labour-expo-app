@@ -307,14 +307,6 @@ export const leaveTeam = async () => {
 export const checkMobileExistance = async (payload: any) => {
   try {
     const response: any = await makePostRequest(`/user/check-mobile`, payload);
-
-    // Display success message when mobile number check is successful
-    if (response?.data?.exists) {
-      toast.success("Mobile number is registered in the system.");
-    } else {
-      toast.error("Mobile number is not registered in the system.");
-    }
-
     return response;
   } catch (error: any) {
     console.log(
