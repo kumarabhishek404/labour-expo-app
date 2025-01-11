@@ -64,8 +64,6 @@ const SkillSelector = ({
   const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [selectedUserSkills, setSelectedUserSkills] = useState<any[]>([]);
 
-  console.log("selectedSkill--", selectedSkill);
-
   useEffect(() => {
     // Filter available skills by excluding the ones already present in userSkills
     const filteredSkills = availableSkills?.filter(
@@ -152,7 +150,7 @@ const SkillSelector = ({
       }
 
       // Ensure at least one skill remains
-      if (userSkills.length <= 1) {
+      if (userSkills?.length <= 1) {
         return console.log("At least one skill is required.");
       }
 
@@ -176,7 +174,8 @@ const SkillSelector = ({
             placeholder={t("enterPricePerDay")}
             type="number"
             style={styles.priceInput}
-            value={skillWithPrice?.pricePerDay?.toString() || ""}
+            value={skillWithPrice?.pricePerDay}
+            maxLength={4}
             onChangeText={(price: string) => handlePriceChange(price)}
             icon={
               <FontAwesome
@@ -250,26 +249,27 @@ const SkillSelector = ({
             <CustomHeading>{t("skills")}</CustomHeading>
           </View>
         )}
-        <View style={{ flexDirection: "row", gap: 20 }}>
-          {canAddSkills && (
-            <TouchableOpacity onPress={toggleModal}>
-              <CustomHeading color={Colors?.link} fontWeight="bold">
-                {t("addNewSkills")}
-              </CustomHeading>
-            </TouchableOpacity>
-          )}
-
-          {canAddSkills && (
-            <TouchableOpacity onPress={toggleRemoveModal}>
-              <CustomHeading color={Colors?.danger} fontWeight="bold">
-                {t("removeSkill")}
-              </CustomHeading>
-            </TouchableOpacity>
-          )}
-        </View>
       </View>
 
       <View style={styles.skillContainer}>{renderSkills()}</View>
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        {canAddSkills && (
+          <TouchableOpacity style={style?.addNewSkill} onPress={toggleModal}>
+            <CustomHeading color={Colors?.link} fontWeight="bold">
+              {t("addNewSkills")}
+            </CustomHeading>
+          </TouchableOpacity>
+        )}
+
+        {canAddSkills && (
+          <TouchableOpacity onPress={toggleRemoveModal}>
+            <CustomHeading color={Colors?.danger} fontWeight="bold">
+              {t("removeSkill")}
+            </CustomHeading>
+          </TouchableOpacity>
+        )}
+      </View>
 
       {/* Add Skill Modal */}
       <ModalComponent
@@ -331,9 +331,12 @@ const SkillSelector = ({
           </>
         )}
         primaryButton={{
-          title: userSkills.length <= 1 ? t("atLeastOneSkillRequired") : t("removeSkill"),
+          title:
+            userSkills?.length <= 1
+              ? t("atLeastOneSkillRequired")
+              : t("removeSkill"),
           action: onRemoveSkill,
-          disabled: !selectedSkillToRemove || userSkills.length <= 1, // Disable if no skill is selected or only one skill exists
+          disabled: !selectedSkillToRemove || userSkills?.length <= 1,
         }}
         secondaryButton={{
           action: () => setIsRemoveModalVisible(false),
@@ -346,7 +349,9 @@ const SkillSelector = ({
 export default SkillSelector;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    gap: 5,
+  },
   skillContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

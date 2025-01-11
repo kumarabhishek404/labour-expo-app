@@ -12,6 +12,7 @@ import { useSetAtom } from "jotai";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import moment from "moment";
 
 interface SecondScreenProps {
   setStep: any;
@@ -113,7 +114,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             <DateField
               title={t("startDate")}
               name="startDate"
-              date={value}
+              type="serviceDate"
+              date={moment(value)}
               setDate={onChange}
               onBlur={onBlur}
               errors={errors}
@@ -141,7 +143,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             <DateField
               title={t("endDate")}
               name="endDate"
-              date={value}
+              type="serviceDate"
+              date={moment(value)}
               setDate={onChange}
               onBlur={onBlur}
               errors={errors}

@@ -1,143 +1,323 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Modal,
-  FlatList,
-  Dimensions,
+  ScrollView,
 } from "react-native";
 import moment from "moment";
+import Button from "./Button";
+import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
 
-const { width } = Dimensions.get("window");
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const CustomDatePicker = ({ visible, onClose, onDateSelect }: any) => {
+const CustomDatePicker = ({
+  visible,
+  onClose,
+  selectedDate,
+  onDateSelect,
+  type,
+}: any) => {
   const currentYear = moment().year();
-  const [selectedMonth, setSelectedMonth] = useState(moment().month());
-  const [selectedDay, setSelectedDay] = useState(moment().date() - 1);
-  const [selectedYear, setSelectedYear] = useState(0);
-  const [years, setYears] = useState([]);
+  const startYear = currentYear - 17 - 50;
+  const years =
+    type === "serviceDate"
+      ? [currentYear, currentYear + 1]
+      : Array.from({ length: 50 }, (_, i) => startYear + i).reverse();
+  const months = moment.months();
+
+  const scrollViewRefYearFirst: any = useRef(null);
+  const scrollViewRefYearSecond: any = useRef(null);
+  const scrollViewRefMonthFirst: any = useRef(null);
+  const scrollViewRefMonthSecond: any = useRef(null);
+
+  // Split months into two rows for horizontal scrolling
+  const firstRowMonths = months.slice(0, 6); // First row (January - June)
+  const secondRowMonths = months.slice(6, 12); // Second row (July - December)
+
+  const firstRowYears = type === "serviceDate" ? years : years.slice(0, 25);
+  const secondRowYears = years.slice(25, 50);
+
+  const scrollToIndex = (scrollViewRef: any, index: number) => {
+    if (scrollViewRef.current) {
+      const itemWidth = 50; // Width of each item in pixels (adjust as needed)
+      const offset = index * itemWidth; // Calculate the offset for the index
+      scrollViewRef.current.scrollTo({ x: offset, animated: true });
+    }
+  };
 
   useEffect(() => {
-    const generatedYears: any = Array.from(
-      { length: 101 },
-      (_, i) => currentYear - 50 + i
-    );
-    setYears(generatedYears);
-    setSelectedYear(
-      generatedYears.findIndex((year: any) => year === currentYear)
-    );
+    if (selectedDate?.month() > 5) {
+      scrollToIndex(scrollViewRefMonthSecond, selectedDate?.month() - 7);
+    } else {
+      scrollToIndex(scrollViewRefMonthFirst, selectedDate?.month()-1);
+    }
+    if (years?.indexOf(selectedDate?.year()) > 26) {
+      scrollToIndex(
+        scrollViewRefYearSecond,
+        years?.indexOf(selectedDate?.year()) - 25
+      );
+    } else {
+      scrollToIndex(
+        scrollViewRefYearFirst,
+        years?.indexOf(selectedDate?.year())-1
+      );
+    }
   }, []);
 
-  const daysInMonth = (month: any, year: any) =>
-    moment(`${year}-${month + 1}`, "YYYY-MM").daysInMonth();
+  const handleSelect = (type: any, value: any) => {
+    console.log("value---", value);
+
+    let updatedDate = selectedDate?.clone();
+    if (type === "day") updatedDate = updatedDate.date(value);
+    if (type === "month") {
+      if (value > 5) {
+        scrollToIndex(scrollViewRefMonthSecond, value - 7);
+      } else {
+        scrollToIndex(scrollViewRefMonthFirst, value - 1);
+      }
+      updatedDate = updatedDate.month(value);
+    }
+    if (type === "year") {
+      if (value > 25) {
+        scrollToIndex(scrollViewRefYearSecond, value - 26);
+      } else {
+        scrollToIndex(scrollViewRefYearFirst, value - 1);
+      }
+      const selectedYear = years[value]; // Get the year from the years array
+      updatedDate = updatedDate.year(selectedYear); // Set the year using the selectedYear
+    }
+    onDateSelect(updatedDate);
+  };
 
   const handleConfirm = () => {
-    const selectedDate = moment()
-      .year(years[selectedYear])
-      .month(selectedMonth)
-      .date(selectedDay + 1);
-    onDateSelect(selectedDate.format("YYYY-MM-DD"));
+    onDateSelect(selectedDate?.format("YYYY-MM-DD"));
     onClose();
   };
 
-  const renderPicker = (
+  const renderColumn = (
     data: any,
-    selectedIndex: any,
-    setSelectedIndex: any
-  ) => (
-    <FlatList
-      data={data}
-      keyExtractor={(_, index) => index.toString()}
-      showsVerticalScrollIndicator={false}
-      snapToAlignment="center"
-      decelerationRate="fast"
-      contentContainerStyle={styles.pickerList}
-      snapToInterval={40}
-      initialScrollIndex={selectedIndex} // Ensures the selected item is in view
-      getItemLayout={(_, index) => ({
-        length: 40,
-        offset: 40 * index,
-        index,
-      })}
-      style={styles.pickerFlatList}
-      renderItem={({ item, index }) => (
-        <TouchableOpacity
-          onPress={() => setSelectedIndex(index)}
+    selectedValue: any,
+    type: any,
+    isScrollable = false
+  ) => {
+    return (
+      <ScrollView
+        horizontal={isScrollable}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={isScrollable ? styles.scrollContainer : null}
+      >
+        <View
           style={[
-            styles.pickerItem,
-            index === selectedIndex && styles.pickerItemSelected,
+            styles.column,
+            type === "month" && styles.monthsContainer, // Custom styles for months
           ]}
         >
-          <Text
-            style={[
-              styles.pickerItemText,
-              index === selectedIndex && styles.pickerItemTextSelected,
-            ]}
-          >
-            {item}
-          </Text>
-        </TouchableOpacity>
-      )}
-    />
-  );
+          {data.map((item: any, index: number) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleSelect(type, item)}
+              style={[
+                styles.item,
+                type === "year" &&
+                  selectedValue === item &&
+                  styles.itemSelected,
+                type !== "year" &&
+                  selectedValue === index &&
+                  styles.itemSelected,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.itemText,
+                  type === "year" &&
+                    selectedValue === item &&
+                    styles.itemTextSelected,
+                  type !== "year" &&
+                    selectedValue === index &&
+                    styles.itemTextSelected,
+                ]}
+              >
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  };
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.container}>
         <View style={styles.pickerContainer}>
-          <Text style={styles.headerText}>
-            {months[selectedMonth]} {selectedDay + 1}, {years[selectedYear]}
+          <Text style={styles.selectedDateText}>
+            {selectedDate?.format("DD MMMM YYYY")}
           </Text>
-          {/* Instructional Text and Arrows */}
-          <Text style={styles.instructions}>
-            Scroll up or down to select a value. Tap on the value to choose it.
-          </Text>
-          <Text style={styles.arrowText}>↑ Scroll ↑</Text>
 
-          <View style={styles.pickerRow}>
-            {renderPicker(months, selectedMonth, setSelectedMonth)}
-            {renderPicker(
-              Array.from(
-                { length: daysInMonth(selectedMonth, years[selectedYear]) },
-                (_, i) => `${i + 1}`
-              ),
-              selectedDay,
-              setSelectedDay
+          <View style={styles.pickerColumn}>
+            <Text style={styles.label}>Years</Text>
+            <ScrollView
+              horizontal
+              ref={scrollViewRefYearFirst}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContainer}
+            >
+              <View style={styles.monthsRow}>
+                {firstRowYears.map((year, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleSelect("year", index)}
+                    style={[
+                      styles.item,
+                      selectedDate?.year() === years[index] &&
+                        styles.itemSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.itemText,
+                        selectedDate?.year() === years[index] &&
+                          styles.itemTextSelected,
+                      ]}
+                    >
+                      {year}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+            {type === "dateOfBirth" && (
+              <ScrollView
+                horizontal
+                ref={scrollViewRefYearSecond}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContainer}
+              >
+                <View style={styles.monthsRow}>
+                  {secondRowYears.map((year, index) => (
+                    <TouchableOpacity
+                      key={index + 25} // Offset the second row
+                      onPress={() => handleSelect("year", index + 25)}
+                      style={[
+                        styles.item,
+                        selectedDate?.year() === years[index + 25] &&
+                          styles.itemSelected,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.itemText,
+                          selectedDate?.year() === years[index + 25] &&
+                            styles.itemTextSelected,
+                        ]}
+                      >
+                        {year}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
             )}
-            {renderPicker(
-              years.map((year) => `${year}`),
-              selectedYear,
-              setSelectedYear
+
+            <Text style={styles.label}>Months</Text>
+            <ScrollView
+              horizontal
+              ref={scrollViewRefMonthFirst}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContainer}
+            >
+              <View style={styles.monthsRow}>
+                {firstRowMonths.map((month, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleSelect("month", index)}
+                    style={[
+                      styles.item,
+                      selectedDate?.month() === index && styles.itemSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.itemText,
+                        selectedDate?.month() === index &&
+                          styles.itemTextSelected,
+                      ]}
+                    >
+                      {month}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+            <ScrollView
+              horizontal
+              ref={scrollViewRefMonthSecond}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContainer}
+            >
+              <View style={styles.monthsRow}>
+                {secondRowMonths.map((month, index) => (
+                  <TouchableOpacity
+                    key={index + 6} // Offset the second row
+                    onPress={() => handleSelect("month", index + 6)}
+                    style={[
+                      styles.item,
+                      selectedDate?.month() === index + 6 &&
+                        styles.itemSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.itemText,
+                        selectedDate?.month() === index + 6 &&
+                          styles.itemTextSelected,
+                      ]}
+                    >
+                      {month}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Days */}
+            <Text style={styles.label}>{t('days')}</Text>
+            {renderColumn(
+              Array.from(
+                { length: selectedDate?.daysInMonth() },
+                (_, i) => i + 1
+              ),
+              selectedDate?.date() - 1,
+              "day"
             )}
           </View>
-          <Text style={styles.arrowText}>↓ Scroll ↓</Text>
 
-          <TouchableOpacity
-            style={styles.confirmButton}
-            onPress={handleConfirm}
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingBottom: 10,
+              paddingHorizontal: 10,
+            }}
           >
-            <Text style={styles.confirmButtonText}>Set Date</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+            <Button
+              isPrimary={true}
+              title={t("cancel")}
+              onPress={onClose}
+              style={styles.cancelButton}
+              textStyle={styles?.cancelButtonText}
+            />
+            <Button
+              isPrimary={true}
+              title={t("setDate")}
+              onPress={handleConfirm}
+              style={styles.confirmButton}
+              textStyle={styles?.confirmButtonText}
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -153,85 +333,111 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     backgroundColor: "#FFF",
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 20,
+    padding: 10,
     alignItems: "center",
     width: "90%",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
-  headerText: {
-    fontSize: 18,
+  selectedDateText: {
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 15,
     color: "#333",
-  },
-  instructions: {
-    fontSize: 14,
-    color: "#666",
     textAlign: "center",
-    marginBottom: 10,
   },
-  arrowText: {
-    fontSize: 18,
-    color: "#999",
+  label: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginVertical: 10,
+    color: "#333",
+    alignSelf: "flex-start",
+    // marginLeft: 20,
   },
-  pickerRow: {
+  scrollContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  monthsWrapper: {
+    width: "100%",
+    alignItems: "center",
+  },
+  monthsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  pickerFlatList: {
-    height: 120,
-    width: width * 0.25,
+  column: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
+    alignItems: "center", // Ensure the items in the column are aligned
+    // marginBottom: 10, // Add some space between the column and other elements
   },
-  pickerList: {
-    alignItems: "center",
+  monthsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between", // Ensure months are spaced out properly
+    width: "100%",
+    // marginBottom: 10, // Space after months to separate from other elements
   },
-  pickerItem: {
-    height: 40,
+  item: {
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: "#CCC",
+    borderRadius: 8,
+    marginBottom: 8, // Space between items in the columns
   },
-  pickerItemSelected: {
-    backgroundColor: "#E0E0E0",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
+  itemSelected: {
+    backgroundColor: "#007BFF",
+    borderRadius: 5,
   },
-  pickerItemText: {
-    fontSize: 16,
+  itemText: {
+    fontSize: 12,
+    fontWeight: "600",
     color: "#757575",
   },
-  pickerItemTextSelected: {
+  itemTextSelected: {
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFF",
   },
   confirmButton: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 20,
-    width: "100%",
-    alignItems: "center",
+    backgroundColor: "#28A745",
+    borderColor: "#28A745",
+    width: "60%",
   },
   confirmButtonText: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
   cancelButton: {
-    marginTop: 10,
+    backgroundColor: Colors?.danger,
+    borderColor: Colors?.danger,
+    width: "34%",
     alignItems: "center",
   },
   cancelButtonText: {
-    color: "#F44336",
-    fontSize: 16,
+    color: Colors?.white,
+    fontSize: 14,
     fontWeight: "bold",
+  },
+  daysContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
+  },
+  pickerColumn: {
+    alignItems: "flex-start",
+    width: "100%",
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
 });
 

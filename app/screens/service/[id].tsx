@@ -50,6 +50,7 @@ interface ImageAsset {
 const ServiceDetails = () => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setAddService = useSetAtom(AddServiceAtom);
+  const firstTimeRef = React.useRef(true);
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
@@ -101,6 +102,16 @@ const ServiceDetails = () => {
     retry: false,
     enabled: !!id,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
   const {
     data: appliedWorkers,

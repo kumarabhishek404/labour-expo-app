@@ -74,9 +74,11 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
       ...userDetails,
       savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
     });
-    await mutationUpdateProfileInfo.mutate({
-      savedAddresses: address,
-    });
+    if (userDetails?.isAuth) {
+      await mutationUpdateProfileInfo.mutate({
+        savedAddresses: address,
+      });
+    }
     reset();
     onClose();
     toast.success(t("addressAddedSuccessfully"));

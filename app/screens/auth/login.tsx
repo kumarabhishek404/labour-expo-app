@@ -1,15 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
-import { Link, router, Stack } from "expo-router";
+import { Link, router, Stack, useFocusEffect } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
-import {
-  AccountStatusAtom,
-  UserAtom,
-} from "../../AtomStore/user";
+import { AccountStatusAtom, UserAtom } from "../../AtomStore/user";
 import { signIn, updateUserById } from "../../api/user";
 import { toast } from "../../hooks/toast";
 import { useForm, Controller } from "react-hook-form";
@@ -23,7 +20,7 @@ import { useTranslation } from "@/utils/i18n";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const setUserDetails = useSetAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(UserAtom);
   const setIsAccountInactive = useSetAtom(AccountStatusAtom);
   const {
     control,
@@ -67,10 +64,10 @@ const LoginScreen = () => {
       if (user?.status === "ACTIVE") {
         setIsAccountInactive(false);
         console.log("user?.role", user?.role);
-        router.push("/(tabs)");
+        router.replace("/(tabs)");
       } else {
         setIsAccountInactive(true);
-        router.push("/(tabs)/fifth");
+        router.replace("/(tabs)/fifth");
       }
       // Condition to fetch location if location key is empty or has latitude 0
       if (

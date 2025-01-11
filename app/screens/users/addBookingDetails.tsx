@@ -142,7 +142,7 @@ const AddBookingDetails = ({
             rules={{
               required: t("startDateIsRequired"),
               validate: (value) => {
-                if (new Date(value) < new Date()) {
+                if (moment(value) < moment(new Date())) {
                   return t("startDateNotEarlierThanToday");
                 } else {
                   return true;
@@ -153,7 +153,8 @@ const AddBookingDetails = ({
               <DateField
                 title={t("startDate")}
                 name="startDate"
-                date={value}
+                type="serviceDate"
+                date={moment(value)}
                 setDate={onChange}
                 onBlur={onBlur}
                 errors={errors}
@@ -248,7 +249,7 @@ const AddBookingDetails = ({
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Enter your work description"
+                placeholder="Enter work description"
                 containerStyle={errors?.description && styles.errorInput}
                 errors={errors}
                 icon={

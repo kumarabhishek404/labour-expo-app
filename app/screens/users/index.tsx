@@ -45,7 +45,7 @@ const Users = () => {
       handleQueryFunction(role, type, pageParam, category),
     retry: false,
     initialPageParam: 1,
-    enabled: !!userDetails?._id,
+    enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;

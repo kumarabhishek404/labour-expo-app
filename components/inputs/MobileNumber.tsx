@@ -31,7 +31,7 @@ interface MobileNumberFieldProps {
   setPhoneNumber: any;
   onBlur: any;
   errors: any;
-  isMobileNumberExist?: boolean|null;
+  isMobileNumberExist?: boolean | null;
   placeholder: string;
   loading: boolean;
   icon?: any;
@@ -192,7 +192,7 @@ const MobileNumberField = ({
 
         <View
           style={{
-            marginBottom: 10,
+            // marginBottom: 10,
             flexDirection: "row",
             alignItems: "flex-start",
           }}
@@ -223,7 +223,9 @@ const MobileNumberField = ({
           maxLength={10}
           label=""
           name={name}
-          containerStyle={(errors[name] || isMobileNumberExist) && styles.errorInput}
+          containerStyle={
+            (errors[name] || isMobileNumberExist) && styles.errorInput
+          }
           isMobileNumberExist={isMobileNumberExist}
           errors={errors}
           loading={loading}
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
-    marginBottom: 15,
+    marginBottom: 5,
     borderRadius: 8,
     padding: 14,
     backgroundColor: "#fff",

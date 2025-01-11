@@ -20,7 +20,7 @@ export const dateDifference = (date1: Date, date2: Date): string => {
 
   // If the difference is less than 30 days, return in days
   if (diffDays < 30) {
-    return `${diffDays} ${diffDays > 1 ? "Days" : "Day"}`;
+    return `${diffDays} ${diffDays > 1 ? t("days") : t("day")}`;
   }
 
   // Calculate the difference in months (inclusive)
@@ -29,14 +29,14 @@ export const dateDifference = (date1: Date, date2: Date): string => {
   // If the difference is less than 12 months, return in months
   if (diffMonths < 12) {
     return `${Math.round(diffMonths)} ${
-      Math.round(diffMonths) > 1 ? "Months" : "Month"
+      Math.round(diffMonths) > 1 ? t("months") : t("month")
     }`;
   }
 
   // Otherwise, calculate the difference in years
   const diffYears = endDate.diff(startDate, "years", true);
   return `${Math.round(diffYears)} ${
-    Math.round(diffYears) > 1 ? "Years" : "Year"
+    Math.round(diffYears) > 1 ? t("years") : t("year")
   }`;
 };
 

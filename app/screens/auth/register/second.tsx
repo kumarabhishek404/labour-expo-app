@@ -13,6 +13,7 @@ import { t } from "@/utils/translationHelper";
 import DateField from "@/components/inputs/DateField";
 import Gender from "@/components/inputs/Gender";
 import CustomDatePicker from "@/components/inputs/CustomDatePicker";
+import moment from "moment";
 
 interface SecondScreenProps {
   setStep: any;
@@ -50,7 +51,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       address: address,
       location: location,
       email: email,
-      dateOfBirth: new Date(dateOfBirth),
+      dateOfBirth: moment().subtract(18, "years").startOf("year"),
       gender: gender,
     },
   });
@@ -130,14 +131,14 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         <Controller
           control={control}
           name="dateOfBirth"
-          defaultValue={new Date()}
+          defaultValue={moment().subtract(18, "years").startOf("year")}
           rules={{
             required: t("dateOfBirthIsRequired"),
             validate: (value) => {
-              const selectedDate = new Date(value);
-              const today = new Date();
-              const eighteenYearsAgo = new Date();
-              eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+              const selectedDate = moment(value);
+              const today = moment(new Date());
+              const eighteenYearsAgo = moment(new Date());
+              eighteenYearsAgo.set("year", today.year() - 18);
 
               if (selectedDate > eighteenYearsAgo) {
                 return t("youMustBeAtLeast18YearsOld");
@@ -150,7 +151,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             <DateField
               title={t("dateOfBirth")}
               name="dateOfBirth"
-              date={value}
+              type="dateOfBirth"
+              date={moment(value)}
               setDate={onChange}
               onBlur={onBlur}
               errors={errors}

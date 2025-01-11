@@ -18,6 +18,8 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
+import { toast } from "@/app/hooks/toast";
+import { submitUserProblem } from "@/app/api/userProblem";
 
 const ForgetPasswordScreen = () => {
   const {
@@ -56,35 +58,52 @@ const ForgetPasswordScreen = () => {
     setPasswordConditions(conditions);
   };
 
-  const mutationForgetPassword = useMutation({
-    mutationKey: ["forgetPassword"],
-    mutationFn: (payload: any) => forgotPassword(payload),
-    onSuccess: (response) => {
-      if (response?.status === 200) {
-        setIsResetCodeSent(true);
-      }
-    },
-  });
+  // const mutationForgetPassword = useMutation({
+  //   mutationKey: ["forgetPassword"],
+  //   mutationFn: (payload: any) => forgotPassword(payload),
+  //   onSuccess: (response) => {
+  //     if (response?.status === 200) {
+  //       setIsResetCodeSent(true);
+  //     }
+  //   },
+  // });
 
-  const mutationSetPassword = useMutation({
-    mutationKey: ["setPassword"],
-    mutationFn: (payload: any) => resetPassword(payload),
+  // const mutationSetPassword = useMutation({
+  //   mutationKey: ["setPassword"],
+  //   mutationFn: (payload: any) => resetPassword(payload),
+  //   onSuccess: (response) => {
+  //     if (response?.status === 200) {
+  //       setIsResetCodeSent(false);
+  //       router.push("/screens/auth/login");
+  //     }
+  //   },
+  // });
+
+  const mutationSubmitProblem = useMutation({
+    mutationKey: ["submitProblem"],
+    mutationFn: (payload: any) => submitUserProblem(payload),
     onSuccess: (response) => {
-      if (response?.status === 200) {
-        setIsResetCodeSent(false);
-        router.push("/screens/auth/login");
-      }
+      // if (response?.status === 201) {
+      // setIsResetCodeSent(false);
+      // router.push("/screens/auth/login");
+      toast.success(t("problemSubmittedSuccessfully"));
+      // }
     },
   });
 
   const onSubmit = (data: any) => {
-    if (isResetCodeSent)
-      mutationSetPassword.mutate({
-        mobile: data?.mobile,
-        resetToken: data?.resetToken,
-        password: data?.password,
-      });
-    else mutationForgetPassword.mutate({ mobile: data?.mobile });
+    // if (isResetCodeSent)
+    //   mutationSetPassword.mutate({
+    //     mobile: data?.mobile,
+    //     resetToken: data?.resetToken,
+    //     password: data?.password,
+    //   });
+    // else mutationForgetPassword.mutate({ mobile: data?.mobile });
+
+    mutationSubmitProblem.mutate({
+      mobile: data?.mobile,
+      problemType: "forgotPassword",
+    });
   };
 
   return (
@@ -94,11 +113,7 @@ const ForgetPasswordScreen = () => {
           headerShown: false,
         }}
       />
-      <Loader
-        loading={
-          mutationForgetPassword?.isPending || mutationSetPassword?.isPending
-        }
-      />
+      <Loader loading={mutationSubmitProblem?.isPending} />
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <CustomHeading textAlign="left" fontSize={24}>
@@ -106,9 +121,6 @@ const ForgetPasswordScreen = () => {
           </CustomHeading>
           <CustomHeading textAlign="left" fontSize={24}>
             {t("resetYour")}
-          </CustomHeading>
-          <CustomHeading textAlign="left" fontSize={24}>
-            {t("password")}
           </CustomHeading>
         </View>
         <View>
@@ -312,7 +324,7 @@ const ForgetPasswordScreen = () => {
           <Button
             isPrimary={true}
             title={
-              isResetCodeSent ? t("setNewPasswords") : t("resetPasswordLink")
+              isResetCodeSent ? t("setNewPasswords") : t("submitYourProblem")
             }
             style={styles.forgetButtonWrapper}
             onPress={handleSubmit(onSubmit)}

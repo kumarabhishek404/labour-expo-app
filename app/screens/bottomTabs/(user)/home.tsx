@@ -81,7 +81,7 @@ const UserHome = () => {
     },
     initialPageParam: 1,
     retry: false,
-    enabled: !!userDetails?._id,
+    enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;

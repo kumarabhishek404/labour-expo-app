@@ -112,7 +112,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         <Stepper currentStep={1} steps={REGISTERSTEPS} />
       </View>
 
-      <View style={{ gap: 15, marginBottom: 15 }}>
+      <View style={{ gap: 10, marginBottom: 15 }}>
         <Controller
           control={control}
           name="phoneNumber"

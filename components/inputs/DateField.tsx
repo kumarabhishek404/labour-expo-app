@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "@/constants/Colors";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import CustomHeading from "../commons/CustomHeading";
@@ -11,7 +10,8 @@ import CustomDatePicker from "./CustomDatePicker";
 interface DateFieldProps {
   title: string;
   name: string;
-  date: Date;
+  type: string;
+  date: any;
   setDate: any;
   onBlur: any;
   errors: any;
@@ -19,19 +19,16 @@ interface DateFieldProps {
 
 const DateField: React.FC<DateFieldProps> = ({
   title,
+  type,
   name,
   date,
   setDate,
-  onBlur,
   errors,
 }: DateFieldProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const onDateChange = (selectedDate: any) => {
-    console.log("selectedDate", selectedDate);
-
     const currentDate = selectedDate || date;
-    setShowDatePicker(false);
     setDate(currentDate);
   };
   return (
@@ -52,19 +49,11 @@ const DateField: React.FC<DateFieldProps> = ({
         {showDatePicker && (
           <CustomDatePicker
             visible={true}
-            selectedDate={date || new Date()}
+            selectedDate={date}
+            type={type}
             onClose={() => setShowDatePicker(false)}
             onDateSelect={(date: any) => onDateChange(date)}
           />
-          // <DateTimePicker
-          //   testID="startDatePicker"
-          //   value={date || new Date()}
-          //   mode="date"
-          //   // is24Hour={true}
-          //   display="default"
-          //   locale="hi-IN"
-          //   onChange={onDateChange}
-          // />
         )}
       </TouchableOpacity>
       {errors[name] && (

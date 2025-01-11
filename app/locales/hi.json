@@ -393,7 +393,11 @@
   "passwordsDoNotMatch": "पासवर्ड मेल नहीं खाते",
   "hey": "नमस्ते",
   "signIn": "लॉग इन",
-  "resetYour": "अपना पासवर्ड रीसेट करें",
+  "resetYour": "अपना पासवर्ड रीसेट करें!",
+  "submitYourProblem": "अपनी समस्या दर्ज करें",
+  "makeNewAccount": "नया खाता बनाएं!",
+  "clickSelfie": "सेल्फी क्लिक करें",
+  "toVerify": "जाँच करने के लिए",
   "useAtLeastOneNumber": "कम से कम एक संख्या (0-9) का उपयोग करें",
   "useAtLeastOneLowerCaseLetter": "कम से कम एक छोटे अक्षर (a-z) का उपयोग करें",
   "useAtLeastOneSymbol": "कम से कम एक प्रतीक (उदाहरण के लिए, !@#$%^&*) का उपयोग करें",
@@ -546,6 +550,11 @@
   "activate": "सक्रिय करें",
   "workHistory": "काम इतिहास",
   "days": "दिन",
+  "day": "दिन",
+  "months": "महीने",
+  "month": "महीना",
+  "years": "साल",
+  "year": "साल",
   "noWorkHistory": "कोई काम इतिहास नहीं मिला",
   "description": "विवरण",
   "experience": "अनुभव",
@@ -662,5 +671,7 @@
   "skillRemovedSuccessfully": "कौशल सफलतापूर्वक हटाया गया",
   "selectSkillToRemove": "हटाने के लिए कौशल का चयन करें",
   "noTeam": "कोई टीम नहीं है",
-  "atLeastOneSkillRequired": "कम से कम एक कौशल आवश्यक है|"
+  "atLeastOneSkillRequired": "कम से कम एक कौशल आवश्यक है|",
+  "setDate": "तिथि निर्धारित करें",
+  "problemSubmittedSuccessfully": "समस्या सफलतापूर्वक दर्ज की गई"
 }

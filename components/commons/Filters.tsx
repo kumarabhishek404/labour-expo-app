@@ -1,4 +1,4 @@
-import {  WORKERTYPES } from "@/constants";
+import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -67,7 +67,7 @@ const Filters = ({
   };
 
   const handleClear = () => {
-    reset()
+    reset();
     // onClear(); // trigger external clear logic
   };
 
@@ -154,6 +154,7 @@ const Filters = ({
                 <DateField
                   title="Start Date"
                   name="startDate"
+                  type="serviceDate"
                   date={value}
                   setDate={onChange}
                   onBlur={onBlur}
@@ -182,6 +183,7 @@ const Filters = ({
                 <DateField
                   title="End Date"
                   name="endDate"
+                  type="serviceDate"
                   date={value}
                   setDate={onChange}
                   onBlur={onBlur}

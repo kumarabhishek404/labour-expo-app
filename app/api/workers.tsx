@@ -19,7 +19,6 @@ export const getWorkerById = async (id: any) => {
 };
 
 export const fetchAllWorkers = async ({ pageParam, skill }: any) => {
-  console.log("skill", skill);
   try {
     const data = await makeGetRequest(
       `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=WORKER`

@@ -185,19 +185,19 @@ const SignupScreen = () => {
         {step === 5 ? (
           <View style={styles.textContainer}>
             <CustomHeading textAlign="left" fontSize={22}>
-              Click selfie
+              {t('clickSelfie')}
             </CustomHeading>
             <CustomHeading textAlign="left" fontSize={22}>
-              to verify
+              {t('toVerify')}
             </CustomHeading>
           </View>
         ) : (
           <View style={styles.textContainer}>
             <CustomHeading textAlign="left" fontSize={22}>
-              Make new
+              {t('hello')}
             </CustomHeading>
             <CustomHeading textAlign="left" fontSize={22}>
-              account
+              {t('makeNewAccount')}
             </CustomHeading>
           </View>
         )}
