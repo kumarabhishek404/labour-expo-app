@@ -65,6 +65,7 @@ const ListingsVerticalWorkers = ({
                   isShowLabel={false}
                   style={styles?.skillsContainer}
                   tagStyle={styles?.skillTag}
+                  tagTextStyle={styles?.skillTagText}
                   userSkills={item?.skills}
                   availableSkills={availableInterest}
                   count={5}
@@ -177,6 +178,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 0,
     marginBottom: 5,
+  },
+  skillTagText: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: Colors.tertiery,
   },
   ratingPriceContainer: {
     flexDirection: "row",

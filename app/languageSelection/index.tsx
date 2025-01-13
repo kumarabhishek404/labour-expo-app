@@ -12,7 +12,7 @@ import { useLocale } from "../context/locale";
 import { t } from "@/utils/translationHelper";
 
 const LanguageSelectionScreen = () => {
-    const { locale, setLocale } = useLocale();
+  const { locale, setLocale } = useLocale();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -20,7 +20,8 @@ const LanguageSelectionScreen = () => {
     if (selectedLanguage) {
       await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
       setLocale(selectedLanguage);
-      router.push("/");
+      // router.push("/");
+      router?.push("/screens/userTipForAppUse");
     }
   };
 

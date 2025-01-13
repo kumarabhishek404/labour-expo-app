@@ -96,7 +96,7 @@ type Props = {
   requestType: any;
   loadMore: () => void;
   isFetchingNextPage: boolean;
-  refreshControl: any;
+  refreshControl?: any;
   onCancelRequest?: any;
   onAcceptRequest?: any;
   onRejectRequest?: any;
@@ -565,7 +565,8 @@ const styles = StyleSheet.create({
   },
   skillTagText: {
     fontSize: 10,
-    color: Colors.primary,
+    fontWeight: "bold",
+    color: Colors.tertiery,
   },
   actionContainer: {
     flexDirection: "row",

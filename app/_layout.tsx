@@ -71,7 +71,7 @@ function RootLayoutNav() {
         <LocaleProvider>
           <QueryClientProvider client={queryClient}>
             <Stack screenOptions={{ headerShown: true }}>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
             </Stack>
             <Toast />
           </QueryClientProvider>

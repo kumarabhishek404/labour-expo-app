@@ -203,9 +203,7 @@ const NotificationScreen = () => {
                     </CustomText>
                   </TouchableOpacity>
                 ) : (
-                  <CustomText margin={10}>
-                    {t("noNotificationsYet")}
-                  </CustomText>
+                  <CustomText margin={10}>{t("noNotificationsYet")}</CustomText>
                 )}
               </>
             )}

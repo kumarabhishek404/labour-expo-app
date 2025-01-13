@@ -224,8 +224,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   skillTagText: {
-    fontSize: 12,
-    color: Colors.primary,
+    fontSize: 10,
+    fontWeight: "bold",
+    color: Colors.tertiery,
   },
   priceContainer: {
     alignItems: "flex-end",

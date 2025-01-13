@@ -164,20 +164,6 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: t("bookings"),
-      icon: (
-        <Ionicons name="hand-right-outline" size={28} color={Colors.primary} />
-      ),
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/bookings",
-        }),
-      // roleCondition:
-      //   userDetails?.role === "EMPLOYER" || userDetails?.role === "WORKER",
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
       title: t("savedServices"),
       icon: (
         <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
@@ -254,49 +240,6 @@ const ProfileMenu = ({ disabled }: any) => {
     //   isSuspended: disabled,
     // },
     {
-      title: t("experience"),
-      icon: <Entypo name="text-document" size={28} color={Colors.primary} />,
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/experience",
-        }),
-      roleCondition: !isAdmin,
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("tellFriends"),
-      icon: <MaterialIcons name="share" size={28} color={Colors.primary} />,
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/shareApp",
-        }),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("support"),
-      icon: (
-        <MaterialIcons name="support-agent" size={28} color={Colors.primary} />
-      ),
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/support",
-        }),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("changeLanguage"),
-      icon: <Entypo name="language" size={28} color={Colors.primary} />,
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/settings/changeLanguage",
-        }),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
       title: notificationConsent ? t("notificationOn") : t("notificationOff"),
       icon: (
         <MaterialIcons
@@ -329,38 +272,6 @@ const ProfileMenu = ({ disabled }: any) => {
     //   style: [styles?.menuItem],
     //   isSuspended: disabled,
     // },
-    {
-      title: t("appFeedback"),
-      icon: (
-        <Ionicons name="chatbox-outline" size={28} color={Colors.primary} />
-      ),
-      onPress: () => router?.push("/screens/feedback/addAppFeedback"),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("reviews"),
-      icon: <AntDesign name="staro" size={28} color={Colors.primary} />,
-      onPress: () => router?.push("/screens/reviews"),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("privacyPolicy"),
-      icon: <Feather name="lock" size={28} color={Colors.primary} />,
-      onPress: () => router?.push("/screens/privacyPolicy"),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("termsAndConditions"),
-      icon: (
-        <SimpleLineIcons name="book-open" size={28} color={Colors.primary} />
-      ),
-      onPress: () => router?.push("/screens/terms&Conditions"),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
     {
       title: t("deactivateAccount"),
       icon: (

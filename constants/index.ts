@@ -1,3 +1,7 @@
+import Image1 from "../assets/image1.png";
+import Image2 from "../assets/image2.png";
+import Image3 from "../assets/image3.png";
+
 export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
@@ -31,9 +35,7 @@ export const STETESOFINDIA = [
   { label: "westbengal", value: "westbengal" },
 ];
 
-export const COUNTRYPHONECODE = [
-  { label: "india", value: "+91" }
-];
+export const COUNTRYPHONECODE = [{ label: "india", value: "+91" }];
 
 export const REGISTERSTEPS = [
   { label: "name" },
@@ -448,4 +450,181 @@ export const APP_FEEDBACK_REASONS = [
     label: "General feedback",
     value: "GENERAL",
   }, // enum: ["BUG", "FEATURE_REQUEST", "IMPROVEMENT", "GENERAL"],
+];
+
+export const FAQS_SUPPORT = [
+  { id: 1, question: "How do I cancel an existing order?", icon: "📦" },
+  { id: 2, question: "What are the other shipping options?", icon: "🚚" },
+  { id: 3, question: "Where is my package?", icon: "🔍" },
+];
+
+export const FAQS_TOPICS = [
+  {
+    id: 1,
+    title: "Returns and Refunds",
+    articles: "12 articles",
+    icon: "📦",
+    questions: [
+      {
+        id: 1,
+        question: "How to stop scooter for some time?",
+        answer: "Tap the pause button on the screen.",
+      },
+      {
+        id: 2,
+        question: "Where can I leave the scooter?",
+        answer: "Park it at a safe place, away from traffic.",
+      },
+      {
+        id: 3,
+        question: "How to stop using the scooter?",
+        answer: "Tap on 'End Ride' when you're done.",
+      },
+      {
+        id: 4,
+        question: "Where is my scooter?",
+        answer: "Check the map in the app for the location.",
+      },
+      {
+        id: 5,
+        question: "I got hurt or damaged the scooter",
+        answer: "Call support immediately or use the app to report.",
+      },
+      {
+        id: 6,
+        question: "Something else",
+        answer: "Contact our support for other issues.",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Shipping and Delivery",
+    articles: "8 articles",
+    icon: "🚚",
+    questions: [
+      {
+        id: 1,
+        question: "How to stop scooter for some time?",
+        answer: "Tap the pause button on the screen.",
+      },
+      {
+        id: 2,
+        question: "Where can I leave the scooter?",
+        answer: "Park it at a safe place, away from traffic.",
+      },
+      {
+        id: 3,
+        question: "How to stop using the scooter?",
+        answer: "Tap on 'End Ride' when you're done.",
+      },
+      {
+        id: 4,
+        question: "Where is my scooter?",
+        answer: "Check the map in the app for the location.",
+      },
+      {
+        id: 5,
+        question: "I got hurt or damaged the scooter",
+        answer: "Call support immediately or use the app to report.",
+      },
+      {
+        id: 6,
+        question: "Something else",
+        answer: "Contact our support for other issues.",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "Payments",
+    articles: "6 articles",
+    icon: "💳",
+    questions: [
+      {
+        id: 1,
+        question: "How to stop scooter for some time?",
+        answer: "Tap the pause button on the screen.",
+      },
+      {
+        id: 2,
+        question: "Where can I leave the scooter?",
+        answer: "Park it at a safe place, away from traffic.",
+      },
+      {
+        id: 3,
+        question: "How to stop using the scooter?",
+        answer: "Tap on 'End Ride' when you're done.",
+      },
+      {
+        id: 4,
+        question: "Where is my scooter?",
+        answer: "Check the map in the app for the location.",
+      },
+      {
+        id: 5,
+        question: "I got hurt or damaged the scooter",
+        answer: "Call support immediately or use the app to report.",
+      },
+      {
+        id: 6,
+        question: "Something else",
+        answer: "Contact our support for other issues.",
+      },
+    ],
+  },
+];
+
+export const FAQS_QUESTIONS = [
+  {
+    id: 1,
+    question: "How to stop scooter for some time?",
+    answer: "Tap the pause button on the screen.",
+  },
+  {
+    id: 2,
+    question: "Where can I leave the scooter?",
+    answer: "Park it at a safe place, away from traffic.",
+  },
+  {
+    id: 3,
+    question: "How to stop using the scooter?",
+    answer: "Tap on 'End Ride' when you're done.",
+  },
+  {
+    id: 4,
+    question: "Where is my scooter?",
+    answer: "Check the map in the app for the location.",
+  },
+  {
+    id: 5,
+    question: "I got hurt or damaged the scooter",
+    answer: "Call support immediately or use the app to report.",
+  },
+  {
+    id: 6,
+    question: "Something else",
+    answer: "Contact our support for other issues.",
+  },
+];
+
+export const ONBOARDING_SLIDE = [
+  {
+    id: "1",
+    title: "takeControlOfYourFinances",
+    description: "Track your income and spending to stay on top.",
+    image: Image1,
+  },
+  {
+    id: "2",
+    title: "cancelUnwantedSubscriptions",
+    description: "Easily unsubscribe from unused services.",
+    image: Image2,
+  },
+  {
+    id: "3",
+    title: "seeExactlyWhereYourMoneyIsGoing",
+    description: "Visualize and understand your spending habits.",
+    image: Image3,
+  },
 ];

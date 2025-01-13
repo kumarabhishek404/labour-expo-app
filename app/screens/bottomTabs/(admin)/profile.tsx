@@ -25,8 +25,6 @@ import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "../../../hooks/toast";
-import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
-import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import WallletInformation from "@/components/commons/WalletInformation";
@@ -37,7 +35,6 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { useLocale } from "../../../context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
-import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
 import { updateUserById, uploadFile } from "@/app/api/user";
@@ -80,8 +77,8 @@ const AdminProfile = () => {
             ? "Profile Suspended"
             : "Approval Is Pending",
           `You can't go back until your profile is ${
-            (userDetails?.status === "SUSPENDED" ||
-            userDetails?.status === "DISABLED")
+            userDetails?.status === "SUSPENDED" ||
+            userDetails?.status === "DISABLED"
               ? "suspended"
               : "not approved"
           }.`
@@ -256,45 +253,9 @@ const AdminProfile = () => {
               />
             )}
           />
-
-          <Controller
-            control={control}
-            name="address"
-            defaultValue=""
-            rules={{
-              required: t("addressIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("address")}
-                name="address"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourAddress")}
-                containerStyle={errors?.lastName && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Entypo
-                    name="location"
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
         </View>
       </View>
     );
-  };
-
-  const handleAddSkills = () => {
-    const skills = selectedSkills?.map((skill: any) => {
-      return skill?.value;
-    });
-    mutationAddSkills?.mutate(skills);
   };
 
   const onSubmit = (data: any) => {
@@ -378,7 +339,7 @@ const AdminProfile = () => {
         <View
           style={[
             styles?.changeRoleWrapper,
-            (userDetails?.status !== "ACTIVE") && {
+            userDetails?.status !== "ACTIVE" && {
               pointerEvents: "none",
               opacity: 0.5,
             },
@@ -431,24 +392,6 @@ const AdminProfile = () => {
 
         <StatsCard />
 
-        {userDetails?.role !== "EMPLOYER" && (
-          <SkillSelector
-            canAddSkills={
-              userDetails?.status === "ACTIVE"
-            }
-            role={userDetails?.role}
-            isShowLabel={true}
-            style={styles?.skillsContainer}
-            selectedSkills={selectedSkills}
-            setSelectedSkills={setSelectedSkills}
-            userSkills={userDetails?.skills}
-            handleAddSkill={handleAddSkills}
-            availableSkills={
-              userDetails?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
-            }
-          />
-        )}
-
         <UserInfoComponent user={userDetails} />
 
         {userDetails?.role === "EMPLOYER" && (
@@ -480,15 +423,7 @@ const AdminProfile = () => {
           </>
         )}
 
-        {userDetails?.employedBy && (
-          <TeamAdminCard admin={userDetails?.employedBy} />
-        )}
-
-        <ProfileMenu
-          disabled={
-            userDetails?.status !== "ACTIVE"
-          }
-        />
+        <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
       </ScrollView>
     </>
   );

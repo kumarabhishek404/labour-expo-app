@@ -205,13 +205,13 @@ const SkillSelector = ({
               {getWorkLabel(availableSkills, item?.skill) && (
                 <View style={[styles.skillBox, tagStyle]}>
                   {role === "WORKER" ? (
-                    <CustomText style={[tagTextStyle]}>
+                    <CustomText textAlign="left" style={tagTextStyle}>
                       {`${getWorkLabel(availableSkills, item?.skill)} - ${t(
                         "rs"
                       )} ${item?.pricePerDay} / ${t("perDay")}`}
                     </CustomText>
                   ) : (
-                    <CustomText style={[tagTextStyle]}>
+                    <CustomText style={tagTextStyle}>
                       {`${getWorkLabel(availableSkills, item?.skill)}`}
                     </CustomText>
                   )}

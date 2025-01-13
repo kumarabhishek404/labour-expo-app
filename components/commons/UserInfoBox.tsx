@@ -137,7 +137,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       />
       <View>
         <View
-          style={[styles.row, user?.role === "EMPLOYER" && styles.firstBox]}
+          style={[
+            styles.row,
+            (user?.role === "EMPLOYER" || user?.role === "ADMIN") &&
+              styles.firstBox,
+          ]}
         >
           <CustomHeading textAlign="left" fontSize={14} padding={12}>
             <CustomText>{t("address")}</CustomText>

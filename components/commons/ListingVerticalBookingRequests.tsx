@@ -586,7 +586,8 @@ const styles = StyleSheet.create({
   },
   skillTagText: {
     fontSize: 10,
-    color: Colors.primary,
+    fontWeight: "bold",
+    color: Colors.tertiery,
   },
   actionContainer: {
     width: "30%",

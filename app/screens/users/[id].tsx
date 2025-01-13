@@ -251,6 +251,7 @@ const User = () => {
                 role={user?.role}
                 isShowLabel={true}
                 style={styles?.skillsContainer}
+                tagTextStyle={styles?.skillTagText}
                 userSkills={user?.skills}
                 availableSkills={
                   user?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
@@ -393,5 +394,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
+  },
+  skillTagText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: Colors.tertiery,
   },
 });

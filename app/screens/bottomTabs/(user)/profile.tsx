@@ -43,6 +43,7 @@ import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
 import { isEmptyObject } from "@/constants/functions";
+import EmailAddressField from "@/components/inputs/EmailAddress";
 
 const UserProfile = () => {
   useLocale();
@@ -68,7 +69,7 @@ const UserProfile = () => {
     defaultValues: {
       firstName: userDetails?.firstName,
       lastName: userDetails?.lastName,
-      address: userDetails?.address,
+      email: userDetails?.email?.value,
     },
   });
 
@@ -105,7 +106,7 @@ const UserProfile = () => {
   useEffect(() => {
     setValue("firstName", userDetails?.firstName);
     setValue("lastName", userDetails?.lastName);
-    setValue("address", userDetails?.address);
+    setValue("email", userDetails?.email?.value);
   }, [isEditProfile]);
 
   const mutationUpdateProfileInfo = useMutation({
@@ -122,6 +123,7 @@ const UserProfile = () => {
         ...userDetails,
         firstName: user?.firstName,
         lastName: user?.lastName,
+        email: user?.email?.value,
       });
     },
     onError: (err) => {
@@ -274,57 +276,36 @@ const UserProfile = () => {
             )}
           />
 
-          {/* <Controller
+          <Controller
             control={control}
-            name="address"
+            name="email"
             defaultValue=""
-            rules={{
-              required: t("addressIsRequired"),
-            }}
+            // rules={{
+            //   required: t("emailAddressIsRequired"),
+            //   pattern: {
+            //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+            //     message: t("enterAValidEmailAddress"),
+            //   },
+            // }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <AddLocationAndAddress
-                label={t("address")}
-                name="address"
-                address={value}
-                setAddress={onChange}
+              <EmailAddressField
+                name="email"
+                email={value}
+                setEmail={onChange}
                 onBlur={onBlur}
-                location={userDetails?.location}
-                setLocation={() => {}}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
                 errors={errors}
-              />
-            )}
-          /> */}
-
-          {/* <Controller
-            control={control}
-            name="address"
-            defaultValue=""
-            rules={{
-              required: t("addressIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("address")}
-                name="address"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourAddress")}
-                containerStyle={errors?.lastName && styles.errorInput}
-                errors={errors}
+                placeholder={t("enterYourEmailAddress")}
                 icon={
-                  <Entypo
-                    name="location"
+                  <Ionicons
+                    name={"mail-outline"}
                     size={30}
                     color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                    style={{ paddingVertical: 10, marginRight: 10 }}
                   />
                 }
               />
             )}
-          /> */}
+          />
         </View>
       </View>
     );
@@ -334,7 +315,7 @@ const UserProfile = () => {
     let payload = {
       firstName: data?.firstName,
       lastName: data?.lastName,
-      address: data?.address,
+      email: data?.email,
     };
     console.log("Payload---", payload);
     mutationUpdateProfileInfo?.mutate(payload);

@@ -136,6 +136,7 @@ const UserWorkers = () => {
               title={
                 userDetails?.role === "EMPLOYER" ? t("workers") : t("services")
               }
+              left="menu"
               right="notification"
             />
           ),

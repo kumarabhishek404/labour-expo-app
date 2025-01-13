@@ -146,7 +146,7 @@ const UserHome = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title="" left="profile" right="notification" />
+            <CustomHeader title="" left="menu" right="notification" />
           ),
         }}
       />
@@ -167,14 +167,14 @@ const UserHome = () => {
             />
           }
         >
-          <View style={{ paddingHorizontal: 10, paddingTop: 10 }}>
-            <CustomHeading
+          <View style={{ paddingHorizontal: 10, paddingTop: 15 }}>
+            {/* <CustomHeading
               textAlign="left"
               fontSize={24}
               style={{ marginBottom: 10 }}
             >
               {t("welcome")} {userDetails?.firstName}
-            </CustomHeading>
+            </CustomHeading> */}
             {/* <AudioRecorder /> */}
             <BannerSlider />
             <HomePageLinks />

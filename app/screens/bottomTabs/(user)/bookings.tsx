@@ -119,6 +119,7 @@ const UserBookingsAndMyServices = () => {
                   ? t("myServices")
                   : t("myBookings")
               }
+              left="menu"
               right="notification"
             />
           ),

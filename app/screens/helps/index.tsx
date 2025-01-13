@@ -4,9 +4,14 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import Button from "@/components/inputs/Button";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
+import { FAQS_QUESTIONS, FAQS_SUPPORT, FAQS_TOPICS } from "@/constants";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
-import { Feather } from "@expo/vector-icons";
+import {
+  Feather,
+  Foundation,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Video } from "expo-av";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
@@ -17,6 +22,8 @@ import {
   StyleSheet,
   Image,
   Modal,
+  ScrollView,
+  Linking,
 } from "react-native";
 
 type RenderItemTypes = {
@@ -36,174 +43,16 @@ const HelpScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [chatVisible, setChatVisible] = useState(false);
-  const faqs = [
-    { id: 1, question: "How do I cancel an existing order?", icon: "📦" },
-    { id: 2, question: "What are the other shipping options?", icon: "🚚" },
-    { id: 3, question: "Where is my package?", icon: "🔍" },
-  ];
-
-  const topics = [
-    {
-      id: 1,
-      title: "Returns and Refunds",
-      articles: "12 articles",
-      icon: "📦",
-      questions: [
-        {
-          id: 1,
-          question: "How to stop scooter for some time?",
-          answer: "Tap the pause button on the screen.",
-        },
-        {
-          id: 2,
-          question: "Where can I leave the scooter?",
-          answer: "Park it at a safe place, away from traffic.",
-        },
-        {
-          id: 3,
-          question: "How to stop using the scooter?",
-          answer: "Tap on 'End Ride' when you're done.",
-        },
-        {
-          id: 4,
-          question: "Where is my scooter?",
-          answer: "Check the map in the app for the location.",
-        },
-        {
-          id: 5,
-          question: "I got hurt or damaged the scooter",
-          answer: "Call support immediately or use the app to report.",
-        },
-        {
-          id: 6,
-          question: "Something else",
-          answer: "Contact our support for other issues.",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Shipping and Delivery",
-      articles: "8 articles",
-      icon: "🚚",
-      questions: [
-        {
-          id: 1,
-          question: "How to stop scooter for some time?",
-          answer: "Tap the pause button on the screen.",
-        },
-        {
-          id: 2,
-          question: "Where can I leave the scooter?",
-          answer: "Park it at a safe place, away from traffic.",
-        },
-        {
-          id: 3,
-          question: "How to stop using the scooter?",
-          answer: "Tap on 'End Ride' when you're done.",
-        },
-        {
-          id: 4,
-          question: "Where is my scooter?",
-          answer: "Check the map in the app for the location.",
-        },
-        {
-          id: 5,
-          question: "I got hurt or damaged the scooter",
-          answer: "Call support immediately or use the app to report.",
-        },
-        {
-          id: 6,
-          question: "Something else",
-          answer: "Contact our support for other issues.",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Payments",
-      articles: "6 articles",
-      icon: "💳",
-      questions: [
-        {
-          id: 1,
-          question: "How to stop scooter for some time?",
-          answer: "Tap the pause button on the screen.",
-        },
-        {
-          id: 2,
-          question: "Where can I leave the scooter?",
-          answer: "Park it at a safe place, away from traffic.",
-        },
-        {
-          id: 3,
-          question: "How to stop using the scooter?",
-          answer: "Tap on 'End Ride' when you're done.",
-        },
-        {
-          id: 4,
-          question: "Where is my scooter?",
-          answer: "Check the map in the app for the location.",
-        },
-        {
-          id: 5,
-          question: "I got hurt or damaged the scooter",
-          answer: "Call support immediately or use the app to report.",
-        },
-        {
-          id: 6,
-          question: "Something else",
-          answer: "Contact our support for other issues.",
-        },
-      ],
-    },
-  ];
-
-  const questions = [
-    {
-      id: 1,
-      question: "How to stop scooter for some time?",
-      answer: "Tap the pause button on the screen.",
-    },
-    {
-      id: 2,
-      question: "Where can I leave the scooter?",
-      answer: "Park it at a safe place, away from traffic.",
-    },
-    {
-      id: 3,
-      question: "How to stop using the scooter?",
-      answer: "Tap on 'End Ride' when you're done.",
-    },
-    {
-      id: 4,
-      question: "Where is my scooter?",
-      answer: "Check the map in the app for the location.",
-    },
-    {
-      id: 5,
-      question: "I got hurt or damaged the scooter",
-      answer: "Call support immediately or use the app to report.",
-    },
-    {
-      id: 6,
-      question: "Something else",
-      answer: "Contact our support for other issues.",
-    },
-  ];
 
   const toggleSection = (id: any) => {
-    setOpenSections((prevSections: any) => ({
-      ...prevSections,
-      [id]: !prevSections[id],
-    }));
+    setOpenSections((prevSections: any) => ({ [id]: !prevSections[id] }));
   };
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);
   };
 
-  const filteredQuestions = questions.filter((q) =>
+  const filteredQuestions = FAQS_QUESTIONS.filter((q) =>
     q.question.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -228,7 +77,7 @@ const HelpScreen = () => {
       </TouchableOpacity>
       {openSections[item.id] && (
         <View style={styles.answerContainer}>
-          {questions.map((item, index) => (
+          {FAQS_QUESTIONS.map((item, index) => (
             <TouchableOpacity
               key={index}
               onPress={() => openModal(item)}
@@ -253,24 +102,58 @@ const HelpScreen = () => {
   };
 
   RenderItem.displayName = "RenderItem";
-  const renderItem = ({ item, index }: any) => (
-    <RenderItem index={index} item={item} />
-  );
 
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Helps" left="back" right="notification" />,
+          headerShown: true,
+          header: () => (
+            <CustomHeader title="Helps" left="menu" right="notification" />
+          ),
         }}
       />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        <View style={styles.contactBox}>
+          <Foundation name="telephone" size={52} color={Colors?.primary} />
+          <View style={styles.contactTextContainer}>
+            <CustomHeading textAlign="left">
+              {t("our24x7CustomerService")}
+            </CustomHeading>
+            <TouchableOpacity onPress={() => Linking.openURL("tel:6397308499")}>
+              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+                6397308499
+              </CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.contactBox}>
+          <MaterialCommunityIcons
+            name="email"
+            size={40}
+            color={Colors?.primary}
+          />
+          <View style={styles.contactTextContainer}>
+            <CustomHeading textAlign="left">{t("writeUsAt")}</CustomHeading>
+            <TouchableOpacity
+              onPress={() =>
+                Linking.openURL("mailto:fastag.recharge@support.com")
+              }
+            >
+              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+                ak7192837@gmail.com
+              </CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View style={styles.searchContainer}>
           <TextInputComponent
             value={searchQuery}
-            placeholder="Search for topics or questions..."
+            placeholder={t("search")}
             onChangeText={handleSearch}
-            label="Have a burning question? 🔥"
+            label={t("haveAQuestion")}
             name="search"
           />
         </View>
@@ -287,22 +170,17 @@ const HelpScreen = () => {
               </TouchableOpacity>
             ))}
             {filteredQuestions.length === 0 && (
-              <CustomText>No results found</CustomText>
+              <CustomText>{t("noResultsFound")}</CustomText>
             )}
           </View>
         )}
         <View style={styles.sectionHeader}>
-          <CustomHeading>Frequently Asked</CustomHeading>
-          <TouchableOpacity>
-            <CustomHeading color={Colors?.link} fontSize={14}>
-              View All
-            </CustomHeading>
-          </TouchableOpacity>
+          <CustomHeading>{t("frequentlyAskedQuestions")}</CustomHeading>
         </View>
 
         <View>
           <FlatList
-            data={faqs ?? []}
+            data={FAQS_SUPPORT ?? []}
             renderItem={({ item, index }: any) => (
               <TouchableOpacity
                 key={index}
@@ -318,22 +196,7 @@ const HelpScreen = () => {
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item?.id?.toString()}
-            // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
             onEndReachedThreshold={0.9}
-            // ListFooterComponent={() =>
-            //   isFetchingNextPage ? (
-            //     <ActivityIndicator
-            //       size="large"
-            //       color={Colors?.primary}
-            //       style={styles.loaderStyle}
-            //     />
-            //   ) : null
-            // }
-            // getItemLayout={(data, index) => ({
-            //   length: 200,
-            //   offset: 200 * index,
-            //   index,
-            // })}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
             windowSize={3}
@@ -345,39 +208,13 @@ const HelpScreen = () => {
 
         <View style={styles.sectionHeader}>
           <CustomHeading>Topics</CustomHeading>
-          <TouchableOpacity>
-            <CustomHeading color={Colors?.link} fontSize={14}>
-              View All
-            </CustomHeading>
-          </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={topics ?? []}
-          renderItem={renderItem}
-          keyExtractor={(item) => item?.id?.toString()}
-          // onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-          onEndReachedThreshold={0.9}
-          // ListFooterComponent={() =>
-          //   isFetchingNextPage ? (
-          //     <ActivityIndicator
-          //       size="large"
-          //       color={Colors?.primary}
-          //       style={styles.loaderStyle}
-          //     />
-          //   ) : null
-          // }
-          getItemLayout={(data, index) => ({
-            length: 200,
-            offset: 200 * index,
-            index,
-          })}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={3}
-          removeClippedSubviews={true}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={{ marginBottom: 50 }}>
+          {FAQS_TOPICS.map((item, index) => (
+            <RenderItem key={item.id} item={item} index={index} />
+          ))}
+        </View>
 
         {selectedQuestion && (
           <Modal
@@ -433,7 +270,7 @@ const HelpScreen = () => {
           </Modal>
         )}
 
-        <View style={styles?.startConversation}>
+        {/* <View style={styles?.startConversation}>
           <Button
             isPrimary={true}
             title={t("startAConversation")}
@@ -441,10 +278,10 @@ const HelpScreen = () => {
             style={styles.startConversationButton}
             textStyle={styles.startConversationText}
           />
-        </View>
+        </View> */}
 
-        <Chat chatVisible={chatVisible} setChatVisible={setChatVisible} />
-      </View>
+        {/* <Chat chatVisible={chatVisible} setChatVisible={setChatVisible} /> */}
+      </ScrollView>
     </>
   );
 };
@@ -454,7 +291,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f9f9f9",
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 20,
+  },
+  contactBox: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+    alignItems: "center",
+  },
+  contactTextContainer: {
+    marginLeft: 10,
   },
   searchContainer: {
     marginBottom: 20,
@@ -493,7 +346,7 @@ const styles = StyleSheet.create({
   startConversation: {
     width: "100%",
     position: "absolute",
-    bottom: 20,
+    bottom: -10,
     left: 20,
     flex: 1,
     display: "flex",

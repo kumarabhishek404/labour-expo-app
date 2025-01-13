@@ -6,13 +6,16 @@ import {
   Animated,
   StatusBar,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { hasNewNotificationAtom, UserAtom } from "@/app/AtomStore/user";
 import { useAtomValue } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
+import { DrawerActions } from "@react-navigation/native";
+import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface CustomHeaderProps {
   title?: string;
@@ -31,6 +34,7 @@ const CustomHeader = ({
   const hasNewNotification = useAtomValue(hasNewNotificationAtom);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const router = useRouter();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (hasNewNotification) {
@@ -57,9 +61,21 @@ const CustomHeader = ({
     <>
       <StatusBar barStyle="light-content" />
       <View style={styles.headerContainer}>
+        {left === "menu" && (
+          <TouchableOpacity
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+            style={{marginLeft: 10}}
+          >
+            {/* <CustomText fontSize={26} color={Colors?.white} fontWeight="">
+              {t('menu')}
+            </CustomText> */}
+            <AntDesign name="menu-unfold" size={36} color={Colors?.white} />
+          </TouchableOpacity>
+        )}
         {left === "profile" && (
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/fifth")}
+            // onPress={() => router.push("/(tabs)/fifth")}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
             // style={{ marginLeft: 20 }}
           >
             <ProfilePicture

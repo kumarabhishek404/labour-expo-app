@@ -5,12 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { router, Stack, useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import FeedbackRatingBreakdown from "./ratingBreakdown";
 import Loader from "@/components/commons/Loader";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import { getTimeAgo } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
 import Button from "@/components/inputs/Button";
+import FeedbackRatingBreakdown from "@/app/screens/feedback/ratingBreakdown";
 
 const FeedbackScreen = () => {
   const [filteredFeedbacks, setFilteredFeedbacks]: any = useState([]);
