@@ -33,8 +33,7 @@ type Review = {
   avatar: string;
   reviewer: {
     _id: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     profilePicture: string;
   };
   type: "Positive" | "Negative";
@@ -170,7 +169,7 @@ const UserReviews = forwardRef(
           <View style={styles.headerContainer}>
             <View style={styles.nameContainer}>
               <Text style={styles.name} numberOfLines={2}>
-                {item?.reviewer?.firstName} {item?.reviewer?.lastName}
+                {item?.reviewer?.name}
               </Text>
             </View>
             {item?.reviewer?._id === userDetails?._id && (

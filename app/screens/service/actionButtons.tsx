@@ -413,7 +413,7 @@ const ServiceActionButtons = ({
         <ProfilePicture uri={item?.profilePicture} />
         <View style={styles.userInfo}>
           <CustomText style={styles.userName} textAlign="left">
-            {item?.firstName} {item?.lastName}
+            {item?.name}
           </CustomText>
           <CustomText style={styles.userSkills} textAlign="left">
             {t("skills")}: {item?.skills?.join(", ")}

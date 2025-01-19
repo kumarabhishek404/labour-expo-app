@@ -60,8 +60,7 @@ const AdminProfile = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      firstName: userDetails?.firstName,
-      lastName: userDetails?.lastName,
+      name: userDetails?.name,
       address: userDetails?.address,
     },
   });
@@ -97,8 +96,7 @@ const AdminProfile = () => {
   }, [isAccountInactive]);
 
   useEffect(() => {
-    setValue("firstName", userDetails?.firstName);
-    setValue("lastName", userDetails?.lastName);
+    setValue("name", userDetails?.name);
     setValue("address", userDetails?.address);
   }, [isEditProfile]);
 
@@ -114,8 +112,7 @@ const AdminProfile = () => {
       setIsEditProfile(false);
       setUserDetails({
         ...userDetails,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
+        name: user?.name,
         address: user?.address,
       });
     },
@@ -198,20 +195,20 @@ const AdminProfile = () => {
         <View style={{ flexDirection: "column", gap: 10 }}>
           <Controller
             control={control}
-            name="firstName"
+            name="name"
             defaultValue=""
             rules={{
               required: t("firstNameIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
-                label={t("firstName")}
-                name="firstName"
+                label={t("name")}
+                name="name"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder={t("enterYourFirstName")}
-                containerStyle={errors?.firstName && styles.errorInput}
+                containerStyle={errors?.name && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -225,34 +222,6 @@ const AdminProfile = () => {
             )}
           />
 
-          <Controller
-            control={control}
-            name="lastName"
-            defaultValue=""
-            rules={{
-              required: t("lastNameIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("lastName")}
-                name="lastName"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourLastName")}
-                containerStyle={errors?.lastName && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name="person"
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
         </View>
       </View>
     );
@@ -260,8 +229,7 @@ const AdminProfile = () => {
 
   const onSubmit = (data: any) => {
     let payload = {
-      firstName: data?.firstName,
-      lastName: data?.lastName,
+      name: data?.name,
       address: data?.address,
     };
     mutationUpdateProfileInfo?.mutate(payload);
@@ -321,10 +289,7 @@ const AdminProfile = () => {
                 gap: 5,
               }}
             >
-              <CustomHeading>
-                {userDetails?.firstName || "Name"}{" "}
-                {userDetails?.lastName || "Name"}
-              </CustomHeading>
+              <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
               <CustomText style={styles.caption}>
                 {userDetails?.role}
               </CustomText>

@@ -24,8 +24,7 @@ import ProfilePicture from "./ProfilePicture";
 
 type UserType = {
   _id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   coverImage: string;
   profilePicture: string;
   email: string;
@@ -62,8 +61,7 @@ type RenderItemTypes = {
     status: string;
     receiver: {
       _id: string;
-      firstName: string;
-      lastName: string;
+      name: string;
       coverImage: string;
       profilePicture: string;
       email: string;
@@ -76,8 +74,7 @@ type RenderItemTypes = {
     };
     employer: {
       _id: string;
-      firstName: string;
-      lastName: string;
+      name: string;
       coverImage: string;
       profilePicture: string;
       email: string;
@@ -157,7 +154,7 @@ const RequestCardAdmin = React.memo(({ item }: RequestCardProps) => {
             </View>
             <View style={styles.userDetails}>
               <CustomHeading style={styles.leftAlignText}>
-                {sender?.firstName} {sender?.lastName}
+                {sender?.name}
               </CustomHeading>
               <CustomText style={[styles.label, styles.leftAlignText]}>
                 Sender
@@ -207,7 +204,7 @@ const RequestCardAdmin = React.memo(({ item }: RequestCardProps) => {
             </View>
             <View style={styles.userDetails}>
               <CustomHeading style={styles.rightAlignText}>
-                {receiver?.firstName} {receiver?.lastName}
+                {receiver?.name}
               </CustomHeading>
               <CustomText style={[styles.label, styles.rightAlignText]}>
                 Receiver
@@ -282,7 +279,7 @@ const RequestCardUser = React.memo(
           />
           <View style={styles.infoContainer}>
             <CustomHeading textAlign="left">
-              {user?.firstName} {user?.lastName}
+              {user?.name}
             </CustomHeading>
             <RatingAndReviews
               rating={user?.rating || 0}

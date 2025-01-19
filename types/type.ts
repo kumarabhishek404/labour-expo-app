@@ -17,9 +17,7 @@ export interface ServiceType {
 
 export interface WorkerType {
   _id: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
+  name: string;
   profilePicture: string;
   isBookmarked: boolean;
   skills: string;

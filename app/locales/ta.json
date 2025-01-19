@@ -454,8 +454,6 @@
   "genderIsRequired": "பாலினம் அவசியம்",
   "dateOfBirthIsRequired": "பிறந்த தேதி அவசியம்",
   "youMustBeAtLeast18YearsOld": "உங்களுக்கு குறைந்தது 18 வயது இருக்க வேண்டும்",
-  "firstName": "முதல் பெயர்",
-  "lastName": "கடைசி பெயர்",
   "whatIsYourGender": "உங்கள் பாலினம் என்ன?",
   "enterYourFirstName": "முதல் பெயரை உள்ளிடவும்",
   "enterYourLastName": "கடைசி பெயரை உள்ளிடவும்",

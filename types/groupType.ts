@@ -1,7 +1,6 @@
 export interface GroupType {
   _id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   profileImage: string;
   rating: number;
   reviews: number;

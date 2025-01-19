@@ -18,8 +18,7 @@ const SearchFilter = ({ type, data, setFilteredData }: SearchFilterProps) => {
     let workers = data.flatMap((page: any) => page.data || []);
     const filtered: any = workers?.filter(
       (item: any) =>
-        item?.firstName?.toLowerCase().includes(text.toLowerCase()) ||
-        item?.lastName?.toLowerCase().includes(text.toLowerCase()) ||
+        item?.name?.toLowerCase().includes(text.toLowerCase()) ||
         item?.address?.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);

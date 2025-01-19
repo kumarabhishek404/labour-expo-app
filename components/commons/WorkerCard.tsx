@@ -31,7 +31,7 @@ const WorkerCard = ({ worker }: any) => {
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
               </CustomText>
-              {worker?.firstName} {worker?.lastName}
+              {worker?.name}
             </CustomText>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>

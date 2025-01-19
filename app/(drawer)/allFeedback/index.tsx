@@ -60,7 +60,7 @@ const FeedbackScreen = () => {
           }}
         >
           <CustomText textAlign="left" style={styles.userName}>
-            {item?.sender?.firstName} {item?.sender?.lastName}
+            {item?.sender?.name}
           </CustomText>
           <CustomText textAlign="left" color="#757575" fontSize={12}>
             {getTimeAgo(item?.createdAt)}

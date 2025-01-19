@@ -72,7 +72,7 @@ const ListingsVerticalWorkers = ({
                 />
 
                 <CustomHeading textAlign="left">
-                  {item?.firstName} {item?.middleName} {item?.lastName}
+                  {item?.name}
                 </CustomHeading>
 
                 <CustomText textAlign="left">{item?.address}</CustomText>

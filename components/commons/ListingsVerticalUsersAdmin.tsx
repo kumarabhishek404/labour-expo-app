@@ -131,7 +131,7 @@ const ListingsVerticalUsersAdmin = ({
                   }}
                 >
                   <CustomHeading textAlign="left">
-                    {item?.firstName} {item?.middleName} {item?.lastName}
+                    {item?.name}
                   </CustomHeading>
                   <RatingAndReviews
                     rating={item?.rating?.average}

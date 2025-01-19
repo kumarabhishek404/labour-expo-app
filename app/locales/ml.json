@@ -455,8 +455,6 @@
   "genderIsRequired": "ലിംഗം ആവശ്യമാണ്",
   "dateOfBirthIsRequired": "ജനനത്തീയതി ആവശ്യമാണ്",
   "youMustBeAtLeast18YearsOld": "നിങ്ങൾക്ക് കുറഞ്ഞത് 18 വയസ്സെങ്കിലും ഉണ്ടായിരിക്കണം",
-  "firstName": "ആദ്യ നാമം",
-  "lastName": "അവസാന നാമം",
   "whatIsYourGender": "നിങ്ങളുടെ ലിംഗം എന്താണ്?",
   "enterYourFirstName": "ആദ്യ നാമം നൽകുക",
   "enterYourLastName": "അവസാന നാമം നൽകുക",

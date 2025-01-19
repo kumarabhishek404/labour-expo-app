@@ -19,8 +19,7 @@ const { width } = Dimensions.get("window");
 
 const testimonials = [
   {
-    firstName: "John",
-    lastName: "Doe",
+    name: "John",
     role: "CEO of XYZ Corp",
     testimonial: "Lorem ipsum dolor sit amet, mea regione diamet principes at.",
     profileImage: "https://randomuser.me/api/portraits/men/1.jpg",
@@ -31,8 +30,7 @@ const testimonials = [
     },
   },
   {
-    firstName: "Jane",
-    lastName: "Smith",
+    name: "Jane",
     role: "CTO of ABC Ltd",
     testimonial: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
@@ -43,8 +41,7 @@ const testimonials = [
     },
   },
   {
-    firstName: "John",
-    lastName: "Doe",
+    name: "John",
     role: "CEO of XYZ Corp",
     testimonial: "Lorem ipsum dolor sit amet, mea regione diamet principes at.",
     profileImage: "https://randomuser.me/api/portraits/men/1.jpg",
@@ -55,8 +52,7 @@ const testimonials = [
     },
   },
   {
-    firstName: "Jane",
-    lastName: "Smith",
+    name: "Jane",
     role: "CTO of ABC Ltd",
     testimonial: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
@@ -66,7 +62,6 @@ const testimonials = [
       linkedin: "https://linkedin.com",
     },
   },
-  // Add more testimonials as needed
 ];
 
 const TestimonialSlider = () => {
@@ -130,7 +125,7 @@ const TestimonialSlider = () => {
               />
             </View>
             <CustomHeading>
-              {item.firstName} {item.lastName}
+              {item.name}
             </CustomHeading>
             <CustomText style={styles.role}>{item.role}</CustomText>
 

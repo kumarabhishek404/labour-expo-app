@@ -31,9 +31,7 @@ type Props = {
 type RenderItemTypes = {
   item: {
     _id: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
+    name: string;
     coverImage: string;
     address: string;
     profilePicture: string;
@@ -95,7 +93,7 @@ const ListingHorizontalWorkers = ({
           />
 
           <CustomHeading textAlign="left">
-            {item?.firstName} {item?.middleName} {item?.lastName}
+            {item?.name}
           </CustomHeading>
           <View
             style={{

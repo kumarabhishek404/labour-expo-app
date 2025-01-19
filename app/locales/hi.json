@@ -459,8 +459,6 @@
   "genderIsRequired": "जनकाल आवश्यक है",
   "dateOfBirthIsRequired": "जन्म तिथि आवश्यक है",
   "youMustBeAtLeast18YearsOld": "आपको कम से कम 18 वर्ष होने चाहिए",
-  "firstName": "फर्स्ट नाम",
-  "lastName": "लास्ट नाम",
   "whatIsYourGender": "आपका जनकाल क्या है?",
   "enterYourFirstName": "अपना फर्स्ट नाम दर्ज करें",
   "enterYourLastName": "अपना लास्ट नाम दर्ज करें",

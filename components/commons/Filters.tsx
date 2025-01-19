@@ -206,7 +206,7 @@ const Filters = ({
                   options={WORKERTYPES}
                   selectedOption={value}
                   setSelectedOption={onChange}
-                  containerStyle={errors?.lastName && styles.errorInput}
+                  containerStyle={errors?.selectedWorkers && styles.errorInput}
                   errors={errors}
                 />
               )}
@@ -228,7 +228,7 @@ const Filters = ({
                   onChangeText={onChange}
                   placeholder="Enter Price"
                   style={{ marginBottom: 80 }}
-                  containerStyle={errors?.lastName && styles.errorInput}
+                  containerStyle={errors?.pricePerDay && styles.errorInput}
                   errors={errors}
                   icon={
                     <FontAwesome

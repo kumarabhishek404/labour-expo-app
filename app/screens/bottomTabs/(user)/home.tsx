@@ -176,7 +176,7 @@ const UserHome = () => {
               fontSize={24}
               style={{ marginBottom: 10 }}
             >
-              {t("welcome")} {userDetails?.firstName}
+              {t("welcome")} {userDetails?.name}
             </CustomHeading> */}
             {/* <AudioRecorder /> */}
             <BannerSlider />

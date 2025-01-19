@@ -23,10 +23,8 @@ interface FirstScreenProps {
   setPhoneNumber: any;
   countryCode: string;
   setCountryCode: any;
-  firstName: string;
+  name: string;
   setFirstName: any;
-  lastName: string;
-  setLastName: any;
 }
 
 const FirstScreen: React.FC<FirstScreenProps> = ({
@@ -35,10 +33,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   setPhoneNumber,
   countryCode,
   setCountryCode,
-  firstName,
+  name,
   setFirstName,
-  lastName,
-  setLastName,
 }: FirstScreenProps) => {
   const [isMobileNumberExist, setIsMobileNumberExist] = useState<boolean|null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -51,16 +47,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     defaultValues: {
       countryCode: countryCode,
       phoneNumber: phoneNumber,
-      firstName: firstName,
-      lastName: lastName,
+      name: name,
     },
   });
 
   const onSubmit = (data: any) => {
     setCountryCode(data?.countryCode);
     setPhoneNumber(data?.phoneNumber);
-    setFirstName(data?.firstName);
-    setLastName(data?.lastName);
+    setFirstName(data?.name);
     if (!isMobileNumberExist) {
       setModalVisible(true);
     }
@@ -163,47 +157,26 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
         <Controller
           control={control}
-          name="firstName"
+          name="name"
           rules={{
             required: t("firstNameIsRequired"),
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInputComponent
-              name="firstName"
-              label={t("firstName")}
+              name="name"
+              label={t("name")}
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourFirstName")}
               textStyles={{ fontSize: 16 }}
-              containerStyle={errors?.firstName && styles.errorInput}
+              containerStyle={errors?.name && styles.errorInput}
               errors={errors}
               disabled={isMobileNumberExist}
             />
           )}
         />
 
-        <Controller
-          control={control}
-          name="lastName"
-          rules={{
-            required: t("lastNameIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputComponent
-              name="lastName"
-              label={t("lastName")}
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder={t("enterYourLastName")}
-              textStyles={{ fontSize: 16 }}
-              containerStyle={errors?.lastName && styles.errorInput}
-              errors={errors}
-              disabled={isMobileNumberExist}
-            />
-          )}
-        />
       </View>
       <Button
         isPrimary={true}

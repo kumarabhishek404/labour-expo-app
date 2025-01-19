@@ -185,7 +185,7 @@ const User = () => {
               style={styles.workerImage}
             />
             <CustomHeading textAlign="left" fontSize={20}>
-              {user?.firstName} {user?.lastName}
+              {user?.name}
             </CustomHeading>
 
             <View style={styles.listingLocationWrapper}>

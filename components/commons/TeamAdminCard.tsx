@@ -123,7 +123,7 @@ const TeamAdminCard = ({ admin }: any) => {
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
               </CustomText>
-              {adminDetails?.firstName} {adminDetails?.lastName}
+              {adminDetails?.name}
             </CustomText>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>

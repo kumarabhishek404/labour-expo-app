@@ -72,7 +72,7 @@ const ReviewScreen = () => {
             />
             <View style={styles.userInfo}>
               <CustomHeading style={styles.userName}>
-                {item?.reviewer?.firstName} {item?.reviewer?.lastName}
+                {item?.reviewer?.name}
               </CustomHeading>
               <CustomText textAlign="left" fontSize={12}>
                 {getTimeAgo(item?.createdAt)}

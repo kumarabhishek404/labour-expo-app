@@ -454,8 +454,6 @@
   "genderIsRequired": "लिंग आवश्यक आहे",
   "dateOfBirthIsRequired": "जन्म तारीख आवश्यक आहे",
   "youMustBeAtLeast18YearsOld": "तुमचे वय किमान 18 वर्षे असणे आवश्यक आहे",
-  "firstName": "पहिले नाव",
-  "lastName": "अंतिम नाव",
   "whatIsYourGender": "तुमचे लिंग काय आहे?",
   "enterYourFirstName": "पहिले नाव प्रविष्ट करा",
   "enterYourLastName": "अंतिम नाव प्रविष्ट करा",

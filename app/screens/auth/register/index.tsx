@@ -16,13 +16,10 @@ import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 
 const SignupScreen = () => {
-  const [step, setStep] = useState(3);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [step, setStep] = useState(1);
+  const [name, setFirstName] = useState("");
   const [gender, setGender] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState(
-    moment().subtract(18, "years").startOf("year")
-  );
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState<any>({});
   const [countryCode, setCountryCode] = useState("+91");
@@ -42,7 +39,6 @@ const SignupScreen = () => {
       console.log("onSuccess----");
       setProfilePicture("");
       setFirstName("");
-      setLastName("");
       setAddress("");
       setLocation({});
       setCountryCode("+91");
@@ -53,7 +49,7 @@ const SignupScreen = () => {
       setPassword("");
       setConfirmPassword("");
       setGender("");
-      setDateOfBirth(moment().subtract(18, "years").startOf("year"));
+      setDateOfBirth("");
       setStep(1);
     },
   });
@@ -84,12 +80,17 @@ const SignupScreen = () => {
           longitude: location.longitude,
         }
       : {};
-    if (!firstName || !lastName || !address || !phoneNumber) {
+    if (!name || !role || !countryCode || !phoneNumber) {
       toast.error(t("pleaseFillAllFields"));
       return;
     }
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
+
+    if (role !== "EMPLOYER" && skills?.length === 0) {
+      toast.error(t("workerMustHaveAtLeasOneSkill"));
+      return;
+    }
+
+    formData.append("name", name);
     formData.append("address", address);
     formData.append("location", JSON.stringify(cleanLocation));
     formData.append("countryCode", countryCode);
@@ -97,7 +98,10 @@ const SignupScreen = () => {
     formData.append("email", email);
     formData.append("role", role);
     formData.append("gender", gender);
-    formData.append("dateOfBirth", moment(dateOfBirth)?.format("DD-MM-YYYY"));
+    formData.append(
+      "dateOfBirth",
+      dateOfBirth && moment(dateOfBirth)?.format("DD-MM-YYYY")
+    );
     formData.append("skills", JSON.stringify(skills));
     formData.append("password", password);
     console.log("formData----", formData);
@@ -119,10 +123,8 @@ const SignupScreen = () => {
             setPhoneNumber={setPhoneNumber}
             countryCode={countryCode}
             setCountryCode={setCountryCode}
-            firstName={firstName}
+            name={name}
             setFirstName={setFirstName}
-            lastName={lastName}
-            setLastName={setLastName}
           />
         );
       // case 2:

@@ -44,6 +44,7 @@ import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
 import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
+import ProfileNotification from "@/components/commons/CompletProfileNotify";
 
 const UserProfile = () => {
   useLocale();
@@ -52,6 +53,7 @@ const UserProfile = () => {
   const [earnings, setEarnings] = useAtom(EarningAtom);
 
   const [isEditProfile, setIsEditProfile] = useState(false);
+
   const [profilePicture, setProfilePicture] = useState(
     userDetails?.profilePicture
   );
@@ -67,8 +69,7 @@ const UserProfile = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      firstName: userDetails?.firstName,
-      lastName: userDetails?.lastName,
+      name: userDetails?.name,
       email: userDetails?.email?.value,
     },
   });
@@ -104,8 +105,7 @@ const UserProfile = () => {
   }, [isAccountInactive]);
 
   useEffect(() => {
-    setValue("firstName", userDetails?.firstName);
-    setValue("lastName", userDetails?.lastName);
+    setValue("name", userDetails?.name);
     setValue("email", userDetails?.email?.value);
   }, [isEditProfile]);
 
@@ -121,8 +121,7 @@ const UserProfile = () => {
       setIsEditProfile(false);
       setUserDetails({
         ...userDetails,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
+        name: user?.name,
         email: user?.email?.value,
       });
     },
@@ -146,13 +145,6 @@ const UserProfile = () => {
     onError: (err) => {
       console.log("Error while uploading profilePicture image - ", err);
     },
-  });
-
-  const mutationRemoveProfileImage = useMutation({
-    mutationKey: ["removeProfileImage"],
-    mutationFn: () => handleRemoveProfileImage(),
-    onSuccess: (response) => {},
-    onError: (err) => {},
   });
 
   const mutationAddSkills = useMutation({
@@ -200,12 +192,6 @@ const UserProfile = () => {
     return await uploadFile(formData);
   };
 
-  const handleRemoveProfileImage = () => {
-    let tempUserDetails = { ...userDetails };
-    tempUserDetails.profilePicture = "";
-    return setUserDetails(tempUserDetails);
-  };
-
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
@@ -220,49 +206,20 @@ const UserProfile = () => {
         <View style={{ flexDirection: "column", gap: 10 }}>
           <Controller
             control={control}
-            name="firstName"
+            name="name"
             defaultValue=""
             rules={{
               required: t("firstNameIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
-                label={t("firstName")}
-                name="firstName"
+                label={t("name")}
+                name="name"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder={t("enterYourFirstName")}
-                containerStyle={errors?.firstName && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name="person"
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="lastName"
-            defaultValue=""
-            rules={{
-              required: t("lastNameIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("lastName")}
-                name="lastName"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourLastName")}
-                containerStyle={errors?.lastName && styles.errorInput}
+                containerStyle={errors?.name && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -313,8 +270,7 @@ const UserProfile = () => {
 
   const onSubmit = (data: any) => {
     let payload = {
-      firstName: data?.firstName,
-      lastName: data?.lastName,
+      name: data?.name,
       email: data?.email,
     };
     mutationUpdateProfileInfo?.mutate(payload);
@@ -371,16 +327,18 @@ const UserProfile = () => {
                 gap: 5,
               }}
             >
-              <CustomHeading>
-                {userDetails?.firstName || "Name"}{" "}
-                {userDetails?.lastName || "Name"}
-              </CustomHeading>
+              <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
               <CustomText style={styles.caption}>
                 {userDetails?.role}
               </CustomText>
             </View>
           </View>
         </View>
+
+        {(!userDetails?.email?.value ||
+          !userDetails?.address ||
+          !userDetails?.dateOfBirth ||
+          !userDetails?.gender) && <ProfileNotification />}
 
         {(userDetails?.status === "SUSPENDED" ||
           userDetails?.status === "DISABLED") && <InactiveAccountMessage />}

@@ -20,9 +20,7 @@ import { t } from "@/utils/translationHelper";
 type RenderItemTypes = {
   item: {
     _id: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
+    name: string;
     coverImage: string;
     location: any;
     profilePicture: string;
@@ -76,9 +74,7 @@ const GroupEmployersListing = ({
             style={styles.image}
           />
           <View>
-            <CustomHeading textAlign="left">
-              {item.firstName} {item.lastName}
-            </CustomHeading>
+            <CustomHeading textAlign="left">{item.name}</CustomHeading>
             <RatingAndReviews
               rating={item?.rating?.average}
               reviews={item?.rating?.count}

@@ -166,7 +166,7 @@ export default function Layout() {
 
   const menus = [
     {
-      label: `${t("welcome")} ${userDetails?.firstName}`,
+      label: `${t("welcome")} ${userDetails?.name}`,
       name: "/",
       onPress: () => Router?.push("/(drawer)/(tabs)"),
       icon: (color: string) => <Feather name="home" size={26} color={color} />,
@@ -389,7 +389,7 @@ export default function Layout() {
             <ProfilePicture uri={userDetails?.profilePicture} />
             <View style={styles.profileText}>
               <Text style={styles.profileName}>
-                {userDetails?.firstName} {userDetails?.lastName}
+                {userDetails?.name}
               </Text>
               <Text style={styles.profileRole}>{userDetails?.role}</Text>
             </View>

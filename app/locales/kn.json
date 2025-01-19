@@ -455,8 +455,6 @@
   "genderIsRequired": "ಲಿಂಗ ಅಗತ್ಯವಿದೆ",
   "dateOfBirthIsRequired": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ಅಗತ್ಯವಿದೆ",
   "youMustBeAtLeast18YearsOld": "ನಿಮಗೆ ಕನಿಷ್ಠ 18 ವರ್ಷ ವಯಸ್ಸಾಗಿರಬೇಕು",
-  "firstName": "ಮೊದಲ ಹೆಸರು",
-  "lastName": "ಕೊನೆಯ ಹೆಸರು",
   "whatIsYourGender": "ನಿಮ್ಮ ಲಿಂಗ ಯಾವುದು?",
   "enterYourFirstName": "ಮೊದಲ ಹೆಸರು ನಮೂದಿಸಿ",
   "enterYourLastName": "ಕೊನೆಯ ಹೆಸರು ನಮೂದಿಸಿ",

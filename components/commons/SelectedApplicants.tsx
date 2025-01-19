@@ -136,7 +136,7 @@ const SelectedApplicants = ({
                   <View style={styles?.titleContainer}>
                     <View style={{ gap: 2, marginBottom: 4 }}>
                       <CustomHeading fontSize={14}>
-                        {item?.firstName} {item?.lastName}
+                        {item?.name}
                       </CustomHeading>
                       <CustomText style={styles.caption}>
                         {item?.role === "WORKER" ? "WORKER" : "MEDIATOR"}
@@ -285,7 +285,7 @@ const SelectedApplicants = ({
                             <ProfilePicture uri={worker?.profilePicture} />
                             <View style={styles.workerInfo}>
                               <CustomText style={styles.workerName}>
-                                {worker?.firstName} {worker?.lastName}
+                                {worker?.name}
                               </CustomText>
                               <View style={styles.workerSkillsContainer}>
                                 <MaterialCommunityIcons

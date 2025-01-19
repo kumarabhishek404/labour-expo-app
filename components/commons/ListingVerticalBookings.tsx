@@ -80,7 +80,7 @@ const ListingsVerticalBookings = ({
                   Duration - {item?.duration}
                 </CustomText>
                 <CustomText textAlign="left">
-                  Emmployer - {employer?.firstName} {employer?.lastName}
+                  Employer - {employer?.name}
                 </CustomText>
                 <CustomText textAlign="left">{item?.description}</CustomText>
               </View>

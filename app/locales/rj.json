@@ -454,8 +454,6 @@
   "genderIsRequired": "लिंग ज़रूरी है",
   "dateOfBirthIsRequired": "जन्म तारीख ज़रूरी है",
   "youMustBeAtLeast18YearsOld": "थारी उम्र कम से कम 18 साल होनी चाहिए",
-  "firstName": "पहलो नाम",
-  "lastName": "आखिरी नाम",
   "whatIsYourGender": "थारो लिंग काई है?",
   "enterYourFirstName": "पहलो नाम दर्ज करो",
   "enterYourLastName": "आखिरी नाम दर्ज करो",
