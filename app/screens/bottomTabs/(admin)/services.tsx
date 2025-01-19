@@ -119,7 +119,7 @@ const AdminServices = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("services")} right="notification" />
+            <CustomHeader title={t("services")} left="menu" right="notification" />
           ),
         }}
       />

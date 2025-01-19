@@ -64,11 +64,8 @@ const CustomHeader = ({
         {left === "menu" && (
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-            style={{marginLeft: 10}}
+            style={{ marginLeft: 10 }}
           >
-            {/* <CustomText fontSize={26} color={Colors?.white} fontWeight="">
-              {t('menu')}
-            </CustomText> */}
             <AntDesign name="menu-unfold" size={36} color={Colors?.white} />
           </TouchableOpacity>
         )}

@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { toast } from "@/app/hooks/toast";
-import { Entypo, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import PasswordComponent from "@/components/inputs/Password";
-import { Controller, useForm } from "react-hook-form";
-import CustomText from "@/components/commons/CustomText";
+import { Ionicons } from "@expo/vector-icons";
 import Stepper from "@/components/commons/Stepper";
 import { REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
@@ -26,190 +23,112 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
   confirmPassword,
   setConfirmPassword,
 }: FourthScreenProps) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      password: password,
-      confirmPassword: confirmPassword,
-    },
-  });
+  const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
+    "create"
+  );
 
-  const [passwordConditions, setPasswordConditions] = useState({
-    hasFourDigits: false,
-    // hasNumber: false,
-    // hasUpperCase: false,
-    // hasLowerCase: false,
-    // hasSymbol: false,
-    // isLongEnough: false,
-  });
-
-  const checkPasswordConditions = (password: any) => {
-    const conditions = {
-      hasFourDigits: password.length === 4,
-      // hasNumber: /\d/.test(password),
-      // hasUpperCase: /[A-Z]/.test(password),
-      // hasLowerCase: /[a-z]/.test(password),
-      // hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      // isLongEnough: password.length >= 8,
-    };
-
-    setPasswordConditions(conditions);
+  const onSubmit = () => {
+    if (password === confirmPassword) {
+      setPassword(password);
+      setConfirmPassword(confirmPassword);
+      setStep(4);
+    } else {
+      toast.error("Passwords do not match. Please try again.");
+      setConfirmPassword("");
+    }
   };
 
-  const onSubmit = (data: any) => {
-    setPassword(data?.password);
-    setConfirmPassword(data?.confirmPassword);
-    setStep(5);
-    // handleRegister();
+  const handleSetPassword = () => {
+    if (password?.length === 4) {
+      setPasswordStep("confirm");
+    } else {
+      toast.error("Please enter full password");
+    }
+  };
+
+  const handleNumberPress = (num: string) => {
+    if (passwordStep === "create") {
+      if (num === "remove") {
+        setPassword(password.slice(0, -1)); // Remove last character from the password
+      } else if (password.length < 4) {
+        setPassword(password + num); // Add a digit to the password
+      }
+    } else if (passwordStep === "confirm") {
+      if (num === "remove") {
+        setConfirmPassword(confirmPassword.slice(0, -1)); // Remove last character from the confirm password
+      } else if (confirmPassword.length < 4) {
+        setConfirmPassword(confirmPassword + num); // Add a digit to the confirm password
+      }
+    }
   };
 
   return (
     <View style={{ gap: 15 }}>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={4} steps={REGISTERSTEPS} />
+      <View style={{ marginBottom: 30 }}>
+        <Stepper currentStep={3} steps={REGISTERSTEPS} />
       </View>
 
-      <Controller
-        control={control}
-        name="password"
-        defaultValue=""
-        rules={{
-          required: t("passwordIsRequired"),
-          pattern: {
-            value: /^\d{4}$/,
-            message: t("passwordMustBe4Digits"),
-          },
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <>
-            <PasswordComponent
-              label={t("password")}
-              name="password"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={(text: any) => {
-                onChange(text);
-                checkPasswordConditions(text);
-              }}
-              placeholder={t("enterYourPassword")}
-              containerStyle={errors?.password && styles.errorInput}
-              errors={errors}
-              icon={
-                <MaterialIcons
-                  name={"password"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-            <CustomText
-              textAlign="left"
-              style={[passwordConditions.hasFourDigits && styles?.successText]}
-            >
-              {passwordConditions.hasFourDigits ? (
-                <Entypo name={"check"} size={16} />
-              ) : (
-                <Entypo name="cross" size={16} />
-              )}{" "}
-              {t("passwordMustBe4Digits")}
-            </CustomText>
-            {/* Do not remove this comment */}
-            {/* <View style={{ marginBottom: 15 }}>
-              <CustomText
-                textAlign="left"
-                style={[passwordConditions.hasNumber && styles?.successText]}
-              >
-                {passwordConditions.hasNumber ? (
-                  <Entypo name={"check"} size={16} />
-                ) : (
-                  <Entypo name="cross" size={16} />
-                )}{" "}
-                {t("useAtLeastOneNumber")}
-              </CustomText>
-              <CustomText
-                textAlign="left"
-                style={[passwordConditions.hasLowerCase && styles?.successText]}
-              >
-                {passwordConditions.hasLowerCase ? (
-                  <Entypo name={"check"} size={16} />
-                ) : (
-                  <Entypo name="cross" size={16} />
-                )}{" "}
-                {t("useAtLeastOneLowerCaseLetter")}
-              </CustomText>
-              <CustomText
-                textAlign="left"
-                style={[passwordConditions.hasSymbol && styles?.successText]}
-              >
-                {passwordConditions.hasSymbol ? (
-                  <Entypo name={"check"} size={16} />
-                ) : (
-                  <Entypo name="cross" size={16} />
-                )}{" "}
-                {t("useAtLeastOneSymbol")}
-              </CustomText>
-              <CustomText
-                textAlign="left"
-                style={[passwordConditions.isLongEnough && styles?.successText]}
-              >
-                {passwordConditions.isLongEnough ? (
-                  <Entypo name={"check"} size={16} />
-                ) : (
-                  <Entypo name="cross" size={16} />
-                )}{" "}
-                {t("beAtLeast8CharactersLong")}
-              </CustomText>
-            </View> */}
-          </>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="confirmPassword"
-        defaultValue=""
-        rules={{
-          required: t("pleaseConfirmYourPassword"),
-          validate: (value) =>
-            value == watch("password") || t("passwordsDoNotMatch"),
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <PasswordComponent
-            label={t("confirmPassword")}
-            name="confirmPassword"
-            value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder={t("enterYourConfirmPassword")}
-            containerStyle={errors?.confirmPassword && styles.errorInput}
-            errors={errors}
-            icon={
-              <FontAwesome
-                name={"user-secret"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
+      >
+        <Text style={styles.title}>
+          {passwordStep === "create"
+            ? "Create a 4-Digit Password"
+            : "Confirm Your Password"}
+        </Text>
+        <View style={styles.passwordContainer}>
+          {Array(4)
+            .fill()
+            .map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  (passwordStep === "create"
+                    ? password.length
+                    : confirmPassword.length) > index && styles.filledDot,
+                ]}
               />
-            }
-          />
-        )}
-      />
+            ))}
+        </View>
+
+        <View style={styles.keypad}>
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "remove"].map(
+            (num, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.key}
+                onPress={() => handleNumberPress(num)}
+              >
+                {num === "remove" ? (
+                  <Ionicons name="backspace" size={30} color={Colors.white} />
+                ) : (
+                  <Text style={styles.keyText}>{num}</Text>
+                )}
+              </TouchableOpacity>
+            )
+          )}
+        </View>
+      </View>
 
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
           title={t("back")}
-          onPress={() => setStep(3)}
+          onPress={() =>
+            passwordStep === "create" ? setStep(2) : setPasswordStep("create")
+          }
         />
         <Button
           isPrimary={true}
-          title={t("saveAllDetails")}
-          onPress={handleSubmit(onSubmit)}
+          title={passwordStep === "create" ? "Next" : "Confirm Your Password"}
+          onPress={() =>
+            passwordStep === "create" ? handleSetPassword() : onSubmit()
+          }
         />
       </View>
     </View>
@@ -293,6 +212,178 @@ const styles = StyleSheet.create({
   successText: {
     color: "green",
   },
+  title: {
+    fontSize: 18,
+    color: Colors?.primary,
+    marginBottom: 20,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    marginBottom: 40,
+  },
+  dot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#3a3a4f",
+    marginHorizontal: 10,
+  },
+  filledDot: {
+    backgroundColor: "#5DB075",
+  },
+  keypad: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "80%",
+    marginBottom: 0,
+    padding: 0,
+  },
+  key: {
+    width: "30%",
+    aspectRatio: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    backgroundColor: Colors?.primary,
+    borderRadius: 8,
+  },
+  keyText: {
+    fontSize: 24,
+    color: "white",
+  },
 });
 
 export default FourthScreen;
+
+{
+  /* Do not remove this comment */
+}
+
+{
+  /* <Controller
+control={control}
+name="password"
+defaultValue=""
+rules={{
+  required: t("passwordIsRequired"),
+  pattern: {
+    value: /^\d{4}$/,
+    message: t("passwordMustBe4Digits"),
+  },
+}}
+render={({ field: { onChange, onBlur, value } }) => (
+  <>
+    <PasswordComponent
+      label={t("password")}
+      name="password"
+      value={value}
+      onBlur={onBlur}
+      onChangeText={(text: any) => {
+        onChange(text);
+        checkPasswordConditions(text);
+      }}
+      placeholder={t("enterYourPassword")}
+      containerStyle={errors?.password && styles.errorInput}
+      errors={errors}
+      icon={
+        <MaterialIcons
+          name={"password"}
+          size={30}
+          color={Colors.secondary}
+          style={{ paddingVertical: 10, paddingRight: 10 }}
+        />
+      }
+    />
+    <CustomText
+      textAlign="left"
+      style={[passwordConditions.hasFourDigits && styles?.successText]}
+    >
+      {passwordConditions.hasFourDigits ? (
+        <Entypo name={"check"} size={16} />
+      ) : (
+        <Entypo name="cross" size={16} />
+      )}{" "}
+      {t("passwordMustBe4Digits")}
+    </CustomText>
+    <View style={{ marginBottom: 15 }}>
+      <CustomText
+        textAlign="left"
+        style={[passwordConditions.hasNumber && styles?.successText]}
+      >
+        {passwordConditions.hasNumber ? (
+          <Entypo name={"check"} size={16} />
+        ) : (
+          <Entypo name="cross" size={16} />
+        )}{" "}
+        {t("useAtLeastOneNumber")}
+      </CustomText>
+      <CustomText
+        textAlign="left"
+        style={[passwordConditions.hasLowerCase && styles?.successText]}
+      >
+        {passwordConditions.hasLowerCase ? (
+          <Entypo name={"check"} size={16} />
+        ) : (
+          <Entypo name="cross" size={16} />
+        )}{" "}
+        {t("useAtLeastOneLowerCaseLetter")}
+      </CustomText>
+      <CustomText
+        textAlign="left"
+        style={[passwordConditions.hasSymbol && styles?.successText]}
+      >
+        {passwordConditions.hasSymbol ? (
+          <Entypo name={"check"} size={16} />
+        ) : (
+          <Entypo name="cross" size={16} />
+        )}{" "}
+        {t("useAtLeastOneSymbol")}
+      </CustomText>
+      <CustomText
+        textAlign="left"
+        style={[passwordConditions.isLongEnough && styles?.successText]}
+      >
+        {passwordConditions.isLongEnough ? (
+          <Entypo name={"check"} size={16} />
+        ) : (
+          <Entypo name="cross" size={16} />
+        )}{" "}
+        {t("beAtLeast8CharactersLong")}
+      </CustomText>
+    </View>
+  </>
+)}
+/>
+
+<Controller
+control={control}
+name="confirmPassword"
+defaultValue=""
+rules={{
+  required: t("pleaseConfirmYourPassword"),
+  validate: (value) =>
+    value == watch("password") || t("passwordsDoNotMatch"),
+}}
+render={({ field: { onChange, onBlur, value } }) => (
+  <PasswordComponent
+    label={t("confirmPassword")}
+    name="confirmPassword"
+    value={value}
+    onBlur={onBlur}
+    onChangeText={onChange}
+    placeholder={t("enterYourConfirmPassword")}
+    containerStyle={errors?.confirmPassword && styles.errorInput}
+    errors={errors}
+    icon={
+      <FontAwesome
+        name={"user-secret"}
+        size={30}
+        color={Colors.secondary}
+        style={{ paddingVertical: 10, paddingRight: 10 }}
+      />
+    }
+  />
+)}
+/> */
+}

@@ -317,7 +317,6 @@ const UserProfile = () => {
       lastName: data?.lastName,
       email: data?.email,
     };
-    console.log("Payload---", payload);
     mutationUpdateProfileInfo?.mutate(payload);
   };
 

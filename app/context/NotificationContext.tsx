@@ -9,8 +9,8 @@ import React, {
 import * as Notifications from "expo-notifications";
 import { Subscription } from "expo-modules-core";
 import { registerForPushNotificationsAsync } from "../hooks/usePushNotification";
-import { useSetAtom } from "jotai";
-import { hasNewNotificationAtom } from "../AtomStore/user";
+import { useAtomValue, useSetAtom } from "jotai";
+import { hasNewNotificationAtom, UserAtom } from "../AtomStore/user";
 
 interface NotificationContextType {
   expoPushToken: string | null;
@@ -44,44 +44,48 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [notification, setNotification] =
     useState<Notifications.Notification | null>(null);
   const [error, setError] = useState<Error | null>(null);
-
+  const userDetails = useAtomValue(UserAtom);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(
-      (token: any) => setExpoPushToken(token),
-      (error: React.SetStateAction<Error | null>) => setError(error)
-    );
+    if (userDetails?.isAuth) {
+      registerForPushNotificationsAsync().then(
+        (token: any) => setExpoPushToken(token),
+        (error: React.SetStateAction<Error | null>) => setError(error)
+      );
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("🔔 Notification Received: ", notification);
-        setNotification(notification);
-        setHasNewNotification(true);
-      });
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          console.log("🔔 Notification Received: ", notification);
+          setNotification(notification);
+          setHasNewNotification(true);
+        });
 
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(
-          "🔔 Notification Response: use can interact with the response",
-          JSON.stringify(response, null, 2),
-          JSON.stringify(response.notification.request.content.data, null, 2)
-        );
-        // Handle the notification response here
-      });
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log(
+            "🔔 Notification Response: use can interact with the response",
+            JSON.stringify(response, null, 2),
+            JSON.stringify(response.notification.request.content.data, null, 2)
+          );
+          // Handle the notification response here
+        });
 
-    return () => {
-      if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-      }
-      if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
-      }
-    };
-  }, []);
+      return () => {
+        if (notificationListener.current) {
+          Notifications.removeNotificationSubscription(
+            notificationListener.current
+          );
+        }
+        if (responseListener.current) {
+          Notifications.removeNotificationSubscription(
+            responseListener.current
+          );
+        }
+      };
+    }
+  }, [userDetails]);
 
   return (
     <NotificationContext.Provider

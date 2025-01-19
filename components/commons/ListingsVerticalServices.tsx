@@ -236,7 +236,7 @@ const ListingsVerticalServices = ({
         maxToRenderPerBatch={10}
         windowSize={3}
         removeClippedSubviews={true}
-        contentContainerStyle={{ paddingBottom: 150 }}
+        contentContainerStyle={{ paddingBottom: 230 }}
         refreshControl={refreshControl}
       />
     </View>

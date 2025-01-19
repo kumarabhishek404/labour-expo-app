@@ -9,7 +9,6 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import DropdownComponent from "@/components/inputs/Dropdown";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { STETESOFINDIA } from "@/constants";
@@ -22,6 +21,8 @@ import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import { updateUserById } from "@/app/api/user";
 import Loader from "@/components/commons/Loader";
+import { ALL_INDIAN_VILLAGES } from "@/constants/india";
+import DropdownComponent from "./dropdown";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(UserAtom);
@@ -34,12 +35,12 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      village: "",
-      post: "",
-      city: "",
-      pinCode: "",
-      state: "",
       country: "India",
+      state: "",
+      district: "",
+      subDistrict: "",
+      village: "",
+      pinCode: "",
     },
   });
 
@@ -57,8 +58,45 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     },
   });
 
+  const selectedState = watch("state");
+  const selectedDistrict = watch("district");
+  const selectedSubDistrict = watch("subDistrict");
+
+  const states = ALL_INDIAN_VILLAGES.map((item) => ({
+    label: item.state,
+    value: item.state,
+  }));
+
+  const districts =
+    selectedState &&
+    ALL_INDIAN_VILLAGES.find(
+      (item) => item.state === selectedState
+    )?.districts.map((item) => ({
+      label: item.district,
+      value: item.district,
+    }));
+
+  const subDistricts =
+    selectedDistrict &&
+    ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+      ?.districts.find((item) => item.district === selectedDistrict)
+      ?.subDistricts.map((item) => ({
+        label: item.subDistrict,
+        value: item.subDistrict,
+      }));
+
+  const villages =
+    selectedSubDistrict &&
+    ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+      ?.districts.find((item) => item.district === selectedDistrict)
+      ?.subDistricts.find((item) => item.subDistrict === selectedSubDistrict)
+      ?.villages.map((item) => ({
+        label: item,
+        value: item,
+      }));
+
   const onSubmit = async (data: any) => {
-    const address = `${data?.village}, ${data?.post} ${data?.city} ${data?.pinCode} ${data?.state} ${data?.country}`;
+    const address = `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`;
 
     if (userDetails?.savedAddresses?.includes(address)) {
       toast.error(t("addressAlreadyExists"));
@@ -74,6 +112,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
       ...userDetails,
       savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
     });
+
     if (userDetails?.isAuth) {
       await mutationUpdateProfileInfo.mutate({
         savedAddresses: address,
@@ -102,11 +141,78 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
                 value={value}
                 setValue={onChange}
                 placeholder={t("selectState")}
-                emptyPlaceholder={t("pleaseSelectAnyState")}
                 errors={errors}
                 containerStyle={errors?.state && styles.errorInput}
                 search={false}
-                options={STETESOFINDIA}
+                options={states || []}
+                icon={
+                  <FontAwesome6
+                    style={styles.icon}
+                    color="black"
+                    name="map-location"
+                    size={20}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="district"
+            rules={{
+              required: t("districtIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                name="district"
+                label={t("district")}
+                value={value}
+                setValue={onChange}
+                placeholder={
+                  selectedState
+                    ? t("selectDistrict")
+                    : t("pleaseSelectStateFirst")
+                }
+                disabled={!selectedState}
+                errors={errors}
+                containerStyle={errors?.district && styles.errorInput}
+                search={false}
+                options={districts || []}
+                icon={
+                  <FontAwesome6
+                    style={styles.icon}
+                    color="black"
+                    name="map-location"
+                    size={20}
+                  />
+                }
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="subDistrict"
+            rules={{
+              required: t("subDistrictIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                name="subDistrict"
+                label={t("subDistrict")}
+                value={value}
+                setValue={onChange}
+                placeholder={
+                  selectedDistrict
+                    ? t("selectSubDistrict")
+                    : t("pleaseSelectDistrictFirst")
+                }
+                disabled={!selectedDistrict}
+                errors={errors}
+                containerStyle={errors?.subDistrict && styles.errorInput}
+                search={false}
+                options={subDistricts || []}
                 icon={
                   <FontAwesome6
                     style={styles.icon}
@@ -126,77 +232,27 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               required: t("villageIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                value={value}
-                style={styles.textInput}
-                placeholder={t("village")}
-                onChangeText={onChange}
-                label={t("village")}
+              <DropdownComponent
                 name="village"
+                label={t("village")}
+                value={value}
+                setValue={onChange}
+                placeholder={
+                  selectedSubDistrict
+                    ? t("selectVillage")
+                    : t("pleaseSelectSubDistrictFirst")
+                }
+                disabled={!selectedSubDistrict}
+                errors={errors}
                 containerStyle={errors?.village && styles.errorInput}
-                errors={errors}
+                search={false}
+                options={villages || []}
                 icon={
-                  <Fontisto
-                    name="holiday-village"
+                  <FontAwesome6
                     style={styles.icon}
-                    size={22}
-                    color={Colors.secondary}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="post"
-            rules={{
-              required: t("postIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                value={value}
-                style={styles.textInput}
-                placeholder={t("post")}
-                onChangeText={onChange}
-                label={t("post")}
-                name="post"
-                containerStyle={errors?.post && styles.errorInput}
-                errors={errors}
-                icon={
-                  <MaterialIcons
-                    name="local-post-office"
-                    style={styles.icon}
-                    size={22}
-                    color={Colors.secondary}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="city"
-            rules={{
-              required: t("cityIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                value={value}
-                style={styles.textInput}
-                placeholder={t("city")}
-                onChangeText={onChange}
-                label={t("city")}
-                name="city"
-                containerStyle={errors?.city && styles.errorInput}
-                errors={errors}
-                icon={
-                  <FontAwesome5
-                    name="city"
-                    style={styles.icon}
-                    size={22}
-                    color={Colors.secondary}
+                    color="black"
+                    name="map-location"
+                    size={20}
                   />
                 }
               />
@@ -216,6 +272,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
                 placeholder={t("pinCode")}
                 onChangeText={onChange}
                 label={t("pinCode")}
+                maxLength={6}
                 name="pinCode"
                 type="number"
                 containerStyle={errors?.pinCode && styles.errorInput}
@@ -231,34 +288,6 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               />
             )}
           />
-
-          {/* <Controller
-            control={control}
-            name="country"
-            rules={{
-              required: t("countryIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                value={value}
-                style={styles.textInput}
-                placeholder={t("country")}
-                onChangeText={onChange}
-                label={t("country")}
-                name="country"
-                containerStyle={errors?.country && styles.errorInput}
-                errors={errors}
-                icon={
-                  <FontAwesome
-                    name="flag"
-                    style={styles.icon}
-                    size={22}
-                    color={Colors.secondary}
-                  />
-                }
-              />
-            )}
-          /> */}
         </View>
       </ScrollView>
     );

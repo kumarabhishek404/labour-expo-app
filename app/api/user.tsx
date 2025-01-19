@@ -188,7 +188,7 @@ export const registerDevice = async (payload: any) => {
   } catch (error: any) {
     console.log(
       `[Sign In] [userService] An error occurred while registering user device `,
-      error?.response?.data?.message
+      error?.response?.data
     );
     toast.error(
       error?.response?.data?.message ||

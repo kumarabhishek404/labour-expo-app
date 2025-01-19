@@ -23,7 +23,12 @@ import ListingVerticalRequests from "@/components/commons/ListingVerticalRequest
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { EMPLOYERBOOKINGS, WORKERBOOKINGS, WORKERTYPES } from "@/constants";
+import {
+  ADMIN_BOOKINGS,
+  EMPLOYER_BOOKINGS,
+  WORKER_BOOKINGS,
+  WORKERTYPES,
+} from "@/constants";
 import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
@@ -261,9 +266,11 @@ const Bookings = () => {
 
           <CategoryButtons
             options={
-              userDetails?.role === "EMPLOYER"
-                ? EMPLOYERBOOKINGS
-                : WORKERBOOKINGS
+              userDetails?.role === "ADMIN"
+                ? ADMIN_BOOKINGS
+                : userDetails?.role === "EMPLOYER"
+                ? EMPLOYER_BOOKINGS
+                : WORKER_BOOKINGS
             }
             onCagtegoryChanged={onCatChanged}
           />

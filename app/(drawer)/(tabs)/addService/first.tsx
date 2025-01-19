@@ -108,8 +108,11 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               label={t("workSubType")}
               value={value}
               setValue={onChange}
-              placeholder={watch('type') ? t("selectWorkSubType") : t("pleaseSelectWorkTypeFirst")}
-              // emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
+              placeholder={
+                watch("type")
+                  ? t("selectWorkSubType")
+                  : t("pleaseSelectWorkTypeFirst")
+              }
               options={filterSubCategories(watch("type"))}
               errors={errors}
               containerStyle={errors?.subType && styles.errorInput}

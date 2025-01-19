@@ -1,15 +1,11 @@
-// notificationSetup.js
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { registerDevice } from "../api/user";
 import { toast } from "./toast";
-import { useSetAtom } from "jotai";
-import { NotificationConsentAtom } from "../AtomStore/user";
 
 export async function registerForPushNotificationsAsync() {
-  // Configure Android notification settings
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",

@@ -55,12 +55,12 @@ const SkillsSelector = ({
     if (isPricePerDayNeeded) {
       setSelectedSkill(skill);
       setIsEditMode(false); // Ensure edit mode is off
-      setPricePopupVisible(true); // Show popup for price input
+      setPricePopupVisible(true); // Show popup for pricePerDay input
     } else {
-      // Add skill without price
+      // Add skill without pricePerDay
       setSelectedInterests([
         ...selectedInterests,
-        { skill: skill.value, price: null },
+        { skill: skill.value, pricePerDay: null },
       ]);
     }
   };
@@ -68,7 +68,7 @@ const SkillsSelector = ({
   const handleAddSkill = (data: any) => {
     const newSkill = {
       skill: selectedSkill?.value,
-      price: isPricePerDayNeeded ? data.pricePerDay : null,
+      pricePerDay: isPricePerDayNeeded ? data.pricePerDay : null,
     };
 
     if (isEditMode) {
@@ -103,7 +103,7 @@ const SkillsSelector = ({
 
     if (isPricePerDayNeeded) {
       setIsEditMode(true);
-      reset({ pricePerDay: existingSkill?.price || "" });
+      reset({ pricePerDay: existingSkill?.pricePerDay || "" });
       setPricePopupVisible(true);
     } else {
       toast?.error(t("priceEditNotAllowed")); // Optional toast for feedback
@@ -139,6 +139,9 @@ const SkillsSelector = ({
     );
   };
 
+  console.log("selectedInterests--", selectedInterests);
+  
+
   return (
     <View style={styles.container}>
       <CustomHeading textAlign="left">{t("selectAnySkills")}</CustomHeading>
@@ -156,8 +159,8 @@ const SkillsSelector = ({
             >
               <CustomHeading color={Colors?.white}>
                 {getWorkLabel(availableOptions, interest.skill)}{" "}
-                {isPricePerDayNeeded && interest.price
-                  ? `- ₹ ${interest.price} / ${t("perDay")}`
+                {isPricePerDayNeeded && interest.pricePerDay
+                  ? `- ₹ ${interest.pricePerDay} / ${t("perDay")}`
                   : ""}
               </CustomHeading>
               <TouchableOpacity
@@ -209,7 +212,7 @@ const SkillsSelector = ({
           }
           onClose={() => {
             setPricePopupVisible(false);
-            reset();
+            reset({ pricePerDay: "" });
           }}
           primaryButton={{
             title: isEditMode ? t("updateSkillPrice") : t("addSkillPrice"),
@@ -219,7 +222,7 @@ const SkillsSelector = ({
             title: t("cancel"),
             action: () => {
               setPricePopupVisible(false);
-              reset();
+              reset({ pricePerDay: "" });
             },
           }}
         />

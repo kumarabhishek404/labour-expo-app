@@ -156,6 +156,8 @@ const User = () => {
     }
   };
 
+  console.log("role--", role);
+  
   return (
     <>
       <Stack.Screen
@@ -245,7 +247,7 @@ const User = () => {
 
             <CustomText>{user?.description}</CustomText>
 
-            {role !== "employers" && (
+            {role !== "EMPLOYER" && (
               <SkillSelector
                 canAddSkills={false}
                 role={user?.role}

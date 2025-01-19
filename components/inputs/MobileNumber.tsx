@@ -165,7 +165,7 @@ const MobileNumberField = ({
       />
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <CustomHeading textAlign="left">{t("phoneNumber")}</CustomHeading>
-        {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
+        {/* {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
           <Dropdown
             style={[styles.dropdown, isFocus && styles?.focusStyle]}
             data={countriesPhoneCode?.map((item: any) => ({
@@ -188,7 +188,7 @@ const MobileNumberField = ({
               </CustomHeading>
             )}
           />
-        )}
+        )} */}
 
         <View
           style={{

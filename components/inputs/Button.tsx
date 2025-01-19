@@ -1,4 +1,11 @@
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import CustomHeading from "../commons/CustomHeading";
@@ -28,87 +35,51 @@ export default function Button({
   loading,
   disabled,
 }: ButtonProps) {
+  const handlePress = (data: any) => {
+    Keyboard.dismiss(); // Dismiss the keyboard before button action
+    onPress(data);
+  };
+
+  const containerStyles = {
+    backgroundColor: bgColor || (isPrimary ? Colors.heading : Colors.white),
+    borderWidth: 2,
+    borderColor: isPrimary ? bgColor || Colors.heading : Colors.heading,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    flexDirection: loading || icon ? "row" : "column",
+    alignItems: "center",
+    justifyContent: "center",
+    ...style,
+  };
+
+  const textStyles = {
+    color: textColor || (isPrimary ? Colors.white : Colors.primary),
+    fontWeight: "700",
+    textAlign: "center",
+    fontSize: 16,
+    display: "flex",
+    flexWrap: "wrap",
+    ...textStyle,
+  };
+
+  const activityIndicatorColor = isPrimary ? Colors.white : Colors.primary;
+
   return (
-    <>
-      {isPrimary ? (
-        <TouchableOpacity
-          disabled={disabled || loading}
-          onPress={onPress}
-          style={{
-            backgroundColor: bgColor || Colors?.heading,
-            borderWidth: 2,
-            borderColor: bgColor || Colors?.heading,
-            paddingVertical: 6,
-            paddingHorizontal: 14,
-            borderRadius: 8,
-            flexDirection: loading || icon ? "row" : "column",
-            alignItems: "center",
-            justifyContent: "center",
-            ...style,
-          }}
-        >
-          {icon && icon}
-          <CustomHeading
-            style={{
-              color: textColor || Colors?.white,
-              fontWeight: "700",
-              textAlign: "center",
-              fontSize: 16,
-              display: "flex",
-              flexWrap: "wrap",
-              ...textStyle,
-            }}
-          >
-            {title}
-          </CustomHeading>
-          {loading && (
-            <ActivityIndicator
-              style={{ marginLeft: 10 }}
-              color={Colors?.white}
-              animating={true}
-            />
-          )}
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          disabled={disabled || loading}
-          onPress={onPress}
-          style={{
-            backgroundColor: bgColor || Colors?.white,
-            borderWidth: 2,
-            borderColor: Colors?.heading,
-            paddingVertical: 6,
-            paddingHorizontal: 14,
-            borderRadius: 8,
-            flexDirection: loading || icon ? "row" : "column",
-            alignItems: "center",
-            justifyContent: "center",
-            ...style,
-          }}
-        >
-          {icon && icon}
-          <CustomHeading
-            style={{
-              color: textColor || Colors?.primary,
-              fontWeight: "700",
-              textAlign: "center",
-              fontSize: 16,
-              display: "flex",
-              flexWrap: "wrap",
-              ...textStyle,
-            }}
-          >
-            {title}
-          </CustomHeading>
-          {loading && (
-            <ActivityIndicator
-              style={{ marginLeft: 10 }}
-              color={Colors?.primary}
-              animating={true}
-            />
-          )}
-        </TouchableOpacity>
+    <TouchableOpacity
+      disabled={disabled || loading}
+      onPress={handlePress}
+      style={containerStyles}
+    >
+      {icon && icon}
+      <CustomHeading style={textStyles}>{title}</CustomHeading>
+      {loading && (
+        <ActivityIndicator
+          style={{ marginLeft: 10 }}
+          color={activityIndicatorColor}
+          animating={true}
+        />
       )}
-    </>
+    </TouchableOpacity>
   );
 }

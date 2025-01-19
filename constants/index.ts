@@ -39,7 +39,7 @@ export const COUNTRYPHONECODE = [{ label: "india", value: "+91" }];
 
 export const REGISTERSTEPS = [
   { label: "name" },
-  { label: "contacts" },
+  // { label: "contacts" },
   { label: "skills" },
   { label: "password" },
 ];
@@ -225,7 +225,20 @@ export const WORKERREQUEST = [
   },
 ];
 
-export const EMPLOYERBOOKINGS = [
+export const ADMIN_BOOKINGS = [
+  {
+    label: "allBookings",
+    value: "booking",
+    iconName: "city",
+  },
+  {
+    label: "allRequests",
+    value: "request",
+    iconName: "city",
+  },
+];
+
+export const EMPLOYER_BOOKINGS = [
   {
     label: "bookedWorker",
     value: "booking",
@@ -238,7 +251,7 @@ export const EMPLOYERBOOKINGS = [
   },
 ];
 
-export const WORKERBOOKINGS = [
+export const WORKER_BOOKINGS = [
   {
     label: "myBookings",
     value: "booking",
@@ -401,12 +414,12 @@ export const LANGUAGE_KEY = "selectedLanguage";
 export const LANGUAGES = [
   { label: "English", value: "en" },
   { label: "हिंदी", value: "hi" },
-  { label: "ગુજરાતી", value: "gu" },
   { label: "मराठी", value: "mr" },
-  { label: "বাংলা", value: "bn" },
   { label: "राजस्थानी", value: "rj" },
-  { label: "ਪੰਜਾਬੀ", value: "pa" },
   { label: "தமிழ்", value: "ta" },
+  { label: "ગુજરાતી", value: "gu" },
+  { label: "বাংলা", value: "bn" },
+  { label: "ਪੰਜਾਬੀ", value: "pa" },
   { label: "తెలుగు", value: "te" },
   { label: "ಕನ್ನಡ", value: "kn" },
   { label: "മലയാളം", value: "ml" },

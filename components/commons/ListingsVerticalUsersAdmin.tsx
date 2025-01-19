@@ -26,6 +26,7 @@ import Loader from "./Loader";
 const ListingsVerticalUsersAdmin = ({
   availableInterest,
   listings,
+  role,
   loadMore,
   isFetchingNextPage,
   refreshControl,
@@ -33,7 +34,7 @@ const ListingsVerticalUsersAdmin = ({
   onActivateUser,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
-    const { role } = useGlobalSearchParams();
+    // const { role } = useGlobalSearchParams();
 
     const getActionButton = (status: string) => {
       let buttonText = "";
@@ -81,6 +82,8 @@ const ListingsVerticalUsersAdmin = ({
       );
     };
 
+    console.log("role--", role);
+
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -91,9 +94,9 @@ const ListingsVerticalUsersAdmin = ({
                 id: item?._id,
                 role: role,
                 title:
-                  role === "workers"
+                  role === "WORKER"
                     ? t("workerDetails")
-                    : role === "employers"
+                    : role === "EMPLOYER"
                     ? t("employerDetails")
                     : t("mediatorDetails"),
                 type: "details",

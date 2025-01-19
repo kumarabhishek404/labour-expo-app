@@ -264,7 +264,6 @@ const AdminProfile = () => {
       lastName: data?.lastName,
       address: data?.address,
     };
-    console.log("Payload---", payload);
     mutationUpdateProfileInfo?.mutate(payload);
   };
 

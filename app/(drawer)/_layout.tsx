@@ -59,6 +59,8 @@ export default function Layout() {
   );
   const pathname = usePathname();
 
+  console.log("pathname--", pathname);
+
   useEffect(() => {
     setIsAdmin(userDetails?.role === "ADMIN");
   }, [userDetails?.role]);
@@ -172,7 +174,7 @@ export default function Layout() {
       hideHeader: true,
     },
     {
-      label: t("requests"),
+      label: isAdmin ? t("mediatorRequests") : t("requests"),
       name: "/requests",
       onPress: () => Router?.push("/(drawer)/requests"),
       icon: (color: string) => (
@@ -182,7 +184,17 @@ export default function Layout() {
       hideHeader: true,
     },
     {
-      label: t("bookings"),
+      label: t("allTeams"),
+      name: "/teams",
+      onPress: () => Router?.push("/(drawer)/teams"),
+      icon: (color: string) => (
+        <AntDesign name="team" size={26} color={color} />
+      ),
+      condition: isAdmin,
+      hideHeader: true,
+    },
+    {
+      label: isAdmin ? t("bookingsAndRequest") : t("bookings"),
       name: "/bookings",
       onPress: () => Router?.push("/(drawer)/bookings"),
       icon: (color: string) => (
@@ -218,7 +230,7 @@ export default function Layout() {
       icon: (color: string) => (
         <MaterialIcons name="support-agent" size={26} color={color} />
       ),
-      condition: true,
+      condition: !isAdmin,
       hideHeader: true,
     },
     {
@@ -228,7 +240,27 @@ export default function Layout() {
       icon: (color: string) => (
         <Ionicons name="chatbox-outline" size={26} color={color} />
       ),
-      condition: true,
+      condition: !isAdmin,
+      hideHeader: true,
+    },
+    {
+      label: t("allFeedback"),
+      name: "/allFeedback",
+      onPress: () => Router?.push("/(drawer)/allFeedback"),
+      icon: (color: string) => (
+        <Ionicons name="chatbox-outline" size={26} color={color} />
+      ),
+      condition: isAdmin,
+      hideHeader: true,
+    },
+    {
+      label: t("allProblems"),
+      name: "/allFeedback",
+      onPress: () => Router?.push("/(drawer)/allFeedback"),
+      icon: (color: string) => (
+        <Entypo name="emoji-sad" size={26} color={color} />
+      ),
+      condition: isAdmin,
       hideHeader: true,
     },
     {
@@ -308,7 +340,7 @@ export default function Layout() {
           }
         />
       ),
-      condition: true,
+      condition: !isAdmin,
       hideHeader: true,
     },
     {
@@ -324,7 +356,7 @@ export default function Layout() {
           }
         />
       ),
-      condition: true,
+      condition: !isAdmin,
       hideHeader: true,
     },
   ];

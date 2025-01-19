@@ -1,26 +1,38 @@
+import Colors from "@/constants/Colors";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { Stack } from "expo-router";
-import { acceptJoiningRequest, rejectJoiningRequest } from "@/app/api/requests";
+import { UserAtom } from "@/app/AtomStore/user";
+import { router, Stack } from "expo-router";
+import {
+  acceptJoiningRequest,
+  cancelJoiningRequest,
+  fetchRecievedRequests,
+  fetchSentRequests,
+  rejectJoiningRequest,
+} from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { ADMINREQUEST} from "@/constants";
+import { MEDIATORREQUEST, WORKERREQUEST, WORKERTYPES } from "@/constants";
 import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import { fetchAllRequestsForAdmin } from "@/app/api/admin";
 
-const AdminRequests = () => {
+const Requests = () => {
+  const userDetails = useAtomValue(UserAtom);
   const { refreshUser } = useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("recievedRequests");
+  const [category, setCategory] = useState(
+    userDetails?.role === "MEDIATOR" ? "sentRequests" : "recievedRequests"
+  );
 
   const {
     data: response,
@@ -30,9 +42,11 @@ const AdminRequests = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["requests", category],
+    queryKey: ["requests"],
     queryFn: ({ pageParam }) =>
-      fetchAllRequestsForAdmin({ pageParam, type: category }),
+      userDetails?.role === "MEDIATOR"
+        ? fetchSentRequests({ pageParam })
+        : fetchRecievedRequests({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -42,6 +56,7 @@ const AdminRequests = () => {
     },
     retry: false,
   });
+
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
@@ -53,6 +68,18 @@ const AdminRequests = () => {
     }, [response])
   );
 
+  const mutationCancelRequest = useMutation({
+    mutationKey: ["cancelRequest"],
+    mutationFn: (id) => cancelJoiningRequest({ userId: id }),
+    onSuccess: (response) => {
+      refetch();
+      console.log("Response while liking a worker - ", response);
+    },
+    // onError: (err) => {
+    //   console.error("error while liking the worker ", err);
+    // },
+  });
+
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
     mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
@@ -60,7 +87,11 @@ const AdminRequests = () => {
       refetch();
       refreshUser();
       toast.success(t("requestAcceptedSuccessfully"));
+      console.log("Response while accepting a request - ", response);
     },
+    // onError: (err) => {
+    //   console.error("error while liking the worker ", err);
+    // },
   });
 
   const mutationRejectRequest = useMutation({
@@ -68,7 +99,11 @@ const AdminRequests = () => {
     mutationFn: (id) => rejectJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
+      console.log("Response while rejecting request - ", response);
     },
+    // onError: (err) => {
+    //   console.error("error while liking the worker ", err);
+    // },
   });
 
   const loadMore = () => {
@@ -84,14 +119,16 @@ const AdminRequests = () => {
 
   const onCatChanged = (category: string) => {
     setCategory(category);
+    refetch();
   };
 
   return (
     <>
       <Stack.Screen
         options={{
+          headerShown: true,
           header: () => (
-            <CustomHeader title={t("requests")} left="menu" right="notification" />
+            <CustomHeader title="All Teams" left="menu" right="notification" />
           ),
         }}
       />
@@ -99,15 +136,20 @@ const AdminRequests = () => {
         <Loader
           loading={
             isLoading ||
+            mutationCancelRequest?.isPending ||
             mutationAcceptRequest?.isPending ||
             mutationRejectRequest?.isPending
           }
         />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
-            options={ADMINREQUEST}
+            options={WORKERTYPES}
             onCagtegoryChanged={onCatChanged}
           />
 
@@ -123,6 +165,7 @@ const AdminRequests = () => {
             requestType={category}
             loadMore={loadMore}
             isFetchingNextPage={isFetchingNextPage}
+            onCancelRequest={mutationCancelRequest?.mutate}
             onAcceptRequest={mutationAcceptRequest?.mutate}
             onRejectRequest={mutationRejectRequest?.mutate}
           />
@@ -140,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AdminRequests;
+export default Requests;

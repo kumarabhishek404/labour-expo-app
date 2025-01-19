@@ -159,7 +159,7 @@ const AdminUsers = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("users")} right="notification" />
+            <CustomHeader title={t("users")} left="menu" right="notification" />
           ),
         }}
       />
@@ -191,6 +191,7 @@ const AdminUsers = () => {
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalUsersAdmin
               type="worker"
+              role={role}
               availableInterest={WORKERTYPES}
               listings={memoizedData || []}
               loadMore={loadMore}

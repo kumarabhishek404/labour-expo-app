@@ -18,7 +18,7 @@ import { useAtomValue } from "jotai";
 import { UserAtom } from "@/app/AtomStore/user";
 import * as DeviceInfo from "expo-device";
 import { Platform } from "react-native";
-import ReasoneSelection from "@/app/screens/feedback/reasons";
+import ReasoneSelection from "@/app/(drawer)/allFeedback/reasons";
 const FeedbackForm = () => {
   const userDetails = useAtomValue(UserAtom);
   const [deviceInfo, setDeviceInfo] = useState<any>(null);
@@ -85,7 +85,9 @@ const FeedbackForm = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <CustomHeader title="Feedback" left="menu" right="notification" />,
+          header: () => (
+            <CustomHeader title="Feedback" left="menu" right="notification" />
+          ),
         }}
       />
       <Loader loading={mutateAddAppFeedback.isPending} />
@@ -99,7 +101,7 @@ const FeedbackForm = () => {
               <Button
                 isPrimary={false}
                 title={t("allFeedbacks")}
-                onPress={() => router.push("/screens/feedback")}
+                onPress={() => router.push("/(drawer)/allFeedback")}
                 style={styles.allFeedbacksButton}
                 textStyle={{ fontSize: 11 }}
               />

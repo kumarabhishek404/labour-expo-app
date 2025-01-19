@@ -8,9 +8,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import Loader from "@/components/commons/Loader";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import { getTimeAgo } from "@/constants/functions";
-import { t } from "@/utils/translationHelper";
-import Button from "@/components/inputs/Button";
-import FeedbackRatingBreakdown from "@/app/screens/feedback/ratingBreakdown";
+import FeedbackRatingBreakdown from "@/app/(drawer)/allFeedback/ratingBreakdown";
 
 const FeedbackScreen = () => {
   const [filteredFeedbacks, setFilteredFeedbacks]: any = useState([]);
@@ -84,8 +82,9 @@ const FeedbackScreen = () => {
       <Loader loading={isLoading || isRefetching} />
       <Stack.Screen
         options={{
+          headerShown: true,
           header: () => (
-            <CustomHeader title="Feedback" left="back" right="notification" />
+            <CustomHeader title="Feedback" left="menu" right="notification" />
           ),
         }}
       />
@@ -101,12 +100,12 @@ const FeedbackScreen = () => {
           style={styles.feedbackList}
           showsVerticalScrollIndicator={false}
         />
-        <Button
+        {/* <Button
           isPrimary={true}
           title={t("writeAReview")}
           style={styles.buttonText}
           onPress={() => router?.back()}
-        />
+        /> */}
       </View>
     </>
   );

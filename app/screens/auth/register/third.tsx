@@ -13,6 +13,8 @@ interface ThirdScreenProps {
   setStep: any;
   role: string;
   setRole: any;
+  previousRole: any;
+  setPreviousRole: any;
   selectedInterests: any;
   setSelectedInterests: any;
 }
@@ -21,6 +23,8 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
   setStep,
   role,
   setRole,
+  previousRole,
+  setPreviousRole,
   selectedInterests,
   setSelectedInterests,
 }: ThirdScreenProps) => {
@@ -37,9 +41,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     },
   });
 
-  const [previousRole, setPreviousRole] = useState("WORKER");
+  console.log("previousRole--", previousRole, watch("role"));
   React.useEffect(() => {
+    
     if (previousRole !== watch("role")) {
+      console.log("previousRole--");
+      
       setValue("interest", []);
     } else {
       setValue("interest", [...selectedInterests]);
@@ -49,8 +56,9 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
 
   const onSubmit = (data: any) => {
     setRole(data?.role);
+    // setPreviousRole(data?.role)
     setSelectedInterests(data?.interest);
-    setStep(4);
+    setStep(3);
   };
 
   console.log("interests", selectedInterests);
@@ -59,7 +67,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
   return (
     <>
       <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={3} steps={REGISTERSTEPS} />
+        <Stepper currentStep={2} steps={REGISTERSTEPS} />
       </View>
       <View style={{ flexDirection: "column", gap: 20 }}>
         <Controller
@@ -121,7 +129,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         <Button
           isPrimary={false}
           title={t("back")}
-          onPress={() => setStep(2)}
+          onPress={() => setStep(1)}
         />
         <Button
           isPrimary={true}

@@ -74,8 +74,6 @@ export const bookMediator = async (payload: any) => {
 };
 
 export const removeBookedMediator = async (payload: any) => {
-  console.log("Payload---", payload);
-
   try {
     const data = await makeDeleteRequest(
       `/mediator/remove-booked/${payload?.mediatorID}`
@@ -95,7 +93,6 @@ export const removeBookedMediator = async (payload: any) => {
 };
 
 export const likeMediator = async (payload: any) => {
-  console.log("Payload---", payload);
   try {
     const data = await makePostRequest(`/user/like/${payload?.mediatorID}`);
     return data.data;
@@ -113,7 +110,6 @@ export const likeMediator = async (payload: any) => {
 };
 
 export const unlikeMediator = async ({ mediatorID }: any) => {
-  console.log("Payload---", mediatorID);
   try {
     const data = await makeDeleteRequest(`/user/unlike/${mediatorID}`);
     return data.data;

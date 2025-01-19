@@ -1,13 +1,21 @@
-import * as Localization from 'expo-localization';
-import { I18n } from 'i18n-js';
-import { useCallback } from 'react';
+import * as Localization from "expo-localization";
+import { I18n } from "i18n-js";
+import { useCallback } from "react";
 
 // Import translation files
-import en from '../app/locales/en.json';
-import hi from '../app/locales/hi.json';
-import mr from '../app/locales/mr.json';
-import rj from '../app/locales/rj.json';
-import ta from '../app/locales/ta.json';
+import en from "../app/locales/en.json";
+import hi from "../app/locales/hi.json";
+import mr from "../app/locales/mr.json";
+import rj from "../app/locales/rj.json";
+import ba from "../app/locales/ba.json";
+import gu from "../app/locales/gu.json";
+import kn from "../app/locales/kn.json";
+import ks from "../app/locales/ks.json";
+import ml from "../app/locales/ml.json";
+import pa from "../app/locales/pa.json";
+import ta from "../app/locales/ta.json";
+import te from "../app/locales/te.json";
+import ur from "../app/locales/ur.json";
 
 // Create an i18n instance with translation files
 const i18n: any = new I18n({
@@ -16,6 +24,14 @@ const i18n: any = new I18n({
   mr, // Marathi
   rj, // Rajasthani
   ta, // Tamil
+  te, // Telugu
+  ba, // Bangali
+  gu, // Gujarati
+  kn, // Kannad
+  ks, // Kashmiri
+  ml, // Malayalam
+  pa, // Punjabi
+  ur, // Urdu
 });
 
 // Set the default locale to the device's locale
@@ -30,7 +46,10 @@ export const setI18nLocale = (locale: string) => {
 
 // Custom hook to use `t` directly
 export const useTranslation = () => {
-  const t = useCallback((key: string, options?: object) => i18n.t(key, options), []);
+  const t = useCallback(
+    (key: string, options?: object) => i18n.t(key, options),
+    []
+  );
   return { t };
 };
 

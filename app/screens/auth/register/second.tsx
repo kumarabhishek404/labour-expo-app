@@ -13,7 +13,7 @@ import { t } from "@/utils/translationHelper";
 import DateField from "@/components/inputs/DateField";
 import Gender from "@/components/inputs/Gender";
 import CustomDatePicker from "@/components/inputs/CustomDatePicker";
-import moment from "moment";
+import moment, { Moment } from "moment";
 
 interface SecondScreenProps {
   setStep: any;
@@ -23,7 +23,7 @@ interface SecondScreenProps {
   setLocation: any;
   email: string;
   setEmail: any;
-  dateOfBirth: Date;
+  dateOfBirth: Moment;
   setDateOfBirth: any;
   gender: string;
   setGender: any;
@@ -51,7 +51,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       address: address,
       location: location,
       email: email,
-      dateOfBirth: moment().subtract(18, "years").startOf("year"),
+      dateOfBirth: dateOfBirth,
       gender: gender,
     },
   });

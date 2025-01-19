@@ -37,6 +37,9 @@ const UserHome = () => {
   const userDetails = useAtomValue(UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
+  // let data = AI4Bharat?.getTransliterationLanguages()
+
+  // console.log("Datalangi=--", data);
 
   const {
     data: response,

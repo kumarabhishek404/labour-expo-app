@@ -107,7 +107,7 @@ const ForgetPasswordScreen = () => {
   };
 
   return (
-    <ScrollView style={{ padding: 10, backgroundColor: Colors?.white }}>
+    <>
       <Stack.Screen
         options={{
           headerShown: false,
@@ -340,7 +340,7 @@ const ForgetPasswordScreen = () => {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </>
   );
 };
 

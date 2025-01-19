@@ -16,11 +16,13 @@ import { toast } from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 
 const SignupScreen = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState(
+    moment().subtract(18, "years").startOf("year")
+  );
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState<any>({});
   const [countryCode, setCountryCode] = useState("+91");
@@ -28,6 +30,7 @@ const SignupScreen = () => {
   const [email, setEmail] = useState("");
   const [role, setRole]: any = useState("WORKER");
   const [skills, setSkills]: any = useState([]);
+  const [previousRole, setPreviousRole] = useState("WORKER");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
@@ -50,10 +53,12 @@ const SignupScreen = () => {
       setPassword("");
       setConfirmPassword("");
       setGender("");
-      setDateOfBirth(new Date());
+      setDateOfBirth(moment().subtract(18, "years").startOf("year"));
       setStep(1);
     },
   });
+
+  console.log("skillss---", skills);
 
   const handleSubmit = async (data: any) => {
     const formData: any = new FormData();
@@ -79,7 +84,7 @@ const SignupScreen = () => {
           longitude: location.longitude,
         }
       : {};
-    if (!firstName || !lastName || !address || !phoneNumber || !email) {
+    if (!firstName || !lastName || !address || !phoneNumber) {
       toast.error(t("pleaseFillAllFields"));
       return;
     }
@@ -92,7 +97,7 @@ const SignupScreen = () => {
     formData.append("email", email);
     formData.append("role", role);
     formData.append("gender", gender);
-    formData.append("dateOfBirth", moment(dateOfBirth).format("DD-MM-YYYY"));
+    formData.append("dateOfBirth", moment(dateOfBirth)?.format("DD-MM-YYYY"));
     formData.append("skills", JSON.stringify(skills));
     formData.append("password", password);
     console.log("formData----", formData);
@@ -120,34 +125,36 @@ const SignupScreen = () => {
             setLastName={setLastName}
           />
         );
+      // case 2:
+      //   return (
+      //     <SecondScreen
+      //       setStep={setStep}
+      //       address={address}
+      //       setAddress={setAddress}
+      //       location={location}
+      //       setLocation={setLocation}
+      //       email={email}
+      //       setEmail={setEmail}
+      //       dateOfBirth={dateOfBirth}
+      //       setDateOfBirth={setDateOfBirth}
+      //       gender={gender}
+      //       setGender={setGender}
+      //     />
+      //   );
       case 2:
-        return (
-          <SecondScreen
-            setStep={setStep}
-            address={address}
-            setAddress={setAddress}
-            location={location}
-            setLocation={setLocation}
-            email={email}
-            setEmail={setEmail}
-            dateOfBirth={dateOfBirth}
-            setDateOfBirth={setDateOfBirth}
-            gender={gender}
-            setGender={setGender}
-          />
-        );
-      case 3:
         return (
           <ThirdScreen
             setStep={setStep}
             role={role}
             setRole={setRole}
+            previousRole={previousRole}
+            setPreviousRole={setPreviousRole}
             selectedInterests={skills}
             setSelectedInterests={setSkills}
           />
         );
 
-      case 4:
+      case 3:
         return (
           <FourthScreen
             setStep={setStep}
@@ -158,7 +165,7 @@ const SignupScreen = () => {
           />
         );
 
-      case 5:
+      case 4:
         return (
           <FifthScreen
             setStep={setStep}
@@ -185,19 +192,19 @@ const SignupScreen = () => {
         {step === 5 ? (
           <View style={styles.textContainer}>
             <CustomHeading textAlign="left" fontSize={22}>
-              {t('clickSelfie')}
+              {t("clickSelfie")}
             </CustomHeading>
             <CustomHeading textAlign="left" fontSize={22}>
-              {t('toVerify')}
+              {t("toVerify")}
             </CustomHeading>
           </View>
         ) : (
           <View style={styles.textContainer}>
             <CustomHeading textAlign="left" fontSize={22}>
-              {t('hello')}
+              {t("hello")}
             </CustomHeading>
             <CustomHeading textAlign="left" fontSize={22}>
-              {t('makeNewAccount')}
+              {t("makeNewAccount")}
             </CustomHeading>
           </View>
         )}
