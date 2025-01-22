@@ -32,6 +32,8 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import HowAppWorks from "@/components/commons/HowAppWorks";
 import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
+import { Platform } from "react-native";
+import * as DeviceInfo from "expo-device";
 
 const UserHome = () => {
   const userDetails = useAtomValue(UserAtom);
@@ -39,7 +41,10 @@ const UserHome = () => {
   const [category, setCategory] = useState("");
   // let data = AI4Bharat?.getTransliterationLanguages()
 
-  // console.log("Datalangi=--", data);
+  console.log("Platform=--", Platform);
+
+  console.log("DeviceInfo=--", DeviceInfo, DeviceInfo?.DeviceType[DeviceInfo?.deviceType] , DeviceInfo?.deviceType);
+
 
   const {
     data: response,

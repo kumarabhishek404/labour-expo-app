@@ -49,16 +49,25 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
   const handleNumberPress = (num: string) => {
     if (passwordStep === "create") {
       if (num === "remove") {
-        setPassword(password.slice(0, -1)); // Remove last character from the password
+        setPassword(password.slice(0, -1));
       } else if (password.length < 4) {
-        setPassword(password + num); // Add a digit to the password
+        setPassword(password + num);
       }
     } else if (passwordStep === "confirm") {
       if (num === "remove") {
-        setConfirmPassword(confirmPassword.slice(0, -1)); // Remove last character from the confirm password
+        setConfirmPassword(confirmPassword.slice(0, -1));
       } else if (confirmPassword.length < 4) {
-        setConfirmPassword(confirmPassword + num); // Add a digit to the confirm password
+        setConfirmPassword(confirmPassword + num);
       }
+    }
+  };
+
+  const handlePasswordBack = () => {
+    if (passwordStep === "create") {
+      setStep(2);
+    } else {
+      setPasswordStep("create");
+      setConfirmPassword("");
     }
   };
 
@@ -72,7 +81,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         style={{
           width: "100%",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
         }}
       >
         <Text style={styles.title}>
@@ -105,7 +114,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
                 onPress={() => handleNumberPress(num)}
               >
                 {num === "remove" ? (
-                  <Ionicons name="backspace" size={30} color={Colors.white} />
+                  <Ionicons name="backspace" size={37} color={Colors.white} />
                 ) : (
                   <Text style={styles.keyText}>{num}</Text>
                 )}
@@ -119,9 +128,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
         <Button
           isPrimary={false}
           title={t("back")}
-          onPress={() =>
-            passwordStep === "create" ? setStep(2) : setPasswordStep("create")
-          }
+          onPress={handlePasswordBack}
         />
         <Button
           isPrimary={true}
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     flexDirection: "row",
-    marginBottom: 40,
+    marginBottom: 20,
   },
   dot: {
     width: 20,
@@ -235,21 +242,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    width: "80%",
-    marginBottom: 0,
+    width: "95%",
+    height: "auto",
+    marginBottom: 20,
     padding: 0,
   },
   key: {
     width: "30%",
-    aspectRatio: 1,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
-    backgroundColor: Colors?.primary,
+    backgroundColor: Colors?.black,
     borderRadius: 8,
   },
   keyText: {
-    fontSize: 24,
+    fontSize: 37,
     color: "white",
   },
 });

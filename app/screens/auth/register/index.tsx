@@ -54,8 +54,6 @@ const SignupScreen = () => {
     },
   });
 
-  console.log("skillss---", skills);
-
   const handleSubmit = async (data: any) => {
     const formData: any = new FormData();
     if (data?.profilePicture) {

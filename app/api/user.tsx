@@ -305,13 +305,15 @@ export const leaveTeam = async () => {
 };
 
 export const checkMobileExistance = async (payload: any) => {
+  console.log("Pay---", payload);
+
   try {
-    const response: any = await makePostRequest(`/user/check-mobile`, payload);
+    const response: any = await makePostRequest("/user/check-mobile", payload);
     return response;
   } catch (error: any) {
     console.log(
       `[Check Mobile] [userService] An error occurred while checking mobile number existence: `,
-      error
+      error?.response?.data?.message
     );
 
     // Display error message if the API call fails

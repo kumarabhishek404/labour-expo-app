@@ -686,5 +686,6 @@
   "selectVillage": "Select Village",
   "pleaseSelectStateFirst": "Please select any state first",
   "pleaseSelectDistrictFirst": "Please select any district first",
-  "pleaseSelectSubDistrictFirst": "Please select any sub district first"
+  "pleaseSelectSubDistrictFirst": "Please select any sub district first",
+  "completeProfile": "Complete Profile"
 }

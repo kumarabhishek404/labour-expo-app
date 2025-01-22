@@ -77,7 +77,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       }
     },
     onError: (err) => {
-      console.error("error while deactivatibg the profile ", err);
+      console.error("error while checking the mobile number ", err);
     },
   });
 
@@ -129,7 +129,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
                 if (val.length < 10) {
                   onChange(val);
-                  setIsMobileNumberExist(true);
                 } else if (val.length === 10 && regex.test(val)) {
                   onChange(val);
                   await mutationCheckMobileNumber.mutate({

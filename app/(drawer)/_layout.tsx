@@ -59,8 +59,6 @@ export default function Layout() {
   );
   const pathname = usePathname();
 
-  console.log("pathname--", pathname);
-
   useEffect(() => {
     setIsAdmin(userDetails?.role === "ADMIN");
   }, [userDetails?.role]);
@@ -108,7 +106,7 @@ export default function Layout() {
 
   const registerNotification = async () => {
     try {
-      await registerForPushNotificationsAsync();
+      await registerForPushNotificationsAsync(notificationConsent);
       setNotificationConsent(true);
       toast.success("Notifications enabled");
       console.log("Notifications enabled");

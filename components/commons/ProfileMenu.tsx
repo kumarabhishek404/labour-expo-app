@@ -74,7 +74,7 @@ const ProfileMenu = ({ disabled }: any) => {
 
   const registerNotification = async () => {
     try {
-      await registerForPushNotificationsAsync();
+      await registerForPushNotificationsAsync(notificationConsent);
       setNotificationConsent(true);
       toast.success("Notifications enabled");
       console.log("Notifications enabled");

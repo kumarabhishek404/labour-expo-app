@@ -10,7 +10,11 @@ import * as Notifications from "expo-notifications";
 import { Subscription } from "expo-modules-core";
 import { registerForPushNotificationsAsync } from "../hooks/usePushNotification";
 import { useAtomValue, useSetAtom } from "jotai";
-import { hasNewNotificationAtom, UserAtom } from "../AtomStore/user";
+import {
+  hasNewNotificationAtom,
+  NotificationConsentAtom,
+  UserAtom,
+} from "../AtomStore/user";
 
 interface NotificationContextType {
   expoPushToken: string | null;
@@ -47,10 +51,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const userDetails = useAtomValue(UserAtom);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
+  const notificationConsent = useAtomValue(NotificationConsentAtom);
 
   useEffect(() => {
     if (userDetails?.isAuth) {
-      registerForPushNotificationsAsync().then(
+      registerForPushNotificationsAsync(notificationConsent).then(
         (token: any) => setExpoPushToken(token),
         (error: React.SetStateAction<Error | null>) => setError(error)
       );

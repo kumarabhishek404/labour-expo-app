@@ -45,8 +45,6 @@ const ProfileNotification: React.FC = () => {
     },
   });
 
-  console.log("userDetails --", userDetails?.gender);
-
   useEffect(() => {
     setValue("email", userDetails?.email?.value);
     setValue("address", userDetails?.address);

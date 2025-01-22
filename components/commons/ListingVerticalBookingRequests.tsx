@@ -3,6 +3,7 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -264,45 +265,13 @@ const RequestCardUser = React.memo(
             pathname: "/screens/users/[id]",
             params: {
               id: user?._id,
-              role: "workers",
-              title: "Workers",
-              type: "all",
+              role: item?.employer?.role,
+              title: item?.employer?.role,
             },
           })
         }
         style={styles.card}
       >
-        <View style={styles.requestContainer}>
-          <ProfilePicture
-            uri={user?.profilePicture}
-            style={styles.profileImage}
-          />
-          <View style={styles.infoContainer}>
-            <CustomHeading textAlign="left">
-              {user?.name}
-            </CustomHeading>
-            <RatingAndReviews
-              rating={user?.rating || 0}
-              reviews={user?.count || 0}
-            />
-            <SkillSelector
-              canAddSkills={false}
-              role={user?.role}
-              isShowLabel={false}
-              style={styles?.skillsContainer}
-              tagStyle={styles?.skillTag}
-              tagTextStyle={styles?.skillTagText}
-              userSkills={user?.skills}
-              availableSkills={WORKERTYPES}
-              count={2}
-            />
-            <CustomText textAlign="left">{user?.address}</CustomText>
-          </View>
-          <View style={styles.etaContainer}>
-            <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
-          </View>
-        </View>
-
         <View style={styles.serviceContainerWrapper}>
           <View style={styles.serviceContainer}>
             <CustomHeading textAlign="left">
@@ -323,20 +292,22 @@ const RequestCardUser = React.memo(
           >
             {isSender && (
               <Button
-                isPrimary={false}
+                isPrimary={true}
                 title="Cancel"
                 onPress={() => onCancelRequest(item?.receiver?._id)}
                 style={styles?.btn}
+                bgColor={Colors?.danger}
                 textStyle={styles?.btnText}
               />
             )}
             {isReceiver && (
               <>
                 <Button
-                  isPrimary={false}
+                  isPrimary={true}
                   title={t("reject")}
                   onPress={() => onRejectRequest(item?._id)}
                   style={styles?.btn}
+                  bgColor={Colors?.danger}
                   textStyle={styles?.btnText}
                 />
                 <Button
@@ -350,6 +321,47 @@ const RequestCardUser = React.memo(
             )}
           </View>
         </View>
+
+        <View style={styles.requestContainer}>
+          <ProfilePicture
+            uri={user?.profilePicture}
+            style={styles.profileImage}
+          />
+          <View style={styles.infoContainer}>
+            <CustomHeading textAlign="left">{user?.name}</CustomHeading>
+            <CustomText
+              fontWeight="bold"
+              textAlign="left"
+              color={Colors?.tertiery}
+            >
+              {item?.employer?.role}
+            </CustomText>
+            {/* <RatingAndReviews
+              rating={user?.rating || 0}
+              reviews={user?.count || 0}
+            />
+            <SkillSelector
+              canAddSkills={false}
+              role={user?.role}
+              isShowLabel={false}
+              style={styles?.skillsContainer}
+              tagStyle={styles?.skillTag}
+              tagTextStyle={styles?.skillTagText}
+              userSkills={user?.skills}
+              availableSkills={WORKERTYPES}
+              count={2}
+            /> */}
+          </View>
+          <View style={styles.etaContainer}>
+            <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
+          </View>
+        </View>
+        {/* <CustomText textAlign="left">
+          <CustomText fontWeight="bold" textAlign="left">
+            {t("address")}:
+          </CustomText>{" "}
+          {user?.address}
+        </CustomText> */}
       </TouchableOpacity>
     );
   }
@@ -587,7 +599,7 @@ const styles = StyleSheet.create({
     color: Colors.tertiery,
   },
   actionContainer: {
-    width: "30%",
+    width: "100%",
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 10,
@@ -606,31 +618,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sentActionContainer: {
-    width: "30%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 10,
-  },
-  serviceContainerWrapper: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: 10,
+    marginTop: 6,
+  },
+  serviceContainerWrapper: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between",
     alignItems: "flex-start",
-    borderTopColor: Colors.secondary,
-    borderTopWidth: 0.3,
-    marginTop: 15,
-    paddingTop: 10,
+    borderBottomColor: Colors.secondary,
+    borderBottomWidth: 0.3,
+    marginBottom: 15,
+    paddingBottom: 10,
   },
   serviceContainer: {
-    width: "70%",
+    width: "100%",
   },
   btn: {
     alignSelf: "flex-end",
-    width: "80%",
-    paddingVertical: 6,
-    paddingHorizontal: 14,
+    width: "45%",
+    paddingVertical: 5,
+    paddingHorizontal: 6,
   },
   btnText: {
-    fontSize: 14,
+    fontSize: 13,
   },
 });

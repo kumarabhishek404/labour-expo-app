@@ -5,7 +5,9 @@ import { Platform } from "react-native";
 import { registerDevice } from "../api/user";
 import { toast } from "./toast";
 
-export async function registerForPushNotificationsAsync() {
+export async function registerForPushNotificationsAsync(
+  notificationConsent: boolean
+) {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -49,11 +51,12 @@ export async function registerForPushNotificationsAsync() {
       try {
         await registerDevice({
           pushToken: pushTokenString,
+          notificationConsent: notificationConsent,
+          deviceType: Device?.DeviceType[Device?.deviceType ?? 0],
         });
       } catch (err) {
         console.log("An error occurred while registering user device", err);
       }
-
       return pushTokenString;
     } catch (e) {
       throw new Error(`${e}`);
