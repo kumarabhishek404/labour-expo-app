@@ -1,21 +1,19 @@
 {
   "expo": {
-    "name": "Labour App",
+    "name": "KAARYA",
     "slug": "labour-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/app/adaptive-icon.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/app/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "jsEngine": "hermes",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "plugins": [
       "expo-router",
       "expo-font",
@@ -33,14 +31,9 @@
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/app/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "experiments": {
       "typedRoutes": true
