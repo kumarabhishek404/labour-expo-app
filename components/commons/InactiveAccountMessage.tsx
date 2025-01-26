@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import ModalComponent from "./Modal";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { AccountStatusAtom, UserAtom } from "@/app/AtomStore/user";
-import { toast } from "@/app/hooks/toast";
+import Atoms from "@/app/AtomStore";
+import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomHeading from "./CustomHeading";
@@ -11,22 +11,22 @@ import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
-import { enableAccount } from "@/app/api/user";
+import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const InactiveAccountMessage = () => {
-  const { refreshUser } = useRefreshUser();
-  const userDetails = useAtomValue(UserAtom);
-  const setIsAccountInactive = useSetAtom(AccountStatusAtom);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const mutationRestoreAccount = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: () => enableAccount(),
+    mutationFn: () => USER?.enableAccount(),
     onSuccess: (response) => {
-      toast.success(t("successActivatedMessage"));
+      TOAST?.showToast?.success(t("successActivatedMessage"));
       refreshUser();
       setModalVisible(false);
       setIsAccountInactive(false);
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   modalContentContainer: {
-    padding: 20,
+    paddingVertical: 20,
     justifyContent: "center",
     alignItems: "center",
     gap: 10,

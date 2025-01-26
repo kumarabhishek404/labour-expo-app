@@ -17,7 +17,7 @@ interface CustomTextProps {
 
 const CustomHeading = ({
   children,
-  color = Colors?.heading,
+  color = Colors?.primary,
   fontSize = 16,
   fontWeight = "bold",
   textAlign = "center",

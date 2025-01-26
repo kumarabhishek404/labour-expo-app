@@ -11,18 +11,12 @@ import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import Map from "@/components/commons/ViewMap";
-import {
-  fetchMyAppliedWorkers,
-  fetchMyAppliedMediators,
-  getServiceById,
-  fetchSelectedWorkers,
-  fetchSelectedMediators,
-} from "../../api/services";
+import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loader";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { useAtom, useSetAtom } from "jotai";
-import { AddServiceAtom, UserAtom } from "../../AtomStore/user";
+import { useAtomValue, useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 import Button from "@/components/inputs/Button";
 import moment from "moment";
 import Applicants from "@/components/commons/Applicants";
@@ -36,20 +30,17 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ServiceActionButtons from "./actionButtons";
-import { fetchAllMembers } from "@/app/api/mediator";
+import MEDIATOR from "@/app/api/mediator";
+import { handleCall } from "@/constants/functions";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-interface ImageAsset {
-  uri: string;
-}
-
 const ServiceDetails = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const setAddService = useSetAtom(AddServiceAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const setAddService = useSetAtom(Atoms?.AddServiceAtom);
   const firstTimeRef = React.useRef(true);
   const { id } = useLocalSearchParams();
   const [service, setService]: any = useState({});
@@ -85,7 +76,8 @@ const ServiceDetails = () => {
   const [selectedWorkersIds, setSelectedWorkersIds]: any = useState([]);
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [applicants, setApplicants] = useState<any[]>([]);
-  const { refreshUser, isLoading: isRefreshLoading } = useRefreshUser();
+  const { refreshUser, isLoading: isRefreshLoading } =
+    REFRESH_USER.useRefreshUser();
 
   const [isAdmin] = useState(userDetails?.role === "ADMIN");
 
@@ -98,7 +90,7 @@ const ServiceDetails = () => {
     isRefetching,
   } = useQuery({
     queryKey: ["serviceDetails"],
-    queryFn: async () => await getServiceById(id),
+    queryFn: async () => await SERVICE?.getServiceById(id),
     retry: false,
     enabled: !!id,
   });
@@ -123,7 +115,7 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["appliedWorkers", service],
     queryFn: ({ pageParam }) => {
-      return fetchMyAppliedWorkers({ pageParam, serviceId: id });
+      return SERVICE?.fetchMyAppliedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -146,7 +138,7 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["appliedMediators", service],
     queryFn: ({ pageParam }) => {
-      return fetchMyAppliedMediators({ pageParam, serviceId: id });
+      return SERVICE?.fetchMyAppliedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -168,9 +160,10 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["members"],
     queryFn: ({ pageParam }) =>
-      fetchAllMembers({
-        mediatorID: userDetails?._id,
+      MEDIATOR?.fetchAllMembers({
+        mediatorId: userDetails?._id,
         pageParam,
+        category: "",
       }),
     retry: false,
     initialPageParam: 1,
@@ -195,7 +188,7 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["selectedWorkers", service],
     queryFn: ({ pageParam }) => {
-      return fetchSelectedWorkers({ pageParam, serviceId: id });
+      return SERVICE?.fetchSelectedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -218,7 +211,7 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["selectedMediators", service],
     queryFn: ({ pageParam }) => {
-      return fetchSelectedMediators({ pageParam, serviceId: id });
+      return SERVICE?.fetchSelectedMediators({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -367,7 +360,7 @@ const ServiceDetails = () => {
                 <Button
                   isPrimary={true}
                   title={t("callEmployer")}
-                  onPress={() => {}}
+                  onPress={handleCall}
                   icon={
                     <FontAwesome5
                       name="phone-alt"
@@ -419,7 +412,7 @@ const ServiceDetails = () => {
           {(service?.employer?._id === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">
-                Selected Applicants
+                {t("selectedApplicants")}
               </CustomHeading>
               {selectedApplicants.length > 0 ? (
                 <SelectedApplicants
@@ -452,7 +445,7 @@ const ServiceDetails = () => {
           {/* Applicants */}
           {(service?.employer?._id === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
-              <CustomHeading textAlign="left">Applicants</CustomHeading>
+              <CustomHeading textAlign="left">{t("applicants")}</CustomHeading>
               {applicants.length > 0 ? (
                 <Applicants
                   applicants={applicants}

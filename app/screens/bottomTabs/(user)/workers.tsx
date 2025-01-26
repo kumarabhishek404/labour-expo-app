@@ -3,26 +3,26 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { UserAtom } from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import { WORKERS, WORKERTYPES } from "@/constants";
-import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { fetchAllWorkers } from "@/app/api/workers";
-import { fetchAllServices } from "@/app/api/services";
+import WORKER from "@/app/api/workers";
+import SERVICE from "@/app/api/services";
+import FetchLocationNote from "@/components/commons/FetchLocationNote";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 
 const UserWorkers = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
@@ -46,8 +46,8 @@ const UserWorkers = () => {
         ...filters, // Add filters to the API request payload
       };
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ ...payload, skill: category })
-        : fetchAllServices({ ...payload, status: "HIRING", skill: category });
+        ? WORKER?.fetchAllWorkers({ ...payload, skill: category })
+        : SERVICE?.fetchAllServices({ ...payload, status: "HIRING", skill: category });
     },
     retry: false,
     initialPageParam: 1,
@@ -59,21 +59,6 @@ const UserWorkers = () => {
       return undefined;
     },
   });
-
-  useEffect(() => {
-    (async () => {
-      // Request location permissions
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        // setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      // Get the current position
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      // setLocation(currentLocation);
-    })();
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -123,7 +108,7 @@ const UserWorkers = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 
@@ -145,6 +130,7 @@ const UserWorkers = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
+          <FetchLocationNote motiveItem="workers" />
           <SearchFilter
             type="users"
             data={response?.pages}

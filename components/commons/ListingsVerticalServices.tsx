@@ -19,7 +19,7 @@ import {
   dateDifference,
   getTimeAgo,
 } from "@/constants/functions";
-import { AddServiceAtom, UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue, useSetAtom } from "jotai";
 import moment from "moment";
 import ImageSlider from "./ImageSlider";
@@ -63,7 +63,7 @@ const ListingsVerticalServices = ({
   loadMore,
   refreshControl,
 }: Props) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const RenderItem = React?.memo(({ item }: any) => {
     return (
@@ -238,6 +238,7 @@ const ListingsVerticalServices = ({
         removeClippedSubviews={true}
         contentContainerStyle={{ paddingBottom: 230 }}
         refreshControl={refreshControl}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

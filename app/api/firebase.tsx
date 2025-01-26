@@ -1,7 +1,7 @@
 import auth from "@react-native-firebase/auth";
-import { makePostRequest } from ".";
+import API_CLIENT from ".";
 
-export const signInWithPhoneNumber = async (phoneNumber: string) => {
+const signInWithPhoneNumber = async (phoneNumber: string) => {
   console.log("phoneNumber", phoneNumber);
   try {
     const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
@@ -12,7 +12,7 @@ export const signInWithPhoneNumber = async (phoneNumber: string) => {
   }
 };
 
-export const verifyCode = async (confirmation: any, code: string) => {
+const verifyCode = async (confirmation: any, code: string) => {
   console.log("confirmation", confirmation);
   console.log("code", code);
   try {
@@ -24,10 +24,10 @@ export const verifyCode = async (confirmation: any, code: string) => {
   }
 };
 
-export const sendEmailCode = async (email: string) => {
+const sendEmailCode = async (email: string) => {
   console.log("email", email);
   try {
-    const response = await makePostRequest("/auth/send-email-code", { email });
+    const response = await API_CLIENT.makePostRequest("/auth/send-email-code", { email });
     return response;
   } catch (error) {
     console.error("Error during email verification:", error);
@@ -35,13 +35,22 @@ export const sendEmailCode = async (email: string) => {
   }
 };
 
-export const verifyEmailCode = async (code: string) => {
+const verifyEmailCode = async (code: string) => {
   console.log("code", code);
   try {
-    const response = await makePostRequest("/auth/verify-email-code", { code });
+    const response = await API_CLIENT.makePostRequest("/auth/verify-email-code", { code });
     return response;
   } catch (error) {
     console.error("Error verifying email code:", error);
     throw error;
   }
 };
+
+const FIREBASE = {
+  signInWithPhoneNumber,
+  verifyCode,
+  sendEmailCode,
+  verifyEmailCode,
+};
+
+export default FIREBASE;

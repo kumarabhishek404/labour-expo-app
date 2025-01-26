@@ -1,8 +1,8 @@
 import * as SMS from "expo-sms";
-import { toast } from "./toast";
+import TOAST from "./toast";
 import { APPLINK } from "@/constants";
 
-export const useSMS = async () => {
+const useSMS = async () => {
   const isAvailable = await SMS.isAvailableAsync();
   if (isAvailable) {
     // do your SMS stuff here
@@ -19,11 +19,17 @@ export const useSMS = async () => {
     );
 
     if (result === "sent") {
-      toast.success("Message sent successfully");
+      TOAST?.showToast?.success("Message sent successfully");
     } else {
-      toast.error("Message failed to send");
+      TOAST?.showToast?.error("Message failed to send");
     }
   } else {
     // misfortune... there's no SMS available on this device
   }
 };
+
+const SMS_HOOK = {
+  useSMS,
+};
+
+export default SMS_HOOK;

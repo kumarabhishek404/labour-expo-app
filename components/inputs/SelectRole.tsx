@@ -72,13 +72,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     gap: 5,
-    // backgroundColor: "#F9F9F9",
-    // padding: 20,
-  },
-  heading: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
   },
   roleContainer: {
     flexDirection: "row",

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export const usePullToRefresh = (fetchData: () => Promise<any>) => {
+const usePullToRefresh = (fetchData: () => Promise<any>) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
@@ -19,3 +19,9 @@ export const usePullToRefresh = (fetchData: () => Promise<any>) => {
     onRefresh,
   };
 };
+
+const PULL_TO_REFRESH = {
+  usePullToRefresh,
+};
+
+export default PULL_TO_REFRESH;

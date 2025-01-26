@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import {
@@ -10,7 +10,6 @@ import {
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
-import { forgotPassword, resetPassword } from "../../api/user";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
@@ -18,8 +17,9 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
-import { toast } from "@/app/hooks/toast";
-import { submitUserProblem } from "@/app/api/userProblem";
+import TOAST from "@/app/hooks/toast";
+import USER_PROBLEM from "@/app/api/userProblem";
+import Step2 from "../../../assets/step2.jpg";
 
 const ForgetPasswordScreen = () => {
   const {
@@ -81,12 +81,12 @@ const ForgetPasswordScreen = () => {
 
   const mutationSubmitProblem = useMutation({
     mutationKey: ["submitProblem"],
-    mutationFn: (payload: any) => submitUserProblem(payload),
+    mutationFn: (payload: any) => USER_PROBLEM?.submitUserProblem(payload),
     onSuccess: (response) => {
       // if (response?.status === 201) {
       // setIsResetCodeSent(false);
       // router.push("/screens/auth/login");
-      toast.success(t("problemSubmittedSuccessfully"));
+      TOAST?.showToast?.success(t("problemSubmittedSuccessfully"));
       // }
     },
   });
@@ -115,6 +115,7 @@ const ForgetPasswordScreen = () => {
       />
       <Loader loading={mutationSubmitProblem?.isPending} />
       <View style={styles.container}>
+        <Image source={Step2} style={styles.image} />
         <View style={styles.textContainer}>
           <CustomHeading textAlign="left" fontSize={24}>
             {t("hey")}
@@ -350,7 +351,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    padding: 10,
+    // justifyContent: "center",
+    paddingHorizontal: 10,
   },
   textContainer: {
     marginVertical: 20,
@@ -365,6 +367,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
     gap: 5,
+  },
+  image: {
+    width: "80%",
+    height: 250,
+    resizeMode: "cover",
+    alignSelf: "center",
+    marginTop: 30,
   },
   footerContainer: {
     flexDirection: "row",

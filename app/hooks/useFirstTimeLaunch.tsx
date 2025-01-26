@@ -14,8 +14,6 @@ const useFirstTimeLaunch = () => {
       try {
         const firstLaunch = await AsyncStorage.getItem(FIRST_LAUNCH_KEY);
         const language = await AsyncStorage.getItem(LANGUAGE_KEY);
-
-        console.log("firstLaunch--", firstLaunch, language);
         
         if (!firstLaunch) {
           await AsyncStorage.setItem(FIRST_LAUNCH_KEY, 'false');

@@ -51,7 +51,7 @@ const CustomDatePicker = ({
     if (selectedDate?.month() > 5) {
       scrollToIndex(scrollViewRefMonthSecond, selectedDate?.month() - 7);
     } else {
-      scrollToIndex(scrollViewRefMonthFirst, selectedDate?.month()-1);
+      scrollToIndex(scrollViewRefMonthFirst, selectedDate?.month() - 1);
     }
     if (years?.indexOf(selectedDate?.year()) > 26) {
       scrollToIndex(
@@ -61,14 +61,12 @@ const CustomDatePicker = ({
     } else {
       scrollToIndex(
         scrollViewRefYearFirst,
-        years?.indexOf(selectedDate?.year())-1
+        years?.indexOf(selectedDate?.year()) - 1
       );
     }
   }, []);
 
   const handleSelect = (type: any, value: any) => {
-    console.log("value---", value);
-
     let updatedDate = selectedDate?.clone();
     if (type === "day") updatedDate = updatedDate.date(value);
     if (type === "month") {
@@ -283,7 +281,7 @@ const CustomDatePicker = ({
             </ScrollView>
 
             {/* Days */}
-            <Text style={styles.label}>{t('days')}</Text>
+            <Text style={styles.label}>{t("days")}</Text>
             {renderColumn(
               Array.from(
                 { length: selectedDate?.daysInMonth() },

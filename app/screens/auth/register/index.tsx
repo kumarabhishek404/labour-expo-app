@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, Platform } from "react-native";
+import { ScrollView, StyleSheet, View, Platform, Image } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -7,13 +7,14 @@ import FirstScreen from "./first";
 import SecondScreen from "./second";
 import ThirdScreen from "./third";
 import FourthScreen from "./fourth";
-import { register } from "@/app/api/user";
+import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import FifthScreen from "./fifth";
 import moment from "moment";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
+import Step2 from "../../../../assets/step2.jpg";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
@@ -28,13 +29,14 @@ const SignupScreen = () => {
   const [role, setRole]: any = useState("WORKER");
   const [skills, setSkills]: any = useState([]);
   const [previousRole, setPreviousRole] = useState("WORKER");
+  const [mobileNumberExist, setMobileNumberExist] = useState("notSet");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
 
   const mutationRegister = useMutation({
     mutationKey: ["register"],
-    mutationFn: (payload: any) => register(payload),
+    mutationFn: (payload: any) => USER?.register(payload),
     onSuccess: () => {
       console.log("onSuccess----");
       setProfilePicture("");
@@ -79,12 +81,12 @@ const SignupScreen = () => {
         }
       : {};
     if (!name || !role || !countryCode || !phoneNumber) {
-      toast.error(t("pleaseFillAllFields"));
+      TOAST?.showToast?.error(t("pleaseFillAllFields"));
       return;
     }
 
     if (role !== "EMPLOYER" && skills?.length === 0) {
-      toast.error(t("workerMustHaveAtLeasOneSkill"));
+      TOAST?.showToast?.error(t("workerMustHaveAtLeasOneSkill"));
       return;
     }
 
@@ -119,6 +121,8 @@ const SignupScreen = () => {
             setStep={setStep}
             phoneNumber={phoneNumber}
             setPhoneNumber={setPhoneNumber}
+            mobileNumberExist={mobileNumberExist}
+            setMobileNumberExist={setMobileNumberExist}
             countryCode={countryCode}
             setCountryCode={setCountryCode}
             name={name}
@@ -181,7 +185,10 @@ const SignupScreen = () => {
   };
 
   return (
-    <ScrollView style={styles?.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       <Stack.Screen
         options={{
           headerShown: false,
@@ -189,7 +196,7 @@ const SignupScreen = () => {
       />
       <Loader loading={mutationRegister?.isPending} />
       <View style={styles.container}>
-        {step === 5 ? (
+        {step === 4 ? (
           <View style={styles.textContainer}>
             <CustomHeading textAlign="left" fontSize={22}>
               {t("clickSelfie")}
@@ -218,14 +225,16 @@ export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: Colors.white,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingTop: 20,
   },
   image: {
     width: "100%",
-    height: 350,
+    height: 250,
     resizeMode: "cover",
+    marginTop: 30,
   },
   backButtonWrapper: {
     height: 40,

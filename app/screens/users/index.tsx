@@ -6,11 +6,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import {
   EMPLOYER,
   MEDIATOR,
@@ -24,7 +24,7 @@ import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
 
 const Users = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -80,7 +80,7 @@ const Users = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 

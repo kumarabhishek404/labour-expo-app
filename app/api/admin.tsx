@@ -1,10 +1,11 @@
-import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
-import { toast } from "../hooks/toast";
 
-export const fetchAllUsers = async ({ pageParam, status, role }: any) => {
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
+
+const fetchAllUsers = async ({ pageParam, status, role }: any) => {
   console.log("status", status, "role", role);
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/admin/all-users?role=${role}&status=${status}&page=${pageParam}&limit=5`
     );
     return data.data;
@@ -13,17 +14,17 @@ export const fetchAllUsers = async ({ pageParam, status, role }: any) => {
       `[adminService] An error occurred while fetching users : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;
   }
 };
 
-export const fetchAllRequestsForAdmin = async ({ pageParam, type }: any) => {
+const fetchAllRequestsForAdmin = async ({ pageParam, type }: any) => {
   console.log("type", type);
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/admin/all-requests?status=${type}&page=${pageParam}&limit=5`
     );
     return data?.data;
@@ -32,7 +33,7 @@ export const fetchAllRequestsForAdmin = async ({ pageParam, type }: any) => {
       `[adminService] An error occurred while fetching all requests : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all requests"
     );
@@ -40,10 +41,10 @@ export const fetchAllRequestsForAdmin = async ({ pageParam, type }: any) => {
   }
 };
 
-export const suspendUser = async (payload: any) => {
+const suspendUser = async (payload: any) => {
   console.log("payload in the api suspend user", payload);
   try {
-    const data = await makeDeleteRequest(
+    const data = await API_CLIENT.makeDeleteRequest(
       `/admin/suspend-user/${payload?.userId}`
     );
     return data?.data;
@@ -52,7 +53,7 @@ export const suspendUser = async (payload: any) => {
       `[adminService] An error occurred while suspending user : `,
       error?.response?.data
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while suspending user"
     );
@@ -60,17 +61,17 @@ export const suspendUser = async (payload: any) => {
   }
 };
 
-export const activateUser = async (payload: any) => {
+const activateUser = async (payload: any) => {
   console.log("payload in the api activate user", payload);
   try {
-    const data = await makePostRequest(`/admin/activate-user`, payload);
+    const data = await API_CLIENT.makePostRequest(`/admin/activate-user`, payload);
     return data?.data;
   } catch (error: any) {
     console.error(
       `[adminService] An error occurred while activating user : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while activating user"
     );
@@ -78,18 +79,28 @@ export const activateUser = async (payload: any) => {
   }
 };
 
-export const fetchAllFeedbacks = async () => {
+const fetchAllFeedbacks = async () => {
   try {
-    const data = await makeGetRequest("/feedback/all");
+    const data = await API_CLIENT.makeGetRequest("/feedback/all");
     return data?.data;
   } catch (error: any) {
     console.error(
       `[adminService] An error occurred while fetching feedbacks : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;
   }
 };
+
+const ADMIN = {
+  fetchAllUsers,
+  fetchAllRequestsForAdmin,
+  suspendUser,
+  activateUser,
+  fetchAllFeedbacks,
+};
+
+export default ADMIN;

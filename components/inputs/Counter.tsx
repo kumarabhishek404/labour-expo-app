@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
+    zIndex: 0,
   },
   counterValue: {
     fontSize: 26,

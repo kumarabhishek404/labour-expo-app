@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import { useAtom } from "jotai";
-import { getUserInfo } from "@/app/api/user";
-import { toast } from "@/app/hooks/toast";
-import { UserAtom } from "../AtomStore/user";
+import USER from "@/app/api/user";
+import TOAST from "@/app/hooks/toast";
+import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
 
 interface UserDetails {
@@ -16,8 +16,8 @@ interface UseRefreshUserReturn {
   error: Error | null;
 }
 
-export const useRefreshUser = (): UseRefreshUserReturn => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+const useRefreshUser = (): UseRefreshUserReturn => {
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -26,16 +26,16 @@ export const useRefreshUser = (): UseRefreshUserReturn => {
     setError(null);
 
     try {
-      const response = await getUserInfo();
+      const response = await USER?.getUserInfo();
       if (response?.success) {
         setUserDetails({ ...userDetails, ...response.data });
-        toast.success(t("userDetailsFetchedSuccessfully"));
+        TOAST?.showToast?.success(t("userDetailsFetchedSuccessfully"));
         return response.data;
       }
     } catch (error: any) {
       const errorMessage = error?.message || "Error refreshing user details";
       setError(new Error(errorMessage));
-      toast.error(errorMessage);
+      TOAST?.showToast?.error(errorMessage);
       console.error("Error refreshing user details:", error);
     } finally {
       setIsLoading(false);
@@ -44,3 +44,9 @@ export const useRefreshUser = (): UseRefreshUserReturn => {
 
   return { refreshUser, isLoading, error };
 };
+
+const REFRESH_USER = {
+  useRefreshUser
+};
+
+export default REFRESH_USER;

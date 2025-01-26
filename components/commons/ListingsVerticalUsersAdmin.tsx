@@ -20,7 +20,7 @@ import { t } from "@/utils/translationHelper";
 import Button from "../inputs/Button";
 import { useMutation } from "@tanstack/react-query";
 import { activateUser, suspendUser } from "@/app/api/admin";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
 
 const ListingsVerticalUsersAdmin = ({

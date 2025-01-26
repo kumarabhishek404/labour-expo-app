@@ -1,14 +1,20 @@
-import React, { useEffect } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React from "react";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
-import { Link, router, Stack, useFocusEffect } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loader";
-import { AccountStatusAtom, UserAtom } from "../../AtomStore/user";
-import { signIn, updateUserById } from "../../api/user";
-import { toast } from "../../hooks/toast";
+import Atoms from "@/app/AtomStore";
+import USER from "@/app/api/user";
+import TOAST from "../../hooks/toast";
 import { useForm, Controller } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
@@ -17,11 +23,13 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
+import Step2 from "../../../assets/step2.jpg";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const setIsAccountInactive = useSetAtom(AccountStatusAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
+
   const {
     control,
     handleSubmit,
@@ -35,7 +43,7 @@ const LoginScreen = () => {
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => updateUserById(payload),
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
@@ -49,37 +57,34 @@ const LoginScreen = () => {
 
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
-    mutationFn: (data) => signIn(data),
+    mutationFn: (data) => USER?.signIn(data),
     onSuccess: async (response) => {
-      let user = response?.user;
-      console.log("user after login", user);
+      const user = response?.user;
       setUserDetails({
         isAuth: true,
         token: response?.token,
         ...user,
       });
-      console.log("user?.status", user?.status);
 
-      toast.success(t("loggedInSuccessfully"));
+      TOAST?.showToast?.success(t("loggedInSuccessfully"));
       if (user?.status === "ACTIVE") {
         setIsAccountInactive(false);
-        console.log("user?.role", user?.role);
-        router.replace("/(tabs)");
+        router.replace("/(drawer)/(tabs)");
       } else {
         setIsAccountInactive(true);
-        router.replace("/(tabs)/fifth");
+        router.replace("/(drawer)/(tabs)/fifth");
       }
-      // Condition to fetch location if location key is empty or has latitude 0
+
+      // Fetch location if required
       if (
         !user?.location ||
-        Object.keys(user?.location).length === 0 ||
-        (!user?.location?.latitude && !user?.location?.longitude)
+        !user?.location?.latitude ||
+        !user?.location?.longitude
       ) {
         const locationData = await fetchCurrentLocation();
-        console.log("Location data - ", locationData);
         if (locationData) {
-          setUserDetails((prevDetails: any) => ({
-            ...prevDetails,
+          setUserDetails((prev: any) => ({
+            ...prev,
             location: locationData.location,
           }));
           mutationUpdateProfileInfo?.mutate({
@@ -89,8 +94,8 @@ const LoginScreen = () => {
       }
     },
     onError: (err) => {
-      console.error("Error while logging in user - ", err);
-      toast.error("Login failed");
+      console.error("Login error: ", err);
+      TOAST?.showToast?.error("Login failed");
     },
   });
 
@@ -98,23 +103,23 @@ const LoginScreen = () => {
     router.push("/screens/auth/forgetPassword");
   };
 
-  const onSubmit = (data: any) => {
+  const handleFormSubmit = (data: any) => {
     mutationSignIn.mutate(data);
   };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <Loader
         loading={
           mutationSignIn?.isPending || mutationUpdateProfileInfo?.isPending
         }
       />
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Image source={Step2} style={styles.image} />
         <View style={styles.textContainer}>
           <CustomHeading textAlign="left" fontSize={24}>
             {t("hello")},
@@ -128,7 +133,6 @@ const LoginScreen = () => {
           <Controller
             control={control}
             name="mobile"
-            defaultValue=""
             rules={{
               required: t("mobileIsRequired"),
               pattern: {
@@ -150,7 +154,7 @@ const LoginScreen = () => {
                 errors={errors}
                 icon={
                   <Ionicons
-                    name={"call-outline"}
+                    name="call-outline"
                     size={30}
                     color={Colors.secondary}
                     style={{ paddingVertical: 10, paddingRight: 10 }}
@@ -163,7 +167,6 @@ const LoginScreen = () => {
           <Controller
             control={control}
             name="password"
-            defaultValue=""
             rules={{ required: t("passwordIsRequired") }}
             render={({ field: { onChange, onBlur, value } }) => (
               <PasswordComponent
@@ -177,7 +180,7 @@ const LoginScreen = () => {
                 errors={errors}
                 icon={
                   <MaterialIcons
-                    name={"password"}
+                    name="password"
                     size={30}
                     color={Colors.secondary}
                     style={{ paddingVertical: 10, paddingRight: 10 }}
@@ -188,20 +191,17 @@ const LoginScreen = () => {
           />
 
           <View style={styles.forgetPasswordContainer}>
-            <TouchableOpacity
-              style={styles.forgetPasswordContainer}
-              onPress={handleForgotPassword}
-            >
-              <CustomHeading fontWeight="normal" color={Colors?.link}>
+            <TouchableOpacity onPress={handleForgotPassword}>
+              <CustomHeading fontWeight="normal" color={Colors.link}>
                 {t("forgotPassword")}
               </CustomHeading>
             </TouchableOpacity>
           </View>
 
           <Button
-            isPrimary={true}
+            isPrimary
             title={t("login")}
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(handleFormSubmit)}
             style={styles.loginButtonWrapper}
           />
 
@@ -209,27 +209,24 @@ const LoginScreen = () => {
             <CustomText>{t("dontHaveAnAccount")}</CustomText>
             <Link href="/screens/auth/register" asChild>
               <TouchableOpacity>
-                <CustomHeading color={Colors?.link}>
-                  {t("signUp")}
-                </CustomHeading>
+                <CustomHeading color={Colors.link}>{t("signUp")}</CustomHeading>
               </TouchableOpacity>
             </Link>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: Colors.white,
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 30,
   },
-  textContainer: {
-    marginVertical: 20,
-  },
+  textContainer: {},
   formContainer: {
     marginTop: 15,
     gap: 15,
@@ -237,13 +234,11 @@ const styles = StyleSheet.create({
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
-    color: "red",
   },
   forgetPasswordContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    gap: 5,
   },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
@@ -257,6 +252,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
+  },
+  image: {
+    width: "80%",
+    height: 250,
+    resizeMode: "cover",
+    alignSelf: "center",
+    marginTop: 30,
   },
 });
 

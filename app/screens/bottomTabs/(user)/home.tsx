@@ -5,18 +5,16 @@ import Colors from "@/constants/Colors";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../../../AtomStore/user";
-import { fetchAllWorkers } from "../../../api/workers";
-import { fetchAllServices } from "../../../api/services";
+import Atoms from "@/app/AtomStore";
+import WORKER from "@/app/api/workers";
+import SERVICE from "../../../api/services";
 import Loader from "@/components/commons/Loader";
-import { fetchAllEmployers } from "../../../api/employer";
+import EMPLOYER from "../../../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
-import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
-import { fetchCurrentLocation } from "@/constants/functions";
 import BannerSlider from "@/components/commons/BannerSlider";
 import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import QuickContact from "@/components/commons/QuickContact";
@@ -34,17 +32,13 @@ import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
 import { Platform } from "react-native";
 import * as DeviceInfo from "expo-device";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 
 const UserHome = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
   // let data = AI4Bharat?.getTransliterationLanguages()
-
-  console.log("Platform=--", Platform);
-
-  console.log("DeviceInfo=--", DeviceInfo, DeviceInfo?.DeviceType[DeviceInfo?.deviceType] , DeviceInfo?.deviceType);
-
 
   const {
     data: response,
@@ -58,8 +52,12 @@ const UserHome = () => {
     queryKey: ["homepage", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ pageParam, skill: category })
-        : fetchAllServices({ pageParam, status: "HIRING", skill: category });
+        ? WORKER?.fetchAllWorkers({ pageParam, skill: category })
+        : SERVICE?.fetchAllServices({
+            pageParam,
+            status: "HIRING",
+            skill: category,
+          });
     },
     initialPageParam: 1,
     retry: false,
@@ -84,8 +82,8 @@ const UserHome = () => {
     queryKey: ["tops", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllWorkers({ pageParam, skill: category, top: true })
-        : fetchAllEmployers({ pageParam, type: category, top: true });
+        ? WORKER?.fetchAllWorkers({ pageParam, skill: category, top: true })
+        : EMPLOYER?.fetchAllEmployers({ pageParam, type: category, top: true });
     },
     initialPageParam: 1,
     retry: false,
@@ -97,10 +95,6 @@ const UserHome = () => {
       return undefined;
     },
   });
-
-  useEffect(() => {
-    fetchLocation();
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -140,14 +134,12 @@ const UserHome = () => {
     [secondResponse]
   );
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    await refetch();
-    await secondRefetch();
-  });
-
-  const fetchLocation = async () => {
-    await fetchCurrentLocation();
-  };
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+      await secondRefetch();
+    }
+  );
 
   return (
     <>

@@ -70,7 +70,7 @@ api.interceptors.response.use(
   }
 );
 
-export const makeGetRequest = async (
+const makeGetRequest = async (
   url: string,
   headers?: { [key: string]: string },
   responseType:
@@ -91,7 +91,7 @@ export const makeGetRequest = async (
   return response;
 };
 
-export const makePostRequest = async (
+const makePostRequest = async (
   url: string,
   body?: object,
   headers?: { [key: string]: string }
@@ -106,7 +106,7 @@ export const makePostRequest = async (
   return response;
 };
 
-export const makePostRequestFormData = async (
+const makePostRequestFormData = async (
   url: string,
   body: object,
   headers?: { [key: string]: string }
@@ -122,7 +122,7 @@ export const makePostRequestFormData = async (
   return response;
 };
 
-export const makePutRequest = async (
+const makePutRequest = async (
   url: string,
   body: object,
   headers?: { [key: string]: string }
@@ -137,7 +137,7 @@ export const makePutRequest = async (
   return response;
 };
 
-export const makePutRequestFormData = async (
+const makePutRequestFormData = async (
   url: string,
   body: object,
   headers?: { [key: string]: string }
@@ -153,7 +153,7 @@ export const makePutRequestFormData = async (
   return response;
 };
 
-export const makePatchRequest = async (
+const makePatchRequest = async (
   url: string,
   body?: object,
   headers?: { [key: string]: string }
@@ -168,7 +168,7 @@ export const makePatchRequest = async (
   return response;
 };
 
-export const makePatchRequestFormData = async (
+const makePatchRequestFormData = async (
   url: string,
   body: object,
   headers?: { [key: string]: string }
@@ -184,7 +184,7 @@ export const makePatchRequestFormData = async (
   return response;
 };
 
-export const makeDeleteRequest = async (
+const makeDeleteRequest = async (
   url: string,
   headers?: { [key: string]: string }
 ): Promise<AxiosResponse> => {
@@ -195,3 +195,16 @@ export const makeDeleteRequest = async (
   });
   return response;
 };
+
+const API_CLIENT = {
+  makeGetRequest,
+  makePostRequest,
+  makePostRequestFormData,
+  makePutRequest,
+  makePutRequestFormData,
+  makePatchRequest,
+  makePatchRequestFormData,
+  makeDeleteRequest,
+};
+
+export default API_CLIENT;

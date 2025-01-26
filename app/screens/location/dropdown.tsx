@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import DropDownPicker from "react-native-dropdown-picker";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { t } from "@/utils/translationHelper";
@@ -8,14 +8,14 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 
 interface DropdownComponentProps {
-  name?: any;
+  name?: string;
   label?: string;
   value: any;
-  setValue: any;
+  setValue: (value: any) => void;
   placeholder?: string;
-  options: any;
+  options: { label: string; value: any }[];
   errors?: any;
-  icon: any;
+  icon?: any;
   search?: boolean;
   style?: any;
   containerStyle?: any;
@@ -31,55 +31,54 @@ const DropdownComponent = ({
   errors,
   options,
   icon,
-  search,
+  search = false,
   style,
   containerStyle,
-  disabled
+  disabled = false,
 }: DropdownComponentProps) => {
-  const translatedOptions = options?.map((option: any) => ({
-    ...option,
-    label: option.label,
-  }));
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState(
+    options.map((option) => ({
+      label: option.label,
+      value: option.value,
+    }))
+  );
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, containerStyle]}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
-      <Dropdown
-        disable={disabled}
-        style={[styles.dropdown, style, containerStyle]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={translatedOptions}
-        search={search}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder || t("selectItem")}
-        searchPlaceholder={t("search")}
+      <DropDownPicker
+        open={open}
+        setOpen={setOpen}
         value={value}
-        onChange={(item: any) => {
-          setValue(item.value);
-        }}
-        renderLeftIcon={() => (
-          <View
-            style={{
-              marginRight: 5,
-            }}
-          >
-            {icon ? (
-              icon
-            ) : (
-              <Ionicons
-                style={styles.icon}
-                color="black"
-                name="person"
-                size={20}
-              />
-            )}
-          </View>
+        setValue={setValue}
+        items={items}
+        setItems={setItems}
+        disabled={disabled}
+        style={[styles.dropdown, style]}
+        placeholder={placeholder || t("selectItem")}
+        placeholderStyle={styles.placeholderStyle}
+        textStyle={styles.selectedTextStyle}
+        dropDownContainerStyle={styles.dropDownContainerStyle}
+        searchPlaceholder={t("search")}
+        searchable={search}
+        listMode="SCROLLVIEW"
+        maxHeight={300}
+        ArrowUpIconComponent={() => (
+          <Ionicons name="list" size={20} color="blue" />
         )}
+        // icon={
+        //   <View style={styles.iconContainer}>
+        //     {icon || (
+        //       <Ionicons
+        //         style={styles.icon}
+        //         color={Colors.secondary}
+        //         name="person"
+        //         size={20}
+        //       />
+        //     )}
+        //   </View>
+        // }
       />
       {errors?.[name] && (
         <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
@@ -105,6 +104,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
   },
+  iconContainer: {
+    marginRight: 5,
+  },
   icon: {
     marginRight: 16,
     color: Colors.secondary,
@@ -115,14 +117,10 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
     color: Colors.secondary,
   },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
+  dropDownContainerStyle: {
+    borderColor: Colors.secondary,
+    borderRadius: 8,
   },
 });

@@ -1,4 +1,4 @@
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
@@ -10,7 +10,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const TeamDetails = ({ type, user }: any) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   console.log("user", user?.employedBy, userDetails?._id);
   return (
     <>

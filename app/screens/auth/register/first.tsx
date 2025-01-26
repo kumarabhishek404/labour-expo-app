@@ -15,12 +15,14 @@ import { Feather } from "@expo/vector-icons";
 import ModalComponent from "@/components/commons/Modal";
 import { set } from "lodash";
 import { useMutation } from "@tanstack/react-query";
-import { checkMobileExistance } from "@/app/api/user";
+import USER from "@/app/api/user";
 
 interface FirstScreenProps {
   setStep: any;
   phoneNumber: string;
   setPhoneNumber: any;
+  mobileNumberExist: string;
+  setMobileNumberExist: any;
   countryCode: string;
   setCountryCode: any;
   name: string;
@@ -31,17 +33,19 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   setStep,
   phoneNumber,
   setPhoneNumber,
+  mobileNumberExist,
+  setMobileNumberExist,
   countryCode,
   setCountryCode,
   name,
   setFirstName,
 }: FirstScreenProps) => {
-  const [isMobileNumberExist, setIsMobileNumberExist] = useState<boolean|null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const {
     control,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -55,10 +59,12 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     setCountryCode(data?.countryCode);
     setPhoneNumber(data?.phoneNumber);
     setFirstName(data?.name);
-    if (!isMobileNumberExist) {
+    if (mobileNumberExist === "notExist") {
       setModalVisible(true);
     }
   };
+
+  console.log("mobileNumberExist--", mobileNumberExist);
 
   const onConfirmMobilerNumber = () => {
     setModalVisible(false);
@@ -67,13 +73,13 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
   const mutationCheckMobileNumber = useMutation({
     mutationKey: ["checkMobileNumber"],
-    mutationFn: (payload: any) => checkMobileExistance(payload),
+    mutationFn: (payload: any) => USER?.checkMobileExistance(payload),
     onSuccess: (response) => {
       console.log("Response while checking the mobile number - ", response);
       if (response?.data?.data?.exists) {
-        setIsMobileNumberExist(true);
+        setMobileNumberExist("exist");
       } else {
-        setIsMobileNumberExist(false);
+        setMobileNumberExist("notExist");
       }
     },
     onError: (err) => {
@@ -82,7 +88,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   });
 
   const modalContent = () => (
-    <View style={{ padding: 10 }}>
+    <View style={{ paddingVertical: 20 }}>
       <CustomText fontSize={18} fontWeight="bold">
         {t("confirmYourMobileNumber")}
       </CustomText>
@@ -126,6 +132,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               setCountryCode={setCountryCode}
               phoneNumber={value}
               setPhoneNumber={async (val: any) => {
+                setMobileNumberExist("notSet");
+                setValue("name", "");
                 const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
                 if (val.length < 10) {
                   onChange(val);
@@ -139,7 +147,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               }}
               onBlur={onBlur}
               errors={errors}
-              isMobileNumberExist={isMobileNumberExist}
+              isMobileNumberExist={mobileNumberExist === "exist"}
               placeholder={t("enterYourMobileNumber")}
               loading={mutationCheckMobileNumber.isPending}
               icon={
@@ -171,11 +179,10 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               textStyles={{ fontSize: 16 }}
               containerStyle={errors?.name && styles.errorInput}
               errors={errors}
-              disabled={isMobileNumberExist}
+              disabled={mobileNumberExist !== "notExist"}
             />
           )}
         />
-
       </View>
       <Button
         isPrimary={true}

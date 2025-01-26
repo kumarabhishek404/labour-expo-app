@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface PaginationOptions {
   totalItems: number;
@@ -15,7 +15,7 @@ interface PaginationResult<T> {
   goToPreviousPage: () => void;
 }
 
-export function usePagination<T>(
+function usePagination<T>(
   items: T[],
   { totalItems, itemsPerPage, initialPage = 1 }: PaginationOptions
 ): PaginationResult<T> {
@@ -45,4 +45,6 @@ export function usePagination<T>(
     goToNextPage,
     goToPreviousPage,
   };
-} 
+}
+
+export default usePagination;

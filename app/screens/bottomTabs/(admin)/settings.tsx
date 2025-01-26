@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useAtomValue } from "jotai";
 import { Stack } from "expo-router";
-import { UserAtom } from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,7 +22,7 @@ const SectionHeader = ({ title }: any) => (
 );
 
 const AdminSettings = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const handleUserManagement = () => {
     // Navigate to user management screen

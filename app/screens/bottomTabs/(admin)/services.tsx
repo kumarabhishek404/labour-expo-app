@@ -6,16 +6,16 @@ import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import { MYSERVICES, WORKERS } from "@/constants";
-import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { fetchAllServices } from "@/app/api/services";
+import SERVICE from "@/app/api/services";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import FetchLocationNote from "@/components/commons/FetchLocationNote";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 
 const AdminServices = () => {
   const [totalData, setTotalData] = useState(0);
@@ -41,7 +41,7 @@ const AdminServices = () => {
         pageParam,
         ...filters,
       };
-      return fetchAllServices({
+      return SERVICE?.fetchAllServices({
         ...payload,
         status: category,
         skill: secondaryCategory,
@@ -56,21 +56,6 @@ const AdminServices = () => {
       return undefined;
     },
   });
-
-  useEffect(() => {
-    (async () => {
-      // Request location permissions
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        // setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      // Get the current position
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      // setLocation(currentLocation);
-    })();
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -110,23 +95,34 @@ const AdminServices = () => {
     setSecondaryCategory(category);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("services")} left="menu" right="notification" />
+            <CustomHeader
+              title={t("services")}
+              left="menu"
+              right="notification"
+            />
           ),
         }}
       />
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter type="services" data={response?.pages} setFilteredData={setFilteredData} />
+          <FetchLocationNote motiveItem="workers" />
+          <SearchFilter
+            type="services"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={MYSERVICES}

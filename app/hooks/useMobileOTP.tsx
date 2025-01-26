@@ -1,8 +1,8 @@
 import firestore from "@react-native-firebase/firestore";
 import { useState } from "react";
 
-export const useMobileOTP = () => {
-//   const [phoneNumber, setPhoneNumber]: any = useState("");
+const useMobileOTP = () => {
+  //   const [phoneNumber, setPhoneNumber]: any = useState("");
   const [code, setCode] = useState("");
   const [confirm, setConfirm]: any = useState(null);
 
@@ -35,3 +35,5 @@ export const useMobileOTP = () => {
     }
   };
 };
+
+export default useMobileOTP;

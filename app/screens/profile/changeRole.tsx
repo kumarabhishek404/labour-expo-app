@@ -1,5 +1,5 @@
-import { updateUserRoleById } from "@/app/api/user";
-import { UserAtom } from "@/app/AtomStore/user";
+import USER from "@/app/api/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
 import Loader from "@/components/commons/Loader";
@@ -9,10 +9,9 @@ import { router, Stack } from "expo-router";
 import { useAtom } from "jotai";
 import React, { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 
 const ChangeRoleScreen = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedRole1, setSelectedRole1] = useState(null);
   const [selectedRole2, setSelectedRole2] = useState(null);
   const [selectedRole3, setSelectedRole3] = useState(null);
@@ -24,7 +23,7 @@ const ChangeRoleScreen = () => {
     mutationKey: ["changeRole"],
     mutationFn: async () => {
       if (selectedRole1 && selectedRole2 && selectedRole3) {
-        return await updateUserRoleById({
+        return await USER?.updateUserRoleById({
           role: userDetails?.role === "WORKER" ? "MEDIATOR" : "WORKER",
         });
       } else {
@@ -82,7 +81,7 @@ const ChangeRoleScreen = () => {
       <Loader loading={mutationChangeProfileRole?.isPending} />
       <View style={styles.container}>
         <CustomHeading textAlign="left">Mediator Type</CustomHeading>
-        <Dropdown
+        {/* <Dropdown
           style={[styles.dropdown, isFocus1 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
@@ -103,9 +102,9 @@ const ChangeRoleScreen = () => {
             setIsFocus1(false);
           }}
           containerStyle={styles.dropdownContainer}
-        />
+        /> */}
         <CustomHeading textAlign="left">Extra Facility</CustomHeading>
-        <Dropdown
+        {/* <Dropdown
           style={[styles.dropdown, isFocus2 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
@@ -126,9 +125,9 @@ const ChangeRoleScreen = () => {
             setIsFocus2(false);
           }}
           containerStyle={styles.dropdownContainer}
-        />
+        /> */}
         <CustomHeading textAlign="left">Place of Team Collection</CustomHeading>
-        <Dropdown
+        {/* <Dropdown
           style={[styles.dropdown, isFocus3 && { borderColor: "#007BFF" }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
@@ -149,7 +148,7 @@ const ChangeRoleScreen = () => {
             setIsFocus3(false);
           }}
           containerStyle={styles.dropdownContainer}
-        />
+        /> */}
 
         <View style={styles.buttonContainer}>
           <Button

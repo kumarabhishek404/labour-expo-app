@@ -1,4 +1,4 @@
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import Colors from "@/constants/Colors";
 import React, { useRef, useState } from "react";
 import {
@@ -52,18 +52,18 @@ const EmailAddressField = ({
   const handleSendOtp = () => {
     if (isEmailValid) {
       setModalVisible(true);
-      toast.success(t("otpSentTo"), `${email}`);
+      TOAST?.showToast?.success(t("otpSentTo"), `${email}`);
     } else {
-      toast.error(t("pleaseEnterAValidEmailAddress"));
+      TOAST?.showToast?.error(t("pleaseEnterAValidEmailAddress"));
     }
   };
 
   const handleVerifyOtp = () => {
     if (otp.join("") === "1234") {
-      toast.success(t("emailAddressVerifiedSuccessfully"));
+      TOAST?.showToast?.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      toast.error(t("incorrectOTPTryAgain"));
+      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
     }
   };
 
@@ -93,15 +93,15 @@ const EmailAddressField = ({
 
   const handleVerify = () => {
     if (otp.join("") === "1234") {
-      toast.success(t("emailAddressVerifiedSuccessfully"));
+      TOAST?.showToast?.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      toast.error(t("incorrectOTPTryAgain"));
+      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
     }
   };
 
   const resendOtp = () => {
-    toast.success(t("otpResent"));
+    TOAST?.showToast?.success(t("otpResent"));
   };
 
   return (
@@ -186,7 +186,6 @@ const EmailAddressField = ({
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     justifyContent: "center",
     gap: 10,
   },

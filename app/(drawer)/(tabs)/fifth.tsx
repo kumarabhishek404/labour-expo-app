@@ -1,12 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import AdminProfile from "../../screens/bottomTabs/(admin)/profile";
 import UserProfile from "../../screens/bottomTabs/(user)/profile";
 
 export default function WorkersScreen() {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   switch (userDetails?.role) {
     case "ADMIN":

@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { Controller, useForm } from "react-hook-form";
 import SelfieScreen from "@/components/inputs/Selfie";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 
 interface FifthScreenProps {
@@ -37,7 +37,7 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
       typeof data.profilePicture !== "string" ||
       data.profilePicture.trim() === ""
     ) {
-      toast.error(t("pleaseSelectAProfilePicture"));
+      TOAST?.showToast?.error(t("pleaseSelectAProfilePicture"));
       return;
     }
 

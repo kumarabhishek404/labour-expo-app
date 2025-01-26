@@ -6,7 +6,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { LanguageAtom } from "../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtom, useAtomValue } from "jotai";
 
 type LocaleContextType = {
@@ -16,9 +16,9 @@ type LocaleContextType = {
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
-export const LocaleProvider = ({ children }: { children: ReactNode }) => {
+const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocaleState] = useState<string>(i18n.locale);
-  const [language, setLanguage] = useAtom(LanguageAtom);
+  const [language, setLanguage] = useAtom(Atoms?.LanguageAtom);
 
   useEffect(() => {
     // Load the saved locale when the app starts
@@ -46,10 +46,17 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useLocale = () => {
+const useLocale = () => {
   const context = useContext(LocaleContext);
   if (!context) {
     throw new Error("useLocale must be used within a LocaleProvider");
   }
   return context;
 };
+
+const LOCAL_CONTEXT = {
+  useLocale,
+  LocaleProvider,
+};
+
+export default LOCAL_CONTEXT;

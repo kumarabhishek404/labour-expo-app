@@ -9,7 +9,7 @@ import { t } from "@/utils/translationHelper";
 import ModalComponent from "../commons/Modal";
 import TextInputComponent from "./TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 
 interface SkillsSelectorProps {
   name: string;
@@ -48,7 +48,7 @@ const SkillsSelector = ({
 
   const handleSelect = (skill: any) => {
     if (selectedInterests.length >= 5) {
-      toast?.error(t("skillLimitReached")); // Limit to 5 skills
+      TOAST?.showToast?.error(t("skillLimitReached")); // Limit to 5 skills
       return;
     }
 
@@ -106,7 +106,7 @@ const SkillsSelector = ({
       reset({ pricePerDay: existingSkill?.pricePerDay || "" });
       setPricePopupVisible(true);
     } else {
-      toast?.error(t("priceEditNotAllowed")); // Optional toast for feedback
+      TOAST?.showToast?.error(t("priceEditNotAllowed")); // Optional toast for feedback
     }
   };
 
@@ -114,7 +114,7 @@ const SkillsSelector = ({
     if (!isPricePerDayNeeded) return null;
 
     return (
-      <View style={{ paddingVertical: 10 }}>
+      <View style={{ paddingVertical: 20 }}>
         <Controller
           control={control}
           name="pricePerDay"

@@ -9,7 +9,6 @@ export default function StackLayout() {
         headerTransparent: true,
         headerShown: false,
       }}
-    >
-    </Stack>
+    ></Stack>
   );
 }

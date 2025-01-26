@@ -19,7 +19,7 @@ import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import ProfilePicture from "./ProfilePicture";
 
 type UserType = {
@@ -345,7 +345,7 @@ const ListingVerticalRequests = ({
   onRejectRequest,
   refreshControl,
 }: Props) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const renderLoader = () =>
     isFetchingNextPage ? (

@@ -18,7 +18,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import Button from "../inputs/Button";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 
 const ListingsVerticalBookings = ({
   availableInterest,
@@ -29,7 +29,7 @@ const ListingsVerticalBookings = ({
   refreshControl,
   type,
 }: any) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const RenderItem = React.memo(({ item }: any) => {
     console.log("Item", item);

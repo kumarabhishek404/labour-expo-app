@@ -41,9 +41,9 @@ export default function Button({
   };
 
   const containerStyles = {
-    backgroundColor: bgColor || (isPrimary ? Colors.heading : Colors.white),
+    backgroundColor: bgColor || (isPrimary ? Colors.primary : Colors.white),
     borderWidth: 2,
-    borderColor: isPrimary ? bgColor || Colors.heading : Colors.heading,
+    borderColor: Colors.primary,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 8,

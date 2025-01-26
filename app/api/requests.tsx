@@ -1,16 +1,16 @@
-import { makeGetRequest, makePostRequest } from ".";
-import { toast } from "../hooks/toast";
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
 
-export const sendJoiningRequest = async (payload: any) => {
+const sendJoiningRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/request/request-joining", payload);
+    const data = await API_CLIENT.makePostRequest("/request/request-joining", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while sending request to the Worker : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while sending request to the Worker"
     );
@@ -18,17 +18,17 @@ export const sendJoiningRequest = async (payload: any) => {
   }
 };
 
-export const cancelJoiningRequest = async (payload: any) => {
+const cancelJoiningRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/request/cancel-request", payload);
-    toast.success("Request cancelled successfully");
+    const data = await API_CLIENT.makePostRequest("/request/cancel-request", payload);
+    TOAST?.showToast?.success("Request cancelled successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while cancelling sent request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling sent requestr"
     );
@@ -36,17 +36,17 @@ export const cancelJoiningRequest = async (payload: any) => {
   }
 };
 
-export const acceptJoiningRequest = async (payload: any) => {
+const acceptJoiningRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/request/accept-request", payload);
-    toast.success("Request accepted successfully");
+    const data = await API_CLIENT.makePostRequest("/request/accept-request", payload);
+    TOAST?.showToast?.success("Request accepted successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while accepting joining request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while accepting joining request"
     );
@@ -54,17 +54,17 @@ export const acceptJoiningRequest = async (payload: any) => {
   }
 };
 
-export const rejectJoiningRequest = async (payload: any) => {
+const rejectJoiningRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/request/decline-request", payload);
-    toast.success("Request rejected successfully");
+    const data = await API_CLIENT.makePostRequest("/request/decline-request", payload);
+    TOAST?.showToast?.success("Request rejected successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while rejecting joining request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while rejecting joining request"
     );
@@ -72,9 +72,9 @@ export const rejectJoiningRequest = async (payload: any) => {
   }
 };
 
-export const fetchAllRequests = async ({ pageParam }: any) => {
+const fetchAllRequests = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/requests/all?page=${pageParam}&limit=3`
     );
     return data.data;
@@ -83,7 +83,7 @@ export const fetchAllRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching requests : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching requests"
     );
@@ -91,9 +91,9 @@ export const fetchAllRequests = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchRecievedRequests = async ({ pageParam }: any) => {
+const fetchRecievedRequests = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/request/all-received-requests?page=${pageParam}&limit=5`
     );
     return data?.data;
@@ -102,7 +102,7 @@ export const fetchRecievedRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching recieved requests : `,
       error?.response
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching recieved requests"
     );
@@ -110,9 +110,9 @@ export const fetchRecievedRequests = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchSentRequests = async ({ pageParam }: any) => {
+const fetchSentRequests = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/request/all-sent-requests?page=${pageParam}&limit=5`
     );
     return data.data;
@@ -121,7 +121,7 @@ export const fetchSentRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching sent requests : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching sent requests"
     );
@@ -129,19 +129,32 @@ export const fetchSentRequests = async ({ pageParam }: any) => {
   }
 };
 
-export const leaveFromTeam = async (payload: any) => {
+const leaveFromTeam = async (payload: any) => {
   try {
-    const data = await makePostRequest("/request/leave-team", payload);
+    const data = await API_CLIENT.makePostRequest("/request/leave-team", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while leaving from team : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while leaving from team"
     );
     throw error;
   }
 };
+
+const RATING = {
+  sendJoiningRequest,
+  cancelJoiningRequest,
+  acceptJoiningRequest,
+  rejectJoiningRequest,
+  fetchAllRequests,
+  fetchRecievedRequests,
+  fetchSentRequests,
+  leaveFromTeam,
+};
+
+export default RATING;

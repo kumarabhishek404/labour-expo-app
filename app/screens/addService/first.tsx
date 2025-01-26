@@ -6,13 +6,15 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { Controller, useForm } from "react-hook-form";
 import { useSetAtom } from "jotai";
-import { AddServiceInProcess } from "@/app/AtomStore/user";
 import DropdownComponent from "@/components/inputs/Dropdown";
 import WorkRequirment from "@/components/inputs/WorkRequirements";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
+import { Stack } from "expo-router";
+import CustomHeader from "@/components/commons/Header";
+import CustomText from "@/components/commons/CustomText";
 
 interface FirstScreenProps {
   setStep: any;
@@ -45,90 +47,106 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       requirements: requirements,
     },
   });
-  const setIsAddService = useSetAtom(AddServiceInProcess);
   const [errorField, setErrorField] = useState({});
 
+  const selectedDropdownValue = watch("type");
+  // console.log("watch---", watch("type"), filterSubCategories(watch("type")))
+
   const onSubmit = (data: any) => {
+    // console.log("data---", data);
+
     setType(data?.type);
     setSubType(data?.subType);
     setRequirements(data?.requirements);
-    setIsAddService(true);
+    // setIsAddService(true);
     setStep(2);
+  };
+
+  const handleValue = (value: any) => {
+    console.log("value --", value);
+
+    // onChange()
   };
 
   return (
     <>
-      {/* <Image source={Step1} style={styles.image} /> */}
+      {/* <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <CustomHeader title={t('addingNewService')} left="back" />,
+        }}
+      /> */}
       <View style={{ marginVertical: 30 }}>
         <Stepper currentStep={1} steps={ADDSERVICESTEPS} />
       </View>
 
       <View style={{ gap: 10 }}>
-        <Controller
-          control={control}
-          name="type"
-          defaultValue=""
-          rules={{
-            required: t("workTypeIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DropdownComponent
-              name="type"
-              label={t("workType")}
-              value={value}
-              setValue={onChange}
-              placeholder={t("selectWorkType")}
-              emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
-              options={WORKTYPES}
-              errors={errors}
-              containerStyle={errors?.type && styles.errorInput}
-              search={false}
-              icon={
-                <Ionicons
-                  name={"mail-outline"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="subType"
-          defaultValue=""
-          rules={{
-            required: t("workSubTypeIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DropdownComponent
-              name="subType"
-              label={t("workSubType")}
-              value={value}
-              setValue={onChange}
-              placeholder={
-                watch("type")
-                  ? t("selectWorkSubType")
-                  : t("pleaseSelectWorkTypeFirst")
-              }
-              options={filterSubCategories(watch("type"))}
-              errors={errors}
-              containerStyle={errors?.subType && styles.errorInput}
-              search={false}
-              icon={
-                <Ionicons
-                  name={"mail-outline"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
-
+        <View style={{ zIndex: 9 }}>
+          <Controller
+            control={control}
+            name="type"
+            defaultValue=""
+            rules={{
+              required: t("workTypeIsRequired"),
+            }}
+            render={({ field: { value, onChange } }) => (
+              <DropdownComponent
+                name="type"
+                label={t("workType")}
+                value={value}
+                setValue={onChange}
+                placeholder={t("selectWorkType")}
+                options={WORKTYPES}
+                errors={errors}
+                containerStyle={errors?.type && styles.errorInput}
+                search={false}
+                icon={
+                  <Ionicons
+                    name={"mail-outline"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
+        </View>
+        <View style={{ zIndex: 8 }}>
+          <Controller
+            control={control}
+            name="subType"
+            defaultValue=""
+            rules={{
+              required: t("workSubTypeIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                name="subType"
+                label={t("workSubType")}
+                value={value}
+                setValue={onChange}
+                placeholder={
+                  watch("type")
+                    ? t("selectWorkSubType")
+                    : t("pleaseSelectWorkTypeFirst")
+                }
+                options={filterSubCategories(watch("type"))}
+                errors={errors}
+                containerStyle={errors?.subType && styles.errorInput}
+                search={false}
+                icon={
+                  <Ionicons
+                    name={"mail-outline"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
+        </View>
         <Controller
           control={control}
           name="requirements"

@@ -13,11 +13,6 @@ import {
 import Colors from "@/constants/Colors";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
-  AccountStatusAtom,
-  NotificationConsentAtom,
-  UserAtom,
-} from "@/app/AtomStore/user";
-import {
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -26,7 +21,7 @@ import {
   ScrollView,
   Switch,
 } from "react-native";
-import { useFocusEffect, usePathname, useRouter } from "expo-router";
+import { Stack, useFocusEffect, usePathname, useRouter } from "expo-router";
 import { useNavigation } from "expo-router";
 import { t } from "@/utils/translationHelper";
 import { DrawerActions } from "@react-navigation/native";
@@ -34,20 +29,21 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import ModalComponent from "@/components/commons/Modal";
 import { useMutation } from "@tanstack/react-query";
-import { disableAccount } from "../api/user";
-import { toast } from "../hooks/toast";
-import { useRefreshUser } from "../hooks/useRefreshUser";
-import {
-  registerForPushNotificationsAsync,
-  unregisterPushNotifications,
-} from "../hooks/usePushNotification";
+import USER from "../api/user";
+import TOAST from "@/app/hooks/toast";
+import REFRESH_USER from "../hooks/useRefreshUser";
+import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import ProfilePicture from "@/components/commons/ProfilePicture";
+import FloatingButton from "@/components/inputs/FloatingButton";
+import CustomHeader from "@/components/commons/Header";
+import Atoms from "../AtomStore";
+import { StatusBar } from "expo-status-bar";
 
-export default function Layout() {
+export default function DrawerLayout() {
   const Router = useRouter();
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isAdmin, setIsAdmin] = useState(false);
-  const setIsAccountInactive = useSetAtom(AccountStatusAtom);
+  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeMenu, setActiveMenu] = useState("(tabs)"); // Track active menu item
@@ -55,7 +51,7 @@ export default function Layout() {
     useState(false);
   const [isEnabling, setIsEnabling] = useState(false);
   const [notificationConsent, setNotificationConsent] = useAtom(
-    NotificationConsentAtom
+    Atoms?.NotificationConsentAtom
   );
   const pathname = usePathname();
 
@@ -86,10 +82,10 @@ export default function Layout() {
 
   const mutationDeactivateAccount = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: () => disableAccount(),
+    mutationFn: () => USER?.disableAccount(),
     onSuccess: (response) => {
-      toast.success(t("successDeactivatedMessage"));
-      useRefreshUser();
+      TOAST?.showToast?.success(t("successDeactivatedMessage"));
+      REFRESH_USER.useRefreshUser();
       setModalVisible(false);
       setIsAccountInactive(true);
     },
@@ -106,9 +102,11 @@ export default function Layout() {
 
   const registerNotification = async () => {
     try {
-      await registerForPushNotificationsAsync(notificationConsent);
+      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+        notificationConsent
+      );
       setNotificationConsent(true);
-      toast.success("Notifications enabled");
+      TOAST?.showToast?.success("Notifications enabled");
       console.log("Notifications enabled");
     } catch (err) {
       setActiveMenu("(tabs)");
@@ -118,8 +116,8 @@ export default function Layout() {
 
   const unregisterNotification = async () => {
     try {
-      await unregisterPushNotifications();
-      toast.success("Notifications disabled");
+      await PUSH_NOTIFICATION?.unregisterPushNotifications();
+      TOAST?.showToast?.success("Notifications disabled");
       console.log("Notifications disabled");
       setNotificationConsent(false);
     } catch (err) {
@@ -137,7 +135,7 @@ export default function Layout() {
         await unregisterNotification();
       }
     } catch (err) {
-      toast.error("Failed to change notification preference");
+      TOAST?.showToast?.error("Failed to change notification preference");
       console.error(err);
     }
   };
@@ -164,7 +162,7 @@ export default function Layout() {
 
   const menus = [
     {
-      label: `${t("welcome")} ${userDetails?.name}`,
+      label: t("home"),
       name: "/",
       onPress: () => Router?.push("/(drawer)/(tabs)"),
       icon: (color: string) => <Feather name="home" size={26} color={color} />,
@@ -379,22 +377,20 @@ export default function Layout() {
     );
   };
 
-  const ShowMenuBar = ({ activeOption }: any) => {
+  const ShowMenuBar = ({ navigation, activeOption }: any) => {
     return (
       <ScrollView style={styles.drawerContent}>
         <View style={styles.profileSection}>
           <View style={styles.profileDetails}>
             <ProfilePicture uri={userDetails?.profilePicture} />
             <View style={styles.profileText}>
-              <Text style={styles.profileName}>
-                {userDetails?.name}
-              </Text>
+              <Text style={styles.profileName}>{userDetails?.name}</Text>
               <Text style={styles.profileRole}>{userDetails?.role}</Text>
             </View>
           </View>
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={handleCloseProfileSection}
+            onPress={() => navigation?.dispatch(DrawerActions.closeDrawer())}
           >
             <MaterialIcons name="close" size={28} color={Colors.white} />
           </TouchableOpacity>
@@ -456,10 +452,13 @@ export default function Layout() {
         screenOptions={{
           headerShown: false,
         }}
-        drawerContent={() => {
+        drawerContent={(props) => {
           return (
             <>
-              <ShowMenuBar activeOption={activeMenu} />
+              <ShowMenuBar
+                navigation={props?.navigation}
+                activeOption={activeMenu}
+              />
               <View>
                 <View style={styles.separator} />
                 {/* Logout Button */}
@@ -538,6 +537,10 @@ export default function Layout() {
           );
         }}
       ></Drawer>
+      <StatusBar style="light" backgroundColor={Colors?.primary} />
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") && <FloatingButton />}
     </GestureHandlerRootView>
   );
 }
@@ -548,7 +551,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   profileSection: {
-    marginTop: 40,
+    marginTop: 54,
     padding: 10,
     margin: 10,
     backgroundColor: Colors.primary,
@@ -642,7 +645,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 20,
+    paddingVertical: 20,
     alignItems: "center",
   },
   iconContainer: {

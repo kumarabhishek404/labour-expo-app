@@ -3,29 +3,21 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Stack, useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import Loader from "@/components/commons/Loader";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MYSERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
-import {
-  fetchAllMyBookingsMediator,
-  fetchAllMyBookingsWorker,
-  fetchMyAppliedServicesMediator,
-  fetchMyAppliedServicesWorker,
-  fetchMyServices,
-  fetchServicesInWhichSelectedMediator,
-  fetchServicesInWhichSelectedWorker,
-} from "@/app/api/services";
+import SERVICE from "@/app/api/services";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 
 const UserBookingsAndMyServices = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
@@ -43,10 +35,10 @@ const UserBookingsAndMyServices = () => {
     queryKey: ["myServices", category],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchMyServices({ pageParam, status: category })
+        ? SERVICE?.fetchMyServices({ pageParam, status: category })
         : userDetails?.role === "MEDIATOR"
-        ? fetchAllMyBookingsMediator({ pageParam, status: category })
-        : fetchAllMyBookingsWorker({ pageParam, status: category });
+        ? SERVICE?.fetchAllMyBookingsMediator({ pageParam, status: category })
+        : SERVICE?.fetchAllMyBookingsWorker({ pageParam, status: category });
     },
     retry: false,
     initialPageParam: 1,
@@ -104,7 +96,7 @@ const UserBookingsAndMyServices = () => {
     // refetch();
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 

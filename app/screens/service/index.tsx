@@ -7,13 +7,9 @@ import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import {
-  fetchAllLikedServices,
-  fetchAllServices,
-  fetchMyServices,
-} from "@/app/api/services";
+import SERVICE from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MYSERVICES, SERVICES } from "@/constants";
@@ -44,10 +40,10 @@ const Services = () => {
     ],
     queryFn: ({ pageParam }) =>
       type === "favourite"
-        ? fetchAllLikedServices({ pageParam })
+        ? SERVICE?.fetchAllLikedServices({ pageParam })
         : type === "myServices"
-        ? fetchMyServices({ pageParam, status: category })
-        : fetchAllServices({ pageParam }),
+        ? SERVICE?.fetchMyServices({ pageParam, status: category })
+        : SERVICE?.fetchAllServices({ pageParam }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
@@ -84,7 +80,7 @@ const Services = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 

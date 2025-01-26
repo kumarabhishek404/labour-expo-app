@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { Ionicons } from "@expo/vector-icons";
 import Stepper from "@/components/commons/Stepper";
 import { REGISTERSTEPS } from "@/constants";
@@ -33,7 +33,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
       setConfirmPassword(confirmPassword);
       setStep(4);
     } else {
-      toast.error("Passwords do not match. Please try again.");
+      TOAST?.showToast?.error("Passwords do not match. Please try again.");
       setConfirmPassword("");
     }
   };
@@ -42,7 +42,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
     if (password?.length === 4) {
       setPasswordStep("confirm");
     } else {
-      toast.error("Please enter full password");
+      TOAST?.showToast?.error("Please enter full password");
     }
   };
 

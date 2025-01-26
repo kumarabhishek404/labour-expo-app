@@ -9,8 +9,8 @@ import { WORKTYPES } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "@/app/hooks/toast";
-import { addBookingRequest } from "@/app/api/booking";
+import TOAST from "@/app/hooks/toast";
+import BOOKING from "@/app/api/booking";
 import DateField from "@/components/inputs/DateField";
 import { filterSubCategories, isEmptyObject } from "@/constants/functions";
 import Duration from "@/components/inputs/Duration";
@@ -58,10 +58,10 @@ const AddBookingDetails = ({
 
   const mutationAddBookingRequest = useMutation({
     mutationKey: ["addBookingRequest"],
-    mutationFn: (payload: any) => addBookingRequest(payload),
+    mutationFn: (payload: any) => BOOKING?.addBookingRequest(payload),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("bookRequestSentSuccessfully"));
+      TOAST?.showToast?.success(t("bookRequestSentSuccessfully"));
       setIsAddBookingModal(false);
     },
   });
@@ -84,7 +84,6 @@ const AddBookingDetails = ({
                 value={value}
                 setValue={onChange}
                 placeholder={t("selectWorkType")}
-                emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
                 options={WORKTYPES}
                 errors={errors}
                 containerStyle={errors?.type && styles.errorInput}
@@ -313,15 +312,10 @@ const AddBookingDetails = ({
         primaryButton={{
           disabled: false,
           title: t("addBookingDetails"),
-          styles: {
-            backgroundColor: "red",
-            borderColor: "red",
-          },
           action: handleSubmit(handleSubmitBooking),
         }}
         secondaryButton={{
           title: t("cancel"),
-          styles: "",
           action: () => setIsAddBookingModal(false),
         }}
       />
@@ -333,7 +327,7 @@ export default AddBookingDetails;
 
 const styles = StyleSheet.create({
   modalContent: {
-    marginTop: 10,
+    paddingVertical: 20,
   },
   errorInput: {
     borderWidth: 1,

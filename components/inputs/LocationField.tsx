@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import Colors from "@/constants/Colors";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeading from "../commons/CustomHeading";
 import AddAddressModal from "@/app/screens/location/addAddress";
 import { t } from "@/utils/translationHelper";
@@ -24,7 +23,7 @@ const LocationField = ({
 }: LocationFieldProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     ...(userDetails?.savedAddresses?.length > 0 ? convertToLabelValueArray(userDetails?.savedAddresses) : []),
@@ -64,7 +63,7 @@ const LocationField = ({
 
   return (
     <View style={styles.container}>
-      <Dropdown
+      {/* <Dropdown
         ref={dropdownRef}
         style={[
           styles.dropdown,
@@ -125,7 +124,7 @@ const LocationField = ({
             size={20}
           />
         )}
-      />
+      /> */}
       <AddAddressModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}

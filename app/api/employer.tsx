@@ -1,16 +1,16 @@
-import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
-import { toast } from "../hooks/toast";
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
 
-export const getEmployerById = async (id: any) => {
+const getEmployerById = async (id: any) => {
   try {
-    const { data } = await makeGetRequest(`/user/detail/${id}`);
+    const { data } = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
     return data;
   } catch (error: any) {
     console.error(
       `[Users] [userService] An error occurred while fetching employer details : `,
       error
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while getting employer by id"
     );
@@ -18,9 +18,9 @@ export const getEmployerById = async (id: any) => {
   }
 };
 
-export const fetchAllEmployers = async ({ pageParam }: any) => {
+const fetchAllEmployers = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/all?page=${pageParam}&limit=5&role=EMPLOYER`
     );
     return data.data;
@@ -29,7 +29,7 @@ export const fetchAllEmployers = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching employers : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching employers"
     );
@@ -37,9 +37,9 @@ export const fetchAllEmployers = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
+const fetchAllLikedEmployer = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/all-liked?role=EMPLOYER&page=${pageParam}&limit=5`
     );
     return data.data;
@@ -48,7 +48,7 @@ export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching liked employers : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching employers"
     );
@@ -56,16 +56,16 @@ export const fetchAllLikedEmployer = async ({ pageParam }: any) => {
   }
 };
 
-export const likeEmployer = async (payload: any) => {
+const likeEmployer = async (payload: any) => {
   try {
-    const data = await makePostRequest(`/user/like/${payload?.employerID}`);
+    const data = await API_CLIENT.makePostRequest(`/user/like/${payload?.employerID}`);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while liking employer : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching employer"
     );
@@ -73,19 +73,29 @@ export const likeEmployer = async (payload: any) => {
   }
 };
 
-export const unlikeEmployer = async (payload: any) => {
+const unlikeEmployer = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(`/user/unlike/${payload?.employerID}`);
+    const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${payload?.employerID}`);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while unliking employer : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching employer"
     );
     throw error;
   }
 };
+
+const EMPLOYER = {
+  getEmployerById,
+  fetchAllEmployers,
+  fetchAllLikedEmployer,
+  likeEmployer,
+  unlikeEmployer,
+};
+
+export default EMPLOYER;

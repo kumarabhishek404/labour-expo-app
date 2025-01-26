@@ -7,7 +7,7 @@ const toastConfig = {
   text2: "",
 };
 
-export const toast = {
+const showToast = {
   success: (message: string, description?: string) => {
     Toast.show({
       ...toastConfig,
@@ -33,3 +33,9 @@ export const toast = {
     });
   },
 };
+
+const TOAST = {
+  showToast,
+};
+
+export default TOAST;

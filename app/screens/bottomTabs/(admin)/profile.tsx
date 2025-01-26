@@ -9,12 +9,7 @@ import {
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
-import {
-  AccountStatusAtom,
-  EarningAtom,
-  SpentAtom,
-  UserAtom,
-} from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import { useMutation } from "@tanstack/react-query";
@@ -24,7 +19,7 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "../../../hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import WallletInformation from "@/components/commons/WalletInformation";
@@ -33,19 +28,19 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import { useLocale } from "../../../context/locale";
+import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
-import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
-import { updateUserById, uploadFile } from "@/app/api/user";
-import { addSkills } from "@/app/api/workers";
+import USER from "@/app/api/user";
+import WORKER from "@/app/api/workers";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const AdminProfile = () => {
-  useLocale();
-  const isAccountInactive = useAtomValue(AccountStatusAtom);
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const [earnings, setEarnings] = useAtom(EarningAtom);
-  const [spents, setSpents] = useAtom(SpentAtom);
+  LOCAL_CONTEXT?.useLocale();
+  const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const [earnings, setEarnings] = useAtom(Atoms?.EarningAtom);
+  const [spents, setSpents] = useAtom(Atoms?.SpentAtom);
 
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
@@ -65,12 +60,12 @@ const AdminProfile = () => {
     },
   });
 
-  const { refreshUser, isLoading } = useRefreshUser();
+  const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
     const backAction = () => {
       if (isAccountInactive) {
-        toast.error(
+        TOAST?.showToast?.error(
           userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
             ? "Profile Suspended"
@@ -102,7 +97,7 @@ const AdminProfile = () => {
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => updateUserById(payload),
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
@@ -147,12 +142,12 @@ const AdminProfile = () => {
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skills: Array<string>) => addSkills({ skills: skills }),
+    mutationFn: (skills: Array<string>) => WORKER?.addSkills({ skills: skills }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      toast.success(t("skillsAddedSuccessfully"));
+      TOAST?.showToast?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
@@ -172,7 +167,7 @@ const AdminProfile = () => {
       type: "image/jpeg",
       name: avatarFile,
     });
-    return await uploadFile(formData);
+    return await USER?.uploadFile(formData);
   };
 
   const handleRemoveProfileImage = () => {
@@ -244,7 +239,7 @@ const AdminProfile = () => {
       await refreshUser();
     } catch (error) {
       console.error("Error while refreshing user - ", error);
-      toast.error("Error while refreshing user");
+      TOAST?.showToast?.error("Error while refreshing user");
     }
   };
 
@@ -439,7 +434,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   formContainer: {
-    marginTop: 10,
+    marginVertical: 20,
   },
   inputContainer: {
     height: 53,

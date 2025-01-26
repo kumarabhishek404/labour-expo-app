@@ -1,65 +1,60 @@
-import {
-  makeDeleteRequest,
-  makeGetRequest,
-  makePostRequest,
-  makePutRequest,
-} from ".";
-import { toast } from "../hooks/toast";
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
 
-export const addReview = async (payload: any) => {
+const addReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
-    const data = await makePostRequest(
+    const data = await API_CLIENT.makePostRequest(
       `/review/add/${payload?.id}`,
       payload?.data
     );
-    toast.success("Review added successfully");
+    TOAST?.showToast?.success("Review added successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding review : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message || "An error occurred while adding review"
     );
     throw error;
   }
 };
 
-export const editReview = async (payload: any) => {
+const editReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
-    const data = await makePutRequest(
+    const data = await API_CLIENT.makePutRequest(
       `/review/update/${payload?.id}`,
       payload?.data
     );
-    toast.success("Review edited successfully");
+    TOAST?.showToast?.success("Review edited successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while editing review : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message || "An error occurred while editing review"
     );
     throw error;
   }
 };
 
-export const deleteReview = async (payload: any) => {
+const deleteReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
-    const data = await makeDeleteRequest(`/review/delete/${payload?.id}`);
-    toast.success("Review deleted successfully");
+    const data = await API_CLIENT.makeDeleteRequest(`/review/delete/${payload?.id}`);
+    TOAST?.showToast?.success("Review deleted successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while deleting review : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while deleting review"
     );
@@ -67,9 +62,9 @@ export const deleteReview = async (payload: any) => {
   }
 };
 
-export const getAllReviews = async (payload: any) => {
+const getAllReviews = async (payload: any) => {
   try {
-    const data = await makeGetRequest(`/review/all/${payload?.id}`);
+    const data = await API_CLIENT.makeGetRequest(`/review/all/${payload?.id}`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -79,3 +74,12 @@ export const getAllReviews = async (payload: any) => {
     throw error;
   }
 };
+
+const NOTIFICATION = {
+  addReview,
+  editReview,
+  deleteReview,
+  getAllReviews,
+};
+
+export default NOTIFICATION;

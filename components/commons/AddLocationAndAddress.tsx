@@ -4,7 +4,7 @@ import LocationField from "../inputs/LocationField";
 import Button from "../inputs/Button";
 import * as Location from "expo-location";
 import { useAtom } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
@@ -39,11 +39,12 @@ const AddLocationAndAddress = ({
   errors,
   style,
 }: AddLocationAndAddressProps) => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchCurrentLocation = async () => {
     setIsLoading(true);
+    
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -64,6 +65,8 @@ const AddLocationAndAddress = ({
         longitude: tempLocation?.longitude,
       });
       setIsLoading(false);
+      console.log("response[0]?.formattedAddress---", response[0]?.formattedAddress);
+      
       setAddress(response[0]?.formattedAddress);
       let tempUserDetails = { ...userDetails };
       tempUserDetails = {
@@ -74,11 +77,15 @@ const AddLocationAndAddress = ({
         ],
       };
       setUserDetails(tempUserDetails);
+    console.log("222", response[0]?.formattedAddress);
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");
     }
   };
+
+  console.log("location--", location, address);
+  
 
   return (
     <View style={[styles.container, style]}>

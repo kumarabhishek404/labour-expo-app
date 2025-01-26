@@ -1,16 +1,16 @@
-import { makeDeleteRequest, makeGetRequest, makePostRequest } from ".";
-import { toast } from "../hooks/toast";
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
 
-export const getMediatorById = async (id: any) => {
+const getMediatorById = async (id: any) => {
   try {
-    const { data } = await makeGetRequest(`/user/detail/${id}`);
+    const { data } = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
     return data;
   } catch (error: any) {
     console.error(
       `An error occurred while fetching mediator details : `,
       error
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while getting mediator by id"
     );
@@ -18,9 +18,9 @@ export const getMediatorById = async (id: any) => {
   }
 };
 
-export const fetchAllMediators = async ({ pageParam, skill }: any) => {
+const fetchAllMediators = async ({ pageParam, skill }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=MEDIATOR`
     );
     return data.data;
@@ -29,7 +29,7 @@ export const fetchAllMediators = async ({ pageParam, skill }: any) => {
       `[userService] An error occurred while fetching all mediators : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all mediators"
     );
@@ -37,9 +37,9 @@ export const fetchAllMediators = async ({ pageParam, skill }: any) => {
   }
 };
 
-export const fetchAllBookedMediators = async ({ pageParam, skill }: any) => {
+const fetchAllBookedMediators = async ({ pageParam, skill }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/mediator/all-booked?page=${pageParam}&limit=5&skill=${skill}`
     );
     return data.data;
@@ -48,7 +48,7 @@ export const fetchAllBookedMediators = async ({ pageParam, skill }: any) => {
       `[userService] An error occurred while fetching booked mediators : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching booked mediators"
     );
@@ -56,16 +56,16 @@ export const fetchAllBookedMediators = async ({ pageParam, skill }: any) => {
   }
 };
 
-export const bookMediator = async (payload: any) => {
+const bookMediator = async (payload: any) => {
   try {
-    const data = await makePostRequest("/mediator/book", payload);
+    const data = await API_CLIENT.makePostRequest("/mediator/book", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while booking mediator : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while booking mediators"
     );
@@ -73,9 +73,9 @@ export const bookMediator = async (payload: any) => {
   }
 };
 
-export const removeBookedMediator = async (payload: any) => {
+const removeBookedMediator = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(
+    const data = await API_CLIENT.makeDeleteRequest(
       `/mediator/remove-booked/${payload?.mediatorID}`
     );
     return data.data;
@@ -84,7 +84,7 @@ export const removeBookedMediator = async (payload: any) => {
       `[userService] An error occurred while removing booked mediators : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while removing booked mediators"
     );
@@ -92,16 +92,16 @@ export const removeBookedMediator = async (payload: any) => {
   }
 };
 
-export const likeMediator = async (payload: any) => {
+const likeMediator = async (payload: any) => {
   try {
-    const data = await makePostRequest(`/user/like/${payload?.mediatorID}`);
+    const data = await API_CLIENT.makePostRequest(`/user/like/${payload?.mediatorID}`);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while liking mediator : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching services"
     );
@@ -109,16 +109,16 @@ export const likeMediator = async (payload: any) => {
   }
 };
 
-export const unlikeMediator = async ({ mediatorID }: any) => {
+const unlikeMediator = async ({ mediatorID }: any) => {
   try {
-    const data = await makeDeleteRequest(`/user/unlike/${mediatorID}`);
+    const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${mediatorID}`);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while unliking mediator : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "[userService] An error occurred while unliking mediator"
     );
@@ -126,9 +126,9 @@ export const unlikeMediator = async ({ mediatorID }: any) => {
   }
 };
 
-export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
+const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/all-liked?role=MEDIATOR&page=${pageParam}&limit=5&skill=${skill}`
     );
     console.log("Data---", data);
@@ -138,7 +138,7 @@ export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
       `[userService] An error occurred while fetching liked mediators : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching liked mediators"
     );
@@ -146,23 +146,25 @@ export const fetchAllLikedMediators = async ({ pageParam, skill }: any) => {
   }
 };
 
-export const fetchAllMembers = async ({
+const fetchAllMembers = async ({
   mediatorId,
   pageParam,
-  category,
+  category = "",
 }: any) => {
   console.log("mediatorId----", mediatorId);
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/mediator/${mediatorId}/members?page=${pageParam}&limit=3&category=${category}`
     );
+    console.log("[userService] member fetched successfully ");
+    
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching all members : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all members"
     );
@@ -170,9 +172,9 @@ export const fetchAllMembers = async ({
   }
 };
 
-export const removeMemberFromTeam = async (payload: any) => {
+const removeMemberFromTeam = async (payload: any) => {
   try {
-    const data = await makeDeleteRequest(
+    const data = await API_CLIENT.makeDeleteRequest(
       `/mediator/remove-member/${payload?.memberID}`
     );
     return data.data;
@@ -181,10 +183,25 @@ export const removeMemberFromTeam = async (payload: any) => {
       `[mediatorService] An error occurred while removing member : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while removing member from team"
     );
     throw error;
   }
 };
+
+const MEDIATOR = {
+  getMediatorById,
+  fetchAllMediators,
+  fetchAllBookedMediators,
+  bookMediator,
+  removeBookedMediator,
+  likeMediator,
+  unlikeMediator,
+  fetchAllLikedMediators,
+  fetchAllMembers,
+  removeMemberFromTeam
+};
+
+export default MEDIATOR;

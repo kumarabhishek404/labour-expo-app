@@ -277,7 +277,7 @@ const SkillSelector = ({
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         content={() => (
-          <>
+          <View style={{paddingVertical: 20}}>
             <DropdownComponent
               value={selectedSkill}
               setValue={(skill: string) => handleSkillSelection(skill)}
@@ -293,7 +293,7 @@ const SkillSelector = ({
               }
             />
             {selectedSkill && renderPriceInput()}
-          </>
+          </View>
         )}
         primaryButton={{
           title: t("addSkill"),
@@ -313,7 +313,7 @@ const SkillSelector = ({
         visible={isRemoveModalVisible}
         onClose={() => setIsRemoveModalVisible(false)}
         content={() => (
-          <>
+          <View style={{paddingVertical: 20}}>
             <DropdownComponent
               value={selectedSkillToRemove}
               setValue={handleSkillToRemoveSelection}
@@ -328,7 +328,7 @@ const SkillSelector = ({
                 />
               }
             />
-          </>
+          </View>
         )}
         primaryButton={{
           title:

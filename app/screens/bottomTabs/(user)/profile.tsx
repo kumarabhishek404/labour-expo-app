@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  BackHandler,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet, ScrollView, BackHandler } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
-import {
-  AccountStatusAtom,
-  EarningAtom,
-  SpentAtom,
-  UserAtom,
-} from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
-import { updateUserById, uploadFile } from "../../../api/user";
+import USER from "../../../api/user";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
@@ -25,8 +15,8 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import { addSkills, removeSkill } from "../../../api/workers";
-import { toast } from "../../../hooks/toast";
+import WORKER from "../../../api/workers";
+import TOAST from "@/app/hooks/toast";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
@@ -37,20 +27,20 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import { useLocale } from "../../../context/locale";
+import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
-import { useRefreshUser } from "../../../hooks/useRefreshUser";
 import { t } from "@/utils/translationHelper";
 import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const UserProfile = () => {
-  useLocale();
-  const isAccountInactive = useAtomValue(AccountStatusAtom);
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const [earnings, setEarnings] = useAtom(EarningAtom);
+  LOCAL_CONTEXT?.useLocale();
+  const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const [earnings, setEarnings] = useAtom(Atoms?.EarningAtom);
 
   const [isEditProfile, setIsEditProfile] = useState(false);
 
@@ -74,12 +64,12 @@ const UserProfile = () => {
     },
   });
 
-  const { refreshUser, isLoading } = useRefreshUser();
+  const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
     const backAction = () => {
       if (isAccountInactive) {
-        toast.error(
+        TOAST?.showToast?.error(
           userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
             ? "Profile Suspended"
@@ -107,22 +97,25 @@ const UserProfile = () => {
   useEffect(() => {
     setValue("name", userDetails?.name);
     setValue("email", userDetails?.email?.value);
-  }, [isEditProfile]);
+  }, [isEditProfile, userDetails]);
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => updateUserById(payload),
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
-        response?.data?.data
+        response?.data?.data?.email
       );
       let user = response?.data?.data;
       setIsEditProfile(false);
       setUserDetails({
         ...userDetails,
         name: user?.name,
-        email: user?.email?.value,
+        email: {
+          value: user?.email?.value,
+          isVerified: false,
+        },
       });
     },
     onError: (err) => {
@@ -149,12 +142,12 @@ const UserProfile = () => {
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skill: any) => addSkills({ skill: skill }),
+    mutationFn: (skill: any) => WORKER?.addSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      toast.success(t("skillsAddedSuccessfully"));
+      TOAST?.showToast?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
@@ -164,12 +157,12 @@ const UserProfile = () => {
 
   const mutationRemoveSkill = useMutation({
     mutationKey: ["removeSkills"],
-    mutationFn: (skill: string) => removeSkill({ skillName: skill }),
+    mutationFn: (skill: string) => WORKER?.removeSkill({ skillName: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      toast.success(t("skillRemovedSuccessfully"));
+      TOAST?.showToast?.success(t("skillRemovedSuccessfully"));
       console.log("Response while removing skill from the worker - ", response);
     },
     onError: (err) => {
@@ -189,13 +182,13 @@ const UserProfile = () => {
       type: "image/jpeg",
       name: avatarFile,
     });
-    return await uploadFile(formData);
+    return await USER?.uploadFile(formData);
   };
 
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        <View style={{ marginBottom: 10 }}>
+        <View style={{ marginBottom: 0 }}>
           <AvatarComponent
             isEditable={true}
             isLoading={mutationUploadProfileImage?.isPending}
@@ -281,13 +274,13 @@ const UserProfile = () => {
       await refreshUser();
     } catch (error) {
       console.error("Error while refreshing user - ", error);
-      toast.error("Error while refreshing user");
+      TOAST?.showToast?.error("Error while refreshing user");
     }
   };
 
   return (
     <>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -503,7 +496,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   formContainer: {
-    marginTop: 10,
+    paddingVertical: 20,
   },
   inputContainer: {
     height: 53,

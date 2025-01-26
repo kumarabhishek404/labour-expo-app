@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLocale } from "@/app/context/locale";
+import LOCAL_CONTEXT from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
@@ -12,7 +12,7 @@ import Animated, { SlideInDown } from "react-native-reanimated";
 import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 
 export default function LanguageSelectionScreen() {
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
 

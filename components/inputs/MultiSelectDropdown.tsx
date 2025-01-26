@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
@@ -68,7 +67,7 @@ const MultiSelectDropdownComponent = ({
         </View>
       </View>
 
-      <Dropdown
+      {/* <Dropdown
         style={[styles.dropdown, style]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
@@ -103,7 +102,7 @@ const MultiSelectDropdownComponent = ({
             )}
           </View>
         )}
-      />
+      /> */}
     </View>
   );
 };

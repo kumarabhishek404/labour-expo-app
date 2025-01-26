@@ -7,27 +7,21 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { router, Stack } from "expo-router";
-import {
-  acceptJoiningRequest,
-  cancelJoiningRequest,
-  fetchRecievedRequests,
-  fetchSentRequests,
-  rejectJoiningRequest,
-} from "@/app/api/requests";
+import REQUEST from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const Requests = () => {
-  const userDetails = useAtomValue(UserAtom);
-  const { refreshUser } = useRefreshUser();
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
@@ -45,8 +39,8 @@ const Requests = () => {
     queryKey: ["requests"],
     queryFn: ({ pageParam }) =>
       userDetails?.role === "MEDIATOR"
-        ? fetchSentRequests({ pageParam })
-        : fetchRecievedRequests({ pageParam }),
+        ? REQUEST?.fetchSentRequests({ pageParam })
+        : REQUEST?.fetchRecievedRequests({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -56,7 +50,7 @@ const Requests = () => {
     },
     retry: false,
   });
-  
+
   useFocusEffect(
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
@@ -70,7 +64,7 @@ const Requests = () => {
 
   const mutationCancelRequest = useMutation({
     mutationKey: ["cancelRequest"],
-    mutationFn: (id) => cancelJoiningRequest({ userId: id }),
+    mutationFn: (id) => REQUEST?.cancelJoiningRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
       console.log("Response while liking a worker - ", response);
@@ -82,11 +76,11 @@ const Requests = () => {
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
-    mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
+    mutationFn: (id) => REQUEST?.acceptJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
       refreshUser();
-      toast.success(t("requestAcceptedSuccessfully"));
+      TOAST?.showToast?.success(t("requestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
     // onError: (err) => {
@@ -96,7 +90,7 @@ const Requests = () => {
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectRequest"],
-    mutationFn: (id) => rejectJoiningRequest({ requestId: id }),
+    mutationFn: (id) => REQUEST?.rejectJoiningRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
       console.log("Response while rejecting request - ", response);
@@ -141,7 +135,11 @@ const Requests = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={

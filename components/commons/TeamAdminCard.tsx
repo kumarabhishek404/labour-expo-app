@@ -13,18 +13,14 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { leaveTeam } from "@/app/api/user";
-import { toast } from "@/app/hooks/toast";
+import USER from "@/app/api/user";
+import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import { useAtom } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ModalComponent from "./Modal";
-import { getUserById } from "@/app/api/user";
 
 const TeamAdminCard = ({ admin }: any) => {
-  const [userDetails] = useAtom(UserAtom);
-  const { refreshUser } = useRefreshUser();
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [isModalVisible, setModalVisible] = useState(false);
   const [adminDetails, setAdminDetails] = useState<any>(null);
 
@@ -35,22 +31,24 @@ const TeamAdminCard = ({ admin }: any) => {
     isRefetching,
   } = useQuery({
     queryKey: ["adminDetails", admin],
-    queryFn: () => getUserById(admin),
+    queryFn: () => USER?.getUserById(admin),
     retry: 0,
     enabled: !!admin,
   });
 
   const mutationLeaveTeam = useMutation({
     mutationKey: ["leaveTeam"],
-    mutationFn: () => leaveTeam(),
+    mutationFn: () => USER?.leaveTeam(),
     onSuccess: (response) => {
       setModalVisible(false);
-      toast.success(t("leftTeamSuccessfully"));
+      TOAST?.showToast?.success(t("leftTeamSuccessfully"));
       refreshUser();
     },
     onError: (error) => {
       setModalVisible(false);
-      toast.error(error?.message || "An error occurred while leaving team");
+      TOAST?.showToast?.error(
+        error?.message || "An error occurred while leaving team"
+      );
     },
   });
 
@@ -238,7 +236,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 20,
+    paddingVertical: 20,
     alignItems: "center",
   },
   iconContainer: {

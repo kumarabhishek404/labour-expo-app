@@ -1,26 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import DropDownPicker from "react-native-dropdown-picker";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import CustomHeader from "../commons/Header";
-import CustomHeading from "../commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
-import CustomText from "../commons/CustomText";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
 
 interface DropdownComponentProps {
-  name?: any;
+  name?: string;
   label?: string;
   value: any;
-  setValue: any;
+  setValue: (value: any) => void;
   placeholder?: string;
-  emptyPlaceholder?: string;
-  options: any;
+  options: { label: string; value: any }[];
   errors?: any;
-  icon: any;
+  icon?: any;
   search?: boolean;
   style?: any;
   containerStyle?: any;
+  disabled?: boolean;
 }
 
 const DropdownComponent = ({
@@ -29,14 +28,15 @@ const DropdownComponent = ({
   value,
   setValue,
   placeholder,
-  emptyPlaceholder,
   errors,
   options,
   icon,
-  search,
+  search = false,
   style,
   containerStyle,
+  disabled = false,
 }: DropdownComponentProps) => {
+  const [open, setOpen] = useState(false);
   const translatedOptions = options?.map((option: any) => ({
     ...option,
     label: t(option.label),
@@ -45,41 +45,40 @@ const DropdownComponent = ({
   return (
     <View style={[styles.container]}>
       {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
-      <Dropdown
-        style={[styles.dropdown, style, containerStyle]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={translatedOptions}
-        search={search}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder || t("selectItem")}
-        searchPlaceholder={t("search")}
+      <DropDownPicker
+        open={open}
         value={value}
-        onChange={(item: any) => {
-          setValue(item.value);
+        items={translatedOptions}
+        setOpen={setOpen}
+        setValue={() => {}}
+        disabled={disabled}
+        onSelectItem={(item) => {
+          setValue(item?.value);
         }}
-        renderLeftIcon={() => (
-          <View
-            style={{
-              marginRight: 5,
-            }}
-          >
-            {icon ? (
-              icon
-            ) : (
-              <Ionicons
-                style={styles.icon}
-                color="black"
-                name="person"
-                size={20}
-              />
-            )}
-          </View>
-        )}
+        style={[styles.dropdown, style, containerStyle]}
+        placeholder={placeholder || t("selectItem")}
+        placeholderStyle={styles.placeholderStyle}
+        textStyle={styles.selectedTextStyle}
+        dropDownContainerStyle={styles.dropDownContainerStyle}
+        searchPlaceholder={t("search")}
+        searchable={search}
+        listMode="SCROLLVIEW"
+        maxHeight={300}
+        // ArrowUpIconComponent={() => (
+        //   <Ionicons name="list" size={20} color="blue" />
+        // )}
+        // icon={
+        //   <View style={styles.iconContainer}>
+        //     {icon || (
+        //       <Ionicons
+        //         style={styles.icon}
+        //         color={Colors.secondary}
+        //         name="person"
+        //         size={20}
+        //       />
+        //     )}
+        //   </View>
+        // }
       />
       {errors?.[name] && (
         <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
@@ -96,6 +95,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "white",
+    flexGrow: 1,
     gap: 5,
   },
   dropdown: {
@@ -104,6 +104,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
+  },
+  iconContainer: {
+    marginRight: 5,
   },
   icon: {
     marginRight: 16,
@@ -116,13 +119,11 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 16,
   },
-  iconStyle: {
-    width: 20,
-    height: 20,
-    color: Colors.secondary,
+  dropDownContainerStyle: {
+    borderColor: Colors.secondary,
+    borderRadius: 8,
   },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
+  dropDownItemContainerStyle: {
+    color: Colors?.primary,
   },
 });

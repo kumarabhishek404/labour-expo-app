@@ -5,13 +5,13 @@ import Farmer3 from "../../assets/farmer3.png";
 import Farmer6 from "../../assets/farmer6.png";
 import Farmer8 from "../../assets/farmer8.png";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 
 const HomePageLinks = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails: any = useAtomValue(Atoms?.UserAtom);
 
   const links = [
     {
@@ -45,7 +45,10 @@ const HomePageLinks = () => {
     },
     {
       title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
-      subtitle: userDetails?.role === "MEDIATOR" ? t("aboutWorkers") : t("aboutMediators"),
+      subtitle:
+        userDetails?.role === "MEDIATOR"
+          ? t("aboutWorkers")
+          : t("aboutMediators"),
       path: {
         pathname: "/screens/users",
         params: {
@@ -62,7 +65,10 @@ const HomePageLinks = () => {
     {
       title:
         userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
-      subtitle: userDetails?.role === "EMPLOYER" ? t("aboutMyServices") : t("aboutMyBookings"),
+      subtitle:
+        userDetails?.role === "EMPLOYER"
+          ? t("aboutMyServices")
+          : t("aboutMyBookings"),
       path: "/(tabs)/second",
       image: Farmer8,
       style: [styles.smallBox, styles.bookingBox],

@@ -1,4 +1,4 @@
-import { deleteUserById } from "@/app/api/user";
+import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import Colors from "@/constants/Colors";
@@ -47,7 +47,7 @@ const DeleteAccountScreen = () => {
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteProfile"],
-    mutationFn: () => deleteUserById(),
+    mutationFn: () => USER?.deleteUserById(),
     onSuccess: (response) => {
       console.log("Response while deleting the user - ", response);
     },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 20,
+    paddingVertical: 20,
     alignItems: "center",
   },
   iconContainer: {

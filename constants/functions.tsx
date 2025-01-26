@@ -1,16 +1,13 @@
 import moment from "moment";
 import * as Location from "expo-location";
-import { toast } from "@/app/hooks/toast";
-import { fetchAllLikedWorkers, fetchAllWorkers } from "@/app/api/workers";
-import {
-  fetchAllBookedMediators,
-  fetchAllLikedMediators,
-  fetchAllMediators,
-} from "@/app/api/mediator";
-import { fetchAllEmployers, fetchAllLikedEmployer } from "@/app/api/employer";
+import TOAST from "@/app/hooks/toast";
+import WORKER from "@/app/api/workers";
+import MEDIATOR from "@/app/api/mediator";
+import EMPLOYER from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
-import { fetchAllBookedWorkers } from "@/app/api/booking";
+import BOOKING from "@/app/api/booking";
 import { WORKTYPES } from ".";
+import { Linking } from "react-native";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days
@@ -119,20 +116,16 @@ export const calculateDistance = (
 export const fetchCurrentLocation = async () => {
   try {
     // Check if location services are enabled
-    const isLocationServicesEnabled = await Location.hasServicesEnabledAsync();
-    console.log("isLocationServicesEnabled--", isLocationServicesEnabled);
-
+    await Location.hasServicesEnabledAsync();
     // // Prompt user to enable GPS if it's off
     // if (!isLocationServicesEnabled) {
-    //   toast?.error("Please enable GPS to get your location.");
+    //   TOAST?.showToast?.error("Please enable GPS to get your location.");
     //   return { location: {}, address: "" }; // Return early with empty location if GPS is off
     // }
 
     // Request permission to access location
     let { status } = await Location.requestForegroundPermissionsAsync();
-    console.log("status--", status);
     if (status !== "granted") {
-      console.log("Location permission not granted");
       return { location: {} };
     }
 
@@ -145,20 +138,29 @@ export const fetchCurrentLocation = async () => {
       longitudeDelta: 2,
     };
 
+    console.log("currentLocation--", currentLocation);
+
+    console.log("tempLocation--", tempLocation);
+
     // Reverse geocode to get the address
     let response = await Location.reverseGeocodeAsync({
       latitude: tempLocation?.latitude,
       longitude: tempLocation?.longitude,
     });
 
+    console.log("response--", response);
+
     return {
       location: tempLocation,
-      address: response[0]?.formattedAddress,
+      address: response[0]?.formattedAddress || "",
     };
   } catch (err) {
     // Handle any errors during location fetching
-    toast?.error("Error while fetching current location");
+    TOAST?.showToast?.error(
+      `Error while fetching current location ${JSON?.stringify(err)}`
+    );
     console.log("Error while fetching location:", err);
+
     return { location: {} };
   }
 };
@@ -188,22 +190,45 @@ export const handleQueryFunction = async (
     let data = {};
     if (role === "workers") {
       if (type === "favourite")
-        data = await fetchAllLikedWorkers({ pageParam, skill: category });
+        data = await WORKER?.fetchAllLikedWorkers({
+          pageParam,
+          skill: category,
+        });
       else if (type === "booked")
-        data = await fetchAllBookedWorkers({ pageParam, skill: category });
-      else data = await fetchAllWorkers({ pageParam, skill: category });
+        data = await BOOKING?.fetchAllBookedWorkers({
+          pageParam,
+          skill: category,
+        });
+      else data = await WORKER?.fetchAllWorkers({ pageParam, skill: category });
       return data;
     } else if (role === "mediators") {
       if (type === "favourite")
-        data = await fetchAllLikedMediators({ pageParam, skill: category });
+        data = await MEDIATOR?.fetchAllLikedMediators({
+          pageParam,
+          skill: category,
+        });
       else if (type === "booked")
-        data = await fetchAllBookedMediators({ pageParam, skill: category });
-      else data = await fetchAllMediators({ pageParam, skill: category });
+        data = await MEDIATOR?.fetchAllBookedMediators({
+          pageParam,
+          skill: category,
+        });
+      else
+        data = await MEDIATOR?.fetchAllMediators({
+          pageParam,
+          skill: category,
+        });
       return data;
     } else {
       if (type === "favourite")
-        data = await fetchAllLikedEmployer({ pageParam, skill: category });
-      else data = await fetchAllEmployers({ pageParam, skill: category });
+        data = await EMPLOYER?.fetchAllLikedEmployer({
+          pageParam,
+          skill: category,
+        });
+      else
+        data = await EMPLOYER?.fetchAllEmployers({
+          pageParam,
+          skill: category,
+        });
       return data;
     }
   } catch (err) {
@@ -239,9 +264,6 @@ export const filterWorkerTypes = (
   workTypeValue: string,
   subTypeValue: string
 ) => {
-  console.log("workTypeValue", workTypeValue);
-  console.log("subTypeValue", subTypeValue);
-
   // Find the work type matching the given workTypeValue
   const workType = WORKTYPES.find((type) => type.value === workTypeValue);
 
@@ -259,4 +281,16 @@ export const convertToLabelValueArray = (stringArray: string[]) => {
     label: str,
     value: str,
   }));
+};
+
+export const handleCall = () => {
+  Linking.openURL("tel:+1234567890");
+};
+
+export const handleMessage = () => {
+  Linking.openURL("sms:+1234567890");
+};
+
+export const handleEmail = () => {
+  Linking.openURL("mailto:example@example.com");
 };

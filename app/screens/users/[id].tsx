@@ -17,7 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import SkillSelector from "@/components/commons/SkillSelector";
@@ -31,7 +31,7 @@ import ButtonContainer from "./buttons";
 import { t } from "@/utils/translationHelper";
 import Button from "@/components/inputs/Button";
 import UserReviews from "@/components/commons/UserReviews";
-import { getUserById } from "@/app/api/user";
+import USER from "@/app/api/user";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
@@ -42,7 +42,7 @@ const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
 const User = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const { id } = useLocalSearchParams();
   const [user, setUser]: any = useState({});
   const router = useRouter();
@@ -86,7 +86,7 @@ const User = () => {
     isRefetching,
   } = useQuery({
     queryKey: ["userDetails", id],
-    queryFn: () => getUserById(id),
+    queryFn: () => USER?.getUserById(id),
     retry: 0,
     enabled: !!id,
   });
@@ -194,24 +194,11 @@ const User = () => {
                 size={14}
                 color={Colors.primary}
               />
-              <CustomText>{user?.address || "Address not found"}</CustomText>
+              <CustomText textAlign="left">{user?.address || "Address not found"}</CustomText>
             </View>
 
             <View style={styles.highlightWrapper}>
-              {user?.role === "WORKER" && (
-                <View style={[styles?.highlightBox, { width: "42%" }]}>
-                  <View style={styles.highlightIcon}>
-                    <Ionicons name="time" size={18} color={Colors.primary} />
-                  </View>
-                  <View>
-                    <CustomText textAlign="left">{t("price")}</CustomText>
-                    <CustomHeading fontSize={14} textAlign="left">
-                      {user?.duration || 0} Rs / {t("perDay")}
-                    </CustomHeading>
-                  </View>
-                </View>
-              )}
-              <View style={[styles?.highlightBox, { width: "58%" }]}>
+              <View style={[styles?.highlightBox]}>
                 <View style={styles.highlightIcon}>
                   <Ionicons name="star" size={18} color={Colors.primary} />
                 </View>

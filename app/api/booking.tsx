@@ -1,15 +1,11 @@
-import {
-  makeDeleteRequest,
-  makeGetRequest,
-  makePostRequest,
-  makePostRequestFormData,
-} from ".";
-import { toast } from "../hooks/toast";
 
-export const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
+import API_CLIENT from ".";
+import TOAST from "@/app/hooks/toast";
+
+const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
   console.log("pageParam", pageParam);
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/employer/invitations/sent?page=${pageParam}&limit=5`
     );
     return data.data;
@@ -18,7 +14,7 @@ export const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching sent bookings : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching sent bookings"
     );
@@ -26,9 +22,9 @@ export const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
+const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/invitation/received?page=${pageParam}&limit=5`
     );
     return data.data;
@@ -37,7 +33,7 @@ export const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching recieved booking requests : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching recieved booking requests"
     );
@@ -45,9 +41,9 @@ export const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
+const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/employer/bookings/all?page=${pageParam}&limit=5`
     );
     return data.data;
@@ -56,7 +52,7 @@ export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching booked workers : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching booked workers"
     );
@@ -64,9 +60,9 @@ export const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   }
 };
 
-export const fetchAllMyBookings = async ({ pageParam }: any) => {
+const fetchAllMyBookings = async ({ pageParam }: any) => {
   try {
-    const data = await makeGetRequest(
+    const data = await API_CLIENT.makeGetRequest(
       `/user/booked/all?page=${pageParam}&limit=5`
     );
     return data.data;
@@ -75,7 +71,7 @@ export const fetchAllMyBookings = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching my bookings : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching my bookings"
     );
@@ -83,9 +79,9 @@ export const fetchAllMyBookings = async ({ pageParam }: any) => {
   }
 };
 
-export const addBookingRequest = async (payload: any) => {
+const addBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequestFormData(
+    const data = await API_CLIENT.makePostRequestFormData(
       "/employer/invitations/send",
       payload
     );
@@ -95,7 +91,7 @@ export const addBookingRequest = async (payload: any) => {
       `[userService] An error occurred while sending booking request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while sending booking request"
     );
@@ -103,18 +99,18 @@ export const addBookingRequest = async (payload: any) => {
   }
 };
 
-export const cancelBookingRequest = async (payload: any) => {
+const cancelBookingRequest = async (payload: any) => {
   console.log("payload", payload);
 
   try {
-    const data = await makePostRequest("/employer/invitations/cancel", payload);
+    const data = await API_CLIENT.makePostRequest("/employer/invitations/cancel", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while cancelling booking request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling booking request"
     );
@@ -122,16 +118,16 @@ export const cancelBookingRequest = async (payload: any) => {
   }
 };
 
-export const acceptBookingRequest = async (payload: any) => {
+const acceptBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/user/invitation/accept", payload);
+    const data = await API_CLIENT.makePostRequest("/user/invitation/accept", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while accepting booking request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while accepting booking request"
     );
@@ -139,16 +135,16 @@ export const acceptBookingRequest = async (payload: any) => {
   }
 };
 
-export const rejectBookingRequest = async (payload: any) => {
+const rejectBookingRequest = async (payload: any) => {
   try {
-    const data = await makePostRequest("/user/invitation/reject", payload);
+    const data = await API_CLIENT.makePostRequest("/user/invitation/reject", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while rejecting booking request : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while rejecting booking request"
     );
@@ -156,16 +152,16 @@ export const rejectBookingRequest = async (payload: any) => {
   }
 };
 
-export const removeBookedWorker = async (payload: any) => {
+const removeBookedWorker = async (payload: any) => {
   try {
-    const data = await makePostRequest("/employer/bookings/remove", payload);
+    const data = await API_CLIENT.makePostRequest("/employer/bookings/remove", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while removing booked worker : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while removing booked worker"
     );
@@ -173,16 +169,16 @@ export const removeBookedWorker = async (payload: any) => {
   }
 };
 
-export const cancelBooking = async (payload: any) => {
+const cancelBooking = async (payload: any) => {
   try {
-    const data = await makePostRequest("/user/booked/cancel", payload);
+    const data = await API_CLIENT.makePostRequest("/user/booked/cancel", payload);
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while cancelling booking : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling booking"
     );
@@ -190,19 +186,38 @@ export const cancelBooking = async (payload: any) => {
   }
 };
 
-export const completeBooking = async (payload: any) => {
+const completeBooking = async (payload: any) => {
   try {
-    const data = await makePostRequest("/employer/invitations/complete", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/invitations/complete",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while completing booking : `,
       error?.response?.data?.message
     );
-    toast.error(
+    TOAST?.showToast?.error(
       error?.response?.data?.message ||
         "An error occurred while completing booking"
     );
     throw error;
   }
 };
+
+const BOOKING = {
+  fetchAllBookingSentRequests,
+  fetchAllBookingReceivedRequests,
+  fetchAllBookedWorkers,
+  fetchAllMyBookings,
+  addBookingRequest,
+  cancelBookingRequest,
+  acceptBookingRequest,
+  rejectBookingRequest,
+  removeBookedWorker,
+  cancelBooking,
+  completeBooking,
+};
+
+export default BOOKING;

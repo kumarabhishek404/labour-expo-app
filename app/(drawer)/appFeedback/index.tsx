@@ -11,16 +11,16 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
-import { addAppFeedback } from "@/app/api/user";
-import { toast } from "@/app/hooks/toast";
+import USER from "@/app/api/user";
+import TOAST from "@/app/hooks/toast";
 import Loader from "@/components/commons/Loader";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import * as DeviceInfo from "expo-device";
 import { Platform } from "react-native";
 import ReasoneSelection from "@/app/(drawer)/allFeedback/reasons";
 const FeedbackForm = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [deviceInfo, setDeviceInfo] = useState<any>(null);
   const {
     control,
@@ -56,13 +56,13 @@ const FeedbackForm = () => {
 
   const mutateAddAppFeedback = useMutation({
     mutationKey: ["addAppFeedback"],
-    mutationFn: (data: any) => addAppFeedback(data),
+    mutationFn: (data: any) => USER?.addAppFeedback(data),
     onSuccess: () => {
       router.back();
-      toast.success("Feedback submitted successfully");
+      TOAST?.showToast?.success("Feedback submitted successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "An error occurred");
+      TOAST?.showToast?.error(error?.response?.data?.message || "An error occurred");
     },
   });
 

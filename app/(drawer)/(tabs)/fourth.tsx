@@ -1,11 +1,11 @@
 import React from "react";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import AdminRequests from "../../screens/bottomTabs/(admin)/requests";
 import UserWorkers from "../../screens/bottomTabs/(user)/workers";
 
 export default function ProfileScreen() {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   switch (userDetails?.role) {
     case "ADMIN":

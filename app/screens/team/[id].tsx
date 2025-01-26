@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { fetchAllMembers } from "@/app/api/mediator";
+import MEDIATOR from "@/app/api/mediator";
 import { Stack, useLocalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -12,14 +12,14 @@ import CustomHeader from "@/components/commons/Header";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import { WORKERTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
-import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import { useAtom, useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
-
+const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const { id } = useLocalSearchParams();
 
   const {
@@ -31,8 +31,8 @@ const Members = () => {
   } = useInfiniteQuery({
     queryKey: ["members", category, id],
     queryFn: ({ pageParam }) =>
-      fetchAllMembers({
-        mediatorId: id,
+      MEDIATOR?.fetchAllMembers({
+        mediatorId: userDetails?._id,
         pageParam,
         category,
       }),

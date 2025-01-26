@@ -1,4 +1,4 @@
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import React from "react";
 import { View, StyleSheet } from "react-native";
@@ -7,7 +7,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 
 const StatsCard = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   return (
     <View style={styles.container}>

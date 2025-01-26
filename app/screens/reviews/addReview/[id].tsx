@@ -12,15 +12,15 @@ import CustomHeader from "@/components/commons/Header";
 import ReasoneSelection from "./reasons";
 import { t } from "@/utils/translationHelper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/app/hooks/toast";
-import { addReview, editReview } from "@/app/api/rating";
+import TOAST from "@/app/hooks/toast";
+import RATING from "@/app/api/rating";
 import Loader from "@/components/commons/Loader";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 
 const AddReview = () => {
   const { id, type, data }: any = useLocalSearchParams();
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const queryClient = useQueryClient();
   const {
     control,
@@ -37,7 +37,7 @@ const AddReview = () => {
   const mutationAddReview = useMutation({
     mutationKey: ["addReview", { id }],
     mutationFn: (reviewData: any) =>
-      addReview({
+      RATING?.addReview({
         id,
         data: {
           rating: reviewData.rating,
@@ -47,7 +47,7 @@ const AddReview = () => {
         },
       }),
     onSuccess: (response) => {
-      toast.success(t("reviewAddedSuccessfully"));
+      TOAST?.showToast?.success(t("reviewAddedSuccessfully"));
       queryClient.invalidateQueries({ queryKey: ["reviews", id] });
       queryClient.invalidateQueries({
         queryKey: ["userDetails", id],
@@ -67,7 +67,7 @@ const AddReview = () => {
   const mutationEditReview = useMutation({
     mutationKey: ["editReview", { id }],
     mutationFn: (reviewData: any) =>
-      editReview({
+      RATING?.editReview({
         id: JSON.parse(data)?.reviewee,
         data: {
           rating: reviewData.rating,
@@ -77,7 +77,7 @@ const AddReview = () => {
         },
       }),
     onSuccess: (response) => {
-      toast.success(t("reviewEditedSuccessfully"));
+      TOAST?.showToast?.success(t("reviewEditedSuccessfully"));
       queryClient.invalidateQueries({ queryKey: ["reviews", id] });
       queryClient.invalidateQueries({
         queryKey: ["userDetails", JSON.parse(data)?.reviewee],
@@ -180,15 +180,13 @@ const AddReview = () => {
         <Controller
           control={control}
           name="comment"
-          rules={
-            {
-              required: t("feedbackIsRequired"),
-              minLength: {
-                value: 10,
-                message: t("feedbackShouldBeAtLeast10Characters"),
-              },
-            }
-          }
+          rules={{
+            required: t("feedbackIsRequired"),
+            minLength: {
+              value: 10,
+              message: t("feedbackShouldBeAtLeast10Characters"),
+            },
+          }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextAreaInputComponent
               label={t("whatWouldYouLike")}
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f7fa",
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   starContainer: {
     flexDirection: "column",

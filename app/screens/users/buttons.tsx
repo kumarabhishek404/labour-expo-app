@@ -11,33 +11,18 @@ import Colors from "@/constants/Colors";
 import Animated, { SlideInDown } from "react-native-reanimated";
 import { useMutation } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
-import { toast } from "@/app/hooks/toast";
+import Atoms from "@/app/AtomStore";
+import TOAST from "@/app/hooks/toast";
 import Button from "@/components/inputs/Button";
 import Loader from "@/components/commons/Loader";
-import { likeWorker, unlikeWorker } from "../../api/workers";
-import {
-  bookMediator,
-  likeMediator,
-  removeBookedMediator,
-  removeMemberFromTeam,
-  unlikeMediator,
-} from "@/app/api/mediator";
-import { likeEmployer, unlikeEmployer } from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
-import {
-  cancelJoiningRequest,
-  leaveFromTeam,
-  sendJoiningRequest,
-} from "@/app/api/requests";
-import { activateUser, suspendUser } from "@/app/api/admin";
-import { deleteUserById } from "@/app/api/user";
-import {
-  addBookingRequest,
-  cancelBooking,
-  cancelBookingRequest,
-  removeBookedWorker,
-} from "@/app/api/booking";
+import WORKER from "../../api/workers";
+import MEDIATOR from "@/app/api/mediator";
+import EMPLOYER from "@/app/api/employer";
+import REQUEST from "@/app/api/requests";
+import ADMIN from "@/app/api/admin";
+import USER from "@/app/api/user";
+import BOOKING from "@/app/api/booking";
 import ModalComponent from "@/components/commons/Modal";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { Controller } from "react-hook-form";
@@ -71,7 +56,7 @@ const ButtonContainer = ({
   isWorkerBookingRequested,
   isWorkerBooked,
 }: ButtonContainerProps) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const { id } = useLocalSearchParams();
   const { role, type } = useGlobalSearchParams();
 
@@ -79,100 +64,100 @@ const ButtonContainer = ({
 
   const mutationLikeWorker = useMutation({
     mutationKey: ["likeWorker", { id }],
-    mutationFn: () => likeWorker({ workerID: id }),
+    mutationFn: () => WORKER?.likeWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("workerAddedToFavourites"));
+      TOAST?.showToast?.success(t("workerAddedToFavourites"));
     },
   });
 
   const mutationUnLikeWorker = useMutation({
     mutationKey: ["unlikeWorker", { id }],
-    mutationFn: () => unlikeWorker({ workerID: id }),
+    mutationFn: () => WORKER?.unlikeWorker({ workerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("workerRemovedFromFavourites"));
+      TOAST?.showToast?.success(t("workerRemovedFromFavourites"));
     },
   });
 
   const mutationLikeMediator = useMutation({
     mutationKey: ["likeMediator", { id }],
-    mutationFn: () => likeMediator({ mediatorID: id }),
+    mutationFn: () => MEDIATOR?.likeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("mediatorAddedToFavourites"));
+      TOAST?.showToast?.success(t("mediatorAddedToFavourites"));
     },
   });
 
   const mutationUnLikeMediator = useMutation({
     mutationKey: ["unlikeMediator", { id }],
-    mutationFn: () => unlikeMediator({ mediatorID: id }),
+    mutationFn: () => MEDIATOR?.unlikeMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("mediatorRemovedFromFavourites"));
+      TOAST?.showToast?.success(t("mediatorRemovedFromFavourites"));
     },
   });
 
   const mutationLikeEmployer = useMutation({
     mutationKey: ["likeEmployer", { id }],
-    mutationFn: () => likeEmployer({ employerID: id }),
+    mutationFn: () => EMPLOYER?.likeEmployer({ employerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("employerAddedToFavourites"));
+      TOAST?.showToast?.success(t("employerAddedToFavourites"));
     },
   });
 
   const mutationUnLikeEmployer = useMutation({
     mutationKey: ["unlikeEmployer", { id }],
-    mutationFn: () => unlikeEmployer({ employerID: id }),
+    mutationFn: () => EMPLOYER?.unlikeEmployer({ employerID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("employerRemovedFromFavourites"));
+      TOAST?.showToast?.success(t("employerRemovedFromFavourites"));
     },
   });
 
   const mutationCancelBookingRequest = useMutation({
     mutationKey: ["cancelBookingRequest"],
-    mutationFn: () => cancelBookingRequest({ userId: id }),
+    mutationFn: () => BOOKING?.cancelBookingRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("bookingRequestCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
     },
   });
 
   const mutationRemoveBookedWorker = useMutation({
     mutationKey: ["removeBookedWorker", { id }],
-    mutationFn: () => removeBookedWorker({ bookingID: id }),
+    mutationFn: () => BOOKING?.removeBookedWorker({ bookingID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("bookingCancelledWorker"));
+      TOAST?.showToast?.success(t("bookingCancelledWorker"));
     },
   });
 
   const mutationBookMediator = useMutation({
     mutationKey: ["bookMediator", { id }],
-    mutationFn: () => bookMediator({ mediatorID: id }),
+    mutationFn: () => MEDIATOR?.bookMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("workerBookedSuccessfully"));
+      TOAST?.showToast?.success(t("workerBookedSuccessfully"));
     },
   });
 
   const mutationRemoveBookedMediator = useMutation({
     mutationKey: ["removeBookedMediator", { id }],
-    mutationFn: () => removeBookedMediator({ mediatorID: id }),
+    mutationFn: () => MEDIATOR?.removeBookedMediator({ mediatorID: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("mediatorBookingCancelled"));
+      TOAST?.showToast?.success(t("mediatorBookingCancelled"));
     },
   });
 
   const mutationSendRequest = useMutation({
     mutationKey: ["sendRequest", { id }],
-    mutationFn: () => sendJoiningRequest({ userId: id }),
+    mutationFn: () => REQUEST?.sendJoiningRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("requestSentSuccessfully"));
+      TOAST?.showToast?.success(t("requestSentSuccessfully"));
     },
     onError: (err) => {
       console.error("error while sending request to worker ", err);
@@ -181,28 +166,28 @@ const ButtonContainer = ({
 
   const mutationActivateUser = useMutation({
     mutationKey: ["activateUser", { id }],
-    mutationFn: () => activateUser({ userId: id }),
+    mutationFn: () => ADMIN?.activateUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      toast.success(t("userActivated"));
+      TOAST?.showToast?.success(t("userActivated"));
     },
   });
 
   const mutationSuspendUser = useMutation({
     mutationKey: ["suspendUser", { id }],
-    mutationFn: () => suspendUser({ userId: id }),
+    mutationFn: () => ADMIN?.suspendUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      toast.success(t("userSuspended"));
+      TOAST?.showToast?.success(t("userSuspended"));
     },
   });
 
   const mutationCancelRequest = useMutation({
     mutationKey: ["cancelRequest"],
-    mutationFn: () => cancelJoiningRequest({ userId: id }),
+    mutationFn: () => REQUEST?.cancelJoiningRequest({ userId: id }),
     onSuccess: () => {
       refetch();
-      toast.success(t("requestCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("requestCancelledSuccessfully"));
     },
     onError: (err) => {
       console.error("error while cancelling request to worker ", err);
@@ -211,10 +196,10 @@ const ButtonContainer = ({
 
   const mutationRemoveMemberFromTeam = useMutation({
     mutationKey: ["removeMemberFromTeam", { id }],
-    mutationFn: () => removeMemberFromTeam({ memberID: id }),
+    mutationFn: () => MEDIATOR?.removeMemberFromTeam({ memberID: id }),
     onSuccess: () => {
       refetch();
-      toast.success(t("successfullyLeftFromTeam"));
+      TOAST?.showToast?.success(t("successfullyLeftFromTeam"));
     },
     onError: (err) => {
       console.error("error while leaving from team ", err);
@@ -226,7 +211,7 @@ const ButtonContainer = ({
   //   mutationFn: () => deleteUserById(id),
   //   onSuccess: () => {
   //     refetch();
-  //     toast.success(t("userDeleted"));
+  //     TOAST?.showToast?.success(t("userDeleted"));
   //   },
   // });
 
@@ -278,6 +263,7 @@ const ButtonContainer = ({
             bgColor={
               isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
             }
+            style={styles?.footerFirstBtn}
             title={
               isInYourTeam
                 ? t("leaveFromTeam")
@@ -328,6 +314,7 @@ const ButtonContainer = ({
           <Button
             isPrimary={true}
             title={isUserLiked ? t("unlike") : t("like")}
+            style={styles?.footerBtn}
             onPress={() =>
               isUserLiked ? handleUnLikeFunction() : handleLikeFunction()
             }
@@ -468,5 +455,14 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
+  },
+  footerFirstBtn: {
+    flex: 1,
+  },
+  footerBtn: {
+    flex: 1,
+    backgroundColor: Colors.tertiery,
+    borderColor: Colors.tertiery,
+    alignItems: "center",
   },
 });

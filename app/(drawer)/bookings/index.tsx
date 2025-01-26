@@ -12,14 +12,8 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { router, Stack } from "expo-router";
-import {
-  acceptJoiningRequest,
-  cancelJoiningRequest,
-  rejectJoiningRequest,
-} from "@/app/api/requests";
-import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
@@ -29,28 +23,18 @@ import {
   WORKER_BOOKINGS,
   WORKERTYPES,
 } from "@/constants";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import {
-  acceptBookingRequest,
-  cancelBooking,
-  cancelBookingRequest,
-  fetchAllBookedWorkers,
-  fetchAllBookingReceivedRequests,
-  fetchAllBookingSentRequests,
-  fetchAllMyBookings,
-  rejectBookingRequest,
-  removeBookedWorker,
-} from "@/app/api/booking";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import BOOKING from "@/app/api/booking";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import ListingVerticalBookingRequests from "@/components/commons/ListingVerticalBookingRequests";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 
 const Bookings = () => {
-  const userDetails = useAtomValue(UserAtom);
-  const { refreshUser } = useRefreshUser();
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const firstTimeRef = React.useRef(true);
   const [totalBookingsData, setTotalBookingsData] = useState(0);
   const [totalRequestsData, setTotalRequestsData] = useState(0);
@@ -72,8 +56,8 @@ const Bookings = () => {
     queryKey: ["bookings"],
     queryFn: ({ pageParam }) =>
       userDetails?.role === "EMPLOYER"
-        ? fetchAllBookedWorkers({ pageParam })
-        : fetchAllMyBookings({ pageParam }),
+        ? BOOKING?.fetchAllBookedWorkers({ pageParam })
+        : BOOKING?.fetchAllMyBookings({ pageParam }),
     initialPageParam: 1,
     enabled: category === "booking",
     getNextPageParam: (lastPage: any, pages) => {
@@ -97,8 +81,8 @@ const Bookings = () => {
     queryKey: ["myBookings"],
     queryFn: ({ pageParam }) =>
       userDetails?.role === "EMPLOYER"
-        ? fetchAllBookingSentRequests({ pageParam })
-        : fetchAllBookingReceivedRequests({ pageParam }),
+        ? BOOKING?.fetchAllBookingSentRequests({ pageParam })
+        : BOOKING?.fetchAllBookingReceivedRequests({ pageParam }),
     initialPageParam: 1,
     enabled: category === "request",
     getNextPageParam: (lastPage: any, pages) => {
@@ -145,48 +129,48 @@ const Bookings = () => {
 
   const mutationCancelBookingRequest = useMutation({
     mutationKey: ["cancelBookingRequest"],
-    mutationFn: (id: string) => cancelBookingRequest({ userId: id }),
+    mutationFn: (id: string) => BOOKING?.cancelBookingRequest({ userId: id }),
     onSuccess: (response) => {
       refetchRequests();
-      toast.success(t("bookingRequestCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
     },
   });
 
   const mutationRemoveBookedWorker = useMutation({
     mutationKey: ["removeBookedWorkerOrMediator"],
-    mutationFn: (id: string) => removeBookedWorker({ userId: id }),
+    mutationFn: (id: string) => BOOKING?.removeBookedWorker({ userId: id }),
     onSuccess: (response) => {
       refetchBookings();
-      toast.success(t("removeBookedWorkerOrMediatorSuccessfully"));
+      TOAST?.showToast?.success(t("removeBookedWorkerOrMediatorSuccessfully"));
     },
   });
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptBookingRequest"],
-    mutationFn: (id) => acceptBookingRequest({ invitationId: id }),
+    mutationFn: (id) => BOOKING?.acceptBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
       refetchRequests();
-      toast.success(t("bookingRequestAcceptedSuccessfully"));
+      TOAST?.showToast?.success(t("bookingRequestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
   });
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectBookingRequest"],
-    mutationFn: (id) => rejectBookingRequest({ invitationId: id }),
+    mutationFn: (id) => BOOKING?.rejectBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
       refetchRequests();
-      toast.success(t("bookingRequestRejectedSuccessfully"));
+      TOAST?.showToast?.success(t("bookingRequestRejectedSuccessfully"));
       console.log("Response while rejecting request - ", response);
     },
   });
 
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelBooking"],
-    mutationFn: (id: string) => cancelBooking({ bookingId: id }),
+    mutationFn: (id: string) => BOOKING?.cancelBooking({ bookingId: id }),
     onSuccess: () => {
       refetchBookings();
-      toast.success(t("bookingCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("bookingCancelledSuccessfully"));
     },
     onError: (err) => {
       console.error("error while cancelling request to worker ", err);
@@ -219,13 +203,15 @@ const Bookings = () => {
     }
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    if (category === "booking") {
-      await refetchBookings();
-    } else if (category === "request") {
-      await refetchRequests();
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      if (category === "booking") {
+        await refetchBookings();
+      } else if (category === "request") {
+        await refetchRequests();
+      }
     }
-  });
+  );
 
   return (
     <>

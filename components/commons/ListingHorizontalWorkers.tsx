@@ -18,7 +18,7 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 
 type Props = {
   availableInterest: any;
@@ -51,7 +51,7 @@ const ListingHorizontalWorkers = ({
   loadMore,
   isFetchingNextPage,
 }: Props) => {
-  const userDetails = useAtomValue(UserAtom)
+  const userDetails = useAtomValue(Atoms?.UserAtom)
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <TouchableOpacity

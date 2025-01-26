@@ -9,16 +9,14 @@ import {
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
-import {
-  cancelSelectedMediator,
-  cancelSelectedWorker,
-} from "@/app/api/services";
-import { toast } from "@/app/hooks/toast";
+import SERVICE from "@/app/api/services";
+import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
+import { handleCall } from "@/constants/functions";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -34,10 +32,10 @@ const SelectedApplicants = ({
   const mutationCancelSelectedWorker = useMutation({
     mutationKey: ["cancelSelectedWorker", { serviceId }],
     mutationFn: (userId) =>
-      cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
+      SERVICE?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
-      toast.success(t("cancelSelectedWorkerSuccess"));
+      TOAST?.showToast?.success(t("cancelSelectedWorkerSuccess"));
       console.log("Response while cancelling an selected worker - ", response);
     },
     onError: (err) => {
@@ -48,10 +46,10 @@ const SelectedApplicants = ({
   const mutationCancelSelectedMediator = useMutation({
     mutationKey: ["cancelSelectedMediator", { serviceId }],
     mutationFn: (mediatorId) =>
-      cancelSelectedMediator({ serviceId: serviceId, mediatorId: mediatorId }),
+      SERVICE?.cancelSelectedMediator({ serviceId: serviceId, mediatorId: mediatorId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
-      toast.success(t("cancelSelectedMediatorSuccess"));
+      TOAST?.showToast?.success(t("cancelSelectedMediatorSuccess"));
       console.log(
         "Response while cancelling an selected mediator - ",
         response
@@ -170,7 +168,7 @@ const SelectedApplicants = ({
                         }
                         isPrimary={true}
                         title="Call"
-                        onPress={() => {}}
+                        onPress={handleCall}
                       />
                       <Button
                         style={{

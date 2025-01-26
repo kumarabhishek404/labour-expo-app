@@ -4,20 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
+import { handleCall, handleEmail, handleMessage } from "@/constants/functions";
 
 const QuickContact = () => {
-  const handleCall = () => {
-    Linking.openURL("tel:+1234567890");
-  };
-
-  const handleMessage = () => {
-    Linking.openURL("sms:+1234567890");
-  };
-
-  const handleEmail = () => {
-    Linking.openURL("mailto:example@example.com");
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.contactContainer}>

@@ -1,9 +1,15 @@
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import Colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
 
@@ -18,10 +24,10 @@ const CategoryButtons = ({
   onCagtegoryChanged,
   stylesProp,
 }: Props) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [categories, setCategories] = useState(options);
   const scrollRef: any = useRef<ScrollView>(null);
-  const itemRef = useRef<TouchableOpacity[] | null[]>([]);
+  const itemRef = useRef<any[] | null[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const { width } = Dimensions.get("window");
 
@@ -32,12 +38,15 @@ const CategoryButtons = ({
   const handleSelectCategory = (index: number) => {
     const selected = itemRef.current[index];
     setActiveIndex(index);
-    selected?.measureLayout(scrollRef?.current?.getInnerViewRef(), (x, y) => {
-      scrollRef.current.scrollTo({
-        x: x - width/2,
-        animated: true,
-      });
-    });
+    selected?.measureLayout(
+      scrollRef?.current?.getInnerViewRef(),
+      (x: any, y: any) => {
+        scrollRef.current.scrollTo({
+          x: x - width / 2,
+          animated: true,
+        });
+      }
+    );
 
     onCagtegoryChanged(categories[index].value);
   };

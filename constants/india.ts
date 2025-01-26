@@ -48,6 +48,7 @@ export const ALL_INDIAN_VILLAGES = [
       },
     ],
   },
+
   {
     state: "Andhra Pradesh",
     districts: [

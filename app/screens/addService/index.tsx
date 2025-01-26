@@ -1,35 +1,26 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import Loader from "@/components/commons/Loader";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
-import { Feather } from "@expo/vector-icons";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  AddServiceAtom,
-  AddServiceInProcess,
-  UserAtom,
-} from "@/app/AtomStore/user";
+import { useAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 import SecondScreen from "./second";
 import moment from "moment";
 import ThirdScreen from "./third";
 import FourthScreen from "./fourth";
-import { addNewService, editService } from "@/app/api/services";
-import { toast } from "@/app/hooks/toast";
+import SERVICE from "@/app/api/services";
+import TOAST from "@/app/hooks/toast";
 import FinalScreen from "./final";
-import CustomHeading from "@/components/commons/CustomHeading";
-import Header from "@/components/commons/Header";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import { add } from "lodash";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const AddServiceScreen = () => {
-  const { refreshUser } = useRefreshUser();
-  const [addService, setAddService] = useAtom(AddServiceAtom);
-  const [isAddService, setIsAddService] = useAtom(AddServiceInProcess);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
   const [step, setStep] = useState(1);
   const [type, setType] = useState(addService?.type ?? "");
   const [subType, setSubType] = useState(addService?.subType ?? "");
@@ -43,8 +34,6 @@ const AddServiceScreen = () => {
   const [endDate, setEndDate] = useState(
     moment(addService?.endDate).toDate() ?? new Date()
   );
-
-  console.log("addService --", addService?.type, addService?.subType);
 
   const [requirements, setRequirements]: any = useState(
     addService?.requirements || [
@@ -68,13 +57,12 @@ const AddServiceScreen = () => {
       addService?._id ? handleEditSubmit(addService?._id) : handleSubmit(),
     onSuccess: () => {
       refreshUser();
-      toast?.success(
+      TOAST?.showToast?.success(
         addService?._id
           ? t("serviceUpdatedSuccessfully")
           : t("servicePostedSuccessfully")
       );
       setAddService({});
-      setIsAddService(false);
       setType("");
       setDescription("");
       setAddress("");
@@ -96,7 +84,7 @@ const AddServiceScreen = () => {
       );
       setImages([]);
       setStep(1);
-      router?.push("/(tabs)/second");
+      router?.push("/(drawer)/(tabs)/second");
     },
     onError: (err: any) => {
       console.error("Error details:", {
@@ -106,12 +94,28 @@ const AddServiceScreen = () => {
         error: err,
       });
 
-      toast.error(
+      TOAST?.showToast?.error(
         err?.response?.data?.message ||
           "Failed to update service. Please try again."
       );
     },
   });
+
+  useEffect(() => {
+    const handleBackPress = () => {
+      handleBackAction();
+      return true; // Prevent default back navigation
+    };
+
+    // Add event listener for back button
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress
+    );
+
+    // Cleanup the event listener on unmount
+    return () => backHandler.remove();
+  }, [step, setStep]);
 
   const handleSubmit = async () => {
     if (!type || !address || !startDate || !endDate || !requirements) {
@@ -145,10 +149,19 @@ const AddServiceScreen = () => {
 
     console.log("form Data --", formData);
 
-    const response: any = await addNewService(formData);
+    const response: any = await SERVICE?.addNewService(formData);
     return response?.data;
   };
 
+  const handleBackAction = () => {
+    if (step > 2) {
+      setStep(step - 1);
+    } else if (step > 1) {
+      setStep(step - 1);
+    } else {
+      router?.back();
+    }
+  };
   const handleEditSubmit = async (id: any) => {
     try {
       if (!id) {
@@ -199,7 +212,7 @@ const AddServiceScreen = () => {
 
       console.log("form Data --", formData);
 
-      const response: any = await editService(formData);
+      const response: any = await SERVICE?.editService(formData);
 
       if (!response?.data) {
         throw new Error("No data received from server");
@@ -296,69 +309,28 @@ const AddServiceScreen = () => {
   };
 
   return (
-    <ScrollView style={styles?.container}>
+    <>
       <Stack.Screen
         options={{
-          headerTransparent: false,
           headerShown: true,
           header: () => (
             <CustomHeader
-              title={addService?._id ? t("editService") : t("addService")}
-              left="menu"
-              right="notification"
+              title={t("addingNewService")}
+              left="back"
               onLeftAction={() => {
-                if (step > 2) {
-                  setStep(step - 1);
-                } else if (step > 1) {
-                  setStep(step - 1);
-                  setIsAddService(false);
-                } else {
-                  router?.back();
-                }
+                handleBackAction();
               }}
             />
           ),
         }}
       />
-      <Loader loading={mutationAddService?.isPending} />
-      <View style={styles.container}>
-        {/* {step < 5 && (
-          <View style={styles?.customHeader}>
-            <TouchableOpacity
-              onPress={() => {
-                if (step > 2) {
-                  setStep(step - 1);
-                } else if (step > 1) {
-                  setStep(step - 1);
-                  setIsAddService(false);
-                } else {
-                  router?.back();
-                }
-              }}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 8,
-                padding: 4,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.white,
-                  padding: 6,
-                  borderRadius: 8,
-                }}
-              >
-                <Feather name="arrow-left" size={20} />
-              </View>
-            </TouchableOpacity>
-            <CustomHeading fontSize={18}>
-              {addService?._id ? "Edit Service" : "Add Service"}
-            </CustomHeading>
-          </View>
-        )} */}
-        <View>{renderFormComponents()}</View>
-      </View>
-    </ScrollView>
+      <ScrollView style={styles?.container}>
+        <Loader loading={mutationAddService?.isPending} />
+        <View style={styles.container}>
+          <View>{renderFormComponents()}</View>
+        </View>
+      </ScrollView>
+    </>
   );
 };
 

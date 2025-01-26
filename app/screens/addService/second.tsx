@@ -4,10 +4,9 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
-import Step2 from "../../../../assets/step2.jpg";
+import Step2 from "../../../assets/step2.jpg";
 import DateField from "@/components/inputs/DateField";
 import { isEmptyObject } from "@/constants/functions";
-import { AddServiceInProcess } from "@/app/AtomStore/user";
 import { useSetAtom } from "jotai";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
@@ -51,7 +50,6 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
     },
   });
 
-  const setIsAddService = useSetAtom(AddServiceInProcess);
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
   );
@@ -158,7 +156,6 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           title={t("back")}
           onPress={() => {
             setStep(1);
-            setIsAddService(false);
           }}
         />
         <Button

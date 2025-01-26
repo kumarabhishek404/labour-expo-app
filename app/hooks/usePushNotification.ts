@@ -2,12 +2,12 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-import { registerDevice } from "../api/user";
-import { toast } from "./toast";
+import USER from "@/app/api/user";
+import TOAST from "@/app/hooks/toast";
 
-export async function registerForPushNotificationsAsync(
+const registerForPushNotificationsAsync = async (
   notificationConsent: boolean
-) {
+) => {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -18,7 +18,7 @@ export async function registerForPushNotificationsAsync(
   }
 
   function handleRegistrationError(errorMessage: string) {
-    toast?.error(errorMessage);
+    TOAST?.showToast?.error(errorMessage);
     throw new Error(errorMessage);
   }
 
@@ -49,7 +49,7 @@ export async function registerForPushNotificationsAsync(
       ).data;
       console.log("push token - ", pushTokenString);
       try {
-        await registerDevice({
+        await USER?.registerDevice({
           pushToken: pushTokenString,
           notificationConsent: notificationConsent,
           deviceType: Device?.DeviceType[Device?.deviceType ?? 0],
@@ -64,9 +64,9 @@ export async function registerForPushNotificationsAsync(
   } else {
     handleRegistrationError("Must use physical device for push notifications");
   }
-}
+};
 
-export async function unregisterPushNotifications() {
+const unregisterPushNotifications = async () => {
   try {
     // Remove all scheduled notifications
     await Notifications.cancelAllScheduledNotificationsAsync();
@@ -87,8 +87,15 @@ export async function unregisterPushNotifications() {
       return true;
     }
   } catch (error) {
-    toast?.error("Failed to disable notifications");
+    TOAST?.showToast?.error("Failed to disable notifications");
     console.error("Error disabling notifications:", error);
     return false;
   }
-}
+};
+
+const PUSH_NOTIFICATION = {
+  registerForPushNotificationsAsync,
+  unregisterPushNotifications,
+};
+
+export default PUSH_NOTIFICATION;

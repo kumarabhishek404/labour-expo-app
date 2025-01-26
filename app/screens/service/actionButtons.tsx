@@ -12,20 +12,8 @@ import Animated, { SlideInDown } from "react-native-reanimated";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "@/app/hooks/toast";
-import {
-  applyService,
-  cancelServiceByMediatorAfterSelection,
-  cancelServiceByWorkerAfterSelection,
-  completeService,
-  deleteServiceById,
-  likeService,
-  mediatorApplyService,
-  mediatorUnApplyService,
-  restoreService,
-  unApplyService,
-  unLikeService,
-} from "@/app/api/services";
+import TOAST from "@/app/hooks/toast";
+import SERVICE from "@/app/api/services";
 import Loader from "@/components/commons/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import CustomHeading from "@/components/commons/CustomHeading";
@@ -91,10 +79,10 @@ const ServiceActionButtons = ({
 }: ServiceActionButtonsProps) => {
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
-    mutationFn: () => likeService({ serviceId: id }),
+    mutationFn: () => SERVICE?.likeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("serviceAddedInFavourites"));
+      TOAST?.showToast?.success(t("serviceAddedInFavourites"));
       console.log("Response while liking a service - ", response);
     },
     onError: (err) => {
@@ -104,10 +92,10 @@ const ServiceActionButtons = ({
 
   const mutationUnLikeService = useMutation({
     mutationKey: ["unlikeService", { id }],
-    mutationFn: () => unLikeService({ serviceId: id }),
+    mutationFn: () => SERVICE?.unLikeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
-      toast.success(t("serviceRemovedInFavourites"));
+      TOAST?.showToast?.success(t("serviceRemovedInFavourites"));
       console.log("Response while unliking a service - ", response);
     },
     onError: (err) => {
@@ -117,15 +105,16 @@ const ServiceActionButtons = ({
 
   const mutationApplyService = useMutation({
     mutationKey: ["applyService", { id }],
-    mutationFn: () => applyService({ _id: userDetails?._id, serviceId: id }),
+    mutationFn: () =>
+      SERVICE?.applyService({ _id: userDetails?._id, serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      toast.success(t("serviceAppliedSuccessfully"));
+      TOAST?.showToast?.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
     onError: (err: any) => {
-      toast.error(
+      TOAST?.showToast?.error(
         `Error while applying in the service - ${err?.response?.data?.message}`
       );
       console.error("error while applying in the service ", err);
@@ -134,16 +123,16 @@ const ServiceActionButtons = ({
 
   const mutationUnApplyService = useMutation({
     mutationKey: ["unapplyService", { id }],
-    mutationFn: () => unApplyService({ serviceID: id }),
+    mutationFn: () => SERVICE?.unApplyService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
       setSelectedWorkersIds([]);
-      toast.success(t("yourApplicationCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
     onError: (err: any) => {
-      toast.error(
+      TOAST?.showToast?.error(
         `Error while cancelling your application in the service - ${err?.response?.data?.message}`
       );
       console.error("error while unapplying the service ", err);
@@ -153,12 +142,15 @@ const ServiceActionButtons = ({
   const mutationMediatorApplyService = useMutation({
     mutationKey: ["mediatorApplyService", { id }],
     mutationFn: () =>
-      mediatorApplyService({ serviceId: id, workers: selectedWorkersIds }),
+      SERVICE?.mediatorApplyService({
+        serviceId: id,
+        workers: selectedWorkersIds,
+      }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
       setIsWorkerSelectModal(false);
-      toast.success(t("serviceAppliedSuccessfully"));
+      TOAST?.showToast?.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
     onError: (err) => {
@@ -168,12 +160,12 @@ const ServiceActionButtons = ({
 
   const mutationMediatorUnApplyService = useMutation({
     mutationKey: ["mediatorUnApplyService", { id }],
-    mutationFn: () => mediatorUnApplyService({ serviceId: id }),
+    mutationFn: () => SERVICE?.mediatorUnApplyService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
       setIsWorkerSelectModal(false);
-      toast.success(t("yourApplicationCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
@@ -183,11 +175,12 @@ const ServiceActionButtons = ({
 
   const mutationCancelServiceByWorkerAfterSelection = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () => cancelServiceByWorkerAfterSelection({ serviceId: id }),
+    mutationFn: () =>
+      SERVICE?.cancelServiceByWorkerAfterSelection({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      toast.success(t("yourSelectionCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
@@ -197,11 +190,12 @@ const ServiceActionButtons = ({
 
   const mutationCancelServiceByMediatorAfterSelection = useMutation({
     mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
-    mutationFn: () => cancelServiceByMediatorAfterSelection({ serviceId: id }),
+    mutationFn: () =>
+      SERVICE?.cancelServiceByMediatorAfterSelection({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      toast.success(t("yourSelectionCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
@@ -211,11 +205,11 @@ const ServiceActionButtons = ({
 
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
-    mutationFn: () => completeService({ serviceId: id }),
+    mutationFn: () => SERVICE?.completeService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      toast.success(t("serviceCompletedSuccessfully"));
+      TOAST?.showToast?.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a service - ", response);
     },
     onError: (err) => {
@@ -225,7 +219,7 @@ const ServiceActionButtons = ({
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => deleteServiceById(id),
+    mutationFn: () => SERVICE?.deleteServiceById(id),
     onSuccess: async (response) => {
       setModalVisible(false);
       await refetch();
@@ -239,11 +233,11 @@ const ServiceActionButtons = ({
 
   const mutationRestoreService = useMutation({
     mutationKey: ["restoreService", { id }],
-    mutationFn: () => restoreService({ serviceId: id }),
+    mutationFn: () => SERVICE?.restoreService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      toast.success(t("serviceRestoredSuccessfully"));
+      TOAST?.showToast?.success(t("serviceRestoredSuccessfully"));
       console.log("Response while restoring a service - ", response);
     },
   });
@@ -344,7 +338,7 @@ const ServiceActionButtons = ({
                 isPrimary={false}
                 title={t("edit")}
                 onPress={() => {
-                  router.push("/(tabs)/addService/");
+                  router.push("/screens/addService");
                   setAddService(service);
                 }}
                 style={styles.footerBtn}
@@ -394,9 +388,9 @@ const ServiceActionButtons = ({
   };
 
   const toggleUserSelection = (userId: string) => {
-    setSelectedWorkersIds((prev: any) =>
+    setSelectedWorkersIds((prev: string[]) =>
       prev.includes(userId)
-        ? prev.filter((id: string) => id !== userId)
+        ? prev.filter((id) => id !== userId)
         : [...prev, userId]
     );
   };
@@ -570,8 +564,8 @@ const ServiceActionButtons = ({
           disabled: selectedWorkersIds?.length === 0,
           title: isServiceApplied ? t("cancelApply") : t("applyNow"),
           styles: {
-            backgroundColor: "red",
-            borderColor: "red",
+            backgroundColor: Colors?.danger,
+            borderColor: Colors?.danger,
           },
           action: isServiceApplied
             ? mutationMediatorUnApplyService?.mutate
@@ -602,8 +596,8 @@ const styles = StyleSheet.create({
   },
   footerBtn: {
     flex: 1,
-    backgroundColor: Colors.black,
-    borderColor: Colors.black,
+    backgroundColor: Colors.tertiery,
+    borderColor: Colors.tertiery,
     alignItems: "center",
   },
   deleteBtn: {
@@ -672,7 +666,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 20,
+    paddingVertical: 20,
     alignItems: "center",
   },
   iconContainer: {
@@ -691,6 +685,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
+    paddingVertical: 20,
   },
   userItem: {
     flexDirection: "row",

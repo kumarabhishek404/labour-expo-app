@@ -13,11 +13,11 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import { useQuery } from "@tanstack/react-query";
-import { getAllReviews } from "@/app/api/rating";
-import { UserAtom } from "@/app/AtomStore/user";
+import RATING from "@/app/api/rating";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import Loader from "@/components/commons/Loader";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
 import EmptyPlaceholder from "@/assets/empty-placeholder.png";
 import ProfilePicture from "@/components/commons/ProfilePicture";
@@ -53,11 +53,11 @@ const StarRating = ({ rating }: any) => {
 };
 
 const ReviewScreen = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["reviews", userDetails?._id],
-    queryFn: () => getAllReviews({ id: userDetails?._id }),
+    queryFn: () => RATING?.getAllReviews({ id: userDetails?._id }),
     enabled: !!userDetails?._id,
   });
 
@@ -93,7 +93,7 @@ const ReviewScreen = () => {
     );
   });
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 

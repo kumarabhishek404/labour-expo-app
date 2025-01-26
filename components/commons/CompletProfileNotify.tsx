@@ -5,8 +5,8 @@ import Button from "../inputs/Button";
 import CustomText from "./CustomText";
 import ModalComponent from "./Modal";
 import { useMutation } from "@tanstack/react-query";
-import { updateUserById } from "@/app/api/user";
-import { UserAtom } from "@/app/AtomStore/user";
+import USER from "@/app/api/user";
+import Atoms from "@/app/AtomStore";
 import { useAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "../inputs/TextInputWithIcon";
@@ -19,7 +19,7 @@ import DateField from "../inputs/DateField";
 import moment from "moment";
 import { isEmptyObject } from "@/constants/functions";
 import Loader from "./Loader";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const ProfileNotification: React.FC = () => {
   const [isCompleteProfileModel, setIsCompleteProfileModel] = useState(false);
@@ -27,9 +27,9 @@ const ProfileNotification: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
   );
-  const { refreshUser, isLoading } = useRefreshUser();
+  const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const {
     control,
     handleSubmit,
@@ -55,7 +55,7 @@ const ProfileNotification: React.FC = () => {
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["completeProfile"],
-    mutationFn: (payload: any) => updateUserById(payload),
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
@@ -128,9 +128,6 @@ const ProfileNotification: React.FC = () => {
                 control={control}
                 name="address"
                 defaultValue=""
-                // rules={{
-                //   required: t("addressIsRequired"),
-                // }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <AddLocationAndAddress
                     label={t("address")}
@@ -187,9 +184,6 @@ const ProfileNotification: React.FC = () => {
             <Controller
               control={control}
               name="gender"
-              //   rules={{
-              //     required: t("genderIsRequired"),
-              //   }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Gender
                   name="gender"
@@ -221,11 +215,11 @@ const ProfileNotification: React.FC = () => {
         color={Colors?.white}
         style={styles?.text}
       >
-        Complete your profile to unlock all features!
+        {t("completeYourProfileToUnlockAllFeatures")}
       </CustomText>
       <Button
         isPrimary={true}
-        title="Complete Profile"
+        title={t("completeProfile")}
         onPress={() => setIsCompleteProfileModel(true)}
         style={styles.completeButton}
       />
@@ -259,6 +253,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   completeButton: {
+    width: "40%",
     backgroundColor: Colors.primary,
     paddingVertical: 6,
     paddingHorizontal: 13,
@@ -271,7 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   formContainer: {
-    marginTop: 10,
+    paddingVertical: 20,
   },
   errorInput: {
     borderWidth: 1,

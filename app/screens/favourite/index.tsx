@@ -8,23 +8,23 @@ import {
 import { router, Stack, useFocusEffect } from "expo-router";
 import Colors from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { UserAtom } from "../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { fetchAllLikedServices } from "../../api/services";
+import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loader";
-import { fetchAllLikedWorkers } from "../../api/workers";
+import WORKER from "../../api/workers";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
-import {  SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 
 const Favourite = (props: any) => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("All");
@@ -41,8 +41,8 @@ const Favourite = (props: any) => {
     queryKey: ["favourites"],
     queryFn: ({ pageParam }) => {
       return userDetails?.role === "EMPLOYER"
-        ? fetchAllLikedWorkers({ pageParam })
-        : fetchAllLikedServices({ pageParam });
+        ? WORKER?.fetchAllLikedWorkers({ pageParam })
+        : SERVICE?.fetchAllLikedServices({ pageParam });
     },
     retry: false,
     initialPageParam: 1,
@@ -80,9 +80,11 @@ const Favourite = (props: any) => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
@@ -96,14 +98,14 @@ const Favourite = (props: any) => {
 
       <Loader loading={isLoading} />
       <View style={styles.container}>
-        <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+        <SearchFilter
+          type="users"
+          data={response?.pages}
+          setFilteredData={setFilteredData}
+        />
 
         <CategoryButtons
-          options={
-            userDetails?.role === "EMPLOYER"
-              ? WORKERS
-              : SERVICES
-          }
+          options={userDetails?.role === "EMPLOYER" ? WORKERS : SERVICES}
           onCagtegoryChanged={onCatChanged}
         />
 

@@ -13,43 +13,36 @@ import {
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import {
-  AccountStatusAtom,
-  NotificationConsentAtom,
-  UserAtom,
-} from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import ModalComponent from "./Modal";
 import Loader from "./Loader";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import {
-  registerForPushNotificationsAsync,
-  unregisterPushNotifications,
-} from "@/app/hooks/usePushNotification";
-import { disableAccount } from "@/app/api/user";
+import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
+import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const ProfileMenu = ({ disabled }: any) => {
-  const { refreshUser } = useRefreshUser();
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
-  const setIsAccountInactive = useSetAtom(AccountStatusAtom);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   // const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [notificationConsent, setNotificationConsent] = useAtom(
-    NotificationConsentAtom
+    Atoms?.NotificationConsentAtom
   );
   const [isAdmin, setIsAdmin] = useState(false);
 
   const mutationDeactivateAccount = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: () => disableAccount(),
+    mutationFn: () => USER?.disableAccount(),
     onSuccess: (response) => {
-      toast.success(t("successDeactivatedMessage"));
+      TOAST?.showToast?.success(t("successDeactivatedMessage"));
       refreshUser();
       setModalVisible(false);
       setIsAccountInactive(true);
@@ -74,9 +67,11 @@ const ProfileMenu = ({ disabled }: any) => {
 
   const registerNotification = async () => {
     try {
-      await registerForPushNotificationsAsync(notificationConsent);
+      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+        notificationConsent
+      );
       setNotificationConsent(true);
-      toast.success("Notifications enabled");
+      TOAST?.showToast?.success("Notifications enabled");
       console.log("Notifications enabled");
     } catch (err) {
       console.error("Failed to enable notifications", err);
@@ -85,8 +80,8 @@ const ProfileMenu = ({ disabled }: any) => {
 
   const unregisterNotification = async () => {
     try {
-      await unregisterPushNotifications();
-      toast.success("Notifications disabled");
+      await PUSH_NOTIFICATION?.unregisterPushNotifications();
+      TOAST?.showToast?.success("Notifications disabled");
       console.log("Notifications disabled");
       setNotificationConsent(false);
     } catch (err) {
@@ -113,7 +108,7 @@ const ProfileMenu = ({ disabled }: any) => {
         await unregisterNotification();
       }
     } catch (err) {
-      toast.error("Failed to change notification preference");
+      TOAST?.showToast?.error("Failed to change notification preference");
       console.error(err);
     }
   };
@@ -451,7 +446,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 20,
+    paddingVertical: 20,
     alignItems: "center",
   },
   iconContainer: {

@@ -190,6 +190,7 @@
   "accepted": "Accepted",
   "rejected": "Rejected",
 
+  
   "andhrapradesh": "Andhra Pradesh",
   "arunachalpradesh": "Arunachal Pradesh",
   "assam": "Assam",
@@ -218,6 +219,16 @@
   "uttarpradesh": "Uttar Pradesh",
   "uttarakhand": "Uttarakhand",
   "westbengal": "West Bengal",
+  "andamanandnicobarislands": "Andaman and Nicobar Islands",
+  "chandigarh": "Chandigarh",
+  "dadarandnagarhavelianddamananddiu": "Dadra and Nagar Haveli and Daman and Diu",
+  "delhi": "Delhi",
+  "lakshadweep": "Lakshadweep",
+  "laddakh": "Ladakh",
+  "puducherry": "Puducherry",
+  "ladakh": "Ladakh",
+  "jammuandkashmir": "Jammu and Kashmir",
+  "nctdelhi": "NCT Delhi",
 
   "india": "India",
   "canada": "Canada",
@@ -687,5 +698,12 @@
   "pleaseSelectStateFirst": "Please select any state first",
   "pleaseSelectDistrictFirst": "Please select any district first",
   "pleaseSelectSubDistrictFirst": "Please select any sub district first",
-  "completeProfile": "Complete Profile"
+  "completeProfile": "Complete Your Profile",
+  "newService": "Add New Service",
+  "addingNewService": "Adding New Service",
+  "applicants": "Selected Applicants",
+  "completeProfileButton": "Complete Profile",
+  "completeYourProfileToUnlockAllFeatures": "Complete your profile to unlock all features!",
+  "pleaseFetchNearestWorkers": "Please Fetch your current location to get nearest workers",
+  "fetchLocation": "Please Fetch your current location to get nearest {{entity}}"
 }

@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     overflow: "hidden",
     borderWidth: 3,
-    borderColor: Colors?.heading,
+    borderColor: Colors?.primary,
     padding: 5,
     marginBottom: 15,
   },

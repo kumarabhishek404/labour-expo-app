@@ -11,13 +11,13 @@ import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { ADMINREQUEST} from "@/constants";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { fetchAllRequestsForAdmin } from "@/app/api/admin";
 
 const AdminRequests = () => {
-  const { refreshUser } = useRefreshUser();
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("recievedRequests");
@@ -59,7 +59,7 @@ const AdminRequests = () => {
     onSuccess: (response) => {
       refetch();
       refreshUser();
-      toast.success(t("requestAcceptedSuccessfully"));
+      TOAST?.showToast?.success(t("requestAcceptedSuccessfully"));
     },
   });
 

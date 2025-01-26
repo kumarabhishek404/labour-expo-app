@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-import { useSetAtom } from "jotai";
-import { AddServiceInProcess } from "./AtomStore/user";
 import Toast from "react-native-toast-message";
-import { LocaleProvider } from "./context/locale";
-import { NotificationProvider } from "./context/NotificationContext";
+import LOCAL_CONTEXT from "./context/locale";
+import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import SpaceMono from "../assets/fonts/SpaceMono-Regular.ttf";
@@ -25,26 +21,23 @@ Notifications.setNotificationHandler({
 });
 
 export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary, // Catch any errors thrown by the Layout component.
 } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
+  initialRouteName: "/drawer/(tabs)", // Ensure that reloading on `/modal` keeps a back button present.
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 // Set the animation options. This is optional.
-// SplashScreen.setOptions({
-//   duration: 1000,
-//   fade: true,
-// });
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function RootLayout() {
-  const setIsAddService = useSetAtom(AddServiceInProcess);
   const [loaded, error] = useFonts({
     SpaceMono: SpaceMono,
     ...FontAwesome.font,
@@ -56,7 +49,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      setIsAddService(false);
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -73,16 +65,16 @@ function RootLayoutNav() {
 
   return (
     <SafeAreaProvider>
-      <NotificationProvider>
-        <LocaleProvider>
+      <NOTIFICATION_CONTEXT.NotificationProvider>
+        <LOCAL_CONTEXT.LocaleProvider>
           <QueryClientProvider client={queryClient}>
             <Stack screenOptions={{ headerShown: true }}>
               <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
             </Stack>
             <Toast />
           </QueryClientProvider>
-        </LocaleProvider>
-      </NotificationProvider>
+        </LOCAL_CONTEXT.LocaleProvider>
+      </NOTIFICATION_CONTEXT.NotificationProvider>
     </SafeAreaProvider>
   );
 }

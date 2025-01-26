@@ -2,9 +2,9 @@ import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Button from "@/components/inputs/Button";
 import { Controller, useForm } from "react-hook-form";
-import Step4 from "../../../../assets/step4.jpg";
+import Step4 from "../../../assets/step4.jpg";
 import ImageUpload from "@/components/inputs/ImagePicker";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -41,7 +41,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     console.log("data?.images?.length--", data?.images?.length);
 
     if (data?.images && data?.images?.length > 3) {
-      toast?.error("You can not upload more than 3 images");
+      TOAST?.showToast?.error("You can not upload more than 3 images");
     } else {
       setDescription(data?.description);
       if (data?.images && data?.images?.length > 0) setImages(data?.images);
@@ -105,7 +105,11 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         />
       </View>
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title={t("back")} onPress={() => setStep(2)} />
+        <Button
+          isPrimary={false}
+          title={t("back")}
+          onPress={() => setStep(2)}
+        />
         <Button
           isPrimary={true}
           title={t("saveAndView")}

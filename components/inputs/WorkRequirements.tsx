@@ -39,10 +39,6 @@ const WorkRequirment = ({
   errors,
   errorField,
 }: WorkRequirmentProps) => {
-  console.log("type - ", type);
-  console.log("subType - ", subType);
-  console.log("options - - ", filterWorkerTypes(type, subType));
-  
   const addRequirments = () => {
     let tempRequirements = [...requirements];
     tempRequirements[requirements?.length] = {
@@ -69,7 +65,7 @@ const WorkRequirment = ({
     let tempRequirments = [...requirements];
     tempRequirments[index].name = name;
     console.log("tempRequirments", tempRequirments[index]?.name);
-    
+
     setRequirements(tempRequirments);
   };
 
@@ -98,25 +94,31 @@ const WorkRequirment = ({
           return (
             <View style={{ width: "100%" }} key={index}>
               <View style={styles.addRequirment}>
-                <DropdownComponent
-                  style={
-                    errorField?.index === index &&
-                    errorField?.name === "dropdown" &&
-                    styles?.errorInput
-                  }
-                  value={requirement?.name}
-                  setValue={(name: any) =>
-                    handleRequirementTypeChange(index, name)
-                  }
-                  placeholder={watch('subType') ? t("selectWorkRequirementType") : t("pleaseSelectWorkTypeAndSubTypeFirst")}
-                  // emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
-                  options={filterWorkerTypes(type, subType) ?? []}
-                  icon={
-                    <CustomHeading fontSize={20} color={Colors?.secondary}>
-                      {index + 1}
-                    </CustomHeading>
-                  }
-                />
+                <View style={{ zIndex: 7 }}>
+                  <DropdownComponent
+                    style={
+                      errorField?.index === index &&
+                      errorField?.name === "dropdown" &&
+                      styles?.errorInput
+                    }
+                    value={requirement?.name}
+                    setValue={(name: any) =>
+                      handleRequirementTypeChange(index, name)
+                    }
+                    placeholder={
+                      watch("subType")
+                        ? t("selectWorkRequirementType")
+                        : t("pleaseSelectWorkTypeAndSubTypeFirst")
+                    }
+                    // emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
+                    options={filterWorkerTypes(type, subType) ?? []}
+                    icon={
+                      <CustomHeading fontSize={20} color={Colors?.secondary}>
+                        {index + 1}
+                      </CustomHeading>
+                    }
+                  />
+                </View>
                 <View style={styles.counterContainer}>
                   <Counter
                     counter={requirement?.count}
@@ -201,7 +203,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 10,
   },
   counterContainer: {
@@ -212,6 +213,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     marginTop: 10,
+    zIndex: 6,
   },
   addMore: {
     justifyContent: "space-between",

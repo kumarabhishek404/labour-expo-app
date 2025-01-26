@@ -1,4 +1,4 @@
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import Colors from "@/constants/Colors";
 import React, { useRef, useState } from "react";
 import {
@@ -10,17 +10,15 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
 import Button from "./Button";
 import { t } from "@/utils/translationHelper";
-import { signInWithPhoneNumber, verifyCode } from "@/app/api/firebase";
+import FIREBASE from "@/app/api/firebase";
 import ModalComponent from "../commons/Modal";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "../commons/Loader";
-import { checkMobileExistance } from "@/app/api/user";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -60,27 +58,27 @@ const MobileNumberField = ({
 
   const mutationSendOtp = useMutation({
     mutationKey: ["signInWithPhoneNumber"],
-    mutationFn: (payload: any) => signInWithPhoneNumber(payload),
+    mutationFn: (payload: any) => FIREBASE?.signInWithPhoneNumber(payload),
     onSuccess: (data: any) => {
-      toast.success(t("otpSentTo"), data);
+      TOAST?.showToast?.success(t("otpSentTo"), data);
       setConfirmation(data);
       setModalVisible(true);
     },
     onError: (error: any) => {
-      toast.error(t("errorWhileSendingCode"), error?.message);
+      TOAST?.showToast?.error(t("errorWhileSendingCode"), error?.message);
     },
   });
 
   const mutationVerifyCode = useMutation({
     mutationKey: ["verifyCode"],
     mutationFn: (payload: any) =>
-      verifyCode(payload?.confirmation, payload?.otp),
+      FIREBASE?.verifyCode(payload?.confirmation, payload?.otp),
     onSuccess: (data: any) => {
-      toast.success(t("mobileNumberVerifiedSuccessfully"));
+      TOAST?.showToast?.success(t("mobileNumberVerifiedSuccessfully"));
       setModalVisible(false);
     },
     onError: (error: any) => {
-      toast.error(t("incorrectOTPTryAgain"));
+      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
     },
   });
 
@@ -88,7 +86,7 @@ const MobileNumberField = ({
   //   try {
   //     mutationSendOtp.mutate(`${countryCode}${phoneNumber}`);
   //   } catch (err) {
-  //     toast.error(t("errorWhileSendingCode"));
+  //     TOAST?.showToast?.error(t("errorWhileSendingCode"));
   //   }
   // };
 
@@ -96,7 +94,7 @@ const MobileNumberField = ({
   //   if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
   //     mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
   //   } else {
-  //     toast?.error(t("incorrectOTPTryAgain"));
+  //     TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
   //   }
   // };
 
@@ -123,7 +121,7 @@ const MobileNumberField = ({
 
   // const resendOtp = () => {
   //   handleSendOtp();
-  //   toast.success(t("otpResent"));
+  //   TOAST?.showToast?.success(t("otpResent"));
   // };
 
   // const modalContent = () => (

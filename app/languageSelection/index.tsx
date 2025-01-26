@@ -8,11 +8,11 @@ import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { useLocale } from "../context/locale";
+import LOCAL_CONTEXT from "@/app/context/locale";
 import { t } from "@/utils/translationHelper";
 
 const LanguageSelectionScreen = () => {
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const router = useRouter();
 

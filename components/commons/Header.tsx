@@ -1,21 +1,19 @@
-import React, { useEffect, useRef } from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  StatusBar,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useNavigation, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { hasNewNotificationAtom, UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
 import { DrawerActions } from "@react-navigation/native";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import RippleDot from "./RippleDot";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import NOTIFICATION from "@/app/api/notification";
 
 interface CustomHeaderProps {
   title?: string;
@@ -30,37 +28,33 @@ const CustomHeader = ({
   onLeftAction,
   right,
 }: CustomHeaderProps) => {
-  const userDetails = useAtomValue(UserAtom);
-  const hasNewNotification = useAtomValue(hasNewNotificationAtom);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const hasNewNotification = Boolean(
+    useAtomValue(Atoms?.hasNewNotificationAtom)
+  );
   const router = useRouter();
   const navigation = useNavigation();
+  const [unreadNotificationCount, setUnreadNotificationCount] =
+    useState<number>(0);
+
+  const { data: response } = useQuery({
+    queryKey: ["allNotificationsCount"],
+    queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
+    retry: false,
+    refetchInterval: 20000,
+    enabled: !!userDetails?._id,
+  });
 
   useEffect(() => {
-    if (hasNewNotification) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scaleAnim, {
-            toValue: 1.5,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(scaleAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    } else {
-      scaleAnim.setValue(1); // Reset the scale if there is no new notification
+    if (response) {
+      setUnreadNotificationCount(response?.unreadCount);
     }
-  }, [hasNewNotification]);
+  }, [response]);
 
   return (
     <>
-      <StatusBar barStyle="light-content" />
       <View style={styles.headerContainer}>
+        
         {left === "menu" && (
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
@@ -128,16 +122,7 @@ const CustomHeader = ({
               }}
             >
               <Ionicons name="notifications" size={20} color={Colors.primary} />
-              {hasNewNotification ? (
-                <Animated.View
-                  style={[
-                    styles.alertDot,
-                    { transform: [{ scale: scaleAnim }] },
-                  ]}
-                />
-              ) : (
-                <></>
-              )}
+              {unreadNotificationCount > 0 && <RippleDot />}
             </View>
           </TouchableOpacity>
         )}
@@ -175,6 +160,10 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingTop: 50,
     backgroundColor: Colors?.primary,
+    zIndex: -1,
+  },
+  headerTitleWrapper: {
+    // width: "100%"
   },
   backButton: {
     paddingHorizontal: 10,
@@ -182,15 +171,6 @@ const styles = StyleSheet.create({
   backText: {
     color: "#ffffff",
     fontSize: 18,
-  },
-  alertDot: {
-    position: "absolute",
-    top: -5,
-    left: -5,
-    width: 12,
-    height: 12,
-    backgroundColor: "red",
-    borderRadius: 30,
   },
   headerTitle: {
     color: "#ffffff",

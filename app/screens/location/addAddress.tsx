@@ -12,20 +12,20 @@ import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
 import { STETESOFINDIA } from "@/constants";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import ModalComponent from "@/components/commons/Modal";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import { useAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
-import { updateUserById } from "@/app/api/user";
+import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loader";
 import { ALL_INDIAN_VILLAGES } from "@/constants/india";
 import DropdownComponent from "./dropdown";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const {
     control,
     watch,
@@ -46,7 +46,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => updateUserById(payload),
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
@@ -99,7 +99,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     const address = `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`;
 
     if (userDetails?.savedAddresses?.includes(address)) {
-      toast.error(t("addressAlreadyExists"));
+      TOAST?.showToast?.error(t("addressAlreadyExists"));
       return;
     }
 
@@ -120,12 +120,12 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     }
     reset();
     onClose();
-    toast.success(t("addressAddedSuccessfully"));
+    TOAST?.showToast?.success(t("addressAddedSuccessfully"));
   };
 
   const modalContent = () => {
     return (
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={{paddingVertical: 20}} showsVerticalScrollIndicator={false}>
         <Loader loading={mutationUpdateProfileInfo?.isPending} />
         <View style={styles.formContainer}>
           <Controller

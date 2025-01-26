@@ -5,13 +5,13 @@ import CustomText from "./CustomText";
 import { useTranslation } from "@/utils/i18n";
 import Button from "../inputs/Button";
 import Colors from "@/constants/Colors";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
-import { sendEmailCode, verifyEmailCode } from "@/app/api/firebase";
+import FIREBASE from "@/app/api/firebase";
 import ModalComponent from "./Modal";
 import Loader from "./Loader";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import { UserAtom } from "@/app/AtomStore/user";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 
 interface UserInfoComponentProps {
@@ -20,31 +20,31 @@ interface UserInfoComponentProps {
 }
 
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
-  const { refreshUser, isLoading } = useRefreshUser();
-  const userDetails = useAtomValue(UserAtom);
+  const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
+  const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const mutationSendOtp = useMutation({
     mutationKey: ["verifyEmail"],
-    mutationFn: (payload: any) => sendEmailCode(payload),
+    mutationFn: (payload: any) => FIREBASE?.sendEmailCode(payload),
     onSuccess: (data: any) => {
-      toast.success(t("otpSentTo"), data);
+      TOAST?.showToast?.success(t("otpSentTo"), data);
       setModalVisible(true);
     },
     onError: (error: any) => {
-      toast.error(t("errorWhileSendingCode"), error?.message);
+      TOAST?.showToast?.error(t("errorWhileSendingCode"), error?.message);
     },
   });
 
   const mutationVerifyCode = useMutation({
     mutationKey: ["verifyEmailCode"],
-    mutationFn: (payload: any) => verifyEmailCode(payload?.code),
+    mutationFn: (payload: any) => FIREBASE?.verifyEmailCode(payload?.code),
     onSuccess: (data: any) => {
-      toast.success(t("emailVerifiedSuccessfully"));
+      TOAST?.showToast?.success(t("emailVerifiedSuccessfully"));
       setModalVisible(false);
       refreshUser();
     },
     onError: (error: any) => {
-      toast.error(t("incorrectOTPTryAgain"));
+      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
     },
   });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -57,7 +57,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       await mutationSendOtp.mutateAsync(user?.email?.value);
       setModalVisible(true);
     } catch (err) {
-      toast.error(t("errorWhileSendingCode"));
+      TOAST?.showToast?.error(t("errorWhileSendingCode"));
     }
   };
 
@@ -66,7 +66,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       await mutationVerifyCode.mutateAsync({ code: otp?.join("") });
       setOtp(["", "", "", ""]);
     } else {
-      toast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
     }
   };
 
@@ -91,15 +91,13 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
     setOtp(newOtp);
   };
 
-  const resendOtp = () => {
-    handleSendOtp();
-    toast.success(t("otpResent"));
-  };
-
   const modalContent = () => (
-    <View>
+    <View style={{ paddingVertical: 20 }}>
       <CustomHeading fontSize={50}>✉️</CustomHeading>
       <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
+      <CustomHeading fontSize={18} color={Colors?.tertiery}>
+        ({user?.email?.value})
+      </CustomHeading>
       <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
       <View style={styles.otpform}>
@@ -121,10 +119,12 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         ))}
       </View>
 
-      <TouchableOpacity style={styles?.resendContainer} onPress={resendOtp}>
+      <View style={styles?.resendContainer}>
         <CustomText>{t("didntGetTheCode")}</CustomText>
-        <CustomText color={Colors?.link}>{t("clickToResend")}</CustomText>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={handleSendOtp}>
+          <CustomText color={Colors?.link}>{t("clickToResend")}</CustomText>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -192,7 +192,6 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         title={t("verifyEmail")}
         onClose={() => setModalVisible(false)}
         primaryButton={{
-          disabled: otp?.join("")?.length !== 4,
           title: t("verify"),
           action: handleVerifyOtp,
         }}
@@ -295,7 +294,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   resendContainer: {
-    width: "100%",
+    // width: "100%",
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 20,

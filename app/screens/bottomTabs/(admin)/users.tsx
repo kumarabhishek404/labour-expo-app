@@ -3,12 +3,11 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import { UserAtom } from "../../../AtomStore/user";
+import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { usePullToRefresh } from "../../../hooks/usePullToRefresh";
 import { ROLES, USERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
 import Filters from "@/components/commons/Filters";
@@ -16,12 +15,13 @@ import SearchFilter from "@/components/commons/SearchFilter";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import { activateUser, fetchAllUsers, suspendUser } from "@/app/api/admin";
+import ADMIN from "@/app/api/admin";
 import ListingsVerticalUsersAdmin from "@/components/commons/ListingsVerticalUsersAdmin";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 
 const AdminUsers = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [status, setStatus] = useState("ACTIVE");
@@ -44,7 +44,7 @@ const AdminUsers = () => {
         pageParam,
         ...filters, // Add filters to the API request payload
       };
-      return fetchAllUsers({ ...payload, role: role, status: status });
+      return ADMIN?.fetchAllUsers({ ...payload, role: role, status: status });
     },
     retry: false,
     initialPageParam: 1,
@@ -95,25 +95,25 @@ const AdminUsers = () => {
 
   const mutationSuspendUser = useMutation({
     mutationKey: ["suspendUser"],
-    mutationFn: (payload: any) => suspendUser(payload),
+    mutationFn: (payload: any) => ADMIN?.suspendUser(payload),
     onSuccess: () => {
-      toast.success("User suspended successfully");
+      TOAST?.showToast?.success("User suspended successfully");
       refetch();
     },
     onError: (error: any) => {
-      toast.error(error?.message || "An error occurred while suspending user");
+      TOAST?.showToast?.error(error?.message || "An error occurred while suspending user");
     },
   });
 
   const mutationActivateUser = useMutation({
     mutationKey: ["activateUser"],
-    mutationFn: (payload: any) => activateUser(payload),
+    mutationFn: (payload: any) => ADMIN?.activateUser(payload),
     onSuccess: () => {
-      toast.success("User activated successfully");
+      TOAST?.showToast?.success("User activated successfully");
       refetch();
     },
     onError: (error: any) => {
-      toast.error(error?.message || "An error occurred while activating user");
+      TOAST?.showToast?.error(error?.message || "An error occurred while activating user");
     },
   });
 
@@ -150,7 +150,7 @@ const AdminUsers = () => {
     setRole(role);
   };
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
     await refetch();
   });
 

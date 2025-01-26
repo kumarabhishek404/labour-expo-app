@@ -1,7 +1,13 @@
 import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import React from "react";
-import { Modal, View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Modal,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import CustomHeading from "./CustomHeading";
 import Button from "../inputs/Button";
@@ -25,48 +31,35 @@ const ModalComponent = ({
       <View style={styles.modalContainer}>
         <View style={styles.container}>
           {/* Header with gradient and improved styling */}
-          <LinearGradient
-            colors={["#4c669f", "#3b5998", "#192f6a"]}
-            style={styles.header}
-          >
+          <View style={styles.header}>
             <CustomHeading fontSize={18} color={Colors?.white} textAlign="left">
               {title ? title : t("title")}
             </CustomHeading>
-            <TouchableOpacity onPress={onClose} style={styles.headerButton}>
+            <TouchableOpacity onPress={onClose}>
               <Entypo name="cross" size={28} color="#FFF" />
             </TouchableOpacity>
-          </LinearGradient>
+          </View>
 
           {/* Modal Content */}
-          <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>
-            {content()}
-          </View>
+          <ScrollView style={styles?.contentContaincer}>{content()}</ScrollView>
 
           <View style={styles.footer}>
             <Button
               isPrimary={false}
-              title={secondaryButton?.title ? secondaryButton?.title : t("cancel")}
+              title={
+                secondaryButton?.title ? secondaryButton?.title : t("cancel")
+              }
               onPress={secondaryButton?.action}
             />
-            <LinearGradient
-              colors={["#ff7e5f", "#feb47b"]}
-              style={[
-                styles.primaryButton,
-                primaryButton?.styles,
-                primaryButton?.disabled && styles.disabled,
-              ]}
-            >
-              <Button
-                isPrimary={true}
-                disabled={primaryButton?.disabled}
-                title={primaryButton?.title ? primaryButton?.title : t("save")}
-                onPress={primaryButton?.action}
-                style={{
-                  backgroundColor: "transparent",
-                  borderColor: "transparent",
-                }}
-              />
-            </LinearGradient>
+            <Button
+              isPrimary={true}
+              disabled={primaryButton?.disabled}
+              title={primaryButton?.title ? primaryButton?.title : t("save")}
+              onPress={primaryButton?.action}
+              style={{
+                flex: 1,
+              }}
+            />
           </View>
         </View>
       </View>
@@ -81,10 +74,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     paddingHorizontal: 20,
+    zIndex: 0
   },
   container: {
     backgroundColor: "white",
     width: "100%",
+    maxHeight: "70%",
     borderRadius: 12,
     overflow: "hidden",
     shadowColor: "#000",
@@ -93,28 +88,26 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  header: {
-    paddingVertical: 15,
+  contentContaincer: {
     paddingHorizontal: 20,
+  },
+  header: {
+    padding: 15,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: Colors?.primary,
   },
   headerText: {
     fontWeight: "700",
     fontSize: 20,
     color: "#FFF",
-    // textAlign: "center",
     flex: 1,
-  },
-  headerButton: {
-    // position: "absolute",
-    // right: 15,
-    // top: 15,
   },
   footer: {
     flexDirection: "row",
     padding: 15,
+    gap: 10,
     borderTopWidth: 1,
     borderTopColor: Colors?.secondary,
     justifyContent: "space-between",

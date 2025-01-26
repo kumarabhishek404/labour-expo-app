@@ -11,8 +11,8 @@ import CustomHeading from "./CustomHeading";
 import PaginationControls from "./Pagination/PaginationControls";
 import { usePagination } from "@/app/hooks/usePagination";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/AtomStore/user";
-import { toast } from "@/app/hooks/toast";
+import Atoms from "@/app/AtomStore";
+import TOAST from "@/app/hooks/toast";
 import { addReview, deleteReview, getAllReviews } from "@/app/api/rating";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -77,7 +77,7 @@ const StarRating = ({ rating }: any) => {
 
 const UserReviews = forwardRef(
   ({ setHasUserReviewed, onLayout, workerId }: UserReviewsProps, ref: any) => {
-    const userDetails = useAtomValue(UserAtom);
+    const userDetails = useAtomValue(Atoms?.UserAtom);
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<"Positive" | "Negative">(
       "Positive"
@@ -147,7 +147,7 @@ const UserReviews = forwardRef(
           reviewId,
         }),
       onSuccess: (response) => {
-        toast.success(t("reviewDeletedSuccessfully"));
+        TOAST?.showToast?.success(t("reviewDeletedSuccessfully"));
         refetch();
         queryClient.invalidateQueries({
           queryKey: ["userDetails", workerId],

@@ -1,22 +1,13 @@
-import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { SlideInDown, useAnimatedRef } from "react-native-reanimated";
-import { useAtom, useSetAtom } from "jotai";
-import { AddServiceAtom, UserAtom } from "../../AtomStore/user";
+import { useAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 import Button from "@/components/inputs/Button";
 import moment from "moment";
-import Applicants from "@/components/commons/Applicants";
-import SelectedApplicants from "@/components/commons/SelectedApplicants";
-import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
 import ImageSlider from "@/components/commons/ImageSlider";
@@ -24,17 +15,10 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import { useRefreshUser } from "@/app/hooks/useRefreshUser";
-import { fetchAllMembers } from "@/app/api/mediator";
 import WorkerCard from "@/components/commons/WorkerCard";
 import { useMutation } from "@tanstack/react-query";
-import {
-  cancelBooking,
-  completeBooking,
-  removeBookedWorker,
-} from "@/app/api/booking";
-import { toast } from "@/app/hooks/toast";
+import BOOKING from "@/app/api/booking";
+import TOAST from "@/app/hooks/toast";
 import Loader from "@/components/commons/Loader";
 
 const { width } = Dimensions.get("window");
@@ -45,7 +29,7 @@ interface ImageAsset {
 }
 
 const ServiceDetails = () => {
-  const [userDetails, setUserDetails] = useAtom(UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const { title, data }: any = useLocalSearchParams();
   const [booking, setBooking]: any = useState(JSON.parse(data));
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
@@ -63,27 +47,28 @@ const ServiceDetails = () => {
 
   const mutationRemoveBookedUser = useMutation({
     mutationKey: ["removeBookedUser"],
-    mutationFn: () => removeBookedWorker({ userId: booking?.worker?._id }),
+    mutationFn: () =>
+      BOOKING?.removeBookedWorker({ userId: booking?.worker?._id }),
     onSuccess: async (response) => {
-      toast.success(t("removedBookedWorkerSuccessfully"));
+      TOAST?.showToast?.success(t("removedBookedWorkerSuccessfully"));
       console.log("Response while removing a booked worker - ", response);
     },
   });
 
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelBooking"],
-    mutationFn: () => cancelBooking({ bookingId: booking?._id }),
+    mutationFn: () => BOOKING?.cancelBooking({ bookingId: booking?._id }),
     onSuccess: async (response) => {
-      toast.success(t("bookingCancelledSuccessfully"));
+      TOAST?.showToast?.success(t("bookingCancelledSuccessfully"));
       console.log("Response while cancelling a booking - ", response);
     },
   });
 
   const mutationCompleteBooking = useMutation({
     mutationKey: ["completBooking"],
-    mutationFn: () => completeBooking({ bookingId: booking?._id }),
+    mutationFn: () => BOOKING?.completeBooking({ bookingId: booking?._id }),
     onSuccess: async (response) => {
-      toast.success(t("bookingCompletedSuccessfully"));
+      TOAST?.showToast?.success(t("bookingCompletedSuccessfully"));
       console.log("Response while cancelling a booking - ", response);
     },
   });

@@ -1,3 +1,4 @@
+import { t } from "@/utils/translationHelper";
 import React, { useState } from "react";
 import {
   View,
@@ -48,7 +49,7 @@ const SkillSelector = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Text style={styles.heading}>Select Any Skills</Text>
+      <Text style={styles.heading}>{t('selectAnySkills')}</Text>
 
       {/* Selected Skills */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>

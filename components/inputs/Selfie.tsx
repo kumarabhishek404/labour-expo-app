@@ -9,7 +9,7 @@ import {
 import { Camera, CameraType, CameraView } from "expo-camera";
 import Colors from "@/constants/Colors";
 import * as ImageManipulator from "expo-image-manipulator";
-import { toast } from "@/app/hooks/toast";
+import TOAST from "@/app/hooks/toast";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
@@ -66,7 +66,7 @@ const SelfieScreen = ({
         console.log("error while capturing image ", err);
         setLoading(false);
         setProfilePicture("");
-        toast?.error(t("failedToCaptureImageRetryAgain"));
+        TOAST?.showToast?.error(t("failedToCaptureImageRetryAgain"));
       }
     } else {
       setLoading(false);

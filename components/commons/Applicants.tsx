@@ -9,14 +9,8 @@ import {
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
-import {
-  cancelSelectedWorker,
-  rejectMediator,
-  rejectWorker,
-  selectMediator,
-  selectWorker,
-} from "@/app/api/services";
-import { toast } from "@/app/hooks/toast";
+import SERVICE from "@/app/api/services";
+import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
@@ -39,11 +33,11 @@ const Applicants = ({
   const mutationSelectWorker = useMutation({
     mutationKey: ["selectWorker", { serviceId }],
     mutationFn: (userId) =>
-      selectWorker({ serviceId: serviceId, userId: userId }),
+      SERVICE?.selectWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      toast.success(t("workerSelectedSuccessfully"));
+      TOAST?.showToast?.success(t("workerSelectedSuccessfully"));
       console.log("Response while seleting an worker for service - ", response);
     },
     onError: (err) => {
@@ -54,11 +48,11 @@ const Applicants = ({
   const mutationSelectMediator = useMutation({
     mutationKey: ["selectMediator", { serviceId }],
     mutationFn: (mediatorId) =>
-      selectMediator({ serviceId: serviceId, mediator: mediatorId }),
+      SERVICE?.selectMediator({ serviceId: serviceId, mediator: mediatorId }),
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      toast.success(t("mediatorSelectedSuccessfully"));
+      TOAST?.showToast?.success(t("mediatorSelectedSuccessfully"));
       console.log(
         "Response while seleting an mediator for service - ",
         response
@@ -72,11 +66,11 @@ const Applicants = ({
   const mutationRejectWorker = useMutation({
     mutationKey: ["rejectWorker", { serviceId }],
     mutationFn: (userId) =>
-      rejectWorker({ serviceId: serviceId, userId: userId }),
+      SERVICE?.rejectWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      toast.success(t("workerRejectedSuccessfully"));
+      TOAST?.showToast?.success(t("workerRejectedSuccessfully"));
       console.log("Response while rejecting an selected worker - ", response);
     },
     onError: (err) => {
@@ -87,11 +81,11 @@ const Applicants = ({
   const mutationRejectMediator = useMutation({
     mutationKey: ["rejectMediator", { serviceId }],
     mutationFn: (mediatorId) =>
-      rejectMediator({ serviceId: serviceId, mediator: mediatorId }),
+      SERVICE?.rejectMediator({ serviceId: serviceId, mediator: mediatorId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
       refetchApplicants();
-      toast.success(t("mediatorRejectedSuccessfully"));
+      TOAST?.showToast?.success(t("mediatorRejectedSuccessfully"));
       console.log("Response while rejecting an applied mediator - ", response);
     },
     onError: (err) => {

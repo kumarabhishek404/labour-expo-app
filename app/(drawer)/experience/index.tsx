@@ -12,10 +12,10 @@ import { t } from "@/utils/translationHelper";
 import CustomText from "@/components/commons/CustomText";
 import Requirements from "@/components/commons/Requirements";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { UserAtom } from "@/app/AtomStore/user";
+import Atoms from "@/app/AtomStore";
 
 const Experience = () => {
-  const userDetails = useAtomValue(UserAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);

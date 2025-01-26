@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   View,
   TouchableOpacity,
@@ -11,23 +11,33 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack, useFocusEffect } from "expo-router";
 import Button from "@/components/inputs/Button";
-import { fetchAllNotifications } from "@/app/api/notification";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import NOTIFICATION from "@/app/api/notification";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import Loader from "@/components/commons/Loader";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { getTimeAgo } from "@/constants/functions";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import { useSetAtom } from "jotai";
-import { hasNewNotificationAtom } from "@/app/AtomStore/user";
-import { usePullToRefresh } from "@/app/hooks/usePullToRefresh";
+import Atoms from "@/app/AtomStore";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
+import RippleDot from "@/components/commons/RippleDot";
 
 const NotificationScreen = () => {
+  const queryClient = useQueryClient();
+  const visibleNotificationIdsRef = useRef(new Set());
   const [hasPermission, setHasPermission] = useState(false);
-  const [notifications, setNotifications]: any = useState([]);
-  const setHasNewNotification = useSetAtom(hasNewNotificationAtom);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [visibleNotificationIds, setVisibleNotificationIds] = useState<
+    Set<string>
+  >(new Set());
+  const setHasNewNotification = useSetAtom(Atoms?.hasNewNotificationAtom);
 
   const {
     data: response,
@@ -39,7 +49,8 @@ const NotificationScreen = () => {
     refetch,
   } = useInfiniteQuery({
     queryKey: ["allNotifications"],
-    queryFn: ({ pageParam }) => fetchAllNotifications({ pageParam }),
+    queryFn: ({ pageParam }) =>
+      NOTIFICATION?.fetchAllNotifications({ pageParam }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
@@ -49,6 +60,32 @@ const NotificationScreen = () => {
       return undefined;
     },
   });
+
+  const mutationMarkAsReadMutation = useMutation({
+    mutationKey: ["markAsReadNotification"],
+    mutationFn: (payload: any) => NOTIFICATION?.markAsReadNotification(payload),
+    onSuccess: (response) => {
+      console.log("response while marking as read notification - ", response);
+      queryClient.invalidateQueries({ queryKey: ["allNotificationsCount"] });
+    },
+    onError: (err) => {
+      console.error("error while marking as read notification - ", err);
+    },
+  });
+
+  useEffect(() => {
+    visibleNotificationIdsRef.current = visibleNotificationIds;
+  }, [visibleNotificationIds]);
+
+  useEffect(() => {
+    return () => {
+      if (mutationMarkAsReadMutation) {
+        const notificationIds = [...visibleNotificationIdsRef.current];
+        if (notificationIds?.length > 0)
+          mutationMarkAsReadMutation.mutate({ notificationIds });
+      }
+    };
+  }, []);
 
   useEffect(() => {
     checkPermission();
@@ -61,7 +98,7 @@ const NotificationScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       const unsubscribe = setNotifications(
-        response?.pages.flatMap((page: any) => page?.notifications || [])
+        response?.pages?.flatMap((page: any) => page?.notifications || []) || []
       );
       return () => unsubscribe;
     }, [response])
@@ -82,75 +119,106 @@ const NotificationScreen = () => {
     setHasPermission(status === "granted");
   };
 
-  const renderNotification = ({ item, index }: any) => (
-    <TouchableOpacity
-      key={`${index}-${item?.data?.actionBy?.id}`}
-      style={styles.notificationItem}
-      onPress={() => router?.push(`/screens/users/${item?.data?.actionBy?.id}`)}
-    >
-      <View style={{ width: "55%", flexDirection: "row" }}>
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: any[] }) => {
+      const newVisibleIds = viewableItems
+        ?.filter((item) => !item?.item?.read)
+        ?.map((item) => item?.item?._id);
+
+      setVisibleNotificationIds((prevIds) => {
+        const updatedIds = new Set(prevIds);
+        newVisibleIds?.forEach((id) => updatedIds?.add(id));
+
+        if (updatedIds?.size !== prevIds?.size) {
+          return updatedIds;
+        }
+        return prevIds;
+      });
+    }
+  ).current;
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50, // Trigger when 50% of the item is visible
+  };
+
+  useEffect(() => {
+    // Update the visibleNotificationIds whenever new data is fetched
+    const newVisibleIds = notifications
+      ?.filter((item) => !item?.read)
+      ?.map((item) => item?._id);
+
+    setVisibleNotificationIds(new Set(newVisibleIds));
+  }, [notifications]); // Trigger this effect every time notifications change after a refetch
+
+  const renderNotification = ({ item }: any) => (
+    <View style={styles?.notificationItem}>
+      <View
+        style={{ width: "55%", flexDirection: "row", position: "relative" }}
+      >
         <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
-        <View style={styles.notificationContent}>
+        <View style={styles?.notificationContent}>
+          <View style={{ position: "absolute", top: 0, left: -20 }}>
+            {!item?.read && <RippleDot />}
+          </View>
           <CustomHeading textAlign="left">{item?.title}</CustomHeading>
           <CustomText textAlign="left">{item?.body}</CustomText>
         </View>
       </View>
       <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
-    </TouchableOpacity>
+    </View>
   );
 
   const RequestPermission = () => (
-    <View style={styles.container}>
+    <View style={styles?.container}>
       <CustomHeading textAlign="left">
         Get notifications about important things for you.
       </CustomHeading>
       <CustomText textAlign="left" style={{ marginBottom: 10 }}>
         We&#39;ll notify you when
       </CustomText>
-      <View style={styles.permissionItems}>
+      <View style={styles?.permissionItems}>
         <CustomText fontSize={14} textAlign="left">
           1. New service is arrived
         </CustomText>
         <CustomText fontSize={14} textAlign="left">
-          2. When any mediator create requirements
+          2. When any mediator creates requirements
         </CustomText>
         <CustomText fontSize={14} textAlign="left">
           3. When you got selected in the service
         </CustomText>
         <CustomText fontSize={14} textAlign="left">
-          4. When someone like you
+          4. When someone likes you
         </CustomText>
         <CustomText fontSize={14} textAlign="left">
-          5. When any mediator request you to join his team
+          5. When any mediator requests you to join his team
         </CustomText>
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
           title="Later"
           onPress={() => router?.back()}
-          style={styles.button}
-          textStyle={styles.buttonText}
+          style={styles?.button}
+          textStyle={styles?.buttonText}
         />
         <Button
           isPrimary={true}
-          title="Allow Notificatios"
+          title="Allow Notifications"
           onPress={requestPermission}
-          style={styles.button}
-          textStyle={styles.buttonText}
+          style={styles?.button}
+          textStyle={styles?.buttonText}
         />
       </View>
     </View>
   );
 
-  const HasPermissonZeroNotification = () => (
-    <View style={styles.container}>
+  const HasPermissionZeroNotification = () => (
+    <View style={styles?.container}>
       <MaterialIcons
         name="notifications"
         size={100}
-        style={styles.notificationIcon}
+        style={styles?.notificationIcon}
       />
-
       <CustomHeading>No notifications yet</CustomHeading>
       <CustomText>
         Your notifications will appear here once you’ve received them.
@@ -163,9 +231,11 @@ const NotificationScreen = () => {
     </View>
   );
 
-  const { refreshing, onRefresh } = usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
@@ -175,19 +245,21 @@ const NotificationScreen = () => {
         }}
       />
       <Loader loading={isLoading || isRefetching || isFetchingNextPage} />
-      <View style={styles.container}>
+      <View style={styles?.container}>
         {!hasPermission && RequestPermission()}
 
         {hasPermission &&
           notifications?.length === 0 &&
-          HasPermissonZeroNotification()}
+          HasPermissionZeroNotification()}
 
         {hasPermission && notifications?.length > 0 && (
           <FlatList
             data={memoizedData || []}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item?._id}
             renderItem={renderNotification}
             showsVerticalScrollIndicator={false}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
             ListFooterComponent={() => (
               <>
                 {hasNextPage ? (
