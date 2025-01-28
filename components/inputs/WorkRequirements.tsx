@@ -113,7 +113,7 @@ const WorkRequirment = ({
                     // emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
                     options={filterWorkerTypes(type, subType) ?? []}
                     icon={
-                      <CustomHeading fontSize={20} color={Colors?.secondary}>
+                      <CustomHeading baseFont={20} color={Colors?.secondary}>
                         {index + 1}
                       </CustomHeading>
                     }
@@ -172,7 +172,7 @@ const WorkRequirment = ({
         })}
       <View style={errors[name] && styles?.addMore}>
         {errors[name] && (
-          <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
             {errors[name]?.message || ""}
           </CustomText>
         )}

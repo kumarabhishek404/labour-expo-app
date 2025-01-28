@@ -18,13 +18,13 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
           {requirements?.map((requirement: any, index: number) => (
             <View key={index} style={styles.tag}>
               <CustomHeading
-                fontSize={14}
+                baseFont={14}
                 color={Colors?.white}
                 style={{ textTransform: "capitalize" }}
               >
                 {requirement?.count} {t(`${requirement?.name}`)}
               </CustomHeading>
-              <CustomText color={Colors?.white} fontSize={12}>
+              <CustomText color={Colors?.white} baseFont={12}>
                 ₹ {requirement?.payPerDay} {t("perDay")}
               </CustomText>
             </View>
@@ -51,7 +51,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                   <CustomHeading style={{ textTransform: "capitalize" }}>
                     {t(`${requirement?.name}`)}
                   </CustomHeading>
-                  <CustomText fontSize={14}>
+                  <CustomText baseFont={14}>
                     ₹ {requirement?.payPerDay} {t("perDay")}
                   </CustomText>
                 </View>

@@ -21,7 +21,7 @@ const HowAppWorks = () => {
       <View style={styles?.roleDescription}>
         <CustomHeading textAlign="left">
           {t("employer")} -{" "}
-          <CustomText fontSize={14} textAlign="left">
+          <CustomText baseFont={14} textAlign="left">
             {t("howAppWorkEmployer")}
           </CustomText>
         </CustomHeading>
@@ -30,14 +30,14 @@ const HowAppWorks = () => {
       <View style={styles?.roleDescription}>
         <CustomHeading textAlign="left">
           {t("worker")} -{" "}
-          <CustomText fontSize={14}>{t("howAppWorkWorker")}</CustomText>
+          <CustomText baseFont={14}>{t("howAppWorkWorker")}</CustomText>
         </CustomHeading>
       </View>
 
       <View style={styles?.roleDescription}>
         <CustomHeading textAlign="left">
           {t("mediator")} -{" "}
-          <CustomText fontSize={14}>{t("howAppWorkMediator")}</CustomText>
+          <CustomText baseFont={14}>{t("howAppWorkMediator")}</CustomText>
         </CustomHeading>
       </View>
     </View>

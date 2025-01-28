@@ -34,6 +34,9 @@ const hasNewNotificationAtom = atomWithStorage(
   asyncStorage
 );
 
+const LocaleAtom = atomWithStorage<any>("locale", {}, asyncStorage);
+
+
 // Bundle all atoms into an object
 const Atoms = {
   UserAtom,
@@ -45,6 +48,7 @@ const Atoms = {
   AccountStatusAtom,
   AddServiceAtom,
   hasNewNotificationAtom,
+  LocaleAtom
 };
 
 // Export the object as default

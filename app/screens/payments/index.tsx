@@ -144,7 +144,7 @@ const PaymentMethodsScreen = () => {
       >
         <CustomHeading
           textAlign="left"
-          fontSize={20}
+          baseFont={20}
           style={{ marginBottom: 10 }}
         >
           Payment methods
@@ -165,7 +165,7 @@ const PaymentMethodsScreen = () => {
 
         <CustomHeading
           textAlign="left"
-          fontSize={20}
+          baseFont={20}
           style={{ marginBottom: 10, marginTop: 20 }}
         >
           Transaction History

@@ -1,4 +1,4 @@
-import { fetchAllFeedbacks } from "@/app/api/admin";
+import ADMIN from "@/app/api/admin";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ const FeedbackScreen = () => {
     isRefetching,
   } = useQuery({
     queryKey: ["feedbacks"],
-    queryFn: () => fetchAllFeedbacks(),
+    queryFn: () => ADMIN?.fetchAllFeedbacks(),
     refetchOnMount: true,
     retry: false,
   });
@@ -62,7 +62,7 @@ const FeedbackScreen = () => {
           <CustomText textAlign="left" style={styles.userName}>
             {item?.sender?.name}
           </CustomText>
-          <CustomText textAlign="left" color="#757575" fontSize={12}>
+          <CustomText textAlign="left" color="#757575" baseFont={12}>
             {getTimeAgo(item?.createdAt)}
           </CustomText>
         </View>
@@ -70,7 +70,7 @@ const FeedbackScreen = () => {
         <CustomText textAlign="left" fontWeight="bold">
           {item?.feedbackType}
         </CustomText>
-        <CustomText textAlign="left" fontSize={14}>
+        <CustomText textAlign="left" baseFont={14}>
           {item?.description}
         </CustomText>
       </View>

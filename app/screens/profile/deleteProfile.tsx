@@ -82,11 +82,11 @@ const DeleteAccountScreen = () => {
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <CustomHeading fontSize={30}>?</CustomHeading>
+            <CustomHeading baseFont={30}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading fontSize={20}>Are you sure?</CustomHeading>
-        <CustomText fontSize={14}>
+        <CustomHeading baseFont={20}>Are you sure?</CustomHeading>
+        <CustomText baseFont={14}>
           You want to delete your account permanently. This action is
           irreversible and will lead to a loss of all your data.
         </CustomText>
@@ -127,13 +127,13 @@ const DeleteAccountScreen = () => {
                       <View style={styles.selectedRb} />
                     )}
                   </View>
-                  <CustomText fontSize={14}>{reason}</CustomText>
+                  <CustomText baseFont={14}>{reason}</CustomText>
                 </TouchableOpacity>
               ))}
               {errors?.selectedReasons && (
                 <CustomText
                   textAlign="left"
-                  fontSize={10}
+                  baseFont={10}
                   color={Colors?.danger}
                 >
                   {errors.selectedReasons.message}

@@ -39,7 +39,7 @@ const OnboardingScreen = () => {
         resizeMode="contain"
       />
       <CustomText
-        fontSize={24}
+        baseFont={24}
         fontWeight="bold"
         textAlign="center"
         color={Colors?.primary}
@@ -48,7 +48,7 @@ const OnboardingScreen = () => {
         {t(item.title)}
       </CustomText>
       <CustomText
-        fontSize={16}
+        baseFont={16}
         textAlign="center"
         color={Colors?.secondaryText}
         style={styles.description}

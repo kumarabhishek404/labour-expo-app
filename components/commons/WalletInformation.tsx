@@ -29,12 +29,12 @@ const WallletInformation = ({
           },
         ]}
       >
-        <CustomHeading fontSize={20}>₹ {wallet?.work || 0}</CustomHeading>
-        <CustomText fontSize={14}>{t("spents")}</CustomText>
+        <CustomHeading baseFont={20}>₹ {wallet?.work || 0}</CustomHeading>
+        <CustomText baseFont={14}>{t("spents")}</CustomText>
       </View>
       <View style={styles.infoBox}>
-        <CustomHeading fontSize={20}>₹ {wallet?.tip || 0}</CustomHeading>
-        <CustomText fontSize={14}>{t("tip")}</CustomText>
+        <CustomHeading baseFont={20}>₹ {wallet?.tip || 0}</CustomHeading>
+        <CustomText baseFont={14}>{t("tip")}</CustomText>
       </View>
     </View>
   );
@@ -50,12 +50,12 @@ const WallletInformation = ({
           },
         ]}
       >
-        <CustomHeading fontSize={20}>₹ {wallet?.work || 0}</CustomHeading>
-        <CustomText fontSize={14}>{t("earnings")}</CustomText>
+        <CustomHeading baseFont={20}>₹ {wallet?.work || 0}</CustomHeading>
+        <CustomText baseFont={14}>{t("earnings")}</CustomText>
       </View>
       <View style={styles.infoBox}>
-        <CustomHeading fontSize={20}>₹ {wallet?.rewards || 0}</CustomHeading>
-        <CustomText fontSize={14}>{t("rewards")}</CustomText>
+        <CustomHeading baseFont={20}>₹ {wallet?.rewards || 0}</CustomHeading>
+        <CustomText baseFont={14}>{t("rewards")}</CustomText>
       </View>
     </View>
   );

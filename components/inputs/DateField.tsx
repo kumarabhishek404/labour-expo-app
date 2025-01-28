@@ -40,7 +40,7 @@ const DateField: React.FC<DateFieldProps> = ({
         <View style={styles.dateItem}>
           <CustomHeading>{title}</CustomHeading>
           <View style={styles?.calendar}>
-            <CustomText fontSize={14} fontWeight="bold">
+            <CustomText baseFont={14} fontWeight="bold">
               {date ? moment(date).format("LL") : "dd/mm/yyyy"}
             </CustomText>
             <AntDesign name="calendar" size={24} color={Colors.secondary} />
@@ -59,7 +59,7 @@ const DateField: React.FC<DateFieldProps> = ({
       {errors[name] && (
         <CustomText
           textAlign="left"
-          fontSize={10}
+          baseFont={10}
           color={Colors?.danger}
           style={{ marginTop: 5 }}
         >

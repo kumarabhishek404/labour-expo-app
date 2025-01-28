@@ -1,11 +1,13 @@
+import LOCAL_CONTEXT from "@/app/context/locale";
 import Colors from "@/constants/Colors";
+import { getFontSize } from "@/constants/functions";
 import React from "react";
 import { Text, StyleSheet } from "react-native";
 
 interface CustomTextProps {
   children: any;
   color?: string;
-  fontSize?: number;
+  baseFont?: number;
   fontWeight?: string;
   textAlign?: string;
   margin?: number;
@@ -18,7 +20,7 @@ interface CustomTextProps {
 const CustomText = ({
   children,
   color = Colors?.text,
-  fontSize = 12,
+  baseFont = 16,
   fontWeight = "normal",
   textAlign = "center",
   margin = 0,
@@ -27,20 +29,21 @@ const CustomText = ({
   style,
   ...restProps
 }: CustomTextProps) => {
+  const { locale } = LOCAL_CONTEXT.useLocale();
   return (
     <Text
       style={[
         styles?.text,
         {
           color,
-          fontSize,
           fontWeight,
           textAlign,
           margin,
           padding,
-          lineHeight: lineHeight || fontSize * 1.5,
+          lineHeight: lineHeight || baseFont * 1.2,
         },
         style, // Any extra styles passed in
+        { fontSize: getFontSize(locale, baseFont) },
       ]}
       {...restProps} // Pass through any extra props to Text
     >

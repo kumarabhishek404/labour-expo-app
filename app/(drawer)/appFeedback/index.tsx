@@ -135,7 +135,7 @@ const FeedbackForm = () => {
                 {errors?.rating && (
                   <CustomText
                     textAlign="left"
-                    fontSize={10}
+                    baseFont={10}
                     color={Colors?.danger}
                     style={styles.errorText}
                   >
@@ -164,7 +164,7 @@ const FeedbackForm = () => {
           />
 
           {errors?.feedbackType && (
-            <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+            <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
               {errors.feedbackType.message}
             </CustomText>
           )}

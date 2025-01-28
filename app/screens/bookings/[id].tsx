@@ -102,7 +102,7 @@ const ServiceDetails = () => {
           )}
 
           <View style={styles.contentWrapper}>
-            <CustomHeading fontSize={18} textAlign="left">
+            <CustomHeading baseFont={18} textAlign="left">
               {t(booking?.type)} - {t(booking?.subType)}
             </CustomHeading>
             <View style={styles.listingLocationWrapper}>
@@ -129,7 +129,7 @@ const ServiceDetails = () => {
             <Highlights service={booking} />
 
             {booking?.description && (
-              <CustomText textAlign="left" fontSize={13}>
+              <CustomText textAlign="left" baseFont={13}>
                 {booking?.description}
               </CustomText>
             )}

@@ -7,7 +7,7 @@ import en from "../app/locales/en.json";
 import hi from "../app/locales/hi.json";
 import mr from "../app/locales/mr.json";
 import rj from "../app/locales/rj.json";
-import ba from "../app/locales/ba.json";
+import bn from "../app/locales/bn.json";
 import gu from "../app/locales/gu.json";
 import kn from "../app/locales/kn.json";
 import ks from "../app/locales/ks.json";
@@ -25,7 +25,7 @@ const i18n: any = new I18n({
   rj, // Rajasthani
   ta, // Tamil
   te, // Telugu
-  ba, // Bangali
+  bn, // Bangali
   gu, // Gujarati
   kn, // Kannad
   ks, // Kashmiri

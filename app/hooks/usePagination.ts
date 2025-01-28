@@ -47,4 +47,8 @@ function usePagination<T>(
   };
 }
 
-export default usePagination;
+const PAGINATION = {
+  usePagination
+}
+
+export default PAGINATION;

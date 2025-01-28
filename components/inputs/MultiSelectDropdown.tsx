@@ -43,7 +43,7 @@ const MultiSelectDropdownComponent = ({
               value.map((item: any, index: number) => (
                 <View key={index} style={styles.selectedItem}>
                   <CustomHeading
-                    fontSize={14}
+                    baseFont={14}
                     color={Colors?.white}
                     style={{ marginRight: 5 }}
                   >

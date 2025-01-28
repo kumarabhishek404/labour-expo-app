@@ -68,7 +68,7 @@ const Map = ({ data }: any) => {
         <Marker coordinate={data || initialRegion}>
           <Callout onPress={onCalloutPresses}>
             <View style={{ padding: 4 }}>
-              <CustomText fontSize={20}>{JSON.stringify(data)}</CustomText>
+              <CustomText baseFont={20}>{JSON.stringify(data)}</CustomText>
             </View>
           </Callout>
         </Marker>

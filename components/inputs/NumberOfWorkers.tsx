@@ -15,11 +15,11 @@ const NumberOfWorkers = ({
   return (
     <View style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <View style={styles.container}>
-        <CustomHeading fontSize={20}>{t('noOfWorkers')}</CustomHeading>
+        <CustomHeading baseFont={20}>{t('noOfWorkers')}</CustomHeading>
         <Counter counter={noOfWorkers || 0} setCounter={setNoOfWorkers} />
       </View>
       {errors[name] && (
-        <CustomText textAlign="right" fontSize={10} color={Colors?.danger}>
+        <CustomText textAlign="right" baseFont={10} color={Colors?.danger}>
           {errors[name]?.message || ""}
         </CustomText>
       )}

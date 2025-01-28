@@ -184,7 +184,7 @@ const User = () => {
               uri={user?.profilePicture}
               style={styles.workerImage}
             />
-            <CustomHeading textAlign="left" fontSize={20}>
+            <CustomHeading textAlign="left" baseFont={20}>
               {user?.name}
             </CustomHeading>
 
@@ -212,7 +212,7 @@ const User = () => {
                 >
                   <View style={{ flexDirection: "column" }}>
                     <CustomText textAlign="left">{t("rating")}</CustomText>
-                    <CustomHeading fontSize={14} textAlign="left">
+                    <CustomHeading baseFont={14} textAlign="left">
                       {user?.rating?.average || 0}
                     </CustomHeading>
                   </View>

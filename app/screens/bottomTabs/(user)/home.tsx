@@ -151,11 +151,7 @@ const UserHome = () => {
         }}
       />
 
-      <Loader
-        loading={
-          isLoading || isRefetching || isSecondLoading || isSecondRefetching
-        }
-      />
+      <Loader loading={isLoading || isSecondLoading} />
 
       <View style={styles.container}>
         <ScrollView
@@ -170,7 +166,7 @@ const UserHome = () => {
           <View style={{ paddingHorizontal: 10, paddingTop: 15 }}>
             {/* <CustomHeading
               textAlign="left"
-              fontSize={24}
+              baseFont={24}
               style={{ marginBottom: 10 }}
             >
               {t("welcome")} {userDetails?.name}

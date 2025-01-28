@@ -92,10 +92,10 @@ const HomePageLinks = () => {
             onPress={() => router.push(link?.path)}
           >
             <View style={styles.textContainer}>
-              <CustomHeading textAlign="left" fontSize={12}>
+              <CustomHeading textAlign="left" baseFont={16}>
                 {link.title}
               </CustomHeading>
-              <CustomText textAlign="left" fontSize={10}>
+              <CustomText textAlign="left" baseFont={12}>
                 {link.subtitle}
               </CustomText>
             </View>

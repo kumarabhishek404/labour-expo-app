@@ -89,7 +89,7 @@ const ServiceDetails = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["serviceDetails"],
+    queryKey: ["serviceDetails", id],
     queryFn: async () => await SERVICE?.getServiceById(id),
     retry: false,
     enabled: !!id,
@@ -373,7 +373,7 @@ const ServiceDetails = () => {
               </View>
             )}
 
-            <CustomHeading fontSize={18} textAlign="left">
+            <CustomHeading baseFont={18} textAlign="left">
               {t(service?.type)} - {t(service?.subType)}
             </CustomHeading>
             <View style={styles.listingLocationWrapper}>
@@ -399,7 +399,7 @@ const ServiceDetails = () => {
 
             <Highlights service={service} />
 
-            <CustomText textAlign="left" fontSize={13}>
+            <CustomText textAlign="left" baseFont={13}>
               {service?.description}
             </CustomText>
 
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: Colors?.tertiery,
+    backgroundColor: Colors?.success,
   },
   listingLocationWrapper: {
     flexDirection: "row",

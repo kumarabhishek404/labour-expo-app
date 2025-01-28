@@ -108,7 +108,7 @@ const ShareAppScreen = () => {
         }}
       />
       <View style={styles.container}>
-        <CustomHeading fontSize={24}>Share Our App With Your Family</CustomHeading>
+        <CustomHeading baseFont={24}>Share Our App With Your Family</CustomHeading>
 
         <View style={styles.iconContainer}>
           <TouchableOpacity onPress={() => shareToSocialMedia("whatsapp")}>

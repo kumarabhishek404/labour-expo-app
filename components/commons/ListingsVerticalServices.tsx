@@ -155,7 +155,7 @@ const ListingsVerticalServices = ({
                       color={Colors.primary}
                     />
                     <CustomText
-                      fontSize={10}
+                      baseFont={10}
                       textAlign="left"
                       style={{ marginLeft: 5 }}
                     >
@@ -166,7 +166,7 @@ const ListingsVerticalServices = ({
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Entypo name="calendar" size={14} color={Colors.primary} />
                     <CustomText
-                      fontSize={10}
+                      baseFont={10}
                       textAlign="left"
                       style={{ marginLeft: 5 }}
                     >

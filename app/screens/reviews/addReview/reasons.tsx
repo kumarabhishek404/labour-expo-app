@@ -27,7 +27,7 @@ const ReasoneSelection = ({ reason, setReason, onBlur }: RoleSelectionProps) => 
             ]}
             onPress={() => handleSelectReason(selectedReason)}
           >
-            <CustomText fontSize={14}>{t(selectedReason?.label)}</CustomText>
+            <CustomText baseFont={14}>{t(selectedReason?.label)}</CustomText>
             <View
               style={[
                 styles.radioCircle,

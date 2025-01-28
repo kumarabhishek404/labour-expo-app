@@ -117,10 +117,10 @@ const ForgetPasswordScreen = () => {
       <View style={styles.container}>
         <Image source={Step2} style={styles.image} />
         <View style={styles.textContainer}>
-          <CustomHeading textAlign="left" fontSize={24}>
+          <CustomHeading textAlign="left" baseFont={24}>
             {t("hey")}
           </CustomHeading>
-          <CustomHeading textAlign="left" fontSize={24}>
+          <CustomHeading textAlign="left" baseFont={24}>
             {t("resetYour")}
           </CustomHeading>
         </View>

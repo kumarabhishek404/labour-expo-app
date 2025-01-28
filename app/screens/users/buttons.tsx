@@ -263,7 +263,15 @@ const ButtonContainer = ({
             bgColor={
               isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
             }
-            style={styles?.footerFirstBtn}
+            style={[
+              {
+                borderColor:
+                  isInYourTeam || isUserRequested
+                    ? Colors.danger
+                    : Colors.primary,
+              },
+              styles?.footerFirstBtn,
+            ]}
             title={
               isInYourTeam
                 ? t("leaveFromTeam")

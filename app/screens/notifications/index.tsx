@@ -177,19 +177,19 @@ const NotificationScreen = () => {
         We&#39;ll notify you when
       </CustomText>
       <View style={styles?.permissionItems}>
-        <CustomText fontSize={14} textAlign="left">
+        <CustomText baseFont={14} textAlign="left">
           1. New service is arrived
         </CustomText>
-        <CustomText fontSize={14} textAlign="left">
+        <CustomText baseFont={14} textAlign="left">
           2. When any mediator creates requirements
         </CustomText>
-        <CustomText fontSize={14} textAlign="left">
+        <CustomText baseFont={14} textAlign="left">
           3. When you got selected in the service
         </CustomText>
-        <CustomText fontSize={14} textAlign="left">
+        <CustomText baseFont={14} textAlign="left">
           4. When someone likes you
         </CustomText>
-        <CustomText fontSize={14} textAlign="left">
+        <CustomText baseFont={14} textAlign="left">
           5. When any mediator requests you to join his team
         </CustomText>
       </View>

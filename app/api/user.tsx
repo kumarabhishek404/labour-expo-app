@@ -6,7 +6,10 @@ import { t } from "@/utils/translationHelper";
 
 const register = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequestFormData("/auth/register", payload);
+    const data = await API_CLIENT.makePostRequestFormData(
+      "/auth/register",
+      payload
+    );
     TOAST?.showToast?.success("Your account has registered successfully");
     router.push("/screens/auth/login");
     return data?.data;
@@ -28,7 +31,9 @@ const forgotPassword = async (payload: any) => {
       `/auth/forgot-password-code`,
       payload
     );
-    TOAST?.showToast?.success("Password reset code is sent to your email successfully");
+    TOAST?.showToast?.success(
+      "Password reset code is sent to your email successfully"
+    );
     return response;
   } catch (error: any) {
     console.log(
@@ -45,7 +50,10 @@ const forgotPassword = async (payload: any) => {
 
 const resetPassword = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePatchRequest(`/auth/set-forgot-password`, payload);
+    const data = await API_CLIENT.makePatchRequest(
+      `/auth/set-forgot-password`,
+      payload
+    );
     TOAST?.showToast?.success("Password Reset successfully");
     return data;
   } catch (error: any) {
@@ -104,7 +112,10 @@ const updateUserById = async (payload: any) => {
 
 const updateUserRoleById = async (payload: any) => {
   try {
-    const resposne = await API_CLIENT.makePatchRequest(`/auth/set-role`, payload);
+    const resposne = await API_CLIENT.makePatchRequest(
+      `/auth/set-role`,
+      payload
+    );
     TOAST?.showToast?.success("Role updated successfully");
     return resposne;
   } catch (error: any) {
@@ -145,7 +156,10 @@ const uploadFile = async (file: any) => {
     file
   );
   try {
-    const data = await API_CLIENT.makePostRequestFormData("/user/upload-pic", file);
+    const data = await API_CLIENT.makePostRequestFormData(
+      "/user/upload-pic",
+      file
+    );
     TOAST?.showToast?.success(t("fileUploadedSuccessfully"));
     console.log(
       "[userService] File uploaded successfully with file location",
@@ -282,7 +296,7 @@ const addAppFeedback = async (payload: any) => {
 
 const leaveTeam = async () => {
   try {
-    const data = await API_CLIENT.makePostRequest(`/user/leave-org`);
+    const data = await API_CLIENT.makePostRequest(`/request/leave-org`);
     return data.data;
   } catch (error: any) {
     console.error(
@@ -300,7 +314,10 @@ const checkMobileExistance = async (payload: any) => {
   console.log("Pay---", payload);
 
   try {
-    const response: any = await API_CLIENT.makePostRequest("/user/check-mobile", payload);
+    const response: any = await API_CLIENT.makePostRequest(
+      "/user/check-mobile",
+      payload
+    );
     return response;
   } catch (error: any) {
     console.log(

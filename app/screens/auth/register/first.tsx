@@ -89,14 +89,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
   const modalContent = () => (
     <View style={{ paddingVertical: 20 }}>
-      <CustomText fontSize={18} fontWeight="bold">
+      <CustomText baseFont={18} fontWeight="bold">
         {t("confirmYourMobileNumber")}
       </CustomText>
-      <CustomText fontSize={16} color="#555">
+      <CustomText baseFont={16} color="#555">
         {t("isYourCorrectNumber")}
       </CustomText>
       <CustomText
-        fontSize={20}
+        baseFont={20}
         fontWeight="bold"
         color={Colors?.primary}
         style={{ letterSpacing: 1 }}
@@ -192,7 +192,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       />
 
       <View style={styles.footerContainer}>
-        <CustomText fontSize={14}>{t("alreadyHaveAnAccount")}</CustomText>
+        <CustomText baseFont={14}>{t("alreadyHaveAnAccount")}</CustomText>
         <Link href="/screens/auth/login" asChild>
           <TouchableOpacity>
             <CustomHeading color={Colors?.link}>{t("signIn")}</CustomHeading>

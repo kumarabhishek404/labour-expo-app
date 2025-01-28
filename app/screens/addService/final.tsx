@@ -112,25 +112,25 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
                         <View style={styles.details}>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             {t("count")}
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             {t("food")}
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             {t("living")}
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             {t("esi/pf")}

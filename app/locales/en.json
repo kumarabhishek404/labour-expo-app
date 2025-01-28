@@ -55,7 +55,7 @@
   "users": "Users",
   "mediators": "Mediators",
   "myServices": "My Services",
-  "myBookings": "My Bookings",
+  "myBookings": "Bookings",
   "aboutWorkers": "People who help in doing work.",
   "aboutMyServices": "See the work you have posted.",
   "aboutServices": "Find work and services near you.",
@@ -164,7 +164,7 @@
   "editService": "Edit Service",
   "addService": "Add Service",
   "addNeed": "Add Need",
-  "myProfile": "My Profile",
+  "myProfile": "Profile",
 
   "titleDescription": "Title & Description",
   "addressDate": "Address & Date",

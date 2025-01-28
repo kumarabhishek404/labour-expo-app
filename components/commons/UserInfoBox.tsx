@@ -93,9 +93,9 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
 
   const modalContent = () => (
     <View style={{ paddingVertical: 20 }}>
-      <CustomHeading fontSize={50}>✉️</CustomHeading>
+      <CustomHeading baseFont={50}>✉️</CustomHeading>
       <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
-      <CustomHeading fontSize={18} color={Colors?.tertiery}>
+      <CustomHeading baseFont={18} color={Colors?.tertiery}>
         ({user?.email?.value})
       </CustomHeading>
       <CustomText>{t("weVeSentACodeTo")}</CustomText>
@@ -143,14 +143,14 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
               styles.firstBox,
           ]}
         >
-          <CustomHeading textAlign="left" fontSize={14} padding={12}>
+          <CustomHeading textAlign="left" baseFont={14} padding={12}>
             <CustomText>{t("address")}</CustomText>
             {"  "}
             {user?.address || t("addressNotFound")}
           </CustomHeading>
         </View>
         <View style={styles.row}>
-          <CustomHeading fontSize={14} padding={12}>
+          <CustomHeading baseFont={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
             {user?._id === userDetails?._id
@@ -160,7 +160,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         </View>
         <View style={[styles.row, styles.lastBox]}>
           <CustomHeading
-            fontSize={14}
+            baseFont={14}
             padding={12}
             style={styles?.verifyEmailBtnWrapper}
           >

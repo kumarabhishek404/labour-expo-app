@@ -86,7 +86,7 @@ const GroupEmployersListing = ({
                 style={{ marginRight: 5 }}
                 color={Colors.primary}
               />
-              <CustomHeading fontSize={14}>
+              <CustomHeading baseFont={14}>
                 {`${30} ${t("services")}`}{" "}
               </CustomHeading>
               <CustomText>{`${10} ${t("active")}`}</CustomText>

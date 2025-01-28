@@ -29,7 +29,7 @@ const ReasoneSelection = ({
             ]}
             onPress={() => handleSelectReason(reason)}
           >
-            <CustomText fontSize={14}>{reason.label}</CustomText>
+            <CustomText baseFont={14}>{reason.label}</CustomText>
             <View
               style={[
                 styles.radioCircle,

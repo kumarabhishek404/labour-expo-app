@@ -41,7 +41,7 @@ const Chat = ({ chatVisible, setChatVisible }: ChatProps) => {
       <KeyboardAvoidingView behavior="height" style={styles.chatModalContainer}>
         <View style={styles.chatScreen}>
           <View style={styles.chatHeader}>
-            <CustomHeading textAlign="left" fontSize={22}>
+            <CustomHeading textAlign="left" baseFont={22}>
               Chat with Support
             </CustomHeading>
             <TouchableOpacity onPress={() => setChatVisible(false)}>

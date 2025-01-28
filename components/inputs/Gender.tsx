@@ -38,7 +38,7 @@ const Gender = ({
           ))}
       </View>
       {errors[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
           {errors[name]?.message || ""}
         </CustomText>
       )}

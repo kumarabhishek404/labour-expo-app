@@ -39,7 +39,7 @@ const InactiveAccountMessage = () => {
   const modalContent = () => (
     <View style={styles.modalContentContainer}>
       <CustomHeading>{t("inactiveModalHeading")}</CustomHeading>
-      <CustomText fontSize={14}>{t("inactiveModalMessage")}</CustomText>
+      <CustomText baseFont={14}>{t("inactiveModalMessage")}</CustomText>
     </View>
   );
 
@@ -49,10 +49,10 @@ const InactiveAccountMessage = () => {
       <View style={styles.container}>
         <View style={styles.gradientBackground}>
           <FontAwesome name="exclamation-circle" size={80} color="#fff" />
-          <CustomHeading fontSize={20} color={Colors?.white}>
+          <CustomHeading baseFont={20} color={Colors?.white}>
             {t("inactiveHeading")}
           </CustomHeading>
-          <CustomText color={Colors?.white} fontSize={14}>
+          <CustomText color={Colors?.white} baseFont={14}>
             {t("inactiveMessage")}
           </CustomText>
 

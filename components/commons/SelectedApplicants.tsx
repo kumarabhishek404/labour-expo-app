@@ -133,7 +133,7 @@ const SelectedApplicants = ({
                 <View style={styles.productInfo}>
                   <View style={styles?.titleContainer}>
                     <View style={{ gap: 2, marginBottom: 4 }}>
-                      <CustomHeading fontSize={14}>
+                      <CustomHeading baseFont={14}>
                         {item?.name}
                       </CustomHeading>
                       <CustomText style={styles.caption}>

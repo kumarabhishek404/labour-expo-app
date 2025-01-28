@@ -80,7 +80,7 @@ const CategoryButtons = ({
               color={activeIndex === index ? Colors.white : Colors.black}
             />
             <CustomText
-              fontSize={13}
+              baseFont={13}
               style={
                 activeIndex === index
                   ? styles.categoryBtnTxtActive

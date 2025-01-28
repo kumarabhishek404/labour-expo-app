@@ -62,7 +62,7 @@ const HelpScreen = () => {
         onPress={() => toggleSection(item.id)}
         style={styles.topicCard}
       >
-        <CustomHeading fontSize={30}>{item.icon}</CustomHeading>
+        <CustomHeading baseFont={30}>{item.icon}</CustomHeading>
         <View style={styles.topicTextContainer}>
           <CustomHeading textAlign="left">{item.title}</CustomHeading>
           <CustomText textAlign="left">{item.articles}</CustomText>
@@ -83,7 +83,7 @@ const HelpScreen = () => {
               onPress={() => openModal(item)}
               style={styles.questionButton}
             >
-              <CustomText fontSize={14}>{item.question}</CustomText>
+              <CustomText baseFont={14}>{item.question}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -121,7 +121,7 @@ const HelpScreen = () => {
               {t("our24x7CustomerService")}
             </CustomHeading>
             <TouchableOpacity onPress={() => Linking.openURL("tel:6397308499")}>
-              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+              <CustomText textAlign="left" baseFont={16} color={Colors?.link}>
                 6397308499
               </CustomText>
             </TouchableOpacity>
@@ -141,7 +141,7 @@ const HelpScreen = () => {
                 Linking.openURL("mailto:fastag.recharge@support.com")
               }
             >
-              <CustomText textAlign="left" fontSize={16} color={Colors?.link}>
+              <CustomText textAlign="left" baseFont={16} color={Colors?.link}>
                 ak7192837@gmail.com
               </CustomText>
             </TouchableOpacity>
@@ -166,7 +166,7 @@ const HelpScreen = () => {
                 style={styles.questionButton}
                 onPress={() => openModal(q)}
               >
-                <CustomHeading fontSize={14}>{q.question}</CustomHeading>
+                <CustomHeading baseFont={14}>{q.question}</CustomHeading>
               </TouchableOpacity>
             ))}
             {filteredQuestions.length === 0 && (
@@ -187,10 +187,10 @@ const HelpScreen = () => {
                 style={styles.faqCard}
                 onPress={() => openModal(item)}
               >
-                <CustomHeading fontSize={30} style={{ marginBottom: 10 }}>
+                <CustomHeading baseFont={30} style={{ marginBottom: 10 }}>
                   {item.icon}
                 </CustomHeading>
-                <CustomText textAlign="left" fontSize={14}>
+                <CustomText textAlign="left" baseFont={14}>
                   {item.question}
                 </CustomText>
               </TouchableOpacity>
@@ -234,7 +234,7 @@ const HelpScreen = () => {
                 <CustomHeading textAlign="left">
                   {selectedQuestion.question}
                 </CustomHeading>
-                <CustomText fontSize={14} textAlign="left">
+                <CustomText baseFont={14} textAlign="left">
                   {selectedQuestion.answer}
                 </CustomText>
 

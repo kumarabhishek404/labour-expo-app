@@ -146,7 +146,7 @@ const AddReview = () => {
               {errors?.rating && (
                 <CustomText
                   textAlign="left"
-                  fontSize={10}
+                  baseFont={10}
                   color={Colors?.danger}
                 >
                   {errors.rating.message}
@@ -172,7 +172,7 @@ const AddReview = () => {
         />
 
         {errors?.feedbackType && (
-          <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+          <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
             {errors.feedbackType.message}
           </CustomText>
         )}

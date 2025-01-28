@@ -131,7 +131,7 @@ const EmailAddressField = ({
         <View style={styles.otpContainer}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <CustomHeading fontSize={50}>✉️</CustomHeading>
+              <CustomHeading baseFont={50}>✉️</CustomHeading>
               <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
               <CustomText>{t("weVeSentACodeTo")}</CustomText>
 

@@ -211,7 +211,7 @@ const ProfileNotification: React.FC = () => {
       <Loader loading={mutationUpdateProfileInfo?.isPending || isLoading} />
       <CustomText
         textAlign="left"
-        fontSize={14}
+        baseFont={14}
         color={Colors?.white}
         style={styles?.text}
       >

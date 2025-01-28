@@ -126,25 +126,25 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
                         <View style={styles.details}>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             Count
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             Food
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             Living
                           </CustomHeading>
                           <CustomHeading
-                            fontSize={14}
+                            baseFont={14}
                             color={Colors?.secondaryText}
                           >
                             ESI / PF

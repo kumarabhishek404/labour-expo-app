@@ -19,7 +19,7 @@ const EmptyDatePlaceholder = ({ title }: any) => {
         source={EmptyPlaceholder}
         style={{ width: 100, height: 100, marginBottom: 10 }}
       />
-      <CustomText fontSize={12}>Not Found Any {title}</CustomText>
+      <CustomText baseFont={12}>Not Found Any {title}</CustomText>
     </View>
   );
 };

@@ -26,7 +26,7 @@ const TeamDetails = ({ type, user }: any) => {
             },
           ]}
         >
-          <CustomHeading fontSize={16} fontWeight="bold" color={Colors?.white}>
+          <CustomHeading baseFont={16} fontWeight="bold" color={Colors?.white}>
             {user?.employedBy === userDetails?._id
               ? t("alreadyJoinedInYourTeam")
               : t("alreadyJoinedTeam")}
@@ -43,7 +43,7 @@ const TeamDetails = ({ type, user }: any) => {
               }}
             >
               <CustomHeading
-                fontSize={16}
+                baseFont={16}
                 fontWeight="bold"
                 color={Colors?.white}
               >

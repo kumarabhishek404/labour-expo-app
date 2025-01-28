@@ -294,3 +294,26 @@ export const handleMessage = () => {
 export const handleEmail = () => {
   Linking.openURL("mailto:example@example.com");
 };
+
+const FONT_SIZE_MULTIPLIER: any = {
+  en: 0.8,
+  hi: 0.8,
+  mr: 0.8,
+  rj: 0.8,
+  ta: 0.7,
+  gu: 0.8,
+  bn: 0.8,
+  pa: 0.8,
+  te: 0.7,
+  kn: 0.7,
+  ml: 0.7,
+  ks: 0.8,
+  ur: 0.8,
+};
+
+const BASE_FONT_SIZE = 16; // Base font size in pixels
+
+export const getFontSize = (locale: string, baseSize = BASE_FONT_SIZE) => {
+  const multiplier = FONT_SIZE_MULTIPLIER[locale] || 1;
+  return baseSize * multiplier;
+};

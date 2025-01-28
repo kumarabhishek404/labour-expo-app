@@ -50,7 +50,7 @@
   "cancelled": "रद्द",
   "totalServices": "सभी काम",
   "myServices": "मेरे सारे काम",
-  "myBookings": "मेरी बुकिंग्स",
+  "myBookings": "बुकिंग्स",
   "myLikes": "मेरी पसंद",
   "services": "सेवाएं",
   "mediators": "ठेकेदार",
@@ -160,7 +160,7 @@
   "editService": "काम संपादित करें",
   "addService": "काम जोड़ें",
   "addNeed": "आवश्यकता जोड़ें",
-  "myProfile": "मेरा प्रोफ़ाइल",
+  "myProfile": "प्रोफ़ाइल",
 
   "titleDescription": "शीर्षक और विवरण",
   "addressDate": "पता और तिथि",

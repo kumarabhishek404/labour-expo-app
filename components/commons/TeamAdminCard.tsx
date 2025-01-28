@@ -66,13 +66,13 @@ const TeamAdminCard = ({ admin }: any) => {
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <CustomHeading fontSize={34}>?</CustomHeading>
+            <CustomHeading baseFont={34}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading fontSize={20}>
+        <CustomHeading baseFont={20}>
           {t("leaveThisTeamQuestion")}
         </CustomHeading>
-        <CustomText fontSize={14}>{t("leaveThisTeamSubHeading")}</CustomText>
+        <CustomText baseFont={14}>{t("leaveThisTeamSubHeading")}</CustomText>
         <CustomText>{t("leaveThisTeamSubText")}</CustomText>
       </View>
     );

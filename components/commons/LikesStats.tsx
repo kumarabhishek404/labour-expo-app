@@ -12,7 +12,7 @@ const StatsCard = () => {
   return (
     <View style={styles.container}>
       <View>
-        <CustomHeading fontSize={20}>
+        <CustomHeading baseFont={20}>
           {userDetails?.role === "EMPLOYER"
             ? userDetails?.serviceDetails?.total || 0
             : userDetails?.appliedServices?.length || 0}
@@ -24,7 +24,7 @@ const StatsCard = () => {
         </CustomText>
       </View>
       <View>
-        <CustomHeading fontSize={20}>
+        <CustomHeading baseFont={20}>
           {userDetails?.likedBy?.length || 0}
         </CustomHeading>
         <CustomText>{t("myLikes")}</CustomText>

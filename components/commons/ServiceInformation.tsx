@@ -31,7 +31,7 @@ const ServiceInformation = ({
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <CustomHeading fontSize={26}>
+            <CustomHeading baseFont={26}>
               {information?.total || 0}
             </CustomHeading>
             <MaterialCommunityIcons
@@ -41,11 +41,11 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>{t("totalServices")}</CustomText>
+          <CustomText baseFont={14}>{t("totalServices")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <CustomHeading fontSize={26}>
+            <CustomHeading baseFont={26}>
               {information?.completed || 0}
             </CustomHeading>
             <Ionicons
@@ -54,7 +54,7 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>
+          <CustomText baseFont={14}>
             {t("completed")} {/* Translation for "Completed" */}
           </CustomText>
         </View>
@@ -70,7 +70,7 @@ const ServiceInformation = ({
           ]}
         >
           <View style={styles?.iconWrapper}>
-            <CustomHeading fontSize={26}>
+            <CustomHeading baseFont={26}>
               {information?.pending || 0}
             </CustomHeading>
             <MaterialCommunityIcons
@@ -79,16 +79,16 @@ const ServiceInformation = ({
               color={Colors.primary}
             />
           </View>
-          <CustomText fontSize={14}>{t("pending")}</CustomText>
+          <CustomText baseFont={14}>{t("pending")}</CustomText>
         </View>
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
-            <CustomHeading fontSize={26}>
+            <CustomHeading baseFont={26}>
               {information?.cancelled || 0}
             </CustomHeading>
             <Fontisto name="close" size={24} color={Colors.primary} />
           </View>
-          <CustomText fontSize={14}>{t("cancelled")}</CustomText>
+          <CustomText baseFont={14}>{t("cancelled")}</CustomText>
         </View>
       </View>
     </View>

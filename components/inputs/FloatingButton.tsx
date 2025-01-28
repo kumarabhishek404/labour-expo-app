@@ -6,18 +6,20 @@ import { router } from "expo-router";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
+import { useRouter } from "expo-router";
 
 const FloatingButton = memo(function FloatingButton() {
-  const navigation = useNavigation();
   const route = useRoute();
 
+  console.log("route--", route);
+  
   // Define screens where the FAB should not appear
-  const excludedScreens = ["AddServiceScreen", "AnotherScreenToExclude"];
+  const excludedScreens = ["/drawer/settings/changeLanguage"];
 
-  // Check if the current screen is excluded
-  if (excludedScreens.includes(route.name)) {
-    return null;
-  }
+  // // Check if the current screen is excluded
+  // if (excludedScreens.includes()) {
+  //   return null;
+  // }
 
   return (
     <TouchableOpacity
@@ -26,7 +28,7 @@ const FloatingButton = memo(function FloatingButton() {
     >
       <View style={styles.iconContainer}>
         <Entypo name="plus" size={22} color="#fff" />
-        <CustomText fontSize={14} fontWeight="bold" color={Colors?.white}>
+        <CustomText baseFont={14} fontWeight="bold" color={Colors?.white}>
           {t("newService")}
         </CustomText>
       </View>

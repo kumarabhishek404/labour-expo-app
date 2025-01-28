@@ -377,11 +377,11 @@ const ServiceActionButtons = ({
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <CustomHeading fontSize={26}>?</CustomHeading>
+            <CustomHeading baseFont={26}>?</CustomHeading>
           </View>
         </View>
         <CustomHeading>{t("areYouSure")}</CustomHeading>
-        <CustomHeading fontSize={14}>{t("wantToDeleteService")}</CustomHeading>
+        <CustomHeading baseFont={14}>{t("wantToDeleteService")}</CustomHeading>
         <CustomText>{t("irreversibleAction")}</CustomText>
       </View>
     );
@@ -487,11 +487,11 @@ const ServiceActionButtons = ({
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <CustomHeading fontSize={26}>?</CustomHeading>
+            <CustomHeading baseFont={26}>?</CustomHeading>
           </View>
         </View>
         <CustomHeading>{t("areYouSure")}</CustomHeading>
-        <CustomHeading fontSize={14}>
+        <CustomHeading baseFont={14}>
           {t("wantToCompleteService")}
         </CustomHeading>
         <CustomText>{t("restoreSerivceText")}</CustomText>

@@ -32,7 +32,7 @@ const ModalComponent = ({
         <View style={styles.container}>
           {/* Header with gradient and improved styling */}
           <View style={styles.header}>
-            <CustomHeading fontSize={18} color={Colors?.white} textAlign="left">
+            <CustomHeading baseFont={18} color={Colors?.white} textAlign="left">
               {title ? title : t("title")}
             </CustomHeading>
             <TouchableOpacity onPress={onClose}>

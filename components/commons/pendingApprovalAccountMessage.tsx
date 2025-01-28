@@ -11,10 +11,10 @@ const PendingApprovalMessage = () => {
     <View style={styles.container}>
       <View style={styles.background}>
         <FontAwesome name="hourglass-half" size={80} color="#fff" />
-        <CustomHeading fontSize={20} color={Colors?.white}>
+        <CustomHeading baseFont={20} color={Colors?.white}>
           {t("pendingApprovalHeading")}
         </CustomHeading>
-        <CustomText color={Colors?.white} fontSize={14}>
+        <CustomText color={Colors?.white} baseFont={14}>
           {t("pendingApprovalMessage")}
         </CustomText>
       </View>

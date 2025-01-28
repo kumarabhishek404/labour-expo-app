@@ -108,7 +108,7 @@ const LocationField = ({
             return (
               <CustomHeading
                 textAlign="left"
-                fontSize={12}
+                baseFont={12}
                 style={{ padding: 10 }}
               >
                 {item.label}

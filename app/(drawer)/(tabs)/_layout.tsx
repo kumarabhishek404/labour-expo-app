@@ -26,6 +26,7 @@ import { t } from "@/utils/translationHelper";
 import LanguageSelectionScreen from "../../languageSelection";
 import ProfileScreen from "../../screens/bottomTabs/(user)/profile";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { getFontSize } from "@/constants/functions";
 
 export default function Layout() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -33,6 +34,7 @@ export default function Layout() {
   const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
   LOCAL_CONTEXT?.useLocale();
   const isFirstLaunch = useFirstTimeLaunch();
+  const { locale } = LOCAL_CONTEXT.useLocale();
 
   if (isFirstLaunch === null) {
     return null;
@@ -69,6 +71,7 @@ export default function Layout() {
           style={[
             styles.customButtonText,
             isSelected && styles.selectedButtonText,
+            { fontSize: getFontSize(locale) },
           ]}
         >
           {title}
@@ -182,17 +185,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderTopWidth: 6,
-    borderColor: Colors?.primary,
-    padding: 10,
+    // borderTopWidth: 6,
+    // borderColor: Colors?.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   selectedCustomButton: {
     backgroundColor: Colors?.primary,
   },
   customButtonText: {
     color: Colors?.primary,
-    fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
   selectedButtonText: {
     color: "white",

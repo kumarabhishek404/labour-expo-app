@@ -16,20 +16,20 @@ const OurMission = () => {
 
       <View style={styles.divider}></View>
 
-      <CustomText fontSize={14}>{t("ourMissonDescription1")}</CustomText>
+      <CustomText baseFont={14}>{t("ourMissonDescription1")}</CustomText>
 
-      <CustomText fontSize={14}>{t("ourMissonDescription2")}</CustomText>
+      <CustomText baseFont={14}>{t("ourMissonDescription2")}</CustomText>
 
 
       {/* <View style={styles.iconsRow}>
         <View style={styles.iconContainer}>
           <AntDesign name="staro" size={40} color="#1F3E72" />
-          <CustomHeading fontSize={14}>{t("vision")}</CustomHeading>
+          <CustomHeading baseFont={14}>{t("vision")}</CustomHeading>
         </View>
 
         <View style={styles.iconContainer}>
           <FontAwesome6 name="medal" size={40} color="#1F3E72" />
-          <CustomHeading fontSize={14}>{t("missions")}</CustomHeading>
+          <CustomHeading baseFont={14}>{t("missions")}</CustomHeading>
         </View>
 
         <View style={styles.iconContainer}>
@@ -38,7 +38,7 @@ const OurMission = () => {
             size={40}
             color="#1F3E72"
           />
-          <CustomHeading fontSize={14}>{t("goals")}</CustomHeading>
+          <CustomHeading baseFont={14}>{t("goals")}</CustomHeading>
         </View>
       </View> */}
     </View>

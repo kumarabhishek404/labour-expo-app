@@ -19,7 +19,7 @@ const Counter = ({ counter, setCounter, style }: any) => {
         <TouchableOpacity style={[styles.button, style]} onPress={handleClick1}>
           <Foundation style={styles.counterIcon} name="plus" size={28} />
         </TouchableOpacity>
-        <CustomHeading fontSize={30}>{counter}</CustomHeading>
+        <CustomHeading baseFont={30}>{counter}</CustomHeading>
         <TouchableOpacity
           disabled={counter === 0}
           style={[styles.button, style]}

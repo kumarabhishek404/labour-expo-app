@@ -41,11 +41,11 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
               <Entypo name="lock" size={20} color={Colors?.white} />
             )}
           </View>
-          <CustomText fontWeight="500" fontSize={10}>
+          <CustomText fontWeight="500" baseFont={10}>
             {t(step.label)}
           </CustomText>
           <CustomText
-            fontSize={10}
+            baseFont={10}
             fontWeight="600"
             color={
               index < activeStep

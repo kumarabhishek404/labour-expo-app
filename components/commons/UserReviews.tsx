@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import CustomHeading from "./CustomHeading";
 import PaginationControls from "./Pagination/PaginationControls";
-import { usePagination } from "@/app/hooks/usePagination";
+import PAGINATION from "@/app/hooks/usePagination";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
-import { addReview, deleteReview, getAllReviews } from "@/app/api/rating";
+import RATING from "@/app/api/rating";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { t } from "@/utils/translationHelper";
@@ -91,7 +91,7 @@ const UserReviews = forwardRef(
       refetch,
     } = useQuery({
       queryKey: ["reviews", workerId],
-      queryFn: () => getAllReviews({ id: workerId }),
+      queryFn: () => RATING?.getAllReviews({ id: workerId }),
     });
 
     const sortReviews = (reviews: Review[]) => {
@@ -122,7 +122,7 @@ const UserReviews = forwardRef(
       goToNextPage,
       goToPreviousPage,
       setCurrentPage,
-    } = usePagination(filteredReviews || [], {
+    } = PAGINATION.usePagination(filteredReviews || [], {
       totalItems: filteredReviews?.length || 0,
       itemsPerPage,
     });
@@ -142,7 +142,7 @@ const UserReviews = forwardRef(
     const mutationDeleteReview = useMutation({
       mutationKey: ["deleteReview", { id: workerId }],
       mutationFn: (reviewId: string) =>
-        deleteReview({
+        RATING?.deleteReview({
           id: workerId,
           reviewId,
         }),
@@ -198,7 +198,7 @@ const UserReviews = forwardRef(
             <Text style={styles.rating}>{item?.rating}</Text>
             <StarRating rating={item?.rating} />
           </View>
-          <CustomText textAlign="left" fontSize={14} fontWeight="600">
+          <CustomText textAlign="left" baseFont={14} fontWeight="600">
             {t(item?.ratingType)}
           </CustomText>
           <CustomText textAlign="left">{item?.comment}</CustomText>
@@ -221,7 +221,7 @@ const UserReviews = forwardRef(
         />
         <CustomHeading
           textAlign="left"
-          fontSize={18}
+          baseFont={18}
           style={{ marginBottom: 10 }}
         >
           {t("reviews")}

@@ -172,12 +172,12 @@ const SkillsSelector = ({
             </TouchableOpacity>
           ))
         ) : (
-          <CustomText fontSize={14}>{t("whatYouCanDo")}</CustomText>
+          <CustomText baseFont={14}>{t("whatYouCanDo")}</CustomText>
         )}
       </View>
 
       {errors[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
           {errors[name]?.message || ""}
         </CustomText>
       )}

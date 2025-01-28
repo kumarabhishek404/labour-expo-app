@@ -9,9 +9,12 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
 import LOCAL_CONTEXT from "@/app/context/locale";
-import { t } from "@/utils/translationHelper";
+import { useSetAtom } from "jotai";
+import Atoms from "../AtomStore";
 
 const LanguageSelectionScreen = () => {
+  const setLocaleValue = useSetAtom(Atoms?.LocaleAtom);
+
   const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const router = useRouter();
@@ -20,6 +23,9 @@ const LanguageSelectionScreen = () => {
     if (selectedLanguage) {
       await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
       setLocale(selectedLanguage);
+      setLocaleValue({
+        language: selectedLanguage,
+      });
       // router.push("/");
       router?.push("/screens/userTipForAppUse");
     }
@@ -27,7 +33,7 @@ const LanguageSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <CustomHeading fontSize={20}>कृपया अपनी भाषा चुनें</CustomHeading>
+      <CustomHeading baseFont={20}>कृपया अपनी भाषा चुनें</CustomHeading>
       <View style={styles.languageList}>
         {LANGUAGES.map((language) => (
           <TouchableOpacity

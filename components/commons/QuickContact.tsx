@@ -11,12 +11,12 @@ const QuickContact = () => {
     <View style={styles.container}>
       <View style={styles.contactContainer}>
         <View style={styles.contactInfo}>
-          <CustomHeading fontSize={18}>ABHISHEK KUMAR</CustomHeading>
+          <CustomHeading baseFont={18}>ABHISHEK KUMAR</CustomHeading>
           <CustomText style={styles.contactJob}>CEO of KAAM DEKHO</CustomText>
-          <CustomText fontSize={14} fontWeight="500">
+          <CustomText baseFont={14} fontWeight="500">
             +91 6394743923
           </CustomText>
-          <CustomText fontSize={14} fontWeight="500">
+          <CustomText baseFont={14} fontWeight="500">
             ceo@kaamdekho.com
           </CustomText>
         </View>

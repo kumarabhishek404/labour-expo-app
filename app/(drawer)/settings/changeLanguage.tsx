@@ -10,11 +10,27 @@ import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import Animated, { SlideInDown } from "react-native-reanimated";
 import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
+import { useMutation } from "@tanstack/react-query";
+import USER from "@/app/api/user";
 
 export default function LanguageSelectionScreen() {
   const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
+
+  const mutationUpdateProfileInfo = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
+    onSuccess: (response) => {
+      console.log(
+        "Response while updating the profile - ",
+        response?.data?.data?.email
+      );
+    },
+    onError: (err) => {
+      console.error("error while updating the profile ", err);
+    },
+  });
 
   useEffect(() => {
     setSelectedLanguage(locale);
@@ -23,6 +39,9 @@ export default function LanguageSelectionScreen() {
   const handleSave = async () => {
     setLocale(selectedLanguage);
     await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
+    await mutationUpdateProfileInfo?.mutate({
+      language: selectedLanguage,
+    });
     router?.back();
   };
 
@@ -41,11 +60,17 @@ export default function LanguageSelectionScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <CustomHeader title="Change Language" left="menu" right="notification" />,
+          header: () => (
+            <CustomHeader
+              title="Change Language"
+              left="menu"
+              right="notification"
+            />
+          ),
         }}
       />
       <View style={styles.container}>
-        <CustomHeading textAlign="left" fontSize={18}>
+        <CustomHeading textAlign="left" baseFont={22}>
           Selected Language
         </CustomHeading>
         <FlatList
@@ -59,7 +84,7 @@ export default function LanguageSelectionScreen() {
           ]}
           renderItem={({ item }) => (
             <View style={styles.languageItem}>
-              <CustomText fontSize={16}>{item?.label}</CustomText>
+              <CustomText baseFont={18}>{item?.label}</CustomText>
               <TouchableOpacity style={styles.radioSelected} />
             </View>
           )}
@@ -67,7 +92,7 @@ export default function LanguageSelectionScreen() {
           keyExtractor={(item) => item.value}
         />
 
-        <CustomHeading textAlign="left" fontSize={18}>
+        <CustomHeading textAlign="left" baseFont={20}>
           Available Languages
         </CustomHeading>
         <FlatList
@@ -77,7 +102,7 @@ export default function LanguageSelectionScreen() {
               style={styles.languageItem}
               onPress={() => setSelectedLanguage(item?.value)}
             >
-              <CustomText fontSize={16}>{item.label}</CustomText>
+              <CustomText baseFont={22}>{item.label}</CustomText>
               <View
                 style={
                   selectedLanguage === item?.value
@@ -88,6 +113,7 @@ export default function LanguageSelectionScreen() {
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item?.value}
+          showsVerticalScrollIndicator={false}
         />
 
         <Animated.View

@@ -38,13 +38,15 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
       onPress={() => handleServicePress(work._id)}
     >
       <View style={styles.headerRow}>
-        <CustomHeading
-          fontSize={16}
-          textAlign="left"
-          style={styles.serviceName}
-        >
-          {work?.type} - {work?.subType}
-        </CustomHeading>
+        {(work?.type || work?.subType) && (
+          <CustomHeading
+            baseFont={16}
+            textAlign="left"
+            style={styles.serviceName}
+          >
+            {work?.type} - {work?.subType}
+          </CustomHeading>
+        )}
         <CustomText style={styles.date}>
           {new Date(work.startDate).toLocaleDateString()}
         </CustomText>
@@ -58,7 +60,9 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
         </View>
 
         <View style={styles.footerRow}>
-          <CustomText style={styles.address}>📍 {work.address}</CustomText>
+          <CustomText style={styles.address} textAlign="left">
+            📍 {work.address}
+          </CustomText>
           <CustomText style={styles.duration}>
             ⏱️ {work.duration} {t("days")}
           </CustomText>
@@ -96,7 +100,7 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
 
   return (
     <View style={styles.container}>
-      <CustomHeading fontSize={18} textAlign="left">
+      <CustomHeading baseFont={18} textAlign="left">
         {t("workHistory")}
       </CustomHeading>
 
@@ -158,6 +162,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   address: {
+    width: "80%",
     fontSize: 12,
     color: Colors.white,
   },

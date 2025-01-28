@@ -74,7 +74,7 @@ const ReviewScreen = () => {
               <CustomHeading style={styles.userName}>
                 {item?.reviewer?.name}
               </CustomHeading>
-              <CustomText textAlign="left" fontSize={12}>
+              <CustomText textAlign="left" baseFont={12}>
                 {getTimeAgo(item?.createdAt)}
               </CustomText>
             </View>
@@ -85,7 +85,7 @@ const ReviewScreen = () => {
           </View>
         </View>
 
-        <CustomText textAlign="left" fontWeight="bold" fontSize={14}>
+        <CustomText textAlign="left" fontWeight="bold" baseFont={14}>
           {t(item?.ratingType)}
         </CustomText>
         <CustomText textAlign="left">{item?.comment}</CustomText>
@@ -131,12 +131,12 @@ const ReviewScreen = () => {
         {memoizedData?.length > 0 && (
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <CustomHeading fontSize={24}>{stats.average}</CustomHeading>
+              <CustomHeading baseFont={24}>{stats.average}</CustomHeading>
               <StarRating rating={stats.average} />
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <CustomHeading fontSize={24}>{stats.total}</CustomHeading>
+              <CustomHeading baseFont={24}>{stats.total}</CustomHeading>
               <CustomText>{t("totalReviews")}</CustomText>
             </View>
           </View>
@@ -156,7 +156,7 @@ const ReviewScreen = () => {
           ListEmptyComponent={() => (
             <View style={styles.emptyContainer}>
               <Image source={EmptyPlaceholder} style={styles.emptyImage} />
-              <CustomText fontSize={16} fontWeight="bold">
+              <CustomText baseFont={16} fontWeight="bold">
                 {t("noReviewsYet")}
               </CustomText>
             </View>

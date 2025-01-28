@@ -367,11 +367,11 @@ export default function DrawerLayout() {
       <View style={styles.modalView}>
         <View style={styles.iconContainer}>
           <View style={styles.iconCircle}>
-            <CustomHeading fontSize={34}>?</CustomHeading>
+            <CustomHeading baseFont={34}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading fontSize={20}>{t("areYouSure")}</CustomHeading>
-        <CustomText fontSize={14}>{t("deactivateMessage")}</CustomText>
+        <CustomHeading baseFont={20}>{t("areYouSure")}</CustomHeading>
+        <CustomText baseFont={14}>{t("deactivateMessage")}</CustomText>
         <CustomText>{t("deactivateMessageText")}</CustomText>
       </View>
     );
@@ -446,6 +446,8 @@ export default function DrawerLayout() {
     );
   };
 
+  console.log("userDetails--", userDetails?.status, userDetails?.isAuth, userDetails?._id);
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -540,8 +542,8 @@ export default function DrawerLayout() {
       <StatusBar style="light" backgroundColor={Colors?.primary} />
       {userDetails?.isAuth &&
         (userDetails?.role === "EMPLOYER" ||
-          userDetails?.role === "MEDIATOR") && <FloatingButton />}
-    </GestureHandlerRootView>
+          userDetails?.role === "MEDIATOR") && userDetails?._id && userDetails?.status === "ACTIVE" && <FloatingButton />}
+    </GestureHandlerRootView> 
   );
 }
 

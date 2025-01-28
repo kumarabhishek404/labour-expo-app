@@ -336,46 +336,31 @@ const UserProfile = () => {
         {(userDetails?.status === "SUSPENDED" ||
           userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
         {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
-        <View
-          style={[
-            styles?.changeRoleWrapper,
-            userDetails?.status !== "ACTIVE" && {
-              pointerEvents: "none",
-              opacity: 0.5,
-            },
-          ]}
-        >
-          {/* <Button
-            disabled={false}
-            style={styles?.mediatorButton}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title="Change Role"
-            onPress={handleChangeRole}
-          /> */}
-
+        <View style={styles?.changeRoleWrapper}>
           <Button
             disabled={false}
-            style={{ ...styles?.mediatorButton, width: "54%" }}
+            style={{ ...styles?.mediatorButton, width: "45%" }}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
             title={t("refreshUser")}
             onPress={handleRefreshUser}
           />
-          <Button
-            style={{
-              ...styles?.mediatorButton,
-              width: "40%",
-              backgroundColor: Colors?.black,
-              borderColor: Colors?.black,
-            }}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title={t("editProfile")}
-            onPress={() => {
-              return !isEditProfile && handleEditProfile();
-            }}
-          />
+          <View
+            style={[
+              userDetails?.status !== "ACTIVE" && styles?.disableButton,
+              { width: "42%" },
+            ]}
+          >
+            <Button
+              textStyle={styles?.mediatorButtonText}
+              isPrimary={true}
+              title={t("editProfile")}
+              onPress={() => {
+                return !isEditProfile && handleEditProfile();
+              }}
+              style={[styles?.mediatorButton]}
+            />
+          </View>
           <ModalComponent
             visible={isEditProfile}
             title={t("editProfile")}
@@ -459,6 +444,7 @@ const styles = StyleSheet.create({
   },
   changeRoleWrapper: {
     paddingHorizontal: 20,
+    marginTop: 10,
     marginBottom: 20,
     display: "flex",
     flexDirection: "row",
@@ -487,9 +473,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",
-    paddingVertical: 6,
-    paddingHorizontal: 25,
-    marginTop: 16,
   },
   mediatorButtonText: {
     fontWeight: "500",
@@ -511,7 +494,6 @@ const styles = StyleSheet.create({
   textInput2: {
     flex: 1,
     paddingHorizontal: 10,
-    // fontFamily: fonts.Light,
   },
   errorInput: {
     borderWidth: 1,
@@ -526,5 +508,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
+  },
+  disableButton: {
+    pointerEvents: "none",
+    opacity: 0.5,
+    width: "45%",
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "baseline",
   },
 });

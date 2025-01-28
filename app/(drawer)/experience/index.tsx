@@ -48,7 +48,7 @@ const Experience = () => {
     >
       <View style={styles.headerRow}>
         <CustomHeading
-          fontSize={16}
+          baseFont={16}
           textAlign="left"
           style={styles.serviceName}
         >

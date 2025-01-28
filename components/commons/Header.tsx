@@ -96,7 +96,7 @@ const CustomHeader = ({
           </TouchableOpacity>
         )}
 
-        <CustomHeading fontSize={20} color={Colors?.white}>
+        <CustomHeading baseFont={20} color={Colors?.white}>
           {title}
         </CustomHeading>
 

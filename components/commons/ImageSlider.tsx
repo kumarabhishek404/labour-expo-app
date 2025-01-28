@@ -39,7 +39,7 @@ const ImageSlider = ({ images }: any) => {
         {images?.map((i: any, k: any) => (
           <CustomHeading
             key={k}
-            fontSize={50}
+            baseFont={50}
             color={k === active ? Colors?.white : Colors?.secondary}
           >
             •

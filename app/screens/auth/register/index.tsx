@@ -15,8 +15,11 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import Step2 from "../../../../assets/step2.jpg";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const SignupScreen = () => {
+  const locale = useAtomValue(Atoms?.LocaleAtom);
   const [step, setStep] = useState(1);
   const [name, setFirstName] = useState("");
   const [gender, setGender] = useState("");
@@ -92,6 +95,7 @@ const SignupScreen = () => {
 
     formData.append("name", name);
     formData.append("address", address);
+    formData.append("locale", locale);
     formData.append("location", JSON.stringify(cleanLocation));
     formData.append("countryCode", countryCode);
     formData.append("mobile", phoneNumber);
@@ -198,19 +202,19 @@ const SignupScreen = () => {
       <View style={styles.container}>
         {step === 4 ? (
           <View style={styles.textContainer}>
-            <CustomHeading textAlign="left" fontSize={22}>
+            <CustomHeading textAlign="left" baseFont={22}>
               {t("clickSelfie")}
             </CustomHeading>
-            <CustomHeading textAlign="left" fontSize={22}>
+            <CustomHeading textAlign="left" baseFont={22}>
               {t("toVerify")}
             </CustomHeading>
           </View>
         ) : (
           <View style={styles.textContainer}>
-            <CustomHeading textAlign="left" fontSize={22}>
+            <CustomHeading textAlign="left" baseFont={22}>
               {t("hello")}
             </CustomHeading>
-            <CustomHeading textAlign="left" fontSize={22}>
+            <CustomHeading textAlign="left" baseFont={22}>
               {t("makeNewAccount")}
             </CustomHeading>
           </View>

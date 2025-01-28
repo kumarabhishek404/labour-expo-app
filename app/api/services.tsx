@@ -49,6 +49,8 @@ const editService = async (payload: any) => {
 };
 
 const getServiceById = async (id: any) => {
+  console.log("id--", id);
+  
   try {
     const { data } = await API_CLIENT.makeGetRequest(`/service/service-info/${id}`);
     return data;

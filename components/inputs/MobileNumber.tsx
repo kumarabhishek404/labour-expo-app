@@ -126,7 +126,7 @@ const MobileNumberField = ({
 
   // const modalContent = () => (
   //   <View>
-  //     <CustomHeading fontSize={50}>✉️</CustomHeading>
+  //     <CustomHeading baseFont={50}>✉️</CustomHeading>
   //     <CustomHeading>{t("pleaseCheckYourEmail")}</CustomHeading>
   //     <CustomText>{t("weVeSentACodeTo")}</CustomText>
 
@@ -181,7 +181,7 @@ const MobileNumberField = ({
             onChange={(item) => setCountryCode(item.value)}
             showsVerticalScrollIndicator={true}
             renderLeftIcon={() => (
-              <CustomHeading textAlign="left" fontSize={14}>
+              <CustomHeading textAlign="left" baseFont={14}>
                 {t("countryCode")}
               </CustomHeading>
             )}
@@ -197,14 +197,14 @@ const MobileNumberField = ({
         >
           <CustomHeading
             textAlign="left"
-            fontSize={16}
+            baseFont={16}
             color={Colors?.secondaryText}
           >
             {t("note")}
             {"  "}
             <CustomText
               textAlign="left"
-              fontSize={15}
+              baseFont={15}
               color={Colors?.secondaryText}
             >
               {t("enterActiveNumber")}
@@ -238,7 +238,7 @@ const MobileNumberField = ({
               }}
             >
               {icon && icon}
-              <CustomHeading fontSize={18}>{countryCode}</CustomHeading>
+              <CustomHeading baseFont={18}>{countryCode}</CustomHeading>
             </View>
           }
         />

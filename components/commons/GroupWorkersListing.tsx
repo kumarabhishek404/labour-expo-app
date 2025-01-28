@@ -70,7 +70,7 @@ const GroupWorkersListing = ({
             style={styles.image}
           />
           <View>
-            <CustomHeading textAlign="left" fontSize={14}>
+            <CustomHeading textAlign="left" baseFont={14}>
               {item.name}
             </CustomHeading>
             <RatingAndReviews

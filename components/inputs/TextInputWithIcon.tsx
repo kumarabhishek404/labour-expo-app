@@ -101,12 +101,12 @@ const TextInputComponent = ({
         )}
       </View>
       {isMobileNumberExist && !errors?.[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
           {loading ? "Wait..." : "Mobile number already exists"}
         </CustomText>
       )}
       {errors?.[name] && (
-        <CustomText textAlign="left" fontSize={10} color={Colors?.danger}>
+        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
           {errors[name]?.message || ""}
         </CustomText>
       )}

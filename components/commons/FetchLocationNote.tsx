@@ -15,9 +15,9 @@ const FetchLocationNote = ({ motiveItem }: any) => {
     !userDetails.location.latitude ||
     !userDetails.location.longitude;
 
-  //   if (!shouldRender) {
-  //     return null; // Don't render the component
-  //   }
+    if (!shouldRender) {
+      return null; // Don't render the component
+    }
 
   return (
     <View style={styles.container}>

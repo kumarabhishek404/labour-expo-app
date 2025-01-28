@@ -220,11 +220,11 @@ const SkillSelector = ({
             </View>
           ))
         ) : (
-          <CustomText fontSize={14}>{t("noSkillsFound")}</CustomText>
+          <CustomText baseFont={14}>{t("noSkillsFound")}</CustomText>
         )}
 
         {count && count < userSkills?.length && (
-          <CustomText color={Colors?.link} fontSize={18}>
+          <CustomText color={Colors?.link} baseFont={18}>
             ...
           </CustomText>
         )}
