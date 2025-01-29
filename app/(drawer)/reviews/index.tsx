@@ -21,6 +21,7 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
 import EmptyPlaceholder from "@/assets/empty-placeholder.png";
 import ProfilePicture from "@/components/commons/ProfilePicture";
+import FloatingButton from "@/components/inputs/FloatingButton";
 
 const StarRating = ({ rating }: any) => {
   const fullStars = Math.floor(rating);
@@ -163,6 +164,13 @@ const ReviewScreen = () => {
           )}
         />
       </View>
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") &&
+        userDetails?._id &&
+        userDetails?.status === "ACTIVE" && (
+          <FloatingButton style={{ bottom: 10 }} />
+        )}
     </>
   );
 };

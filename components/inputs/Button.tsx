@@ -18,6 +18,7 @@ type ButtonProps = {
   style?: any;
   textStyle?: any;
   bgColor?: string;
+  borderColor?: string;
   textColor?: string;
   loading?: boolean;
   disabled?: boolean;
@@ -31,6 +32,7 @@ export default function Button({
   style,
   textStyle,
   bgColor,
+  borderColor,
   textColor,
   loading,
   disabled,
@@ -43,7 +45,7 @@ export default function Button({
   const containerStyles = {
     backgroundColor: bgColor || (isPrimary ? Colors.primary : Colors.white),
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: borderColor || Colors.primary,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 8,

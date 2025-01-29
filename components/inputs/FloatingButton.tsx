@@ -1,29 +1,17 @@
 import React, { memo } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { Entypo, Feather } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
-import { useRouter } from "expo-router";
 
-const FloatingButton = memo(function FloatingButton() {
-  const route = useRoute();
-
-  console.log("route--", route);
-  
+const FloatingButton = memo(function FloatingButton({ style }: any) {
   // Define screens where the FAB should not appear
-  const excludedScreens = ["/drawer/settings/changeLanguage"];
-
-  // // Check if the current screen is excluded
-  // if (excludedScreens.includes()) {
-  //   return null;
-  // }
 
   return (
     <TouchableOpacity
-      style={styles.fab}
+      style={[styles.fab, style]}
       onPress={() => router?.push("/screens/addService")}
     >
       <View style={styles.iconContainer}>
@@ -42,8 +30,6 @@ const styles = StyleSheet.create({
     bottom: 80,
     right: 8,
     backgroundColor: Colors?.tertiery,
-    // width: 60,
-    // height: 60,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 30,

@@ -1,6 +1,8 @@
+import EventEmitter from "eventemitter3"; // ✅ Correct import
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
-import { router } from "expo-router";
+
+const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
@@ -11,191 +13,139 @@ const getHeaders = async (retries = 3, delay = 500) => {
         Authorization: `Bearer ${parsedUser.token}`,
       };
     } else if (retries > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
-      return getHeaders(retries - 1, delay); // Retry after delay
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return getHeaders(retries - 1, delay);
     } else {
-      return {
-        Authorization: "",
-      };
+      return { Authorization: "" };
     }
   } catch (error) {
     console.error("Error retrieving token from AsyncStorage:", error);
-    return {
-      Authorization: "",
-    };
+    return { Authorization: "" };
   }
 };
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
-  // headers: async () => {
-  //   try {
-  //     const user:any = await AsyncStorage.getItem("user");
-  //     // const parsedUser = user ? JSON.parse(user) : null;
-
-  //     if (user?.token) {
-  //       return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
-  //     }
-  //     return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
-  //   } catch (error) {
-  //     console.error("Error retrieving token from AsyncStorage:", error);
-  //     return { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRiMTZlZmNkZGFlYmVlMzYzNmI3MTgiLCJpYXQiOjE3MjU4OTI4NzMsImV4cCI6MTcyNTg5NjQ3M30.x5HbEJscmdUS-iAzTa1GR0NS7J7ExcYEw79z-GzTDqU` };
-  //   }
-  // },
 });
 
-// AsyncStorage.removeItem("user");
-// router.push("/screens/auth/login");
-
+// ✅ Interceptor: Handle Token Expiry and Emit Logout Event
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response) {
+      const errorMessage = error.response.data.message;
+      const statusText = error.response.statusText;
+
       if (
-        (error.response.status === 400 &&
-          error.response.data.message === "jwt expired") ||
-        error.response.data.message === "jwt malformed" ||
-        error.response.statusText === "TokenExpiredError" ||
-        error.response.statusText === "Unautorized Request"
+        (error.response.status === 400 && errorMessage === "jwt expired") ||
+        errorMessage === "jwt malformed" ||
+        statusText === "TokenExpiredError" ||
+        statusText === "Unauthorized Request"
       ) {
-        AsyncStorage.removeItem("user");
-        router.push("/screens/auth/login");
+        console.warn("Token expired. Logging out...");
+        eventEmitter.emit("logout"); // ✅ Emit logout event
       }
     } else if (error.request) {
       console.error("No response received:", error.request);
     } else {
       console.error("Request error:", error.message);
     }
-    throw error;
+    return Promise.reject(error);
   }
 );
 
+// ✅ API Request Functions
 const makeGetRequest = async (
   url: string,
-  headers?: { [key: string]: string },
-  responseType:
-    | "arraybuffer"
-    | "blob"
-    | "document"
-    | "json"
-    | "text"
-    | "stream" = "json"
+  headers?: object,
+  responseType: any = "json"
 ): Promise<any> => {
-  const response = await api.get(url, {
-    headers: {
-      ...(await getHeaders()),
-      // ...headers,
-    },
+  return api.get(url, {
+    headers: { ...(await getHeaders()), ...headers },
     responseType,
   });
-  return response;
 };
 
 const makePostRequest = async (
   url: string,
   body?: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response = await api.post(url, body, {
-    headers: {
-      // ...api.defaults.headers.common,
-      ...(await getHeaders()),
-      // ...headers,
-    },
+  return api.post(url, body, {
+    headers: { ...(await getHeaders()), ...headers },
   });
-  return response;
 };
 
 const makePostRequestFormData = async (
   url: string,
   body: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response: any = await api.post(url, body, {
+  return api.post(url, body, {
     headers: {
-      // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      // ...headers,
+      ...headers,
     },
   });
-  return response;
 };
 
 const makePutRequest = async (
   url: string,
   body: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response = await api.put(url, body, {
-    headers: {
-      // ...api.defaults.headers.common,
-      ...(await getHeaders()),
-      // ...headers,
-    },
+  return api.put(url, body, {
+    headers: { ...(await getHeaders()), ...headers },
   });
-  return response;
 };
 
 const makePutRequestFormData = async (
   url: string,
   body: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response: any = await api.put(url, body, {
+  return api.put(url, body, {
     headers: {
-      // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      // ...headers,
+      ...headers,
     },
   });
-  return response;
 };
 
 const makePatchRequest = async (
   url: string,
   body?: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response = await api.patch(url, body, {
-    headers: {
-      // ...api.defaults.headers.common,
-      ...(await getHeaders()),
-      // ...headers,
-    },
+  return api.patch(url, body, {
+    headers: { ...(await getHeaders()), ...headers },
   });
-  return response;
 };
 
 const makePatchRequestFormData = async (
   url: string,
   body: object,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response: any = await api.patch(url, body, {
+  return api.patch(url, body, {
     headers: {
-      // ...api.defaults.headers.common,
       ...(await getHeaders()),
       "Content-Type": "multipart/form-data",
-      // ...headers,
+      ...headers,
     },
   });
-  return response;
 };
 
 const makeDeleteRequest = async (
   url: string,
-  headers?: { [key: string]: string }
+  headers?: object
 ): Promise<AxiosResponse> => {
-  const response = await api.delete(url, {
-    headers: {
-      ...(await getHeaders()),
-    },
-  });
-  return response;
+  return api.delete(url, { headers: { ...(await getHeaders()), ...headers } });
 };
 
+// Export API Client & Event Emitter
 const API_CLIENT = {
   makeGetRequest,
   makePostRequest,
@@ -205,6 +155,7 @@ const API_CLIENT = {
   makePatchRequest,
   makePatchRequestFormData,
   makeDeleteRequest,
+  eventEmitter
 };
 
 export default API_CLIENT;

@@ -12,7 +12,7 @@
   "earnings": "വരുമാനം",
   "rewards": "പ്രതിഫലങ്ങൾ",
   "yourTeam": "നിങ്ങളുടെ ടീം",
-  "requests": "അഭ്യർത്ഥനകൾ",
+  "requests": "ടീമിൽ ചേരാനുള്ള അഭ്യർത്ഥനകൾ",
   "mediatorRequests": "മീഡിയേറ്റർ അഭ്യർത്ഥനകൾ",
   "savedServices": "സംരക്ഷിച്ച സേവനങ്ങൾ",
   "booked": "ബുക്ക് ചെയ്തു",
@@ -566,7 +566,8 @@
   "cancelBooking": "ബുക്കിംഗ് റദ്ദാക്കുക",
   "cancelBookingRequest": "ബുക്കിംഗ് അഭ്യർത്ഥന റദ്ദാക്കുക",
   "bookWorker": "തൊഴിലാളിയെ ബുക്ക് ചെയ്യുക",
-  "bookings": "ബുക്കിംഗുകൾ",
+  "bookings": "നേരിട്ടുള്ള ബുക്കിംഗ്",
+  "receivedDirectBookingRequests": "ലഭിച്ച നേരിട്ടുള്ള ബുക്കിംഗ് അഭ്യർത്ഥനകൾ",
   "bookingsAndRequest": "ബുക്കിംഗുകളും അഭ്യർത്ഥനയും",
   "bookedWorker": "ബുക്ക് ചെയ്ത തൊഴിലാളി",
 

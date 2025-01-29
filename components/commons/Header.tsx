@@ -9,10 +9,8 @@ import { useAtomValue } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
 import { DrawerActions } from "@react-navigation/native";
-import CustomText from "./CustomText";
-import { t } from "@/utils/translationHelper";
 import RippleDot from "./RippleDot";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import NOTIFICATION from "@/app/api/notification";
 
 interface CustomHeaderProps {
@@ -38,11 +36,11 @@ const CustomHeader = ({
     useState<number>(0);
 
   const { data: response } = useQuery({
-    queryKey: ["allNotificationsCount"],
+    queryKey: ["allNotificationsCount", userDetails?._id],
     queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
     retry: false,
     refetchInterval: 20000,
-    enabled: !!userDetails?._id,
+    enabled: !!userDetails?._id, // API will stop when userDetails is null
   });
 
   useEffect(() => {
@@ -54,7 +52,6 @@ const CustomHeader = ({
   return (
     <>
       <View style={styles.headerContainer}>
-        
         {left === "menu" && (
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}

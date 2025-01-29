@@ -268,12 +268,12 @@ export const EMPLOYER_BOOKINGS = [
 
 export const WORKER_BOOKINGS = [
   {
-    label: "myBookings",
+    label: "bookings",
     value: "booking",
     iconName: "city",
   },
   {
-    label: "receivedRequest",
+    label: "receivedDirectBookingRequests",
     value: "request",
     iconName: "city",
   },

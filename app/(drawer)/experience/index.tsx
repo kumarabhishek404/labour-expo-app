@@ -13,6 +13,7 @@ import CustomText from "@/components/commons/CustomText";
 import Requirements from "@/components/commons/Requirements";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Atoms from "@/app/AtomStore";
+import FloatingButton from "@/components/inputs/FloatingButton";
 
 const Experience = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -122,7 +123,11 @@ const Experience = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter type="services" data={filteredData} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="services"
+            data={filteredData}
+            setFilteredData={setFilteredData}
+          />
 
           <PaginationString
             type="requests"
@@ -162,6 +167,13 @@ const Experience = () => {
           )}
         </View>
       </View>
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") &&
+        userDetails?._id &&
+        userDetails?.status === "ACTIVE" && (
+          <FloatingButton style={{ bottom: 10 }} />
+        )}
     </>
   );
 };

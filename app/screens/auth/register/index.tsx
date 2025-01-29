@@ -95,7 +95,7 @@ const SignupScreen = () => {
 
     formData.append("name", name);
     formData.append("address", address);
-    formData.append("locale", locale);
+    formData.append("locale", JSON.stringify(locale));
     formData.append("location", JSON.stringify(cleanLocation));
     formData.append("countryCode", countryCode);
     formData.append("mobile", phoneNumber);

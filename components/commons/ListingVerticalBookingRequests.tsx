@@ -293,7 +293,7 @@ const RequestCardUser = React.memo(
             {isSender && (
               <Button
                 isPrimary={true}
-                title="Cancel"
+                title={t("cancel")}
                 onPress={() => onCancelRequest(item?.receiver?._id)}
                 style={styles?.btn}
                 bgColor={Colors?.danger}

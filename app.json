@@ -9,7 +9,7 @@
     "icon": "./assets/app/adaptive-icon.png",
     "splash": {
       "image": "./assets/app/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "jsEngine": "hermes",
@@ -32,6 +32,11 @@
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/app/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "image": "./assets/app/splash.png",
+        "resizeMode": "cover",
         "backgroundColor": "#ffffff"
       }
     },

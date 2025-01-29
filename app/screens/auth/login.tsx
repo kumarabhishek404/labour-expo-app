@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -24,11 +24,13 @@ import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
 import Step2 from "../../../assets/step2.jpg";
+import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
+  const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
 
   const {
     control,
@@ -91,6 +93,17 @@ const LoginScreen = () => {
             location: locationData.location,
           });
         }
+      }
+
+      console.log("notificationConsent--", notificationConsent);
+
+      try {
+        await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+          user?.notificationConsent
+        );
+        console.log("Notifications enabled");
+      } catch (err) {
+        console.error("Failed to enable notifications", err);
       }
     },
     onError: (err) => {

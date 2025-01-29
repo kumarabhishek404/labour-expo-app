@@ -4,6 +4,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
 import Loader from "@/components/commons/Loader";
 import Button from "@/components/inputs/Button";
+import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { useAtom } from "jotai";
@@ -153,7 +154,7 @@ const ChangeRoleScreen = () => {
         <View style={styles.buttonContainer}>
           <Button
             isPrimary={false}
-            title="Cancel"
+            title={t("cancel")}
             onPress={() => router.back()}
           />
           <Button

@@ -94,7 +94,7 @@ const ListingsVerticalBookings = ({
                     {/* <FontAwesome name="rupee" size={14} /> {item?.duration} */}
                     <Button
                       isPrimary={false}
-                      title="Cancel"
+                      title={t("cancel")}
                       onPress={() =>
                         onCancelBooking(
                           userDetails?.role === "EMPLOYER"

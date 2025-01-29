@@ -347,8 +347,9 @@ const UserProfile = () => {
           />
           <View
             style={[
+              { justifyContent: "flex-end" },
               userDetails?.status !== "ACTIVE" && styles?.disableButton,
-              { width: "42%" },
+              { width: "45%" },
             ]}
           >
             <Button

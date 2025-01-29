@@ -12,7 +12,7 @@
   "earnings": "উপার্জন",
   "rewards": "পুরস্কার",
   "yourTeam": "আপনার দল",
-  "requests": "অনুরোধ",
+  "requests": "দল যোগদানের অনুরোধ",
   "mediatorRequests": "মধ্যস্থতাকারীর অনুরোধ",
   "savedServices": "সংরক্ষিত পরিষেবা",
   "booked": "বুক করা হয়েছে",
@@ -565,7 +565,8 @@
   "cancelBooking": "বুকিং বাতিল করুন",
   "cancelBookingRequest": "বুকিং অনুরোধ বাতিল করুন",
   "bookWorker": "কর্মী বুক করুন",
-  "bookings": "বুকিং",
+  "bookings": "সরাসরি বুকিং",
+  "receivedDirectBookingRequests": "প্রাপ্ত সরাসরি বুকিং অনুরোধ",
   "bookingsAndRequest": "বুকিং এবং অনুরোধ",
   "bookedWorker": "বুক করা কর্মী",
 

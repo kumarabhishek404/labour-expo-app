@@ -64,8 +64,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     }
   };
 
-  console.log("mobileNumberExist--", mobileNumberExist);
-
   const onConfirmMobilerNumber = () => {
     setModalVisible(false);
     setStep(2);

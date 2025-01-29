@@ -71,9 +71,7 @@ const ListingsVerticalWorkers = ({
                   count={5}
                 />
 
-                <CustomHeading textAlign="left">
-                  {item?.name}
-                </CustomHeading>
+                <CustomHeading textAlign="left">{item?.name}</CustomHeading>
 
                 <CustomText textAlign="left">{item?.address}</CustomText>
               </View>
@@ -82,14 +80,6 @@ const ListingsVerticalWorkers = ({
                   rating={item?.rating?.average}
                   reviews={item?.rating?.count}
                 />
-                {item?.role === "WORKER" && (
-                  <View style={styles.priceContainer}>
-                    <CustomHeading>
-                      <FontAwesome name="rupee" size={14} />{" "}
-                      {item?.price || "350"}/Day
-                    </CustomHeading>
-                  </View>
-                )}
               </View>
             </View>
           </View>
@@ -187,7 +177,7 @@ const styles = StyleSheet.create({
   ratingPriceContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignSelf: "flex-end",
     marginTop: 8,
   },
   priceContainer: {

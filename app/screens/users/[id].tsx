@@ -56,7 +56,7 @@ const User = () => {
     user?.requestedBy?.includes(userDetails?._id)
   );
   const [isInYourTeam, setIsInYourTeam] = useState(
-    user?.employedBy?.includes(userDetails?._id)
+    user?.employedBy?._id === userDetails?._id
   );
   const [isWorkerBookingRequested, setIsWorkerBookingRequested] = useState(
     user?.bookingRequestedBy?.includes(userDetails?._id)
@@ -95,7 +95,7 @@ const User = () => {
     setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
     setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
     setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
-    setIsInYourTeam(user?.employedBy?.includes(userDetails?._id));
+    setIsInYourTeam(user?.employedBy?._id === userDetails?._id);
     setIsWorkerBookingRequested(
       user?.bookingRequestedBy?.includes(userDetails?._id)
     );
@@ -157,7 +157,7 @@ const User = () => {
   };
 
   console.log("role--", role);
-  
+
   return (
     <>
       <Stack.Screen
@@ -194,7 +194,9 @@ const User = () => {
                 size={14}
                 color={Colors.primary}
               />
-              <CustomText textAlign="left">{user?.address || "Address not found"}</CustomText>
+              <CustomText textAlign="left">
+                {user?.address || "Address not found"}
+              </CustomText>
             </View>
 
             <View style={styles.highlightWrapper}>
@@ -232,6 +234,15 @@ const User = () => {
               </View>
             </View>
 
+            {(user?.role === "MEDIATOR" ||
+              (user?.role === "WORKER" && user?.employedBy)) && (
+              <TeamDetails
+                type={user?.role}
+                mediator={user}
+                isInYourTeam={isInYourTeam}
+              />
+            )}
+
             <CustomText>{user?.description}</CustomText>
 
             {role !== "EMPLOYER" && (
@@ -249,11 +260,6 @@ const User = () => {
             )}
 
             <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
-
-            {(user?.role === "MEDIATOR" ||
-              (user?.role === "WORKER" && user?.employedBy)) && (
-              <TeamDetails type={user?.role} user={user} />
-            )}
 
             <WallletInformation
               type={user?.role === "EMPLOYER" ? "spents" : "earnings"}

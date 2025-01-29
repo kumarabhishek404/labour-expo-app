@@ -217,7 +217,7 @@ const Applicants = ({
                           />
                         }
                         isPrimary={true}
-                        title="Reject"
+                        title={t('reject')}
                         onPress={() =>
                           item?.role === "WORKER"
                             ? mutationRejectWorker?.mutate(item?._id)

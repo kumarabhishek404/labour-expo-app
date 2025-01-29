@@ -12,7 +12,7 @@
   "earnings": "ಗಳಿಕೆಗಳು",
   "rewards": "ಬಹುಮಾನಗಳು",
   "yourTeam": "ನಿಮ್ಮ ತಂಡ",
-  "requests": "ವಿನಂತಿಗಳು",
+  "requests": "ತಂಡ ಸೇರ್ಪಡೆ ಮನವಿಗಳು",
   "mediatorRequests": "ಮಧ್ಯಸ್ಥ ವಿನಂತಿಗಳು",
   "savedServices": "ಉಳಿಸಿದ ಸೇವೆಗಳು",
   "booked": "ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ",
@@ -542,7 +542,8 @@
   "cancelBooking": "ಬುಕಿಂಗ್ ರದ್ದುಗೊಳಿಸಿ",
   "cancelBookingRequest": "ಬುಕಿಂಗ್ ವಿನಂತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಿ",
   "bookWorker": "ಕೆಲಸಗಾರನನ್ನು ಬುಕ್ ಮಾಡಿ",
-  "bookings": "ಬುಕಿಂಗ್‌ಗಳು",
+  "bookings": "ನೇರ ಬುಕಿಂಗ್",
+  "receivedDirectBookingRequests": "ಸ್ವೀಕೃತ ನೇರ ಬುಕ್ಕಿಂಗ್ ಮನವಿಗಳು",
   "bookingsAndRequest": "ಬುಕಿಂಗ್‌ಗಳು ಮತ್ತು ವಿನಂತಿ",
   "bookedWorker": "ಬುಕ್ ಮಾಡಿದ ಕೆಲಸಗಾರ",
 

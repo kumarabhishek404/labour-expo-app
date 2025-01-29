@@ -1,3 +1,4 @@
+import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
@@ -33,7 +34,7 @@ const CustomCheckbox = ({
       >
         {isChecked && (
           <Text style={styles.checkmark}>
-            <Entypo name="check" size={20} color="#007BFF" />
+            <Entypo name="check" size={20} color={Colors?.primary} />
           </Text>
         )}
       </View>
@@ -51,14 +52,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderWidth: 2,
-    borderColor: "#007BFF",
+    borderColor: Colors?.primary,
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
   },
   checkmark: {
-    color: "#007BFF",
+    color: Colors?.primary,
     fontSize: 16,
     fontWeight: "bold",
   },

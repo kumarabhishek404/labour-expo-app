@@ -283,7 +283,7 @@ export const convertToLabelValueArray = (stringArray: string[]) => {
   }));
 };
 
-export const handleCall = () => {
+export const handleCall = (mobile: string) => {
   Linking.openURL("tel:+1234567890");
 };
 
@@ -316,4 +316,12 @@ const BASE_FONT_SIZE = 16; // Base font size in pixels
 export const getFontSize = (locale: string, baseSize = BASE_FONT_SIZE) => {
   const multiplier = FONT_SIZE_MULTIPLIER[locale] || 1;
   return baseSize * multiplier;
+};
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const logoutUser = async (setUserDetails: any, router: any) => {
+  await AsyncStorage.removeItem("user"); // Remove from AsyncStorage
+  setUserDetails(null); // Update the global user atom
+  router.push("/screens/auth/login"); // Redirect to login
 };

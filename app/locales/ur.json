@@ -12,7 +12,7 @@
   "earnings": "آمدنی",
   "rewards": "انعامات",
   "yourTeam": "آپ کی ٹیم",
-  "requests": "درخواستیں",
+  "requests": "ٹیم میں شامل ہونے کی درخواستیں",
   "mediatorRequests": "میڈی ایٹر کی درخواستیں",
   "savedServices": "محفوظ کردہ خدمات",
   "booked": "بک کیا گیا",
@@ -565,7 +565,8 @@
   "cancelBooking": "بکنگ منسوخ کریں",
   "cancelBookingRequest": "بکنگ کی درخواست منسوخ کریں",
   "bookWorker": "ورکر بک کریں",
-  "bookings": "بکنگز",
+  "bookings": "براہ راست بکنگ",
+  "receivedDirectBookingRequests": "موصولہ براہ راست بکنگ کی درخواستیں",
   "bookingsAndRequest": "بکنگز اور درخواست",
   "bookedWorker": "بک کیا گیا ورکر",
 

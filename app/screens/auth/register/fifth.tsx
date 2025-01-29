@@ -65,11 +65,17 @@ const FifthScreen: React.FC<FifthScreenProps> = ({
         )}
       />
       <View style={styles?.buttonContainer}>
-        <Button isPrimary={false} title={t("back")} onPress={() => setStep(3)} />
+        <Button
+          isPrimary={false}
+          title={t("back")}
+          onPress={() => setStep(3)}
+          style={{ width: "30%" }}
+        />
         <Button
           isPrimary={true}
           title={t("saveProfilePicture")}
           onPress={handleSubmit(onSubmit)}
+          style={{width: "45%"}}
         />
       </View>
     </View>

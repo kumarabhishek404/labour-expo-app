@@ -227,7 +227,7 @@ const getUserInfo = async () => {
     return data;
   } catch (error: any) {
     console.error(
-      `[Users] [userService] An error occurred while fetching user details : `,
+      `[Users] [userService] An error occurred while refreshing user details  : `,
       error
     );
     TOAST?.showToast?.error(

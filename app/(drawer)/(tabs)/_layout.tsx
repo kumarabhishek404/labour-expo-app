@@ -25,8 +25,8 @@ import LOCAL_CONTEXT from "@/app/context/locale";
 import { t } from "@/utils/translationHelper";
 import LanguageSelectionScreen from "../../languageSelection";
 import ProfileScreen from "../../screens/bottomTabs/(user)/profile";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { getFontSize } from "@/constants/functions";
+import FloatingButton from "@/components/inputs/FloatingButton";
 
 export default function Layout() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -176,6 +176,11 @@ export default function Layout() {
           }}
         />
       </Tabs>
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") &&
+        userDetails?._id &&
+        userDetails?.status === "ACTIVE" && <FloatingButton />}
     </>
   );
 }

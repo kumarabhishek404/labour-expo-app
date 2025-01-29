@@ -43,7 +43,7 @@ const WorkerCard = ({ worker }: any) => {
 
           <Button
             isPrimary={false}
-            title="Dial Phone"
+            title={t("callWorker")}
             onPress={() => {}}
             icon={
               <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
@@ -60,7 +60,7 @@ const WorkerCard = ({ worker }: any) => {
 
           <Button
             isPrimary={false}
-            title="Whatsapp Message"
+            title={t("messageEmployer")}
             onPress={() => {}}
             icon={
               <FontAwesome5 name="whatsapp" size={18} color={Colors.primary} />

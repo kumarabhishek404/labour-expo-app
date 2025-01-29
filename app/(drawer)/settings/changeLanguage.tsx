@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Entypo } from "@expo/vector-icons";
 import LOCAL_CONTEXT from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
@@ -37,10 +38,12 @@ export default function LanguageSelectionScreen() {
   }, [locale]);
 
   const handleSave = async () => {
+    console.log(" selectedLanguage- ", selectedLanguage);
+
     setLocale(selectedLanguage);
     await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
     await mutationUpdateProfileInfo?.mutate({
-      language: selectedLanguage,
+      locale: { language: selectedLanguage },
     });
     router?.back();
   };
@@ -85,7 +88,11 @@ export default function LanguageSelectionScreen() {
           renderItem={({ item }) => (
             <View style={styles.languageItem}>
               <CustomText baseFont={18}>{item?.label}</CustomText>
-              <TouchableOpacity style={styles.radioSelected} />
+              <View style={styles.boxSelected}>
+                {selectedLanguage === item?.value && (
+                  <Entypo name="check" size={20} color="white" />
+                )}
+              </View>
             </View>
           )}
           showsVerticalScrollIndicator={false}
@@ -106,10 +113,14 @@ export default function LanguageSelectionScreen() {
               <View
                 style={
                   selectedLanguage === item?.value
-                    ? styles.radioSelected
-                    : styles.radioUnselected
+                    ? styles.boxSelected
+                    : styles.boxUnselected
                 }
-              />
+              >
+                {selectedLanguage === item?.value && (
+                  <Entypo name="check" size={20} color="white" />
+                )}
+              </View>
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item?.value}
@@ -131,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 80,
+    paddingBottom: 62,
     justifyContent: "space-between",
   },
   languageItem: {
@@ -169,5 +180,22 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
+  },
+  boxUnselected: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: "#000",
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  boxSelected: {
+    width: 24,
+    height: 24,
+    backgroundColor: "#007BFF",
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

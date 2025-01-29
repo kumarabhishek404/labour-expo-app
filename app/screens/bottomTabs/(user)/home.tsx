@@ -30,16 +30,13 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import HowAppWorks from "@/components/commons/HowAppWorks";
 import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
-import { Platform } from "react-native";
-import * as DeviceInfo from "expo-device";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import { useRoute } from "@react-navigation/native";
 
 const UserHome = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
-  // let data = AI4Bharat?.getTransliterationLanguages()
-
   const {
     data: response,
     isLoading,

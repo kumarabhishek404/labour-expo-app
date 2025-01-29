@@ -55,6 +55,8 @@ const acceptJoiningRequest = async (payload: any) => {
 };
 
 const rejectJoiningRequest = async (payload: any) => {
+  console.log("Paylaof --", payload);
+  
   try {
     const data = await API_CLIENT.makePostRequest("/request/decline-request", payload);
     TOAST?.showToast?.success("Request rejected successfully");

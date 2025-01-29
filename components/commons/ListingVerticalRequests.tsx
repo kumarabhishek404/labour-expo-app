@@ -255,6 +255,8 @@ const RequestCardUser = React.memo(
 
     const user = isSender ? item?.receiver : item?.sender;
 
+    console.log("Item---", item);
+
     return (
       <TouchableOpacity
         onPress={() =>
@@ -276,9 +278,7 @@ const RequestCardUser = React.memo(
             style={styles.profileImage}
           />
           <View style={styles.infoContainer}>
-            <CustomHeading textAlign="left">
-              {user?.name}
-            </CustomHeading>
+            <CustomHeading textAlign="left">{user?.name}</CustomHeading>
             <RatingAndReviews
               rating={user?.rating || 4.5}
               reviews={user?.reviews || 400}
@@ -309,7 +309,7 @@ const RequestCardUser = React.memo(
           {isSender && (
             <Button
               isPrimary={false}
-              title="Cancel"
+              title={t("cancel")}
               onPress={() => onCancelRequest?.(item?.receiver?._id)}
             />
           )}
@@ -317,13 +317,13 @@ const RequestCardUser = React.memo(
             <>
               <Button
                 isPrimary={false}
-                title="Reject"
-                onPress={() => onRejectRequest?.(item?._id)}
+                title={t("reject")}
+                onPress={() => onRejectRequest?.(item?.sender?._id)}
               />
               <Button
                 isPrimary={true}
                 title={t("accept")}
-                onPress={() => onAcceptRequest?.(item?._id)}
+                onPress={() => onAcceptRequest?.(item?.sender?._id)}
               />
             </>
           )}

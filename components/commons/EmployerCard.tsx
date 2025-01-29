@@ -8,6 +8,7 @@ import AvatarComponent from "./Avatar";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { handleCall } from "@/constants/functions";
 
 const EmployerCard = ({ employer }: any) => {
   return (
@@ -51,8 +52,8 @@ const EmployerCard = ({ employer }: any) => {
 
           <Button
             isPrimary={false}
-            title="Dial Phone"
-            onPress={() => {}}
+            title={t('callEmployer')}
+            onPress={() => handleCall(employer?.mobile)}
             icon={
               <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
             }
@@ -68,7 +69,7 @@ const EmployerCard = ({ employer }: any) => {
 
           <Button
             isPrimary={false}
-            title="Whatsapp Message"
+            title={t('messageEmployer')}
             onPress={() => {}}
             icon={
               <FontAwesome5 name="whatsapp" size={18} color={Colors.primary} />

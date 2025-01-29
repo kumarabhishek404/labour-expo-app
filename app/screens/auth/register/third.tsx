@@ -130,11 +130,13 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           isPrimary={false}
           title={t("back")}
           onPress={() => setStep(1)}
+          style={{width: "30%"}}
         />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
+          style={{width: "40%"}}
         />
       </View>
     </>

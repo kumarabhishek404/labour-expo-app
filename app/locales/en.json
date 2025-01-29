@@ -12,7 +12,7 @@
   "earnings": "Earnings",
   "rewards": "Rewards",
   "yourTeam": "Your Team",
-  "requests": "Requests",
+  "requests": "Join Team Requests",
   "mediatorRequests": "Mediator Requests",
   "savedServices": "Saved Services",
   "booked": "Booked",
@@ -55,7 +55,7 @@
   "users": "Users",
   "mediators": "Mediators",
   "myServices": "My Services",
-  "myBookings": "Bookings",
+  "myBookings": "My Booking",
   "aboutWorkers": "People who help in doing work.",
   "aboutMyServices": "See the work you have posted.",
   "aboutServices": "Find work and services near you.",
@@ -190,7 +190,6 @@
   "accepted": "Accepted",
   "rejected": "Rejected",
 
-  
   "andhrapradesh": "Andhra Pradesh",
   "arunachalpradesh": "Arunachal Pradesh",
   "assam": "Assam",
@@ -575,7 +574,8 @@
   "cancelBooking": "Cancel Booking",
   "cancelBookingRequest": "Cancel Booking Request",
   "bookWorker": "Book Worker",
-  "bookings": "Bookings",
+  "bookings": "Direct Bookings",
+  "receivedDirectBookingRequests": "Received Direct Booking Requests",
   "bookingsAndRequest": "Bookings & Request",
   "bookedWorker": "Booked Worker",
 
@@ -705,5 +705,8 @@
   "completeProfileButton": "Complete Profile",
   "completeYourProfileToUnlockAllFeatures": "Complete your profile to unlock all features!",
   "pleaseFetchNearestWorkers": "Please Fetch your current location to get nearest workers",
-  "fetchLocation": "Please Fetch your current location to get nearest {{entity}}"
+  "fetchLocation": "Please Fetch your current location to get nearest {{entity}}",
+  "callWorker": "Call Worker",
+  "callTeamAdmin": "Call Team Admin",
+  "messageEmployer": "Message Employer"
 }

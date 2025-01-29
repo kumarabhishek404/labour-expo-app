@@ -142,7 +142,7 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: () =>
         router?.push({
           pathname: "/screens/team/[id]",
-          params: { id: userDetails?._id },
+          params: { id: userDetails?._id, title: t("teamMembers") },
         }),
       roleCondition: userDetails?.role === "MEDIATOR" && !isAdmin,
       style: [styles?.menuItem],

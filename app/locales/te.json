@@ -12,7 +12,7 @@
   "earnings": "సంపాదనలు",
   "rewards": "రివార్డులు",
   "yourTeam": "మీ బృందం",
-  "requests": "అభ్యర్థనలు",
+  "requests": "జట్టు చేరిక అభ్యర్థనలు",
   "mediatorRequests": "మధ్యవర్తి అభ్యర్థనలు",
   "savedServices": "సేవ్ చేసిన సేవలు",
   "booked": "బుక్ చేయబడింది",
@@ -566,7 +566,8 @@
   "cancelBooking": "బుకింగ్‌ను రద్దు చేయండి",
   "cancelBookingRequest": "బుకింగ్ అభ్యర్థనను రద్దు చేయండి",
   "bookWorker": "కార్మికుడిని బుక్ చేయండి",
-  "bookings": "బుకింగ్‌లు",
+  "bookings": "నేరుగా బుకింగ్",
+  "receivedDirectBookingRequests": "అందిన ప్రత్యక్ష బుకింగ్ అభ్యర్థనలు",
   "bookingsAndRequest": "బుకింగ్‌లు & అభ్యర్థన",
   "bookedWorker": "బుక్ చేసిన కార్మికుడు",
 

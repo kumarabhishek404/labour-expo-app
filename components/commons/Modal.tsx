@@ -41,7 +41,7 @@ const ModalComponent = ({
           </View>
 
           {/* Modal Content */}
-          <ScrollView style={styles?.contentContaincer}>{content()}</ScrollView>
+          <View style={styles?.contentContaincer}>{content()}</View>
 
           <View style={styles.footer}>
             <Button
@@ -50,6 +50,8 @@ const ModalComponent = ({
                 secondaryButton?.title ? secondaryButton?.title : t("cancel")
               }
               onPress={secondaryButton?.action}
+              borderColor={Colors?.danger}
+              textColor={Colors?.danger}
             />
             <Button
               isPrimary={true}
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     paddingHorizontal: 20,
-    zIndex: 0
+    zIndex: 0,
   },
   container: {
     backgroundColor: "white",

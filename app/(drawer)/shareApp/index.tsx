@@ -79,18 +79,6 @@ const ShareAppScreen = () => {
     }
   };
 
-  // Share App Link using React Native Share
-  const shareAppLink = async () => {
-    try {
-      await Sharing.shareAsync(null, {
-        message: `Check out this amazing app: ${APPLINK}`,
-        // url: appLink,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // Copy link to clipboard
   const copyLink = () => {
     Clipboard.setString(APPLINK);
@@ -159,19 +147,6 @@ const ShareAppScreen = () => {
             icon={
               <MaterialIcons
                 name="link"
-                size={24}
-                color="white"
-                style={{ marginRight: 10 }}
-              />
-            }
-          />
-          <Button
-            isPrimary={true}
-            title="Share Link"
-            onPress={shareAppLink}
-            icon={
-              <MaterialIcons
-                name="share"
                 size={24}
                 color="white"
                 style={{ marginRight: 10 }}

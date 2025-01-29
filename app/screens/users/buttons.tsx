@@ -263,15 +263,10 @@ const ButtonContainer = ({
             bgColor={
               isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
             }
-            style={[
-              {
-                borderColor:
-                  isInYourTeam || isUserRequested
-                    ? Colors.danger
-                    : Colors.primary,
-              },
-              styles?.footerFirstBtn,
-            ]}
+            borderColor={
+              isInYourTeam || isUserRequested ? Colors.danger : Colors.primary
+            }
+            style={styles?.footerFirstBtn}
             title={
               isInYourTeam
                 ? t("leaveFromTeam")
@@ -365,10 +360,7 @@ const ButtonContainer = ({
                 <Button
                   isPrimary={false}
                   title={t("edit")}
-                  onPress={() => {
-                    /* Navigate to edit screen */
-                  }}
-                  // style={styles.adminButton}
+                  onPress={() => {}}
                 />
                 <Button
                   isPrimary={true}
@@ -465,10 +457,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   footerFirstBtn: {
-    flex: 1,
+    width: "70%",
   },
   footerBtn: {
-    flex: 1,
+    width: "25%",
     backgroundColor: Colors.tertiery,
     borderColor: Colors.tertiery,
     alignItems: "center",

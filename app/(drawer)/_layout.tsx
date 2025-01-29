@@ -24,7 +24,7 @@ import {
 import { Stack, useFocusEffect, usePathname, useRouter } from "expo-router";
 import { useNavigation } from "expo-router";
 import { t } from "@/utils/translationHelper";
-import { DrawerActions } from "@react-navigation/native";
+import { DrawerActions, useRoute } from "@react-navigation/native";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import ModalComponent from "@/components/commons/Modal";
@@ -445,8 +445,6 @@ export default function DrawerLayout() {
       </ScrollView>
     );
   };
-
-  console.log("userDetails--", userDetails?.status, userDetails?.isAuth, userDetails?._id);
   
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -463,7 +461,6 @@ export default function DrawerLayout() {
               />
               <View>
                 <View style={styles.separator} />
-                {/* Logout Button */}
                 <TouchableOpacity
                   style={styles.logoutButton}
                   onPress={handleLogout}
@@ -540,9 +537,6 @@ export default function DrawerLayout() {
         }}
       ></Drawer>
       <StatusBar style="light" backgroundColor={Colors?.primary} />
-      {userDetails?.isAuth &&
-        (userDetails?.role === "EMPLOYER" ||
-          userDetails?.role === "MEDIATOR") && userDetails?._id && userDetails?.status === "ACTIVE" && <FloatingButton />}
     </GestureHandlerRootView> 
   );
 }
@@ -612,7 +606,7 @@ const styles = StyleSheet.create({
   },
   activeMenuItem: {
     backgroundColor: Colors.tertiery, // Highlight active menu item
-    borderRadius: 5,
+    borderRadius: 8,
   },
   activeMenuItemContent: {
     backgroundColor: Colors?.white,

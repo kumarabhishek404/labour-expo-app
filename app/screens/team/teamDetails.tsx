@@ -1,17 +1,15 @@
-import Atoms from "@/app/AtomStore";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import { router } from "expo-router";
-import { useAtomValue } from "jotai";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
-const TeamDetails = ({ type, user }: any) => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  console.log("user", user?.employedBy, userDetails?._id);
+const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
+  console.log("user--", mediator?._id);
+
   return (
     <>
       {type === "WORKER" ? (
@@ -19,15 +17,12 @@ const TeamDetails = ({ type, user }: any) => {
           style={[
             styles.row,
             {
-              backgroundColor:
-                user?.employedBy === userDetails?._id
-                  ? Colors?.success
-                  : Colors?.danger,
+              backgroundColor: isInYourTeam ? Colors?.success : Colors?.danger,
             },
           ]}
         >
           <CustomHeading baseFont={16} fontWeight="bold" color={Colors?.white}>
-            {user?.employedBy === userDetails?._id
+            {isInYourTeam
               ? t("alreadyJoinedInYourTeam")
               : t("alreadyJoinedTeam")}
           </CustomHeading>
@@ -50,11 +45,11 @@ const TeamDetails = ({ type, user }: any) => {
                 {t("team")}
               </CustomHeading>
               <CustomText color={Colors?.white}>
-                ({t(user?.teamDetails?.status)})
+                ({t(mediator?.teamDetails?.status?.toLowerCase())})
               </CustomText>
             </View>
             <CustomText color={Colors?.white}>
-              {user?.teamDetails?.memberCount || 0} {t("members")}
+              {mediator?.teamDetails?.memberCount || 0} {t("members")}
             </CustomText>
           </View>
           <Button
@@ -64,7 +59,7 @@ const TeamDetails = ({ type, user }: any) => {
               router?.push({
                 pathname: "/screens/team/[id]",
                 params: {
-                  id: user?._id,
+                  id: mediator?._id,
                   role: "mediator",
                   title: t("teamMembers"),
                   type: "details",
@@ -83,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginTop: 5,
     padding: 12,
     backgroundColor: Colors?.primary,
     borderRadius: 8,

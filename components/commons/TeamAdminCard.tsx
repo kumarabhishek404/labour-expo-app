@@ -7,12 +7,12 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import AvatarComponent from "./Avatar";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import Loader from "./Loader";
@@ -22,19 +22,6 @@ import ModalComponent from "./Modal";
 const TeamAdminCard = ({ admin }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [adminDetails, setAdminDetails] = useState<any>(null);
-
-  const {
-    isLoading,
-    data: response,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ["adminDetails", admin],
-    queryFn: () => USER?.getUserById(admin),
-    retry: 0,
-    enabled: !!admin,
-  });
 
   const mutationLeaveTeam = useMutation({
     mutationKey: ["leaveTeam"],
@@ -51,15 +38,6 @@ const TeamAdminCard = ({ admin }: any) => {
       );
     },
   });
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const unsubscribe = setAdminDetails(response?.data);
-      return () => unsubscribe;
-    }, [response])
-  );
-
-  console.log("admin", adminDetails, response);
 
   const modalContent = () => {
     return (
@@ -121,19 +99,19 @@ const TeamAdminCard = ({ admin }: any) => {
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
               </CustomText>
-              {adminDetails?.name}
+              {admin?.name}
             </CustomText>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("address")} :{" "}
               </CustomText>
-              {adminDetails?.address}
+              {admin?.address}
             </CustomText>
           </View>
 
           <Button
             isPrimary={false}
-            title="Dial Phone"
+            title={t("callTeamAdmin")}
             onPress={() => {}}
             icon={
               <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
@@ -150,7 +128,7 @@ const TeamAdminCard = ({ admin }: any) => {
 
           <Button
             isPrimary={false}
-            title="Leave Team"
+            title={t("leaveTeam")}
             onPress={() => setModalVisible(true)}
             icon={
               <MaterialCommunityIcons
@@ -179,7 +157,7 @@ const TeamAdminCard = ({ admin }: any) => {
         >
           <AvatarComponent
             isEditable={false}
-            profileImage={adminDetails?.profilePicture}
+            profileImage={admin?.profilePicture}
           />
           <Button
             isPrimary={true}
@@ -188,8 +166,8 @@ const TeamAdminCard = ({ admin }: any) => {
               router.push({
                 pathname: "/screens/users/[id]",
                 params: {
-                  id: adminDetails?._id,
-                  role: adminDetails?.role,
+                  id: admin?._id,
+                  role: admin?.role,
                   title: t("teamAdminDetails"),
                   type: "details",
                 },

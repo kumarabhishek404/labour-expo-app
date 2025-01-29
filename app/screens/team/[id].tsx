@@ -19,7 +19,7 @@ const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
-const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const { id } = useLocalSearchParams();
 
   const {
@@ -32,7 +32,7 @@ const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
     queryKey: ["members", category, id],
     queryFn: ({ pageParam }) =>
       MEDIATOR?.fetchAllMembers({
-        mediatorId: userDetails?._id,
+        mediatorId: id,
         pageParam,
         category,
       }),
@@ -46,12 +46,15 @@ const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
     },
   });
 
+  console.log("responseresponseresponse00000------", response?.pages[0]?.data);
+
   useFocusEffect(
     React.useCallback(() => {
-      const totalData = response?.pages[0]?.pagination?.total;
-      setTotalData(totalData);
       const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page?.data[0]?.workers || [])
+        response?.pages.flatMap((page: any) => {
+          setTotalData(page?.data[0]?.workers?.length);
+          return page?.data[0]?.workers || [];
+        })
       );
       return () => unsubscribe;
     }, [response])

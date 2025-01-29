@@ -12,7 +12,7 @@
   "earnings": "કમાણી",
   "rewards": "પુરસ્કારો",
   "yourTeam": "તમારી ટીમ",
-  "requests": "વિનંતીઓ",
+  "requests": "ટીમમાં જોડાવા માટેની વિનંતીઓ",
   "mediatorRequests": "મધ્યસ્થી વિનંતીઓ",
   "savedServices": "સાચવેલી સેવાઓ",
   "booked": "બુક કરેલ",
@@ -566,7 +566,8 @@
   "cancelBooking": "બુકિંગ રદ કરો",
   "cancelBookingRequest": "બુકિંગ વિનંતી રદ કરો",
   "bookWorker": "કામદાર બુક કરો",
-  "bookings": "બુકિંગ્સ",
+  "bookings": "સીધી બુકિંગ",
+  "receivedDirectBookingRequests": "પ્રાપ્ત સીધી બુકિંગની વિનંતીઓ",
   "bookingsAndRequest": "બુકિંગ્સ અને વિનંતી",
   "bookedWorker": "બુક કરેલ કામદાર",
 

@@ -27,10 +27,10 @@ import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import BOOKING from "@/app/api/booking";
-import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import ListingVerticalBookingRequests from "@/components/commons/ListingVerticalBookingRequests";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
+import FloatingButton from "@/components/inputs/FloatingButton";
 
 const Bookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -219,7 +219,7 @@ const Bookings = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Requests" left="menu" right="notification" />
+            <CustomHeader title={t("bookings")} left="menu" right="notification" />
           ),
         }}
       />
@@ -312,6 +312,13 @@ const Bookings = () => {
           )}
         </View>
       </View>
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") &&
+        userDetails?._id &&
+        userDetails?.status === "ACTIVE" && (
+          <FloatingButton style={{ bottom: 10 }} />
+        )}
     </>
   );
 };

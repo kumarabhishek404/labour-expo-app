@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import Loader from "@/components/commons/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import Atoms from "@/app/AtomStore";
@@ -18,11 +18,15 @@ import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import FloatingButton from "@/components/inputs/FloatingButton";
+import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const Requests = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
+  const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState(
     userDetails?.role === "MEDIATOR" ? "sentRequests" : "recievedRequests"
@@ -31,6 +35,7 @@ const Requests = () => {
   const {
     data: response,
     isLoading,
+    isRefetching,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
@@ -50,6 +55,16 @@ const Requests = () => {
     },
     retry: false,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -76,21 +91,21 @@ const Requests = () => {
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
-    mutationFn: (id) => REQUEST?.acceptJoiningRequest({ requestId: id }),
+    mutationFn: (id) => REQUEST?.acceptJoiningRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
       refreshUser();
       TOAST?.showToast?.success(t("requestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
+    onError: (err) => {
+      console.error("error while accepting team joining request ", err);
+    },
   });
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectRequest"],
-    mutationFn: (id) => REQUEST?.rejectJoiningRequest({ requestId: id }),
+    mutationFn: (id) => REQUEST?.rejectJoiningRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
       console.log("Response while rejecting request - ", response);
@@ -116,6 +131,12 @@ const Requests = () => {
     refetch();
   };
 
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
+
   return (
     <>
       <Stack.Screen
@@ -130,6 +151,7 @@ const Requests = () => {
         <Loader
           loading={
             isLoading ||
+            isRefetching ||
             mutationCancelRequest?.isPending ||
             mutationAcceptRequest?.isPending ||
             mutationRejectRequest?.isPending
@@ -160,6 +182,12 @@ const Requests = () => {
             listings={memoizedData || []}
             requestType={category}
             loadMore={loadMore}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
+            }
             isFetchingNextPage={isFetchingNextPage}
             onCancelRequest={mutationCancelRequest?.mutate}
             onAcceptRequest={mutationAcceptRequest?.mutate}
@@ -167,6 +195,13 @@ const Requests = () => {
           />
         </View>
       </View>
+      {userDetails?.isAuth &&
+        (userDetails?.role === "EMPLOYER" ||
+          userDetails?.role === "MEDIATOR") &&
+        userDetails?._id &&
+        userDetails?.status === "ACTIVE" && (
+          <FloatingButton style={{ bottom: 10 }} />
+        )}
     </>
   );
 };

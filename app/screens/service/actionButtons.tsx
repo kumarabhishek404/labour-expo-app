@@ -37,7 +37,7 @@ interface ServiceActionButtonsProps {
   refetch: () => void;
   refreshUser: () => void;
   selectedWorkersIds: string[];
-  setSelectedWorkersIds: (ids: string[]) => void;
+  setSelectedWorkersIds: any;
   setIsWorkerSelectModal: (modal: boolean) => void;
   setModalVisible: (modal: boolean) => void;
   setIsCompleteModalVisible: (modal: boolean) => void;
@@ -162,9 +162,9 @@ const ServiceActionButtons = ({
     mutationKey: ["mediatorUnApplyService", { id }],
     mutationFn: () => SERVICE?.mediatorUnApplyService({ serviceId: id }),
     onSuccess: async (response) => {
+      setIsWorkerSelectModal(false);
       await refetch();
       await refreshUser();
-      setIsWorkerSelectModal(false);
       TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
@@ -295,6 +295,11 @@ const ServiceActionButtons = ({
                 isPrimary={true}
                 title={isServiceApplied ? t("cancelApply") : t("applyNow")}
                 onPress={isServiceApplied ? handleCancelApply : handleApply}
+                style={{ width: "65%" }}
+                bgColor={isServiceApplied ? Colors?.danger : Colors?.primary}
+                borderColor={
+                  isServiceApplied ? Colors?.danger : Colors?.primary
+                }
               />
             )}
             <Button
@@ -396,6 +401,8 @@ const ServiceActionButtons = ({
   };
 
   const RenderMemberItem = ({ item }: any) => {
+    console.log("item---", item);
+
     return (
       <View style={[styles.userItem]} key={item?._id}>
         <CustomCheckbox
@@ -410,10 +417,17 @@ const ServiceActionButtons = ({
             {item?.name}
           </CustomText>
           <CustomText style={styles.userSkills} textAlign="left">
-            {t("skills")}: {item?.skills?.join(", ")}
+            <CustomText fontWeight="bold">{t("skills")} : </CustomText>
+            {[
+              { pricePerDay: 300, skill: "brickLayer" },
+              { pricePerDay: 300, skill: "brickLayer" },
+            ].map(
+              (skill: any) =>
+                `${t(skill?.skill)} ${skill?.pricePerDay} / ${t("perDay")}, `
+            )}
           </CustomText>
           <CustomText style={styles.userAddress} textAlign="left">
-            {item?.address}
+            {item?.address || t("addressNotFound")}
           </CustomText>
         </View>
       </View>
@@ -421,7 +435,7 @@ const ServiceActionButtons = ({
   };
 
   const memoizedData = useMemo(
-    () => members?.flatMap((data: any) => data),
+    () => members && members[0]?.workers?.flatMap((data: any) => data),
     [members]
   );
 
@@ -464,6 +478,8 @@ const ServiceActionButtons = ({
             removeClippedSubviews={true}
             contentContainerStyle={{ paddingBottom: 110 }}
             showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
           />
         ) : (
           <View style={styles.emptyContainer}>
@@ -573,7 +589,6 @@ const ServiceActionButtons = ({
         }}
         secondaryButton={{
           title: t("cancel"),
-          styles: "",
           action: () => setIsWorkerSelectModal(false),
         }}
       />

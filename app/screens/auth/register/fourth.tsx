@@ -129,6 +129,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
           isPrimary={false}
           title={t("back")}
           onPress={handlePasswordBack}
+          style={{width: "30%"}}
         />
         <Button
           isPrimary={true}
@@ -136,6 +137,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
           onPress={() =>
             passwordStep === "create" ? handleSetPassword() : onSubmit()
           }
+          style={{width: "50%", paddingHorizontal: 6}}
         />
       </View>
     </View>

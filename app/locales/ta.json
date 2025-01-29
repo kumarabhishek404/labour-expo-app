@@ -12,7 +12,7 @@
   "earnings": "சம்பாதிப்புகள்",
   "rewards": "பரிசுகள்",
   "yourTeam": "உங்கள் அணி",
-  "requests": "கோரிக்கைகள்",
+  "requests": "குழுவில் சேரும் கோரிக்கைகள்",
   "mediatorRequests": "நடுவர் கோரிக்கைகள்",
   "savedServices": "சேமித்த சேவைகள்",
   "booked": "பதிவு செய்யப்பட்டது",
@@ -564,7 +564,8 @@
   "cancelBooking": "முன்பதிவை ரத்து செய்யவும்",
   "cancelBookingRequest": "முன்பதிவு கோரிக்கையை ரத்து செய்யவும்",
   "bookWorker": "தொழிலாளியை முன்பதிவு செய்யவும்",
-  "bookings": "முன்பதிவுகள்",
+  "bookings": "நேரடி முன்பதிவு",
+  "receivedDirectBookingRequests": "பெறப்பட்ட நேரடி முன்பதிவு கோரிக்கைகள்",
   "bookingsAndRequest": "முன்பதிவுகள் & கோரிக்கை",
   "bookedWorker": "முன்பதிவு செய்யப்பட்ட தொழிலாளி",
 
