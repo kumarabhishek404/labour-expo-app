@@ -20,8 +20,9 @@ import { t } from "@/utils/translationHelper";
 import { getTimeAgo } from "@/constants/functions";
 import CustomText from "./CustomText";
 import { FontAwesome } from "@expo/vector-icons";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import ProfilePicture from "./ProfilePicture";
+import Colors from "@/constants/Colors";
 
 type Review = {
   _id: string;
@@ -208,9 +209,7 @@ const UserReviews = forwardRef(
 
     const EmptyListComponent = () => (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>
-          No {activeTab.toLowerCase()} reviews yet
-        </Text>
+        <CustomText style={styles.emptyText}>{t("noReviews")}</CustomText>
       </View>
     );
 
@@ -408,13 +407,16 @@ const styles = StyleSheet.create({
     color: "white",
   },
   emptyContainer: {
-    padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    paddingVertical: 40,
+    paddingHorizontal: 10,
+    marginTop: 10,
     alignItems: "center",
-    justifyContent: "center",
   },
   emptyText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
+    color: Colors.gray,
   },
 });

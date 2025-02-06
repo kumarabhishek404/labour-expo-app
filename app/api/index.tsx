@@ -4,6 +4,8 @@ import axios, { AxiosResponse } from "axios";
 
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
+// AsyncStorage?.removeItem("user")
+
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
     const user: any = await AsyncStorage.getItem("user");
@@ -155,7 +157,7 @@ const API_CLIENT = {
   makePatchRequest,
   makePatchRequestFormData,
   makeDeleteRequest,
-  eventEmitter
+  eventEmitter,
 };
 
 export default API_CLIENT;

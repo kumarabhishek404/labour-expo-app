@@ -3,7 +3,7 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import Atoms from "@/app/AtomStore";
@@ -11,6 +11,7 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import { StatusBar } from "react-native";
 import {
   EMPLOYER,
   MEDIATOR,
@@ -22,6 +23,8 @@ import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
+import WORKER from "@/app/api/workers";
+import BOOKING from "@/app/api/booking";
 
 const Users = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -29,7 +32,7 @@ const Users = () => {
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
-  const { role, title, type } = useGlobalSearchParams();
+  const { role, title, type, searchCategory } = useGlobalSearchParams();
 
   const {
     data: response,
@@ -41,8 +44,17 @@ const Users = () => {
     refetch,
   } = useInfiniteQuery({
     queryKey: [handleQueryKey(role, type), category],
-    queryFn: ({ pageParam }) =>
-      handleQueryFunction(role, type, pageParam, category),
+    queryFn: async ({ pageParam }) =>
+      (await type) === "booked"
+        ? BOOKING?.fetchAllBookedWorkers({
+            pageParam,
+            skill: category,
+          })
+        : WORKER?.fetchAllWorkers({
+            pageParam,
+            name: JSON?.parse(searchCategory as string)?.name,
+            skill: JSON?.parse(searchCategory as string)?.skill,
+          }),
     retry: false,
     initialPageParam: 1,
     enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
@@ -71,6 +83,8 @@ const Users = () => {
     }
   };
 
+  // console.log("filteredData--", filteredData);
+
   const memoizedData = useMemo(
     () => filteredData?.flatMap((data: any) => data),
     [filteredData]
@@ -80,38 +94,37 @@ const Users = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title={`${title}`} left="back" />,
+          header: () => (
+            <CustomHeader title={`${title}`} left="back" right="notification" />
+          ),
         }}
       />
+      <StatusBar backgroundColor={"#EAF0FF"} />
       <Loader loading={isLoading} />
       <View style={styles.container}>
-        <SearchFilter
+        {/* <SearchFilter
           type="users"
           data={response?.pages}
           setFilteredData={setFilteredData}
-        />
+        /> */}
 
-        <CategoryButtons
-          options={
-            role === "workers"
-              ? WORKERS
-              : role === "mediators"
-              ? MEDIATOR
-              : EMPLOYER
-          }
+        {/* <CategoryButtons
+          options={WORKERTYPES}
           onCagtegoryChanged={onCatChanged}
-        />
+        /> */}
 
         <PaginationString
-          type={Array.isArray(role) ? role[0] : role}
+          type="workers"
           isLoading={isLoading || isRefetching}
           totalFetchedData={memoizedData?.length}
           totalData={totalData}
@@ -120,10 +133,10 @@ const Users = () => {
         {memoizedData && memoizedData?.length > 0 ? (
           <ListingsVerticalWorkers
             style={styles.listContainer}
-            availableInterest={role === "workers" ? WORKERTYPES : MEDIATORTYPES}
+            availableInterest={WORKERTYPES}
             listings={memoizedData || []}
             loadMore={loadMore}
-            type={role === "workers" ? "worker" : role === "mediators" ? "mediator" : "employer"}
+            type={"worker"}
             isFetchingNextPage={isFetchingNextPage}
             refreshControl={
               <RefreshControl
@@ -143,7 +156,7 @@ const Users = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#EAF0FF",
     paddingHorizontal: 10,
     paddingBottom: 10,
   },

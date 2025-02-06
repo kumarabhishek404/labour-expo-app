@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
 import TOAST from "@/app/hooks/toast";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
@@ -102,7 +102,7 @@ const Applicants = ({
   const toggleAccordion = (itemId: string) => {
     const isExpanded = expandedItem === itemId;
     setExpandedItem(isExpanded ? null : itemId);
-  
+
     Animated.timing(animatedHeights.current[itemId], {
       toValue: isExpanded ? 0 : 1,
       duration: 300,
@@ -162,11 +162,9 @@ const Applicants = ({
                 <View style={styles.productInfo}>
                   <View style={styles?.titleContainer}>
                     <View style={{ gap: 2, marginBottom: 4 }}>
-                      <CustomHeading baseFont={14}>
-                        {item?.name}
-                      </CustomHeading>
+                      <CustomHeading baseFont={14}>{item?.name}</CustomHeading>
                       <CustomText style={styles.caption}>
-                        {item?.role === "WORKER" ? "WORKER" : "MEDIATOR"}
+                        {t("workers")}
                       </CustomText>
                     </View>
                     <View
@@ -191,11 +189,7 @@ const Applicants = ({
                         }}
                         isPrimary={true}
                         title="Select"
-                        onPress={() =>
-                          item?.role === "WORKER"
-                            ? mutationSelectWorker?.mutate(item?._id)
-                            : mutationSelectMediator?.mutate(item?._id)
-                        }
+                        onPress={() => mutationSelectWorker?.mutate(item?._id)}
                       />
                       <Button
                         style={{
@@ -217,17 +211,13 @@ const Applicants = ({
                           />
                         }
                         isPrimary={true}
-                        title={t('reject')}
-                        onPress={() =>
-                          item?.role === "WORKER"
-                            ? mutationRejectWorker?.mutate(item?._id)
-                            : mutationRejectMediator?.mutate(item?._id)
-                        }
+                        title={t("reject")}
+                        onPress={() => mutationRejectWorker?.mutate(item?._id)}
                       />
                     </View>
                   </View>
 
-                  {item?.role !== "MEDIATOR" && item?.skills?.length > 0 && (
+                  {item?.skills?.length > 0 && (
                     <View style={styles.recommendationContainer}>
                       <MaterialCommunityIcons
                         name="hammer-sickle"
@@ -338,7 +328,8 @@ const Applicants = ({
 
 const styles = StyleSheet.create({
   applicantList: {
-    display: "flex",
+    // display: "flex",
+    flex: 1
   },
   applicantContainer: {
     gap: 5,

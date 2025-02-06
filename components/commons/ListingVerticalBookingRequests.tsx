@@ -409,7 +409,7 @@ const ListingVerticalBookingRequests = ({
   };
 
   const renderContent = () => {
-    if (userDetails?.role === "ADMIN") {
+    if (userDetails?.isAdmin) {
       return (
         <FlatList
           {...commonFlatListProps}

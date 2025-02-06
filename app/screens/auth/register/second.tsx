@@ -1,204 +1,177 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+} from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
+import TOAST from "@/app/hooks/toast";
 import { Ionicons } from "@expo/vector-icons";
-import EmailAddressField from "@/components/inputs/EmailAddress";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
-import { Controller, useForm } from "react-hook-form";
-import { isEmptyObject } from "@/constants/functions";
-import Stepper from "@/components/commons/Stepper";
-import { REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
-import DateField from "@/components/inputs/DateField";
-import Gender from "@/components/inputs/Gender";
-import CustomDatePicker from "@/components/inputs/CustomDatePicker";
-import moment, { Moment } from "moment";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import CustomHeading from "@/components/commons/CustomHeading";
+import { useMutation } from "@tanstack/react-query";
+import USER from "@/app/api/user";
+import Loader from "@/components/commons/Loaders/Loader";
 
-interface SecondScreenProps {
+interface FourthScreenProps {
   setStep: any;
-  address: string;
-  setAddress: any;
-  location: object;
-  setLocation: any;
-  email: string;
-  setEmail: any;
-  dateOfBirth: Moment;
-  setDateOfBirth: any;
-  gender: string;
-  setGender: any;
+  handleUpdate: any;
 }
 
-const SecondScreen: React.FC<SecondScreenProps> = ({
+const FourthScreen: React.FC<FourthScreenProps> = ({
   setStep,
-  address,
-  setAddress,
-  location,
-  setLocation,
-  email,
-  setEmail,
-  dateOfBirth,
-  setDateOfBirth,
-  gender,
-  setGender,
-}: SecondScreenProps) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      address: address,
-      location: location,
-      email: email,
-      dateOfBirth: dateOfBirth,
-      gender: gender,
-    },
-  });
-  const [selectedOption, setSelectedOption] = useState(
-    !isEmptyObject(location) ? "currentLocation" : "address"
+  handleUpdate,
+}: FourthScreenProps) => {
+  const { userId } = useLocalSearchParams();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
+    "create"
   );
 
-  const onSubmit = (data: any) => {
-    setAddress(data?.address);
-    setEmail(data?.email);
-    setDateOfBirth(data?.dateOfBirth);
-    setGender(data?.gender);
-    setStep(3);
+  const mutationUpdateProfile = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) =>
+      USER.updateUserById({
+        _id: userId,
+        ...payload,
+      }),
+    onSuccess: () => {
+      console.log("Profile updated successfully");
+      TOAST?.showToast?.success(t("profileUpdated"));
+      router.push({
+        pathname: "/screens/auth/register/third",
+        params: { userId: userId },
+      });
+    },
+    onError: (error) => {
+      console.error("Profile update error:", error);
+    },
+  });
+
+  const onSubmit = () => {
+    if (password === confirmPassword) {
+      mutationUpdateProfile.mutate({
+        password,
+      });
+    } else {
+      TOAST?.showToast?.error("Passwords do not match. Please try again.");
+      setConfirmPassword("");
+    }
+  };
+
+  const handleSetPassword = () => {
+    if (password?.length === 4) {
+      setPasswordStep("confirm");
+    } else {
+      TOAST?.showToast?.error("Please enter full password");
+    }
+  };
+
+  const handleNumberPress = (num: string) => {
+    if (passwordStep === "create") {
+      if (num === "remove") {
+        setPassword(password.slice(0, -1));
+      } else if (password.length < 4) {
+        setPassword(password + num);
+      }
+    } else if (passwordStep === "confirm") {
+      if (num === "remove") {
+        setConfirmPassword(confirmPassword.slice(0, -1));
+      } else if (confirmPassword.length < 4) {
+        setConfirmPassword(confirmPassword + num);
+      }
+    }
+  };
+
+  const handlePasswordBack = async () => {
+    if (passwordStep === "create") {
+      router?.back();
+    } else {
+      setPasswordStep("create");
+      setConfirmPassword("");
+    }
   };
 
   return (
-    <>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={2} steps={REGISTERSTEPS} />
-      </View>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Loader loading={mutationUpdateProfile?.isPending} />
+      <Stack.Screen options={{ headerShown: false }} />
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        <CustomHeading baseFont={30} style={styles.title}>
+          {passwordStep === "create"
+            ? "Create a 4-Digit Password"
+            : "Confirm Your Password"}
+        </CustomHeading>
+        <View style={styles.passwordContainer}>
+          {Array(4)
+            .fill(null)
+            .map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  (passwordStep === "create"
+                    ? password.length
+                    : confirmPassword.length) > index && styles.filledDot,
+                ]}
+              />
+            ))}
+        </View>
 
-      <View style={{ flexDirection: "column", gap: 20 }}>
-        <Controller
-          control={control}
-          name="address"
-          defaultValue=""
-          rules={{
-            required: t("addressIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <AddLocationAndAddress
-              label={t("address")}
-              name="address"
-              address={value}
-              setAddress={onChange}
-              location={location}
-              setLocation={setLocation}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              onBlur={onBlur}
-              errors={errors}
-            />
+        <View style={styles.keypad}>
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "remove"].map(
+            (num, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.key}
+                onPress={() => handleNumberPress(num)}
+              >
+                {num === "remove" ? (
+                  <Ionicons name="backspace" size={37} color={Colors.white} />
+                ) : (
+                  <Text style={styles.keyText}>{num}</Text>
+                )}
+              </TouchableOpacity>
+            )
           )}
-        />
-
-        <Controller
-          control={control}
-          name="email"
-          defaultValue=""
-          // rules={{
-          //   required: t("emailAddressIsRequired"),
-          //   pattern: {
-          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-          //     message: t("enterAValidEmailAddress"),
-          //   },
-          // }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <EmailAddressField
-              name="email"
-              email={value}
-              setEmail={onChange}
-              onBlur={onBlur}
-              errors={errors}
-              placeholder={t("enterYourEmailAddress")}
-              icon={
-                <Ionicons
-                  name={"mail-outline"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, marginRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="dateOfBirth"
-          defaultValue={moment().subtract(18, "years").startOf("year")}
-          rules={{
-            required: t("dateOfBirthIsRequired"),
-            validate: (value) => {
-              const selectedDate = moment(value);
-              const today = moment(new Date());
-              const eighteenYearsAgo = moment(new Date());
-              eighteenYearsAgo.set("year", today.year() - 18);
-
-              if (selectedDate > eighteenYearsAgo) {
-                return t("youMustBeAtLeast18YearsOld");
-              } else {
-                return true;
-              }
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("dateOfBirth")}
-              name="dateOfBirth"
-              type="dateOfBirth"
-              date={moment(value)}
-              setDate={onChange}
-              onBlur={onBlur}
-              errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="gender"
-          rules={{
-            required: t("genderIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Gender
-              name="gender"
-              label={t("whatIsYourGender")}
-              options={[
-                { title: t("male"), value: "male", icon: "👩‍🦰" },
-                { title: t("female"), value: "female", icon: "👨" },
-                { title: t("other"), value: "other", icon: "✨" },
-              ]}
-              gender={value}
-              setGender={onChange}
-              containerStyle={errors?.gender && styles.errorInput}
-              errors={errors}
-            />
-          )}
-        />
+        </View>
       </View>
 
       <View style={styles?.buttonContainer}>
-        <Button
-          isPrimary={false}
-          title={t("back")}
-          onPress={() => setStep(1)}
-          style={{width: "30%"}}
-        />
+        {router?.canGoBack() ? (
+          <Button
+            isPrimary={false}
+            title={t("back")}
+            onPress={handlePasswordBack}
+            style={{ width: "35%" }}
+          />
+        ) : (
+          <View></View>
+        )}
         <Button
           isPrimary={true}
-          title={t("saveAndNext")}
-          onPress={handleSubmit(onSubmit)}
-          style={{width: "40%"}}
+          title={passwordStep === "create" ? "Next" : "Confirm Your Password"}
+          onPress={() =>
+            passwordStep === "create" ? handleSetPassword() : onSubmit()
+          }
+          style={{ width: "60%", paddingHorizontal: 6 }}
         />
       </View>
-    </>
+    </ScrollView>
   );
 };
 
@@ -206,69 +179,70 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    backgroundColor: "white",
-  },
-  customHeader: {
+    backgroundColor: Colors?.white,
+    paddingHorizontal: 20,
+    gap: 10,
     width: "100%",
-    marginTop: 40,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "center",
   },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-  },
-  formContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    marginBottom: 40,
-  },
-
   label: {
     marginVertical: 10,
-  },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 8,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
-  },
-  buttonText: {
-    color: Colors?.white,
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 18,
-  },
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
     marginVertical: 10,
   },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    marginTop: 20,
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    textAlign: "center",
-    padding: 10,
+  heading: {
+    marginBottom: 20,
   },
   errorInput: {
     borderWidth: 1,
     borderColor: "red",
     color: "red",
   },
+  successText: {
+    color: "green",
+  },
+  title: {
+    marginBottom: 20,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  dot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#3a3a4f",
+    marginHorizontal: 10,
+  },
+  filledDot: {
+    backgroundColor: "#5DB075",
+  },
+  keypad: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "95%",
+    height: "auto",
+    marginBottom: 20,
+    padding: 0,
+  },
+  key: {
+    width: "30%",
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    backgroundColor: Colors?.black,
+    borderRadius: 8,
+  },
+  keyText: {
+    fontSize: 37,
+    color: "white",
+  },
 });
 
-export default SecondScreen;
+export default FourthScreen;

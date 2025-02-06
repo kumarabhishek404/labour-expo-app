@@ -1,33 +1,21 @@
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/inputs/Button";
-import { MEDIATORTYPES, REGISTERSTEPS, WORKERTYPES } from "@/constants";
-import SkillsSelector from "@/components/inputs/SelectSkills";
-import RoleSelection from "@/components/inputs/SelectRole";
-import { Controller, useForm } from "react-hook-form";
-import Stepper from "@/components/commons/Stepper";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import Loader from "@/components/commons/Loaders/Loader";
+import USER from "@/app/api/user";
+import { useMutation } from "@tanstack/react-query";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
+import { Controller, useForm } from "react-hook-form";
+import RoleSelection from "@/components/inputs/SelectRole";
+import SkillsSelector from "@/components/inputs/SelectSkills";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import ButtonComp from "@/components/inputs/Button";
 
-interface ThirdScreenProps {
-  setStep: any;
-  role: string;
-  setRole: any;
-  previousRole: any;
-  setPreviousRole: any;
-  selectedInterests: any;
-  setSelectedInterests: any;
-}
-
-const ThirdScreen: React.FC<ThirdScreenProps> = ({
-  setStep,
-  role,
-  setRole,
-  previousRole,
-  setPreviousRole,
-  selectedInterests,
-  setSelectedInterests,
-}: ThirdScreenProps) => {
+const UpdateUserSkillsScreen = () => {
+  const [previousRole, setPreviousRole] = useState("WORKER");
+  const { userId } = useLocalSearchParams();
   const {
     control,
     handleSubmit,
@@ -36,39 +24,66 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      role: role,
-      interest: selectedInterests,
+      role: "WORKER",
+      skills: [],
     },
   });
 
-  console.log("previousRole--", previousRole, watch("role"));
+  const mutationUpdateProfile = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) =>
+      USER.updateUserById({
+        _id: userId,
+        ...payload,
+      }),
+    onSuccess: () => {
+      console.log("Profile updated successfully");
+      TOAST?.showToast?.success(t("profileUpdated"));
+      router.push({
+        pathname: "/screens/auth/register/fourth",
+        params: { userId: userId },
+      });
+    },
+    onError: (error) => {
+      console.error("Profile update error:", error);
+      TOAST?.showToast?.error(error?.message || t("updateFailed"));
+    },
+  });
+
   React.useEffect(() => {
-    
     if (previousRole !== watch("role")) {
-      console.log("previousRole--");
-      
-      setValue("interest", []);
+      setValue("skills", []);
     } else {
-      setValue("interest", [...selectedInterests]);
+      setValue("skills", [...watch("skills")]);
     }
     setPreviousRole(watch("role"));
   }, [watch("role")]);
 
-  const onSubmit = (data: any) => {
-    setRole(data?.role);
-    // setPreviousRole(data?.role)
-    setSelectedInterests(data?.interest);
-    setStep(3);
+  const handleUpdate = () => {
+    if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
+      TOAST?.showToast?.error(t("pleaseSelectSkills"));
+      return;
+    }
+
+    const payload = {
+      skills: watch("skills"),
+    };
+    console.log("Paylaod---", payload);
+
+    mutationUpdateProfile.mutate(payload);
   };
 
-  console.log("interests", selectedInterests);
-  
+  console.log("selectedInterests32423424--", watch("skills"));
 
   return (
-    <>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={2} steps={REGISTERSTEPS} />
-      </View>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Stack.Screen options={{ headerShown: false }} />
+      <Loader loading={mutationUpdateProfile?.isPending} />
+      <Text style={styles.heading}>{t("updateYourSkillsAndRole")}</Text>
+
       <View style={{ flexDirection: "column", gap: 20 }}>
         <Controller
           control={control}
@@ -84,14 +99,13 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         {watch("role") === "WORKER" && (
           <Controller
             control={control}
-            name="interest"
-            defaultValue=""
+            name="skills"
             rules={{
               required: t("selectAtLeastOneSkill"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
-                name="interest"
+                name="skills"
                 isPricePerDayNeeded={true}
                 selectedInterests={value}
                 setSelectedInterests={onChange}
@@ -106,14 +120,13 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         {watch("role") === "MEDIATOR" && (
           <Controller
             control={control}
-            name="interest"
-            defaultValue=""
+            name="skills"
             rules={{
               required: t("selectAtLeastOneSkill"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SkillsSelector
-                name="interest"
+                name="skills"
                 isPricePerDayNeeded={false}
                 selectedInterests={value}
                 setSelectedInterests={onChange}
@@ -126,80 +139,42 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         )}
       </View>
       <View style={styles?.buttonContainer}>
-        <Button
+        <ButtonComp
           isPrimary={false}
           title={t("back")}
-          onPress={() => setStep(1)}
-          style={{width: "30%"}}
+          onPress={() => router?.back()}
+          style={{ width: "30%" }}
         />
-        <Button
+        <ButtonComp
           isPrimary={true}
           title={t("saveAndNext")}
-          onPress={handleSubmit(onSubmit)}
-          style={{width: "40%"}}
+          onPress={handleSubmit(handleUpdate)}
+          style={{ width: "40%" }}
         />
       </View>
-    </>
+    </ScrollView>
   );
 };
 
+export default UpdateUserSkillsScreen;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "white",
-  },
-  customHeader: {
-    width: "100%",
-    marginTop: 40,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  formContainer: {
-    paddingHorizontal: 20,
+    flexGrow: 1,
+    backgroundColor: Colors?.white,
+    paddingHorizontal: 10,
     paddingTop: 20,
-    marginBottom: 40,
   },
-  label: {
-    marginVertical: 10,
-  },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 8,
+  heading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: Colors.primary,
+    textAlign: "center",
+    marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,
   },
-  buttonText: {
-    color: Colors?.white,
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 18,
-  },
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
-    marginVertical: 10,
-  },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    marginTop: 20,
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    textAlign: "center",
-    padding: 10,
-  },
 });
-
-export default ThirdScreen;

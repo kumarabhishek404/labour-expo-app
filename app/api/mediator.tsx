@@ -94,7 +94,9 @@ const removeBookedMediator = async (payload: any) => {
 
 const likeMediator = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest(`/user/like/${payload?.mediatorID}`);
+    const data = await API_CLIENT.makePostRequest(
+      `/user/like/${payload?.mediatorID}`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -111,7 +113,9 @@ const likeMediator = async (payload: any) => {
 
 const unlikeMediator = async ({ mediatorID }: any) => {
   try {
-    const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${mediatorID}`);
+    const data = await API_CLIENT.makeDeleteRequest(
+      `/user/unlike/${mediatorID}`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -151,13 +155,12 @@ const fetchAllMembers = async ({
   pageParam,
   category = "",
 }: any) => {
-  console.log("mediatorId----", mediatorId);
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/mediator/${mediatorId}/members?page=${pageParam}&limit=3&category=${category}`
+      `/mediator/${mediatorId}/members?category=${category}&page=${pageParam}&limit=3`
     );
     console.log("[userService] member fetched successfully ");
-    
+
     return data.data;
   } catch (error: any) {
     console.error(
@@ -201,7 +204,7 @@ const MEDIATOR = {
   unlikeMediator,
   fetchAllLikedMediators,
   fetchAllMembers,
-  removeMemberFromTeam
+  removeMemberFromTeam,
 };
 
 export default MEDIATOR;

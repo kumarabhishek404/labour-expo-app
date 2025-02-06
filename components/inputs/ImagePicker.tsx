@@ -48,7 +48,9 @@ const ImageUpload = ({
 
   return (
     <View>
-      <CustomHeading textAlign="left">{t("workImages")}</CustomHeading>
+      <CustomHeading textAlign="left" color={Colors?.white}>
+        {t("workImages")}
+      </CustomHeading>
       <View style={[styles.container, errors[name] && styles?.errorInput]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />
@@ -99,12 +101,13 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: Colors.secondary,
+    backgroundColor: Colors.white,
     borderRadius: 8,
     flexDirection: "column",
     alignItems: "flex-start",
     padding: 10,
+    paddingBottom: 20,
     marginTop: 5,
-    marginBottom: 10,
   },
   imageContainer: {
     flexDirection: "row",
@@ -124,7 +127,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   imageUploadButton: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5
   },
   cancelImage: {
     position: "absolute",

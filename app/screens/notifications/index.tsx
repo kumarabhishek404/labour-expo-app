@@ -17,7 +17,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { getTimeAgo } from "@/constants/functions";

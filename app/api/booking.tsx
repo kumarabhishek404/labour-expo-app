@@ -1,4 +1,3 @@
-
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
@@ -44,7 +43,7 @@ const fetchAllBookingReceivedRequests = async ({ pageParam }: any) => {
 const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/employer/bookings/all?page=${pageParam}&limit=5`
+      `/employer/booking/all?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -103,7 +102,10 @@ const cancelBookingRequest = async (payload: any) => {
   console.log("payload", payload);
 
   try {
-    const data = await API_CLIENT.makePostRequest("/employer/invitations/cancel", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/invitations/cancel",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -120,7 +122,10 @@ const cancelBookingRequest = async (payload: any) => {
 
 const acceptBookingRequest = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest("/user/invitation/accept", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/user/invitation/accept",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -137,7 +142,10 @@ const acceptBookingRequest = async (payload: any) => {
 
 const rejectBookingRequest = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest("/user/invitation/reject", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/user/invitation/reject",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -154,7 +162,10 @@ const rejectBookingRequest = async (payload: any) => {
 
 const removeBookedWorker = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest("/employer/bookings/remove", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/bookings/remove",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -171,7 +182,10 @@ const removeBookedWorker = async (payload: any) => {
 
 const cancelBooking = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest("/user/booked/cancel", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/user/booked/cancel",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(

@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Feather,
   FontAwesome,
@@ -20,9 +20,9 @@ import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import { ALL_INDIAN_VILLAGES } from "@/constants/india";
-import DropdownComponent from "./dropdown";
+import DropdownWithMenu from "@/components/inputs/dropdownWithMenu";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
@@ -43,6 +43,14 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
       pinCode: "",
     },
   });
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [districts, setDistricts]: any = useState([]);
+  const [subDistricts, setSubDistricts]: any = useState([]);
+  const [villages, setVillages]: any = useState([]);
+
+  const selectedState = watch("state");
+  const selectedDistrict = watch("district");
+  const selectedSubDistrict = watch("subDistrict");
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
@@ -58,42 +66,86 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
     },
   });
 
-  const selectedState = watch("state");
-  const selectedDistrict = watch("district");
-  const selectedSubDistrict = watch("subDistrict");
+  useEffect(() => {
+    if (selectedState) {
+      const foundDistricts =
+        ALL_INDIAN_VILLAGES.find(
+          (item) => item.state === selectedState
+        )?.districts.map((item) => ({
+          label: item.district,
+          value: item.district,
+        })) || [];
+      setDistricts(foundDistricts);
+      setValue("district", ""); // Reset dependent dropdowns
+      setValue("subDistrict", "");
+      setValue("village", "");
+    }
+  }, [selectedState]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      const foundSubDistricts =
+        ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+          ?.districts.find((item) => item.district === selectedDistrict)
+          ?.subDistricts.map((item) => ({
+            label: item.subDistrict,
+            value: item.subDistrict,
+          })) || [];
+      setSubDistricts(foundSubDistricts);
+      setValue("subDistrict", ""); // Reset subDistrict and village
+      setValue("village", "");
+    }
+  }, [selectedDistrict]);
+
+  useEffect(() => {
+    if (selectedSubDistrict) {
+      const foundVillages: any =
+        ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+          ?.districts.find((item) => item.district === selectedDistrict)
+          ?.subDistricts.find(
+            (item) => item.subDistrict === selectedSubDistrict
+          )
+          ?.villages.map((item) => ({
+            label: item,
+            value: item,
+          })) || [];
+      setVillages(foundVillages);
+      setValue("village", ""); // Reset village when sub-district changes
+    }
+  }, [selectedSubDistrict]);
 
   const states = ALL_INDIAN_VILLAGES.map((item) => ({
     label: item.state,
     value: item.state,
   }));
 
-  const districts =
-    selectedState &&
-    ALL_INDIAN_VILLAGES.find(
-      (item) => item.state === selectedState
-    )?.districts.map((item) => ({
-      label: item.district,
-      value: item.district,
-    }));
+  // const districts =
+  //   selectedState &&
+  //   ALL_INDIAN_VILLAGES.find(
+  //     (item) => item.state === selectedState
+  //   )?.districts.map((item) => ({
+  //     label: item.district,
+  //     value: item.district,
+  //   }));
 
-  const subDistricts =
-    selectedDistrict &&
-    ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-      ?.districts.find((item) => item.district === selectedDistrict)
-      ?.subDistricts.map((item) => ({
-        label: item.subDistrict,
-        value: item.subDistrict,
-      }));
+  // const subDistricts =
+  //   selectedDistrict &&
+  //   ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+  //     ?.districts.find((item) => item.district === selectedDistrict)
+  //     ?.subDistricts.map((item) => ({
+  //       label: item.subDistrict,
+  //       value: item.subDistrict,
+  //     }));
 
-  const villages =
-    selectedSubDistrict &&
-    ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-      ?.districts.find((item) => item.district === selectedDistrict)
-      ?.subDistricts.find((item) => item.subDistrict === selectedSubDistrict)
-      ?.villages.map((item) => ({
-        label: item,
-        value: item,
-      }));
+  // const villages =
+  //   selectedSubDistrict &&
+  //   ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
+  //     ?.districts.find((item) => item.district === selectedDistrict)
+  //     ?.subDistricts.find((item) => item.subDistrict === selectedSubDistrict)
+  //     ?.villages.map((item) => ({
+  //       label: item,
+  //       value: item,
+  //     }));
 
   const onSubmit = async (data: any) => {
     const address = `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`;
@@ -115,6 +167,7 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
 
     if (userDetails?.isAuth) {
       await mutationUpdateProfileInfo.mutate({
+        _id: userDetails?._id,
         savedAddresses: address,
       });
     }
@@ -125,169 +178,187 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
 
   const modalContent = () => {
     return (
-      <ScrollView style={{paddingVertical: 20}} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles?.container}
+        showsVerticalScrollIndicator={false}
+      >
         <Loader loading={mutationUpdateProfileInfo?.isPending} />
         <View style={styles.formContainer}>
-          <Controller
-            control={control}
-            name="state"
-            rules={{
-              required: t("stateIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                name="state"
-                label={t("state")}
-                value={value}
-                setValue={onChange}
-                placeholder={t("selectState")}
-                errors={errors}
-                containerStyle={errors?.state && styles.errorInput}
-                search={false}
-                options={states || []}
-                icon={
-                  <FontAwesome6
-                    style={styles.icon}
-                    color="black"
-                    name="map-location"
-                    size={20}
-                  />
-                }
-              />
-            )}
-          />
+          <View style={{ zIndex: 9 }}>
+            <Controller
+              control={control}
+              name="state"
+              rules={{
+                required: t("stateIsRequired"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DropdownWithMenu
+                  id="state"
+                  label={t("state")}
+                  options={states}
+                  selectedValue={value}
+                  onSelect={(value: any) => onChange(value)}
+                  containerStyle={errors?.state && styles.errorInput}
+                  placeholder={t("selectState")}
+                  errors={errors}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                  icon={
+                    <FontAwesome6
+                      style={styles.icon}
+                      color="black"
+                      name="map-location"
+                      size={20}
+                    />
+                  }
+                />
+              )}
+            />
+          </View>
 
-          <Controller
-            control={control}
-            name="district"
-            rules={{
-              required: t("districtIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                name="district"
-                label={t("district")}
-                value={value}
-                setValue={onChange}
-                placeholder={
-                  selectedState
-                    ? t("selectDistrict")
-                    : t("pleaseSelectStateFirst")
-                }
-                disabled={!selectedState}
-                errors={errors}
-                containerStyle={errors?.district && styles.errorInput}
-                search={false}
-                options={districts || []}
-                icon={
-                  <FontAwesome6
-                    style={styles.icon}
-                    color="black"
-                    name="map-location"
-                    size={20}
-                  />
-                }
-              />
-            )}
-          />
+          <View style={{ zIndex: 8 }}>
+            <Controller
+              control={control}
+              name="district"
+              rules={{
+                required: t("districtIsRequired"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DropdownWithMenu
+                  id="district"
+                  label={t("district")}
+                  options={districts || []}
+                  selectedValue={value}
+                  onSelect={(value: any) => onChange(value)}
+                  errors={errors}
+                  containerStyle={errors?.district && styles.errorInput}
+                  placeholder={
+                    selectedState
+                      ? t("selectDistrict")
+                      : t("pleaseSelectStateFirst")
+                  }
+                  searchEnabled={false}
+                  disabled={!selectedState}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                  icon={
+                    <FontAwesome6
+                      style={styles.icon}
+                      color="black"
+                      name="map-location"
+                      size={20}
+                    />
+                  }
+                />
+              )}
+            />
+          </View>
+          <View style={{ zIndex: 7 }}>
+            <Controller
+              control={control}
+              name="subDistrict"
+              rules={{
+                required: t("subDistrictIsRequired"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DropdownWithMenu
+                  id="subDistrict"
+                  label={t("subDistrict")}
+                  placeholder={
+                    selectedDistrict
+                      ? t("selectSubDistrict")
+                      : t("pleaseSelectDistrictFirst")
+                  }
+                  disabled={!selectedDistrict}
+                  errors={errors}
+                  containerStyle={errors?.subDistrict && styles.errorInput}
+                  searchEnabled={false}
+                  options={subDistricts || []}
+                  icon={
+                    <FontAwesome6
+                      style={styles.icon}
+                      color="black"
+                      name="map-location"
+                      size={20}
+                    />
+                  }
+                  selectedValue={value}
+                  onSelect={(value: any) => onChange(value)}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                />
+              )}
+            />
+          </View>
 
-          <Controller
-            control={control}
-            name="subDistrict"
-            rules={{
-              required: t("subDistrictIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                name="subDistrict"
-                label={t("subDistrict")}
-                value={value}
-                setValue={onChange}
-                placeholder={
-                  selectedDistrict
-                    ? t("selectSubDistrict")
-                    : t("pleaseSelectDistrictFirst")
-                }
-                disabled={!selectedDistrict}
-                errors={errors}
-                containerStyle={errors?.subDistrict && styles.errorInput}
-                search={false}
-                options={subDistricts || []}
-                icon={
-                  <FontAwesome6
-                    style={styles.icon}
-                    color="black"
-                    name="map-location"
-                    size={20}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="village"
-            rules={{
-              required: t("villageIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                name="village"
-                label={t("village")}
-                value={value}
-                setValue={onChange}
-                placeholder={
-                  selectedSubDistrict
-                    ? t("selectVillage")
-                    : t("pleaseSelectSubDistrictFirst")
-                }
-                disabled={!selectedSubDistrict}
-                errors={errors}
-                containerStyle={errors?.village && styles.errorInput}
-                search={false}
-                options={villages || []}
-                icon={
-                  <FontAwesome6
-                    style={styles.icon}
-                    color="black"
-                    name="map-location"
-                    size={20}
-                  />
-                }
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="pinCode"
-            rules={{
-              required: t("pinCodeIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                value={value}
-                style={styles.textInput}
-                placeholder={t("pinCode")}
-                onChangeText={onChange}
-                label={t("pinCode")}
-                maxLength={6}
-                name="pinCode"
-                type="number"
-                containerStyle={errors?.pinCode && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Feather
-                    name="map-pin"
-                    style={styles.icon}
-                    size={22}
-                    color={Colors.secondary}
-                  />
-                }
-              />
-            )}
-          />
+          <View style={{ zIndex: 6 }}>
+            <Controller
+              control={control}
+              name="village"
+              rules={{
+                required: t("villageIsRequired"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DropdownWithMenu
+                  id="village"
+                  label={t("village")}
+                  placeholder={
+                    selectedSubDistrict
+                      ? t("selectVillage")
+                      : t("pleaseSelectSubDistrictFirst")
+                  }
+                  disabled={!selectedSubDistrict}
+                  errors={errors}
+                  containerStyle={errors?.village && styles.errorInput}
+                  searchEnabled={false}
+                  options={villages || []}
+                  icon={
+                    <FontAwesome6
+                      style={styles.icon}
+                      color="black"
+                      name="map-location"
+                      size={20}
+                    />
+                  }
+                  selectedValue={value}
+                  onSelect={(value: any) => onChange(value)}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                />
+              )}
+            />
+          </View>
+          <View style={{ zIndex: 5 }}>
+            <Controller
+              control={control}
+              name="pinCode"
+              rules={{
+                required: t("pinCodeIsRequired"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInputComponent
+                  value={value}
+                  style={styles.textInput}
+                  placeholder={t("pinCode")}
+                  onChangeText={onChange}
+                  label={t("pinCode")}
+                  maxLength={6}
+                  name="pinCode"
+                  type="number"
+                  containerStyle={errors?.pinCode && styles.errorInput}
+                  errors={errors}
+                  icon={
+                    <Feather
+                      name="map-pin"
+                      style={styles.icon}
+                      size={22}
+                      color={Colors.secondary}
+                    />
+                  }
+                />
+              )}
+            />
+          </View>
         </View>
       </ScrollView>
     );
@@ -312,6 +383,9 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
 export default AddAddressModal;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 20,
+  },
   formContainer: {
     gap: 10,
   },

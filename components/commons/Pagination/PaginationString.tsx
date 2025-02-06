@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomText from "../CustomText";
 import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
 
 interface PaginationStringProps {
   type: string;
@@ -17,15 +18,21 @@ const PaginationString = ({
   totalData,
 }: PaginationStringProps) => {
   return (
-    <View style={styles.totalData}>
-      <CustomText textAlign="left">
-        {isLoading
-          ? t("loading")
-          : `${t("fetched")} ${totalFetchedData || 0} ${t("from")} ${
-              totalData || 0
-            } ${type}`}
-      </CustomText>
-    </View>
+    <>
+      {totalData ? (
+        <View style={styles.totalData}>
+          <CustomText textAlign="left" color={Colors?.tertiery}>
+            {isLoading
+              ? t("loading")
+              : `${t("fetched")} ${totalFetchedData || 0} ${t("from")} ${
+                  totalData || 0
+                } ${type}`}
+          </CustomText>
+        </View>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 

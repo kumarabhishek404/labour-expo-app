@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
   emptyContainer: {
     borderWidth: 1,
     borderColor: Colors.secondary,
+    backgroundColor: Colors.white,
     borderRadius: 8,
     paddingVertical: 40,
     paddingHorizontal: 10,

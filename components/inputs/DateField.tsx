@@ -71,7 +71,8 @@ const DateField: React.FC<DateFieldProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+  },
   dateField: {
     width: "100%",
     display: "flex",
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 53,
     padding: 10,
+    backgroundColor: Colors?.white,
     borderColor: Colors?.secondary,
     borderRadius: 8,
   },

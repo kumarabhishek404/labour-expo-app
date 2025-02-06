@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
@@ -12,14 +12,14 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { MYSERVICES, SERVICES } from "@/constants";
+import { MYSERVICES, SERVICES, WORKERTYPES, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const [category, setCategory] = useState("HIRING");
-  const { title, type } = useGlobalSearchParams();
+  const { title, type, searchCategory } = useGlobalSearchParams();
 
   const {
     data: response,
@@ -42,8 +42,19 @@ const Services = () => {
       type === "favourite"
         ? SERVICE?.fetchAllLikedServices({ pageParam })
         : type === "myServices"
-        ? SERVICE?.fetchMyServices({ pageParam, status: category })
-        : SERVICE?.fetchAllServices({ pageParam }),
+        ? SERVICE?.fetchMyServices({
+            pageParam,
+            status: "",
+          })
+        : SERVICE?.fetchAllServices({
+            pageParam,
+            status: "HIRING",
+            type: searchCategory && JSON?.parse(searchCategory as string)?.type,
+            subType:
+              searchCategory && JSON?.parse(searchCategory as string)?.subType,
+            skill:
+              searchCategory && JSON?.parse(searchCategory as string)?.skill,
+          }),
     initialPageParam: 1,
     retry: false,
     getNextPageParam: (lastPage: any, pages) => {
@@ -80,30 +91,34 @@ const Services = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title={`${title}`} left="back" />,
+          header: () => (
+            <CustomHeader title={`${title}`} left="back" right="notification" />
+          ),
         }}
       />
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter
+          {/* <SearchFilter
             type="services"
             data={response?.pages}
             setFilteredData={setFilteredData}
-          />
-
+          /> */}
+          {/* 
           <CategoryButtons
-            options={type === "myServices" ? MYSERVICES : SERVICES}
+            options={WORKTYPES}
             onCagtegoryChanged={onCatChanged}
-          />
+          /> */}
 
           <PaginationString
             type="services"
@@ -136,7 +151,7 @@ const Services = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#EAF0FF",
     paddingHorizontal: 10,
   },
 });

@@ -18,7 +18,7 @@ import { t } from "@/utils/translationHelper";
 import FIREBASE from "@/app/api/firebase";
 import ModalComponent from "../commons/Modal";
 import { useMutation } from "@tanstack/react-query";
-import Loader from "../commons/Loader";
+import Loader from "../commons/Loaders/Loader";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -27,11 +27,11 @@ interface MobileNumberFieldProps {
   setCountryCode?: any;
   phoneNumber: string;
   setPhoneNumber: any;
-  onBlur: any;
+  onBlur?: any;
   errors: any;
   isMobileNumberExist?: boolean | null;
   placeholder: string;
-  loading: boolean;
+  loading?: boolean;
   icon?: any;
 }
 

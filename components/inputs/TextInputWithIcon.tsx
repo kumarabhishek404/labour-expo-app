@@ -24,10 +24,10 @@ type TextInputProps = {
   secureTextEntry?: any;
   secondIcon?: any;
   errors?: any;
-  isMobileNumberExist?: boolean|null;
+  isMobileNumberExist?: boolean | null;
   style?: any;
   textStyles?: any;
-  disabled?: boolean|null;
+  disabled?: boolean | null;
   loading?: boolean;
   containerStyle?: any;
 };
@@ -71,7 +71,11 @@ const TextInputComponent = ({
     <View
       style={[styles?.inputField, style, disabled && styles?.disabledInput]}
     >
-      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
+      {label && (
+        <CustomHeading textAlign="left" color={Colors?.primary}>
+          {label}
+        </CustomHeading>
+      )}
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && (
           <TouchableOpacity activeOpacity={1} onPress={handleLabelPress}>

@@ -67,143 +67,173 @@ const ListingsVerticalServices = ({
 
   const RenderItem = React?.memo(({ item }: any) => {
     return (
-      <View style={styles.container}>
-        <Link href={`/screens/service/${item._id}`} asChild>
-          <TouchableOpacity>
-            <View style={styles.item}>
-              <Image
-                source={
-                  item?.coverImage ? { uri: item?.coverImage } : coverImage
-                }
-                style={styles.image}
-              />
-              {(item?.selectedWorkers || item?.selectedMediators) &&
-                (item?.selectedWorkers?.includes(userDetails?._id) ||
-                  item?.selectedMediators?.includes(userDetails?._id)) && (
-                  <View
-                    style={[
-                      styles.applicants,
-                      { backgroundColor: Colors?.tertiery },
-                    ]}
-                  >
-                    <Ionicons name="happy" size={20} color={Colors.white} />
-                    <CustomHeading color={Colors?.white}>
-                      {t("selected")}
-                    </CustomHeading>
-                  </View>
-                )}
+      <>
+        <View style={styles.container}>
+          <Link href={`/screens/service/${item._id}`} asChild>
+            <TouchableOpacity>
+              {userDetails?._id !== item?.employer && (
+                <>
+                  {item?.type === "booking" ? (
+                    <View
+                      style={[
+                        styles?.tag,
+                        { backgroundColor: Colors?.primary },
+                      ]}
+                    >
+                      <CustomText color={Colors?.white} fontWeight="bold">
+                        Applied In Service
+                      </CustomText>
+                    </View>
+                  ) : (
+                    <View style={styles?.tag}>
+                      <CustomText color={Colors?.white} fontWeight="bold">
+                        Direct Bookings
+                      </CustomText>
+                    </View>
+                  )}
+                </>
+              )}
+              <View style={styles.item}>
+                <Image
+                  source={
+                    item?.coverImage ? { uri: item?.coverImage } : coverImage
+                  }
+                  style={styles.image}
+                />
+                {(item?.selectedWorkers || item?.selectedMediators) &&
+                  (item?.selectedWorkers?.includes(userDetails?._id) ||
+                    item?.selectedMediators?.includes(userDetails?._id)) && (
+                    <View
+                      style={[
+                        styles.applicants,
+                        { backgroundColor: Colors?.tertiery },
+                      ]}
+                    >
+                      <Ionicons name="happy" size={20} color={Colors.white} />
+                      <CustomHeading color={Colors?.white}>
+                        {t("selected")}
+                      </CustomHeading>
+                    </View>
+                  )}
 
-              {(item?.appliedWorkers || item?.appliedMediators) &&
-                (item?.appliedWorkers?.length > 0 ||
-                  item?.appliedMediators?.length > 0) && (
-                  <View style={styles.applicants}>
-                    <Fontisto name="persons" size={18} color={Colors.white} />
-                    <CustomHeading color={Colors?.white}>
-                      {item?.appliedWorkers?.length +
-                        item?.appliedMediators?.length}
-                    </CustomHeading>
-                    <CustomHeading color={Colors?.white}>
-                      {t("proposals")}
-                    </CustomHeading>
-                  </View>
-                )}
+                {(item?.appliedWorkers || item?.appliedMediators) &&
+                  (item?.appliedWorkers?.length > 0 ||
+                    item?.appliedMediators?.length > 0) && (
+                    <View style={styles.applicants}>
+                      <Fontisto name="persons" size={18} color={Colors.white} />
+                      <CustomHeading color={Colors?.white}>
+                        {item?.appliedWorkers?.length +
+                          item?.appliedMediators?.length}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.white}>
+                        {t("proposals")}
+                      </CustomHeading>
+                    </View>
+                  )}
 
-              <Requirements
-                type="highlights"
-                requirements={item?.requirements}
-              />
+                <Requirements
+                  type="highlights"
+                  requirements={item?.requirements}
+                />
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ width: "70%", flexDirection: "column" }}>
-                  <CustomHeading
-                    textAlign="left"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    {t(item?.type)} - {t(item?.subType)}
-                  </CustomHeading>
-                </View>
-                <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
                 <View
                   style={{
-                    flexDirection: "column",
-                    gap: 5,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <View style={{ width: "70%", flexDirection: "column" }}>
+                    <CustomHeading
+                      textAlign="left"
+                      style={{ textTransform: "capitalize" }}
+                    >
+                      {t(item?.type)} - {t(item?.subType)}
+                    </CustomHeading>
+                  </View>
+                  <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                   }}
                 >
                   <View
                     style={{
-                      width: "69%",
-                      flexDirection: "row",
-                      alignItems: "flex-start",
+                      flexDirection: "column",
+                      gap: 5,
                     }}
                   >
-                    <FontAwesome5
-                      name="map-marker-alt"
-                      size={14}
-                      color={Colors.primary}
-                    />
-                    <CustomText
-                      baseFont={10}
-                      textAlign="left"
-                      style={{ marginLeft: 5 }}
+                    <View
+                      style={{
+                        width: "69%",
+                        flexDirection: "row",
+                        alignItems: "flex-start",
+                      }}
                     >
-                      {item?.address}
-                    </CustomText>
+                      <FontAwesome5
+                        name="map-marker-alt"
+                        size={14}
+                        color={Colors.primary}
+                      />
+                      <CustomText
+                        baseFont={10}
+                        textAlign="left"
+                        style={{ marginLeft: 5 }}
+                      >
+                        {item?.address}
+                      </CustomText>
+                    </View>
+
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Entypo
+                        name="calendar"
+                        size={14}
+                        color={Colors.primary}
+                      />
+                      <CustomText
+                        baseFont={10}
+                        textAlign="left"
+                        style={{ marginLeft: 5 }}
+                      >
+                        {moment(item?.startDate, "YYYY-MM-DD")?.format(
+                          "Do MMMM YYYY"
+                        )}
+                      </CustomText>
+                    </View>
                   </View>
 
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Entypo name="calendar" size={14} color={Colors.primary} />
-                    <CustomText
-                      baseFont={10}
-                      textAlign="left"
-                      style={{ marginLeft: 5 }}
-                    >
-                      {moment(item?.startDate, "YYYY-MM-DD")?.format(
-                        "Do MMMM YYYY"
+                  <View style={styles?.actionContainer}>
+                    <CustomText>
+                      {t("duration")}{" "}
+                      {item?.duration ||
+                        dateDifference(item?.startDate, item?.endDate)}
+                    </CustomText>
+
+                    {item?.location &&
+                      item?.location?.latitude &&
+                      userDetails?.location &&
+                      !isNaN(
+                        calculateDistance(item?.location, userDetails?.location)
+                      ) && (
+                        <CustomHeading>
+                          {calculateDistance(
+                            item?.location,
+                            userDetails?.location
+                          )}{" "}
+                          Kms
+                        </CustomHeading>
                       )}
-                    </CustomText>
                   </View>
-                </View>
-
-                <View style={styles?.actionContainer}>
-                  <CustomText>
-                    {t("duration")}{" "}
-                    {item?.duration ||
-                      dateDifference(item?.startDate, item?.endDate)}
-                  </CustomText>
-
-                  {item?.location &&
-                    item?.location?.latitude &&
-                    userDetails?.location &&
-                    !isNaN(
-                      calculateDistance(item?.location, userDetails?.location)
-                    ) && (
-                      <CustomHeading>
-                        {calculateDistance(
-                          item?.location,
-                          userDetails?.location
-                        )}{" "}
-                        Kms
-                      </CustomHeading>
-                    )}
                 </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        </Link>
-      </View>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </>
     );
   });
 
@@ -250,6 +280,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 20,
+    position: "relative",
+  },
+  tag: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: Colors?.tertiery,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderTopRightRadius: 8,
   },
   item: {
     backgroundColor: Colors.white,

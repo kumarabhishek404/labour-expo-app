@@ -95,13 +95,7 @@ const ListingsVerticalBookings = ({
                     <Button
                       isPrimary={false}
                       title={t("cancel")}
-                      onPress={() =>
-                        onCancelBooking(
-                          userDetails?.role === "EMPLOYER"
-                            ? item?.worker?._id
-                            : item?._id
-                        )
-                      }
+                      onPress={() => onCancelBooking(item?._id)}
                     />
                   </CustomHeading>
                 </View>

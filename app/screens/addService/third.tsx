@@ -51,19 +51,11 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
 
   return (
     <View style={styles?.container}>
-      <Image source={Step4} style={styles.image} />
-      <View style={{ marginVertical: 30 }}>
-        <Stepper currentStep={4} steps={ADDSERVICESTEPS} />
-      </View>
-
-      <View style={{ flexDirection: "column", gap: 10 }}>
+      <View style={{ flexDirection: "column" }}>
         <Controller
           control={control}
           name="images"
           defaultValue=""
-          // rules={{
-          //   required: "Please upload at least one image",
-          // }}
           render={({ field: { onChange, onBlur, value } }) => (
             <ImageUpload
               name="images"
@@ -79,9 +71,6 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           control={control}
           name="description"
           defaultValue=""
-          // rules={{
-          //   required: "Work description is required",
-          // }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextAreaInputComponent
               label={t("workDescription")}
@@ -109,11 +98,13 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           isPrimary={false}
           title={t("back")}
           onPress={() => setStep(2)}
+          style={{ width: "30%" }}
         />
         <Button
           isPrimary={true}
           title={t("saveAndView")}
           onPress={handleSubmit(onSubmit)}
+          style={{ width: "50%" }}
         />
       </View>
     </View>
@@ -124,7 +115,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: "transparent",
   },
   image: {
     width: "80%",
@@ -135,7 +126,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
+    marginTop: 20,
   },
   errorInput: {
     borderWidth: 1,

@@ -6,7 +6,7 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -15,6 +15,7 @@ import { MYSERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import SERVICE from "@/app/api/services";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import Colors from "@/constants/Colors";
 
 const UserBookingsAndMyServices = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -33,13 +34,8 @@ const UserBookingsAndMyServices = () => {
     refetch,
   } = useInfiniteQuery({
     queryKey: ["myServices", category],
-    queryFn: ({ pageParam }) => {
-      return userDetails?.role === "EMPLOYER"
-        ? SERVICE?.fetchMyServices({ pageParam, status: category })
-        : userDetails?.role === "MEDIATOR"
-        ? SERVICE?.fetchAllMyBookingsMediator({ pageParam, status: category })
-        : SERVICE?.fetchAllMyBookingsWorker({ pageParam, status: category });
-    },
+    queryFn: ({ pageParam }) =>
+      SERVICE?.fetchMyServices({ pageParam, status: category }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -65,18 +61,14 @@ const UserBookingsAndMyServices = () => {
       const totalData = response?.pages[0]?.pagination?.total;
       setTotalData(totalData);
 
-      if (userDetails?.role === "EMPLOYER") {
-        // For employers, keep existing behavior
-        setFilteredData(
-          response?.pages.flatMap((page: any) => page.data || [])
-        );
-      } else {
-        // For mediators and workers, combine both responses
-        const appliedServices =
-          response?.pages?.flatMap((page: any) => page.data || []) || [];
+      // setFilteredData(
+      //   response?.pages.flatMap((page: any) => page.data || [])
+      // );
 
-        setFilteredData([...appliedServices]);
-      }
+      const appliedServices =
+        response?.pages?.flatMap((page: any) => page.data || []) || [];
+
+      setFilteredData([...appliedServices]);
     }, [response, userDetails?.role])
   );
 
@@ -96,21 +88,20 @@ const UserBookingsAndMyServices = () => {
     // refetch();
   };
 
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
+          headerShown: false,
           header: () => (
             <CustomHeader
-              title={
-                userDetails?.role === "EMPLOYER"
-                  ? t("myServices")
-                  : t("myBookings")
-              }
+              title={t("myBookings")}
               left="menu"
               right="notification"
             />
@@ -152,9 +143,7 @@ const UserBookingsAndMyServices = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder
-              title={userDetails?.role === "EMPLOYER" ? "Service" : "Booking"}
-            />
+            <EmptyDatePlaceholder title={"Booking"} />
           )}
         </View>
       </View>
@@ -166,7 +155,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    marginBottom: 100,
+    backgroundColor: Colors?.white,
   },
 });
 

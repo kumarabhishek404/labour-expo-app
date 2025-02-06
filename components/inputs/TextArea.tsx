@@ -30,7 +30,9 @@ const TextAreaInputComponent = ({
 }: TextInputProps) => {
   return (
     <View style={styles?.inputField}>
-      <CustomHeading textAlign="left">{label}</CustomHeading>
+      <CustomHeading textAlign="left" color={Colors?.white}>
+        {label}
+      </CustomHeading>
       <View style={[styles.inputContainer, containerStyle]}>
         {icon && icon}
         <TextInput
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
     height: 140,
     borderWidth: 1,
     borderColor: Colors.secondary,
+    backgroundColor: Colors.white,
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "flex-start",

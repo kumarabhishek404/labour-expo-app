@@ -8,7 +8,7 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import WORKER from "@/app/api/workers";
 import SERVICE from "../../../api/services";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import EMPLOYER from "../../../api/employer";
 import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
 import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
@@ -48,13 +48,11 @@ const UserHome = () => {
   } = useInfiniteQuery({
     queryKey: ["homepage", category],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "EMPLOYER"
-        ? WORKER?.fetchAllWorkers({ pageParam, skill: category })
-        : SERVICE?.fetchAllServices({
-            pageParam,
-            status: "HIRING",
-            skill: category,
-          });
+      SERVICE?.fetchAllServices({
+        pageParam,
+        status: "HIRING",
+        skill: category,
+      });
     },
     initialPageParam: 1,
     retry: false,
@@ -78,9 +76,7 @@ const UserHome = () => {
   } = useInfiniteQuery({
     queryKey: ["tops", category],
     queryFn: ({ pageParam }) => {
-      return userDetails?.role === "EMPLOYER"
-        ? WORKER?.fetchAllWorkers({ pageParam, skill: category, top: true })
-        : EMPLOYER?.fetchAllEmployers({ pageParam, type: category, top: true });
+      EMPLOYER?.fetchAllEmployers({ pageParam, type: category, top: true });
     },
     initialPageParam: 1,
     retry: false,
@@ -142,6 +138,7 @@ const UserHome = () => {
     <>
       <Stack.Screen
         options={{
+          headerShown: false,
           header: () => (
             <CustomHeader title="" left="menu" right="notification" />
           ),
@@ -172,9 +169,7 @@ const UserHome = () => {
             <BannerSlider />
             <HomePageLinks />
 
-            <CustomHeading textAlign="left">
-              {userDetails?.role === "EMPLOYER" ? t("workers") : t("services")}
-            </CustomHeading>
+            <CustomHeading textAlign="left">{t("services")}</CustomHeading>
             <View style={styles.divider}></View>
 
             <CategoryButtons
@@ -185,55 +180,19 @@ const UserHome = () => {
 
             <View style={{ paddingBottom: 30, paddingTop: 5 }}>
               {memoizedData && memoizedData?.length > 0 ? (
-                userDetails?.role === "EMPLOYER" ? (
-                  <>
-                    <ListingHorizontalWorkers
-                      availableInterest={WORKERTYPES}
-                      category={category}
-                      listings={memoizedData || []}
-                      loadMore={loadMore}
-                      isFetchingNextPage={isFetchingNextPage}
-                    />
-                    <ScrollHint />
-                  </>
-                ) : (
-                  <>
-                    <ListingHorizontalServices
-                      category={category}
-                      listings={memoizedData || []}
-                      loadMore={loadMore}
-                      isFetchingNextPage={isFetchingNextPage}
-                    />
-                    <ScrollHint />
-                  </>
-                )
+                <>
+                  <ListingHorizontalWorkers
+                    availableInterest={WORKERTYPES}
+                    listings={memoizedData || []}
+                    loadMore={loadMore}
+                    isFetchingNextPage={isFetchingNextPage}
+                  />
+                  <ScrollHint />
+                </>
               ) : (
-                <EmptyDatePlaceholder
-                  title={
-                    userDetails?.role === "EMPLOYER" ? "Worker" : "Service"
-                  }
-                />
+                <EmptyDatePlaceholder title={"Service"} />
               )}
             </View>
-
-            {/* <View style={{ marginBottom: 40 }}>
-              {userDetails?.role === "EMPLOYER" ? (
-                <GroupWorkersListing
-                  category={category}
-                  listings={secondMemoizedData || []}
-                  loadMore={loadSecondMore}
-                  isFetchingNextPage={isSecondFetchingNextPage}
-                />
-              ) : (
-                <GroupEmployersListing
-                  category={category}
-                  listings={secondMemoizedData || []}
-                  loadMore={loadSecondMore}
-                  isFetchingNextPage={isSecondFetchingNextPage}
-                />
-              )}
-              <ScrollHint />
-            </View> */}
           </View>
 
           <AboutCompany />
@@ -241,7 +200,6 @@ const UserHome = () => {
           <HowAppWorks />
           <OurMission />
           <OurVision />
-          {/* <PublicationsScreen /> */}
           <TestimonialSlider />
           <QuickContact />
         </ScrollView>

@@ -8,7 +8,6 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import CustomHeading from "./CustomHeading";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
@@ -30,7 +29,7 @@ const ModalComponent = ({
     >
       <View style={styles.modalContainer}>
         <View style={styles.container}>
-          {/* Header with gradient and improved styling */}
+          {/* Header */}
           <View style={styles.header}>
             <CustomHeading baseFont={18} color={Colors?.white} textAlign="left">
               {title ? title : t("title")}
@@ -40,15 +39,20 @@ const ModalComponent = ({
             </TouchableOpacity>
           </View>
 
-          {/* Modal Content */}
-          <View style={styles?.contentContaincer}>{content()}</View>
+          {/* Modal Content with ScrollView */}
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.contentContainer}
+            keyboardShouldPersistTaps="handled"
+          >
+            {content()}
+          </ScrollView>
 
+          {/* Footer Buttons */}
           <View style={styles.footer}>
             <Button
               isPrimary={false}
-              title={
-                secondaryButton?.title ? secondaryButton?.title : t("cancel")
-              }
+              title={secondaryButton?.title || t("cancel")}
               onPress={secondaryButton?.action}
               borderColor={Colors?.danger}
               textColor={Colors?.danger}
@@ -56,11 +60,9 @@ const ModalComponent = ({
             <Button
               isPrimary={true}
               disabled={primaryButton?.disabled}
-              title={primaryButton?.title ? primaryButton?.title : t("save")}
+              title={primaryButton?.title || t("save")}
               onPress={primaryButton?.action}
-              style={{
-                flex: 1,
-              }}
+              style={{ flex: 1 }}
             />
           </View>
         </View>
@@ -76,12 +78,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     paddingHorizontal: 20,
-    zIndex: 0,
   },
   container: {
     backgroundColor: "white",
     width: "100%",
-    maxHeight: "70%",
+    maxHeight: "70%", // Ensures scrollability
     borderRadius: 12,
     overflow: "hidden",
     shadowColor: "#000",
@@ -90,8 +91,12 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  contentContaincer: {
+  scrollContainer: {
+    maxHeight: "100%",
+  },
+  contentContainer: {
     paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   header: {
     padding: 15,
@@ -100,12 +105,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: Colors?.primary,
   },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-    color: "#FFF",
-    flex: 1,
-  },
   footer: {
     flexDirection: "row",
     padding: 15,
@@ -113,37 +112,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors?.secondary,
     justifyContent: "space-between",
-  },
-  secondaryButton: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  primaryButton: {
-    flex: 1,
-    marginLeft: 10,
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  secondaryButtonText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    paddingHorizontal: 10,
-  },
-  primaryButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    paddingVertical: 10,
   },
 });
 

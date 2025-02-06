@@ -12,7 +12,7 @@ import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import Map from "@/components/commons/ViewMap";
 import SERVICE from "../../api/services";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -50,22 +50,14 @@ const ServiceDetails = () => {
     service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
-    userDetails?.role === "MEDIATOR"
-      ? service?.appliedMediators?.find(
-          (mediator: any) => mediator?.mediator?._id === userDetails?._id
-        )
-      : service?.appliedWorkers?.find(
-          (worker: any) => worker?._id === userDetails?._id
-        ) || false
+    service?.appliedUsers?.find(
+      (worker: any) => worker?._id === userDetails?._id
+    ) || false
   );
   const [isSelected, setIsSelected] = useState(
-    userDetails?.role === "MEDIATOR"
-      ? service?.selectedMediators?.find(
-          (mediator: any) => mediator?.mediator?._id === userDetails?._id
-        )
-      : service?.selectedWorkers?.find(
-          (worker: any) => worker?._id === userDetails?._id
-        ) || false
+    service?.selectedUsers?.find(
+      (worker: any) => worker?._id === userDetails?._id
+    ) || false
   );
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,7 +71,7 @@ const ServiceDetails = () => {
   const { refreshUser, isLoading: isRefreshLoading } =
     REFRESH_USER.useRefreshUser();
 
-  const [isAdmin] = useState(userDetails?.role === "ADMIN");
+  const [isAdmin] = useState(userDetails?.isAdmin);
 
   // console.log("User ID --", userDetails?._id, service?.employer);
   const {
@@ -167,9 +159,7 @@ const ServiceDetails = () => {
       }),
     retry: false,
     initialPageParam: 1,
-    enabled:
-      userDetails?.role === "MEDIATOR" &&
-      userDetails?._id !== service?.employer?._id,
+    enabled: userDetails?._id !== service?.employer?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -211,7 +201,7 @@ const ServiceDetails = () => {
   } = useInfiniteQuery({
     queryKey: ["selectedMediators", service],
     queryFn: ({ pageParam }) => {
-      return SERVICE?.fetchSelectedMediators({ pageParam, serviceId: id });
+      return SERVICE?.fetchSelectedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
@@ -237,25 +227,17 @@ const ServiceDetails = () => {
 
   useEffect(() => {
     setIsServiceApplied(
-      userDetails?.role === "MEDIATOR"
-        ? service?.appliedMediators?.find(
-            (mediator: any) => mediator?.mediator?._id === userDetails?._id
-          )
-        : service?.appliedWorkers?.find(
-            (worker: any) => worker?._id === userDetails?._id
-          ) || false
+      service?.appliedUsers?.find(
+        (worker: any) => worker?._id === userDetails?._id
+      ) || false
     );
     setIsServiceLiked(
       service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
     );
     setIsSelected(
-      userDetails?.role === "MEDIATOR"
-        ? service?.selectedMediators?.find(
-            (mediator: any) => mediator?.mediator?._id === userDetails?._id
-          )
-        : service?.selectedWorkers?.find(
-            (worker: any) => worker?._id === userDetails?._id
-          ) || false
+      service?.selectedUsers?.find(
+        (worker: any) => worker?._id === userDetails?._id
+      ) || false
     );
   }, [service]);
 
@@ -529,7 +511,7 @@ export default ServiceDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   image: {
     width: width,
@@ -538,7 +520,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     paddingHorizontal: 10,
     paddingVertical: 20,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   selectedWrapper: {
     padding: 15,
@@ -670,7 +652,7 @@ const styles = StyleSheet.create({
   },
   applicantContainer: {
     paddingHorizontal: 10,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
     gap: 5,
   },
   emptyContainer: {
@@ -680,5 +662,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray,
+    backgroundColor: Colors.white,
   },
 });

@@ -41,10 +41,7 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
         {roles.map((selectedRole, index) => (
           <TouchableOpacity
             key={index}
-            style={[
-              styles.roleBox,
-              role === selectedRole.id && styles.selectedRoleBox,
-            ]}
+            style={[styles.roleBox, styles.selectedRoleBox]}
             onPress={() => handleSelectRole(selectedRole)}
           >
             <View style={styles.roleContent}>

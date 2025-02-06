@@ -4,7 +4,7 @@ import ModalComponent from "./Modal";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";

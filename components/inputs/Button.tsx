@@ -1,14 +1,8 @@
-import {
-  ActivityIndicator,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, Keyboard, TouchableOpacity } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import CustomHeading from "../commons/CustomHeading";
+import { Button } from "react-native-paper";
 
 type ButtonProps = {
   isPrimary: boolean;
@@ -24,7 +18,7 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
-export default function Button({
+export default function ButtonComp({
   isPrimary,
   title,
   onPress,
@@ -38,7 +32,7 @@ export default function Button({
   disabled,
 }: ButtonProps) {
   const handlePress = (data: any) => {
-    Keyboard.dismiss(); // Dismiss the keyboard before button action
+    Keyboard.dismiss();
     onPress(data);
   };
 
@@ -46,9 +40,9 @@ export default function Button({
     backgroundColor: bgColor || (isPrimary ? Colors.primary : Colors.white),
     borderWidth: 2,
     borderColor: borderColor || Colors.primary,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: 8,
+    borderRadius: 30,
     flexDirection: loading || icon ? "row" : "column",
     alignItems: "center",
     justifyContent: "center",
@@ -59,7 +53,7 @@ export default function Button({
     color: textColor || (isPrimary ? Colors.white : Colors.primary),
     fontWeight: "700",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 20,
     display: "flex",
     flexWrap: "wrap",
     ...textStyle,
@@ -74,7 +68,9 @@ export default function Button({
       style={containerStyles}
     >
       {icon && icon}
-      <CustomHeading style={textStyles}>{title}</CustomHeading>
+      <CustomHeading style={textStyles} baseFont={textStyles?.fontSize}>
+        {title}
+      </CustomHeading>
       {loading && (
         <ActivityIndicator
           style={{ marginLeft: 10 }}

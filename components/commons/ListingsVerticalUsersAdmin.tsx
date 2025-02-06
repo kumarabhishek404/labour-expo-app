@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { Link, router, useGlobalSearchParams } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
@@ -18,10 +18,6 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import Button from "../inputs/Button";
-import { useMutation } from "@tanstack/react-query";
-import { activateUser, suspendUser } from "@/app/api/admin";
-import TOAST from "@/app/hooks/toast";
-import Loader from "./Loader";
 
 const ListingsVerticalUsersAdmin = ({
   availableInterest,
@@ -34,7 +30,6 @@ const ListingsVerticalUsersAdmin = ({
   onActivateUser,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
-    // const { role } = useGlobalSearchParams();
 
     const getActionButton = (status: string) => {
       let buttonText = "";
@@ -93,12 +88,7 @@ const ListingsVerticalUsersAdmin = ({
               params: {
                 id: item?._id,
                 role: role,
-                title:
-                  role === "WORKER"
-                    ? t("workerDetails")
-                    : role === "EMPLOYER"
-                    ? t("employerDetails")
-                    : t("mediatorDetails"),
+                title: t("userDetails"),
                 type: "details",
               },
             })
@@ -130,9 +120,7 @@ const ListingsVerticalUsersAdmin = ({
                     alignItems: "flex-start",
                   }}
                 >
-                  <CustomHeading textAlign="left">
-                    {item?.name}
-                  </CustomHeading>
+                  <CustomHeading textAlign="left">{item?.name}</CustomHeading>
                   <RatingAndReviews
                     rating={item?.rating?.average}
                     reviews={item?.rating?.count}

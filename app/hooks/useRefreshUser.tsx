@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import Atoms from "@/app/AtomStore";
@@ -7,7 +7,6 @@ import { t } from "@/utils/translationHelper";
 
 interface UserDetails {
   id: string;
-  // add other user properties
 }
 
 interface UseRefreshUserReturn {
@@ -20,6 +19,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
@@ -30,6 +30,8 @@ const useRefreshUser = (): UseRefreshUserReturn => {
       if (response?.success) {
         setUserDetails({ ...userDetails, ...response.data });
         TOAST?.showToast?.success(t("userDetailsFetchedSuccessfully"));
+        if (response.data?.status === "ACTIVE") setIsAccountInactive(false);
+        else setIsAccountInactive(true);
         return response.data;
       }
     } catch (error: any) {
@@ -46,7 +48,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
 };
 
 const REFRESH_USER = {
-  useRefreshUser
+  useRefreshUser,
 };
 
 export default REFRESH_USER;

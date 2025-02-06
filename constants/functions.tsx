@@ -138,17 +138,11 @@ export const fetchCurrentLocation = async () => {
       longitudeDelta: 2,
     };
 
-    console.log("currentLocation--", currentLocation);
-
-    console.log("tempLocation--", tempLocation);
-
     // Reverse geocode to get the address
     let response = await Location.reverseGeocodeAsync({
       latitude: tempLocation?.latitude,
       longitude: tempLocation?.longitude,
     });
-
-    console.log("response--", response);
 
     return {
       location: tempLocation,
@@ -166,71 +160,39 @@ export const fetchCurrentLocation = async () => {
 };
 
 export const handleQueryKey = (role: any, type: any) => {
-  if (role === "workers") {
-    if (type === "favourite") return "favouriteWorkers";
-    else if (type === "booked") return "bookedWorkers";
-    else return "workers";
-  } else if (role === "mediators") {
-    if (type === "favourite") return "favouriteMediators";
-    else if (type === "booked") return "bookedMediators";
-    else return "mediators";
-  } else {
-    if (type === "favourite") return "favouriteEmployers";
-    else return "employers";
-  }
+  if (type === "favourite") return "favouriteWorkers";
+  else if (type === "booked") return "bookedWorkers";
+  else return "workers";
 };
 
 export const handleQueryFunction = async (
   role: any,
   type: any,
   pageParam: number,
-  category: any
+  category: any,
+  searchCategory: any
 ) => {
+  console.log("searchCategory--", searchCategory);
+
   try {
     let data = {};
-    if (role === "workers") {
-      if (type === "favourite")
-        data = await WORKER?.fetchAllLikedWorkers({
-          pageParam,
-          skill: category,
-        });
-      else if (type === "booked")
-        data = await BOOKING?.fetchAllBookedWorkers({
-          pageParam,
-          skill: category,
-        });
-      else data = await WORKER?.fetchAllWorkers({ pageParam, skill: category });
-      return data;
-    } else if (role === "mediators") {
-      if (type === "favourite")
-        data = await MEDIATOR?.fetchAllLikedMediators({
-          pageParam,
-          skill: category,
-        });
-      else if (type === "booked")
-        data = await MEDIATOR?.fetchAllBookedMediators({
-          pageParam,
-          skill: category,
-        });
-      else
-        data = await MEDIATOR?.fetchAllMediators({
-          pageParam,
-          skill: category,
-        });
-      return data;
-    } else {
-      if (type === "favourite")
-        data = await EMPLOYER?.fetchAllLikedEmployer({
-          pageParam,
-          skill: category,
-        });
-      else
-        data = await EMPLOYER?.fetchAllEmployers({
-          pageParam,
-          skill: category,
-        });
-      return data;
-    }
+    if (type === "favourite")
+      data = await WORKER?.fetchAllLikedWorkers({
+        pageParam,
+        skill: category,
+      });
+    else if (type === "booked")
+      data = await BOOKING?.fetchAllBookedWorkers({
+        pageParam,
+        skill: category,
+      });
+    else
+      data = await WORKER?.fetchAllWorkers({
+        pageParam,
+        name: searchCategory?.name,
+        skill: searchCategory?.skill,
+      });
+    return data;
   } catch (err) {
     console.log("error while fetching users ", err);
   }

@@ -68,19 +68,19 @@ const CategoryButtons = ({
             key={index}
             ref={(el) => (itemRef.current[index] = el)}
             onPress={() => handleSelectCategory(index)}
-            style={
-              activeIndex === index
-                ? styles.categoryBtnActive
-                : styles.categoryBtn
-            }
+            style={[
+              styles?.categoryBtn,
+              activeIndex === index && styles.categoryBtnActive,
+            ]}
           >
             <MaterialCommunityIcons
               name={item.iconName as any}
               size={20}
-              color={activeIndex === index ? Colors.white : Colors.black}
+              color={activeIndex === index ? Colors.white : Colors.primary}
             />
             <CustomText
-              baseFont={13}
+              baseFont={15}
+              fontWeight="medium"
               style={
                 activeIndex === index
                   ? styles.categoryBtnTxtActive
@@ -99,38 +99,21 @@ const CategoryButtons = ({
 export default CategoryButtons;
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: Colors.black,
-  },
   categoryBtn: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.white,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    borderWidth: 2,
+    borderColor: Colors?.primary,
+    paddingHorizontal: 13,
+    paddingVertical: 8,
     borderRadius: 8,
-    shadowColor: "#333333",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
   categoryBtnActive: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.action,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-    shadowColor: "#333333",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    backgroundColor: Colors.primary,
   },
   categoryBtnTxt: {
     marginLeft: 5,
-    color: Colors.text,
+    color: Colors?.primary,
   },
   categoryBtnTxtActive: {
     marginLeft: 5,

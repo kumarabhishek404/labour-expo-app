@@ -4,7 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   BackHandler,
-  StatusBar,
+  // StatusBar,
 } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -13,7 +13,7 @@ import Atoms from "@/app/AtomStore";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import { useMutation } from "@tanstack/react-query";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
 import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
@@ -142,7 +142,8 @@ const AdminProfile = () => {
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skills: Array<string>) => WORKER?.addSkills({ skills: skills }),
+    mutationFn: (skills: Array<string>) =>
+      WORKER?.addSkills({ skills: skills }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -216,7 +217,6 @@ const AdminProfile = () => {
               />
             )}
           />
-
         </View>
       </View>
     );
@@ -224,6 +224,7 @@ const AdminProfile = () => {
 
   const onSubmit = (data: any) => {
     let payload = {
+      _id: userDetails?._id,
       name: data?.name,
       address: data?.address,
     };
@@ -245,7 +246,7 @@ const AdminProfile = () => {
 
   return (
     <>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      {/* <StatusBar backgroundColor="transparent" barStyle="dark-content" /> */}
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -353,34 +354,25 @@ const AdminProfile = () => {
 
         <UserInfoComponent user={userDetails} />
 
-        {userDetails?.role === "EMPLOYER" && (
-          <>
-            <WallletInformation
-              type="spents"
-              wallet={userDetails?.spent}
-              style={{ marginLeft: 20 }}
-            />
-            <ServiceInformation
-              information={userDetails?.serviceDetails}
-              style={{ marginLeft: 20 }}
-            />
-          </>
-        )}
+        <WallletInformation
+          type="spents"
+          wallet={userDetails?.spent}
+          style={{ marginLeft: 20 }}
+        />
+        <ServiceInformation
+          information={userDetails?.serviceDetails}
+          style={{ marginLeft: 20 }}
+        />
 
-        {(userDetails?.role === "WORKER" ||
-          userDetails?.role === "MEDIATOR") && (
-          <>
-            <WallletInformation
-              type="earnings"
-              wallet={{ earnings }}
-              style={{ marginLeft: 20 }}
-            />
-            <WorkInformation
-              information={userDetails?.workDetails}
-              style={{ marginLeft: 20 }}
-            />
-          </>
-        )}
+        <WallletInformation
+          type="earnings"
+          wallet={{ earnings }}
+          style={{ marginLeft: 20 }}
+        />
+        <WorkInformation
+          information={userDetails?.workDetails}
+          style={{ marginLeft: 20 }}
+        />
 
         <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
       </ScrollView>

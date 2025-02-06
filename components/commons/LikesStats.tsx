@@ -13,15 +13,9 @@ const StatsCard = () => {
     <View style={styles.container}>
       <View>
         <CustomHeading baseFont={20}>
-          {userDetails?.role === "EMPLOYER"
-            ? userDetails?.serviceDetails?.total || 0
-            : userDetails?.appliedServices?.length || 0}
+          {userDetails?.appliedServices?.length || 0}
         </CustomHeading>
-        <CustomText>
-          {t(
-            userDetails?.role === "EMPLOYER" ? "myServices" : "myBookings"
-          )}
-        </CustomText>
+        <CustomText>{t("myBookings")}</CustomText>
       </View>
       <View>
         <CustomHeading baseFont={20}>

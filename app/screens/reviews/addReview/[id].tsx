@@ -14,7 +14,7 @@ import { t } from "@/utils/translationHelper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
 import RATING from "@/app/api/rating";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 

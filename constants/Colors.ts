@@ -2,6 +2,7 @@ export default {
   primary: "#22409a",
   tertiery: "#fa6400",
   secondary: "#AEB5BB",
+  fourth: "#EAF0FF",
   bgColor: "#F4F4F4",
   black: "#27283a",
   white: "#FFFFFF",

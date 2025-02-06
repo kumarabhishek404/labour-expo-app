@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
 import TOAST from "@/app/hooks/toast";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
@@ -46,7 +46,10 @@ const SelectedApplicants = ({
   const mutationCancelSelectedMediator = useMutation({
     mutationKey: ["cancelSelectedMediator", { serviceId }],
     mutationFn: (mediatorId) =>
-      SERVICE?.cancelSelectedMediator({ serviceId: serviceId, mediatorId: mediatorId }),
+      SERVICE?.cancelSelectedMediator({
+        serviceId: serviceId,
+        mediatorId: mediatorId,
+      }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
       TOAST?.showToast?.success(t("cancelSelectedMediatorSuccess"));
@@ -133,11 +136,9 @@ const SelectedApplicants = ({
                 <View style={styles.productInfo}>
                   <View style={styles?.titleContainer}>
                     <View style={{ gap: 2, marginBottom: 4 }}>
-                      <CustomHeading baseFont={14}>
-                        {item?.name}
-                      </CustomHeading>
+                      <CustomHeading baseFont={14}>{item?.name}</CustomHeading>
                       <CustomText style={styles.caption}>
-                        {item?.role === "WORKER" ? "WORKER" : "MEDIATOR"}
+                        {t("workers")}
                       </CustomText>
                     </View>
                     <View
@@ -192,9 +193,7 @@ const SelectedApplicants = ({
                         isPrimary={true}
                         title="Remove"
                         onPress={() =>
-                          item?.role === "WORKER"
-                            ? mutationCancelSelectedWorker?.mutate(item?._id)
-                            : mutationCancelSelectedMediator?.mutate(item?._id)
+                          mutationCancelSelectedWorker?.mutate(item?._id)
                         }
                       />
                     </View>
@@ -314,6 +313,7 @@ const SelectedApplicants = ({
 const styles = StyleSheet.create({
   applicantList: {
     display: "flex",
+    backgroundColor: Colors.white,
   },
   applicantContainer: {
     backgroundColor: Colors.white,

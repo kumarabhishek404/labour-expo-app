@@ -224,6 +224,19 @@ export const ADMINREQUEST = [
   },
 ];
 
+export const ALLREQUEST = [
+  {
+    label: "received",
+    value: "RECEIVED",
+    iconName: "beach",
+  },
+  {
+    label: "sent",
+    value: "SENT",
+    iconName: "city",
+  },
+];
+
 export const MEDIATORREQUEST = [
   {
     label: "sent",

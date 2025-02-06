@@ -1,143 +1,108 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
+import { Controller, useForm } from "react-hook-form";
+import SelfieScreen from "@/components/inputs/Selfie";
 import TOAST from "@/app/hooks/toast";
-import { Ionicons } from "@expo/vector-icons";
-import Stepper from "@/components/commons/Stepper";
-import { REGISTERSTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import CustomHeading from "@/components/commons/CustomHeading";
+import { useMutation } from "@tanstack/react-query";
+import USER from "@/app/api/user";
+import Loader from "@/components/commons/Loaders/Loader";
 
-interface FourthScreenProps {
-  setStep: any;
-  password: string;
-  setPassword: any;
-  confirmPassword: string;
-  setConfirmPassword: any;
-}
+const FifthScreen = () => {
+  const { userId } = useLocalSearchParams();
+  const {
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      profilePicture: "",
+    },
+  });
 
-const FourthScreen: React.FC<FourthScreenProps> = ({
-  setStep,
-  password,
-  setPassword,
-  confirmPassword,
-  setConfirmPassword,
-}: FourthScreenProps) => {
-  const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
-    "create"
-  );
+  const mutationUpdateProfile = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) => USER.updateUserById(payload),
+    onSuccess: () => {
+      console.log("Profile updated successfully");
+      TOAST?.showToast?.success(t("profileUpdated"));
+      router?.push("/screens/auth/login");
+    },
+    onError: (error) => {
+      console.error("Profile update error:", error);
+    },
+  });
 
-  const onSubmit = () => {
-    if (password === confirmPassword) {
-      setPassword(password);
-      setConfirmPassword(confirmPassword);
-      setStep(4);
-    } else {
-      TOAST?.showToast?.error("Passwords do not match. Please try again.");
-      setConfirmPassword("");
+  const handleProfilePictureSubmit = async (data: any) => {
+    if (
+      !data?.profilePicture ||
+      typeof data.profilePicture !== "string" ||
+      data.profilePicture.trim() === ""
+    ) {
+      TOAST?.showToast?.error(t("pleaseSelectAProfilePicture"));
+      return;
     }
+
+    const formData: any = new FormData();
+    const imageName = data?.profilePicture.split("/").pop();
+    formData.append("profileImage", {
+      uri:
+        Platform.OS === "android"
+          ? data?.profilePicture
+          : data?.profilePicture.replace("file://", ""),
+      type: "image/jpeg",
+      name: imageName || "photo.jpg",
+    });
+    formData?.append("_id", userId);
+
+    console.log("Forrr---", formData);
+
+    mutationUpdateProfile.mutate(formData);
   };
 
-  const handleSetPassword = () => {
-    if (password?.length === 4) {
-      setPasswordStep("confirm");
-    } else {
-      TOAST?.showToast?.error("Please enter full password");
-    }
-  };
-
-  const handleNumberPress = (num: string) => {
-    if (passwordStep === "create") {
-      if (num === "remove") {
-        setPassword(password.slice(0, -1));
-      } else if (password.length < 4) {
-        setPassword(password + num);
-      }
-    } else if (passwordStep === "confirm") {
-      if (num === "remove") {
-        setConfirmPassword(confirmPassword.slice(0, -1));
-      } else if (confirmPassword.length < 4) {
-        setConfirmPassword(confirmPassword + num);
-      }
-    }
-  };
-
-  const handlePasswordBack = () => {
-    if (passwordStep === "create") {
-      setStep(2);
-    } else {
-      setPasswordStep("create");
-      setConfirmPassword("");
-    }
-  };
+  console.log("Wathch image --", watch("profilePicture"));
 
   return (
-    <View style={{ gap: 15 }}>
-      <View style={{ marginBottom: 30 }}>
-        <Stepper currentStep={3} steps={REGISTERSTEPS} />
-      </View>
-
-      <View
-        style={{
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "flex-start",
+    <View style={styles?.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <Loader loading={mutationUpdateProfile?.isPending} />
+      <CustomHeading baseFont={25} style={styles.heading}>
+        {t("updateYourSkillsAndRole")}
+      </CustomHeading>
+      <Controller
+        control={control}
+        name="profilePicture"
+        defaultValue=""
+        rules={{
+          required: t("profilePictureIsRequired"),
         }}
-      >
-        <Text style={styles.title}>
-          {passwordStep === "create"
-            ? "Create a 4-Digit Password"
-            : "Confirm Your Password"}
-        </Text>
-        <View style={styles.passwordContainer}>
-          {Array(4)
-            .fill()
-            .map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  (passwordStep === "create"
-                    ? password.length
-                    : confirmPassword.length) > index && styles.filledDot,
-                ]}
-              />
-            ))}
-        </View>
-
-        <View style={styles.keypad}>
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "remove"].map(
-            (num, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.key}
-                onPress={() => handleNumberPress(num)}
-              >
-                {num === "remove" ? (
-                  <Ionicons name="backspace" size={37} color={Colors.white} />
-                ) : (
-                  <Text style={styles.keyText}>{num}</Text>
-                )}
-              </TouchableOpacity>
-            )
-          )}
-        </View>
-      </View>
-
+        render={({ field: { onChange, onBlur, value } }) => (
+          <SelfieScreen
+            name="profilePicture"
+            profilePicture={value}
+            setProfilePicture={onChange}
+            onBlur={onBlur}
+            errors={errors}
+          />
+        )}
+      />
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
           title={t("back")}
-          onPress={handlePasswordBack}
-          style={{width: "30%"}}
+          onPress={() => router?.back()}
+          style={{ width: "35%", paddingHorizontal: 6 }}
         />
         <Button
           isPrimary={true}
-          title={passwordStep === "create" ? "Next" : "Confirm Your Password"}
-          onPress={() =>
-            passwordStep === "create" ? handleSetPassword() : onSubmit()
-          }
-          style={{width: "50%", paddingHorizontal: 6}}
+          title={t("saveProfilePicture")}
+          onPress={handleSubmit(handleProfilePictureSubmit)}
+          style={{ width: "60%", paddingHorizontal: 8 }}
         />
       </View>
     </View>
@@ -149,6 +114,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     backgroundColor: "white",
+    paddingVertical: 0,
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
   customHeader: {
     width: "100%",
@@ -166,7 +134,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     marginBottom: 40,
   },
-
+  heading: {
+    marginBottom: 20,
+  },
   label: {
     marginVertical: 10,
   },
@@ -180,7 +150,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   buttonText: {
     color: Colors?.white,
@@ -192,6 +162,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     textAlign: "right",
     color: Colors.primary,
+    // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
@@ -204,6 +175,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
+    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },
@@ -212,188 +184,14 @@ const styles = StyleSheet.create({
     borderColor: "red",
     color: "red",
   },
+  conditionsContainer: {},
   conditionText: {
     fontSize: 13,
     marginBottom: 6,
-    borderWidth: 1,
-    borderColor: "red",
   },
   successText: {
     color: "green",
   },
-  title: {
-    fontSize: 18,
-    color: Colors?.primary,
-    marginBottom: 20,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
-  },
-  dot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "#3a3a4f",
-    marginHorizontal: 10,
-  },
-  filledDot: {
-    backgroundColor: "#5DB075",
-  },
-  keypad: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    width: "95%",
-    height: "auto",
-    marginBottom: 20,
-    padding: 0,
-  },
-  key: {
-    width: "30%",
-    height: 70,
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 5,
-    backgroundColor: Colors?.black,
-    borderRadius: 8,
-  },
-  keyText: {
-    fontSize: 37,
-    color: "white",
-  },
 });
 
-export default FourthScreen;
-
-{
-  /* Do not remove this comment */
-}
-
-{
-  /* <Controller
-control={control}
-name="password"
-defaultValue=""
-rules={{
-  required: t("passwordIsRequired"),
-  pattern: {
-    value: /^\d{4}$/,
-    message: t("passwordMustBe4Digits"),
-  },
-}}
-render={({ field: { onChange, onBlur, value } }) => (
-  <>
-    <PasswordComponent
-      label={t("password")}
-      name="password"
-      value={value}
-      onBlur={onBlur}
-      onChangeText={(text: any) => {
-        onChange(text);
-        checkPasswordConditions(text);
-      }}
-      placeholder={t("enterYourPassword")}
-      containerStyle={errors?.password && styles.errorInput}
-      errors={errors}
-      icon={
-        <MaterialIcons
-          name={"password"}
-          size={30}
-          color={Colors.secondary}
-          style={{ paddingVertical: 10, paddingRight: 10 }}
-        />
-      }
-    />
-    <CustomText
-      textAlign="left"
-      style={[passwordConditions.hasFourDigits && styles?.successText]}
-    >
-      {passwordConditions.hasFourDigits ? (
-        <Entypo name={"check"} size={16} />
-      ) : (
-        <Entypo name="cross" size={16} />
-      )}{" "}
-      {t("passwordMustBe4Digits")}
-    </CustomText>
-    <View style={{ marginBottom: 15 }}>
-      <CustomText
-        textAlign="left"
-        style={[passwordConditions.hasNumber && styles?.successText]}
-      >
-        {passwordConditions.hasNumber ? (
-          <Entypo name={"check"} size={16} />
-        ) : (
-          <Entypo name="cross" size={16} />
-        )}{" "}
-        {t("useAtLeastOneNumber")}
-      </CustomText>
-      <CustomText
-        textAlign="left"
-        style={[passwordConditions.hasLowerCase && styles?.successText]}
-      >
-        {passwordConditions.hasLowerCase ? (
-          <Entypo name={"check"} size={16} />
-        ) : (
-          <Entypo name="cross" size={16} />
-        )}{" "}
-        {t("useAtLeastOneLowerCaseLetter")}
-      </CustomText>
-      <CustomText
-        textAlign="left"
-        style={[passwordConditions.hasSymbol && styles?.successText]}
-      >
-        {passwordConditions.hasSymbol ? (
-          <Entypo name={"check"} size={16} />
-        ) : (
-          <Entypo name="cross" size={16} />
-        )}{" "}
-        {t("useAtLeastOneSymbol")}
-      </CustomText>
-      <CustomText
-        textAlign="left"
-        style={[passwordConditions.isLongEnough && styles?.successText]}
-      >
-        {passwordConditions.isLongEnough ? (
-          <Entypo name={"check"} size={16} />
-        ) : (
-          <Entypo name="cross" size={16} />
-        )}{" "}
-        {t("beAtLeast8CharactersLong")}
-      </CustomText>
-    </View>
-  </>
-)}
-/>
-
-<Controller
-control={control}
-name="confirmPassword"
-defaultValue=""
-rules={{
-  required: t("pleaseConfirmYourPassword"),
-  validate: (value) =>
-    value == watch("password") || t("passwordsDoNotMatch"),
-}}
-render={({ field: { onChange, onBlur, value } }) => (
-  <PasswordComponent
-    label={t("confirmPassword")}
-    name="confirmPassword"
-    value={value}
-    onBlur={onBlur}
-    onChangeText={onChange}
-    placeholder={t("enterYourConfirmPassword")}
-    containerStyle={errors?.confirmPassword && styles.errorInput}
-    errors={errors}
-    icon={
-      <FontAwesome
-        name={"user-secret"}
-        size={30}
-        color={Colors.secondary}
-        style={{ paddingVertical: 10, paddingRight: 10 }}
-      />
-    }
-  />
-)}
-/> */
-}
+export default FifthScreen;

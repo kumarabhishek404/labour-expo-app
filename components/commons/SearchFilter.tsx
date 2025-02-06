@@ -51,7 +51,7 @@ const SearchFilter = ({ type, data, setFilteredData }: SearchFilterProps) => {
             <Ionicons
               name="search"
               size={28}
-              color={Colors?.secondaryText}
+              color={Colors?.primary}
               style={{ marginRight: 10 }}
             />
           }

@@ -15,28 +15,14 @@ const HomePageLinks = () => {
 
   const links = [
     {
-      title:
-        userDetails?.role === "EMPLOYER"
-          ? t("workers")
-          : userDetails?.role === "MEDIATOR"
-          ? t("myServices")
-          : t("services"),
-      subtitle:
-        userDetails?.role === "EMPLOYER"
-          ? t("aboutWorkers")
-          : userDetails?.role === "MEDIATOR"
-          ? t("aboutMyServices")
-          : t("aboutServices"),
+      title: t("workers"),
+      subtitle: t("aboutWorkers"),
       path: {
-        pathname:
-          userDetails?.role === "MEDIATOR"
-            ? "/screens/service"
-            : "/(tabs)/fourth",
+        pathname: "/(tabs)/fourth",
         params: {
-          role: userDetails?.role === "MEDIATOR" ? "services" : "workers",
-          title:
-            userDetails?.role === "MEDIATOR" ? t("services") : t("workers"),
-          type: userDetails?.role === "MEDIATOR" ? "myServices" : "all",
+          role: "workers",
+          title: t("workers"),
+          type: "all",
         },
       },
       image: Farmer3,
@@ -44,17 +30,13 @@ const HomePageLinks = () => {
       big: true,
     },
     {
-      title: userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
-      subtitle:
-        userDetails?.role === "MEDIATOR"
-          ? t("aboutWorkers")
-          : t("aboutMediators"),
+      title: t("mediators"),
+      subtitle: t("aboutMediators"),
       path: {
         pathname: "/screens/users",
         params: {
-          role: userDetails?.role === "MEDIATOR" ? "workers" : "mediators",
-          title:
-            userDetails?.role === "MEDIATOR" ? t("workers") : t("mediators"),
+          role: "mediators",
+          title: t("mediators"),
           type: "all",
         },
       },
@@ -63,12 +45,8 @@ const HomePageLinks = () => {
       big: true,
     },
     {
-      title:
-        userDetails?.role === "EMPLOYER" ? t("myServices") : t("myBookings"),
-      subtitle:
-        userDetails?.role === "EMPLOYER"
-          ? t("aboutMyServices")
-          : t("aboutMyBookings"),
+      title: t("myBookings"),
+      subtitle: t("aboutMyBookings"),
       path: "/(tabs)/second",
       image: Farmer8,
       style: [styles.smallBox, styles.bookingBox],

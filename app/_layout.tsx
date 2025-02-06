@@ -12,6 +12,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import SpaceMono from "../assets/fonts/SpaceMono-Regular.ttf";
 import AuthListener from "./context/AuthListner";
+import { PaperProvider } from "react-native-paper";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -69,11 +70,13 @@ function RootLayoutNav() {
       <NOTIFICATION_CONTEXT.NotificationProvider>
         <LOCAL_CONTEXT.LocaleProvider>
           <QueryClientProvider client={queryClient}>
-            <Stack screenOptions={{ headerShown: true }}>
-              <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-            </Stack>
-            <Toast />
-            <AuthListener />
+            <PaperProvider>
+              <Stack screenOptions={{ headerShown: true }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+              <Toast />
+              <AuthListener />
+            </PaperProvider>
           </QueryClientProvider>
         </LOCAL_CONTEXT.LocaleProvider>
       </NOTIFICATION_CONTEXT.NotificationProvider>

@@ -4,7 +4,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 
-const Counter = ({ counter, setCounter, style }: any) => {
+const Counter = ({ label, counter, setCounter, style }: any) => {
   const handleClick1 = () => {
     setCounter(counter + 1);
   };
@@ -15,11 +15,18 @@ const Counter = ({ counter, setCounter, style }: any) => {
 
   return (
     <View style={styles.container}>
+      {label && (
+        <CustomHeading textAlign="left" color={Colors?.primary}>
+          {label}
+        </CustomHeading>
+      )}
       <View style={styles.buttons}>
         <TouchableOpacity style={[styles.button, style]} onPress={handleClick1}>
           <Foundation style={styles.counterIcon} name="plus" size={28} />
         </TouchableOpacity>
-        <CustomHeading baseFont={30}>{counter}</CustomHeading>
+        <CustomHeading baseFont={32} color={Colors?.primary}>
+          {counter}
+        </CustomHeading>
         <TouchableOpacity
           disabled={counter === 0}
           style={[styles.button, style]}
@@ -40,20 +47,16 @@ const Counter = ({ counter, setCounter, style }: any) => {
 const styles = StyleSheet.create({
   container: {
     height: 44,
+    gap: 5,
   },
   buttons: {
     height: "100%",
     padding: 0,
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     gap: 8,
     zIndex: 0,
-  },
-  counterValue: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: Colors.primary,
   },
   counterIcon: {
     fontWeight: 900,

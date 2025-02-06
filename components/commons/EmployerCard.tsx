@@ -129,11 +129,10 @@ const EmployerCard = ({ employer }: any) => {
 const styles = StyleSheet.create({
   employerContainer: {
     marginVertical: 10,
-    backgroundColor: "#e1e8e5",
     borderRadius: 8,
   },
   card: {
-    backgroundColor: "#e1e8e5",
+    backgroundColor: Colors?.white,
     padding: 15,
     marginBottom: 16,
     borderRadius: 8,

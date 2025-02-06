@@ -5,11 +5,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { t } from "@/utils/translationHelper";
 
 const register = async (payload: any) => {
+  console.log("Payload --", payload);
+
   try {
-    const data = await API_CLIENT.makePostRequestFormData(
-      "/auth/register",
-      payload
-    );
+    const data = await API_CLIENT.makePostRequest("/auth/register", payload);
     TOAST?.showToast?.success("Your account has registered successfully");
     router.push("/screens/auth/login");
     return data?.data;
@@ -84,7 +83,7 @@ const signIn = async (payload: any) => {
   } catch (error: any) {
     console.log(
       `[Sign In] [userService] An error occurred while signing the user `,
-      error
+      error?.response?.data
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message || "An error occurred while login user"
@@ -95,7 +94,10 @@ const signIn = async (payload: any) => {
 
 const updateUserById = async (payload: any) => {
   try {
-    const response = await API_CLIENT.makePatchRequest(`/user/info`, payload);
+    const response = await API_CLIENT.makePatchRequestFormData(
+      `/user/info`,
+      payload
+    );
     TOAST?.showToast?.success(t("profileUpdatedSuccessfully"));
     return response;
   } catch (error: any) {
@@ -120,12 +122,12 @@ const updateUserRoleById = async (payload: any) => {
     return resposne;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while updating role of user : `,
+      `[userService] An error occurred while updating of user : `,
       error?.response?.data
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while updating role of user"
+        "An error occurred while updating of user"
     );
     throw error;
   }
@@ -238,10 +240,10 @@ const getUserInfo = async () => {
   }
 };
 
-const fetchAllUsers = async ({ pageParam, role }: any) => {
+const fetchAllUsers = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all?page=${pageParam}&limit=5&role=${role}`
+      `/user/all?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -256,10 +258,10 @@ const fetchAllUsers = async ({ pageParam, role }: any) => {
   }
 };
 
-const fetchAllLikedUsers = async ({ pageParam, role }: any) => {
+const fetchAllLikedUsers = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all-liked/${role}?page=${pageParam}&limit=5`
+      `/user/all-liked?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {

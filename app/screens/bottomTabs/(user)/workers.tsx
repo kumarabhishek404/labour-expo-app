@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Atoms from "@/app/AtomStore";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
@@ -20,6 +20,7 @@ import WORKER from "@/app/api/workers";
 import SERVICE from "@/app/api/services";
 import FetchLocationNote from "@/components/commons/FetchLocationNote";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import SearchForm from "@/app/screens/bottomTabs/(user)/search";
 
 const UserWorkers = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -45,9 +46,11 @@ const UserWorkers = () => {
         pageParam,
         ...filters, // Add filters to the API request payload
       };
-      return userDetails?.role === "EMPLOYER"
-        ? WORKER?.fetchAllWorkers({ ...payload, skill: category })
-        : SERVICE?.fetchAllServices({ ...payload, status: "HIRING", skill: category });
+      return SERVICE?.fetchAllServices({
+        ...payload,
+        status: "HIRING",
+        skill: category,
+      });
     },
     retry: false,
     initialPageParam: 1,
@@ -108,19 +111,20 @@ const UserWorkers = () => {
     setCategory(category);
   };
 
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
+          headerShown: false,
           header: () => (
             <CustomHeader
-              title={
-                userDetails?.role === "EMPLOYER" ? t("workers") : t("services")
-              }
+              title={t("services")}
               left="menu"
               right="notification"
             />
@@ -150,39 +154,35 @@ const UserWorkers = () => {
           />
 
           {memoizedData && memoizedData?.length > 0 ? (
-            <>
-              {userDetails?.role === "EMPLOYER" ? (
-                <ListingsVerticalWorkers
-                  type="worker"
-                  availableInterest={WORKERTYPES}
-                  listings={memoizedData || []}
-                  loadMore={loadMore}
-                  isFetchingNextPage={isFetchingNextPage}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={!isRefetching && refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }
+            // <>
+            //     <ListingsVerticalWorkers
+            //       type="worker"
+            //       availableInterest={WORKERTYPES}
+            //       listings={memoizedData || []}
+            //       loadMore={loadMore}
+            //       isFetchingNextPage={isFetchingNextPage}
+            //       refreshControl={
+            //         <RefreshControl
+            //           refreshing={!isRefetching && refreshing}
+            //           onRefresh={onRefresh}
+            //         />
+            //       }
+            //     />
+            //   ) : (
+            <ListingsVerticalServices
+              listings={memoizedData || []}
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl
+                  refreshing={!isRefetching && refreshing}
+                  onRefresh={onRefresh}
                 />
-              ) : (
-                <ListingsVerticalServices
-                  listings={memoizedData || []}
-                  loadMore={loadMore}
-                  isFetchingNextPage={isFetchingNextPage}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={!isRefetching && refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }
-                />
-              )}
-            </>
-          ) : (
-            <EmptyDatePlaceholder
-              title={userDetails?.role === "EMPLOYER" ? "Worker" : "Service"}
+              }
             />
+          ) : (
+            // </>
+            <EmptyDatePlaceholder title={"Service"} />
           )}
         </View>
 

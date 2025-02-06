@@ -14,7 +14,7 @@ import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
 import SERVICE from "@/app/api/services";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { debounce } from "lodash";
@@ -247,19 +247,15 @@ const ServiceActionButtons = ({
   };
 
   const handleApply = () => {
-    if (userDetails?.role === "MEDIATOR") {
-      setIsWorkerSelectModal(true);
-    } else {
-      mutationApplyService.mutate();
-    }
+    setIsWorkerSelectModal(true);
+    // for worker
+    // mutationApplyService.mutate();
   };
 
   const handleCancelApply = () => {
-    if (userDetails?.role === "MEDIATOR") {
-      setIsWorkerSelectModal(true);
-    } else {
-      mutationUnApplyService.mutate();
-    }
+    setIsWorkerSelectModal(true);
+    // for worker
+    // mutationUnApplyService.mutate();
   };
 
   const renderButtons = () => {
@@ -343,7 +339,7 @@ const ServiceActionButtons = ({
                 isPrimary={false}
                 title={t("edit")}
                 onPress={() => {
-                  router.push("/screens/addService");
+                  router.push("/(tabs)");
                   setAddService(service);
                 }}
                 style={styles.footerBtn}

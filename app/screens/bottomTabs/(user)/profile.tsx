@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, BackHandler } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  BackHandler,
+  TouchableOpacity,
+  Text,
+  StatusBar,
+} from "react-native";
+// import { StatusBar } from "expo-status-bar";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
@@ -9,7 +17,7 @@ import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import USER from "../../../api/user";
 import { useMutation } from "@tanstack/react-query";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
 import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
@@ -35,12 +43,14 @@ import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import ProfileTabs from "./tabsSwitcher";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [earnings, setEarnings] = useAtom(Atoms?.EarningAtom);
+  const [selectedTab, setSelectedTab] = useState("Profile Information");
 
   const [isEditProfile, setIsEditProfile] = useState(false);
 
@@ -263,6 +273,7 @@ const UserProfile = () => {
 
   const onSubmit = (data: any) => {
     let payload = {
+      _id: userDetails?._id,
       name: data?.name,
       email: data?.email,
     };
@@ -280,14 +291,7 @@ const UserProfile = () => {
 
   return (
     <>
-      <StatusBar style="dark" />
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          headerTitle: "",
-        }}
-      />
-
+      <StatusBar backgroundColor={Colors?.white} />
       <Loader
         loading={
           mutationUpdateProfileInfo?.isPending ||
@@ -296,109 +300,109 @@ const UserProfile = () => {
           isLoading
         }
       />
-      <ScrollView style={styles.container}>
-        <View style={styles.userInfoSection}>
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "space-between",
-              marginTop: 50,
-            }}
-          >
-            <AvatarComponent
-              isEditable={false}
-              isLoading={mutationUploadProfileImage?.isPending}
-              profileImage={profilePicture}
-              onUpload={mutationUploadProfileImage?.mutate}
-            />
-            <View
-              style={{
-                flex: 1,
-                marginHorizontal: 10,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
-              <CustomText style={styles.caption}>
-                {userDetails?.role}
-              </CustomText>
+      <View style={styles.container}>
+        <ProfileTabs
+          tabPositions={{
+            "Profile Information": 0,
+            "Other Information": 1,
+          }}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
+        {selectedTab === "Profile Information" ? (
+          <ScrollView>
+            <View style={styles.userInfoSection}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  marginTop: 10,
+                }}
+              >
+                <AvatarComponent
+                  isEditable={false}
+                  isLoading={mutationUploadProfileImage?.isPending}
+                  profileImage={profilePicture}
+                  onUpload={mutationUploadProfileImage?.mutate}
+                />
+                <View
+                  style={{
+                    flex: 1,
+                    marginHorizontal: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+            {(!userDetails?.email?.value ||
+              !userDetails?.address ||
+              !userDetails?.dateOfBirth ||
+              !userDetails?.gender) && <ProfileNotification />}
 
-        {(!userDetails?.email?.value ||
-          !userDetails?.address ||
-          !userDetails?.dateOfBirth ||
-          !userDetails?.gender) && <ProfileNotification />}
+            {(userDetails?.status === "SUSPENDED" ||
+              userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
+            {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
+            <View style={styles?.changeRoleWrapper}>
+              <Button
+                disabled={false}
+                style={{ ...styles?.mediatorButton, width: "45%" }}
+                textStyle={styles?.mediatorButtonText}
+                isPrimary={true}
+                title={t("refreshUser")}
+                onPress={handleRefreshUser}
+              />
+              <View
+                style={[
+                  { justifyContent: "flex-end" },
+                  userDetails?.status !== "ACTIVE" && styles?.disableButton,
+                  { width: "45%" },
+                ]}
+              >
+                <Button
+                  textStyle={styles?.mediatorButtonText}
+                  isPrimary={true}
+                  title={t("editProfile")}
+                  onPress={() => {
+                    return !isEditProfile && handleEditProfile();
+                  }}
+                  style={[styles?.mediatorButton]}
+                />
+              </View>
+              <ModalComponent
+                visible={isEditProfile}
+                title={t("editProfile")}
+                onClose={() => setIsEditProfile(false)}
+                content={modalContent}
+                primaryButton={{
+                  action: handleSubmit(onSubmit),
+                }}
+                secondaryButton={{
+                  action: () => setIsEditProfile(false),
+                }}
+              />
+            </View>
 
-        {(userDetails?.status === "SUSPENDED" ||
-          userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
-        {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
-        <View style={styles?.changeRoleWrapper}>
-          <Button
-            disabled={false}
-            style={{ ...styles?.mediatorButton, width: "45%" }}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title={t("refreshUser")}
-            onPress={handleRefreshUser}
-          />
-          <View
-            style={[
-              { justifyContent: "flex-end" },
-              userDetails?.status !== "ACTIVE" && styles?.disableButton,
-              { width: "45%" },
-            ]}
-          >
-            <Button
-              textStyle={styles?.mediatorButtonText}
-              isPrimary={true}
-              title={t("editProfile")}
-              onPress={() => {
-                return !isEditProfile && handleEditProfile();
-              }}
-              style={[styles?.mediatorButton]}
+            <StatsCard />
+
+            <SkillSelector
+              canAddSkills={userDetails?.status === "ACTIVE"}
+              role={userDetails?.role}
+              isShowLabel={true}
+              style={styles?.skillsContainer}
+              selectedSkills={selectedSkills}
+              setSelectedSkills={setSelectedSkills}
+              userSkills={userDetails?.skills}
+              handleAddSkill={mutationAddSkills?.mutate}
+              handleRemoveSkill={mutationRemoveSkill?.mutate}
+              availableSkills={WORKERTYPES}
             />
-          </View>
-          <ModalComponent
-            visible={isEditProfile}
-            title={t("editProfile")}
-            onClose={() => setIsEditProfile(false)}
-            content={modalContent}
-            primaryButton={{
-              action: handleSubmit(onSubmit),
-            }}
-            secondaryButton={{
-              action: () => setIsEditProfile(false),
-            }}
-          />
-        </View>
 
-        <StatsCard />
+            <UserInfoComponent user={userDetails} />
 
-        {userDetails?.role !== "EMPLOYER" && (
-          <SkillSelector
-            canAddSkills={userDetails?.status === "ACTIVE"}
-            role={userDetails?.role}
-            isShowLabel={true}
-            style={styles?.skillsContainer}
-            selectedSkills={selectedSkills}
-            setSelectedSkills={setSelectedSkills}
-            userSkills={userDetails?.skills}
-            handleAddSkill={mutationAddSkills?.mutate}
-            handleRemoveSkill={mutationRemoveSkill?.mutate}
-            availableSkills={
-              userDetails?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
-            }
-          />
-        )}
-
-        <UserInfoComponent user={userDetails} />
-
-        {userDetails?.role === "EMPLOYER" && (
-          <>
             <WallletInformation
               type="spents"
               wallet={userDetails?.spent}
@@ -408,12 +412,7 @@ const UserProfile = () => {
               information={userDetails?.serviceDetails}
               style={{ marginLeft: 20 }}
             />
-          </>
-        )}
 
-        {(userDetails?.role === "WORKER" ||
-          userDetails?.role === "MEDIATOR") && (
-          <>
             <WallletInformation
               type="earnings"
               wallet={{ earnings }}
@@ -423,15 +422,23 @@ const UserProfile = () => {
               information={userDetails?.workDetails}
               style={{ marginLeft: 20 }}
             />
-          </>
-        )}
 
-        {userDetails?.employedBy && (
-          <TeamAdminCard admin={userDetails?.employedBy} />
+            {userDetails?.employedBy && (
+              <TeamAdminCard admin={userDetails?.employedBy} />
+            )}
+            <CustomText style={styles.copyright}>
+              © 2024 KAAM DEKHO. All rights reserved.
+            </CustomText>
+          </ScrollView>
+        ) : (
+          <ScrollView>
+            <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
+            <CustomText style={styles.copyright}>
+              © 2024 KAAM DEKHO. All rights reserved.
+            </CustomText>
+          </ScrollView>
         )}
-
-        <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
-      </ScrollView>
+      </View>
     </>
   );
 };
@@ -442,6 +449,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    backgroundColor: Colors?.fourth,
+    position: "relative",
+    top: 0,
   },
   changeRoleWrapper: {
     paddingHorizontal: 20,
@@ -506,7 +516,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flexDirection: "column",
     marginBottom: 5,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors?.white,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
   },
@@ -517,5 +527,46 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "baseline",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    // backgroundColor: Colors.primary,
+    // paddingVertical: 10,
+    position: "fixed",
+    top: 0,
+    left: 0,
+  },
+  tab: {
+    paddingVertical: 20,
+    flex: 1,
+    alignItems: "center",
+  },
+  activeTab: {
+    borderBottomWidth: 3,
+    borderBottomColor: Colors.tertiery,
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.primary,
+  },
+  activeTabText: {
+    color: Colors.tertiery,
+  },
+  profileContent: {
+    padding: 20,
+    alignItems: "center",
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  otherContent: {
+    padding: 20,
+  },
+  copyright: {
+    marginVertical: 20,
   },
 });

@@ -137,10 +137,7 @@ const SkillsSelector = ({
         />
       </View>
     );
-  };
-
-  console.log("selectedInterests--", selectedInterests);
-  
+  };  
 
   return (
     <View style={styles.container}>

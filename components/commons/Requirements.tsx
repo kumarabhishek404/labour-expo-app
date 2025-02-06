@@ -100,11 +100,10 @@ const styles = StyleSheet.create({
   },
   requirmentContainer: {
     marginVertical: 10,
-    backgroundColor: "#e1e8e5",
     borderRadius: 8,
   },
   card: {
-    backgroundColor: "#e1e8e5",
+    backgroundColor: Colors?.white,
     padding: 15,
     marginBottom: 6,
     borderRadius: 8,

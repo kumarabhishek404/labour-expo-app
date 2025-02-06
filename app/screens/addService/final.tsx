@@ -13,23 +13,14 @@ import { t } from "@/utils/translationHelper";
 interface FinalScreenProps {
   setStep: any;
   type: string;
-  setType: any;
   subType: string;
-  setSubType: any;
   description: string;
-  setDescription: any;
   address: string;
-  setAddress: any;
   location: object;
-  setLocation: any;
   startDate: Date;
-  setStartDate: any;
-  endDate: Date;
-  setEndDate: any;
+  duration: number;
   requirements: Array<any>;
-  setRequirements: any;
   images: Array<string>;
-  setImages: any;
   handleOnSubmit: any;
 }
 
@@ -41,7 +32,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
   address,
   location,
   startDate,
-  endDate,
+  duration,
   requirements,
   images,
   handleOnSubmit,
@@ -50,172 +41,187 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
     handleOnSubmit();
   };
 
-  console.log("tye - ", type);
-
   return (
     <View style={styles.container}>
       <View style={styles.box}>
         <View>
-          <CustomHeading>{t("checkServiceDetails")}</CustomHeading>
+          {/* <CustomHeading>{t("checkServiceDetails")}</CustomHeading>
           <View style={{ marginVertical: 30 }}>
             <Stepper currentStep={5} steps={ADDSERVICESTEPS} />
+          </View> */}
+          {/* <View> */}
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("workType")}
+            </CustomHeading>
+            <CustomText
+              style={[styles.value, { textTransform: "capitalize" }]}
+              textAlign="left"
+            >
+              {t(type)}
+            </CustomText>
           </View>
-          <View>
+
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("workSubType")}
+            </CustomHeading>
+            <CustomText
+              style={[styles.value, { textTransform: "capitalize" }]}
+              textAlign="left"
+            >
+              {t(subType)}
+            </CustomText>
+          </View>
+
+          {description && (
             <View style={styles.row}>
-              <CustomHeading>{t("workType")}</CustomHeading>
-              <CustomText
-                style={[styles.value, { textTransform: "capitalize" }]}
-                textAlign="left"
-              >
-                {t(type)}
+              <CustomHeading color={Colors?.primary}>
+                {t("workDescription")}
+              </CustomHeading>
+              <CustomText style={styles.value} textAlign="left">
+                {description}
               </CustomText>
             </View>
+          )}
 
-            <View style={styles.row}>
-              <CustomHeading>{t("workSubType")}</CustomHeading>
-              <CustomText
-                style={[styles.value, { textTransform: "capitalize" }]}
-                textAlign="left"
-              >
-                {t(subType)}
-              </CustomText>
-            </View>
-
-            {description && (
-              <View style={styles.row}>
-                <CustomHeading>{t("workDescription")}</CustomHeading>
-                <CustomText style={styles.value} textAlign="left">
-                  {description}
-                </CustomText>
-              </View>
-            )}
-
-            <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-              <CustomHeading>{t("workRequirements")}</CustomHeading>
-              <View style={styles.requirmentContainer}>
-                {requirements &&
-                  requirements?.map((requirement: any, index: number) => {
-                    return (
-                      <View style={styles.card} key={index}>
-                        <View style={styles.header}>
-                          <View style={{ flexDirection: "column" }}>
-                            <CustomHeading
-                              style={{ textTransform: "capitalize" }}
-                            >
-                              {t(requirement?.name)}
-                            </CustomHeading>
-                          </View>
-                          <CustomHeading>
-                            ₹ {requirement?.payPerDay} {t("perDay")}
+          <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+            <CustomHeading color={Colors?.primary}>
+              {t("workRequirements")}
+            </CustomHeading>
+            <View style={styles.requirmentContainer}>
+              {requirements &&
+                requirements?.map((requirement: any, index: number) => {
+                  return (
+                    <View style={styles.card} key={index}>
+                      <View style={styles.header}>
+                        <View style={{ flexDirection: "column" }}>
+                          <CustomHeading
+                            style={{ textTransform: "capitalize" }}
+                          >
+                            {t(requirement?.name)}
                           </CustomHeading>
                         </View>
-
-                        <View style={styles.details}>
-                          <CustomHeading
-                            baseFont={14}
-                            color={Colors?.secondaryText}
-                          >
-                            {t("count")}
-                          </CustomHeading>
-                          <CustomHeading
-                            baseFont={14}
-                            color={Colors?.secondaryText}
-                          >
-                            {t("food")}
-                          </CustomHeading>
-                          <CustomHeading
-                            baseFont={14}
-                            color={Colors?.secondaryText}
-                          >
-                            {t("living")}
-                          </CustomHeading>
-                          <CustomHeading
-                            baseFont={14}
-                            color={Colors?.secondaryText}
-                          >
-                            {t("esi/pf")}
-                          </CustomHeading>
-                        </View>
-
-                        <View
-                          style={[
-                            styles.values,
-                            requirements?.length - 1 !== index &&
-                              styles?.divider,
-                          ]}
-                        >
-                          <CustomText>{requirement?.count}</CustomText>
-                          <CustomText>
-                            {requirement?.food ? "Yes" : "No"}
-                          </CustomText>
-                          <CustomText>
-                            {requirement?.shelterProvider ? "Yes" : "No"}
-                          </CustomText>
-                          <CustomText>No</CustomText>
-                        </View>
+                        <CustomHeading>
+                          ₹ {requirement?.payPerDay} {t("perDay")}
+                        </CustomHeading>
                       </View>
-                    );
-                  })}
-              </View>
-            </View>
 
-            <View style={styles.row}>
-              <CustomHeading>{t("address")}</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {address}
-              </CustomText>
-            </View>
+                      <View style={styles.details}>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.secondaryText}
+                        >
+                          {t("count")}
+                        </CustomHeading>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.secondaryText}
+                        >
+                          {t("food")}
+                        </CustomHeading>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.secondaryText}
+                        >
+                          {t("living")}
+                        </CustomHeading>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.secondaryText}
+                        >
+                          {t("esi/pf")}
+                        </CustomHeading>
+                      </View>
 
-            <View style={styles.row}>
-              <CustomHeading>{t("location")}</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {isEmptyObject(location) ? (
-                  JSON?.stringify(location)
-                ) : (
-                  <CustomText>{t("locationNotFound")}</CustomText>
-                )}
-              </CustomText>
+                      <View
+                        style={[
+                          styles.values,
+                          requirements?.length - 1 !== index && styles?.divider,
+                        ]}
+                      >
+                        <CustomText>{requirement?.count}</CustomText>
+                        <CustomText>
+                          {requirement?.food ? "Yes" : "No"}
+                        </CustomText>
+                        <CustomText>
+                          {requirement?.shelterProvider ? "Yes" : "No"}
+                        </CustomText>
+                        <CustomText>No</CustomText>
+                      </View>
+                    </View>
+                  );
+                })}
             </View>
+          </View>
 
-            <View style={styles.row}>
-              <CustomHeading>{t("startDate")}</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {moment(startDate)?.format("Do MMM YYYY")}
-              </CustomText>
-            </View>
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("address")}
+            </CustomHeading>
+            <CustomText style={styles.value} textAlign="left">
+              {address}
+            </CustomText>
+          </View>
 
-            <View style={styles.row}>
-              <CustomHeading>{t("endDate")}</CustomHeading>
-              <CustomText style={styles.value} textAlign="left">
-                {moment(endDate)?.format("Do MMM YYYY")}
-              </CustomText>
-            </View>
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("location")}
+            </CustomHeading>
+            <CustomText style={styles.value} textAlign="left">
+              {isEmptyObject(location) ? (
+                JSON?.stringify(location)
+              ) : (
+                <CustomText>{t("locationNotFound")}</CustomText>
+              )}
+            </CustomText>
+          </View>
 
-            {images && images?.length > 0 && (
-              <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-                <CustomHeading>{t("workImages")}</CustomHeading>
-                <View
-                  style={[
-                    styles.value,
-                    { width: "100%", paddingBottom: 0, paddingRight: 0 },
-                  ]}
-                >
-                  <View style={styles.imageContainer}>
-                    {images &&
-                      images?.map((imgUri: any, index: number) => (
-                        <View key={index} style={styles.imagesContainer}>
-                          <Image
-                            key={index}
-                            source={{ uri: imgUri }}
-                            style={styles.uploadedImage}
-                          />
-                        </View>
-                      ))}
-                  </View>
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("startDate")}
+            </CustomHeading>
+            <CustomText style={styles.value} textAlign="left">
+              {moment(startDate)?.format("Do MMM YYYY")}
+            </CustomText>
+          </View>
+
+          <View style={styles.row}>
+            <CustomHeading color={Colors?.primary}>
+              {t("duration")}
+            </CustomHeading>
+            <CustomText style={styles.value} textAlign="left">
+              {duration} {t("days")}
+            </CustomText>
+          </View>
+
+          {images && images?.length > 0 && (
+            <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+              <CustomHeading color={Colors?.primary}>
+                {t("workImages")}
+              </CustomHeading>
+              <View
+                style={[
+                  styles.value,
+                  { width: "100%", paddingBottom: 0, paddingRight: 0 },
+                ]}
+              >
+                <View style={styles.imageContainer}>
+                  {images &&
+                    images?.map((imgUri: any, index: number) => (
+                      <View key={index} style={styles.imagesContainer}>
+                        <Image
+                          key={index}
+                          source={{ uri: imgUri }}
+                          style={styles.uploadedImage}
+                        />
+                      </View>
+                    ))}
                 </View>
               </View>
-            )}
-          </View>
+            </View>
+          )}
+          {/* </View> */}
         </View>
 
         <View style={styles?.buttonContainer}>
@@ -223,11 +229,13 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             isPrimary={false}
             title={t("back")}
             onPress={() => setStep(3)}
+            style={{ width: "30%" }}
           />
           <Button
             isPrimary={true}
             title={t("submitAllDetails")}
             onPress={handleFinish}
+            style={{ width: "50%" }}
           />
         </View>
       </View>
@@ -238,7 +246,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "transparent",
   },
   box: {
     justifyContent: "space-between",
@@ -246,7 +254,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
+    marginTop: 20,
   },
   row: {
     flexDirection: "row",
@@ -257,22 +265,20 @@ const styles = StyleSheet.create({
   },
   value: {
     width: "60%",
-    backgroundColor: "#f3f3f3",
+    backgroundColor: Colors?.white,
+    borderColor: Colors?.secondary,
+    borderWidth: 1,
     padding: 10,
     borderRadius: 8,
   },
   requirmentContainer: {
     width: "100%",
+    backgroundColor: Colors?.fourth,
     borderRadius: 8,
-    backgroundColor: "#e1e8e5",
   },
   card: {
-    width: "100%",
-    backgroundColor: "#e1e8e5",
-    padding: 10,
-    borderRadius: 8,
-    fontSize: 16,
-    color: "#000",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
   header: {
     flexDirection: "row",

@@ -19,6 +19,7 @@ import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import DropdownComponent from "../inputs/Dropdown";
 import TextInputComponent from "../inputs/TextInputWithIcon";
+import DropdownWithMenu from "../inputs/dropdownWithMenu";
 
 interface SkillSelectorProps {
   canAddSkills: boolean;
@@ -51,6 +52,7 @@ const SkillSelector = ({
   handleRemoveSkill,
   count,
 }: SkillSelectorProps) => {
+  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false); // For remove skill modal
   const [skillPrices, setSkillPrices] = useState<any>({});
@@ -118,20 +120,13 @@ const SkillSelector = ({
 
   const onAddSkills = async () => {
     try {
-      // For MEDIATOR, skip price validation
-      if (
-        role === "WORKER" &&
-        (!skillWithPrice || !skillWithPrice.pricePerDay)
-      ) {
+      if (!skillWithPrice || !skillWithPrice.pricePerDay) {
         return console.log("Please enter both skill and price.");
       }
 
       console.log("skill---", skillWithPrice, selectedSkill);
 
-      // Send skill object to the API
-      await handleAddSkill(
-        role === "WORKER" ? skillWithPrice : { skill: selectedSkill }
-      );
+      await handleAddSkill(skillWithPrice);
 
       setIsModalVisible(false);
       setSkillPrices({});
@@ -165,31 +160,28 @@ const SkillSelector = ({
   };
 
   const renderPriceInput = () => {
-    if (role === "WORKER") {
-      return (
-        <View style={styles.priceInputContainer}>
-          <TextInputComponent
-            label={t("enterPricePerDay")}
-            name="pricePerDay"
-            placeholder={t("enterPricePerDay")}
-            type="number"
-            style={styles.priceInput}
-            value={skillWithPrice?.pricePerDay}
-            maxLength={4}
-            onChangeText={(price: string) => handlePriceChange(price)}
-            icon={
-              <FontAwesome
-                name="rupee"
-                size={26}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
-          />
-        </View>
-      );
-    }
-    return null;
+    return (
+      <View style={styles.priceInputContainer}>
+        <TextInputComponent
+          label={t("enterPricePerDay")}
+          name="pricePerDay"
+          placeholder={t("enterPricePerDay")}
+          type="number"
+          style={styles.priceInput}
+          value={skillWithPrice?.pricePerDay}
+          maxLength={4}
+          onChangeText={(price: string) => handlePriceChange(price)}
+          icon={
+            <FontAwesome
+              name="rupee"
+              size={26}
+              color={Colors.secondary}
+              style={{ paddingVertical: 10, paddingRight: 10 }}
+            />
+          }
+        />
+      </View>
+    );
   };
 
   const renderSkills = () => {
@@ -204,7 +196,7 @@ const SkillSelector = ({
             <View key={index}>
               {getWorkLabel(availableSkills, item?.skill) && (
                 <View style={[styles.skillBox, tagStyle]}>
-                  {role === "WORKER" ? (
+                  {item?.pricePerDay ? (
                     <CustomText textAlign="left" style={tagTextStyle}>
                       {`${getWorkLabel(availableSkills, item?.skill)} - ${t(
                         "rs"
@@ -277,12 +269,12 @@ const SkillSelector = ({
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         content={() => (
-          <View style={{paddingVertical: 20}}>
-            <DropdownComponent
-              value={selectedSkill}
-              setValue={(skill: string) => handleSkillSelection(skill)}
-              placeholder={t("searchAndSelectSkills")}
-              options={filteredSkills}
+          <View style={{ paddingVertical: 20 }}>
+            <DropdownWithMenu
+              id="addSkill"
+              placeholder="searchAndSelectSkills"
+              searchEnabled={false}
+              options={filteredSkills || []}
               icon={
                 <MaterialCommunityIcons
                   style={styles.icon}
@@ -291,6 +283,10 @@ const SkillSelector = ({
                   size={30}
                 />
               }
+              selectedValue={selectedSkill}
+              onSelect={(skill: string) => handleSkillSelection(skill)}
+              openDropdownId={openDropdownId}
+              setOpenDropdownId={setOpenDropdownId}
             />
             {selectedSkill && renderPriceInput()}
           </View>
@@ -298,9 +294,7 @@ const SkillSelector = ({
         primaryButton={{
           title: t("addSkill"),
           action: onAddSkills,
-          disabled:
-            (!skillWithPrice || !skillWithPrice.pricePerDay) &&
-            role === "WORKER",
+          disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
         }}
         secondaryButton={{
           action: () => setIsModalVisible(false),
@@ -313,7 +307,7 @@ const SkillSelector = ({
         visible={isRemoveModalVisible}
         onClose={() => setIsRemoveModalVisible(false)}
         content={() => (
-          <View style={{paddingVertical: 20}}>
+          <View style={{ paddingVertical: 20 }}>
             <DropdownComponent
               value={selectedSkillToRemove}
               setValue={handleSkillToRemoveSelection}
@@ -358,7 +352,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   skillBox: {
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.fourth,
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -370,7 +364,7 @@ const styles = StyleSheet.create({
     height: 25,
     display: "flex",
     justifyContent: "center",
-    backgroundColor: "#F4F4F4",
+    backgroundColor: Colors?.white,
     borderRadius: 8,
     alignItems: "center",
   },

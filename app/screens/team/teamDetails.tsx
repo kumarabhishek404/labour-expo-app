@@ -8,8 +8,6 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 
 const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
-  console.log("user--", mediator?._id);
-
   return (
     <>
       {type === "WORKER" ? (

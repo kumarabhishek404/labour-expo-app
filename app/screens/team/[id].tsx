@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import MEDIATOR from "@/app/api/mediator";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -14,6 +14,8 @@ import { WORKERTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { useAtom, useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import Colors from "@/constants/Colors";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
@@ -91,11 +93,11 @@ const Members = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter
+          {/* <SearchFilter
             type="users"
             data={response?.pages}
             setFilteredData={setFilteredData}
-          />
+          /> */}
 
           <CategoryButtons
             options={WORKERTYPES}
@@ -109,14 +111,18 @@ const Members = () => {
             totalData={totalData}
           />
 
-          <ListingsVerticalWorkers
-            listings={memoizedData || []}
-            category="workers"
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
-            availableInterest={WORKERTYPES}
-            type="member"
-          />
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalWorkers
+              listings={memoizedData || []}
+              category="workers"
+              loadMore={loadMore}
+              isFetchingNextPage={isFetchingNextPage}
+              availableInterest={WORKERTYPES}
+              type="member"
+            />
+          ) : (
+            <EmptyDatePlaceholder title={t("members")} />
+          )}
         </View>
       </View>
     </>
@@ -126,7 +132,7 @@ const Members = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 10,
   },
 });

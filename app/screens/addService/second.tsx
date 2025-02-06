@@ -12,6 +12,7 @@ import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import moment from "moment";
+import Duration from "@/components/inputs/Duration";
 
 interface SecondScreenProps {
   setStep: any;
@@ -21,8 +22,8 @@ interface SecondScreenProps {
   setLocation: any;
   startDate: Date;
   setStartDate: any;
-  endDate: Date;
-  setEndDate: any;
+  duration: number;
+  setDuration: any;
 }
 
 const SecondScreen: React.FC<SecondScreenProps> = ({
@@ -33,8 +34,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
   setLocation,
   startDate,
   setStartDate,
-  endDate,
-  setEndDate,
+  duration,
+  setDuration,
 }: SecondScreenProps) => {
   const {
     control,
@@ -46,7 +47,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       address: address,
       location: location,
       startDate: startDate,
-      endDate: endDate,
+      duration: duration,
     },
   });
 
@@ -57,40 +58,42 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
   const onSubmit = (data: any) => {
     setAddress(data?.address);
     setStartDate(data?.startDate);
-    setEndDate(data?.endDate);
+    setDuration(data?.duration);
     setStep(3);
   };
 
   return (
     <View style={styles?.container}>
-      <Image source={Step2} style={styles.image} />
+      {/* <Image source={Step2} style={styles.image} />
       <View style={{ marginVertical: 30 }}>
         <Stepper currentStep={2} steps={ADDSERVICESTEPS} />
-      </View>
+      </View> */}
 
       <View style={{ flexDirection: "column", gap: 15 }}>
-        <Controller
-          control={control}
-          name="address"
-          defaultValue=""
-          rules={{
-            required: t("addressIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <AddLocationAndAddress
-              label={t("address")}
-              name="address"
-              address={value}
-              setAddress={onChange}
-              onBlur={onBlur}
-              location={location}
-              setLocation={setLocation}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              errors={errors}
-            />
-          )}
-        />
+        <View style={{ zIndex: 9 }}>
+          <Controller
+            control={control}
+            name="address"
+            defaultValue=""
+            rules={{
+              required: t("addressIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AddLocationAndAddress
+                label={t("address")}
+                name="address"
+                address={value}
+                setAddress={onChange}
+                onBlur={onBlur}
+                location={location}
+                setLocation={setLocation}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                errors={errors}
+              />
+            )}
+          />
+        </View>
 
         <Controller
           control={control}
@@ -101,8 +104,6 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             validate: (value) => {
               if (new Date(value) < new Date()) {
                 return t("startDateNotEarlierThanToday");
-              } else if (new Date(value) > new Date(watch("endDate"))) {
-                return t("startDateNotLaterThanEndDate");
               } else {
                 return true;
               }
@@ -121,34 +122,31 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           )}
         />
 
-        <Controller
-          control={control}
-          name="endDate"
-          defaultValue={new Date()}
-          rules={{
-            required: t("endDateIsRequired"),
-            validate: (value) => {
-              if (new Date(value) <= new Date()) {
-                return t("endDateNotEarlierThanToday");
-              } else if (new Date(value) < new Date(watch("startDate"))) {
-                return t("endDateNotEarlierThanStartDate");
-              } else {
-                return true;
-              }
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("endDate")}
-              name="endDate"
-              type="serviceDate"
-              date={moment(value)}
-              setDate={onChange}
-              onBlur={onBlur}
-              errors={errors}
-            />
-          )}
-        />
+        <View style={{ marginBottom: 20 }}>
+          <Controller
+            control={control}
+            name="duration"
+            defaultValue={0}
+            rules={{
+              required: t("durationIsRequired"),
+              validate: (value) => {
+                if (value <= 0) {
+                  return t("durationMustBeGreaterThanZero");
+                } else {
+                  return true;
+                }
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Duration
+                duration={value}
+                setDuration={onChange}
+                errors={errors}
+                name="duration"
+              />
+            )}
+          />
+        </View>
       </View>
       <View style={styles?.buttonContainer}>
         <Button
@@ -157,11 +155,13 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           onPress={() => {
             setStep(1);
           }}
+          style={{ width: "30%" }}
         />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
+          style={{ width: "50%" }}
         />
       </View>
     </View>
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: "transparent",
   },
   image: {
     width: "80%",
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
+    marginTop: 20,
   },
 });
 

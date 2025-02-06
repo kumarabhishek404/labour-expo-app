@@ -1,39 +1,49 @@
-import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  BackHandler,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
-import { router, Stack } from "expo-router";
-import Loader from "@/components/commons/Loader";
-import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import Loader from "@/components/commons/Loaders/Loader";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import SecondScreen from "./second";
 import moment from "moment";
 import ThirdScreen from "./third";
-import FourthScreen from "./fourth";
 import SERVICE from "@/app/api/services";
 import TOAST from "@/app/hooks/toast";
 import FinalScreen from "./final";
-import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import { Platform, KeyboardAvoidingView } from "react-native";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import Stepper from "@/components/commons/Stepper";
+import { ADDSERVICESTEPS } from "@/constants";
+import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
+import { Button } from "react-native-paper";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [step, setStep] = useState(1);
   const [type, setType] = useState(addService?.type ?? "");
   const [subType, setSubType] = useState(addService?.subType ?? "");
   const [description, setDescription] = useState(addService?.description ?? "");
-
   const [address, setAddress] = useState(addService?.address ?? "");
   const [location, setLocation] = useState<any>(addService?.location ?? {});
   const [startDate, setStartDate] = useState(
     moment(addService?.startDate).toDate() ?? new Date()
   );
-  const [endDate, setEndDate] = useState(
-    moment(addService?.endDate).toDate() ?? new Date()
-  );
+  const [duration, setDuration] = useState(addService?.duration ?? 0);
 
   const [requirements, setRequirements]: any = useState(
     addService?.requirements || [
@@ -51,6 +61,32 @@ const AddServiceScreen = () => {
 
   const [images, setImages]: any = useState(addService?.images ?? []);
 
+  const {
+    data: response,
+    isLoading,
+    isRefetching,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ["myServices"],
+    queryFn: ({ pageParam }) => {
+      return SERVICE?.fetchMyServices({
+        pageParam,
+        status: "",
+      });
+    },
+    initialPageParam: 1,
+    retry: false,
+    enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
+        return lastPage?.pagination?.page + 1;
+      }
+      return undefined;
+    },
+  });
   const mutationAddService = useMutation({
     mutationKey: [addService?._id ? "editService" : "addService"],
     mutationFn: () =>
@@ -64,11 +100,12 @@ const AddServiceScreen = () => {
       );
       setAddService({});
       setType("");
+      setSubType("");
       setDescription("");
       setAddress("");
       setLocation("");
       setStartDate(new Date());
-      setEndDate(new Date());
+      setDuration(0);
       setRequirements(
         addService?.requirements || [
           {
@@ -84,7 +121,13 @@ const AddServiceScreen = () => {
       );
       setImages([]);
       setStep(1);
-      router?.push("/(drawer)/(tabs)/second");
+      router?.push({
+        pathname: "/screens/service",
+        params: {
+          title: "My All Services",
+          type: "myServices",
+        },
+      });
     },
     onError: (err: any) => {
       console.error("Error details:", {
@@ -118,7 +161,7 @@ const AddServiceScreen = () => {
   }, [step, setStep]);
 
   const handleSubmit = async () => {
-    if (!type || !address || !startDate || !endDate || !requirements) {
+    if (!type || !address || !startDate || !requirements) {
       throw new Error("Required fields are missing");
     }
 
@@ -140,11 +183,8 @@ const AddServiceScreen = () => {
     formData.append("description", description);
     formData.append("address", address);
     formData.append("location", JSON.stringify(location || {}));
-    formData.append("city", "Jalesar");
-    formData.append("state", "Uttar Predesh");
-    formData.append("pinCode", "207302");
     formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
-    formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
+    formData.append("duration", duration);
     formData.append("requirements", JSON.stringify(requirements));
 
     console.log("form Data --", formData);
@@ -162,6 +202,7 @@ const AddServiceScreen = () => {
       router?.back();
     }
   };
+
   const handleEditSubmit = async (id: any) => {
     try {
       if (!id) {
@@ -203,11 +244,8 @@ const AddServiceScreen = () => {
       formData.append("description", description);
       formData.append("address", address);
       formData.append("location", JSON.stringify(location || {}));
-      formData.append("city", "Jalesar");
-      formData.append("state", "Uttar Predesh");
-      formData.append("pinCode", "207302");
       formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
-      formData.append("endDate", moment(endDate).format("YYYY-MM-DD"));
+      formData.append("duration", duration);
       formData.append("requirements", JSON.stringify(requirements));
 
       console.log("form Data --", formData);
@@ -222,6 +260,17 @@ const AddServiceScreen = () => {
     } catch (error: any) {
       console.error("Error in handleEditSubmit:", error);
       throw error; // Re-throw to be handled by mutation
+    }
+  };
+
+  const memoizedData = useMemo(
+    () => response?.pages?.flatMap((data: any) => data?.data),
+    [response]
+  );
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
   };
 
@@ -249,8 +298,8 @@ const AddServiceScreen = () => {
             setLocation={setLocation}
             startDate={startDate}
             setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
+            duration={duration}
+            setDuration={setDuration}
           />
         );
       case 3:
@@ -264,37 +313,19 @@ const AddServiceScreen = () => {
           />
         );
 
-      // case 3:
-      //   return (
-      //     <FourthScreen
-      //       setStep={setStep}
-      //       images={images}
-      //       setImages={setImages}
-      //     />
-      //   );
-
       case 4:
         return (
           <FinalScreen
             setStep={setStep}
             type={type}
-            setType={setType}
             subType={subType}
-            setSubType={setSubType}
             description={description}
-            setDescription={setDescription}
             address={address}
-            setAddress={setAddress}
             location={location}
-            setLocation={setLocation}
             startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
+            duration={duration}
             requirements={requirements}
-            setRequirements={setRequirements}
             images={images}
-            setImages={setImages}
             handleOnSubmit={
               addService?._id
                 ? (data: any) => mutationAddService?.mutate(data)
@@ -310,26 +341,90 @@ const AddServiceScreen = () => {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          header: () => (
-            <CustomHeader
-              title={t("addingNewService")}
-              left="back"
-              onLeftAction={() => {
-                handleBackAction();
+      <StatusBar backgroundColor={Colors?.white} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1, backgroundColor: "#EAF0FF" }}
+        >
+          <View>
+            <View style={styles.header}>
+              <Stepper currentStep={step} steps={ADDSERVICESTEPS} />
+            </View>
+
+            <View
+              style={{
+                paddingHorizontal: 15,
+                paddingTop: 10,
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
               }}
-            />
-          ),
-        }}
-      />
-      <ScrollView style={styles?.container}>
-        <Loader loading={mutationAddService?.isPending} />
-        <View style={styles.container}>
-          <View>{renderFormComponents()}</View>
-        </View>
-      </ScrollView>
+            >
+              <Button
+                icon={() => (
+                  <Ionicons name="people" size={22} color={Colors.primary} />
+                )}
+                textColor={Colors?.primary}
+                style={{ width: "50%", alignItems: "flex-start" }}
+                onPress={() =>
+                  router?.push({
+                    pathname: "/screens/users",
+                    params: {
+                      title: "My Booked Workers",
+                      type: "booked",
+                    },
+                  })
+                }
+              >
+                BOOKED WORKERS
+              </Button>
+              <Button
+                icon={() => (
+                  <MaterialIcons name="work" size={22} color={Colors.primary} />
+                )}
+                textColor={Colors?.primary}
+                style={{ width: "50%", alignItems: "flex-end" }}
+                onPress={() =>
+                  router?.push({
+                    pathname: "/screens/service",
+                    params: {
+                      title: "My All Services",
+                      type: "myServices",
+                    },
+                  })
+                }
+              >
+                MY ALL SERVICES
+              </Button>
+            </View>
+            <View style={styles.searchContainer}>
+              <Loader loading={mutationAddService?.isPending} />
+              <View>{renderFormComponents()}</View>
+            </View>
+          </View>
+
+          <View style={{ marginBottom: 20 }}>
+            <Text style={styles.sectionTitle}>🌴 My Created Services</Text>
+            {memoizedData ? (
+              <ListingHorizontalServices
+                listings={memoizedData || []}
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+              />
+            ) : (
+              <ActivityIndicator
+                size="large"
+                style={styles.loaderStyle}
+                color={Colors?.primary}
+              />
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -338,14 +433,128 @@ export default AddServiceScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-    padding: 10,
+    flexGrow: 1,
+    backgroundColor: "#EAF0FF",
+    justifyContent: "space-between",
+    minHeight: "100%",
   },
-  customHeader: {
-    width: "100%",
-    marginTop: 20,
-    flexDirection: "row",
+  header: {
+    backgroundColor: "white",
+    padding: 20,
+    position: "relative",
+  },
+  tab: {
     alignItems: "center",
+    alignSelf: "flex-start",
+    padding: 10,
+    marginHorizontal: 10,
+  },
+  activeTab: {
+    backgroundColor: "yellow",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+  },
+  tabText: {
+    fontSize: 14,
+    color: "white",
+    marginTop: 5,
+  },
+  activeTabText: {
+    color: "black",
+    fontWeight: "bold",
+  },
+  searchContainer: {
+    backgroundColor: Colors?.white,
+    padding: 20,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  input: {
+    height: 53,
+    backgroundColor: "#F0F0F0",
+    padding: 15,
+    borderRadius: 10,
+    fontSize: 16,
+    marginBottom: 10,
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  dropdown: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    marginBottom: 10,
+    height: 53,
+  },
+  dropDownContainer: {
+    borderColor: "#ddd",
+    borderRadius: 10,
+    position: "absolute",
+  },
+  searchButton: {
+    backgroundColor: "yellow",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  searchButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  cardScroll: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 10,
+    marginRight: 10,
+    width: 150,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  cardImage: {
+    width: "100%",
+    height: 100,
+    borderRadius: 10,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+  cardPrice: {
+    fontSize: 14,
+    color: "gray",
+  },
+  bottomOption: {
+    width: "100%",
+    textAlign: "right",
+    marginTop: 10,
+    paddingHorizontal: 5,
+  },
+  loaderStyle: {
+    alignItems: "flex-start",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });

@@ -9,7 +9,7 @@ import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
 import FIREBASE from "@/app/api/firebase";
 import ModalComponent from "./Modal";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
@@ -136,13 +136,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         }
       />
       <View>
-        <View
-          style={[
-            styles.row,
-            (user?.role === "EMPLOYER" || user?.role === "ADMIN") &&
-              styles.firstBox,
-          ]}
-        >
+        <View style={[styles.row, !user?.skills && styles.firstBox]}>
           <CustomHeading textAlign="left" baseFont={14} padding={12}>
             <CustomText>{t("address")}</CustomText>
             {"  "}
@@ -211,7 +205,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     flexDirection: "row",
     marginBottom: 5,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors?.white,
   },
   userInfoTextWrapper: {
     marginBottom: 25,

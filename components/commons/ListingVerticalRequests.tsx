@@ -255,8 +255,6 @@ const RequestCardUser = React.memo(
 
     const user = isSender ? item?.receiver : item?.sender;
 
-    console.log("Item---", item);
-
     return (
       <TouchableOpacity
         onPress={() =>
@@ -375,7 +373,7 @@ const ListingVerticalRequests = ({
   };
 
   const renderContent = () => {
-    if (userDetails?.role === "ADMIN") {
+    if (userDetails?.isAdmin) {
       return (
         <FlatList
           {...commonFlatListProps}
@@ -423,7 +421,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     padding: 16,
-    marginHorizontal: 5,
     marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

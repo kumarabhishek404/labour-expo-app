@@ -23,7 +23,6 @@ import Atoms from "@/app/AtomStore";
 type Props = {
   availableInterest: any;
   listings: any[];
-  category: string;
   isFetchingNextPage: boolean;
   loadMore: any;
 };
@@ -47,11 +46,10 @@ type RenderItemTypes = {
 const ListingHorizontalWorkers = ({
   availableInterest,
   listings,
-  category,
   loadMore,
   isFetchingNextPage,
 }: Props) => {
-  const userDetails = useAtomValue(Atoms?.UserAtom)
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => {
     return (
       <TouchableOpacity
@@ -92,42 +90,43 @@ const ListingHorizontalWorkers = ({
             count={2}
           />
 
-          <CustomHeading textAlign="left">
-            {item?.name}
-          </CustomHeading>
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "space-between",
-              gap: 8,
-            }}
-          >
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
-            >
-              <FontAwesome5
-                name="map-marker-alt"
-                size={12}
-                color={Colors.primary}
-              />
-              <CustomText>{item?.address || t("addressNotFound")}</CustomText>
-            </View>
+          <View style={{ paddingRight: 8 }}>
+            <CustomHeading textAlign="left">{item?.name}</CustomHeading>
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "space-between",
-                alignItems: "flex-end",
+                gap: 8,
               }}
             >
-              <RatingAndReviews
-                rating={item?.rating || 4.5}
-                reviews={item?.reviews || 400}
-              />
-              <View style={styles.priceContainer}>
-                <CustomHeading>
-                  <FontAwesome name="rupee" size={14} /> {item?.price}/
-                  {t("perDay")}
-                </CustomHeading>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  gap: 5,
+                }}
+              >
+                <FontAwesome5
+                  name="map-marker-alt"
+                  size={12}
+                  style={{ marginTop: 3 }}
+                  color={Colors.primary}
+                />
+                <CustomText textAlign="left" baseFont={13}>
+                  {item?.address || t("addressNotFound")}
+                </CustomText>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                }}
+              >
+                <RatingAndReviews
+                  rating={item?.rating || 4.5}
+                  reviews={item?.reviews || 400}
+                />
               </View>
             </View>
           </View>
@@ -149,6 +148,7 @@ const ListingHorizontalWorkers = ({
         onEndReachedThreshold={0.9}
         horizontal
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <ActivityIndicator

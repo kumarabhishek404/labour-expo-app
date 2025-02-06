@@ -1,12 +1,11 @@
-
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
-const fetchAllUsers = async ({ pageParam, status, role }: any) => {
-  console.log("status", status, "role", role);
+const fetchAllUsers = async ({ pageParam, status }: any) => {
+  console.log("status", status);
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/admin/all-users?role=${role}&status=${status}&page=${pageParam}&limit=5`
+      `/admin/all-users?status=${status}&page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
@@ -64,7 +63,10 @@ const suspendUser = async (payload: any) => {
 const activateUser = async (payload: any) => {
   console.log("payload in the api activate user", payload);
   try {
-    const data = await API_CLIENT.makePostRequest(`/admin/activate-user`, payload);
+    const data = await API_CLIENT.makePostRequest(
+      `/admin/activate-user`,
+      payload
+    );
     return data?.data;
   } catch (error: any) {
     console.error(

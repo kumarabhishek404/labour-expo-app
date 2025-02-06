@@ -40,11 +40,12 @@ const AddLocationAndAddress = ({
   style,
 }: AddLocationAndAddressProps) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchCurrentLocation = async () => {
     setIsLoading(true);
-    
+
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -65,8 +66,11 @@ const AddLocationAndAddress = ({
         longitude: tempLocation?.longitude,
       });
       setIsLoading(false);
-      console.log("response[0]?.formattedAddress---", response[0]?.formattedAddress);
-      
+      console.log(
+        "response[0]?.formattedAddress---",
+        response[0]?.formattedAddress
+      );
+
       setAddress(response[0]?.formattedAddress);
       let tempUserDetails = { ...userDetails };
       tempUserDetails = {
@@ -77,20 +81,27 @@ const AddLocationAndAddress = ({
         ],
       };
       setUserDetails(tempUserDetails);
-    console.log("222", response[0]?.formattedAddress);
+      console.log("222", response[0]?.formattedAddress);
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");
     }
   };
 
-  console.log("location--", location, address);
-  
-
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
+        <CustomHeading color={Colors?.primary}>{label}</CustomHeading>
         <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <CustomHeading color={Colors?.link}>
+            {t("addNewAddress")}
+          </CustomHeading>
+        </TouchableOpacity>
+
+        {/* <TouchableOpacity
           style={styles.radioButton}
           onPress={() => setSelectedOption("address")}
         >
@@ -100,9 +111,9 @@ const AddLocationAndAddress = ({
             )}
           </View>
           {label && <CustomHeading>{label}</CustomHeading>}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.radioButton}
           onPress={() => setSelectedOption("currentLocation")}
         >
@@ -112,13 +123,15 @@ const AddLocationAndAddress = ({
             )}
           </View>
           <CustomHeading>{t("currentLocation")}</CustomHeading>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {selectedOption === "address" ? (
         <LocationField
           address={address}
           setAddress={setAddress}
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
           isError={errors[name]}
         />
       ) : (
@@ -164,8 +177,8 @@ const AddLocationAndAddress = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#fff",
+    // justifyContent: "center",
+    backgroundColor: Colors?.white,
     gap: 5,
     // height: 90,
   },

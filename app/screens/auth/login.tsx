@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import Atoms from "@/app/AtomStore";
 import USER from "@/app/api/user";
 import TOAST from "../../hooks/toast";
@@ -28,7 +28,7 @@ import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const setUserDetails = useSetAtom(Atoms?.UserAtom);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
 
@@ -69,12 +69,17 @@ const LoginScreen = () => {
       });
 
       TOAST?.showToast?.success(t("loggedInSuccessfully"));
-      if (user?.status === "ACTIVE") {
+      if (user?.status === "ACTIVE" && user?.profilePicture) {
         setIsAccountInactive(false);
-        router.replace("/(drawer)/(tabs)");
+        router.replace("/(tabs)");
+      } else if (!user?.profilePicture) {
+        router.push({
+          pathname: "/screens/auth/register/fourth",
+          params: { userId: user?._id },
+        });
       } else {
         setIsAccountInactive(true);
-        router.replace("/(drawer)/(tabs)/fifth");
+        router.replace("/(tabs)/fifth");
       }
 
       // Fetch location if required
@@ -90,6 +95,7 @@ const LoginScreen = () => {
             location: locationData.location,
           }));
           mutationUpdateProfileInfo?.mutate({
+            _id: user?._id,
             location: locationData.location,
           });
         }
@@ -106,9 +112,19 @@ const LoginScreen = () => {
         console.error("Failed to enable notifications", err);
       }
     },
-    onError: (err) => {
-      console.error("Login error: ", err);
-      TOAST?.showToast?.error("Login failed");
+    onError: (err: any) => {
+      console.error("Login error: ", err?.response?.data);
+
+      // // Handle "SET_PASSWORD_FIRST" error code
+      if (err?.response?.data?.errorCode === "SET_PASSWORD_FIRST") {
+        setUserDetails({
+          token: err?.response?.data?.token,
+        });
+        router.push({
+          pathname: "/screens/auth/register/second",
+          params: { userId: err?.response?.data?.userId },
+        });
+      }
     },
   });
 
@@ -220,7 +236,7 @@ const LoginScreen = () => {
 
           <View style={styles.footerContainer}>
             <CustomText>{t("dontHaveAnAccount")}</CustomText>
-            <Link href="/screens/auth/register" asChild>
+            <Link href="/screens/auth/register/first" asChild>
               <TouchableOpacity>
                 <CustomHeading color={Colors.link}>{t("signUp")}</CustomHeading>
               </TouchableOpacity>

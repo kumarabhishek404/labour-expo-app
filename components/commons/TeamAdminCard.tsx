@@ -15,7 +15,7 @@ import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ModalComponent from "./Modal";
 

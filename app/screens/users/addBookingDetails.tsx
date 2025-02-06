@@ -14,7 +14,7 @@ import BOOKING from "@/app/api/booking";
 import DateField from "@/components/inputs/DateField";
 import { filterSubCategories, isEmptyObject } from "@/constants/functions";
 import Duration from "@/components/inputs/Duration";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import moment from "moment";
 import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
@@ -185,31 +185,29 @@ const AddBookingDetails = ({
             )}
           />
 
-          {role === "MEDIATOR" && (
-            <Controller
-              control={control}
-              name="noOfWorkers"
-              defaultValue={0}
-              rules={{
-                required: t("durationIsRequired"),
-                validate: (value) => {
-                  if (value <= 0) {
-                    return t("durationMustBeGreaterThanZero");
-                  } else {
-                    return true;
-                  }
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <NumberOfWorkers
-                  noOfWorkers={value}
-                  setNoOfWorkers={onChange}
-                  errors={errors}
-                  name="noOfWorkers"
-                />
-              )}
-            />
-          )}
+          <Controller
+            control={control}
+            name="noOfWorkers"
+            defaultValue={0}
+            rules={{
+              required: t("durationIsRequired"),
+              validate: (value) => {
+                if (value <= 0) {
+                  return t("durationMustBeGreaterThanZero");
+                } else {
+                  return true;
+                }
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <NumberOfWorkers
+                noOfWorkers={value}
+                setNoOfWorkers={onChange}
+                errors={errors}
+                name="noOfWorkers"
+              />
+            )}
+          />
 
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Controller
@@ -282,10 +280,7 @@ const AddBookingDetails = ({
 
     const formData: any = new FormData();
 
-    if (role === "MEDIATOR") {
-      formData.append("requiredNumberOfWorkers", data?.noOfWorkers);
-    }
-
+    formData.append("requiredNumberOfWorkers", data?.noOfWorkers);
     formData.append("userId", id);
     formData.append("type", data?.type);
     formData.append("subType", data?.subType);

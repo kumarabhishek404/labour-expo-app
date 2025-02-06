@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Atoms from "@/app/AtomStore";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";

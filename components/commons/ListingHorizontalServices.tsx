@@ -20,7 +20,6 @@ import { t } from "@/utils/translationHelper";
 
 type Props = {
   listings: any[];
-  category: string;
   isFetchingNextPage: boolean;
   loadMore: any;
 };
@@ -49,7 +48,6 @@ type RenderItemTypes = {
 
 const ListingHorizontalServices = ({
   listings,
-  category,
   isFetchingNextPage,
   loadMore,
 }: Props) => {
@@ -86,7 +84,7 @@ const ListingHorizontalServices = ({
                 gap: 5,
               }}
             >
-              <View
+              {/* <View
                 style={{
                   width: "60%",
                   flexDirection: "row",
@@ -100,18 +98,18 @@ const ListingHorizontalServices = ({
                   color={Colors.primary}
                 />
                 <CustomText textAlign="left">{item?.address}</CustomText>
-              </View>
+              </View> */}
               <View
                 style={{
-                  width: "40%",
+                  width: "100%",
                   flexDirection: "column",
                   justifyContent: "flex-end",
                   alignItems: "flex-end",
                 }}
               >
-                <CustomText>
+                {/* <CustomText>
                   {item?.duration || getTimeAgo(item?.createdAt)}
-                </CustomText>
+                </CustomText> */}
                 <CustomText>
                   {item?.duration ||
                     dateDifference(item?.startDate, item?.endDate)}
@@ -139,6 +137,7 @@ const ListingHorizontalServices = ({
         onEndReachedThreshold={0.9}
         horizontal
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <View style={styles.footerLoader}>

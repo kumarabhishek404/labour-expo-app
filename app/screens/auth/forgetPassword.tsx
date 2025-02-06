@@ -9,7 +9,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";

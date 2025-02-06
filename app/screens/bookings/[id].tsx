@@ -19,7 +19,7 @@ import WorkerCard from "@/components/commons/WorkerCard";
 import { useMutation } from "@tanstack/react-query";
 import BOOKING from "@/app/api/booking";
 import TOAST from "@/app/hooks/toast";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -33,17 +33,6 @@ const ServiceDetails = () => {
   const { title, data }: any = useLocalSearchParams();
   const [booking, setBooking]: any = useState(JSON.parse(data));
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-
-  const [isSelected, setIsSelected] = useState(
-    userDetails?.role === "MEDIATOR"
-      ? booking?.selectedMediators?.find(
-          (mediator: any) => mediator?.mediator?._id === userDetails?._id
-        )
-      : booking?.selectedWorkers?.find(
-          (worker: any) => worker?._id === userDetails?._id
-        ) || false
-  );
-  const [isAdmin] = useState(userDetails?.role === "ADMIN");
 
   const mutationRemoveBookedUser = useMutation({
     mutationKey: ["removeBookedUser"],
@@ -145,11 +134,7 @@ const ServiceDetails = () => {
         <Button
           isPrimary={false}
           title={t("cancel")}
-          onPress={() =>
-            userDetails?.role === "EMPLOYER"
-              ? mutationRemoveBookedUser.mutate()
-              : mutationCancelBooking.mutate()
-          }
+          onPress={() => mutationCancelBooking.mutate()}
           style={styles.cancelBtn}
           textStyle={{ color: Colors?.white }}
         />

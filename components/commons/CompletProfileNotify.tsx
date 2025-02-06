@@ -18,7 +18,7 @@ import Gender from "../inputs/Gender";
 import DateField from "../inputs/DateField";
 import moment from "moment";
 import { isEmptyObject } from "@/constants/functions";
-import Loader from "./Loader";
+import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const ProfileNotification: React.FC = () => {
@@ -55,7 +55,11 @@ const ProfileNotification: React.FC = () => {
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["completeProfile"],
-    mutationFn: (payload: any) => USER?.updateUserById(payload),
+    mutationFn: (payload: any) =>
+      USER?.updateUserById({
+        _id: userDetails?._id,
+        ...payload,
+      }),
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",

@@ -18,13 +18,12 @@ const getWorkerById = async (id: any) => {
   }
 };
 
-const fetchAllWorkers = async ({ pageParam, skill }: any) => {
-  console.log("Payload ---", pageParam, skill);
-
+const fetchAllWorkers = async ({ pageParam, skill, name }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all?page=${pageParam}&limit=5&skill=${skill}&role=WORKER`
+      `/user/all?role=WORKER&name=${name}&skill=${skill}&page=${pageParam}&limit=5`
     );
+
     return data.data;
   } catch (error: any) {
     console.error(
@@ -60,7 +59,9 @@ const fetchAllLikedWorkers = async ({ pageParam, skill }: any) => {
 
 const likeWorker = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest(`/user/like/${payload?.workerID}`);
+    const data = await API_CLIENT.makePostRequest(
+      `/user/like/${payload?.workerID}`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
@@ -114,7 +115,10 @@ const addSkills = async (payload: any) => {
 
 const removeSkill = async (payload: any) => {
   try {
-    const data = await API_CLIENT.makePostRequest("/user/remove-skill", payload);
+    const data = await API_CLIENT.makePostRequest(
+      "/user/remove-skill",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(

@@ -1,46 +1,31 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
-import { Link } from "expo-router";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
-import Stepper from "@/components/commons/Stepper";
-import { COUNTRYPHONECODE, REGISTERSTEPS } from "@/constants";
+import { COUNTRYPHONECODE } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import MobileNumberField from "@/components/inputs/MobileNumber";
 import { Feather } from "@expo/vector-icons";
 import ModalComponent from "@/components/commons/Modal";
-import { set } from "lodash";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
+import { useAtomValue, useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
+import TOAST from "@/app/hooks/toast";
+import { Link, router, Stack } from "expo-router";
+import Loader from "@/components/commons/Loaders/Loader";
 
-interface FirstScreenProps {
-  setStep: any;
-  phoneNumber: string;
-  setPhoneNumber: any;
-  mobileNumberExist: string;
-  setMobileNumberExist: any;
-  countryCode: string;
-  setCountryCode: any;
-  name: string;
-  setFirstName: any;
-}
-
-const FirstScreen: React.FC<FirstScreenProps> = ({
-  setStep,
-  phoneNumber,
-  setPhoneNumber,
-  mobileNumberExist,
-  setMobileNumberExist,
-  countryCode,
-  setCountryCode,
-  name,
-  setFirstName,
-}: FirstScreenProps) => {
+const RegisterScreen = () => {
+  const setUserDetails = useSetAtom(Atoms?.UserAtom);
+  const locale = useAtomValue(Atoms?.LocaleAtom);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
+  const [mobileNumberExist, setMobileNumberExist] = useState("notSet");
+
   const {
     control,
     watch,
@@ -50,30 +35,34 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   } = useForm({
     defaultValues: {
       countryCode: countryCode,
-      phoneNumber: phoneNumber,
-      name: name,
+      phoneNumber: "",
+      name: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    setCountryCode(data?.countryCode);
-    setPhoneNumber(data?.phoneNumber);
-    setFirstName(data?.name);
-    if (mobileNumberExist === "notExist") {
-      setModalVisible(true);
-    }
-  };
-
-  const onConfirmMobilerNumber = () => {
-    setModalVisible(false);
-    setStep(2);
-  };
+  const mutationRegister = useMutation({
+    mutationKey: ["register"],
+    mutationFn: (payload) => USER.register(payload),
+    onSuccess: (data) => {
+      console.log("User registered:", data);
+      setUserDetails({
+        token: data?.data?.token,
+      });
+      router.push({
+        pathname: "/screens/auth/register/second",
+        params: { userId: data?.data?.userId },
+      });
+    },
+    onError: (error) => {
+      console.error("Registration error:", error);
+    },
+  });
 
   const mutationCheckMobileNumber = useMutation({
     mutationKey: ["checkMobileNumber"],
-    mutationFn: (payload: any) => USER?.checkMobileExistance(payload),
+    mutationFn: (payload: { mobile: string }) =>
+      USER?.checkMobileExistance(payload),
     onSuccess: (response) => {
-      console.log("Response while checking the mobile number - ", response);
       if (response?.data?.data?.exists) {
         setMobileNumberExist("exist");
       } else {
@@ -81,9 +70,28 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
       }
     },
     onError: (err) => {
-      console.error("error while checking the mobile number ", err);
+      console.error("Error checking mobile number", err);
     },
   });
+
+  const onSubmit = (data: any) => {
+    setModalVisible(true);
+  };
+
+  const onConfirmMobileNumber = () => {
+    setModalVisible(false);
+    if (!watch("name") || !watch("phoneNumber")) {
+      TOAST?.showToast?.error(t("pleaseFillAllFields"));
+      return;
+    }
+    const payload: any = {
+      name: watch("name"),
+      countryCode: watch("countryCode"),
+      mobile: watch("phoneNumber"),
+      locale: locale,
+    };
+    mutationRegister.mutate(payload);
+  };
 
   const modalContent = () => (
     <View style={{ paddingVertical: 20 }}>
@@ -105,24 +113,27 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   );
 
   return (
-    <>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={1} steps={REGISTERSTEPS} />
-      </View>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Loader loading={mutationRegister?.isPending} />
+      <Stack.Screen options={{ headerShown: false }} />
+      <CustomHeading baseFont={30}>{t("registerNow")}</CustomHeading>
+      <CustomHeading baseFont={25}>{t("enterMobileAndName")}</CustomHeading>
 
-      <View style={{ gap: 10, marginBottom: 15 }}>
+      <View style={{ gap: 20, marginBottom: 15 }}>
         <Controller
           control={control}
           name="phoneNumber"
-          defaultValue=""
           rules={{
             required: t("mobileNumberIsRequired"),
             pattern: {
-              value: /^(\+91[-\s]?)?[6-9]\d{9}$/,
+              value: /^\d{10}$/,
               message: t("enterAValidMobileNumber"),
             },
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, value } }) => (
             <MobileNumberField
               name="phoneNumber"
               countriesPhoneCode={COUNTRYPHONECODE}
@@ -131,23 +142,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               phoneNumber={value}
               setPhoneNumber={async (val: any) => {
                 setMobileNumberExist("notSet");
-                setValue("name", "");
-                const regex = /^(\+91[-\s]?)?[6-9]\d{9}$/;
-                if (val.length < 10) {
-                  onChange(val);
-                } else if (val.length === 10 && regex.test(val)) {
-                  onChange(val);
-                  await mutationCheckMobileNumber.mutate({
-                    mobile: val,
-                  });
+                if (val.length === 10) {
+                  await mutationCheckMobileNumber.mutate({ mobile: val });
                 }
-                return;
+                onChange(val);
               }}
-              onBlur={onBlur}
               errors={errors}
               isMobileNumberExist={mobileNumberExist === "exist"}
               placeholder={t("enterYourMobileNumber")}
-              loading={mutationCheckMobileNumber.isPending}
               icon={
                 <Feather
                   name={"phone"}
@@ -163,41 +165,37 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         <Controller
           control={control}
           name="name"
-          rules={{
-            required: t("firstNameIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          rules={{ required: t("firstNameIsRequired") }}
+          render={({ field: { onChange, value } }) => (
             <TextInputComponent
               name="name"
               label={t("name")}
               value={value}
-              onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("enterYourFirstName")}
               textStyles={{ fontSize: 16 }}
               containerStyle={errors?.name && styles.errorInput}
               errors={errors}
-              disabled={mobileNumberExist !== "notExist"}
             />
           )}
         />
       </View>
       <Button
-        isPrimary={true}
+        isPrimary
         title={t("saveAndNext")}
-        onPress={handleSubmit(onSubmit)}
+        // onPress={handleSubmit(onSubmit)}
+        onPress={onSubmit}
         style={styles.submitButton}
       />
 
       <View style={styles.footerContainer}>
-        <CustomText baseFont={14}>{t("alreadyHaveAnAccount")}</CustomText>
+        <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
         <Link href="/screens/auth/login" asChild>
           <TouchableOpacity>
-            <CustomHeading color={Colors?.link}>{t("signIn")}</CustomHeading>
+            <CustomHeading color={Colors.link}>{t("signIn")}</CustomHeading>
           </TouchableOpacity>
         </Link>
       </View>
-
       <ModalComponent
         visible={isModalVisible}
         content={modalContent}
@@ -207,28 +205,34 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         onClose={() => setModalVisible(false)}
         primaryButton={{
           title: t("yesProceed"),
-          action: onConfirmMobilerNumber,
+          action: onConfirmMobileNumber,
         }}
         secondaryButton={{
           title: t("noEdit"),
           action: () => setModalVisible(false),
         }}
       />
-    </>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  selectedButton: {
-    borderColor: Colors.primary,
-    backgroundColor: "#ffe5cc",
+  container: {
+    flexGrow: 1,
+    backgroundColor: Colors.white,
+    paddingHorizontal: 10,
+    paddingTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 15,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  errorInput: { borderWidth: 1, borderColor: "red" },
   submitButton: {
+    paddingHorizontal: 40,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    alignSelf: "flex-end",
     borderRadius: 30,
     marginTop: 10,
   },
@@ -236,36 +240,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 20,
     gap: 5,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginTop: 20,
-  },
-  confirmButton: {
-    backgroundColor: Colors.primary,
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: Colors.danger,
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 
-export default FirstScreen;
+export default RegisterScreen;

@@ -1,40 +1,42 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Colors from "@/constants/Colors";
-import { Entypo, FontAwesome6 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import CustomHeading from "../commons/CustomHeading";
 import AddAddressModal from "@/app/screens/location/addAddress";
-import { t } from "@/utils/translationHelper";
 import { convertToLabelValueArray } from "@/constants/functions";
+import DropdownWithMenu from "./dropdownWithMenu";
 
 interface LocationFieldProps {
   address: string;
   setAddress: any;
+  isModalVisible: boolean;
+  setIsModalVisible: any;
   isError: boolean;
 }
 
 const LocationField = ({
   address,
   setAddress,
+  isModalVisible,
+  setIsModalVisible,
   isError,
 }: LocationFieldProps) => {
+  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const [allSavedAddresses, setAllSavedAddresses] = useState([
-    ...(userDetails?.savedAddresses?.length > 0 ? convertToLabelValueArray(userDetails?.savedAddresses) : []),
-    { label: t("addNewAddress"), value: "addAddress" },
+    ...(userDetails?.savedAddresses?.length > 0
+      ? convertToLabelValueArray(userDetails?.savedAddresses)
+      : []),
+    // { label: t("addNewAddress"), value: "addAddress" },
   ]);
   const dropdownRef = useRef<any>(null);
 
   useEffect(() => {
-    console.log("useEffect called", userDetails?.savedAddresses);
     if (userDetails?.savedAddresses) {
-      // Remove duplicates and create unique address objects
       const uniqueAddresses = Array.from(
         new Set(userDetails.savedAddresses)
       ).map((address) => ({
@@ -42,10 +44,9 @@ const LocationField = ({
         value: address as string,
       }));
 
-      // Add the "Add New Address" option at the end
       setAllSavedAddresses([
         ...uniqueAddresses,
-        { label: t("addNewAddress"), value: "addAddress" },
+        // { label: t("addNewAddress"), value: "addAddress" },
       ]);
 
       // Auto-select the newly added address if it exists in savedAddresses
@@ -63,67 +64,44 @@ const LocationField = ({
 
   return (
     <View style={styles.container}>
-      {/* <Dropdown
-        ref={dropdownRef}
-        style={[
-          styles.dropdown,
-          isFocus && styles?.focusStyle,
-          isError && styles?.errorInput,
-        ]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        containerStyle={isFocus && styles?.containerStyle}
-        iconStyle={styles.iconStyle}
-        data={allSavedAddresses}
-        labelField="label"
-        valueField="value"
-        placeholder={t("selectAddress")}
-        value={address}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={(item: any) => {
-          if (item.value === "addAddress") {
-            setIsModalVisible(true);
-            return;
-          }
-          setAddress(item.value);
-          setIsFocus(false);
-        }}
-        renderItem={(item: any) => {
-          if (item?.value === "addAddress") {
-            return (
-              <TouchableOpacity
-                style={styles.actionItemWrapper}
-                onPress={() => {
-                  dropdownRef.current?.close();
-                  setIsModalVisible(true);
-                }}
-              >
-                <CustomHeading color={Colors?.link}>{item.label}</CustomHeading>
-                <Entypo name="link" size={20} color={Colors?.link} />
-              </TouchableOpacity>
-            );
-          } else {
-            return (
-              <CustomHeading
-                textAlign="left"
-                baseFont={12}
-                style={{ padding: 10 }}
-              >
-                {item.label}
-              </CustomHeading>
-            );
-          }
-        }}
-        renderLeftIcon={() => (
-          <FontAwesome6
-            style={styles.icon}
-            color="black"
-            name="location-dot"
-            size={20}
+      <DropdownWithMenu
+        id="selectAddress"
+        name="type"
+        placeholder="selectAddress"
+        searchEnabled={false}
+        options={allSavedAddresses}
+        icon={
+          <Ionicons
+            name={"location"}
+            size={30}
+            color={Colors.secondary}
+            style={{ paddingVertical: 10, paddingRight: 10 }}
+            errors={isError}
+            containerStyle={isError && styles.errorInput}
           />
-        )}
+        }
+        selectedValue={address}
+        onSelect={setAddress}
+        openDropdownId={openDropdownId}
+        setOpenDropdownId={setOpenDropdownId}
+      />
+      {/* <PaperDropdown
+        name="type"
+        value={address}
+        onSelect={setAddress}
+        placeholder={t("selectAddress")}
+        options={allSavedAddresses}
+        errors={isError}
+        containerStyle={isError && styles.errorInput}
+        search={false}
+        icon={
+          <Ionicons
+            name={"mail-outline"}
+            size={30}
+            color={Colors.secondary}
+            style={{ paddingVertical: 10, paddingRight: 10 }}
+          />
+        }
       /> */}
       <AddAddressModal
         visible={isModalVisible}
@@ -142,7 +120,7 @@ export default LocationField;
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     // marginBottom: 10,
   },
   dropdown: {

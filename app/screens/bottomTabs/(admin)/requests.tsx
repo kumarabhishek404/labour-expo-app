@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { Stack } from "expo-router";
 import { acceptJoiningRequest, rejectJoiningRequest } from "@/app/api/requests";

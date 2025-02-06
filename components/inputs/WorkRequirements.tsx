@@ -84,10 +84,15 @@ const WorkRequirment = ({
     }
     setRequirements(tempRequirments);
   };
+  console.log("watch()--", watch("subType"));
 
   return (
     <View style={styles.addRequirmentWrapper}>
-      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
+      {label && (
+        <CustomHeading textAlign="left" color={Colors?.primary}>
+          {label}
+        </CustomHeading>
+      )}
       {requirements &&
         requirements.length > 0 &&
         requirements?.map((requirement: any, index: number) => {
@@ -102,15 +107,16 @@ const WorkRequirment = ({
                       styles?.errorInput
                     }
                     value={requirement?.name}
-                    setValue={(name: any) =>
+                    onSelect={(name: any) =>
                       handleRequirementTypeChange(index, name)
                     }
+                    translationEnabled
                     placeholder={
                       watch("subType")
-                        ? t("selectWorkRequirementType")
-                        : t("pleaseSelectWorkTypeAndSubTypeFirst")
+                        ? "selectWorkRequirementType"
+                        : "pleaseSelectWorkTypeAndSubTypeFirst"
                     }
-                    // emptyPlaceholder={t("pleaseSelectWorkTypeAndSubTypeFirst")}
+                    disabled={!watch("subType")}
                     options={filterWorkerTypes(type, subType) ?? []}
                     icon={
                       <CustomHeading baseFont={20} color={Colors?.secondary}>
@@ -121,6 +127,7 @@ const WorkRequirment = ({
                 </View>
                 <View style={styles.counterContainer}>
                   <Counter
+                    label="Number Of Workers"
                     counter={requirement?.count}
                     setCounter={(count: any) =>
                       handleRequirementCountChange(index, count)
@@ -132,7 +139,7 @@ const WorkRequirment = ({
                     }
                   />
                   <TextInputComponent
-                    label=""
+                    label="Rupess Per Daye"
                     name="payPerDay"
                     value={requirement?.payPerDay.toString()}
                     placeholder={t("ratePerDay")}
@@ -144,7 +151,11 @@ const WorkRequirment = ({
                     }}
                     style={styles.textInput}
                     containerStyle={[
-                      { height: 44 },
+                      {
+                        height: 44,
+                        borderColor: Colors.secondary,
+                        backgroundColor: Colors?.white,
+                      },
                       errorField?.index === index &&
                         errorField?.name === "price" &&
                         styles?.errorInput,
@@ -162,6 +173,7 @@ const WorkRequirment = ({
                       style={styles.deleteIcon}
                       name="delete"
                       size={40}
+                      color={Colors?.tertiery}
                       onPress={() => removeRequirment(index)}
                     />
                   )}
@@ -210,7 +222,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    // alignItems: "center",
     gap: 10,
     marginTop: 10,
     zIndex: 6,
@@ -232,10 +244,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     borderRadius: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.tertiery,
   },
   deleteIcon: {
     width: "40%",
+    alignSelf: "flex-end",
   },
   textInput: {
     width: "48%",

@@ -52,8 +52,8 @@ const User = () => {
   const [isUserLiked, setIsUserLiked] = useState(
     user?.likedBy?.includes(userDetails?._id)
   );
-  const [isUserRequested, setIsUserRequested] = useState(
-    user?.requestedBy?.includes(userDetails?._id)
+  const [isUserRequestedToJoinTeam, setIsUserRequestedToJoinTeam] = useState(
+    user?.teamJoiningRequestBy?.includes(userDetails?._id)
   );
   const [isInYourTeam, setIsInYourTeam] = useState(
     user?.employedBy?._id === userDetails?._id
@@ -94,7 +94,9 @@ const User = () => {
   useEffect(() => {
     setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
     setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
-    setIsUserRequested(user?.requestedBy?.includes(userDetails?._id));
+    setIsUserRequestedToJoinTeam(
+      user?.teamJoiningRequestBy?.includes(userDetails?._id)
+    );
     setIsInYourTeam(user?.employedBy?._id === userDetails?._id);
     setIsWorkerBookingRequested(
       user?.bookingRequestedBy?.includes(userDetails?._id)
@@ -173,7 +175,10 @@ const User = () => {
       <View style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
-          contentContainerStyle={{ paddingBottom: 150 }}
+          contentContainerStyle={{
+            paddingBottom: 150,
+            backgroundColor: Colors?.fourth,
+          }}
         >
           <Animated.Image
             source={user?.coverImage ? { uri: user?.coverImage } : CoverImage}
@@ -234,8 +239,7 @@ const User = () => {
               </View>
             </View>
 
-            {(user?.role === "MEDIATOR" ||
-              (user?.role === "WORKER" && user?.employedBy)) && (
+            {user?.employedBy && (
               <TeamDetails
                 type={user?.role}
                 mediator={user}
@@ -245,36 +249,24 @@ const User = () => {
 
             <CustomText>{user?.description}</CustomText>
 
-            {role !== "EMPLOYER" && (
-              <SkillSelector
-                canAddSkills={false}
-                role={user?.role}
-                isShowLabel={true}
-                style={styles?.skillsContainer}
-                tagTextStyle={styles?.skillTagText}
-                userSkills={user?.skills}
-                availableSkills={
-                  user?.role === "WORKER" ? WORKERTYPES : MEDIATORTYPES
-                }
-              />
-            )}
+            <SkillSelector
+              canAddSkills={false}
+              role={user?.role}
+              isShowLabel={true}
+              style={styles?.skillsContainer}
+              tagTextStyle={styles?.skillTagText}
+              userSkills={user?.skills}
+              availableSkills={WORKERTYPES}
+            />
 
             <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
 
-            <WallletInformation
-              type={user?.role === "EMPLOYER" ? "spents" : "earnings"}
-              wallet={user?.wallet}
-            />
+            <WallletInformation type={"earnings"} wallet={user?.wallet} />
 
-            {user?.role === "EMPLOYER" ? (
-              <ServiceInformation information={user?.serviceDetails} />
-            ) : (
-              <WorkInformation information={user?.workDetails} />
-            )}
+            <ServiceInformation information={user?.serviceDetails} />
+            <WorkInformation information={user?.workDetails} />
 
-            {user?.role !== "EMPLOYER" && (
-              <WorkHistory workHistory={user?.workHistory} />
-            )}
+            <WorkHistory workHistory={user?.workHistory} />
 
             <UserReviews
               ref={reviewsSectionRef}
@@ -295,7 +287,7 @@ const User = () => {
         refetch={refetch}
         isUserBooked={isUserBooked}
         isUserLiked={isUserLiked}
-        isUserRequested={isUserRequested}
+        isUserRequestedToJoinTeam={isUserRequestedToJoinTeam}
         isInYourTeam={isInYourTeam}
         isWorkerBookingRequested={isWorkerBookingRequested}
         isWorkerBooked={isWorkerBooked}
@@ -309,7 +301,6 @@ export default User;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
   },
   image: {
     width: width,
@@ -318,7 +309,7 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     padding: 20,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   workerImage: {
     width: 150,
@@ -386,7 +377,7 @@ const styles = StyleSheet.create({
     padding: 12,
     flexDirection: "column",
     marginBottom: 5,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors?.white,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
   },

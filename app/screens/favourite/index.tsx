@@ -12,7 +12,7 @@ import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import SERVICE from "../../api/services";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import WORKER from "../../api/workers";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
@@ -39,11 +39,7 @@ const Favourite = (props: any) => {
     refetch,
   } = useInfiniteQuery({
     queryKey: ["favourites"],
-    queryFn: ({ pageParam }) => {
-      return userDetails?.role === "EMPLOYER"
-        ? WORKER?.fetchAllLikedWorkers({ pageParam })
-        : SERVICE?.fetchAllLikedServices({ pageParam });
-    },
+    queryFn: ({ pageParam }) => SERVICE?.fetchAllLikedServices({ pageParam }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
@@ -104,10 +100,7 @@ const Favourite = (props: any) => {
           setFilteredData={setFilteredData}
         />
 
-        <CategoryButtons
-          options={userDetails?.role === "EMPLOYER" ? WORKERS : SERVICES}
-          onCagtegoryChanged={onCatChanged}
-        />
+        <CategoryButtons options={SERVICES} onCagtegoryChanged={onCatChanged} />
 
         <PaginationString
           type="services"
@@ -116,33 +109,17 @@ const Favourite = (props: any) => {
           totalData={totalData}
         />
 
-        {userDetails?.role === "EMPLOYER" ? (
-          <ListingsVerticalWorkers
-            type="employer"
-            availableInterest={WORKERTYPES}
-            listings={memoizedData || []}
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
-            refreshControl={
-              <RefreshControl
-                refreshing={!isRefetching && refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        ) : (
-          <ListingsVerticalServices
-            listings={memoizedData || []}
-            loadMore={loadMore}
-            isFetchingNextPage={isFetchingNextPage}
-            refreshControl={
-              <RefreshControl
-                refreshing={!isRefetching && refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        )}
+        <ListingsVerticalServices
+          listings={memoizedData || []}
+          loadMore={loadMore}
+          isFetchingNextPage={isFetchingNextPage}
+          refreshControl={
+            <RefreshControl
+              refreshing={!isRefetching && refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        />
       </View>
     </>
   );

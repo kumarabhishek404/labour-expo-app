@@ -2,7 +2,7 @@ import USER from "@/app/api/user";
 import Atoms from "@/app/AtomStore";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
-import Loader from "@/components/commons/Loader";
+import Loader from "@/components/commons/Loaders/Loader";
 import Button from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
@@ -25,22 +25,22 @@ const ChangeRoleScreen = () => {
     mutationFn: async () => {
       if (selectedRole1 && selectedRole2 && selectedRole3) {
         return await USER?.updateUserRoleById({
-          role: userDetails?.role === "WORKER" ? "MEDIATOR" : "WORKER",
+          role:  "MEDIATOR",
         });
       } else {
         return Alert.alert("Error", "Please select all roles.");
       }
     },
     onSuccess: (response: any) => {
-      console.log("Response while updating the role of the User - ", response);
+      console.log("Response while updating the of the User - ", response);
       let user = response?.data;
       setUserDetails({
         ...userDetails,
-        role: userDetails?.role === "WORKER" ? "MEDIATOR" : "WORKER",
+        role: "MEDIATOR",
       });
     },
     onError: (err) => {
-      console.error("error while updating the role of User ", err);
+      console.error("error while updating the of User ", err);
     },
   });
 

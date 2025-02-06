@@ -12,9 +12,11 @@ import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import CustomText from "@/components/commons/CustomText";
+import DropdownExample from "@/components/inputs/Dropdown";
+import PaperDropdown from "@/components/inputs/Dropdown";
 
 interface FirstScreenProps {
   setStep: any;
@@ -49,8 +51,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   });
   const [errorField, setErrorField] = useState({});
 
-  const selectedDropdownValue = watch("type");
-  // console.log("watch---", watch("type"), filterSubCategories(watch("type")))
+  console.log("Type---", type, subType, requirements);
 
   const onSubmit = (data: any) => {
     // console.log("data---", data);
@@ -65,37 +66,27 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   const handleValue = (value: any) => {
     console.log("value --", value);
 
-    // onChange()
   };
 
   return (
     <>
-      {/* <Stack.Screen
-        options={{
-          headerShown: true,
-          header: () => <CustomHeader title={t('addingNewService')} left="back" />,
-        }}
-      /> */}
-      <View style={{ marginVertical: 30 }}>
-        <Stepper currentStep={1} steps={ADDSERVICESTEPS} />
-      </View>
-
-      <View style={{ gap: 10 }}>
+      <View style={{ gap: 20 }}>
         <View style={{ zIndex: 9 }}>
           <Controller
             control={control}
             name="type"
-            defaultValue=""
+            defaultValue={type}
             rules={{
               required: t("workTypeIsRequired"),
             }}
             render={({ field: { value, onChange } }) => (
-              <DropdownComponent
+              <PaperDropdown
                 name="type"
                 label={t("workType")}
                 value={value}
-                setValue={onChange}
-                placeholder={t("selectWorkType")}
+                onSelect={onChange}
+                translationEnabled
+                placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
                 containerStyle={errors?.type && styles.errorInput}
@@ -116,7 +107,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           <Controller
             control={control}
             name="subType"
-            defaultValue=""
+            defaultValue={subType}
             rules={{
               required: t("workSubTypeIsRequired"),
             }}
@@ -125,12 +116,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 name="subType"
                 label={t("workSubType")}
                 value={value}
-                setValue={onChange}
+                onSelect={onChange}
                 placeholder={
                   watch("type")
-                    ? t("selectWorkSubType")
-                    : t("pleaseSelectWorkTypeFirst")
+                    ? "selectWorkSubType"
+                    : "pleaseSelectWorkTypeFirst"
                 }
+                translationEnabled
+                disabled={!watch("type")}
                 options={filterSubCategories(watch("type"))}
                 errors={errors}
                 containerStyle={errors?.subType && styles.errorInput}
@@ -213,7 +206,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <WorkRequirment
-              label={t("workRequirements")}
+              label="Worker Type"
               name="requirements"
               watch={watch}
               type={watch("type") ?? ""}
@@ -228,12 +221,14 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
         />
       </View>
 
-      <Button
-        style={styles?.bottomButton}
-        isPrimary={true}
-        title={t("next")}
-        onPress={handleSubmit(onSubmit)}
-      />
+      <View style={styles?.buttonContainer}>
+        <Button
+          style={{ width: "100%" }}
+          isPrimary={true}
+          title={t("next")}
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
     </>
   );
 };
@@ -254,6 +249,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "red",
     color: "red",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
   },
   bottomButton: {
     marginVertical: 20,
