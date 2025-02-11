@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -6,21 +6,18 @@ import { useFocusEffect } from "@react-navigation/native";
 import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { WORKERS, WORKERTYPES } from "@/constants";
+import { WORKERS } from "@/constants";
 import Filters from "@/components/commons/Filters";
 import SearchFilter from "@/components/commons/SearchFilter";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import WORKER from "@/app/api/workers";
 import SERVICE from "@/app/api/services";
 import FetchLocationNote from "@/components/commons/FetchLocationNote";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import SearchForm from "@/app/screens/bottomTabs/(user)/search";
 
 const UserWorkers = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);

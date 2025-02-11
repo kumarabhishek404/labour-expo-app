@@ -21,12 +21,12 @@ const Members = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("");
-  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const { id } = useLocalSearchParams();
 
   const {
     data: response,
     isLoading,
+    refetch,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
@@ -48,7 +48,11 @@ const Members = () => {
     },
   });
 
-  console.log("responseresponseresponse00000------", response?.pages[0]?.data);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [category])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -93,17 +97,6 @@ const Members = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          {/* <SearchFilter
-            type="users"
-            data={response?.pages}
-            setFilteredData={setFilteredData}
-          /> */}
-
-          <CategoryButtons
-            options={WORKERTYPES}
-            onCagtegoryChanged={onCatChanged}
-          />
-
           <PaginationString
             type="members"
             isLoading={isLoading}

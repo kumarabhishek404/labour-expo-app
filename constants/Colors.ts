@@ -9,6 +9,7 @@ export default {
   gray: "#D9D9D9",
   danger: "#FF0000",
   warning: "#FF8C00",
+  darkGray: "#A9A9A9",
 
   action: "#FF7A00",
   link: "#007BFF",

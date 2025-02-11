@@ -2,6 +2,8 @@ import Colors from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import {
+  AntDesign,
+  Entypo,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -16,6 +18,9 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
+import EMPLOYER from "@/app/api/employer";
+import SkillSelector from "./SkillSelector";
+import ShowSkills from "./ShowSkills";
 
 interface ApplicantsProps {
   applicants: any;
@@ -33,7 +38,7 @@ const Applicants = ({
   const mutationSelectWorker = useMutation({
     mutationKey: ["selectWorker", { serviceId }],
     mutationFn: (userId) =>
-      SERVICE?.selectWorker({ serviceId: serviceId, userId: userId }),
+      EMPLOYER?.selectWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
@@ -45,28 +50,10 @@ const Applicants = ({
     },
   });
 
-  const mutationSelectMediator = useMutation({
-    mutationKey: ["selectMediator", { serviceId }],
-    mutationFn: (mediatorId) =>
-      SERVICE?.selectMediator({ serviceId: serviceId, mediator: mediatorId }),
-    onSuccess: (response) => {
-      refetchApplicants();
-      refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("mediatorSelectedSuccessfully"));
-      console.log(
-        "Response while seleting an mediator for service - ",
-        response
-      );
-    },
-    onError: (err) => {
-      console.error("error while seleting an mediator for service ", err);
-    },
-  });
-
   const mutationRejectWorker = useMutation({
     mutationKey: ["rejectWorker", { serviceId }],
     mutationFn: (userId) =>
-      SERVICE?.rejectWorker({ serviceId: serviceId, userId: userId }),
+      EMPLOYER?.rejectWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
@@ -75,21 +62,6 @@ const Applicants = ({
     },
     onError: (err) => {
       console.error("error while rejecting an selected worker ", err);
-    },
-  });
-
-  const mutationRejectMediator = useMutation({
-    mutationKey: ["rejectMediator", { serviceId }],
-    mutationFn: (mediatorId) =>
-      SERVICE?.rejectMediator({ serviceId: serviceId, mediator: mediatorId }),
-    onSuccess: (response) => {
-      refetchSelectedApplicants();
-      refetchApplicants();
-      TOAST?.showToast?.success(t("mediatorRejectedSuccessfully"));
-      console.log("Response while rejecting an applied mediator - ", response);
-    },
-    onError: (err) => {
-      console.error("error while rejecting an applied mediator ", err);
     },
   });
 
@@ -122,28 +94,49 @@ const Applicants = ({
     <>
       <Loader
         loading={
-          mutationSelectWorker?.isPending ||
-          mutationSelectMediator?.isPending ||
-          mutationRejectWorker?.isPending ||
-          mutationRejectMediator?.isPending
+          mutationSelectWorker?.isPending || mutationRejectWorker?.isPending
         }
       />
       <View style={styles.applicantContainer}>
         {applicants?.map((item: any, index: number) => {
+          const appliedUser = item?.user;
+          const workers = item?.workers;
           return (
             <View key={index} style={styles.mediatorCard}>
               <View style={styles.productCard}>
-                <View style={{ flexDirection: "column" }}>
-                  <ProfilePicture uri={item?.profilePicture} />
+                <ProfilePicture uri={appliedUser?.profilePicture} />
+                <View style={styles.productInfo}>
+                  <View style={styles?.titleContainer}>
+                    <CustomHeading baseFont={14}>
+                      {appliedUser?.name}
+                    </CustomHeading>
+                  </View>
+
+                  <ShowSkills
+                    userSkills={appliedUser?.skills}
+                    tagStyle={{ backgroundColor: Colors?.darkGray }}
+                  />
+                  <View style={styles.recommendationContainer}>
+                    <Ionicons name="location" size={14} color="gray" />
+                    <CustomText textAlign="left">
+                      {appliedUser?.address || "Not provided"}
+                    </CustomText>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    alignContent: "flex-end",
+                    justifyContent: "flex-start",
+                  }}
+                >
                   <Button
                     style={{
-                      width: 60,
                       paddingVertical: 4,
-                      paddingHorizontal: 6,
+                      paddingHorizontal: 8,
                       marginTop: 6,
                     }}
                     textStyle={{
-                      fontSize: 11,
+                      fontSize: 14,
                     }}
                     isPrimary={false}
                     title="Details"
@@ -151,7 +144,7 @@ const Applicants = ({
                       router?.push({
                         pathname: "/screens/users/[id]",
                         params: {
-                          id: item?._id,
+                          id: appliedUser?._id,
                           role: "workers",
                           type: "applicant",
                         },
@@ -159,89 +152,9 @@ const Applicants = ({
                     }
                   />
                 </View>
-                <View style={styles.productInfo}>
-                  <View style={styles?.titleContainer}>
-                    <View style={{ gap: 2, marginBottom: 4 }}>
-                      <CustomHeading baseFont={14}>{item?.name}</CustomHeading>
-                      <CustomText style={styles.caption}>
-                        {t("workers")}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        gap: 5,
-                      }}
-                    >
-                      <Button
-                        style={{
-                          width: 60,
-                          paddingVertical: 4,
-                          paddingHorizontal: 8,
-                          marginLeft: 4,
-                          backgroundColor: "#fa6400",
-                          borderColor: "#fa6400",
-                          alignSelf: "flex-end",
-                        }}
-                        textStyle={{
-                          fontSize: 10,
-                        }}
-                        isPrimary={true}
-                        title="Select"
-                        onPress={() => mutationSelectWorker?.mutate(item?._id)}
-                      />
-                      <Button
-                        style={{
-                          paddingVertical: 4,
-                          paddingHorizontal: 6,
-                          marginLeft: 4,
-                          backgroundColor: Colors?.danger,
-                          borderColor: Colors?.danger,
-                        }}
-                        textStyle={{
-                          fontSize: 10,
-                        }}
-                        icon={
-                          <FontAwesome
-                            name="remove"
-                            size={14}
-                            color="white"
-                            style={{ marginRight: 4 }}
-                          />
-                        }
-                        isPrimary={true}
-                        title={t("reject")}
-                        onPress={() => mutationRejectWorker?.mutate(item?._id)}
-                      />
-                    </View>
-                  </View>
-
-                  {item?.skills?.length > 0 && (
-                    <View style={styles.recommendationContainer}>
-                      <MaterialCommunityIcons
-                        name="hammer-sickle"
-                        size={14}
-                        color="gray"
-                      />
-                      <CustomText
-                        textAlign="left"
-                        style={{ textTransform: "capitalize" }}
-                      >
-                        {item?.skills?.join(", ")}
-                      </CustomText>
-                    </View>
-                  )}
-                  <View style={styles.recommendationContainer}>
-                    <Ionicons name="location" size={14} color="gray" />
-                    <CustomText textAlign="left">
-                      {item?.address || "Not provided"}
-                    </CustomText>
-                  </View>
-                </View>
               </View>
               {/* Add workers section */}
-              {item?.workers?.length > 0 && (
+              {workers?.length > 0 && (
                 <View style={styles.workersContainer}>
                   <TouchableOpacity
                     style={styles.workersTitleContainer}
@@ -255,7 +168,7 @@ const Applicants = ({
                         color={Colors.primary}
                       />
                       <CustomText style={styles.workersTitle}>
-                        Associated Workers ({item?.workers?.length})
+                        Associated Workers ({workers?.length})
                       </CustomText>
                     </View>
                     <Animated.View
@@ -292,32 +205,78 @@ const Applicants = ({
                         },
                       ]}
                     >
-                      {item?.workers?.map(
-                        (worker: any, workerIndex: number) => (
-                          <View key={workerIndex} style={styles.workerItem}>
-                            <ProfilePicture uri={worker?.profilePicture} />
-                            <View style={styles.workerInfo}>
-                              <CustomText style={styles.workerName}>
-                                {worker?.name}
-                              </CustomText>
-                              <View style={styles.workerSkillsContainer}>
-                                <MaterialCommunityIcons
-                                  name="hammer-wrench"
-                                  size={12}
-                                  color={Colors.primary}
-                                />
-                                <CustomText style={styles.workerSkills}>
-                                  {worker?.skills?.join(", ")}
-                                </CustomText>
-                              </View>
-                            </View>
+                      {workers?.map((worker: any, workerIndex: number) => (
+                        <View key={workerIndex} style={styles.workerItem}>
+                          <ProfilePicture uri={worker?.profilePicture} />
+                          <View style={styles.workerInfo}>
+                            <CustomText style={styles.workerName}>
+                              {worker?.name}
+                            </CustomText>
+                            <ShowSkills userSkills={worker?.skills} />
                           </View>
-                        )
-                      )}
+                        </View>
+                      ))}
                     </Animated.View>
                   )}
                 </View>
               )}
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  marginTop: 10,
+                }}
+              >
+                <Button
+                  style={{
+                    width: "30%",
+                    paddingVertical: 4,
+                    paddingHorizontal: 6,
+                  }}
+                  bgColor={Colors?.danger}
+                  borderColor={Colors?.danger}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  icon={
+                    <FontAwesome
+                      name="remove"
+                      size={14}
+                      color="white"
+                      style={{ marginRight: 4 }}
+                    />
+                  }
+                  isPrimary={true}
+                  title={t("reject")}
+                  onPress={() => mutationRejectWorker?.mutate(appliedUser?._id)}
+                />
+                <Button
+                  style={{
+                    width: "40%",
+                    paddingVertical: 4,
+                    paddingHorizontal: 8,
+                  }}
+                  bgColor={Colors?.success}
+                  borderColor={Colors?.success}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  icon={
+                    <Entypo
+                      name="check"
+                      size={14}
+                      color="white"
+                      style={{ marginRight: 4 }}
+                    />
+                  }
+                  isPrimary={true}
+                  title="Select"
+                  onPress={() => mutationSelectWorker?.mutate(appliedUser?._id)}
+                />
+              </View>
             </View>
           );
         })}
@@ -328,8 +287,7 @@ const Applicants = ({
 
 const styles = StyleSheet.create({
   applicantList: {
-    // display: "flex",
-    flex: 1
+    flex: 1,
   },
   applicantContainer: {
     gap: 5,
@@ -337,7 +295,7 @@ const styles = StyleSheet.create({
   mediatorCard: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 10,
+    padding: 8,
     marginBottom: 5,
     flex: 1,
     flexDirection: "column",
@@ -379,7 +337,7 @@ const styles = StyleSheet.create({
   },
   workersContainer: {
     width: "100%",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: Colors?.fourth,
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
@@ -426,17 +384,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
     color: "#2c3e50",
-  },
-  workerSkillsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 4,
-  },
-  workerSkills: {
-    fontSize: 12,
-    color: "#6c757d",
-    fontWeight: "500",
   },
 });
 

@@ -14,6 +14,8 @@ import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MYSERVICES, SERVICES, WORKERTYPES, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import USER from "@/app/api/user";
+import EMPLOYER from "@/app/api/employer";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -31,24 +33,31 @@ const Services = () => {
     refetch,
   } = useInfiniteQuery({
     queryKey: [
-      type === "favourite"
+      type === "saved"
         ? "savedServices"
         : type === "myServices"
         ? "myServices"
+        : type === "booked"
+        ? "booked"
         : "services",
       category,
     ],
     queryFn: ({ pageParam }) =>
-      type === "favourite"
-        ? SERVICE?.fetchAllLikedServices({ pageParam })
+      type === "saved"
+        ? USER?.fetchAllLikedServices({ pageParam })
         : type === "myServices"
-        ? SERVICE?.fetchMyServices({
+        ? EMPLOYER?.fetchMyServices({
             pageParam,
             status: "",
           })
+        : type === "booked"
+        ? EMPLOYER?.fetchAllBookedWorkers({
+            pageParam,
+            skill: JSON?.parse(searchCategory as string)?.skill,
+          })
         : SERVICE?.fetchAllServices({
             pageParam,
-            status: "HIRING",
+            status: "ACTIVE",
             type: searchCategory && JSON?.parse(searchCategory as string)?.type,
             subType:
               searchCategory && JSON?.parse(searchCategory as string)?.subType,

@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Dimensions,
   ScrollView,
+  StatusBar,
   StyleSheet,
   View,
 } from "react-native";
@@ -10,7 +11,6 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
-import Map from "@/components/commons/ViewMap";
 import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -47,16 +47,16 @@ const ServiceDetails = () => {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const [isServiceLiked, setIsServiceLiked] = useState(
-    service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
+    service?.likedBy?.find((id: any) => id === userDetails?._id)
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
-      (worker: any) => worker?._id === userDetails?._id
+      (user: any) => user?.user?._id === userDetails?._id
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
-      (worker: any) => worker?._id === userDetails?._id
+      (user: any) => user?.user?._id === userDetails?._id
     ) || false
   );
 
@@ -72,8 +72,6 @@ const ServiceDetails = () => {
     REFRESH_USER.useRefreshUser();
 
   const [isAdmin] = useState(userDetails?.isAdmin);
-
-  // console.log("User ID --", userDetails?._id, service?.employer);
   const {
     isLoading,
     isError,
@@ -98,43 +96,20 @@ const ServiceDetails = () => {
   );
 
   const {
-    data: appliedWorkers,
+    data: appliedUsers,
     isLoading: isAppliedWorkersLoading,
     isFetchingNextPage: isAppliedWorkersFetchingNextPage,
     fetchNextPage: appliedWorkersFetchPage,
     hasNextPage: hasAppliedWorkersNextPage,
     refetch: refetchAppliedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["appliedWorkers", service],
+    queryKey: ["appliedUsers", service],
     queryFn: ({ pageParam }) => {
       return SERVICE?.fetchMyAppliedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id || isAdmin,
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
-  });
-
-  const {
-    data: appliedMediators,
-    isLoading: isAppliedMediatorsLoading,
-    isFetchingNextPage: isAppliedMediatorsFetchingNextPage,
-    fetchNextPage: appliedMediatorsFetchPage,
-    hasNextPage: hasAppliedMediatorsNextPage,
-    refetch: refetchAppliedMediators,
-  } = useInfiniteQuery({
-    queryKey: ["appliedMediators", service],
-    queryFn: ({ pageParam }) => {
-      return SERVICE?.fetchMyAppliedMediators({ pageParam, serviceId: id });
-    },
-    retry: false,
-    initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id || isAdmin,
+    enabled: userDetails?._id === service?.employer?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -169,20 +144,20 @@ const ServiceDetails = () => {
   });
 
   const {
-    data: selectedWorkers,
+    data: selectedUsers,
     isLoading: isSelectedWorkerLoading,
     isFetchingNextPage: isSelectedWorkerFetchingNextPage,
     fetchNextPage: selectedWorkersFetchPage,
     hasNextPage: hasSelectedWorkersNextPage,
     refetch: refetchSelectedWorkers,
   } = useInfiniteQuery({
-    queryKey: ["selectedWorkers", service],
+    queryKey: ["selectedUsers", service],
     queryFn: ({ pageParam }) => {
       return SERVICE?.fetchSelectedWorkers({ pageParam, serviceId: id });
     },
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id || isAdmin,
+    enabled: userDetails?._id === service?.employer?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -191,35 +166,15 @@ const ServiceDetails = () => {
     },
   });
 
-  const {
-    data: selectedMediators,
-    isLoading: isSelectedMediatorLoading,
-    isFetchingNextPage: isSelectedMediatorFetchingNextPage,
-    fetchNextPage: selectedMediatorsFetchPage,
-    hasNextPage: hasSelectedMediatorsNextPage,
-    refetch: refetchSelectedMediators,
-  } = useInfiniteQuery({
-    queryKey: ["selectedMediators", service],
-    queryFn: ({ pageParam }) => {
-      return SERVICE?.fetchSelectedWorkers({ pageParam, serviceId: id });
-    },
-    retry: false,
-    initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id || isAdmin,
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
-  });
+  console.log(
+    "members--",
+    members?.pages.flatMap((page: any) => page.data || [])[0]?.workers
+  );
 
   useFocusEffect(
     React.useCallback(() => {
-      // const totalData = members?.pages[0]?.pagination?.total;
-      // setTotalData(totalData);
       const unsubscribe = setWorkers(
-        members?.pages.flatMap((page: any) => page.data || [])
+        members?.pages.flatMap((page: any) => page.data || [])[0]?.workers
       );
       return () => unsubscribe;
     }, [members])
@@ -228,52 +183,50 @@ const ServiceDetails = () => {
   useEffect(() => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
-        (worker: any) => worker?._id === userDetails?._id
+        (user: any) => user?.user?._id === userDetails?._id
       ) || false
     );
     setIsServiceLiked(
-      service?.likedBy?.find((liked: any) => liked?._id === userDetails?._id)
+      service?.likedBy?.find((id: any) => id === userDetails?._id)
     );
     setIsSelected(
       service?.selectedUsers?.find(
-        (worker: any) => worker?._id === userDetails?._id
+        (user: any) => user?.user?._id === userDetails?._id
       ) || false
     );
   }, [service]);
 
+  // console.log("appliedUsers--", response?.data?.appliedUsers);
+
   useFocusEffect(
     React.useCallback(() => {
-      let appliedWorkers = response?.data?.appliedMediators?.filter(
-        (mediator: any) => {
-          if (mediator?.mediator?._id === userDetails?._id) {
-            return mediator?.workers;
-          }
-        }
+      // Filter appliedUsers to find the logged-in user's entry
+      let appliedUsers = response?.data?.appliedUsers?.find(
+        (mediator: any) => mediator?.user?._id === userDetails?._id
       );
 
-      // Extract just the worker IDs if workers are objects, otherwise use as-is
+      console.log("appliedUsers--", appliedUsers);
+
+      // Extract worker IDs if the logged-in user is found
       const workerIds =
-        appliedWorkers?.[0]?.workers?.map((worker: any) =>
-          typeof worker === "object" ? worker._id : worker
-        ) || [];
+        appliedUsers?.workers?.map((worker: any) => worker?._id) || [];
 
       setSelectedWorkersIds(workerIds);
+
       const unsubscribe = setService(response?.data);
       return () => unsubscribe;
     }, [response])
   );
 
   useEffect(() => {
-    const workers = selectedWorkers?.pages[0]?.data || [];
-    const mediators = selectedMediators?.pages[0]?.data || [];
-    setSelectedApplicants([...workers, ...mediators]);
-  }, [selectedWorkers?.pages, selectedMediators?.pages]);
+    const workers = selectedUsers?.pages[0]?.data || [];
+    setSelectedApplicants([...workers]);
+  }, [selectedUsers?.pages]);
 
   useEffect(() => {
-    const workers = appliedWorkers?.pages[0]?.data || [];
-    const mediators = appliedMediators?.pages[0]?.data || [];
-    setApplicants([...workers, ...mediators]);
-  }, [appliedWorkers?.pages, appliedMediators?.pages]);
+    const workers = appliedUsers?.pages[0]?.data || [];
+    setApplicants([...workers]);
+  }, [appliedUsers?.pages]);
 
   return (
     <>
@@ -289,16 +242,15 @@ const ServiceDetails = () => {
         }}
       />
 
-      <Loader loading={isLoading || isRefetching} />
+      <StatusBar backgroundColor={Colors?.fourth} />
+      <Loader loading={isLoading} />
 
       <ScrollView style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
         >
-          {service && service?.images?.length > 0 && (
-            <ImageSlider images={service?.images} />
-          )}
+          <ImageSlider images={service?.images} />
 
           <View style={styles.contentWrapper}>
             {service?.status === "CANCELLED" && (
@@ -402,22 +354,22 @@ const ServiceDetails = () => {
                   serviceId={service?._id}
                   refetchSelectedApplicants={() => {
                     refetchSelectedWorkers();
-                    refetchSelectedMediators();
                   }}
                 />
               ) : (
                 <View style={styles.emptyContainer}>
                   {isSelectedWorkerLoading ||
-                  isSelectedMediatorLoading ||
-                  isSelectedWorkerFetchingNextPage ||
-                  isSelectedMediatorFetchingNextPage ? (
+                  isSelectedWorkerFetchingNextPage ? (
                     <ActivityIndicator
                       style={{ marginLeft: 10, paddingVertical: 60 }}
                       color={Colors?.primary}
                       animating={true}
                     />
                   ) : (
-                    <EmptyDatePlaceholder title="Selected Applicants" />
+                    <EmptyDatePlaceholder
+                      parentHeight={450}
+                      title="Selected Applicants"
+                    />
                   )}
                 </View>
               )}
@@ -434,26 +386,25 @@ const ServiceDetails = () => {
                   serviceId={service?._id}
                   refetchApplicants={() => {
                     refetchAppliedWorkers();
-                    refetchAppliedMediators();
                   }}
                   refetchSelectedApplicants={() => {
                     refetchSelectedWorkers();
-                    refetchSelectedMediators();
                   }}
                 />
               ) : (
                 <View style={styles.emptyContainer}>
                   {isAppliedWorkersLoading ||
-                  isAppliedMediatorsLoading ||
-                  isAppliedWorkersFetchingNextPage ||
-                  isAppliedMediatorsFetchingNextPage ? (
+                  isAppliedWorkersFetchingNextPage ? (
                     <ActivityIndicator
                       style={{ marginLeft: 10, paddingVertical: 60 }}
                       color={Colors?.primary}
                       animating={true}
                     />
                   ) : (
-                    <EmptyDatePlaceholder title="Applicants" />
+                    <EmptyDatePlaceholder
+                      parentHeight={450}
+                      title="Applicants"
+                    />
                   )}
                 </View>
               )}

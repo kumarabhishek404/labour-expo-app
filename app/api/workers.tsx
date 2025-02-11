@@ -1,146 +1,260 @@
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
-const getWorkerById = async (id: any) => {
-  try {
-    const { data } = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
-    return data;
-  } catch (error: any) {
-    console.error(
-      `[Users] [userService] An error occurred while fetching worker details : `,
-      error
-    );
-    TOAST?.showToast?.error(
-      error?.response?.data?.message ||
-        "An error occurred while getting service by id"
-    );
-    throw error;
-  }
-};
+const applyService = async (payload: any) => {
+  console.log("Payload--", payload);
 
-const fetchAllWorkers = async ({ pageParam, skill, name }: any) => {
   try {
-    const data = await API_CLIENT.makeGetRequest(
-      `/user/all?role=WORKER&name=${name}&skill=${skill}&page=${pageParam}&limit=5`
-    );
-
+    const data = await API_CLIENT.makePostRequest("/worker/apply", payload);
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching workers : `,
+      `[userService] An error occurred while applying in service : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching services"
+        "An error occurred while applying in service"
     );
     throw error;
   }
 };
 
-const fetchAllLikedWorkers = async ({ pageParam, skill }: any) => {
-  try {
-    const data = await API_CLIENT.makeGetRequest(
-      `/user/all-liked?role=WORKER&skill=${skill}&page=${pageParam}&limit=5`
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while fetching liked workers : `,
-      error?.response?.data?.message
-    );
-    TOAST?.showToast?.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching services"
-    );
-    throw error;
-  }
-};
-
-const likeWorker = async (payload: any) => {
+const unApplyService = async (payload: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
-      `/user/like/${payload?.workerID}`
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while liking worker : `,
-      error?.response?.data?.message
-    );
-    TOAST?.showToast?.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching services"
-    );
-    throw error;
-  }
-};
-
-const unlikeWorker = async ({ workerID }: any) => {
-  console.log("Worker ID---", workerID);
-  try {
-    const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${workerID}`);
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while unliking worker : `,
-      error?.response?.data?.message
-    );
-    TOAST?.showToast?.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching services"
-    );
-    throw error;
-  }
-};
-
-const addSkills = async (payload: any) => {
-  console.log("payloet--", payload);
-
-  try {
-    const data = await API_CLIENT.makePostRequest("/user/add-skill", payload);
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while adding skills in the worker : `,
-      error?.response?.data?.message
-    );
-    TOAST?.showToast?.error(
-      error?.response?.data?.message ||
-        "An error occurred while adding skills in the worker"
-    );
-    throw error;
-  }
-};
-
-const removeSkill = async (payload: any) => {
-  try {
-    const data = await API_CLIENT.makePostRequest(
-      "/user/remove-skill",
+      "/worker/cancel-apply",
       payload
     );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while remove skill from the user profile : `,
+      `[userService] An error occurred while cancel applying the service : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while remove skill from the user profile"
+        "An error occurred while cancel apply service"
+    );
+    throw error;
+  }
+};
+
+const fetchMyAppliedServices = async ({ pageParam }: any) => {
+  try {
+    const data = await API_CLIENT.makeGetRequest(
+      `/worker/applied-services?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching my applied services : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching my applied services"
+    );
+    throw error;
+  }
+};
+
+const fetchAllBookingReceivedInvitations = async ({ pageParam }: any) => {
+  try {
+    const data = await API_CLIENT.makeGetRequest(
+      `/worker/booking/invitation/received?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching recieved booking requests : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching recieved booking requests"
+    );
+    throw error;
+  }
+};
+
+const acceptBookingRequest = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/booking/invitation/accept",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while accepting booking request : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while accepting booking request"
+    );
+    throw error;
+  }
+};
+
+const rejectBookingRequest = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/booking/invitation/reject",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while rejecting booking request : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while rejecting booking request"
+    );
+    throw error;
+  }
+};
+
+const fetchAllMyBookings = async ({ pageParam }: any) => {
+  try {
+    const data = await API_CLIENT.makeGetRequest(
+      `/worker/booking/all?page=${pageParam}&limit=5`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching my bookings : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching my bookings"
+    );
+    throw error;
+  }
+};
+
+const cancelBooking = async (payload: any) => {
+  console.log("Payload---", payload);
+
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/booking/cancel",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while removing worker after selection : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while removing worker after selection"
+    );
+    throw error;
+  }
+};
+
+const fetchAllRecievedTeamRequests = async ({ pageParam }: any) => {
+  try {
+    const data = await API_CLIENT.makeGetRequest(
+      `/worker/team/request/received/all?page=${pageParam}&limit=5`
+    );
+    return data?.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching recieved requests : `,
+      error?.response
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching recieved requests"
+    );
+    throw error;
+  }
+};
+
+const acceptTeamRequest = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/team/request/accept",
+      payload
+    );
+    TOAST?.showToast?.success("Request accepted successfully");
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while accepting joining request : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while accepting joining request"
+    );
+    throw error;
+  }
+};
+
+const rejectTeamRequest = async (payload: any) => {
+  console.log("Paylaof --", payload);
+
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/team/request/reject",
+      payload
+    );
+    TOAST?.showToast?.success("Request rejected successfully");
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while rejecting joining request : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while rejecting joining request"
+    );
+    throw error;
+  }
+};
+
+const leftTeam = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/worker/team/leave",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while leaving from team : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while leaving from team"
     );
     throw error;
   }
 };
 
 const WORKER = {
-  getWorkerById,
-  fetchAllWorkers,
-  fetchAllLikedWorkers,
-  likeWorker,
-  unlikeWorker,
-  addSkills,
-  removeSkill,
+  applyService,
+  unApplyService,
+  fetchMyAppliedServices,
+  fetchAllBookingReceivedInvitations,
+  acceptBookingRequest,
+  rejectBookingRequest,
+  fetchAllMyBookings,
+  cancelBooking,
+  fetchAllRecievedTeamRequests,
+  acceptTeamRequest,
+  rejectTeamRequest,
+  leftTeam,
 };
 
 export default WORKER;

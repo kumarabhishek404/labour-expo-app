@@ -1,125 +1,79 @@
 import React, { useState, useRef } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Animated,
-  FlatList,
-  StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Animated, Easing } from "react-native";
+import { SelectList } from "react-native-dropdown-select-list";
+import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomHeading from "@/components/commons/CustomHeading";
-import CustomText from "@/components/commons/CustomText";
+import { t } from "@/utils/translationHelper";
 
 const DropdownWithMenu = ({
-  id, // Unique ID for each dropdown
+  id,
   label,
-  options,
+  options = [],
   selectedValue,
   onSelect,
   containerStyle,
   placeholder,
-  searchEnabled = true,
-  openDropdownId,
-  setOpenDropdownId,
-  icon, // Default icon before placeholder
   disabled = false,
 }: any) => {
-  const isOpen = openDropdownId === id; // Check if this dropdown is open
-  const [searchText, setSearchText] = useState("");
+  const [selected, setSelected] = useState(selectedValue || "");
   const dropdownAnim = useRef(new Animated.Value(0)).current;
 
-  const toggleDropdown = () => {
-    if (disabled) return; // Prevent opening if disabled
-
-    if (isOpen) {
-      setOpenDropdownId(null);
-    } else {
-      setOpenDropdownId(id);
-    }
+  // Animate dropdown visibility
+  const animateDropdown = (toValue: number) => {
     Animated.timing(dropdownAnim, {
-      toValue: isOpen ? 0 : 1,
-      duration: 200,
-      useNativeDriver: false,
+      toValue,
+      duration: 150, // Faster opening/closing
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
     }).start();
   };
 
-  const handleSelect = (value: any) => {
-    onSelect(value);
-    setSearchText("");
-    setOpenDropdownId(null); // Close dropdown after selection
-  };
-
-  const filteredOptions = options.filter((item: any) =>
-    item.label.toLowerCase().includes(searchText.toLowerCase())
-  );
-
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <CustomHeading textAlign="left">{label}</CustomHeading>}
+      {label && <CustomHeading textAlign="left">{t(label)}</CustomHeading>}
 
-      <TouchableOpacity
-        style={[
-          styles.input,
-          isOpen && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
-          disabled && styles.disabledInput, // Apply disabled styles
-        ]}
-        onPress={toggleDropdown}
-        activeOpacity={disabled ? 1 : 0.7} // Prevents feedback on disabled
+      <View
+        pointerEvents={disabled ? "none" : "auto"}
+        style={{ opacity: disabled ? 0.6 : 1 }}
       >
-        <View style={styles.inputContent}>
-          {icon && icon}
-          {selectedValue ? (
-            <CustomText baseFont={18}>{selectedValue}</CustomText>
-          ) : (
-            <CustomText color={Colors?.secondary}>
-              {placeholder || label}
-            </CustomText>
-          )}
-        </View>
-        <Ionicons
-          name={isOpen ? "chevron-up" : "chevron-down"}
-          size={20}
-          color={disabled ? Colors.gray : Colors.secondary} // Gray color when disabled
+        <SelectList
+          setSelected={(val: any) => {
+            setSelected(val);
+            onSelect(val);
+            animateDropdown(1); // Show animation on selection
+          }}
+          data={options.map((item: any) => ({
+            key: item.value,
+            value: t(item.label), // Translate option labels
+          }))}
+          save="value"
+          fontFamily="lato"
+          arrowicon={
+            <FontAwesome
+              name="chevron-down"
+              size={16}
+              color={disabled ? Colors.gray : Colors.primary}
+            />
+          }
+          search={false}
+          boxStyles={StyleSheet.flatten([
+            styles.input,
+            disabled && styles.disabledInput,
+          ])}
+          dropdownStyles={StyleSheet.flatten([styles.dropdown])}
+          placeholder={t(placeholder) || "Select an option"} // Translate placeholder
+          defaultOption={options.find((item: any) => item.value === selected)}
         />
-      </TouchableOpacity>
 
-      {isOpen && !disabled && (
+        {/* Animated Dropdown */}
         <Animated.View
           style={[
-            styles.dropdown,
-            {
-              maxHeight: dropdownAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 200],
-              }),
-            },
+            styles.animatedDropdown,
+            { transform: [{ scale: dropdownAnim }] },
           ]}
-        >
-          {searchEnabled && (
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search..."
-              value={searchText}
-              onChangeText={setSearchText}
-            />
-          )}
-
-          <FlatList
-            data={filteredOptions}
-            keyExtractor={(item) => item.value}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.option}
-                onPress={() => handleSelect(item.value)}
-              >
-                <CustomText textAlign="left">{item.label}</CustomText>
-              </TouchableOpacity>
-            )}
-          />
-        </Animated.View>
-      )}
+        />
+      </View>
     </View>
   );
 };
@@ -127,52 +81,35 @@ const DropdownWithMenu = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    position: "relative",
-    gap: 5,
+    zIndex: 999,
   },
   input: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderRadius: 8,
-    padding: 10,
+    borderColor: Colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     backgroundColor: "#fff",
+    borderRadius: 8,
   },
   disabledInput: {
-    backgroundColor: "#f2f2f2",
-    borderColor: "#ccc",
-    opacity: 0.6, // Make it look disabled
-  },
-  inputContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: "#f7f7f7",
+    borderColor: "#ddd",
   },
   dropdown: {
-    position: "absolute",
-    top: 70,
-    left: 0,
-    right: 0,
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: Colors.secondary,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    overflow: "hidden",
-    zIndex: 10,
+    borderColor: Colors.primary,
+    maxHeight: 200,
+    borderRadius: 8,
+    elevation: 3,
+    zIndex: 999,
   },
-  searchInput: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    fontSize: 16,
-    backgroundColor: "#f8f8f8",
-  },
-  option: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+  animatedDropdown: {
+    position: "absolute",
+    top: 50,
+    width: "100%",
+    height: 10,
+    backgroundColor: "transparent",
   },
 });
 

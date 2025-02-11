@@ -13,9 +13,9 @@ import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { MYSERVICES } from "@/constants";
 import { t } from "@/utils/translationHelper";
-import SERVICE from "@/app/api/services";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import Colors from "@/constants/Colors";
+import EMPLOYER from "@/app/api/employer";
 
 const UserBookingsAndMyServices = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -35,7 +35,7 @@ const UserBookingsAndMyServices = () => {
   } = useInfiniteQuery({
     queryKey: ["myServices", category],
     queryFn: ({ pageParam }) =>
-      SERVICE?.fetchMyServices({ pageParam, status: category }),
+      EMPLOYER?.fetchMyServices({ pageParam, status: category }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {

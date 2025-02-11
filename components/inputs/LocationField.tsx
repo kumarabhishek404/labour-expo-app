@@ -6,7 +6,8 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import AddAddressModal from "@/app/screens/location/addAddress";
 import { convertToLabelValueArray } from "@/constants/functions";
-import DropdownWithMenu from "./dropdownWithMenu";
+import DropdownWithMenu from "./DropdownWithMenu";
+import { t } from "@/utils/translationHelper";
 
 interface LocationFieldProps {
   address: string;
@@ -62,12 +63,14 @@ const LocationField = ({
     }
   }, [userDetails?.savedAddresses]);
 
+  console.log("address---", address);
+
   return (
     <View style={styles.container}>
       <DropdownWithMenu
         id="selectAddress"
         name="type"
-        placeholder="selectAddress"
+        placeholder={"selectAddress"}
         searchEnabled={false}
         options={allSavedAddresses}
         icon={
@@ -85,29 +88,11 @@ const LocationField = ({
         openDropdownId={openDropdownId}
         setOpenDropdownId={setOpenDropdownId}
       />
-      {/* <PaperDropdown
-        name="type"
-        value={address}
-        onSelect={setAddress}
-        placeholder={t("selectAddress")}
-        options={allSavedAddresses}
-        errors={isError}
-        containerStyle={isError && styles.errorInput}
-        search={false}
-        icon={
-          <Ionicons
-            name={"mail-outline"}
-            size={30}
-            color={Colors.secondary}
-            style={{ paddingVertical: 10, paddingRight: 10 }}
-          />
-        }
-      /> */}
       <AddAddressModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         setAddress={(address: any) => {
-          setAddress(address);
+          setAddress(address?.address);
           setIsFocus(false);
         }}
       />

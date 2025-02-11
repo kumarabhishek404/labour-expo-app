@@ -1,48 +1,26 @@
 import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from "react-native";
-import { useAtomValue } from "jotai";
+import { View, StyleSheet, RefreshControl, StatusBar } from "react-native";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
-import CategoryButtons from "@/components/inputs/CategoryButtons";
-import Atoms from "@/app/AtomStore";
-import { router, Stack } from "expo-router";
+import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import {
-  ADMIN_BOOKINGS,
-  EMPLOYER_BOOKINGS,
-  WORKER_BOOKINGS,
-  WORKERTYPES,
-} from "@/constants";
+import { WORKERTYPES } from "@/constants";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import BOOKING from "@/app/api/booking";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import ListingVerticalBookingRequests from "@/components/commons/ListingVerticalBookingRequests";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
-import FloatingButton from "@/components/inputs/FloatingButton";
+import EMPLOYER from "@/app/api/employer";
+import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const Bookings = () => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  const { refreshUser } = REFRESH_USER.useRefreshUser();
-  const firstTimeRef = React.useRef(true);
   const [totalBookingsData, setTotalBookingsData] = useState(0);
-  const [totalRequestsData, setTotalRequestsData] = useState(0);
   const [filteredBookedWorkers, setFilteredBookedWorkers]: any = useState([]);
-  const [filteredReceivedRequests, setFilteredReceivedRequests]: any = useState(
-    []
-  );
-  const [category, setCategory] = useState("booking");
+  const [filteredReceivedRequests]: any = useState([]);
+  const { type, title, searchCategory } = useGlobalSearchParams();
+  const [category] = useState("booking");
 
   const {
     data: responseBookings,
@@ -54,7 +32,11 @@ const Bookings = () => {
     refetch: refetchBookings,
   } = useInfiniteQuery({
     queryKey: ["bookings"],
-    queryFn: ({ pageParam }) => BOOKING?.fetchAllMyBookings({ pageParam }),
+    queryFn: ({ pageParam }) =>
+      EMPLOYER?.fetchAllBookedWorkers({
+        pageParam,
+        skill: JSON?.parse(searchCategory as string)?.skill,
+      }),
     initialPageParam: 1,
     enabled: category === "booking",
     getNextPageParam: (lastPage: any, pages) => {
@@ -65,40 +47,6 @@ const Bookings = () => {
     },
     retry: false,
   });
-
-  const {
-    data: responseRequests,
-    isLoading: isLoadingRequests,
-    isRefetching: isRefetchingRequests,
-    isFetchingNextPage: isFetchingNextPageRequests,
-    fetchNextPage: fetchNextPageRequests,
-    hasNextPage: hasNextPageRequests,
-    refetch: refetchRequests,
-  } = useInfiniteQuery({
-    queryKey: ["myBookings"],
-    queryFn: ({ pageParam }) =>
-      BOOKING?.fetchAllBookingReceivedRequests({ pageParam }),
-    initialPageParam: 1,
-    enabled: category === "request",
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
-    retry: false,
-  });
-
-  useFocusEffect(
-    React.useCallback(() => {
-      if (firstTimeRef.current) {
-        firstTimeRef.current = false;
-        return;
-      }
-      if (category === "booking") refetchBookings();
-      else refetchRequests();
-    }, [refetchRequests])
-  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -111,58 +59,18 @@ const Bookings = () => {
     }, [responseBookings])
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const totalData = responseRequests?.pages[0]?.pagination?.total;
-      setTotalRequestsData(totalData);
-      const unsubscribe = setFilteredReceivedRequests(
-        responseRequests?.pages?.flatMap((page: any) => page.data || [])
-      );
-      return () => unsubscribe;
-    }, [responseRequests])
-  );
-
-  const mutationCancelBookingRequest = useMutation({
-    mutationKey: ["cancelBookingRequest"],
-    mutationFn: (id: string) => BOOKING?.cancelBookingRequest({ userId: id }),
-    onSuccess: (response) => {
-      refetchRequests();
-      TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
-    },
-  });
-
   const mutationRemoveBookedWorker = useMutation({
-    mutationKey: ["removeBookedWorkerOrMediator"],
-    mutationFn: (id: string) => BOOKING?.removeBookedWorker({ userId: id }),
+    mutationKey: ["removeBookedWorker"],
+    mutationFn: (id: string) => EMPLOYER?.removeBookedWorker({ userId: id }),
     onSuccess: (response) => {
       refetchBookings();
       TOAST?.showToast?.success(t("removeBookedWorkerOrMediatorSuccessfully"));
     },
   });
 
-  const mutationAcceptRequest = useMutation({
-    mutationKey: ["acceptBookingRequest"],
-    mutationFn: (id) => BOOKING?.acceptBookingRequest({ invitationId: id }),
-    onSuccess: (response) => {
-      refetchRequests();
-      TOAST?.showToast?.success(t("bookingRequestAcceptedSuccessfully"));
-      console.log("Response while accepting a request - ", response);
-    },
-  });
-
-  const mutationRejectRequest = useMutation({
-    mutationKey: ["rejectBookingRequest"],
-    mutationFn: (id) => BOOKING?.rejectBookingRequest({ invitationId: id }),
-    onSuccess: (response) => {
-      refetchRequests();
-      TOAST?.showToast?.success(t("bookingRequestRejectedSuccessfully"));
-      console.log("Response while rejecting request - ", response);
-    },
-  });
-
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelBooking"],
-    mutationFn: (id: string) => BOOKING?.cancelBooking({ bookingId: id }),
+    mutationFn: (id: string) => EMPLOYER?.cancelBooking({ bookingId: id }),
     onSuccess: () => {
       refetchBookings();
       TOAST?.showToast?.success(t("bookingCancelledSuccessfully"));
@@ -188,23 +96,9 @@ const Bookings = () => {
     [filteredReceivedRequests]
   );
 
-  const onCatChanged = (category: string) => {
-    setCategory(category);
-    // Explicitly call the refetch function for the current query
-    if (category === "booking") {
-      refetchBookings();
-    } else if (category === "request") {
-      refetchRequests();
-    }
-  };
-
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
     async () => {
-      if (category === "booking") {
-        await refetchBookings();
-      } else if (category === "request") {
-        await refetchRequests();
-      }
+      await refetchBookings();
     }
   );
 
@@ -215,91 +109,51 @@ const Bookings = () => {
           headerShown: true,
           header: () => (
             <CustomHeader
-              title={t("bookings")}
-              left="menu"
+              title={title as string}
+              left="back"
               right="notification"
             />
           ),
         }}
       />
+      <StatusBar backgroundColor={Colors?.fourth} />
       <View style={{ flex: 1 }}>
         <Loader
           loading={
             isLoading ||
-            isLoadingRequests ||
-            mutationCancelBookingRequest?.isPending ||
-            mutationAcceptRequest?.isPending ||
-            mutationRejectRequest?.isPending ||
             mutationCancelBooking?.isPending ||
             mutationRemoveBookedWorker?.isPending
           }
         />
         <View style={styles.container}>
-          <SearchFilter
-            type="users"
-            data={
-              category === "booking"
-                ? responseBookings?.pages
-                : responseRequests?.pages
-            }
-            setFilteredData={
-              category === "booking"
-                ? setFilteredBookedWorkers
-                : setFilteredReceivedRequests
-            }
-          />
-
-          <CategoryButtons
-            options={
-              userDetails?.isAdmin ? ADMIN_BOOKINGS : WORKER_BOOKINGS
-            }
-            onCagtegoryChanged={onCatChanged}
-          />
-
-          <PaginationString
-            type="request"
-            isLoading={isLoading || isRefetching || isRefetchingRequests}
-            totalFetchedData={
-              category === "booking"
-                ? memoizedBookedWorkers?.length
-                : memoizedReceivedRequests?.length
-            }
-            totalData={
-              category === "booking" ? totalBookingsData : totalRequestsData
-            }
-          />
-          {category === "booking" ? (
-            <ListingsVerticalBookings
-              style={{ flexGrow: 1 }}
-              availableInterest={WORKERTYPES}
-              listings={memoizedBookedWorkers || []}
-              loadMore={loadMore}
-              type="booking"
-              isFetchingNextPage={isFetchingNextPage}
-              onCancelBooking={mutationCancelBooking?.mutate}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetching && refreshing}
-                  onRefresh={onRefresh}
+          {memoizedBookedWorkers && memoizedBookedWorkers?.length > 0 ? (
+            <>
+              <View style={styles?.paginationTabs}>
+                <PaginationString
+                  type="request"
+                  isLoading={isLoading || isRefetching}
+                  totalFetchedData={memoizedBookedWorkers?.length}
+                  totalData={totalBookingsData}
                 />
-              }
-            />
+              </View>
+
+              <ListingsVerticalBookings
+                style={{ flexGrow: 1 }}
+                listings={memoizedBookedWorkers || []}
+                loadMore={loadMore}
+                type="booking"
+                isFetchingNextPage={isFetchingNextPage}
+                onRemoveBookedWorker={mutationRemoveBookedWorker?.mutate}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={!isRefetching && refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            </>
           ) : (
-            <ListingVerticalBookingRequests
-              listings={memoizedReceivedRequests || []}
-              requestType={category}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPageRequests}
-              onCancelRequest={mutationCancelBookingRequest?.mutate}
-              onAcceptRequest={mutationAcceptRequest?.mutate}
-              onRejectRequest={mutationRejectRequest?.mutate}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetchingRequests && refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            />
+            <EmptyDatePlaceholder title={"Booked Worker"} />
           )}
         </View>
       </View>
@@ -310,8 +164,12 @@ const Bookings = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 10,
+  },
+  paginationTabs: {
+    width: "100%",
+    paddingBottom: 10,
   },
 });
 

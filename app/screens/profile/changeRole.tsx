@@ -24,9 +24,7 @@ const ChangeRoleScreen = () => {
     mutationKey: ["changeRole"],
     mutationFn: async () => {
       if (selectedRole1 && selectedRole2 && selectedRole3) {
-        return await USER?.updateUserRoleById({
-          role:  "MEDIATOR",
-        });
+        return;
       } else {
         return Alert.alert("Error", "Please select all roles.");
       }

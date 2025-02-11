@@ -21,6 +21,7 @@ import { t } from "@/utils/translationHelper";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import ProfilePicture from "./ProfilePicture";
+import OnPageLoader from "./Loaders/OnPageLoader";
 
 type UserType = {
   _id: string;
@@ -92,6 +93,7 @@ type Props = {
   listings: Array<RequestCardProps["item"]>;
   requestType: any;
   loadMore: () => void;
+  isLoading: boolean;
   isFetchingNextPage: boolean;
   refreshControl?: any;
   onCancelRequest?: any;
@@ -249,11 +251,17 @@ const RequestCardUser = React.memo(
     onAcceptRequest,
     onRejectRequest,
     onCancelRequest,
-  }: RequestCardProps & { userDetails: UserType }) => {
-    const isSender = item?.sender?._id === userDetails?._id;
-    const isReceiver = item?.receiver?._id === userDetails?._id;
+  }: any) => {
+    const isSender =
+      item?.employer?._id === userDetails?._id ||
+      item?.employer === userDetails?._id;
+    const isReceiver =
+      item?.receiver?._id === userDetails?._id ||
+      item?.receiver === userDetails?._id;
 
-    const user = isSender ? item?.receiver : item?.sender;
+    const user = isSender ? item?.receiver : item?.employer;
+
+    console.log("user---", item);
 
     return (
       <TouchableOpacity
@@ -309,19 +317,26 @@ const RequestCardUser = React.memo(
               isPrimary={false}
               title={t("cancel")}
               onPress={() => onCancelRequest?.(item?.receiver?._id)}
+              style={{ width: "30%" }}
             />
           )}
           {isReceiver && (
             <>
               <Button
-                isPrimary={false}
+                isPrimary={true}
                 title={t("reject")}
-                onPress={() => onRejectRequest?.(item?.sender?._id)}
+                onPress={() => onRejectRequest?.(item?._id)}
+                style={styles?.rejectButton}
+                bgColor={Colors?.danger}
+                borderColor={Colors?.danger}
               />
               <Button
                 isPrimary={true}
                 title={t("accept")}
-                onPress={() => onAcceptRequest?.(item?.sender?._id)}
+                onPress={() => onAcceptRequest?.(item?._id)}
+                style={styles?.acceptButton}
+                bgColor={Colors?.success}
+                borderColor={Colors?.success}
               />
             </>
           )}
@@ -333,9 +348,118 @@ const RequestCardUser = React.memo(
 
 RequestCardUser.displayName = "RequestCardUser";
 
+const RequestCardTeamJoinng = React.memo(
+  ({
+    item,
+    userDetails,
+    requestType,
+    onAcceptRequest,
+    onRejectRequest,
+    onCancelRequest,
+  }: any) => {
+    const isSender =
+      item?.sender?._id === userDetails?._id ||
+      item?.sender === userDetails?._id;
+    const isReceiver =
+      item?.receiver?._id === userDetails?._id ||
+      item?.receiver === userDetails?._id;
+
+    const user = isSender ? item?.receiver : item?.sender;
+
+    console.log("user---", item);
+
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/screens/users/[id]",
+            params: {
+              id: user?._id,
+              role: "workers",
+              title: "Workers",
+              type: "all",
+            },
+          })
+        }
+        style={styles.card}
+      >
+        <View style={styles.requestContainer}>
+          <ProfilePicture
+            uri={user?.profilePicture}
+            style={styles.profileImage}
+          />
+          <View style={styles.infoContainer}>
+            <CustomHeading textAlign="left">{user?.name}</CustomHeading>
+            <RatingAndReviews
+              rating={user?.rating || 4.5}
+              reviews={user?.reviews || 400}
+            />
+            <SkillSelector
+              canAddSkills={false}
+              role={user?.role}
+              isShowLabel={false}
+              style={styles?.skillsContainer}
+              tagStyle={styles?.skillTag}
+              tagTextStyle={styles?.skillTagText}
+              userSkills={user?.skills}
+              availableSkills={MEDIATORTYPES}
+              count={2}
+            />
+            <CustomText textAlign="left">{user?.address}</CustomText>
+          </View>
+          <View style={styles.etaContainer}>
+            <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
+          </View>
+        </View>
+
+        <View
+          style={
+            isSender ? styles.actionContainer : styles?.sentActionContainer
+          }
+        >
+          {isSender && (
+            <Button
+              isPrimary={false}
+              title={t("cancel")}
+              onPress={() => onCancelRequest?.(item?.receiver?._id)}
+              bgColor={Colors?.danger}
+              borderColor={Colors?.danger}
+              textColor={Colors?.white}
+              style={{ width: "30%", paddingVertical: 6 }}
+            />
+          )}
+          {isReceiver && (
+            <>
+              <Button
+                isPrimary={true}
+                title={t("reject")}
+                onPress={() => onRejectRequest?.(item?.sender?._id)}
+                style={styles?.rejectButton}
+                bgColor={Colors?.danger}
+                borderColor={Colors?.danger}
+              />
+              <Button
+                isPrimary={true}
+                title={t("accept")}
+                onPress={() => onAcceptRequest?.(item?.sender?._id)}
+                style={styles?.acceptButton}
+                bgColor={Colors?.success}
+                borderColor={Colors?.success}
+              />
+            </>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+);
+
+RequestCardTeamJoinng.displayName = "RequestCardTeamJoinng";
+
 const ListingVerticalRequests = ({
   listings,
   requestType,
+  isLoading,
   loadMore,
   isFetchingNextPage,
   onCancelRequest,
@@ -390,6 +514,24 @@ const ListingVerticalRequests = ({
       );
     }
 
+    if (requestType === "teamJoiningRequest") {
+      return (
+        <FlatList
+          {...commonFlatListProps}
+          renderItem={({ item }) => (
+            <RequestCardTeamJoinng
+              item={item}
+              userDetails={userDetails}
+              requestType={requestType}
+              onAcceptRequest={onAcceptRequest}
+              onRejectRequest={onRejectRequest}
+              onCancelRequest={onCancelRequest}
+            />
+          )}
+          refreshControl={refreshControl}
+        />
+      );
+    }
     return (
       <FlatList
         {...commonFlatListProps}
@@ -408,6 +550,10 @@ const ListingVerticalRequests = ({
     );
   };
 
+  if (isLoading) {
+    return <OnPageLoader />;
+  }
+
   return <View style={styles.container}>{renderContent()}</View>;
 };
 
@@ -415,7 +561,8 @@ export default ListingVerticalRequests;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 30,
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   card: {
     backgroundColor: "white",
@@ -553,7 +700,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   skillTag: {
-    backgroundColor: Colors?.secondary,
+    backgroundColor: Colors?.fourth,
     borderRadius: 4,
     marginHorizontal: 2,
   },
@@ -564,9 +711,7 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 10,
-    marginTop: 2,
+    justifyContent: "flex-end"
   },
   requestContainer: {
     flexDirection: "row",
@@ -583,6 +728,15 @@ const styles = StyleSheet.create({
   sentActionContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 15,
+  },
+  rejectButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    width: "30%",
+  },
+  acceptButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    width: "50%",
   },
 });

@@ -134,6 +134,7 @@ const ProfileMenu = ({ disabled }: any) => {
       </View>
     </View>
   );
+  console.log("userDetails--", userDetails?.team?._id);
 
   const menus = [
     {
@@ -170,9 +171,12 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: () =>
         router?.push({
           pathname: "/screens/team/[id]",
-          params: { id: userDetails?._id, title: t("teamMembers") },
+          params: {
+            id: userDetails?._id,
+            title: t("yourTeam"),
+          },
         }),
-      roleCondition: !isAdmin,
+      roleCondition: userDetails?.team === null,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -181,8 +185,16 @@ const ProfileMenu = ({ disabled }: any) => {
       icon: (
         <Ionicons name="hand-right-outline" size={28} color={Colors.primary} />
       ),
-      onPress: () => router?.push({ pathname: "/screens/requests" }),
-      roleCondition: !isAdmin,
+      onPress: () =>
+        router?.push({
+          pathname: "/screens/teamRequests",
+          params: {
+            id: userDetails?._id,
+            title: t("teamJoiningRequest"),
+            type: "teamJoiningRequest",
+          },
+        }),
+      roleCondition: isAdmin,
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
@@ -194,36 +206,24 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: () =>
         router?.push({
           pathname: "/screens/service",
-          params: { title: t("savedServices"), type: "favourite" },
+          params: { title: t("savedServices"), type: "saved" },
         }),
       style: [styles?.menuItem],
       isSuspended: disabled,
     },
     {
-      title: t("favouriteMediators"),
+      title: t("savedUsers"),
       icon: <FontAwesome6 name="heart" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
           params: {
-            role: "mediators",
-            title: t("favouriteMediators"),
-            type: "favourite",
-          },
-        }),
-      style: [styles?.menuItem],
-      isSuspended: disabled,
-    },
-    {
-      title: t("favouriteWorkers"),
-      icon: <FontAwesome6 name="heart" size={28} color={Colors.primary} />,
-      onPress: () =>
-        router?.push({
-          pathname: "/screens/users",
-          params: {
-            role: "workers",
-            title: t("favouriteWorkers"),
-            type: "favourite",
+            role: "users",
+            title: t("savedUsers"),
+            type: "saved",
+            searchCategory: JSON.stringify({
+              skill: "",
+            }),
           },
         }),
       style: [styles?.menuItem],
@@ -238,7 +238,7 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
+            type: "reviews",
           },
         }),
       style: [styles?.menuItem],
@@ -253,7 +253,7 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
+            type: "experience",
           },
         }),
       style: [styles?.menuItem],
@@ -283,7 +283,6 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
           },
         }),
       style: [styles?.menuItem],
@@ -300,7 +299,7 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
+            type: "support",
           },
         }),
       style: [styles?.menuItem],
@@ -315,7 +314,6 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
           },
         }),
       style: [styles?.menuItem],
@@ -332,7 +330,6 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "mediators",
             title: t("favouriteMediators"),
-            type: "favourite",
           },
         }),
       style: [styles?.menuItem],
@@ -347,7 +344,6 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "workers",
             title: t("favouriteWorkers"),
-            type: "favourite",
           },
         }),
       style: [styles?.menuItem],
@@ -364,7 +360,6 @@ const ProfileMenu = ({ disabled }: any) => {
           params: {
             role: "workers",
             title: t("favouriteWorkers"),
-            type: "favourite",
           },
         }),
       style: [styles?.menuItem],
@@ -376,7 +371,7 @@ const ProfileMenu = ({ disabled }: any) => {
         <Ionicons name="close-circle-outline" size={30} color={Colors.danger} />
       ),
       onPress: () => setModalVisible(true),
-      roleCondition: !isAdmin,
+      roleCondition: isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
       isSuspended: disabled,
@@ -391,7 +386,7 @@ const ProfileMenu = ({ disabled }: any) => {
         />
       ),
       onPress: () => router?.push("/screens/profile/deleteProfile"),
-      roleCondition: !isAdmin,
+      roleCondition: isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
       isSuspended: false,
@@ -434,7 +429,7 @@ const ProfileMenu = ({ disabled }: any) => {
       <View style={styles.menuWrapper}>
         {menus.map(
           (menu, index) =>
-            menu.roleCondition !== false && (
+            !menu.roleCondition && (
               <View key={index}>
                 <TouchableOpacity
                   onPress={menu?.onPress}

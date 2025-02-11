@@ -9,7 +9,6 @@ import {
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
-import SERVICE from "@/app/api/services";
 import TOAST from "@/app/hooks/toast";
 import Loader from "./Loaders/Loader";
 import CustomHeading from "./CustomHeading";
@@ -17,6 +16,9 @@ import CustomText from "./CustomText";
 import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
 import { handleCall } from "@/constants/functions";
+import EMPLOYER from "@/app/api/employer";
+import SkillSelector from "./SkillSelector";
+import ShowSkills from "./ShowSkills";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -32,7 +34,7 @@ const SelectedApplicants = ({
   const mutationCancelSelectedWorker = useMutation({
     mutationKey: ["cancelSelectedWorker", { serviceId }],
     mutationFn: (userId) =>
-      SERVICE?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
+      EMPLOYER?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
       TOAST?.showToast?.success(t("cancelSelectedWorkerSuccess"));
@@ -40,26 +42,6 @@ const SelectedApplicants = ({
     },
     onError: (err) => {
       console.error("error while cancelling an selected worker ", err);
-    },
-  });
-
-  const mutationCancelSelectedMediator = useMutation({
-    mutationKey: ["cancelSelectedMediator", { serviceId }],
-    mutationFn: (mediatorId) =>
-      SERVICE?.cancelSelectedMediator({
-        serviceId: serviceId,
-        mediatorId: mediatorId,
-      }),
-    onSuccess: (response) => {
-      refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("cancelSelectedMediatorSuccess"));
-      console.log(
-        "Response while cancelling an selected mediator - ",
-        response
-      );
-    },
-    onError: (err) => {
-      console.error("error while cancelling an selected mediator ", err);
     },
   });
 
@@ -94,30 +76,50 @@ const SelectedApplicants = ({
     }).start();
   };
 
+  console.log("selectedApplicants--", selectedApplicants);
+
   return (
     <>
-      <Loader
-        loading={
-          mutationCancelSelectedWorker?.isPending ||
-          mutationCancelSelectedMediator?.isPending
-        }
-      />
+      <Loader loading={mutationCancelSelectedWorker?.isPending} />
       <View style={styles.applicantContainer}>
         {selectedApplicants?.map((item: any, index: number) => {
+          const appliedUser = item?.user;
+          const workers = item?.workers;
           return (
             <View key={index} style={styles.workerCard}>
               <View style={styles.productCard}>
-                <View style={{ flexDirection: "column" }}>
-                  <ProfilePicture uri={item?.profilePicture} />
+                <ProfilePicture uri={appliedUser?.profilePicture} />
+                <View style={styles.productInfo}>
+                  <View style={styles?.titleContainer}>
+                    <CustomHeading baseFont={14}>
+                      {appliedUser?.name}
+                    </CustomHeading>
+                  </View>
+                  <ShowSkills
+                    userSkills={appliedUser?.skills}
+                    tagStyle={{ backgroundColor: Colors?.darkGray }}
+                  />
+                  <View style={styles.recommendationContainer}>
+                    <Ionicons name="location" size={14} color="gray" />
+                    <CustomText textAlign="left">
+                      {appliedUser?.address || "Not Available"}
+                    </CustomText>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    alignContent: "flex-end",
+                    justifyContent: "flex-start",
+                  }}
+                >
                   <Button
                     style={{
-                      width: 60,
                       paddingVertical: 4,
                       paddingHorizontal: 6,
                       marginTop: 6,
                     }}
                     textStyle={{
-                      fontSize: 11,
+                      fontSize: 14,
                     }}
                     isPrimary={false}
                     title="Details"
@@ -125,7 +127,7 @@ const SelectedApplicants = ({
                       router?.push({
                         pathname: "/screens/users/[id]",
                         params: {
-                          id: item?._id,
+                          id: appliedUser?._id,
                           role: "workers",
                           type: "applicant",
                         },
@@ -133,99 +135,9 @@ const SelectedApplicants = ({
                     }
                   />
                 </View>
-                <View style={styles.productInfo}>
-                  <View style={styles?.titleContainer}>
-                    <View style={{ gap: 2, marginBottom: 4 }}>
-                      <CustomHeading baseFont={14}>{item?.name}</CustomHeading>
-                      <CustomText style={styles.caption}>
-                        {t("workers")}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                        gap: 10,
-                      }}
-                    >
-                      <Button
-                        style={{
-                          paddingVertical: 3,
-                          paddingHorizontal: 6,
-                          marginLeft: 4,
-                          backgroundColor: Colors?.primary,
-                          borderColor: Colors?.primary,
-                        }}
-                        textStyle={{
-                          fontSize: 14,
-                        }}
-                        icon={
-                          <FontAwesome
-                            name="phone"
-                            size={16}
-                            color="white"
-                            style={{ marginRight: 6 }}
-                          />
-                        }
-                        isPrimary={true}
-                        title="Call"
-                        onPress={handleCall}
-                      />
-                      <Button
-                        style={{
-                          paddingVertical: 3,
-                          paddingHorizontal: 6,
-                          marginLeft: 4,
-                          backgroundColor: Colors?.danger,
-                          borderColor: Colors?.danger,
-                        }}
-                        textStyle={{
-                          fontSize: 14,
-                        }}
-                        icon={
-                          <FontAwesome
-                            name="remove"
-                            size={14}
-                            color="white"
-                            style={{ marginRight: 4 }}
-                          />
-                        }
-                        isPrimary={true}
-                        title="Remove"
-                        onPress={() =>
-                          mutationCancelSelectedWorker?.mutate(item?._id)
-                        }
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.recommendationContainer}>
-                    {item?.skills?.length > 0 && (
-                      <>
-                        <MaterialCommunityIcons
-                          name="hammer-sickle"
-                          size={14}
-                          color="gray"
-                        />
-                        <CustomText
-                          textAlign="left"
-                          style={{ textTransform: "capitalize" }}
-                        >
-                          {item?.skills?.join(", ")}
-                        </CustomText>
-                      </>
-                    )}
-                  </View>
-                  <View style={styles.recommendationContainer}>
-                    <Ionicons name="location" size={14} color="gray" />
-                    <CustomText textAlign="left">
-                      {item?.address || "Not Available"}
-                    </CustomText>
-                  </View>
-                </View>
               </View>
               {/* Add workers section */}
-              {item?.workers?.length > 0 && (
+              {workers?.length > 0 && (
                 <View style={styles.workersContainer}>
                   <TouchableOpacity
                     style={styles.workersTitleContainer}
@@ -239,7 +151,7 @@ const SelectedApplicants = ({
                         color={Colors.primary}
                       />
                       <CustomText style={styles.workersTitle}>
-                        Associated Workers ({item?.workers?.length})
+                        Associated Workers ({workers?.length})
                       </CustomText>
                     </View>
                     <Animated.View
@@ -276,32 +188,80 @@ const SelectedApplicants = ({
                         },
                       ]}
                     >
-                      {item?.workers?.map(
-                        (worker: any, workerIndex: number) => (
-                          <View key={workerIndex} style={styles.workerItem}>
-                            <ProfilePicture uri={worker?.profilePicture} />
-                            <View style={styles.workerInfo}>
-                              <CustomText style={styles.workerName}>
-                                {worker?.name}
-                              </CustomText>
-                              <View style={styles.workerSkillsContainer}>
-                                <MaterialCommunityIcons
-                                  name="hammer-wrench"
-                                  size={12}
-                                  color={Colors.primary}
-                                />
-                                <CustomText style={styles.workerSkills}>
-                                  {worker?.skills?.join(", ")}
-                                </CustomText>
-                              </View>
-                            </View>
+                      {workers?.map((worker: any, workerIndex: number) => (
+                        <View key={workerIndex} style={styles.workerItem}>
+                          <ProfilePicture uri={worker?.profilePicture} />
+                          <View style={styles.workerInfo}>
+                            <CustomText style={styles.workerName}>
+                              {worker?.name}
+                            </CustomText>
+                            <ShowSkills userSkills={worker?.skills} />
                           </View>
-                        )
-                      )}
+                        </View>
+                      ))}
                     </Animated.View>
                   )}
                 </View>
               )}
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  marginTop: 10,
+                }}
+              >
+                <Button
+                  style={{
+                    width: "30%",
+                    paddingVertical: 4,
+                    paddingHorizontal: 6,
+                  }}
+                  bgColor={Colors?.danger}
+                  borderColor={Colors?.danger}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  icon={
+                    <FontAwesome
+                      name="remove"
+                      size={14}
+                      color="white"
+                      style={{ marginRight: 4 }}
+                    />
+                  }
+                  isPrimary={true}
+                  title="Remove"
+                  onPress={() =>
+                    mutationCancelSelectedWorker?.mutate(appliedUser?._id)
+                  }
+                />
+                <Button
+                  style={{
+                    width: "40%",
+                    paddingVertical: 4,
+                    paddingHorizontal: 8,
+                  }}
+                  bgColor={Colors?.success}
+                  borderColor={Colors?.success}
+                  textStyle={{
+                    fontSize: 14,
+                  }}
+                  icon={
+                    <FontAwesome
+                      name="phone"
+                      size={16}
+                      color="white"
+                      style={{ marginRight: 6 }}
+                    />
+                  }
+                  isPrimary={true}
+                  title="Call Worker"
+                  onPress={handleCall}
+                />
+              </View>
             </View>
           );
         })}
@@ -313,16 +273,16 @@ const SelectedApplicants = ({
 const styles = StyleSheet.create({
   applicantList: {
     display: "flex",
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   applicantContainer: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
     gap: 5,
   },
   workerCard: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 10,
+    padding: 8,
     marginBottom: 5,
     flex: 1,
     flexDirection: "column",
@@ -348,18 +308,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  caption: {
-    fontWeight: "600",
-    letterSpacing: 0,
-    width: 90,
-    padding: 2,
-    borderRadius: 30,
-    textAlign: "center",
-    backgroundColor: "#d6ecdd",
-  },
   workersContainer: {
     width: "100%",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: Colors?.fourth,
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
@@ -406,17 +357,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
     color: "#2c3e50",
-  },
-  workerSkillsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 4,
-  },
-  workerSkills: {
-    fontSize: 12,
-    color: "#6c757d",
-    fontWeight: "500",
   },
 });
 

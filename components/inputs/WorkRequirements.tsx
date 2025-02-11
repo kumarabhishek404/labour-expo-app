@@ -84,7 +84,6 @@ const WorkRequirment = ({
     }
     setRequirements(tempRequirments);
   };
-  console.log("watch()--", watch("subType"));
 
   return (
     <View style={styles.addRequirmentWrapper}>

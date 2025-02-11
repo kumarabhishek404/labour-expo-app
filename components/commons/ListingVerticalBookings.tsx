@@ -25,15 +25,20 @@ const ListingsVerticalBookings = ({
   listings,
   loadMore,
   isFetchingNextPage,
-  onCancelBooking,
+  onRemoveBookedWorker,
   refreshControl,
   type,
 }: any) => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-
-  const RenderItem = React.memo(({ item }: any) => {
-    console.log("Item", item);
-    const employer = item?.employer;
+  const RenderItem = ({
+    item,
+    onRemoveBookedWorker,
+    onCompleteBooking,
+  }: any) => {
+    console.log("item--", item);
+    const workersList =
+      item?.selectedUsers?.length > 0
+        ? item?.selectedUsers
+        : [item?.bookedWorker ?? ""];
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -42,73 +47,108 @@ const ListingsVerticalBookings = ({
               pathname: "/screens/bookings/[id]",
               params: {
                 id: item?._id,
-                role: type,
-                title: `${t(type)} ${t("details")}`,
+                title: `Booking Details`,
                 data: JSON.stringify(item),
               },
             })
           }
         >
-          <View style={styles.item}>
-            <Image
-              source={
-                employer?.profilePicture
-                  ? { uri: employer?.profilePicture }
-                  : coverImage
-              }
-              style={styles.image}
-            />
-            {item && item?.isBookmarked && (
-              <View style={styles.liked}>
-                <Ionicons name="heart" size={16} color={Colors.white} />
-              </View>
-            )}
+          <View style={styles.card}>
+            {/* Status Badge */}
+            <View style={[styles.statusBadge]}>
+              <CustomText style={styles.statusText}>
+                {item?.status.toUpperCase()}
+              </CustomText>
+            </View>
 
-            <View style={styles.itemInfo}>
-              <View>
-                <CustomHeading textAlign="left">
-                  {item?.type} - {item?.subType}
-                </CustomHeading>
+            {/* Booking Details */}
+            <View style={styles.infoContainer}>
+              <CustomHeading
+                color={Colors?.primary}
+                textAlign="left"
+                baseFont={22}
+              >
+                {t(item?.type)} - {t(item?.subType)}
+              </CustomHeading>
+              <CustomText textAlign="left" baseFont={17} fontWeight="bold">
+                📍 {item?.address}
+              </CustomText>
+              <CustomText textAlign="left" baseFont={17} fontWeight="bold">
+                📅 Start Date: {item?.startDate.split("T")[0]}
+              </CustomText>
+              <CustomText textAlign="left" baseFont={17} fontWeight="bold">
+                ⏳ Duration: {item?.duration} days
+              </CustomText>
+              <CustomText textAlign="left" baseFont={17} fontWeight="bold">
+                🛠 Booking Type: {item?.bookingType}
+              </CustomText>
+            </View>
 
-                <CustomText textAlign="left">
-                  Address - {item?.address}
-                </CustomText>
-                <CustomText textAlign="left">
-                  Start Date - {item?.startingDate}
-                </CustomText>
-                <CustomText textAlign="left">
-                  Duration - {item?.duration}
-                </CustomText>
-                <CustomText textAlign="left">
-                  Employer - {employer?.name}
-                </CustomText>
-                <CustomText textAlign="left">{item?.description}</CustomText>
-              </View>
-              <View style={styles.ratingPriceContainer}>
-                <RatingAndReviews
-                  rating={employer?.rating?.average}
-                  reviews={employer?.rating?.count}
-                />
-                <View style={styles.priceContainer}>
-                  <CustomHeading>
-                    {/* <FontAwesome name="rupee" size={14} /> {item?.duration} */}
-                    <Button
-                      isPrimary={false}
-                      title={t("cancel")}
-                      onPress={() => onCancelBooking(item?._id)}
+            {/* Worker Details */}
+            <View style={styles.workerContainer}>
+              {workersList.length > 0 ? (
+                workersList.map((worker: any, index: number) => (
+                  <View key={index} style={styles.workerCard}>
+                    <Image
+                      source={
+                        worker?.profilePicture
+                          ? { uri: worker?.profilePicture }
+                          : coverImage
+                      }
+                      style={styles.workerImage}
                     />
-                  </CustomHeading>
-                </View>
-              </View>
+                    <View style={styles.workerInfo}>
+                      <CustomText style={styles.workerName}>
+                        <CustomText color={Colors?.tertiery} fontWeight="bold">
+                          ({worker?.role})
+                        </CustomText>{" "}
+                        {worker?.name}
+                      </CustomText>
+                      <CustomText>📞 {worker?.mobile}</CustomText>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <CustomText style={styles.noWorkerText}>
+                  No Workers Assigned
+                </CustomText>
+              )}
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.actionContainer}>
+              {workersList && workersList?.length <= 1 ? (
+                <Button
+                  isPrimary={false}
+                  title={t("cancelBooking")}
+                  onPress={() =>
+                    onRemoveBookedWorker({
+                      serviceId: item?._id,
+                      userId: item?.bookedWorker?._id,
+                    })
+                  }
+                  borderColor={Colors?.danger}
+                  textColor={Colors?.danger}
+                />
+              ) : (
+                <View></View>
+              )}
+              <Button
+                isPrimary={true}
+                title={t("markAsCompleted")}
+                onPress={() => onCompleteBooking(item?.serviceId)}
+              />
             </View>
           </View>
         </TouchableOpacity>
       </View>
     );
-  });
+  };
 
   RenderItem.displayName = "RenderItem";
-  const renderItem = ({ item }: any) => <RenderItem item={item} />;
+  const renderItem = ({ item }: any) => (
+    <RenderItem item={item} onRemoveBookedWorker={onRemoveBookedWorker} />
+  );
 
   return (
     <View style={{ marginBottom: 110 }}>
@@ -149,6 +189,7 @@ export default ListingsVerticalBookings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 20,
   },
   item: {
     backgroundColor: Colors.white,
@@ -157,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     position: "relative",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   image: {
     width: 80,
@@ -201,5 +242,68 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 20,
     paddingBottom: 10,
+  },
+  card: {
+    backgroundColor: Colors.white,
+    padding: 15,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    position: "relative",
+  },
+  statusBadge: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+  hiring: { backgroundColor: "#FFA500" },
+  completed: { backgroundColor: "#28A745" },
+  cancelled: { backgroundColor: "#DC3545" },
+  statusText: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  infoContainer: {
+    marginBottom: 10,
+  },
+  workerContainer: {
+    backgroundColor: Colors?.fourth,
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  workerCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  workerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  workerInfo: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  workerName: {
+    fontWeight: "bold",
+  },
+  noWorkerText: {
+    textAlign: "center",
+    fontStyle: "italic",
+    color: "#888",
+  },
+  actionContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
   },
 });

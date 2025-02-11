@@ -19,7 +19,8 @@ import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import DropdownComponent from "../inputs/Dropdown";
 import TextInputComponent from "../inputs/TextInputWithIcon";
-import DropdownWithMenu from "../inputs/dropdownWithMenu";
+import DropdownWithMenu from "../inputs/DropdownWithMenu";
+import DropdownNew from "../inputs/DropdownNew";
 
 interface SkillSelectorProps {
   canAddSkills: boolean;
@@ -272,7 +273,7 @@ const SkillSelector = ({
           <View style={{ paddingVertical: 20 }}>
             <DropdownWithMenu
               id="addSkill"
-              placeholder="searchAndSelectSkills"
+              placeholder={t("searchAndSelectSkills")}
               searchEnabled={false}
               options={filteredSkills || []}
               icon={
@@ -308,11 +309,11 @@ const SkillSelector = ({
         onClose={() => setIsRemoveModalVisible(false)}
         content={() => (
           <View style={{ paddingVertical: 20 }}>
-            <DropdownComponent
-              value={selectedSkillToRemove}
-              setValue={handleSkillToRemoveSelection}
+            <DropdownWithMenu
+              id="removeSkill"
               placeholder={t("selectSkillToRemove")}
-              options={selectedUserSkills}
+              searchEnabled={false}
+              options={selectedUserSkills || []}
               icon={
                 <MaterialCommunityIcons
                   style={styles.icon}
@@ -321,6 +322,10 @@ const SkillSelector = ({
                   size={30}
                 />
               }
+              selectedValue={selectedUserSkills}
+              onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
+              openDropdownId={openDropdownId}
+              setOpenDropdownId={setOpenDropdownId}
             />
           </View>
         )}

@@ -717,5 +717,11 @@
   "updateYourSkillsAndRole": "Update your role for using this app",
   "InDays": "In Days",
   "selectedApplicants": "Selected Applicants",
-  "applicants": "Applicants"
+  "applicants": "Applicants",
+  "savedUsers": "Saved Users",
+  "removeTeamJoingRequest": "Remove Team Joing Request",
+  "removeFromSaved": "Remove From Saved",
+  "markAsCompleted": "Mark As Completed",
+  "removeFromBooking": "Remove From Booking",
+  "teamJoiningRequest": "Team Joining Requests"
 }

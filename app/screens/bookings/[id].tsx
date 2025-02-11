@@ -1,5 +1,12 @@
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -17,9 +24,12 @@ import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import WorkerCard from "@/components/commons/WorkerCard";
 import { useMutation } from "@tanstack/react-query";
-import BOOKING from "@/app/api/booking";
 import TOAST from "@/app/hooks/toast";
 import Loader from "@/components/commons/Loaders/Loader";
+import Requirements from "@/components/commons/Requirements";
+import { handleCall } from "@/constants/functions";
+import EMPLOYER from "@/app/api/employer";
+import ShowSkills from "@/components/commons/ShowSkills";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -33,11 +43,16 @@ const ServiceDetails = () => {
   const { title, data }: any = useLocalSearchParams();
   const [booking, setBooking]: any = useState(JSON.parse(data));
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const [isSelected, setIsSelected] = useState(
+    booking?.selectedUsers?.find(
+      (worker: any) => worker?._id === userDetails?._id
+    ) || false
+  );
 
   const mutationRemoveBookedUser = useMutation({
     mutationKey: ["removeBookedUser"],
     mutationFn: () =>
-      BOOKING?.removeBookedWorker({ userId: booking?.worker?._id }),
+      EMPLOYER?.removeBookedWorker({ userId: booking?.worker?._id }),
     onSuccess: async (response) => {
       TOAST?.showToast?.success(t("removedBookedWorkerSuccessfully"));
       console.log("Response while removing a booked worker - ", response);
@@ -46,7 +61,7 @@ const ServiceDetails = () => {
 
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelBooking"],
-    mutationFn: () => BOOKING?.cancelBooking({ bookingId: booking?._id }),
+    mutationFn: () => EMPLOYER?.cancelBooking({ bookingId: booking?._id }),
     onSuccess: async (response) => {
       TOAST?.showToast?.success(t("bookingCancelledSuccessfully"));
       console.log("Response while cancelling a booking - ", response);
@@ -55,14 +70,26 @@ const ServiceDetails = () => {
 
   const mutationCompleteBooking = useMutation({
     mutationKey: ["completBooking"],
-    mutationFn: () => BOOKING?.completeBooking({ bookingId: booking?._id }),
+    mutationFn: () => EMPLOYER?.completeBooking({ bookingId: booking?._id }),
     onSuccess: async (response) => {
       TOAST?.showToast?.success(t("bookingCompletedSuccessfully"));
       console.log("Response while cancelling a booking - ", response);
     },
   });
 
-  console.log("data---", JSON.parse(data)?._id, booking?.worker);
+  useEffect(() => {
+    setIsSelected(
+      booking?.selectedUsers?.find(
+        (worker: any) => worker?._id === userDetails?._id
+      ) || false
+    );
+  }, [booking]);
+
+  const workersList =
+    booking?.selectedUsers?.length > 0
+      ? booking?.selectedUsers
+      : [booking?.bookedWorker ?? ""];
+  console.log("data---", workersList);
 
   return (
     <>
@@ -73,7 +100,7 @@ const ServiceDetails = () => {
           ),
         }}
       />
-
+      <StatusBar backgroundColor={Colors?.fourth} />
       <Loader
         loading={
           mutationCancelBooking?.isPending ||
@@ -86,11 +113,63 @@ const ServiceDetails = () => {
           ref={scrollRef}
           contentContainerStyle={{ paddingBottom: 150 }}
         >
-          {booking && booking?.images?.length > 0 && (
-            <ImageSlider images={booking?.images} />
-          )}
+          <ImageSlider images={booking?.images} />
 
           <View style={styles.contentWrapper}>
+            {booking?.status === "CANCELLED" && (
+              <View style={styles?.selectedWrapper}>
+                <View style={{ width: "100%" }}>
+                  <CustomHeading color={Colors?.white} textAlign="left">
+                    {t("thisServiceIsCancelled")}
+                  </CustomHeading>
+                  <CustomText textAlign="left" color={Colors?.white}>
+                    {t("apologyForInconvenience")}
+                  </CustomText>
+                </View>
+              </View>
+            )}
+
+            {booking?.status === "COMPLETED" && (
+              <View style={styles?.selectedWrapper}>
+                <View style={{ width: "100%" }}>
+                  <CustomHeading color={Colors?.white} textAlign="left">
+                    {t("thisServiceIsCompleted")}
+                  </CustomHeading>
+                  <CustomText textAlign="left" color={Colors?.white}>
+                    {t("thankYouForUsingOurService")}
+                  </CustomText>
+                </View>
+              </View>
+            )}
+
+            {isSelected && booking?.status !== "CANCELLED" && (
+              <View style={styles?.selectedWrapper}>
+                <CustomHeading color={Colors?.white} textAlign="left">
+                  {t("youAreSelected")}
+                </CustomHeading>
+                <CustomText
+                  textAlign="left"
+                  color={Colors?.white}
+                  style={{ marginBottom: 10 }}
+                >
+                  {t("doYourBest")}
+                </CustomText>
+                <Button
+                  isPrimary={true}
+                  title={t("callEmployer")}
+                  onPress={handleCall}
+                  icon={
+                    <FontAwesome5
+                      name="phone-alt"
+                      size={16}
+                      color={Colors.white}
+                      style={{ marginRight: 10 }}
+                    />
+                  }
+                />
+              </View>
+            )}
+
             <CustomHeading baseFont={18} textAlign="left">
               {t(booking?.type)} - {t(booking?.subType)}
             </CustomHeading>
@@ -117,15 +196,64 @@ const ServiceDetails = () => {
 
             <Highlights service={booking} />
 
-            {booking?.description && (
-              <CustomText textAlign="left" baseFont={13}>
-                {booking?.description}
-              </CustomText>
+            <CustomText textAlign="left" baseFont={13}>
+              {booking?.description}
+            </CustomText>
+
+            {booking && booking?.requirements?.length > 0 && (
+              <Requirements type="full" requirements={booking?.requirements} />
             )}
           </View>
-          {booking && booking?.user && <WorkerCard worker={booking?.user} />}
-          {booking && booking?.employer && (
-            <EmployerCard employer={booking?.user} />
+
+          {workersList?.length > 0 && (
+            <View style={styles.workerListContainer}>
+              <CustomHeading baseFont={18} textAlign="left">
+                {t("selectedWorkers")}
+              </CustomHeading>
+
+              {workersList?.map((worker: any) => (
+                <View key={worker._id} style={styles.workerCard}>
+                  {/* Worker Image */}
+                  <Image
+                    source={{ uri: worker?.profilePicture }}
+                    style={styles.workerImage}
+                  />
+
+                  {/* Worker Details */}
+                  <View style={styles.workerInfo}>
+                    <CustomHeading baseFont={16} textAlign="left">
+                      {worker?.name}
+                    </CustomHeading>
+                    <ShowSkills userSkills={worker?.skills} />
+                    <View style={styles.workerLocation}>
+                      <Entypo
+                        name="location-pin"
+                        size={14}
+                        color={Colors.primary}
+                      />
+                      <CustomText textAlign="left" style={styles.workerAddress}>
+                        {worker?.address || "Address not found"}
+                      </CustomText>
+                    </View>
+                    <Button
+                      isPrimary={false}
+                      title={t("removeFromBooking")}
+                      onPress={() => mutationRemoveBookedUser.mutate()}
+                      style={styles.removeButton}
+                      bgColor={Colors?.danger}
+                      borderColor={Colors?.danger}
+                      textColor={Colors.danger}
+                    />
+                  </View>
+
+                  {/* Remove Button */}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {booking && booking?.employer !== userDetails?._id && (
+            <EmployerCard employer={booking?.employer} />
           )}
         </Animated.ScrollView>
       </ScrollView>
@@ -135,6 +263,8 @@ const ServiceDetails = () => {
           isPrimary={false}
           title={t("cancel")}
           onPress={() => mutationCancelBooking.mutate()}
+          bgColor={Colors?.danger}
+          borderColor={Colors?.danger}
           style={styles.cancelBtn}
           textStyle={{ color: Colors?.white }}
         />
@@ -155,7 +285,7 @@ export default ServiceDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   image: {
     width: width,
@@ -164,7 +294,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     paddingHorizontal: 10,
     paddingTop: 20,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
   },
   selectedWrapper: {
     padding: 15,
@@ -202,8 +332,6 @@ const styles = StyleSheet.create({
   },
   cancelBtn: {
     flex: 1,
-    backgroundColor: Colors.tertiery,
-    borderColor: Colors.tertiery,
     alignItems: "center",
   },
   footerBookBtn: {
@@ -305,5 +433,57 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray,
+  },
+  workerListContainer: {
+    marginTop: 20,
+    padding: 10,
+    margin: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    elevation: 2, // Light shadow for elevation
+  },
+  workerCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    borderWidth: 2,
+    borderColor: Colors.fourth,
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  workerImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  workerInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  workerSkills: {
+    fontSize: 14,
+    color: Colors.gray,
+  },
+  workerLocation: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 3,
+  },
+  workerAddress: {
+    fontSize: 12,
+    color: Colors.secondary,
+    marginLeft: 5,
+  },
+  removeButton: {
+    flex: 1,
+    backgroundColor: "transparent",
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    marginTop: 10,
   },
 });

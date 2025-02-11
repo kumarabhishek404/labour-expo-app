@@ -32,7 +32,6 @@ import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import { t } from "@/utils/translationHelper";
 import USER from "@/app/api/user";
-import WORKER from "@/app/api/workers";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const AdminProfile = () => {
@@ -117,21 +116,21 @@ const AdminProfile = () => {
     },
   });
 
-  const mutationUploadProfileImage = useMutation({
-    mutationKey: ["uploadProfileImage"],
-    mutationFn: (payload) => handleUploadAvatar(payload),
-    onSuccess: (response) => {
-      console.log("Response from profilePicture image uploading - ", response);
-      setUserDetails({
-        ...userDetails,
-        profilePicture: response?.data,
-      });
-      setProfilePicture(response?.data);
-    },
-    onError: (err) => {
-      console.log("Error while uploading profilePicture image - ", err);
-    },
-  });
+  // const mutationUploadProfileImage = useMutation({
+  //   mutationKey: ["uploadProfileImage"],
+  //   mutationFn: (payload) => handleUploadAvatar(payload),
+  //   onSuccess: (response) => {
+  //     console.log("Response from profilePicture image uploading - ", response);
+  //     setUserDetails({
+  //       ...userDetails,
+  //       profilePicture: response?.data,
+  //     });
+  //     setProfilePicture(response?.data);
+  //   },
+  //   onError: (err) => {
+  //     console.log("Error while uploading profilePicture image - ", err);
+  //   },
+  // });
 
   const mutationRemoveProfileImage = useMutation({
     mutationKey: ["removeProfileImage"],
@@ -143,7 +142,7 @@ const AdminProfile = () => {
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
     mutationFn: (skills: Array<string>) =>
-      WORKER?.addSkills({ skills: skills }),
+      USER?.updateSkills({ skills: skills }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -160,16 +159,16 @@ const AdminProfile = () => {
     setIsEditProfile(true);
   };
 
-  const handleUploadAvatar = async (profileImage: any) => {
-    const formData: any = new FormData();
-    const avatarFile = profileImage.split("/").pop();
-    formData.append("profilePicture", {
-      uri: profileImage,
-      type: "image/jpeg",
-      name: avatarFile,
-    });
-    return await USER?.uploadFile(formData);
-  };
+  // const handleUploadAvatar = async (profileImage: any) => {
+  //   const formData: any = new FormData();
+  //   const avatarFile = profileImage.split("/").pop();
+  //   formData.append("profilePicture", {
+  //     uri: profileImage,
+  //     type: "image/jpeg",
+  //     name: avatarFile,
+  //   });
+  //   return await USER?.uploadFile(formData);
+  // };
 
   const handleRemoveProfileImage = () => {
     let tempUserDetails = { ...userDetails };
@@ -180,14 +179,14 @@ const AdminProfile = () => {
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        <View style={{ marginBottom: 10 }}>
+        {/* <View style={{ marginBottom: 10 }}>
           <AvatarComponent
             isEditable={true}
             isLoading={mutationUploadProfileImage?.isPending}
             profileImage={profilePicture}
             onUpload={mutationUploadProfileImage?.mutate}
           />
-        </View>
+        </View> */}
         <View style={{ flexDirection: "column", gap: 10 }}>
           <Controller
             control={control}
@@ -272,9 +271,9 @@ const AdminProfile = () => {
           >
             <AvatarComponent
               isEditable={false}
-              isLoading={mutationUploadProfileImage?.isPending}
+              // isLoading={mutationUploadProfileImage?.isPending}
               profileImage={profilePicture}
-              onUpload={mutationUploadProfileImage?.mutate}
+              // onUpload={mutationUploadProfileImage?.mutate}
             />
             <View
               style={{

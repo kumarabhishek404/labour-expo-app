@@ -19,6 +19,7 @@ type AvatarProps = {
   profileImage: string;
   onUpload?: any;
   style?: any;
+  avatarWrapperStyle?: any;
 };
 
 const AvatarComponent = ({
@@ -27,6 +28,7 @@ const AvatarComponent = ({
   profileImage,
   onUpload,
   style,
+  avatarWrapperStyle
 }: AvatarProps) => {
   const pickImage = async () => {
     let result: any = await ImagePicker.launchImageLibraryAsync({
@@ -48,7 +50,7 @@ const AvatarComponent = ({
 
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.avatarWrapper}>
+      <View style={[styles.avatarWrapper, avatarWrapperStyle]}>
         <ProfilePicture uri={profileImage} style={styles.profilePicture} />
 
         {isLoading && (

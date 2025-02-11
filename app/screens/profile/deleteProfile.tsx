@@ -47,7 +47,7 @@ const DeleteAccountScreen = () => {
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteProfile"],
-    mutationFn: () => USER?.deleteUserById(),
+    mutationFn: () => USER?.disableAccount(),
     onSuccess: (response) => {
       console.log("Response while deleting the user - ", response);
     },

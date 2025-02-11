@@ -51,8 +51,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   });
   const [errorField, setErrorField] = useState({});
 
-  console.log("Type---", type, subType, requirements);
-
   const onSubmit = (data: any) => {
     // console.log("data---", data);
 

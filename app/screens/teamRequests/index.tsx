@@ -1,13 +1,12 @@
 import Colors from "@/constants/Colors";
 import React, { useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
+import { View, StyleSheet, RefreshControl, StatusBar } from "react-native";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import Atoms from "@/app/AtomStore";
-import { Stack } from "expo-router";
-import REQUEST from "@/app/api/requests";
+import { Stack, useLocalSearchParams } from "expo-router";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -19,17 +18,21 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import CustomSegmentedButton from "../bottomTabs/(user)/bookingsAndRequests/customTabs";
+import WORKER from "@/app/api/workers";
+import EMPLOYER from "@/app/api/employer";
+import MEDIATOR from "@/app/api/mediator";
 
 const Requests = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData] = useState([]);
   const [category, setCategory] = useState("RECEIVED");
+  const {title} = useLocalSearchParams()
 
   const fetchRequests =
     category === "RECEIVED"
-      ? REQUEST.fetchRecievedRequests
-      : REQUEST.fetchSentRequests;
+      ? WORKER.fetchAllRecievedTeamRequests
+      : MEDIATOR.fetchSentTeamRequests;
 
   const {
     data: response,
@@ -66,7 +69,7 @@ const Requests = () => {
   );
 
   const mutationAcceptRequest = useMutation({
-    mutationFn: (id) => REQUEST.acceptJoiningRequest({ userId: id }),
+    mutationFn: (id) => WORKER.acceptTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
       refreshUser();
@@ -75,14 +78,14 @@ const Requests = () => {
   });
 
   const mutationRejectRequest = useMutation({
-    mutationFn: (id) => REQUEST.rejectJoiningRequest({ userId: id }),
+    mutationFn: (id) => WORKER.rejectTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
     },
   });
 
   const mutationCancelRequest = useMutation({
-    mutationFn: (id) => REQUEST.cancelJoiningRequest({ userId: id }),
+    mutationFn: (id) => MEDIATOR.cancelTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
     },
@@ -108,18 +111,19 @@ const Requests = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Requests" left="back" right="notification" />
+            <CustomHeader title={title as string} left="back" right="notification" />
           ),
         }}
       />
+      <StatusBar backgroundColor={Colors?.fourth} />
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          <SearchFilter
+          {/* <SearchFilter
             type="users"
             data={response?.pages}
             setFilteredData={setFilteredData}
-          />
+          /> */}
           <View style={styles?.paginationTabs}>
             <CustomSegmentedButton
               buttons={ALLREQUEST}
@@ -140,7 +144,12 @@ const Requests = () => {
           {filteredData && filteredData?.length > 0 ? (
             <ListingVerticalRequests
               listings={filteredData || []}
-              requestType={category}
+              requestType="teamJoiningRequest"
+              isLoading={
+                mutationCancelRequest?.isPending ||
+                mutationAcceptRequest?.isPending ||
+                mutationRejectRequest?.isPending
+              }
               loadMore={loadMore}
               refreshControl={
                 <RefreshControl

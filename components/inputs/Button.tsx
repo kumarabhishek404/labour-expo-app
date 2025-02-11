@@ -32,25 +32,33 @@ export default function ButtonComp({
   disabled,
 }: ButtonProps) {
   const handlePress = (data: any) => {
-    Keyboard.dismiss();
-    onPress(data);
+    if (!disabled && !loading) {
+      Keyboard.dismiss();
+      onPress(data);
+    }
   };
 
   const containerStyles = {
-    backgroundColor: bgColor || (isPrimary ? Colors.primary : Colors.white),
+    backgroundColor: disabled
+      ? Colors.gray // Faded color when disabled
+      : bgColor || (isPrimary ? Colors.primary : Colors.white),
     borderWidth: 2,
-    borderColor: borderColor || Colors.primary,
+    borderColor: disabled ? Colors.gray : borderColor || Colors.primary,
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 30,
     flexDirection: loading || icon ? "row" : "column",
     alignItems: "center",
     justifyContent: "center",
+    opacity: disabled ? 0.6 : 1, // Fades button when disabled
+    pointerEvents: disabled ? "none" : "auto", // Prevents interaction
     ...style,
   };
 
   const textStyles = {
-    color: textColor || (isPrimary ? Colors.white : Colors.primary),
+    color: disabled
+      ? Colors.darkGray // Adjust text color when disabled
+      : textColor || (isPrimary ? Colors.white : Colors.primary),
     fontWeight: "700",
     textAlign: "center",
     fontSize: 20,
@@ -59,7 +67,11 @@ export default function ButtonComp({
     ...textStyle,
   };
 
-  const activityIndicatorColor = isPrimary ? Colors.white : Colors.primary;
+  const activityIndicatorColor = disabled
+    ? Colors.darkGray
+    : isPrimary
+    ? Colors.white
+    : Colors.primary;
 
   return (
     <TouchableOpacity

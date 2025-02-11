@@ -4,21 +4,19 @@ import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
-// import CategoryButtons from "@/components/inputs/CategoryButtons";
 import Atoms from "@/app/AtomStore";
-import REQUEST from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-// import SearchFilter from "@/components/commons/SearchFilter";
-// import { MEDIATORREQUEST, WORKERREQUEST } from "@/constants";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import { Stack } from "expo-router";
-import CustomTabs from "./customTabs";
 import CustomSegmentedButton from "./customTabs";
+import WORKER from "@/app/api/workers";
+import MEDIATOR from "@/app/api/mediator";
+import EMPLOYER from "@/app/api/employer";
+import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 
 const Requests = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -42,8 +40,13 @@ const Requests = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["requests"],
-    queryFn: ({ pageParam }) => REQUEST?.fetchRecievedRequests({ pageParam }),
+    queryKey: [
+      category === "recievedRequests" ? "recievedRequests" : "sentRequests",
+    ],
+    queryFn: ({ pageParam }) =>
+      category === "recievedRequests"
+        ? WORKER?.fetchAllBookingReceivedInvitations({ pageParam })
+        : EMPLOYER?.fetchAllBookingSentRequests({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -77,7 +80,7 @@ const Requests = () => {
 
   const mutationCancelRequest = useMutation({
     mutationKey: ["cancelRequest"],
-    mutationFn: (id) => REQUEST?.cancelJoiningRequest({ userId: id }),
+    mutationFn: (id) => MEDIATOR?.cancelTeamRequest({ userId: id }),
     onSuccess: (response) => {
       refetch();
       console.log("Response while liking a worker - ", response);
@@ -89,7 +92,7 @@ const Requests = () => {
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
-    mutationFn: (id) => REQUEST?.acceptJoiningRequest({ userId: id }),
+    mutationFn: (id) => WORKER?.acceptBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
       refetch();
       refreshUser();
@@ -103,9 +106,10 @@ const Requests = () => {
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectRequest"],
-    mutationFn: (id) => REQUEST?.rejectJoiningRequest({ userId: id }),
+    mutationFn: (id) => WORKER?.rejectBookingRequest({ invitationId: id }),
     onSuccess: (response) => {
       refetch();
+      TOAST?.showToast?.success(t("requestRejectedSuccessfully"));
       console.log("Response while rejecting request - ", response);
     },
     // onError: (err) => {
@@ -135,41 +139,37 @@ const Requests = () => {
     }
   );
 
+  if (isLoading) {
+    return <OnPageLoader />;
+  }
+
   return (
     <>
       <View style={{ flex: 1 }}>
-        <Loader
-          loading={
-            isLoading ||
-            mutationCancelRequest?.isPending ||
-            mutationAcceptRequest?.isPending ||
-            mutationRejectRequest?.isPending
-          }
-        />
         <View style={styles.container}>
+          <CustomSegmentedButton
+            buttons={TABS}
+            selectedTab={category}
+            onValueChange={onCatChanged}
+          />
           {memoizedData && memoizedData?.length > 0 ? (
             <>
               <View style={styles?.paginationTabs}>
-                <CustomSegmentedButton
-                  buttons={TABS}
-                  selectedTab={category}
-                  onValueChange={onCatChanged}
-                />
-                {/* <View style={{ width: "40%" }}> */}
                 <PaginationString
                   type="requests"
                   isLoading={isLoading || isRefetching}
                   totalFetchedData={memoizedData?.length}
                   totalData={totalData}
                 />
-                {/* </View>
-                <View style={{ width: "60%" }}>
-                  
-                </View> */}
               </View>
               <ListingVerticalRequests
                 listings={memoizedData || []}
-                requestType={category}
+                requestType="bookingRequest"
+                isLoading={
+                  mutationAcceptRequest?.isPending ||
+                  mutationRejectRequest?.isPending ||
+                  mutationCancelRequest?.isPending
+                }
                 loadMore={loadMore}
                 refreshControl={
                   <RefreshControl
@@ -200,7 +200,6 @@ const styles = StyleSheet.create({
   },
   paginationTabs: {
     width: "100%",
-    flexDirection: "column",
     paddingBottom: 10,
   },
 });

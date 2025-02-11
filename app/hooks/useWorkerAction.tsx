@@ -1,71 +1,33 @@
 import { useMutation } from "@tanstack/react-query";
-import WORKER from "@/app/api/workers";
 import MEDIATOR from "@/app/api/mediator";
-import EMPLOYER from "@/app/api/employer";
-import REQUEST from "@/app/api/requests";
-import BOOKING from "@/app/api/booking";
 import ADMIN from "@/app/api/admin";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
+import USER from "../api/user";
+import EMPLOYER from "../api/employer";
 
 const useApiCalls = (id: any, refetch: any) => {
-  const mutationLikeWorker = useMutation({
-    mutationKey: ["likeWorker", { id }],
-    mutationFn: () => WORKER?.likeWorker({ workerID: id }),
+  const mutationLikeUser = useMutation({
+    mutationKey: ["likeUser", { id }],
+    mutationFn: () => USER?.likeUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("workerAddedToFavourites"));
+      TOAST?.showToast?.success(t("userAddedToFavourites"));
     },
   });
 
-  const mutationUnLikeWorker = useMutation({
-    mutationKey: ["unlikeWorker", { id }],
-    mutationFn: () => WORKER?.unlikeWorker({ workerID: id }),
+  const mutationUnLikeUser = useMutation({
+    mutationKey: ["unlikeUser", { id }],
+    mutationFn: () => USER?.unlikeUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("workerRemovedFromFavourites"));
-    },
-  });
-
-  const mutationLikeMediator = useMutation({
-    mutationKey: ["likeMediator", { id }],
-    mutationFn: () => MEDIATOR?.likeMediator({ mediatorID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("mediatorAddedToFavourites"));
-    },
-  });
-
-  const mutationUnLikeMediator = useMutation({
-    mutationKey: ["unlikeMediator", { id }],
-    mutationFn: () => MEDIATOR?.unlikeMediator({ mediatorID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("mediatorRemovedFromFavourites"));
-    },
-  });
-
-  const mutationLikeEmployer = useMutation({
-    mutationKey: ["likeEmployer", { id }],
-    mutationFn: () => EMPLOYER?.likeEmployer({ employerID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("employerAddedToFavourites"));
-    },
-  });
-
-  const mutationUnLikeEmployer = useMutation({
-    mutationKey: ["unlikeEmployer", { id }],
-    mutationFn: () => EMPLOYER?.unlikeEmployer({ employerID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("employerRemovedFromFavourites"));
+      TOAST?.showToast?.success(t("userRemovedFromFavourites"));
     },
   });
 
   const mutationCancelBookingRequest = useMutation({
     mutationKey: ["cancelBookingRequest"],
-    mutationFn: () => BOOKING?.cancelBookingRequest({ userId: id }),
+    mutationFn: () => EMPLOYER?.cancelBookingRequest({ userId: id }),
     onSuccess: () => {
       refetch();
       TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
@@ -74,34 +36,16 @@ const useApiCalls = (id: any, refetch: any) => {
 
   const mutationRemoveBookedWorker = useMutation({
     mutationKey: ["removeBookedWorker", { id }],
-    mutationFn: () => BOOKING?.removeBookedWorker({ bookingID: id }),
+    mutationFn: () => EMPLOYER?.removeBookedWorker({ bookingID: id }),
     onSuccess: () => {
       refetch();
       TOAST?.showToast?.success(t("bookingCancelledWorker"));
     },
   });
 
-  const mutationBookMediator = useMutation({
-    mutationKey: ["bookMediator", { id }],
-    mutationFn: () => MEDIATOR?.bookMediator({ mediatorID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("workerBookedSuccessfully"));
-    },
-  });
-
-  const mutationRemoveBookedMediator = useMutation({
-    mutationKey: ["removeBookedMediator", { id }],
-    mutationFn: () => MEDIATOR?.removeBookedMediator({ mediatorID: id }),
-    onSuccess: () => {
-      refetch();
-      TOAST?.showToast?.success(t("mediatorBookingCancelled"));
-    },
-  });
-
   const mutationSendRequest = useMutation({
     mutationKey: ["sendRequest", { id }],
-    mutationFn: () => REQUEST?.sendJoiningRequest({ userId: id }),
+    mutationFn: () => MEDIATOR?.sendTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
       TOAST?.showToast?.success(t("requestSentSuccessfully"));
@@ -128,7 +72,7 @@ const useApiCalls = (id: any, refetch: any) => {
 
   const mutationCancelRequest = useMutation({
     mutationKey: ["cancelRequest"],
-    mutationFn: () => REQUEST?.cancelJoiningRequest({ userId: id }),
+    mutationFn: () => MEDIATOR?.cancelTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
       TOAST?.showToast?.success(t("requestCancelledSuccessfully"));
@@ -145,16 +89,10 @@ const useApiCalls = (id: any, refetch: any) => {
   });
 
   return {
-    mutationLikeWorker,
-    mutationUnLikeWorker,
-    mutationLikeMediator,
-    mutationUnLikeMediator,
-    mutationLikeEmployer,
-    mutationUnLikeEmployer,
+    mutationLikeUser,
+    mutationUnLikeUser,
     mutationCancelBookingRequest,
     mutationRemoveBookedWorker,
-    mutationBookMediator,
-    mutationRemoveBookedMediator,
     mutationSendRequest,
     mutationActivateUser,
     mutationSuspendUser,

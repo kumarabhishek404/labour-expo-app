@@ -134,25 +134,25 @@ const UserProfile = () => {
     },
   });
 
-  const mutationUploadProfileImage = useMutation({
-    mutationKey: ["uploadProfileImage"],
-    mutationFn: (payload) => handleUploadAvatar(payload),
-    onSuccess: (response) => {
-      console.log("Response from profilePicture image uploading - ", response);
-      setUserDetails({
-        ...userDetails,
-        profilePicture: response?.data,
-      });
-      setProfilePicture(response?.data);
-    },
-    onError: (err) => {
-      console.log("Error while uploading profilePicture image - ", err);
-    },
-  });
+  // const mutationUploadProfileImage = useMutation({
+  //   mutationKey: ["uploadProfileImage"],
+  //   mutationFn: (payload) => handleUploadAvatar(payload),
+  //   onSuccess: (response) => {
+  //     console.log("Response from profilePicture image uploading - ", response);
+  //     setUserDetails({
+  //       ...userDetails,
+  //       profilePicture: response?.data,
+  //     });
+  //     setProfilePicture(response?.data);
+  //   },
+  //   onError: (err) => {
+  //     console.log("Error while uploading profilePicture image - ", err);
+  //   },
+  // });
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skill: any) => WORKER?.addSkills({ skill: skill }),
+    mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -167,7 +167,7 @@ const UserProfile = () => {
 
   const mutationRemoveSkill = useMutation({
     mutationKey: ["removeSkills"],
-    mutationFn: (skill: string) => WORKER?.removeSkill({ skillName: skill }),
+    mutationFn: (skill: string) => USER?.removeSkill({ skillName: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -184,28 +184,28 @@ const UserProfile = () => {
     setIsEditProfile(true);
   };
 
-  const handleUploadAvatar = async (profileImage: any) => {
-    const formData: any = new FormData();
-    const avatarFile = profileImage.split("/").pop();
-    formData.append("profilePicture", {
-      uri: profileImage,
-      type: "image/jpeg",
-      name: avatarFile,
-    });
-    return await USER?.uploadFile(formData);
-  };
+  // const handleUploadAvatar = async (profileImage: any) => {
+  //   const formData: any = new FormData();
+  //   const avatarFile = profileImage.split("/").pop();
+  //   formData.append("profilePicture", {
+  //     uri: profileImage,
+  //     type: "image/jpeg",
+  //     name: avatarFile,
+  //   });
+  //   return await USER?.uploadFile(formData);
+  // };
 
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        <View style={{ marginBottom: 0 }}>
+        {/* <View style={{ marginBottom: 0 }}>
           <AvatarComponent
             isEditable={true}
             isLoading={mutationUploadProfileImage?.isPending}
             profileImage={profilePicture}
             onUpload={mutationUploadProfileImage?.mutate}
           />
-        </View>
+        </View> */}
         <View style={{ flexDirection: "column", gap: 10 }}>
           <Controller
             control={control}
@@ -321,9 +321,9 @@ const UserProfile = () => {
               >
                 <AvatarComponent
                   isEditable={false}
-                  isLoading={mutationUploadProfileImage?.isPending}
+                  // isLoading={mutationUploadProfileImage?.isPending}
                   profileImage={profilePicture}
-                  onUpload={mutationUploadProfileImage?.mutate}
+                  // onUpload={mutationUploadProfileImage?.mutate}
                 />
                 <View
                   style={{
@@ -386,6 +386,9 @@ const UserProfile = () => {
               />
             </View>
 
+            {userDetails?.employedBy && (
+              <TeamAdminCard admin={userDetails?.employedBy} />
+            )}
             <StatsCard />
 
             <SkillSelector
@@ -404,28 +407,29 @@ const UserProfile = () => {
             <UserInfoComponent user={userDetails} />
 
             <WallletInformation
-              type="spents"
-              wallet={userDetails?.spent}
-              style={{ marginLeft: 20 }}
-            />
-            <ServiceInformation
-              information={userDetails?.serviceDetails}
-              style={{ marginLeft: 20 }}
-            />
-
-            <WallletInformation
               type="earnings"
               wallet={{ earnings }}
               style={{ marginLeft: 20 }}
             />
+
+            <WallletInformation
+              type="spents"
+              wallet={userDetails?.spent}
+              style={{ marginLeft: 20 }}
+            />
+
             <WorkInformation
               information={userDetails?.workDetails}
               style={{ marginLeft: 20 }}
             />
 
-            {userDetails?.employedBy && (
-              <TeamAdminCard admin={userDetails?.employedBy} />
-            )}
+            <View style={{ paddingTop: 20 }}>
+              <ServiceInformation
+                information={userDetails?.serviceDetails}
+                style={{ marginLeft: 20 }}
+              />
+            </View>
+
             <CustomText style={styles.copyright}>
               © 2024 KAAM DEKHO. All rights reserved.
             </CustomText>

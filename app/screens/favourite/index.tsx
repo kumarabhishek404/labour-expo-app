@@ -22,6 +22,7 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
+import USER from "@/app/api/user";
 
 const Favourite = (props: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -39,7 +40,7 @@ const Favourite = (props: any) => {
     refetch,
   } = useInfiniteQuery({
     queryKey: ["favourites"],
-    queryFn: ({ pageParam }) => SERVICE?.fetchAllLikedServices({ pageParam }),
+    queryFn: ({ pageParam }) => USER?.fetchAllLikedServices({ pageParam }),
     retry: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {

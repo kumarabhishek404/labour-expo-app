@@ -1,24 +1,14 @@
 import TOAST from "@/app/hooks/toast";
 import Colors from "@/constants/Colors";
 import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import TextInputComponent from "./TextInputWithIcon";
-import Button from "./Button";
 import { t } from "@/utils/translationHelper";
-import FIREBASE from "@/app/api/firebase";
-import ModalComponent from "../commons/Modal";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "../commons/Loaders/Loader";
+import AUTH from "@/app/api/auth";
 
 interface MobileNumberFieldProps {
   name: string;
@@ -58,7 +48,7 @@ const MobileNumberField = ({
 
   const mutationSendOtp = useMutation({
     mutationKey: ["signInWithPhoneNumber"],
-    mutationFn: (payload: any) => FIREBASE?.signInWithPhoneNumber(payload),
+    mutationFn: (payload: any) => AUTH?.sendOTP(payload),
     onSuccess: (data: any) => {
       TOAST?.showToast?.success(t("otpSentTo"), data);
       setConfirmation(data);
@@ -72,7 +62,7 @@ const MobileNumberField = ({
   const mutationVerifyCode = useMutation({
     mutationKey: ["verifyCode"],
     mutationFn: (payload: any) =>
-      FIREBASE?.verifyCode(payload?.confirmation, payload?.otp),
+      AUTH?.verifyOTP(payload?.confirmation, payload?.otp),
     onSuccess: (data: any) => {
       TOAST?.showToast?.success(t("mobileNumberVerifiedSuccessfully"));
       setModalVisible(false);

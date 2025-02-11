@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
 import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
+import PlaceholderImage from "../../assets/banner-placeholder.jpg";
 
 const ImageSlider = ({ images }: any) => {
   const { width } = Dimensions.get("window");
@@ -27,13 +28,22 @@ const ImageSlider = ({ images }: any) => {
         showsHorizontalScrollIndicator={false}
         style={{ width, height }}
       >
-        {images?.map((image: any, index: number) => (
+        {images && images?.length > 0 ? (
+          <>
+            {images?.map((image: any, index: number) => (
+              <Image
+                key={index}
+                source={{ uri: image }}
+                style={{ width, height, resizeMode: "cover" }}
+              />
+            ))}
+          </>
+        ) : (
           <Image
-            key={index}
-            source={{ uri: image }}
+            source={PlaceholderImage}
             style={{ width, height, resizeMode: "cover" }}
           />
-        ))}
+        )}
       </ScrollView>
       <View style={styles.pagination}>
         {images?.map((i: any, k: any) => (

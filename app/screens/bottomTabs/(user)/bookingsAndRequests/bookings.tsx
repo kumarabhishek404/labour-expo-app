@@ -1,25 +1,16 @@
 import React, { useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Stack, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import Loader from "@/components/commons/Loaders/Loader";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import SearchFilter from "@/components/commons/SearchFilter";
-import CustomHeader from "@/components/commons/Header";
-import { MYSERVICES } from "@/constants";
-import { t } from "@/utils/translationHelper";
-import SERVICE from "@/app/api/services";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import Colors from "@/constants/Colors";
-import CustomTabs from "./customTabs";
-import SegmantedButton from "./customTabs";
 import CustomSegmentedButton from "./customTabs";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
+import WORKER from "@/app/api/workers";
 
 const Bookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -44,9 +35,13 @@ const Bookings = () => {
   } = useInfiniteQuery({
     queryKey: ["myServices", category],
     queryFn: ({ pageParam }) => {
-      return SERVICE?.fetchMyAppliedServicesMediator({
-        pageParam,
-      });
+      return category === "selected"
+        ? WORKER?.fetchAllMyBookings({
+            pageParam,
+          })
+        : WORKER?.fetchMyAppliedServices({
+            pageParam,
+          });
     },
     retry: false,
     initialPageParam: 1,
@@ -57,6 +52,8 @@ const Bookings = () => {
       return undefined;
     },
   });
+
+  console.log("category--", category);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -107,7 +104,7 @@ const Bookings = () => {
     }
   );
 
-  if (isLoading || isFetchingNextPage) {
+  if (isLoading) {
     return <OnPageLoader />;
   }
 
@@ -115,25 +112,20 @@ const Bookings = () => {
     <>
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
+          <CustomSegmentedButton
+            buttons={TABS}
+            selectedTab={category}
+            onValueChange={onCatChanged}
+          />
           {memoizedData && memoizedData?.length > 0 ? (
             <>
               <View style={styles?.paginationTabs}>
-                <CustomSegmentedButton
-                  buttons={TABS}
-                  selectedTab={category}
-                  onValueChange={onCatChanged}
-                />
-                {/* <View style={{ width: "40%" }}> */}
                 <PaginationString
                   type="services"
                   isLoading={isLoading || isRefetching}
                   totalFetchedData={memoizedData?.length}
                   totalData={totalData}
                 />
-                {/* </View>
-                <View style={{ width: "60%" }}>
-                  
-                </View> */}
               </View>
               <ListingsVerticalServices
                 listings={memoizedData || []}
@@ -164,8 +156,6 @@ const styles = StyleSheet.create({
   },
   paginationTabs: {
     width: "100%",
-    flexDirection: "column",
-    justifyContent: "space-between",
     paddingBottom: 10,
   },
 });

@@ -2,7 +2,11 @@ import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import React from "react";
 import { SafeAreaView, StyleSheet, View, Text } from "react-native";
-import { SegmentedButtons, useTheme, ActivityIndicator } from "react-native-paper";
+import {
+  SegmentedButtons,
+  useTheme,
+  ActivityIndicator,
+} from "react-native-paper";
 import Animated, {
   useSharedValue,
   withTiming,
@@ -107,9 +111,8 @@ const CustomSegmentedButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flexGrow: 0,
     alignItems: "center",
-    justifyContent: "center",
     marginBottom: 4,
   },
   segmentedButton: {
@@ -128,8 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: Colors.primary,
-    flexWrap: 'wrap', // Allow wrapping of text
-    overflow: 'visible', // Ensure text doesn't get clipped
+    flexWrap: "wrap", // Allow wrapping of text
+    overflow: "visible", // Ensure text doesn't get clipped
   },
 });
 

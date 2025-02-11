@@ -123,7 +123,7 @@ const SearchServices = () => {
               router?.push({
                 pathname: "/screens/service",
                 params: {
-                  title: "My All Services",
+                  title: "All Services",
                   type: "all",
                   searchCategory: JSON.stringify({
                     type: "",
@@ -156,6 +156,7 @@ const SearchServices = () => {
                       onChange(selectedValue); // Update the type field
                       setValue("subType", ""); // Reset the subType field
                     }}
+                    translationEnabled
                     placeholder="selectWorkType"
                     options={WORKTYPES}
                     errors={errors}
@@ -190,6 +191,7 @@ const SearchServices = () => {
                         ? "selectWorkSubType"
                         : "pleaseSelectWorkTypeFirst"
                     }
+                    translationEnabled
                     disabled={!watch("type")}
                     options={filterSubCategories(watch("type"))}
                     errors={errors}
@@ -216,7 +218,7 @@ const SearchServices = () => {
         </View>
       </View>
 
-      <View style={{ marginBottom: 20 }}>
+      {/* <View style={{ marginBottom: 20 }}>
         <CustomHeading
           style={styles.sectionTitle}
           baseFont={22}
@@ -239,7 +241,7 @@ const SearchServices = () => {
             />
           )}
         </>
-      </View>
+      </View> */}
     </>
   );
 };

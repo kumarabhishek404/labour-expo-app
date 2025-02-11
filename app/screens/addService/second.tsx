@@ -64,11 +64,6 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
 
   return (
     <View style={styles?.container}>
-      {/* <Image source={Step2} style={styles.image} />
-      <View style={{ marginVertical: 30 }}>
-        <Stepper currentStep={2} steps={ADDSERVICESTEPS} />
-      </View> */}
-
       <View style={{ flexDirection: "column", gap: 15 }}>
         <View style={{ zIndex: 9 }}>
           <Controller

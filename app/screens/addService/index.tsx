@@ -18,7 +18,6 @@ import Atoms from "@/app/AtomStore";
 import SecondScreen from "./second";
 import moment from "moment";
 import ThirdScreen from "./third";
-import SERVICE from "@/app/api/services";
 import TOAST from "@/app/hooks/toast";
 import FinalScreen from "./final";
 import { t } from "@/utils/translationHelper";
@@ -29,6 +28,7 @@ import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import { Button } from "react-native-paper";
+import EMPLOYER from "@/app/api/employer";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -72,7 +72,7 @@ const AddServiceScreen = () => {
   } = useInfiniteQuery({
     queryKey: ["myServices"],
     queryFn: ({ pageParam }) => {
-      return SERVICE?.fetchMyServices({
+      return EMPLOYER?.fetchMyServices({
         pageParam,
         status: "",
       });
@@ -189,7 +189,7 @@ const AddServiceScreen = () => {
 
     console.log("form Data --", formData);
 
-    const response: any = await SERVICE?.addNewService(formData);
+    const response: any = await EMPLOYER?.addNewService(formData);
     return response?.data;
   };
 
@@ -250,7 +250,7 @@ const AddServiceScreen = () => {
 
       console.log("form Data --", formData);
 
-      const response: any = await SERVICE?.editService(formData);
+      const response: any = await EMPLOYER?.editService(formData);
 
       if (!response?.data) {
         throw new Error("No data received from server");
@@ -372,10 +372,11 @@ const AddServiceScreen = () => {
                 style={{ width: "50%", alignItems: "flex-start" }}
                 onPress={() =>
                   router?.push({
-                    pathname: "/screens/users",
+                    pathname: "/screens/bookings",
                     params: {
                       title: "My Booked Workers",
                       type: "booked",
+                      searchCategory: JSON.stringify({ name: "", skill: "" }),
                     },
                   })
                 }
@@ -407,7 +408,7 @@ const AddServiceScreen = () => {
             </View>
           </View>
 
-          <View style={{ marginBottom: 20 }}>
+          {/* <View style={{ marginBottom: 20 }}>
             <Text style={styles.sectionTitle}>🌴 My Created Services</Text>
             {memoizedData ? (
               <ListingHorizontalServices
@@ -422,7 +423,7 @@ const AddServiceScreen = () => {
                 color={Colors?.primary}
               />
             )}
-          </View>
+          </View> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </>

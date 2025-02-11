@@ -4,8 +4,9 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import Animated, { SlideInDown } from "react-native-reanimated";
@@ -13,7 +14,6 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
-import SERVICE from "@/app/api/services";
 import Loader from "@/components/commons/Loaders/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import CustomHeading from "@/components/commons/CustomHeading";
@@ -22,6 +22,9 @@ import CustomText from "@/components/commons/CustomText";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";
 import { router } from "expo-router";
+import USER from "@/app/api/user";
+import WORKER from "@/app/api/workers";
+import EMPLOYER from "@/app/api/employer";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -77,9 +80,15 @@ const ServiceActionButtons = ({
   modalVisible,
   isWorkerSelectModal,
 }: ServiceActionButtonsProps) => {
+  const [selectedWorkers, setSelectedWorkers] = useState(selectedWorkersIds);
+
+  useEffect(() => {
+    setSelectedWorkers(selectedWorkersIds);
+  }, [selectedWorkersIds]);
+
   const mutationLikeService = useMutation({
     mutationKey: ["likeService", { id }],
-    mutationFn: () => SERVICE?.likeService({ serviceId: id }),
+    mutationFn: () => USER?.likeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
       TOAST?.showToast?.success(t("serviceAddedInFavourites"));
@@ -92,7 +101,7 @@ const ServiceActionButtons = ({
 
   const mutationUnLikeService = useMutation({
     mutationKey: ["unlikeService", { id }],
-    mutationFn: () => SERVICE?.unLikeService({ serviceId: id }),
+    mutationFn: () => USER?.unLikeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
       TOAST?.showToast?.success(t("serviceRemovedInFavourites"));
@@ -105,29 +114,28 @@ const ServiceActionButtons = ({
 
   const mutationApplyService = useMutation({
     mutationKey: ["applyService", { id }],
-    mutationFn: () =>
-      SERVICE?.applyService({ _id: userDetails?._id, serviceId: id }),
+    mutationFn: (payload: any) => WORKER?.applyService(payload),
     onSuccess: async (response) => {
+      setIsWorkerSelectModal(false);
+      setSelectedWorkersIds([]);
       await refetch();
       await refreshUser();
       TOAST?.showToast?.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
     onError: (err: any) => {
-      TOAST?.showToast?.error(
-        `Error while applying in the service - ${err?.response?.data?.message}`
-      );
       console.error("error while applying in the service ", err);
     },
   });
 
   const mutationUnApplyService = useMutation({
     mutationKey: ["unapplyService", { id }],
-    mutationFn: () => SERVICE?.unApplyService({ serviceId: id }),
+    mutationFn: () => WORKER?.unApplyService({ serviceId: id }),
     onSuccess: async (response) => {
+      setIsWorkerSelectModal(false);
+      setSelectedWorkersIds([]);
       await refetch();
       await refreshUser();
-      setSelectedWorkersIds([]);
       TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
@@ -139,44 +147,9 @@ const ServiceActionButtons = ({
     },
   });
 
-  const mutationMediatorApplyService = useMutation({
-    mutationKey: ["mediatorApplyService", { id }],
-    mutationFn: () =>
-      SERVICE?.mediatorApplyService({
-        serviceId: id,
-        workers: selectedWorkersIds,
-      }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      setIsWorkerSelectModal(false);
-      TOAST?.showToast?.success(t("serviceAppliedSuccessfully"));
-      console.log("Response while applying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
-  const mutationMediatorUnApplyService = useMutation({
-    mutationKey: ["mediatorUnApplyService", { id }],
-    mutationFn: () => SERVICE?.mediatorUnApplyService({ serviceId: id }),
-    onSuccess: async (response) => {
-      setIsWorkerSelectModal(false);
-      await refetch();
-      await refreshUser();
-      TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
-      console.log("Response while unapplying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
   const mutationCancelServiceByWorkerAfterSelection = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () =>
-      SERVICE?.cancelServiceByWorkerAfterSelection({ serviceId: id }),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -190,8 +163,7 @@ const ServiceActionButtons = ({
 
   const mutationCancelServiceByMediatorAfterSelection = useMutation({
     mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
-    mutationFn: () =>
-      SERVICE?.cancelServiceByMediatorAfterSelection({ serviceId: id }),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -205,7 +177,7 @@ const ServiceActionButtons = ({
 
   const mutationCompleteService = useMutation({
     mutationKey: ["completeService", { id }],
-    mutationFn: () => SERVICE?.completeService({ serviceId: id }),
+    mutationFn: () => EMPLOYER?.completeBooking({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -219,7 +191,7 @@ const ServiceActionButtons = ({
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => SERVICE?.deleteServiceById(id),
+    mutationFn: () => EMPLOYER?.cancelBooking(id),
     onSuccess: async (response) => {
       setModalVisible(false);
       await refetch();
@@ -233,7 +205,7 @@ const ServiceActionButtons = ({
 
   const mutationRestoreService = useMutation({
     mutationKey: ["restoreService", { id }],
-    mutationFn: () => SERVICE?.restoreService({ serviceId: id }),
+    mutationFn: () => EMPLOYER?.restoreService({ serviceId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -246,16 +218,18 @@ const ServiceActionButtons = ({
     mutationDeleteService.mutate();
   };
 
+  console.log("selectedWorkersIds--12345", selectedWorkers);
+
   const handleApply = () => {
-    setIsWorkerSelectModal(true);
+    if (members && members?.length > 0) setIsWorkerSelectModal(true);
     // for worker
-    // mutationApplyService.mutate();
+    else mutationApplyService.mutate({ workers: [], serviceId: id });
   };
 
   const handleCancelApply = () => {
-    setIsWorkerSelectModal(true);
+    if (members && members?.length > 0) setIsWorkerSelectModal(true);
     // for worker
-    // mutationUnApplyService.mutate();
+    else mutationUnApplyService.mutate();
   };
 
   const renderButtons = () => {
@@ -284,6 +258,9 @@ const ServiceActionButtons = ({
               <Button
                 isPrimary={true}
                 title={t("removeFromService")}
+                bgColor={Colors?.danger}
+                borderColor={Colors?.danger}
+                style={{ width: "60%" }}
                 onPress={mutationCancelServiceByWorkerAfterSelection.mutate}
               />
             ) : (
@@ -307,6 +284,8 @@ const ServiceActionButtons = ({
                   : mutationLikeService.mutate
               }
               style={styles.footerBtn}
+              bgColor={isServiceLiked ? Colors?.danger : Colors?.primary}
+              borderColor={isServiceLiked ? Colors?.danger : Colors?.primary}
               textStyle={{ color: Colors?.white }}
             />
           </>
@@ -323,12 +302,10 @@ const ServiceActionButtons = ({
               onPress={mutationDeleteService.mutate}
               style={styles.deleteBtn}
             />
-            {service?.appliedWorkers?.length > 0 ||
-            service?.selectedWorkers?.length > 0 ||
-            service?.selectedWorkers?.length > 0 ||
-            service?.selectedMediators?.length > 0 ? (
+            {service?.appliedUsers?.length > 0 ||
+            service?.selectedUsers?.length > 0 ? (
               <Button
-                isPrimary={false}
+                isPrimary={true}
                 title={t("completeService")}
                 onPress={mutationCompleteService.mutate}
                 style={styles.completeBtn}
@@ -336,7 +313,7 @@ const ServiceActionButtons = ({
               />
             ) : (
               <Button
-                isPrimary={false}
+                isPrimary={true}
                 title={t("edit")}
                 onPress={() => {
                   router.push("/(tabs)");
@@ -397,13 +374,17 @@ const ServiceActionButtons = ({
   };
 
   const RenderMemberItem = ({ item }: any) => {
-    console.log("item---", item);
+    console.log("item--", item);
 
     return (
-      <View style={[styles.userItem]} key={item?._id}>
+      <TouchableOpacity
+        onPress={() => toggleUserSelection(item?._id)}
+        style={[styles.userItem]}
+        key={item?._id}
+      >
         <CustomCheckbox
           disabled={!!isServiceApplied}
-          isChecked={selectedWorkersIds?.includes(item?._id)}
+          isChecked={selectedWorkers?.includes(item?._id)}
           onToggle={() => toggleUserSelection(item?._id)}
           containerStyle={{ marginRight: 8 }}
         />
@@ -426,12 +407,12 @@ const ServiceActionButtons = ({
             {item?.address || t("addressNotFound")}
           </CustomText>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   const memoizedData = useMemo(
-    () => members && members[0]?.workers?.flatMap((data: any) => data),
+    () => members && members?.flatMap((data: any) => data),
     [members]
   );
 
@@ -441,42 +422,29 @@ const ServiceActionButtons = ({
     }
   };
 
+  console.log("members---", members);
+
+  console.log("seleced---", selectedWorkersIds);
+
   RenderMemberItem.displayName = "RenderMemberItem";
   const renderItem = ({ item }: any) => <RenderMemberItem item={item} />;
 
   const mediatorModelContent = () => {
     return (
       <View style={styles.modalContent}>
-        {memoizedData && memoizedData?.length > 0 ? (
-          <FlatList
-            data={memoizedData ?? []}
-            renderItem={renderItem}
-            keyExtractor={(item) => item?._id?.toString()}
-            onEndReached={debounce(loadMore, 300)}
-            onEndReachedThreshold={0.9}
-            ListFooterComponent={() =>
-              isMemberFetchingNextPage ? (
-                <ActivityIndicator
-                  size="large"
-                  color={Colors?.primary}
-                  style={styles.loaderStyle}
-                />
-              ) : null
-            }
-            getItemLayout={(data, index) => ({
-              length: 200,
-              offset: 200 * index,
-              index,
-            })}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={3}
-            removeClippedSubviews={true}
-            contentContainerStyle={{ paddingBottom: 110 }}
-            showsVerticalScrollIndicator={false}
-            nestedScrollEnabled={true}
-            keyboardShouldPersistTaps="handled"
-          />
+        {memoizedData && memoizedData.length > 0 ? (
+          <View style={{ paddingBottom: 110 }}>
+            {memoizedData.map((item: any) => (
+              <View key={item?._id?.toString()}>{renderItem({ item })}</View>
+            ))}
+            {isMemberFetchingNextPage && (
+              <ActivityIndicator
+                size="large"
+                color={Colors?.primary}
+                style={styles.loaderStyle}
+              />
+            )}
+          </View>
         ) : (
           <View style={styles.emptyContainer}>
             {isMemberLoading ? (
@@ -518,9 +486,7 @@ const ServiceActionButtons = ({
           mutationLikeService?.isPending ||
           mutationUnLikeService?.isPending ||
           mutationApplyService?.isPending ||
-          mutationMediatorApplyService?.isPending ||
           mutationUnApplyService?.isPending ||
-          mutationMediatorUnApplyService?.isPending ||
           mutationCompleteService?.isPending ||
           mutationDeleteService?.isPending ||
           mutationCancelServiceByWorkerAfterSelection?.isPending ||
@@ -573,15 +539,19 @@ const ServiceActionButtons = ({
         content={mediatorModelContent}
         onClose={() => setIsWorkerSelectModal(false)}
         primaryButton={{
-          disabled: selectedWorkersIds?.length === 0,
+          disabled: selectedWorkers?.length === 0,
           title: isServiceApplied ? t("cancelApply") : t("applyNow"),
           styles: {
             backgroundColor: Colors?.danger,
             borderColor: Colors?.danger,
           },
           action: isServiceApplied
-            ? mutationMediatorUnApplyService?.mutate
-            : mutationMediatorApplyService?.mutate,
+            ? mutationUnApplyService?.mutate
+            : () =>
+                mutationApplyService?.mutate({
+                  workers: selectedWorkers,
+                  serviceId: id,
+                }),
         }}
         secondaryButton={{
           title: t("cancel"),
@@ -607,8 +577,6 @@ const styles = StyleSheet.create({
   },
   footerBtn: {
     flex: 1,
-    backgroundColor: Colors.tertiery,
-    borderColor: Colors.tertiery,
     alignItems: "center",
   },
   deleteBtn: {
@@ -696,7 +664,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   userItem: {
     flexDirection: "row",

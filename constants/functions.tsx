@@ -1,11 +1,8 @@
 import moment from "moment";
 import * as Location from "expo-location";
 import TOAST from "@/app/hooks/toast";
-import WORKER from "@/app/api/workers";
-import MEDIATOR from "@/app/api/mediator";
 import EMPLOYER from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
-import BOOKING from "@/app/api/booking";
 import { WORKTYPES } from ".";
 import { Linking } from "react-native";
 
@@ -159,14 +156,13 @@ export const fetchCurrentLocation = async () => {
   }
 };
 
-export const handleQueryKey = (role: any, type: any) => {
-  if (type === "favourite") return "favouriteWorkers";
+export const handleQueryKey = (type: any) => {
+  if (type === "saved") return "favouriteWorkers";
   else if (type === "booked") return "bookedWorkers";
   else return "workers";
 };
 
 export const handleQueryFunction = async (
-  role: any,
   type: any,
   pageParam: number,
   category: any,
@@ -176,18 +172,18 @@ export const handleQueryFunction = async (
 
   try {
     let data = {};
-    if (type === "favourite")
-      data = await WORKER?.fetchAllLikedWorkers({
+    if (type === "saved")
+      data = await USER?.fetchAllLikedUsers({
         pageParam,
         skill: category,
       });
     else if (type === "booked")
-      data = await BOOKING?.fetchAllBookedWorkers({
+      data = await EMPLOYER?.fetchAllBookedWorkers({
         pageParam,
         skill: category,
       });
     else
-      data = await WORKER?.fetchAllWorkers({
+      data = await USER?.fetchAllUsers({
         pageParam,
         name: searchCategory?.name,
         skill: searchCategory?.skill,
@@ -281,6 +277,7 @@ export const getFontSize = (locale: string, baseSize = BASE_FONT_SIZE) => {
 };
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import USER from "@/app/api/user";
 
 export const logoutUser = async (setUserDetails: any, router: any) => {
   await AsyncStorage.removeItem("user"); // Remove from AsyncStorage

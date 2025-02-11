@@ -46,7 +46,9 @@ const editReview = async (payload: any) => {
 const deleteReview = async (payload: any) => {
   console.log("Payload --", payload);
   try {
-    const data = await API_CLIENT.makeDeleteRequest(`/review/delete/${payload?.id}`);
+    const data = await API_CLIENT.makeDeleteRequest(
+      `/review/delete/${payload?.id}`
+    );
     TOAST?.showToast?.success("Review deleted successfully");
     return data.data;
   } catch (error: any) {

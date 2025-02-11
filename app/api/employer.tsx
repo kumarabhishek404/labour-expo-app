@@ -1,101 +1,294 @@
+import { t } from "@/utils/translationHelper";
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
-const getEmployerById = async (id: any) => {
+// Helper function for consistent error handling
+const handleServiceError = (error: any, operation: string) => {
+  const errorMessage =
+    error?.response?.data?.message || `Failed to ${operation}`;
+  console.error(`[ServiceAPI] ${operation} failed:`, {
+    error: error?.response?.data || error,
+    operation,
+  });
+  TOAST?.showToast?.error(errorMessage);
+  throw error;
+};
+
+const addNewService = async (payload: any) => {
   try {
-    const { data } = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
-    return data;
+    const data = await API_CLIENT.makePostRequestFormData(
+      "/employer/add-service",
+      payload
+    );
+    return data?.data;
+  } catch (error: any) {
+    handleServiceError(error, "add new service");
+  }
+};
+
+const editService = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePutRequestFormData(
+      "/employer/update-service",
+      payload
+    );
+    return data?.data;
   } catch (error: any) {
     console.error(
-      `[Users] [userService] An error occurred while fetching employer details : `,
-      error
+      `[userService] An error occurred while updating service : `,
+      error?.response?.data
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while getting employer by id"
+        "An error occurred while updating service"
     );
     throw error;
   }
 };
 
-const fetchAllEmployers = async ({ pageParam }: any) => {
+// My Services
+const fetchMyServices = async ({ pageParam, status }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all?page=${pageParam}&limit=5&role=EMPLOYER`
+      `/employer/my-services?status=${status}&page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching employers : `,
+      `[userService] An error occurred while fetching my services : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching employers"
+        "An error occurred while fetching services"
     );
     throw error;
   }
 };
 
-const fetchAllLikedEmployer = async ({ pageParam }: any) => {
+const selectWorker = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/application/select",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    handleServiceError(error, "select worker");
+  }
+};
+
+const rejectWorker = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/application/reject",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while rejecting worker : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while rejecting worker"
+    );
+    throw error;
+  }
+};
+
+const cancelSelectedWorker = async (payload: any) => {
+  console.log("Payload --", payload);
+
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/selection/cancel",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while canceling selected worker : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while canceling selected worker"
+    );
+    throw error;
+  }
+};
+
+// BOOKINGS
+const addBookingRequest = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequestFormData(
+      "/employer/booking/invitations/send",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while sending booking request : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while sending booking request"
+    );
+    throw error;
+  }
+};
+
+const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
+  console.log("pageParam", pageParam);
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all-liked?role=EMPLOYER&page=${pageParam}&limit=5`
+      `/employer/booking/invitations/sent?page=${pageParam}&limit=5`
     );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while fetching liked employers : `,
+      `[userService] An error occurred while fetching sent bookings : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching employers"
+        "An error occurred while fetching sent bookings"
     );
     throw error;
   }
 };
 
-const likeEmployer = async (payload: any) => {
+const cancelBookingRequest = async (payload: any) => {
+  console.log("payload", payload);
+
   try {
-    const data = await API_CLIENT.makePostRequest(`/user/like/${payload?.employerID}`);
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/booking/invitations/cancel",
+      payload
+    );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while liking employer : `,
+      `[userService] An error occurred while cancelling booking request : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching employer"
+        "An error occurred while cancelling booking request"
     );
     throw error;
   }
 };
 
-const unlikeEmployer = async (payload: any) => {
+const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   try {
-    const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${payload?.employerID}`);
+    const data = await API_CLIENT.makeGetRequest(
+      `/employer/booked-worker/all?page=${pageParam}&limit=5`
+    );
     return data.data;
   } catch (error: any) {
     console.error(
-      `[userService] An error occurred while unliking employer : `,
+      `[userService] An error occurred while fetching booked workers : `,
       error?.response?.data?.message
     );
     TOAST?.showToast?.error(
       error?.response?.data?.message ||
-        "An error occurred while fetching employer"
+        "An error occurred while fetching booked workers"
     );
     throw error;
+  }
+};
+
+const removeBookedWorker = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/booking/remove-worker",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while removing booked worker : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while removing booked worker"
+    );
+    throw error;
+  }
+};
+
+const completeBooking = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/booking/complete",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while completing booking : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while completing booking"
+    );
+    throw error;
+  }
+};
+
+const cancelBooking = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/booking/cancel",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while cancelling booking : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while cancelling booking"
+    );
+    throw error;
+  }
+};
+
+const restoreService = async (payload: any) => {
+  try {
+    const data = await API_CLIENT.makePostRequest(
+      "/employer/restore-service",
+      payload
+    );
+    return data.data;
+  } catch (error: any) {
+    handleServiceError(error, "restore service");
   }
 };
 
 const EMPLOYER = {
-  getEmployerById,
-  fetchAllEmployers,
-  fetchAllLikedEmployer,
-  likeEmployer,
-  unlikeEmployer,
+  addNewService,
+  editService,
+  fetchMyServices,
+  selectWorker,
+  rejectWorker,
+  cancelSelectedWorker,
+  addBookingRequest,
+  cancelBookingRequest,
+  fetchAllBookingSentRequests,
+  fetchAllBookedWorkers,
+  removeBookedWorker,
+  cancelBooking,
+  completeBooking,
+  restoreService,
 };
 
 export default EMPLOYER;

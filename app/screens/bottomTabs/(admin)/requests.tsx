@@ -5,16 +5,16 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { Stack } from "expo-router";
-import { acceptJoiningRequest, rejectJoiningRequest } from "@/app/api/requests";
 import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { ADMINREQUEST} from "@/constants";
+import { ADMINREQUEST } from "@/constants";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import { fetchAllRequestsForAdmin } from "@/app/api/admin";
+import ADMIN from "@/app/api/admin";
+import WORKER from "@/app/api/workers";
 
 const AdminRequests = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -32,7 +32,7 @@ const AdminRequests = () => {
   } = useInfiniteQuery({
     queryKey: ["requests", category],
     queryFn: ({ pageParam }) =>
-      fetchAllRequestsForAdmin({ pageParam, type: category }),
+      ADMIN?.fetchAllRequestsForAdmin({ pageParam, type: category }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -55,7 +55,7 @@ const AdminRequests = () => {
 
   const mutationAcceptRequest = useMutation({
     mutationKey: ["acceptRequest"],
-    mutationFn: (id) => acceptJoiningRequest({ requestId: id }),
+    mutationFn: (id) => WORKER?.acceptTeamRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
       refreshUser();
@@ -65,7 +65,7 @@ const AdminRequests = () => {
 
   const mutationRejectRequest = useMutation({
     mutationKey: ["rejectRequest"],
-    mutationFn: (id) => rejectJoiningRequest({ requestId: id }),
+    mutationFn: (id) => WORKER?.rejectTeamRequest({ requestId: id }),
     onSuccess: (response) => {
       refetch();
     },
@@ -91,7 +91,11 @@ const AdminRequests = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("requests")} left="menu" right="notification" />
+            <CustomHeader
+              title={t("requests")}
+              left="menu"
+              right="notification"
+            />
           ),
         }}
       />
@@ -104,7 +108,11 @@ const AdminRequests = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
+          />
 
           <CategoryButtons
             options={ADMINREQUEST}

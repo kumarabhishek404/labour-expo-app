@@ -25,9 +25,12 @@ import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
 import Step2 from "../../../assets/step2.jpg";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
+import AUTH from "@/app/api/auth";
+import useFirstTimeLaunch from "@/app/hooks/useFirstTimeLaunch";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
+  const isFirstLaunch = useFirstTimeLaunch();
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
@@ -59,7 +62,7 @@ const LoginScreen = () => {
 
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
-    mutationFn: (data) => USER?.signIn(data),
+    mutationFn: (data) => AUTH?.signIn(data),
     onSuccess: async (response) => {
       const user = response?.user;
       setUserDetails({
@@ -68,10 +71,15 @@ const LoginScreen = () => {
         ...user,
       });
 
+      console.log("user---", user);
+
       TOAST?.showToast?.success(t("loggedInSuccessfully"));
-      if (user?.status === "ACTIVE" && user?.profilePicture) {
+      if (isFirstLaunch) {
+        return router?.push("/screens/tutorials/bootomNavigation");
+      } else if (user?.status === "ACTIVE" && user?.profilePicture) {
         setIsAccountInactive(false);
-        router.replace("/(tabs)");
+        if (user?.skills?.length > 0) router.replace("/(tabs)/fourth");
+        else router.replace("/(tabs)");
       } else if (!user?.profilePicture) {
         router.push({
           pathname: "/screens/auth/register/fourth",

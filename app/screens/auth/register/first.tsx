@@ -12,12 +12,12 @@ import MobileNumberField from "@/components/inputs/MobileNumber";
 import { Feather } from "@expo/vector-icons";
 import ModalComponent from "@/components/commons/Modal";
 import { useMutation } from "@tanstack/react-query";
-import USER from "@/app/api/user";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
 import { Link, router, Stack } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
+import AUTH from "@/app/api/auth";
 
 const RegisterScreen = () => {
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
@@ -42,7 +42,7 @@ const RegisterScreen = () => {
 
   const mutationRegister = useMutation({
     mutationKey: ["register"],
-    mutationFn: (payload) => USER.register(payload),
+    mutationFn: (payload) => AUTH.register(payload),
     onSuccess: (data) => {
       console.log("User registered:", data);
       setUserDetails({
@@ -61,7 +61,7 @@ const RegisterScreen = () => {
   const mutationCheckMobileNumber = useMutation({
     mutationKey: ["checkMobileNumber"],
     mutationFn: (payload: { mobile: string }) =>
-      USER?.checkMobileExistance(payload),
+      AUTH?.checkMobileExistance(payload),
     onSuccess: (response) => {
       if (response?.data?.data?.exists) {
         setMobileNumberExist("exist");

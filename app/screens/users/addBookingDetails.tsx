@@ -10,7 +10,6 @@ import { Ionicons } from "@expo/vector-icons";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
-import BOOKING from "@/app/api/booking";
 import DateField from "@/components/inputs/DateField";
 import { filterSubCategories, isEmptyObject } from "@/constants/functions";
 import Duration from "@/components/inputs/Duration";
@@ -18,6 +17,8 @@ import Loader from "@/components/commons/Loaders/Loader";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import moment from "moment";
 import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
+import DropdownWithMenu from "@/components/inputs/DropdownWithMenu";
+import EMPLOYER from "@/app/api/employer";
 
 interface AddBookingDetailsProps {
   refetch: any;
@@ -51,6 +52,7 @@ const AddBookingDetails = ({
       description: "",
     },
   });
+  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [location, setLocation] = useState({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
@@ -58,7 +60,7 @@ const AddBookingDetails = ({
 
   const mutationAddBookingRequest = useMutation({
     mutationKey: ["addBookingRequest"],
-    mutationFn: (payload: any) => BOOKING?.addBookingRequest(payload),
+    mutationFn: (payload: any) => EMPLOYER?.addBookingRequest(payload),
     onSuccess: (response) => {
       refetch();
       TOAST?.showToast?.success(t("bookRequestSentSuccessfully"));
@@ -78,12 +80,13 @@ const AddBookingDetails = ({
               required: t("workTypeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
+              <DropdownWithMenu
                 name="type"
                 label={t("workType")}
+                id="type"
                 value={value}
                 setValue={onChange}
-                placeholder={t("selectWorkType")}
+                placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
                 containerStyle={errors?.type && styles.errorInput}
@@ -96,6 +99,11 @@ const AddBookingDetails = ({
                     style={{ paddingVertical: 10, paddingRight: 10 }}
                   />
                 }
+                selectedValue={value}
+                searchEnabled={false}
+                onSelect={onChange}
+                openDropdownId={openDropdownId}
+                setOpenDropdownId={setOpenDropdownId}
               />
             )}
           />
@@ -108,21 +116,18 @@ const AddBookingDetails = ({
               required: t("workSubTypeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
+              <DropdownWithMenu
                 name="subType"
-                label={t("workSubType")}
-                value={value}
-                setValue={onChange}
+                label="workSubType"
+                selectedValue={value}
+                id="subType"
                 placeholder={
                   watch("type")
-                    ? t("selectWorkSubType")
-                    : t("pleaseSelectWorkTypeFirst")
+                    ? "selectWorkSubType"
+                    : "pleaseSelectWorkTypeFirst"
                 }
-                // emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
+                searchEnabled={false}
                 options={filterSubCategories(watch("type"))}
-                errors={errors}
-                containerStyle={errors?.subType && styles.errorInput}
-                search={false}
                 icon={
                   <Ionicons
                     name={"mail-outline"}
@@ -131,7 +136,35 @@ const AddBookingDetails = ({
                     style={{ paddingVertical: 10, paddingRight: 10 }}
                   />
                 }
+                onSelect={onChange}
+                openDropdownId={openDropdownId}
+                setOpenDropdownId={setOpenDropdownId}
               />
+
+              // <DropdownComponent
+              //   name="subType"
+              //   label={t("workSubType")}
+              //   value={value}
+              //   setValue={onChange}
+              // placeholder={
+              //   watch("type")
+              //     ? t("selectWorkSubType")
+              //     : t("pleaseSelectWorkTypeFirst")
+              // }
+              //   // emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
+              //   options={filterSubCategories(watch("type"))}
+              //   errors={errors}
+              //   containerStyle={errors?.subType && styles.errorInput}
+              //   search={false}
+              //   icon={
+              // <Ionicons
+              //   name={"mail-outline"}
+              //   size={30}
+              //   color={Colors.secondary}
+              //   style={{ paddingVertical: 10, paddingRight: 10 }}
+              // />
+              //   }
+              // />
             )}
           />
           <Controller

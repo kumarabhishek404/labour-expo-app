@@ -25,6 +25,7 @@ import DropdownComponent from "@/components/inputs/Dropdown";
 import ButtonComp from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { Button } from "react-native-paper";
+import USER from "@/app/api/user";
 
 const SearchWorkers = () => {
   const {
@@ -51,7 +52,7 @@ const SearchWorkers = () => {
   } = useInfiniteQuery({
     queryKey: ["topWorkers"],
     queryFn: ({ pageParam }) =>
-      WORKER.fetchAllWorkers({ pageParam, skill: "", name: "" }),
+      USER?.fetchAllUsers({ pageParam, skill: "", name: "" }),
     initialPageParam: 1,
     enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
     getNextPageParam: (lastPage) =>
@@ -222,7 +223,7 @@ const SearchWorkers = () => {
           />
         </View>
 
-        <View style={styles.workerList}>
+        {/* <View style={styles.workerList}>
           <CustomHeading
             style={styles.sectionTitle}
             baseFont={22}
@@ -244,7 +245,7 @@ const SearchWorkers = () => {
               color={Colors.primary}
             />
           )}
-        </View>
+        </View> */}
       </View>
     </TouchableWithoutFeedback>
   );

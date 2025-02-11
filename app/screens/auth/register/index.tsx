@@ -14,6 +14,7 @@ import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import AUTH from "@/app/api/auth";
 
 const SignupScreen = () => {
   const locale = useAtomValue(Atoms?.LocaleAtom);
@@ -34,7 +35,7 @@ const SignupScreen = () => {
   // Register User (Step 1)
   const mutationRegister = useMutation({
     mutationKey: ["register"],
-    mutationFn: (payload) => USER.register(payload),
+    mutationFn: (payload) => AUTH.register(payload),
     onSuccess: (data) => {
       console.log("User registered:", data);
       setUserId(data?.id); // Store user ID

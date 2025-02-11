@@ -1,25 +1,19 @@
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Stack, useFocusEffect } from "expo-router";
 import Colors from "@/constants/Colors";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import WORKER from "@/app/api/workers";
 import SERVICE from "../../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
-import EMPLOYER from "../../../api/employer";
-import GroupWorkersListing from "@/components/commons/GroupWorkersListing";
-import GroupEmployersListing from "@/components/commons/GroupEmployersListing";
-import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import HomePageLinks from "@/components/commons/HomePageLinks";
 import BannerSlider from "@/components/commons/BannerSlider";
-import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { WORKERS, WORKERTYPES } from "@/constants";
 import QuickContact from "@/components/commons/QuickContact";
 import TestimonialSlider from "@/components/commons/Testimonials";
-import PublicationsScreen from "@/components/commons/Publications";
 import AboutCompany from "@/components/commons/AboutCompany";
 import CompanySuccess from "@/components/commons/CompanySuccessStats";
 import ScrollHint from "@/components/commons/ScrollToRight";
@@ -31,7 +25,7 @@ import HowAppWorks from "@/components/commons/HowAppWorks";
 import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import { useRoute } from "@react-navigation/native";
+import USER from "@/app/api/user";
 
 const UserHome = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -76,7 +70,7 @@ const UserHome = () => {
   } = useInfiniteQuery({
     queryKey: ["tops", category],
     queryFn: ({ pageParam }) => {
-      EMPLOYER?.fetchAllEmployers({ pageParam, type: category, top: true });
+      USER?.fetchAllUsers({ pageParam, type: category, top: true });
     },
     initialPageParam: 1,
     retry: false,

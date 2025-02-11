@@ -71,27 +71,20 @@ const ListingsVerticalServices = ({
         <View style={styles.container}>
           <Link href={`/screens/service/${item._id}`} asChild>
             <TouchableOpacity>
-              {userDetails?._id !== item?.employer && (
-                <>
-                  {item?.type === "booking" ? (
-                    <View
-                      style={[
-                        styles?.tag,
-                        { backgroundColor: Colors?.primary },
-                      ]}
-                    >
-                      <CustomText color={Colors?.white} fontWeight="bold">
-                        Applied In Service
-                      </CustomText>
-                    </View>
-                  ) : (
-                    <View style={styles?.tag}>
-                      <CustomText color={Colors?.white} fontWeight="bold">
-                        Direct Bookings
-                      </CustomText>
-                    </View>
-                  )}
-                </>
+              {item?.bookingType === "byService" ? (
+                <View
+                  style={[styles?.tag, { backgroundColor: Colors?.primary }]}
+                >
+                  <CustomText color={Colors?.white} fontWeight="bold">
+                    Service Post
+                  </CustomText>
+                </View>
+              ) : (
+                <View style={styles?.tag}>
+                  <CustomText color={Colors?.white} fontWeight="bold">
+                    Direct Bookings
+                  </CustomText>
+                </View>
               )}
               <View style={styles.item}>
                 <Image
@@ -100,9 +93,8 @@ const ListingsVerticalServices = ({
                   }
                   style={styles.image}
                 />
-                {(item?.selectedWorkers || item?.selectedMediators) &&
-                  (item?.selectedWorkers?.includes(userDetails?._id) ||
-                    item?.selectedMediators?.includes(userDetails?._id)) && (
+                {item?.selectedUsers &&
+                  item?.selectedUsers?.includes(userDetails?._id) && (
                     <View
                       style={[
                         styles.applicants,
@@ -116,20 +108,17 @@ const ListingsVerticalServices = ({
                     </View>
                   )}
 
-                {(item?.appliedWorkers || item?.appliedMediators) &&
-                  (item?.appliedWorkers?.length > 0 ||
-                    item?.appliedMediators?.length > 0) && (
-                    <View style={styles.applicants}>
-                      <Fontisto name="persons" size={18} color={Colors.white} />
-                      <CustomHeading color={Colors?.white}>
-                        {item?.appliedWorkers?.length +
-                          item?.appliedMediators?.length}
-                      </CustomHeading>
-                      <CustomHeading color={Colors?.white}>
-                        {t("proposals")}
-                      </CustomHeading>
-                    </View>
-                  )}
+                {item?.appliedUsers && item?.appliedUsers?.length > 0 && (
+                  <View style={styles.applicants}>
+                    <Fontisto name="persons" size={18} color={Colors.white} />
+                    <CustomHeading color={Colors?.white}>
+                      {item?.appliedUsers?.length}
+                    </CustomHeading>
+                    <CustomHeading color={Colors?.white}>
+                      {t("proposals")}
+                    </CustomHeading>
+                  </View>
+                )}
 
                 <Requirements
                   type="highlights"

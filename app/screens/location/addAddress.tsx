@@ -22,7 +22,8 @@ import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
 import { ALL_INDIAN_VILLAGES } from "@/constants/india";
-import DropdownWithMenu from "@/components/inputs/dropdownWithMenu";
+import DropdownWithMenu from "@/components/inputs/DropdownWithMenu";
+// import DropdownWithMenu from "@/components/inputs/dropdownWithMenu";
 
 const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);

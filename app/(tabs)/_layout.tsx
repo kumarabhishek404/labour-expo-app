@@ -20,6 +20,7 @@ import ProfileScreen from "../screens/bottomTabs/(user)/profile";
 import { getFontSize } from "@/constants/functions";
 import { Badge } from "react-native-paper";
 import BadgeComponent from "@/components/commons/Badge";
+import BottomNavTutorial from "../screens/tutorials/bootomNavigation";
 
 export default function Layout() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -30,6 +31,7 @@ export default function Layout() {
   LOCAL_CONTEXT?.useLocale();
   const isFirstLaunch = useFirstTimeLaunch();
   const { locale } = LOCAL_CONTEXT.useLocale();
+  const [showTutorial, setShowTutorial] = useState(true);
 
   useEffect(() => {
     setIsAccountInactiveLocal(isAccountInactive);
@@ -45,8 +47,12 @@ export default function Layout() {
     return <Login />;
   }
 
-  console.log("isAccountInactiveLocal---", isAccountInactiveLocal, isAccountInactive);
-  
+  console.log(
+    "isAccountInactiveLocal---",
+    isAccountInactiveLocal,
+    isAccountInactive
+  );
+
   if (isAccountInactiveLocal) {
     return <ProfileScreen />;
   }
@@ -190,83 +196,85 @@ export default function Layout() {
   };
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          height: 75,
-          display: "flex",
-          alignContent: "center",
-          justifyContent: "center",
-          backgroundColor: Colors.white,
-          elevation: 5,
-          shadowColor: "#000",
-          shadowOpacity: 0.1,
-          shadowRadius: 10,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        listeners={{
-          tabPress: () => setAddService({}),
+    <>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            height: 75,
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            backgroundColor: Colors.white,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+          },
         }}
-        options={{
-          tabBarButton: (props) => (
-            <TabButton
-              props={props}
-              path="/(tabs)/"
-              title="Post Service"
-              iconName="add"
-            />
-          ),
-        }}
-      />
+      >
+        <Tabs.Screen
+          name="index"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/"
+                title="Post Service"
+                iconName="add"
+              />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="fourth"
-        listeners={{
-          tabPress: () => setAddService({}),
-        }}
-        options={{
-          tabBarButton: (props) => (
-            <TabButton
-              props={props}
-              path="/(tabs)/fourth"
-              title={userDetails?.isAdmin ? t("users") : "Search"}
-              iconName={userDetails?.isAdmin ? "person" : "search"}
-            />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="fourth"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/fourth"
+                title={userDetails?.isAdmin ? t("users") : "Search"}
+                iconName={userDetails?.isAdmin ? "person" : "search"}
+              />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="second"
-        listeners={{
-          tabPress: () => setAddService({}),
-        }}
-        options={{
-          tabBarButton: (props) => (
-            <TabButton
-              props={props}
-              path="/(tabs)/second"
-              title={userDetails?.isAdmin ? t("users") : t("myBookings")}
-              iconName={userDetails?.isAdmin ? "person" : "calendar-month"}
-            />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="second"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/second"
+                title={userDetails?.isAdmin ? t("users") : t("myBookings")}
+                iconName={userDetails?.isAdmin ? "person" : "calendar-month"}
+              />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="fifth"
-        listeners={{
-          tabPress: () => setAddService({}),
-        }}
-        options={{
-          tabBarButton: (props) => <TabButtonProfile props={props} />,
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="fifth"
+          listeners={{
+            tabPress: () => setAddService({}),
+          }}
+          options={{
+            tabBarButton: (props) => <TabButtonProfile props={props} />,
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
 

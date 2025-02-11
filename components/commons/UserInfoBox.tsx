@@ -7,12 +7,12 @@ import Button from "../inputs/Button";
 import Colors from "@/constants/Colors";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
-import FIREBASE from "@/app/api/firebase";
 import ModalComponent from "./Modal";
 import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
+import AUTH from "@/app/api/auth";
 
 interface UserInfoComponentProps {
   user: any;
@@ -25,7 +25,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
 
   const mutationSendOtp = useMutation({
     mutationKey: ["verifyEmail"],
-    mutationFn: (payload: any) => FIREBASE?.sendEmailCode(payload),
+    mutationFn: (payload: any) => AUTH?.sendEmailCode(payload),
     onSuccess: (data: any) => {
       TOAST?.showToast?.success(t("otpSentTo"), data);
       setModalVisible(true);
@@ -37,7 +37,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
 
   const mutationVerifyCode = useMutation({
     mutationKey: ["verifyEmailCode"],
-    mutationFn: (payload: any) => FIREBASE?.verifyEmailCode(payload?.code),
+    mutationFn: (payload: any) => AUTH?.verifyEmailCode(payload?.code),
     onSuccess: (data: any) => {
       TOAST?.showToast?.success(t("emailVerifiedSuccessfully"));
       setModalVisible(false);

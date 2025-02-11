@@ -13,11 +13,11 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
-import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ModalComponent from "./Modal";
+import WORKER from "@/app/api/workers";
 
 const TeamAdminCard = ({ admin }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -25,7 +25,7 @@ const TeamAdminCard = ({ admin }: any) => {
 
   const mutationLeaveTeam = useMutation({
     mutationKey: ["leaveTeam"],
-    mutationFn: () => USER?.leaveTeam(),
+    mutationFn: (payload: any) => WORKER?.leftTeam(payload),
     onSuccess: (response) => {
       setModalVisible(false);
       TOAST?.showToast?.success(t("leftTeamSuccessfully"));
@@ -66,7 +66,7 @@ const TeamAdminCard = ({ admin }: any) => {
         content={modalContent}
         primaryButton={{
           title: t("leave"),
-          action: () => mutationLeaveTeam.mutate(),
+          action: () => mutationLeaveTeam.mutate({}),
           styles: {
             backgroundColor: Colors.primary,
             borderColor: Colors.primary,
@@ -158,6 +158,7 @@ const TeamAdminCard = ({ admin }: any) => {
           <AvatarComponent
             isEditable={false}
             profileImage={admin?.profilePicture}
+            avatarWrapperStyle={{ width: 100, height: 100 }}
           />
           <Button
             isPrimary={true}

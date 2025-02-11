@@ -6,16 +6,16 @@ import CustomText from "./CustomText";
 import Button from "../inputs/Button";
 import { t } from "@/utils/translationHelper";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCompanyStats } from "@/app/api/home";
+import HOME from "@/app/api/home";
 
 const CompanySuccess = () => {
   const { data: companyStats } = useQuery({
     queryKey: ["companySuccessStats"],
-    queryFn: () => fetchCompanyStats(),
+    queryFn: () => HOME?.fetchCompanyStats(),
     refetchOnMount: true,
     retry: false,
   });
-  
+
   return (
     <View style={styles.container}>
       <CustomHeading>{t("companySuccess")}</CustomHeading>

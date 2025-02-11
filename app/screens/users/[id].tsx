@@ -36,7 +36,6 @@ import ServiceInformation from "@/components/commons/ServiceInformation";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
 import TeamDetails from "../team/teamDetails";
-import TeamAdminCard from "@/components/commons/TeamAdminCard";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -46,6 +45,7 @@ const User = () => {
   const { id } = useLocalSearchParams();
   const [user, setUser]: any = useState({});
   const router = useRouter();
+  const firstTimeRef = React.useRef(true);
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const [isUserBooked, setIsUserBooked] = useState(user?.bookedBy || false);
@@ -59,7 +59,7 @@ const User = () => {
     user?.employedBy?._id === userDetails?._id
   );
   const [isWorkerBookingRequested, setIsWorkerBookingRequested] = useState(
-    user?.bookingRequestedBy?.includes(userDetails?._id)
+    user?.bookingRequestBy?.includes(userDetails?._id)
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
     user?.bookedBy?.find((item: any) => item?.employer === userDetails?._id) ||
@@ -71,25 +71,28 @@ const User = () => {
 
   const { role, title } = useGlobalSearchParams();
 
-  console.log(
-    "userDetails",
-    user?.bookedBy,
-    user?.bookingRequestedBy,
-    userDetails?._id,
-    isWorkerBooked
-  );
-
   const {
     isLoading,
+    isError,
     data: response,
     refetch,
     isRefetching,
   } = useQuery({
     queryKey: ["userDetails", id],
-    queryFn: () => USER?.getUserById(id),
-    retry: 0,
+    queryFn: async () => await USER?.getUserDetails(id),
+    retry: false,
     enabled: !!id,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
   useEffect(() => {
     setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
@@ -99,7 +102,7 @@ const User = () => {
     );
     setIsInYourTeam(user?.employedBy?._id === userDetails?._id);
     setIsWorkerBookingRequested(
-      user?.bookingRequestedBy?.includes(userDetails?._id)
+      user?.bookingRequestBy?.includes(userDetails?._id)
     );
     setIsWorkerBooked(
       user?.bookedBy?.find(
@@ -110,8 +113,7 @@ const User = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      const unsubscribe = setUser(response?.data);
-      return () => unsubscribe;
+      setUser(response?.data);
     }, [response])
   );
 
@@ -157,8 +159,6 @@ const User = () => {
       });
     }
   };
-
-  console.log("role--", role);
 
   return (
     <>
@@ -282,7 +282,7 @@ const User = () => {
       </View>
 
       <ButtonContainer
-        isLoading={isLoading || isRefetching}
+        isLoading={isLoading}
         user={user}
         refetch={refetch}
         isUserBooked={isUserBooked}

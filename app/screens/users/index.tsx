@@ -4,7 +4,6 @@ import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
-import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import Atoms from "@/app/AtomStore";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
@@ -12,19 +11,12 @@ import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { StatusBar } from "react-native";
-import {
-  EMPLOYER,
-  MEDIATOR,
-  MEDIATORTYPES,
-  WORKERS,
-  WORKERTYPES,
-} from "@/constants";
-import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { handleQueryFunction, handleQueryKey } from "@/constants/functions";
+import { handleQueryKey } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
-import WORKER from "@/app/api/workers";
-import BOOKING from "@/app/api/booking";
+import USER from "@/app/api/user";
+import EMPLOYER from "@/app/api/employer";
+import { WORKERTYPES } from "@/constants";
 
 const Users = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -32,7 +24,7 @@ const Users = () => {
   const [filteredData, setFilteredData]: any = useState([]);
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
-  const { role, title, type, searchCategory } = useGlobalSearchParams();
+  const { title, type, searchCategory } = useGlobalSearchParams();
 
   const {
     data: response,
@@ -43,14 +35,19 @@ const Users = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: [handleQueryKey(role, type), category],
+    queryKey: [handleQueryKey(type), category],
     queryFn: async ({ pageParam }) =>
       (await type) === "booked"
-        ? BOOKING?.fetchAllBookedWorkers({
+        ? EMPLOYER?.fetchAllBookedWorkers({
             pageParam,
-            skill: category,
+            skill: JSON?.parse(searchCategory as string)?.skill,
           })
-        : WORKER?.fetchAllWorkers({
+        : (await type) === "saved"
+        ? USER?.fetchAllLikedUsers({
+            pageParam,
+            skill: JSON?.parse(searchCategory as string)?.skill,
+          })
+        : USER?.fetchAllUsers({
             pageParam,
             name: JSON?.parse(searchCategory as string)?.name,
             skill: JSON?.parse(searchCategory as string)?.skill,
