@@ -10,15 +10,15 @@ const Duration = ({ duration, setDuration, errors, name }: any) => {
   return (
     <View style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <View style={styles.container}>
-        <CustomHeading baseFont={20}>
+        <CustomHeading baseFont={16} fontWeight="500">
           {t("duration")}{" "}
           <CustomText baseFont={14}> ({t("InDays")})</CustomText>
         </CustomHeading>
         <Counter counter={duration} setCounter={setDuration} />
       </View>
-      {errors[name] && (
+      {errors?.[name] && (
         <CustomText textAlign="right" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
+          {errors?.[name]?.message || ""}
         </CustomText>
       )}
     </View>

@@ -31,7 +31,7 @@ const ModalComponent = ({
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <CustomHeading baseFont={18} color={Colors?.white} textAlign="left">
+            <CustomHeading baseFont={18} color={Colors?.background} textAlign="left">
               {title ? title : t("title")}
             </CustomHeading>
             <TouchableOpacity onPress={onClose}>
@@ -54,15 +54,17 @@ const ModalComponent = ({
               isPrimary={false}
               title={secondaryButton?.title || t("cancel")}
               onPress={secondaryButton?.action}
-              borderColor={Colors?.danger}
-              textColor={Colors?.danger}
+              borderColor={Colors?.error}
+              bgColor={Colors?.error}
+              textColor={Colors?.white}
+              style={{ width: "40%", paddingVertical: 8 }}
             />
             <Button
               isPrimary={true}
               disabled={primaryButton?.disabled}
               title={primaryButton?.title || t("save")}
               onPress={primaryButton?.action}
-              style={{ flex: 1 }}
+              style={{ flex: 1, paddingVertical: 8 }}
             />
           </View>
         </View>
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   container: {
-    backgroundColor: "white",
+    backgroundColor: Colors?.background,
     width: "100%",
     maxHeight: "70%", // Ensures scrollability
     borderRadius: 12,

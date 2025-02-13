@@ -7,6 +7,7 @@ import Button from "./Button";
 import CustomText from "../commons/CustomText";
 import CustomHeading from "../commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
+import ErrorText from "../commons/ErrorText";
 
 interface ImageUploadProps {
   name: string;
@@ -48,10 +49,10 @@ const ImageUpload = ({
 
   return (
     <View>
-      <CustomHeading textAlign="left" color={Colors?.white}>
+      <CustomHeading textAlign="left" color={Colors?.inputLabel}>
         {t("workImages")}
       </CustomHeading>
-      <View style={[styles.container, errors[name] && styles?.errorInput]}>
+      <View style={[styles.container]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />
           <Button
@@ -80,17 +81,16 @@ const ImageUpload = ({
               </View>
             ))
           ) : (
-            <CustomText style={{ width: "100%" }}>
+            <CustomText
+              style={{ width: "100%" }}
+              color={Colors?.inputPlaceholder}
+            >
               Not added any image
             </CustomText>
           )}
         </View>
       </View>
-      {errors[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText>{errors?.[name]?.message || ""}</ErrorText>}
     </View>
   );
 };
@@ -128,7 +128,9 @@ const styles = StyleSheet.create({
   },
   imageUploadButton: {
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 5,
+    borderRadius: 8,
+    minHeight: 40,
   },
   cancelImage: {
     position: "absolute",
@@ -136,9 +138,5 @@ const styles = StyleSheet.create({
     color: Colors.white,
     backgroundColor: Colors.black,
     borderRadius: 50,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: Colors?.danger,
   },
 });

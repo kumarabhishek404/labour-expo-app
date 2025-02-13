@@ -144,12 +144,15 @@ const UpdateUserSkillsScreen = () => {
           title={t("back")}
           onPress={() => router?.back()}
           style={{ width: "30%" }}
+          bgColor={Colors?.error}
+          borderColor={Colors?.error}
+          textColor={Colors?.white}
         />
         <ButtonComp
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(handleUpdate)}
-          style={{ width: "40%" }}
+          style={{ flex: 1 }}
         />
       </View>
     </ScrollView>
@@ -161,9 +164,11 @@ export default UpdateUserSkillsScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors?.white,
-    paddingHorizontal: 10,
+    backgroundColor: Colors?.background,
+    paddingHorizontal: 20,
     paddingTop: 20,
+    // alignItems: 'center',
+    // justifyContent: 'center'
   },
   heading: {
     fontSize: 24,
@@ -175,6 +180,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginVertical: 20,
+    gap: 10,
   },
 });

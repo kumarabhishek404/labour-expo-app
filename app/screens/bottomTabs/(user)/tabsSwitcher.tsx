@@ -36,7 +36,6 @@ const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.tabContainer}>
-        {/* Animated Sliding Underline */}
         <Animated.View
           style={[styles.activeIndicator, { transform: [{ translateX }] }]}
         />
@@ -83,39 +82,36 @@ const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 20,
     alignSelf: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.background,
   },
   tabContainer: {
     flexDirection: "row",
     width: "100%",
     position: "relative",
-    marginBottom: 20,
   },
   tab: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: 12,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   tabText: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "bold",
-    color: Colors?.black,
+    color: Colors?.heading,
   },
   activeTabText: {
-    color: Colors.primary,
+    color: Colors.heading,
   },
   activeIndicator: {
     position: "absolute",
-    bottom: -2,
+    bottom: 0,
     left: 0,
-    width: 180, // Adjust based on the width of your tabs
-    height: 4,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
+    width: "50%", // Adjust based on the width of your tabs
+    height: 3,
+    backgroundColor: Colors.heading,
+    borderRadius: 8,
   },
 });
 

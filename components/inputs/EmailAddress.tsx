@@ -112,15 +112,14 @@ const EmailAddressField = ({
           onBlur={onBlur}
           onChangeText={setEmail}
           placeholder={placeholder}
-          label={t("emailAddress")}
+          label="emailAddress"
           name={name}
-          containerStyle={errors[name] && styles.errorInput}
           errors={errors}
           icon={icon && icon}
         />
       </View>
 
-      {/* {!errors[name] && (
+      {/* {!errors?.[name] && (
         <Button
           isPrimary={true}
           title={t("verifyEmailAddress")}
@@ -267,11 +266,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "80%",
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
 });
 

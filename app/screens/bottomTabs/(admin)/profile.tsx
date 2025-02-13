@@ -203,7 +203,6 @@ const AdminProfile = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder={t("enterYourFirstName")}
-                containerStyle={errors?.name && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -245,7 +244,6 @@ const AdminProfile = () => {
 
   return (
     <>
-      {/* <StatusBar backgroundColor="transparent" barStyle="dark-content" /> */}
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -442,11 +440,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     // fontFamily: fonts.Light,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
   skillsContainer: {
     padding: 12,
     marginHorizontal: 20,

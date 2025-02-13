@@ -100,7 +100,6 @@ const ServiceDetails = () => {
           ),
         }}
       />
-      <StatusBar backgroundColor={Colors?.fourth} />
       <Loader
         loading={
           mutationCancelBooking?.isPending ||

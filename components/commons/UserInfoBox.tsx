@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     flexDirection: "row",
     marginBottom: 5,
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.background,
   },
   userInfoTextWrapper: {
     marginBottom: 25,
@@ -239,18 +239,6 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     textAlign: "right",
     marginRight: 10,
-  },
-  containerStyle: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    borderWidth: 0,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
   verifyBtn: {
     position: "absolute",

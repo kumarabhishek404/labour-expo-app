@@ -206,7 +206,6 @@ const Filters = ({
                   options={WORKERTYPES}
                   selectedOption={value}
                   setSelectedOption={onChange}
-                  containerStyle={errors?.selectedWorkers && styles.errorInput}
                   errors={errors}
                 />
               )}
@@ -228,7 +227,6 @@ const Filters = ({
                   onChangeText={onChange}
                   placeholder="Enter Price"
                   style={{ marginBottom: 80 }}
-                  containerStyle={errors?.pricePerDay && styles.errorInput}
                   errors={errors}
                   icon={
                     <FontAwesome
@@ -334,11 +332,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "transparent", // Close on clicking outside
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
 });
 
 export default Filters;

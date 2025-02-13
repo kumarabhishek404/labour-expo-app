@@ -26,8 +26,9 @@ import ButtonComp from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { Button } from "react-native-paper";
 import USER from "@/app/api/user";
+import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
 
-const SearchWorkers = () => {
+const SearchWorkers = ({ style }: any) => {
   const {
     control,
     handleSubmit,
@@ -97,157 +98,116 @@ const SearchWorkers = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View
-          style={{
-            paddingHorizontal: 10,
-            paddingTop: 10,
-            flexDirection: "row",
-            width: "100%",
-            justifyContent: "space-between",
-          }}
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <View style={styles.container}>
+      <TopHeaderLinks
+        title={["SHOW ALL WORKERS"]}
+        onPress={() =>
+          router?.push({
+            pathname: "/screens/users",
+            params: {
+              title: "All Workers",
+              type: "all",
+              searchCategory: JSON.stringify({ name: "", skill: "" }),
+            },
+          })
+        }
+        icon={[
+          <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
+        ]}
+      />
+
+      <View style={[styles.searchContainer, style]}>
+        <CustomHeading
+          textAlign="left"
+          baseFont={22}
+          style={{ marginBottom: 0 }}
+          color={Colors?.heading}
         >
-          <Button
-            icon={() => (
-              <Ionicons name="people" size={22} color={Colors.primary} />
-            )}
-            textColor={Colors?.primary}
-            style={{ width: "50%", alignItems: "flex-start" }}
-            onPress={() =>
-              router?.push({
-                pathname: "/screens/users",
-                params: {
-                  title: "All Workers",
-                  type: "all",
-                  searchCategory: JSON.stringify({ name: "", skill: "" }),
-                },
-              })
-            }
-          >
-            SHOW ALL WORKERS
-          </Button>
-        </View>
-        <View style={styles.searchContainer}>
-          {errors.root && (
-            <CustomText color="red" style={{ marginBottom: 10 }}>
-              {errors.root.message}
-            </CustomText>
-          )}
+          SEARCH WORKERS
+        </CustomHeading>
 
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              validate: (value) => {
-                const skillValue = watch("skill");
-                if (!value && !skillValue) {
-                  return "Please fill at least one field (name or skill).";
-                }
-                return true;
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                name="name"
-                label={"Search Workers By Name"}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourResetPasswordCode")}
-                containerStyle={errors?.name && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name="person"
-                    size={30}
-                    color={Colors.secondary}
-                    style={styles.iconStyle}
-                  />
-                }
-              />
-            )}
-          />
-
-          <CustomText fontWeight="bold" baseFont={26}>
-            OR
-          </CustomText>
-
-          <View style={{ zIndex: 300, marginBottom: 20 }}>
-            <Controller
-              control={control}
-              name="skill"
-              rules={{
-                validate: (value) => {
-                  const nameValue = watch("name");
-                  if (!value && !nameValue) {
-                    return "Please fill at least one field (name or skill).";
-                  }
-                  return true;
-                },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <DropdownComponent
-                  name="skill"
-                  label={"Search Workers By Skill"}
-                  value={value}
-                  translationEnabled
-                  onSelect={(selectedValue: any) => {
-                    onChange(selectedValue);
-                    Keyboard.dismiss();
-                  }}
-                  onPress={() => Keyboard.dismiss()}
-                  onFocus={() => Keyboard.dismiss()} // Dismiss keyboard when dropdown is focused
-                  placeholder="selectWorkType"
-                  options={WORKERTYPES}
-                  errors={errors}
-                  containerStyle={errors?.skill && styles.errorInput}
-                  search={true}
-                  icon={
-                    <Ionicons
-                      name="construct"
-                      size={30}
-                      color={Colors.secondary}
-                      style={styles.iconStyle}
-                    />
-                  }
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            validate: (value) => {
+              const skillValue = watch("skill");
+              if (!value && !skillValue) {
+                return "Please fill at least one field (name or skill).";
+              }
+              return true;
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              name="name"
+              label="workerName"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder={t("enterYourResetPasswordCode")}
+              errors={errors}
+              icon={
+                <Ionicons
+                  name="person"
+                  size={30}
+                  color={Colors.secondary}
+                  style={styles.iconStyle}
                 />
-              )}
-            />
-          </View>
-
-          <ButtonComp
-            title="Search Workers"
-            isPrimary
-            onPress={handleSubmit(onSubmit)}
-          />
-        </View>
-
-        {/* <View style={styles.workerList}>
-          <CustomHeading
-            style={styles.sectionTitle}
-            baseFont={22}
-            textAlign="left"
-          >
-            🌴 Best Workers On Demand
-          </CustomHeading>
-          {memoizedData ? (
-            <ListingHorizontalWorkers
-              availableInterest={WORKERTYPES}
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-            />
-          ) : (
-            <ActivityIndicator
-              size="large"
-              style={styles.loaderStyle}
-              color={Colors.primary}
+              }
             />
           )}
-        </View> */}
+        />
+
+        <Controller
+          control={control}
+          name="skill"
+          rules={{
+            validate: (value) => {
+              const nameValue = watch("name");
+              if (!value && !nameValue) {
+                return "Please fill at least one field (name or skill).";
+              }
+              return true;
+            },
+          }}
+          render={({ field: { onChange, value } }) => (
+            <DropdownComponent
+              name="skill"
+              label="workerSkill"
+              value={value}
+              translationEnabled
+              onSelect={(selectedValue: any) => {
+                onChange(selectedValue);
+                Keyboard.dismiss();
+              }}
+              onPress={() => Keyboard.dismiss()}
+              onFocus={() => Keyboard.dismiss()}
+              placeholder="selectWorkType"
+              options={WORKERTYPES}
+              errors={errors}
+              search={true}
+              icon={
+                <Ionicons
+                  name="construct"
+                  size={30}
+                  color={Colors.secondary}
+                  style={styles.iconStyle}
+                />
+              }
+            />
+          )}
+        />
+
+        <ButtonComp
+          title="Search Workers"
+          isPrimary
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
-    </TouchableWithoutFeedback>
+    </View>
+    // </TouchableWithoutFeedback>
   );
 };
 
@@ -255,20 +215,15 @@ export default SearchWorkers;
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
     justifyContent: "space-between",
   },
   searchContainer: {
-    backgroundColor: "white",
+    backgroundColor: Colors?.background,
     padding: 20,
     marginHorizontal: 20,
-    marginTop: 10,
+    marginTop: 20,
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    zIndex: 400,
+    gap: 25,
   },
   iconStyle: {
     paddingVertical: 10,
@@ -292,9 +247,5 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingLeft: 20,
     paddingBottom: 10,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
   },
 });

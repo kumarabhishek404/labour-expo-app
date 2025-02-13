@@ -13,6 +13,8 @@ import * as Notifications from "expo-notifications";
 import SpaceMono from "../assets/fonts/SpaceMono-Regular.ttf";
 import AuthListener from "./context/AuthListner";
 import { PaperProvider } from "react-native-paper";
+import { StatusBar } from "react-native";
+import Colors from "@/constants/Colors";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -71,6 +73,7 @@ function RootLayoutNav() {
         <LOCAL_CONTEXT.LocaleProvider>
           <QueryClientProvider client={queryClient}>
             <PaperProvider>
+              <StatusBar backgroundColor={Colors?.background} />
               <Stack screenOptions={{ headerShown: true }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               </Stack>

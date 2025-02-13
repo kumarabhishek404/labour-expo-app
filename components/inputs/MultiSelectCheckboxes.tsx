@@ -15,17 +15,13 @@ interface FiltersProps {
   setSelectedOption: any;
   onBlur?: any;
   errors?: any;
-  containerStyle?: any;
 }
 
 const MultiSelectCheckboxes = ({
   label,
-  name,
   options,
   selectedOption,
   setSelectedOption,
-  onBlur,
-  errors,
 }: FiltersProps) => {
   const toggleWorkerSelection = (worker: string) => {
     if (selectedOption.includes(worker)) {

@@ -18,9 +18,9 @@ const NumberOfWorkers = ({
         <CustomHeading baseFont={20}>{t('noOfWorkers')}</CustomHeading>
         <Counter counter={noOfWorkers || 0} setCounter={setNoOfWorkers} />
       </View>
-      {errors[name] && (
+      {errors?.[name] && (
         <CustomText textAlign="right" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
+          {errors?.[name]?.message || ""}
         </CustomText>
       )}
     </View>

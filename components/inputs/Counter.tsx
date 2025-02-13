@@ -3,8 +3,10 @@ import { Foundation } from "@expo/vector-icons";
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
+import { t } from "@/utils/translationHelper";
+import ErrorText from "../commons/ErrorText";
 
-const Counter = ({ label, counter, setCounter, style }: any) => {
+const Counter = ({ label, counter, setCounter, style, errors, name }: any) => {
   const handleClick1 = () => {
     setCounter(counter + 1);
   };
@@ -16,15 +18,20 @@ const Counter = ({ label, counter, setCounter, style }: any) => {
   return (
     <View style={styles.container}>
       {label && (
-        <CustomHeading textAlign="left" color={Colors?.primary}>
-          {label}
+        <CustomHeading
+          textAlign="left"
+          color={Colors?.inputLabel}
+          baseFont={16}
+          fontWeight="500"
+        >
+          {t(label)}
         </CustomHeading>
       )}
       <View style={styles.buttons}>
         <TouchableOpacity style={[styles.button, style]} onPress={handleClick1}>
-          <Foundation style={styles.counterIcon} name="plus" size={28} />
+          <Foundation style={styles.counterIcon} name="plus" />
         </TouchableOpacity>
-        <CustomHeading baseFont={32} color={Colors?.primary}>
+        <CustomHeading baseFont={32} color={Colors?.inputText}>
           {counter}
         </CustomHeading>
         <TouchableOpacity
@@ -35,11 +42,11 @@ const Counter = ({ label, counter, setCounter, style }: any) => {
           <Foundation
             style={styles.counterIcon}
             name="minus"
-            size={32}
             color={counter === 0 ? Colors?.secondary : "black"}
           />
         </TouchableOpacity>
       </View>
+      {errors?.[name] && <ErrorText>{errors?.[name]?.message}</ErrorText>}
     </View>
   );
 };
@@ -54,17 +61,17 @@ const styles = StyleSheet.create({
     padding: 0,
     flexDirection: "row",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 8,
     zIndex: 0,
   },
   counterIcon: {
     fontWeight: 900,
-    fontSize: 20,
+    fontSize: 16,
   },
   button: {
     padding: 10,
-    height: 44,
+    // height: 44,
     justifyContent: "center",
     borderRadius: 8,
     backgroundColor: Colors.white,

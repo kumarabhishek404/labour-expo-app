@@ -242,7 +242,6 @@ const ServiceDetails = () => {
         }}
       />
 
-      <StatusBar backgroundColor={Colors?.fourth} />
       <Loader loading={isLoading} />
 
       <ScrollView style={styles.container}>
@@ -462,7 +461,6 @@ export default ServiceDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.fourth,
   },
   image: {
     width: width,
@@ -471,7 +469,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     paddingHorizontal: 10,
     paddingVertical: 20,
-    backgroundColor: Colors.fourth,
+    backgroundColor: Colors.background,
   },
   selectedWrapper: {
     padding: 15,

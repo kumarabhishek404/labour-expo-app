@@ -4,6 +4,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import ErrorText from "../commons/ErrorText";
+import { t } from "@/utils/translationHelper";
 
 type TextInputProps = {
   label: string;
@@ -14,7 +16,6 @@ type TextInputProps = {
   onBlur?: any;
   icon?: any;
   errors?: any;
-  containerStyle?: any;
 };
 
 const TextAreaInputComponent = ({
@@ -26,14 +27,18 @@ const TextAreaInputComponent = ({
   onBlur,
   icon,
   errors,
-  containerStyle,
 }: TextInputProps) => {
   return (
     <View style={styles?.inputField}>
-      <CustomHeading textAlign="left" color={Colors?.white}>
-        {label}
+      <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+        {t(label)}
       </CustomHeading>
-      <View style={[styles.inputContainer, containerStyle]}>
+      <View
+        style={[
+          styles.inputContainer,
+          errors?.[name] && { borderColor: Colors?.error },
+        ]}
+      >
         {icon && icon}
         <TextInput
           value={value}
@@ -49,11 +54,7 @@ const TextAreaInputComponent = ({
           numberOfLines={10}
         />
       </View>
-      {errors[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText>{errors?.[name]?.message || ""}</ErrorText>}
     </View>
   );
 };

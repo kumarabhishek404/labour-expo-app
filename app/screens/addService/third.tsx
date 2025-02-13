@@ -51,7 +51,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
 
   return (
     <View style={styles?.container}>
-      <View style={{ flexDirection: "column" }}>
+      <View style={{ flexDirection: "column", gap: 25 }}>
         <Controller
           control={control}
           name="images"
@@ -73,13 +73,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           defaultValue=""
           render={({ field: { onChange, onBlur, value } }) => (
             <TextAreaInputComponent
-              label={t("workDescription")}
+              label="workDescription"
               name="description"
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder="Enter work description"
-              containerStyle={errors?.description && styles.errorInput}
               errors={errors}
               icon={
                 <Ionicons
@@ -95,16 +94,18 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
       </View>
       <View style={styles?.buttonContainer}>
         <Button
-          isPrimary={false}
+          isPrimary={true}
           title={t("back")}
           onPress={() => setStep(2)}
+          bgColor={Colors?.danger}
+          borderColor={Colors?.danger}
           style={{ width: "30%" }}
         />
         <Button
           isPrimary={true}
-          title={t("saveAndView")}
+          title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
-          style={{ width: "50%" }}
+          style={{ flex: 1 }}
         />
       </View>
     </View>
@@ -126,12 +127,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 20,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
+    gap: 10,
   },
 });
 

@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
 
 interface RoleSelectionProps {
   role: string;
@@ -36,7 +37,7 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
 
   return (
     <View style={styles.container}>
-      <CustomHeading textAlign="left">Select Your Role</CustomHeading>
+      {/* <CustomHeading textAlign="left">Select Your Role</CustomHeading> */}
       <View style={styles.roleContainer}>
         {roles.map((selectedRole, index) => (
           <TouchableOpacity
@@ -46,7 +47,7 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
           >
             <View style={styles.roleContent}>
               <CustomHeading>{selectedRole.title}</CustomHeading>
-              <CustomText fontWeight="600">
+              <CustomText fontWeight="600" color={Colors?.subHeading}>
                 {selectedRole.description}
               </CustomText>
             </View>
@@ -84,7 +85,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    // marginHorizontal: 5,
   },
   selectedRoleBox: {
     borderColor: "#007BFF",
@@ -94,34 +94,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  roleTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 6,
-  },
-  roleDescription: {
-    fontSize: 14,
-    color: "#666",
-    // marginBottom: 10,
-    textAlign: "center",
-  },
-  rolePrice: {
-    fontSize: 14,
-    color: "#007BFF",
-    fontWeight: "bold",
-  },
   radioCircle: {
     height: 20,
     width: 20,
     borderRadius: 100,
     borderWidth: 2,
-    borderColor: "#DDD",
+    borderColor: Colors?.disabledText,
     marginTop: 10,
   },
   selectedRadio: {
-    borderColor: "#007BFF",
-    backgroundColor: "#007BFF",
+    borderColor: Colors?.tertieryButton,
+    backgroundColor: Colors?.tertieryButton,
   },
 });
 

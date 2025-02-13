@@ -63,12 +63,11 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
   const handleValue = (value: any) => {
     console.log("value --", value);
-
   };
 
   return (
     <>
-      <View style={{ gap: 20 }}>
+      <View style={{ gap: 25 }}>
         <View style={{ zIndex: 9 }}>
           <Controller
             control={control}
@@ -80,14 +79,12 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             render={({ field: { value, onChange } }) => (
               <PaperDropdown
                 name="type"
-                label={t("workType")}
                 value={value}
                 onSelect={onChange}
                 translationEnabled
                 placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
-                containerStyle={errors?.type && styles.errorInput}
                 search={false}
                 icon={
                   <Ionicons
@@ -112,7 +109,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             render={({ field: { onChange, onBlur, value } }) => (
               <DropdownComponent
                 name="subType"
-                label={t("workSubType")}
                 value={value}
                 onSelect={onChange}
                 placeholder={
@@ -121,10 +117,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                     : "pleaseSelectWorkTypeFirst"
                 }
                 translationEnabled
-                disabled={!watch("type")}
                 options={filterSubCategories(watch("type"))}
                 errors={errors}
-                containerStyle={errors?.subType && styles.errorInput}
                 search={false}
                 icon={
                   <Ionicons
@@ -202,16 +196,15 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               return true;
             },
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, value } }) => (
             <WorkRequirment
-              label="Worker Type"
+              // label={"workerType"}
               name="requirements"
               watch={watch}
               type={watch("type") ?? ""}
               subType={watch("subType") ?? ""}
               requirements={value}
               setRequirements={onChange}
-              onBlur={onBlur}
               errors={errors}
               errorField={errorField}
             />
@@ -221,7 +214,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
       <View style={styles?.buttonContainer}>
         <Button
-          style={{ width: "100%" }}
+          style={{ width: "100%", }}
+          textStyle={{ fontSize: 18 }}
           isPrimary={true}
           title={t("next")}
           onPress={handleSubmit(onSubmit)}
@@ -235,7 +229,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    backgroundColor: "white",
   },
   image: {
     width: "80%",
@@ -243,15 +236,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     alignSelf: "center",
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 25,
   },
   bottomButton: {
     marginVertical: 20,

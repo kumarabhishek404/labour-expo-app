@@ -155,13 +155,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
-    // paddingTop: 50,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: Colors?.background,
     zIndex: -1,
   },
-  headerTitleWrapper: {
-    // width: "100%"
-  },
+  headerTitleWrapper: {},
   backButton: {
     paddingHorizontal: 10,
   },

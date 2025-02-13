@@ -20,8 +20,8 @@ const Bookings = () => {
   const [category, setCategory] = useState("selected");
 
   const TABS: any = [
-    { value: "selected", label: "selected", count: 31 },
-    { value: "applied", label: "applied", count: 20 },
+    { value: "selected", label: "selected" },
+    { value: "applied", label: "applied", count: 2 },
   ];
 
   const {
@@ -140,7 +140,7 @@ const Bookings = () => {
               />
             </>
           ) : (
-            <EmptyDatePlaceholder title={"Booking"} />
+            <EmptyDatePlaceholder title={"Booking"} leftHeight={300} />
           )}
         </View>
       </View>

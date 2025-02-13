@@ -64,7 +64,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
 
   return (
     <View style={styles?.container}>
-      <View style={{ flexDirection: "column", gap: 15 }}>
+      <View style={{ flexDirection: "column", gap: 25 }}>
         <View style={{ zIndex: 9 }}>
           <Controller
             control={control}
@@ -145,18 +145,20 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
       </View>
       <View style={styles?.buttonContainer}>
         <Button
-          isPrimary={false}
+          isPrimary={true}
           title={t("back")}
           onPress={() => {
             setStep(1);
           }}
-          style={{ width: "30%" }}
+          bgColor={Colors?.danger}
+          borderColor={Colors?.danger}
+          style={{ width: "30%", paddingVertical: 8 }}
         />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
-          style={{ width: "50%" }}
+          style={{ flex: 1, paddingVertical: 8 }}
         />
       </View>
     </View>
@@ -177,8 +179,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 20,
+    gap: 10
   },
 });
 

@@ -5,6 +5,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -29,6 +30,9 @@ import { ADDSERVICESTEPS } from "@/constants";
 import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
 import { Button } from "react-native-paper";
 import EMPLOYER from "@/app/api/employer";
+import CustomText from "@/components/commons/CustomText";
+import CustomHeading from "@/components/commons/CustomHeading";
+import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -339,91 +343,78 @@ const AddServiceScreen = () => {
     }
   };
 
+  const ClickBookedWorker = () =>
+    router?.push({
+      pathname: "/screens/bookings",
+      params: {
+        title: "My Booked Workers",
+        type: "booked",
+        searchCategory: JSON.stringify({ name: "", skill: "" }),
+      },
+    });
+
+  const ClickMyAllServices = () =>
+    router?.push({
+      pathname: "/screens/service",
+      params: { title: "My All Services", type: "myServices" },
+    });
+
   return (
     <>
-      <StatusBar backgroundColor={Colors?.white} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1, backgroundColor: "#EAF0FF" }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            backgroundColor: Colors?.secondaryBackground,
+          }}
         >
-          <View>
+          <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
             <View style={styles.header}>
               <Stepper currentStep={step} steps={ADDSERVICESTEPS} />
             </View>
+            {step === 1 && (
+              <TopHeaderLinks
+                title={["BOOKED WORKERS", "MY ALL SERVICES"]}
+                onPress={[ClickBookedWorker, ClickMyAllServices]}
+                icon={[
+                  <Ionicons
+                    key={0}
+                    name="people"
+                    size={22}
+                    color={Colors.primary}
+                  />,
+                  <MaterialIcons
+                    key={1}
+                    name="work"
+                    size={22}
+                    color={Colors.primary}
+                    style={{ marginLeft: 8 }}
+                  />,
+                ]}
+              />
+            )}
 
-            <View
-              style={{
-                paddingHorizontal: 15,
-                paddingTop: 10,
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-              }}
-            >
-              <Button
-                icon={() => (
-                  <Ionicons name="people" size={22} color={Colors.primary} />
-                )}
-                textColor={Colors?.primary}
-                style={{ width: "50%", alignItems: "flex-start" }}
-                onPress={() =>
-                  router?.push({
-                    pathname: "/screens/bookings",
-                    params: {
-                      title: "My Booked Workers",
-                      type: "booked",
-                      searchCategory: JSON.stringify({ name: "", skill: "" }),
-                    },
-                  })
-                }
+            <View style={[styles.searchContainer, styles.shadowBox]}>
+              <CustomHeading
+                textAlign="left"
+                baseFont={22}
+                style={{ marginBottom: 20 }}
+                color={Colors?.heading}
               >
-                BOOKED WORKERS
-              </Button>
-              <Button
-                icon={() => (
-                  <MaterialIcons name="work" size={22} color={Colors.primary} />
-                )}
-                textColor={Colors?.primary}
-                style={{ width: "50%", alignItems: "flex-end" }}
-                onPress={() =>
-                  router?.push({
-                    pathname: "/screens/service",
-                    params: {
-                      title: "My All Services",
-                      type: "myServices",
-                    },
-                  })
-                }
-              >
-                MY ALL SERVICES
-              </Button>
-            </View>
-            <View style={styles.searchContainer}>
+                {step === 1 && "CREATE NEW SERVICE"}
+                {step === 2 && "ADDRESS AND DATE"}
+                {step === 3 && "ADD IMAGES AND DESCRIPTION"}
+                {step === 4 && "CHECK ALL DETAILS AND POST SERVICE"}
+              </CustomHeading>
               <Loader loading={mutationAddService?.isPending} />
               <View>{renderFormComponents()}</View>
             </View>
+            <View></View>
           </View>
-
-          {/* <View style={{ marginBottom: 20 }}>
-            <Text style={styles.sectionTitle}>🌴 My Created Services</Text>
-            {memoizedData ? (
-              <ListingHorizontalServices
-                listings={memoizedData || []}
-                loadMore={loadMore}
-                isFetchingNextPage={isFetchingNextPage}
-              />
-            ) : (
-              <ActivityIndicator
-                size="large"
-                style={styles.loaderStyle}
-                color={Colors?.primary}
-              />
-            )}
-          </View> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </>
@@ -435,12 +426,12 @@ export default AddServiceScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: Colors?.background,
     justifyContent: "space-between",
     minHeight: "100%",
   },
   header: {
-    backgroundColor: "white",
+    backgroundColor: Colors?.background,
     padding: 20,
     position: "relative",
   },
@@ -465,15 +456,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   searchContainer: {
-    backgroundColor: Colors?.white,
-    padding: 20,
+    backgroundColor: Colors?.background,
+    padding: 15,
     marginHorizontal: 20,
-    marginVertical: 10,
     borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
+  },
+  shadowBox: {
+    shadowColor: "#000", // Subtle black shadow
+    shadowOffset: { width: 0, height: 4 }, // Shadow position
+    shadowOpacity: 0.1, // Light shadow for elegance
+    shadowRadius: 6, // Smooth blur effect
+    elevation: 4, // Works for Android
   },
   input: {
     height: 53,

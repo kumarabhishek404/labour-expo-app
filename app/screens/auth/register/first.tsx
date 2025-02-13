@@ -24,7 +24,7 @@ const RegisterScreen = () => {
   const locale = useAtomValue(Atoms?.LocaleAtom);
   const [isModalVisible, setModalVisible] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
-  const [mobileNumberExist, setMobileNumberExist] = useState("notSet");
+  const [mobileNumberExist, setMobileNumberExist] = useState("notExist");
 
   const {
     control,
@@ -94,20 +94,12 @@ const RegisterScreen = () => {
   };
 
   const modalContent = () => (
-    <View style={{ paddingVertical: 20 }}>
-      <CustomText baseFont={18} fontWeight="bold">
-        {t("confirmYourMobileNumber")}
-      </CustomText>
-      <CustomText baseFont={16} color="#555">
+    <View style={{ paddingVertical: 20, gap: 5 }}>
+      <CustomText baseFont={25} color={Colors?.subHeading}>
         {t("isYourCorrectNumber")}
       </CustomText>
-      <CustomText
-        baseFont={20}
-        fontWeight="bold"
-        color={Colors?.primary}
-        style={{ letterSpacing: 1 }}
-      >
-        {watch("countryCode")} {watch("phoneNumber")}
+      <CustomText baseFont={30} fontWeight="bold" color={Colors?.tertiery}>
+        {watch("phoneNumber")}
       </CustomText>
     </View>
   );
@@ -119,9 +111,9 @@ const RegisterScreen = () => {
     >
       <Loader loading={mutationRegister?.isPending} />
       <Stack.Screen options={{ headerShown: false }} />
-      <CustomHeading baseFont={30}>{t("registerNow")}</CustomHeading>
-      <CustomHeading baseFont={25}>{t("enterMobileAndName")}</CustomHeading>
-
+      <CustomHeading style={{ marginBottom: 50 }} baseFont={45}>
+        {t("registerNow")}
+      </CustomHeading>
       <View style={{ gap: 20, marginBottom: 15 }}>
         <Controller
           control={control}
@@ -147,6 +139,7 @@ const RegisterScreen = () => {
                 }
                 onChange(val);
               }}
+              loading={mutationCheckMobileNumber?.isPending}
               errors={errors}
               isMobileNumberExist={mobileNumberExist === "exist"}
               placeholder={t("enterYourMobileNumber")}
@@ -169,13 +162,13 @@ const RegisterScreen = () => {
           render={({ field: { onChange, value } }) => (
             <TextInputComponent
               name="name"
-              label={t("name")}
+              label="name"
               value={value}
               onChangeText={onChange}
               placeholder={t("enterYourFirstName")}
               textStyles={{ fontSize: 16 }}
-              containerStyle={errors?.name && styles.errorInput}
-              errors={errors}
+              errors={mobileNumberExist === "notExist" ? errors : []}
+              disabled={mobileNumberExist !== "notExist"}
             />
           )}
         />
@@ -183,8 +176,7 @@ const RegisterScreen = () => {
       <Button
         isPrimary
         title={t("saveAndNext")}
-        // onPress={handleSubmit(onSubmit)}
-        onPress={onSubmit}
+        onPress={handleSubmit(onSubmit)}
         style={styles.submitButton}
       />
 
@@ -192,7 +184,9 @@ const RegisterScreen = () => {
         <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
         <Link href="/screens/auth/login" asChild>
           <TouchableOpacity>
-            <CustomHeading color={Colors.link}>{t("signIn")}</CustomHeading>
+            <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+              {t("signIn")}
+            </CustomHeading>
           </TouchableOpacity>
         </Link>
       </View>
@@ -226,15 +220,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 15,
   },
-  errorInput: { borderWidth: 1, borderColor: "red" },
   submitButton: {
-    paddingHorizontal: 40,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    alignSelf: "flex-end",
-    borderRadius: 30,
-    marginTop: 10,
+    width: "100%",
   },
   footerContainer: {
     flexDirection: "row",

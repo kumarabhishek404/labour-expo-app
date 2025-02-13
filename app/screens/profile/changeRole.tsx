@@ -80,74 +80,8 @@ const ChangeRoleScreen = () => {
       <Loader loading={mutationChangeProfileRole?.isPending} />
       <View style={styles.container}>
         <CustomHeading textAlign="left">Mediator Type</CustomHeading>
-        {/* <Dropdown
-          style={[styles.dropdown, isFocus1 && { borderColor: "#007BFF" }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={roleOptions}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus1 ? "Mediator Type" : "..."}
-          searchPlaceholder="Search..."
-          value={selectedRole1}
-          onFocus={() => setIsFocus1(true)}
-          onBlur={() => setIsFocus1(false)}
-          onChange={(item: any) => {
-            setSelectedRole1(item.value);
-            setIsFocus1(false);
-          }}
-          containerStyle={styles.dropdownContainer}
-        /> */}
         <CustomHeading textAlign="left">Extra Facility</CustomHeading>
-        {/* <Dropdown
-          style={[styles.dropdown, isFocus2 && { borderColor: "#007BFF" }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={extrFacilityOptions}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus2 ? "Extra Facilities" : "..."}
-          searchPlaceholder="Search..."
-          value={selectedRole2}
-          onFocus={() => setIsFocus2(true)}
-          onBlur={() => setIsFocus2(false)}
-          onChange={(item: any) => {
-            setSelectedRole2(item.value);
-            setIsFocus2(false);
-          }}
-          containerStyle={styles.dropdownContainer}
-        /> */}
         <CustomHeading textAlign="left">Place of Team Collection</CustomHeading>
-        {/* <Dropdown
-          style={[styles.dropdown, isFocus3 && { borderColor: "#007BFF" }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={teamCollectionPlaces}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus3 ? "Collection Places" : "..."}
-          searchPlaceholder="Search..."
-          value={selectedRole3}
-          onFocus={() => setIsFocus3(true)}
-          onBlur={() => setIsFocus3(false)}
-          onChange={(item: any) => {
-            setSelectedRole3(item.value);
-            setIsFocus3(false);
-          }}
-          containerStyle={styles.dropdownContainer}
-        /> */}
 
         <View style={styles.buttonContainer}>
           <Button

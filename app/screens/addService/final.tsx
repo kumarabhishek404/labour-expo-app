@@ -45,13 +45,8 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
     <View style={styles.container}>
       <View style={styles.box}>
         <View>
-          {/* <CustomHeading>{t("checkServiceDetails")}</CustomHeading>
-          <View style={{ marginVertical: 30 }}>
-            <Stepper currentStep={5} steps={ADDSERVICESTEPS} />
-          </View> */}
-          {/* <View> */}
           <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("workType")}
             </CustomHeading>
             <CustomText
@@ -63,7 +58,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("workSubType")}
             </CustomHeading>
             <CustomText
@@ -76,7 +71,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
           {description && (
             <View style={styles.row}>
-              <CustomHeading color={Colors?.primary}>
+              <CustomHeading color={Colors?.inputLabel} fontWeight="500">
                 {t("workDescription")}
               </CustomHeading>
               <CustomText style={styles.value} textAlign="left">
@@ -86,7 +81,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           )}
 
           <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("workRequirements")}
             </CustomHeading>
             <View style={styles.requirmentContainer}>
@@ -110,25 +105,25 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                       <View style={styles.details}>
                         <CustomHeading
                           baseFont={14}
-                          color={Colors?.secondaryText}
+                          color={Colors?.tertieryButton}
                         >
                           {t("count")}
                         </CustomHeading>
                         <CustomHeading
                           baseFont={14}
-                          color={Colors?.secondaryText}
+                          color={Colors?.tertieryButton}
                         >
                           {t("food")}
                         </CustomHeading>
                         <CustomHeading
                           baseFont={14}
-                          color={Colors?.secondaryText}
+                          color={Colors?.tertieryButton}
                         >
                           {t("living")}
                         </CustomHeading>
                         <CustomHeading
                           baseFont={14}
-                          color={Colors?.secondaryText}
+                          color={Colors?.tertieryButton}
                         >
                           {t("esi/pf")}
                         </CustomHeading>
@@ -156,7 +151,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("address")}
             </CustomHeading>
             <CustomText style={styles.value} textAlign="left">
@@ -165,20 +160,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
-              {t("location")}
-            </CustomHeading>
-            <CustomText style={styles.value} textAlign="left">
-              {isEmptyObject(location) ? (
-                JSON?.stringify(location)
-              ) : (
-                <CustomText>{t("locationNotFound")}</CustomText>
-              )}
-            </CustomText>
-          </View>
-
-          <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("startDate")}
             </CustomHeading>
             <CustomText style={styles.value} textAlign="left">
@@ -187,7 +169,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           </View>
 
           <View style={styles.row}>
-            <CustomHeading color={Colors?.primary}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("duration")}
             </CustomHeading>
             <CustomText style={styles.value} textAlign="left">
@@ -197,7 +179,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
           {images && images?.length > 0 && (
             <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
-              <CustomHeading color={Colors?.primary}>
+              <CustomHeading color={Colors?.inputLabel} fontWeight="500">
                 {t("workImages")}
               </CustomHeading>
               <View
@@ -226,16 +208,18 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
         <View style={styles?.buttonContainer}>
           <Button
-            isPrimary={false}
+            isPrimary={true}
             title={t("back")}
             onPress={() => setStep(3)}
-            style={{ width: "30%" }}
+            bgColor={Colors?.danger}
+            borderColor={Colors?.danger}
+            style={{ width: "35%" }}
           />
           <Button
             isPrimary={true}
             title={t("submitAllDetails")}
             onPress={handleFinish}
-            style={{ width: "50%" }}
+            style={{ flex: 1 }}
           />
         </View>
       </View>
@@ -254,7 +238,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    alignItems: "center",
+    marginTop: 10,
+    gap: 10,
   },
   row: {
     flexDirection: "row",

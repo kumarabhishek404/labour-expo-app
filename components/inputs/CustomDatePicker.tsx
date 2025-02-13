@@ -299,21 +299,20 @@ const CustomDatePicker = ({
               justifyContent: "space-between",
               paddingBottom: 10,
               paddingHorizontal: 10,
+              gap: 10,
             }}
           >
             <Button
-              isPrimary={true}
+              isPrimary={false}
               title={t("cancel")}
               onPress={onClose}
               style={styles.cancelButton}
-              textStyle={styles?.cancelButtonText}
             />
             <Button
               isPrimary={true}
               title={t("setDate")}
               onPress={handleConfirm}
-              style={styles.confirmButton}
-              textStyle={styles?.confirmButtonText}
+              style={{ flex: 1 }}
             />
           </View>
         </View>
@@ -404,21 +403,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFF",
   },
-  confirmButton: {
-    backgroundColor: "#28A745",
-    borderColor: "#28A745",
-    width: "60%",
-  },
-  confirmButtonText: {
-    color: "#FFF",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
   cancelButton: {
-    backgroundColor: Colors?.danger,
-    borderColor: Colors?.danger,
     width: "34%",
-    alignItems: "center",
   },
   cancelButtonText: {
     color: Colors?.white,

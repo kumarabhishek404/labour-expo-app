@@ -10,7 +10,6 @@ interface CustomCheckboxProps {
   disabled?: boolean;
   checkboxStyle?: any;
   labelStyle?: any;
-  containerStyle?: any;
 }
 
 const CustomCheckbox = ({
@@ -19,12 +18,11 @@ const CustomCheckbox = ({
   label = "",
   checkboxStyle = {},
   labelStyle = {},
-  containerStyle = {},
   disabled = false,
 }: CustomCheckboxProps) => {
   return (
     <TouchableOpacity
-      style={[styles.container, containerStyle]}
+      style={[styles.container]}
       onPress={onToggle}
       activeOpacity={0.7}
       disabled={disabled}

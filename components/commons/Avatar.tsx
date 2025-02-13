@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
   },
   avatarWrapper: {
     position: "relative",
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 140,
+    height: 140,
+    borderRadius: 80,
     overflow: "hidden",
     borderWidth: 2,
     backgroundColor: "rgba(0, 0, 0, 0.5)",

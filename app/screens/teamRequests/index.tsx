@@ -115,7 +115,6 @@ const Requests = () => {
           ),
         }}
       />
-      <StatusBar backgroundColor={Colors?.fourth} />
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>

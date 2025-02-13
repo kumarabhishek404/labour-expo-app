@@ -156,7 +156,6 @@ const DeleteAccountScreen = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder="We'd love to give you the full experience :)"
-                containerStyle={errors?.otherReason && styles.errorInput}
                 errors={errors}
                 icon={
                   <MaterialIcons
@@ -238,9 +237,6 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     paddingTop: 30,
-  },
-  errorInput: {
-    borderColor: "red",
   },
   modalView: {
     backgroundColor: "white",

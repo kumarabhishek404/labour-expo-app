@@ -58,25 +58,33 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
 
                 <View style={styles.details}>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">{t("count")}</CustomText>
+                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
+                      {t("count")}
+                    </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.count}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">{t("food")}</CustomText>
+                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
+                      {t("food")}
+                    </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.food ? "Yes" : "No"}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">{t("living")}</CustomText>
+                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
+                      {t("living")}
+                    </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       {requirement?.shelterProvider ? "Yes" : "No"}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700">{t("esi/pf")}</CustomText>
+                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
+                      {t("esi/pf")}
+                    </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       No
                     </CustomText>

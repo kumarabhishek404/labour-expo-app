@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import ErrorText from "../commons/ErrorText";
 
 const Gender = ({
   name,
@@ -10,7 +11,6 @@ const Gender = ({
   options,
   gender,
   setGender,
-  containerStyle,
   errors,
 }: any) => {
   return (
@@ -25,7 +25,7 @@ const Gender = ({
               onPress={() => setGender(option?.value)}
               style={[
                 styles.genderButton,
-                containerStyle,
+                errors?.[name] && { borderColor: Colors?.error },
                 gender === option?.value && styles.selectedButton,
               ]}
             >
@@ -37,11 +37,7 @@ const Gender = ({
             </TouchableOpacity>
           ))}
       </View>
-      {errors[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText> {errors?.[name]?.message || ""}</ErrorText>}
     </View>
   );
 };

@@ -8,6 +8,7 @@ import AddAddressModal from "@/app/screens/location/addAddress";
 import { convertToLabelValueArray } from "@/constants/functions";
 import DropdownWithMenu from "./DropdownWithMenu";
 import { t } from "@/utils/translationHelper";
+import PaperDropdown from "./Dropdown";
 
 interface LocationFieldProps {
   address: string;
@@ -67,26 +68,22 @@ const LocationField = ({
 
   return (
     <View style={styles.container}>
-      <DropdownWithMenu
-        id="selectAddress"
-        name="type"
-        placeholder={"selectAddress"}
-        searchEnabled={false}
+      <PaperDropdown
+        name="selectAddress"
+        value={address}
+        onSelect={setAddress}
+        placeholder={t("selectAddress")}
         options={allSavedAddresses}
+        errors={isError}
+        search={false}
         icon={
           <Ionicons
             name={"location"}
             size={30}
             color={Colors.secondary}
             style={{ paddingVertical: 10, paddingRight: 10 }}
-            errors={isError}
-            containerStyle={isError && styles.errorInput}
           />
         }
-        selectedValue={address}
-        onSelect={setAddress}
-        openDropdownId={openDropdownId}
-        setOpenDropdownId={setOpenDropdownId}
       />
       <AddAddressModal
         visible={isModalVisible}
@@ -115,22 +112,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
   focusStyle: {
     borderColor: Colors?.primary,
     borderBottomEndRadius: 0,
     borderBottomLeftRadius: 0,
-  },
-  containerStyle: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    borderWidth: 0,
   },
   icon: {
     marginRight: 10,

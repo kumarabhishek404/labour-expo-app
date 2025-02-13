@@ -16,16 +16,9 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
+import CustomText from "@/components/commons/CustomText";
 
-interface FourthScreenProps {
-  setStep: any;
-  handleUpdate: any;
-}
-
-const FourthScreen: React.FC<FourthScreenProps> = ({
-  setStep,
-  handleUpdate,
-}: FourthScreenProps) => {
+const FourthScreen = () => {
   const { userId } = useLocalSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -109,13 +102,23 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
           width: "100%",
           alignItems: "center",
           justifyContent: "flex-start",
+          gap: 10,
         }}
       >
-        <CustomHeading baseFont={30} style={styles.title}>
-          {passwordStep === "create"
-            ? "Create a 4-Digit Password"
-            : "Confirm Your Password"}
-        </CustomHeading>
+        <View style={styles.title}>
+          <CustomHeading baseFont={30} color={Colors?.heading}>
+            {passwordStep === "create"
+              ? "Create a 4-Digit Password"
+              : "Confirm Your Password"}
+          </CustomHeading>
+          <CustomText color={Colors?.tertiery} fontWeight="bold">
+            (
+            {passwordStep === "create"
+              ? "please do not forget this password"
+              : "please write the password again"}
+            )
+          </CustomText>
+        </View>
         <View style={styles.passwordContainer}>
           {Array(4)
             .fill(null)
@@ -152,15 +155,14 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
       </View>
 
       <View style={styles?.buttonContainer}>
-        {router?.canGoBack() ? (
+        {router?.canGoBack() && (
           <Button
             isPrimary={false}
             title={t("back")}
             onPress={handlePasswordBack}
-            style={{ width: "35%" }}
+            style={{ width: "25%" }}
+            bgColor={Colors?.error}
           />
-        ) : (
-          <View></View>
         )}
         <Button
           isPrimary={true}
@@ -168,7 +170,7 @@ const FourthScreen: React.FC<FourthScreenProps> = ({
           onPress={() =>
             passwordStep === "create" ? handleSetPassword() : onSubmit()
           }
-          style={{ width: "60%", paddingHorizontal: 6 }}
+          style={{ flex: 1, paddingHorizontal: 5 }}
         />
       </View>
     </ScrollView>
@@ -191,35 +193,35 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginVertical: 10,
+    gap: 10,
   },
   heading: {
     marginBottom: 20,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+
   successText: {
     color: "green",
   },
   title: {
-    marginBottom: 20,
+    marginBottom: 40,
+    display: "flex",
+    flexDirection: "column",
   },
   passwordContainer: {
     flexDirection: "row",
     marginBottom: 20,
   },
   dot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 30,
     backgroundColor: "#3a3a4f",
     marginHorizontal: 10,
   },
   filledDot: {
-    backgroundColor: "#5DB075",
+    backgroundColor: Colors?.tertieryButton,
   },
   keypad: {
     flexDirection: "row",

@@ -34,11 +34,13 @@ const DateField: React.FC<DateFieldProps> = ({
   return (
     <View style={styles?.container}>
       <TouchableOpacity
-        style={[styles?.dateField, errors[name] && styles?.errorInput]}
+        style={[styles?.dateField]}
         onPress={() => setShowDatePicker(true)}
       >
         <View style={styles.dateItem}>
-          <CustomHeading>{title}</CustomHeading>
+          <CustomHeading baseFont={16} fontWeight="500">
+            {title}
+          </CustomHeading>
           <View style={styles?.calendar}>
             <CustomText baseFont={14} fontWeight="bold">
               {date ? moment(date).format("LL") : "dd/mm/yyyy"}
@@ -56,14 +58,14 @@ const DateField: React.FC<DateFieldProps> = ({
           />
         )}
       </TouchableOpacity>
-      {errors[name] && (
+      {errors?.[name] && (
         <CustomText
           textAlign="left"
           baseFont={10}
           color={Colors?.danger}
           style={{ marginTop: 5 }}
         >
-          {errors[name]?.message || ""}
+          {errors?.[name]?.message || ""}
         </CustomText>
       )}
     </View>
@@ -71,15 +73,14 @@ const DateField: React.FC<DateFieldProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   dateField: {
     width: "100%",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    height: 53,
+    height: 50,
     padding: 10,
     backgroundColor: Colors?.white,
     borderColor: Colors?.secondary,
@@ -95,12 +96,8 @@ const styles = StyleSheet.create({
   calendar: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
     gap: 5,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
 });
 

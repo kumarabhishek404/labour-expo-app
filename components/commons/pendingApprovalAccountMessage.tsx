@@ -11,10 +11,10 @@ const PendingApprovalMessage = () => {
     <View style={styles.container}>
       <View style={styles.background}>
         <FontAwesome name="hourglass-half" size={80} color="#fff" />
-        <CustomHeading baseFont={20} color={Colors?.white}>
+        <CustomHeading baseFont={24} color={Colors?.white}>
           {t("pendingApprovalHeading")}
         </CustomHeading>
-        <CustomText color={Colors?.white} baseFont={14}>
+        <CustomText color={Colors?.white} baseFont={16} fontWeight="500">
           {t("pendingApprovalMessage")}
         </CustomText>
       </View>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 15,
     alignItems: "center",
-    backgroundColor: "#FFBF00", // warm yellow for "pending"
+    backgroundColor: "#FFBF00",
     gap: 10,
   },
 });

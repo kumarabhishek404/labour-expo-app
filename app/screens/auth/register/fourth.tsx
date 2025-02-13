@@ -179,11 +179,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 10,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
   conditionsContainer: {},
   conditionText: {
     fontSize: 13,

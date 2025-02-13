@@ -1,5 +1,31 @@
 export default {
   primary: "#22409a",
+  text: "#2C2C2C",
+  highlight: "#FFC107",
+  background: "#F5F5F5",
+  secondaryBackground: "#EAF0FF",
+
+  inputLabel: "#2C2C2C",
+  inputText: "#2C2C2C",
+  inputBorder: "#CCCCCC",
+  focusedInputBorder: "#22409a",
+  inputPlaceholder: "#A0A0A0",
+  error: "#DC3545",
+
+  heading: "#22409a",
+  subHeading: "#5A5A5A",
+
+  primaryButton: "#22409a",
+  primaryButtonText: "#FFFFFF",
+  secondaryButton: "#FFFFFF",
+  secondaryButtonText: "#22409a",
+  tertieryButton: "#fa6400",
+  tertieryButtonText: "#FFFFFF",
+  disabledButton: "#A0A0A0",
+  disabledButtonText: "#FFFFFF",
+  dangerButton: "#DC3545",
+  dangerButtonText: "#FFFFFF",
+
   tertiery: "#fa6400",
   secondary: "#AEB5BB",
   fourth: "#EAF0FF",
@@ -13,10 +39,6 @@ export default {
 
   action: "#FF7A00",
   link: "#007BFF",
-
-  heading: "#1F3E72",
-  text: "#555",
-  secondaryText: "#FF7A00",
 
   success: "#4CAF50",
   progress: "#2196F3",

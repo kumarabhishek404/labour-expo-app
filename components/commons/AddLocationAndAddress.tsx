@@ -10,6 +10,7 @@ import Colors from "@/constants/Colors";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { isEmptyObject } from "@/constants/functions";
+import ErrorText from "./ErrorText";
 
 interface AddLocationAndAddressProps {
   label: string;
@@ -91,12 +92,14 @@ const AddLocationAndAddress = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
-        <CustomHeading color={Colors?.primary}>{label}</CustomHeading>
+        <CustomHeading color={Colors?.primary} baseFont={16} fontWeight="500">
+          {label}
+        </CustomHeading>
         <TouchableOpacity
           style={styles.radioButton}
           onPress={() => setIsModalVisible(true)}
         >
-          <CustomHeading color={Colors?.link}>
+          <CustomHeading color={Colors?.link} baseFont={16} fontWeight="500">
             {t("addNewAddress")}
           </CustomHeading>
         </TouchableOpacity>
@@ -132,7 +135,7 @@ const AddLocationAndAddress = ({
           setAddress={setAddress}
           isModalVisible={isModalVisible}
           setIsModalVisible={setIsModalVisible}
-          isError={errors[name]}
+          isError={errors?.[name]}
         />
       ) : (
         <>
@@ -165,11 +168,7 @@ const AddLocationAndAddress = ({
           </View>
         </>
       )}
-      {errors[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText> {errors?.[name]?.message || ""}</ErrorText>}
     </View>
   );
 };
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // justifyContent: "center",
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.background,
     gap: 5,
     // height: 90,
   },

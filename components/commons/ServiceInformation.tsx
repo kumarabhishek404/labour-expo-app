@@ -17,9 +17,22 @@ const ServiceInformation = ({
 }: ServiceInformationProps) => {
   return (
     <View style={styles?.container}>
-      <CustomHeading textAlign="left" style={[style]}>
-        {t("serviceInformation")}
+      <CustomHeading
+        textAlign="left"
+        style={[style]}
+        color={Colors?.heading}
+        baseFont={22}
+      >
+        {t("serviceInformation")}{" "}
       </CustomHeading>
+      <CustomText
+        style={[style]}
+        textAlign="left"
+        color={Colors?.tertieryButton}
+        baseFont={18}
+      >
+        (Services which are provided by you)
+      </CustomText>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
           style={[
@@ -109,7 +122,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#dddddd",
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors?.background,
     borderTopWidth: 1,
     height: 100,
     display: "flex",

@@ -13,9 +13,22 @@ interface WorkInformationProps {
 const WorkInformation = ({ information, style }: WorkInformationProps) => {
   return (
     <View style={styles?.container}>
-      <CustomHeading textAlign="left" style={[style]}>
-        {t("workInformation")}
+      <CustomHeading
+        textAlign="left"
+        style={[style]}
+        color={Colors?.heading}
+        baseFont={22}
+      >
+        {t("workInformation")}{" "}
       </CustomHeading>
+      <CustomText
+        style={[style]}
+        textAlign="left"
+        color={Colors?.tertieryButton}
+        baseFont={18}
+      >
+        (Services in which you have worked)
+      </CustomText>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View
           style={[
@@ -90,7 +103,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#dddddd",
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors?.background,
     borderTopWidth: 1,
     height: 100,
     display: "flex",

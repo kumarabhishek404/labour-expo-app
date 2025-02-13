@@ -7,14 +7,15 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
 
 const DropdownWithMenu = ({
-  id,
+  name,
   label,
   options = [],
   selectedValue,
   onSelect,
-  containerStyle,
   placeholder,
+  errors,
   disabled = false,
+  translationEnabled,
 }: any) => {
   const [selected, setSelected] = useState(selectedValue || "");
   const dropdownAnim = useRef(new Animated.Value(0)).current;
@@ -30,39 +31,51 @@ const DropdownWithMenu = ({
   };
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <CustomHeading textAlign="left">{t(label)}</CustomHeading>}
+    <View style={[styles.container]}>
+      {label && (
+        <CustomHeading
+          textAlign="left"
+          baseFont={16}
+          fontWeight="500"
+          color={Colors?.inputLabel}
+        >
+          {t(label)}
+        </CustomHeading>
+      )}
 
       <View
         pointerEvents={disabled ? "none" : "auto"}
-        style={{ opacity: disabled ? 0.6 : 1 }}
+        style={{ opacity: disabled ? 0.6 : 1, marginTop: 4 }}
       >
         <SelectList
           setSelected={(val: any) => {
+            console.log("valuee---", val);
+
             setSelected(val);
             onSelect(val);
             animateDropdown(1); // Show animation on selection
           }}
           data={options.map((item: any) => ({
-            key: item.value,
-            value: t(item.label), // Translate option labels
+            key: item?.label,
+            value: translationEnabled ? t(item.label) : item?.label,
           }))}
-          save="value"
-          fontFamily="lato"
+          save="key"
           arrowicon={
             <FontAwesome
               name="chevron-down"
               size={16}
-              color={disabled ? Colors.gray : Colors.primary}
+              color={disabled ? Colors.darkGray : Colors.primary}
             />
           }
           search={false}
           boxStyles={StyleSheet.flatten([
             styles.input,
             disabled && styles.disabledInput,
+            errors?.[name] && { borderColol: Colors?.error },
           ])}
+          dropdownItemStyles={{ paddingVertical: 8, paddingHorizontal: 12 }}
           dropdownStyles={StyleSheet.flatten([styles.dropdown])}
-          placeholder={t(placeholder) || "Select an option"} // Translate placeholder
+          placeholder={t(placeholder) || "Select an option"}
           defaultOption={options.find((item: any) => item.value === selected)}
         />
 
@@ -85,14 +98,14 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.primary,
+    // borderColor: Colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 14,
     backgroundColor: "#fff",
     borderRadius: 8,
   },
   disabledInput: {
-    backgroundColor: "#f7f7f7",
+    backgroundColor: Colors?.gray,
     borderColor: "#ddd",
   },
   dropdown: {
@@ -101,8 +114,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     maxHeight: 200,
     borderRadius: 8,
-    elevation: 3,
+    elevation: 1,
     zIndex: 999,
+    padding: 0,
   },
   animatedDropdown: {
     position: "absolute",

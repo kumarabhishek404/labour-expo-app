@@ -23,7 +23,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
-import Step2 from "../../../assets/step2.jpg";
+import Step2 from "../../../assets/app/adaptive-icon.png";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import AUTH from "@/app/api/auth";
 import useFirstTimeLaunch from "@/app/hooks/useFirstTimeLaunch";
@@ -158,11 +158,8 @@ const LoginScreen = () => {
       >
         <Image source={Step2} style={styles.image} />
         <View style={styles.textContainer}>
-          <CustomHeading textAlign="left" baseFont={24}>
-            {t("hello")},
-          </CustomHeading>
-          <CustomHeading textAlign="left" baseFont={24}>
-            {t("welcome")}
+          <CustomHeading baseFont={24}>
+            {t("welcome")} {t("users")}
           </CustomHeading>
         </View>
 
@@ -179,7 +176,7 @@ const LoginScreen = () => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInputComponent
-                label={t("mobile")}
+                label="mobile"
                 name="mobile"
                 value={value}
                 onBlur={onBlur}
@@ -187,7 +184,6 @@ const LoginScreen = () => {
                 maxLength={10}
                 onChangeText={onChange}
                 placeholder={t("enterYourMobile")}
-                containerStyle={errors?.mobile && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -207,13 +203,12 @@ const LoginScreen = () => {
             rules={{ required: t("passwordIsRequired") }}
             render={({ field: { onChange, onBlur, value } }) => (
               <PasswordComponent
-                label={t("password")}
+                label="password"
                 name="password"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder={t("enterYourPassword")}
-                containerStyle={errors?.password && styles.errorInput}
                 errors={errors}
                 icon={
                   <MaterialIcons
@@ -246,7 +241,9 @@ const LoginScreen = () => {
             <CustomText>{t("dontHaveAnAccount")}</CustomText>
             <Link href="/screens/auth/register/first" asChild>
               <TouchableOpacity>
-                <CustomHeading color={Colors.link}>{t("signUp")}</CustomHeading>
+                <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                  {t("signUp")}
+                </CustomHeading>
               </TouchableOpacity>
             </Link>
           </View>
@@ -259,19 +256,18 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.white,
-    paddingHorizontal: 10,
-    paddingBottom: 30,
+    backgroundColor: Colors.background,
+    paddingHorizontal: 20,
+    justifyContent: "center",
   },
-  textContainer: {},
+  textContainer: {
+    marginVertical: 10,
+  },
   formContainer: {
     marginTop: 15,
     gap: 15,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-  },
+
   forgetPasswordContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -295,7 +291,6 @@ const styles = StyleSheet.create({
     height: 250,
     resizeMode: "cover",
     alignSelf: "center",
-    marginTop: 30,
   },
 });
 

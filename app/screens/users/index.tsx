@@ -17,6 +17,7 @@ import { t } from "@/utils/translationHelper";
 import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import { WORKERTYPES } from "@/constants";
+import Colors from "@/constants/Colors";
 
 const Users = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -106,7 +107,6 @@ const Users = () => {
           ),
         }}
       />
-      <StatusBar backgroundColor={"#EAF0FF"} />
       <Loader loading={isLoading} />
       <View style={styles.container}>
         {/* <SearchFilter
@@ -153,7 +153,7 @@ const Users = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: Colors?.background,
     paddingHorizontal: 10,
     paddingBottom: 10,
   },

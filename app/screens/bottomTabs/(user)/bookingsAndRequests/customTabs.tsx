@@ -1,138 +1,182 @@
-import Colors from "@/constants/Colors";
-import { t } from "@/utils/translationHelper";
-import React from "react";
-import { SafeAreaView, StyleSheet, View, Text } from "react-native";
+import React, { useState } from "react";
 import {
-  SegmentedButtons,
-  useTheme,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
   ActivityIndicator,
-} from "react-native-paper";
+} from "react-native";
 import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { MaterialIcons } from "@expo/vector-icons";
+import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
+import CustomText from "@/components/commons/CustomText";
 
 type ButtonOption = {
   value: string;
   label: string;
-  count?: number;
-  loading?: boolean; // Add loading state for each button
-  checkedColor?: string;
-  uncheckedColor?: string;
+  icon?: keyof typeof MaterialIcons.glyphMap;
+  loading?: boolean;
 };
 
 type Props = {
   buttons: ButtonOption[];
   selectedTab?: string;
   onValueChange?: (value: string) => void;
-  selectedColor?: string;
-  unselectedColor?: string;
-  selectedBorderColor?: string;
-  unselectedBorderColor?: string;
 };
 
 const CustomSegmentedButton = ({
   buttons,
   selectedTab = "",
   onValueChange,
-  selectedColor = Colors.white,
-  unselectedColor = Colors.primary,
-  selectedBorderColor = Colors.fourth,
-  unselectedBorderColor = Colors.primary,
 }: Props) => {
-  const theme = useTheme();
-  const animationValue = useSharedValue(0); // Control color transition
+  const [selected, setSelected] = useState(selectedTab);
+  const animationValue = useSharedValue(0);
 
-  const handleChange = (selectedValue: string) => {
-    animationValue.value = withTiming(1, { duration: 300 }); // Smooth transition for color change
-
-    if (onValueChange) {
-      onValueChange(selectedValue);
-    }
+  const handlePress = (value: string) => {
+    animationValue.value = withTiming(1, { duration: 300 });
+    setSelected(value);
+    onValueChange && onValueChange(value);
   };
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: animationValue.value ? selectedColor : unselectedColor, // Background color transition
-    borderColor: animationValue.value
-      ? selectedBorderColor
-      : unselectedBorderColor, // Border color transition
-    transform: [{ scale: animationValue.value ? 1.05 : 1 }], // Slight scale-up on selection
-  }));
 
   return (
     <SafeAreaView style={styles.container}>
-      <SegmentedButtons
-        value={selectedTab}
-        onValueChange={handleChange}
-        buttons={buttons?.map((button: ButtonOption) => {
-          const isSelected = selectedTab === button.value;
+      <View style={styles.segmentedContainer}>
+        {buttons.map((button, index) => {
+          const isSelected = selected === button.value;
+          const isFirst = index === 0;
+          const isLast = index === buttons.length - 1;
 
-          return {
-            ...button,
-            checkedColor: selectedColor,
-            uncheckedColor: unselectedColor,
-            style: [
-              styles.button,
-              isSelected
-                ? { borderColor: selectedBorderColor }
-                : { borderColor: unselectedBorderColor },
-              animatedStyle, // Apply the animated styles here
-            ],
-            label: (
-              <View style={styles.labelContainer}>
-                {button.loading ? (
-                  <ActivityIndicator size={20} color={selectedColor} />
-                ) : (
-                  <Text
+          return (
+            <TouchableOpacity
+              key={button.value}
+              style={[
+                styles.button,
+                isFirst && styles.firstButton,
+                isLast && styles.lastButton,
+                !isFirst && !isLast && styles.middleButton,
+                isSelected && styles.selectedButton,
+                isFirst ? { borderRightWidth: 0 } : { borderLeftWidth: 0 },
+              ]}
+              onPress={() => handlePress(button.value)}
+            >
+              <Animated.View style={[styles.buttonContent]}>
+                {button.loading && (
+                  <ActivityIndicator
+                    size="small"
+                    color={
+                      isSelected
+                        ? Colors.tertieryButtonText
+                        : Colors.tertieryButton
+                    }
+                  />
+                )}
+                {button.icon && (
+                  <MaterialIcons
+                    name={button.icon}
+                    size={20}
+                    color={
+                      isSelected
+                        ? Colors.tertieryButtonText
+                        : Colors.tertieryButton
+                    }
+                  />
+                )}
+                <CustomText
+                  baseFont={17}
+                  fontWeight="500"
+                  color={
+                    isSelected
+                      ? Colors?.tertieryButtonText
+                      : Colors?.tertieryButton
+                  }
+                >
+                  {t(button.label)}
+                </CustomText>
+                {button?.count && (
+                  <View
                     style={[
-                      styles.labelText,
-                      isSelected && { color: selectedColor },
-                      !isSelected && { color: unselectedColor },
+                      styles?.countCircle,
+                      {
+                        backgroundColor: isSelected
+                          ? Colors?.tertieryButtonText
+                          : Colors?.tertieryButton,
+                      },
                     ]}
                   >
-                    {t(button.label)}
-                  </Text>
+                    <CustomText
+                      baseFont={18}
+                      fontWeight="500"
+                      color={
+                        isSelected
+                          ? Colors?.tertieryButton
+                          : Colors?.tertieryButtonText
+                      }
+                    >
+                      {button?.count}
+                    </CustomText>
+                  </View>
                 )}
-              </View>
-            ),
-          };
+              </Animated.View>
+            </TouchableOpacity>
+          );
         })}
-        style={styles.segmentedButton}
-        theme={{
-          colors: {
-            secondaryContainer: Colors.primary,
-          },
-        }}
-      />
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 0,
     alignItems: "center",
-    marginBottom: 4,
+    paddingVertical: 10,
   },
-  segmentedButton: {
-    borderRadius: 30,
+  segmentedContainer: {
+    flexDirection: "row",
   },
   button: {
-    borderWidth: 2,
-    borderRadius: 30,
-    margin: 4,
+    flex: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 4, // Add space between buttons
+    borderWidth: 1.5,
+    borderColor: Colors.tertieryButton,
   },
-  labelContainer: {
+  firstButton: {
+    borderTopLeftRadius: 30,
+    borderBottomLeftRadius: 30,
+  },
+  lastButton: {
+    borderTopRightRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  middleButton: {
+    borderRadius: 0, // No rounded edges for middle buttons
+  },
+  selectedButton: {
+    backgroundColor: Colors?.tertiery,
+  },
+  buttonContent: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 5,
   },
-  labelText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: Colors.primary,
-    flexWrap: "wrap", // Allow wrapping of text
-    overflow: "visible", // Ensure text doesn't get clipped
+  label: {},
+  countCircle: {
+    minWidth: 28,
+    minHeight: 28,
+    padding: 3,
+    borderRadius: 100,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

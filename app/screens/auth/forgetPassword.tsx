@@ -141,7 +141,6 @@ const ForgetPasswordScreen = () => {
                     onChangeText={onChange}
                     style={{ marginBottom: 15 }}
                     placeholder={t("enterYourResetPasswordCode")}
-                    containerStyle={errors?.resetToken && styles.errorInput}
                     errors={errors}
                     icon={
                       <Ionicons
@@ -179,7 +178,6 @@ const ForgetPasswordScreen = () => {
                         checkPasswordConditions(text);
                       }}
                       placeholder={t("enterYourPassword")}
-                      containerStyle={errors?.password && styles.errorInput}
                       errors={errors}
                       icon={
                         <MaterialIcons
@@ -270,9 +268,6 @@ const ForgetPasswordScreen = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder={t("reEnterYourPassword")}
-                    containerStyle={
-                      errors?.confirmPassword && styles.errorInput
-                    }
                     errors={errors}
                     icon={
                       <FontAwesome
@@ -307,7 +302,6 @@ const ForgetPasswordScreen = () => {
                   type="number"
                   onChangeText={onChange}
                   placeholder={t("enterYourMobile")}
-                  containerStyle={errors?.mobile && styles.errorInput}
                   errors={errors}
                   icon={
                     <Ionicons
@@ -401,9 +395,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
 });

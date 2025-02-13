@@ -194,13 +194,12 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DropdownWithMenu
-                  id="state"
-                  label={t("state")}
+                  name="state"
+                  label={"state"}
                   options={states}
                   selectedValue={value}
                   onSelect={(value: any) => onChange(value)}
-                  containerStyle={errors?.state && styles.errorInput}
-                  placeholder={t("selectState")}
+                  placeholder={"selectState"}
                   errors={errors}
                   openDropdownId={openDropdownId}
                   setOpenDropdownId={setOpenDropdownId}
@@ -226,17 +225,14 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DropdownWithMenu
-                  id="district"
-                  label={t("district")}
+                  name="district"
+                  label={"district"}
                   options={districts || []}
                   selectedValue={value}
                   onSelect={(value: any) => onChange(value)}
                   errors={errors}
-                  containerStyle={errors?.district && styles.errorInput}
                   placeholder={
-                    selectedState
-                      ? t("selectDistrict")
-                      : t("pleaseSelectStateFirst")
+                    selectedState ? "selectDistrict" : "pleaseSelectStateFirst"
                   }
                   searchEnabled={false}
                   disabled={!selectedState}
@@ -263,16 +259,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DropdownWithMenu
-                  id="subDistrict"
-                  label={t("subDistrict")}
+                  name="subDistrict"
+                  label={"subDistrict"}
                   placeholder={
                     selectedDistrict
-                      ? t("selectSubDistrict")
-                      : t("pleaseSelectDistrictFirst")
+                      ? "selectSubDistrict"
+                      : "pleaseSelectDistrictFirst"
                   }
                   disabled={!selectedDistrict}
                   errors={errors}
-                  containerStyle={errors?.subDistrict && styles.errorInput}
                   searchEnabled={false}
                   options={subDistricts || []}
                   icon={
@@ -301,16 +296,15 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <DropdownWithMenu
-                  id="village"
-                  label={t("village")}
+                  name="village"
+                  label={"village"}
                   placeholder={
                     selectedSubDistrict
-                      ? t("selectVillage")
-                      : t("pleaseSelectSubDistrictFirst")
+                      ? "selectVillage"
+                      : "pleaseSelectSubDistrictFirst"
                   }
                   disabled={!selectedSubDistrict}
                   errors={errors}
-                  containerStyle={errors?.village && styles.errorInput}
                   searchEnabled={false}
                   options={villages || []}
                   icon={
@@ -346,7 +340,6 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
                   maxLength={6}
                   name="pinCode"
                   type="number"
-                  containerStyle={errors?.pinCode && styles.errorInput}
                   errors={errors}
                   icon={
                     <Feather
@@ -396,10 +389,5 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
     color: Colors.secondary,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
 });

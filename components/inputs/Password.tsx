@@ -14,7 +14,6 @@ type TextInputProps = {
   onBlur?: any;
   icon?: any;
   errors?: any;
-  containerStyle?: any;
 };
 
 const PasswordComponent = ({
@@ -41,7 +40,6 @@ const PasswordComponent = ({
         label={label}
         name={name}
         maxLength={4}
-        containerStyle={errors[name] && styles.errorInput}
         errors={errors}
         icon={icon && icon}
         secondIcon={
@@ -65,9 +63,5 @@ export default PasswordComponent;
 
 const styles = StyleSheet.create({
   inputField: { gap: 5 },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
 });

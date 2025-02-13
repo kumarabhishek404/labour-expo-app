@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
 
 const StatsCard = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -12,16 +13,21 @@ const StatsCard = () => {
   return (
     <View style={styles.container}>
       <View>
-        <CustomHeading baseFont={20}>
+        <CustomHeading baseFont={24}>
           {userDetails?.appliedServices?.length || 0}
         </CustomHeading>
-        <CustomText>{t("myBookings")}</CustomText>
+        <CustomText
+          color={Colors?.heading}
+          style={{ textTransform: "uppercase" }}
+        >
+          {t("myBookings")}
+        </CustomText>
       </View>
       <View>
-        <CustomHeading baseFont={20}>
+        <CustomHeading baseFont={24}>
           {userDetails?.likedBy?.length || 0}
         </CustomHeading>
-        <CustomText>{t("myLikes")}</CustomText>
+        <CustomText color={Colors?.heading}>{t("myLikes")}</CustomText>
       </View>
     </View>
   );
@@ -30,17 +36,17 @@ const StatsCard = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "#FFF",
+    backgroundColor: Colors?.background,
     borderRadius: 8,
     padding: 15,
     marginHorizontal: 20,
     alignItems: "center",
     justifyContent: "space-around",
-    elevation: 1, // For Android shadow
+    elevation: 6, // For Android shadow
     shadowColor: "#000", // For iOS shadow
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
     marginBottom: 20,
   },
 });

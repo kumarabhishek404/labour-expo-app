@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Animated,
   View,
+  Image,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { router, Tabs } from "expo-router";
@@ -21,6 +22,11 @@ import { getFontSize } from "@/constants/functions";
 import { Badge } from "react-native-paper";
 import BadgeComponent from "@/components/commons/Badge";
 import BottomNavTutorial from "../screens/tutorials/bootomNavigation";
+import SEARCH from "../../assets/search.gif";
+import ADD from "../../assets/add.gif";
+import BOOKINGS from "../../assets/bookings.gif";
+import NOTIFICATIONS from "../../assets/notifications.gif";
+import PROFILE from "../../assets/profile.gif";
 
 export default function Layout() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -31,7 +37,6 @@ export default function Layout() {
   LOCAL_CONTEXT?.useLocale();
   const isFirstLaunch = useFirstTimeLaunch();
   const { locale } = LOCAL_CONTEXT.useLocale();
-  const [showTutorial, setShowTutorial] = useState(true);
 
   useEffect(() => {
     setIsAccountInactiveLocal(isAccountInactive);
@@ -73,15 +78,10 @@ export default function Layout() {
     useEffect(() => {
       Animated.parallel([
         Animated.spring(scaleAnim, {
-          toValue: isSelected ? 1.1 : 0.9,
+          toValue: isSelected ? 1.2 : 0.9,
           useNativeDriver: true,
           friction: 4,
         }),
-        // Animated.timing(opacityAnim, {
-        //   toValue: isSelected ? 1 : 0.6,
-        //   duration: 200,
-        //   useNativeDriver: true,
-        // }),
         Animated.spring(translateYAnim, {
           toValue: isSelected ? -5 : 0,
           useNativeDriver: true,
@@ -101,17 +101,19 @@ export default function Layout() {
             // opacity: opacityAnim, // Opacity effect on icon
           }}
         >
-          <MaterialIcons
-            name={iconName}
-            size={32}
-            color={isSelected ? Colors?.tertiery : Colors.primary}
-          />
+          <View style={[styles?.icon, isSelected && {backgroundColor: Colors?.tertieryButton}]}>
+            <MaterialIcons
+              name={iconName}
+              size={32}
+              color={isSelected ? Colors?.tertieryButtonText : Colors.primary}
+            />
+          </View>
         </Animated.View>
         <Animated.Text
           style={[
             styles.customButtonText,
             {
-              fontSize: getFontSize(locale),
+              fontSize: getFontSize(locale, 13),
               // opacity: opacityAnim,
               color: isSelected ? Colors?.tertiery : Colors.primary,
             }, // Opacity effect on text
@@ -129,6 +131,32 @@ export default function Layout() {
 
     // Local state for toggling between Profile and Notifications
     const [showProfile, setShowProfile] = useState(true);
+    // const fadeAnim = useRef(new Animated.Value(1)).current;
+
+    // Animations
+    // const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
+    // const opacityAnim = useRef(
+    //   new Animated.Value(isSelected ? 1 : 0.7)
+    // ).current;
+    // const translateYAnim = useRef(
+    //   new Animated.Value(isSelected ? -5 : 0)
+    // ).current;
+
+    // useEffect(() => {
+    //   Animated.parallel([
+    //     Animated.spring(scaleAnim, {
+    //       toValue: isSelected ? 1 : 0.9,
+    //       useNativeDriver: true,
+    //       friction: 4,
+    //     }),
+    //     Animated.spring(translateYAnim, {
+    //       toValue: isSelected ? -5 : 0,
+    //       useNativeDriver: true,
+    //       friction: 5,
+    //     }),
+    //   ]).start();
+    // }, [isSelected]);
+
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
@@ -156,42 +184,58 @@ export default function Layout() {
     }, []);
 
     return (
-      <TouchableOpacity
-        style={[styles.customButton]}
-        onPress={() => router?.push("/(tabs)/fifth")}
-      >
-        <Animated.View
-          style={{ opacity: fadeAnim, transform: [{ scale: fadeAnim }] }}
+      <>
+        <TouchableOpacity
+          style={[styles.customButton]}
+          onPress={() => router?.push("/(tabs)/fifth")}
         >
-          <View style={styles?.notificationWrapper}>
-            <MaterialIcons
-              name={showProfile ? "person" : "notifications"}
-              size={32}
-              color={isSelected ? Colors?.tertiery : Colors.primary}
-            />
-            <BadgeComponent
-              style={{
-                backgroundColor: isSelected
-                  ? Colors?.tertiery
-                  : Colors?.primary,
-              }}
-              count={34}
-            />
-          </View>
-        </Animated.View>
-        <Animated.Text
-          style={[
-            styles.customButtonText,
-            {
-              fontSize: getFontSize(locale),
-              opacity: fadeAnim,
-              color: isSelected ? Colors?.tertiery : Colors.primary,
-            },
-          ]}
-        >
-          {showProfile ? t("myProfile") : t("notifications")}
-        </Animated.Text>
-      </TouchableOpacity>
+          <Animated.View
+            style={[
+              {
+                transform: [
+                  { scale: fadeAnim },
+                  // { translateY: translateYAnim },
+                ],
+              },
+            ]}
+          >
+            <View style={styles?.notificationWrapper}>
+              <Image
+                source={showProfile ? PROFILE : NOTIFICATIONS} // Local GIF
+                style={[
+                  styles.doubleIcon,
+                  isSelected && {
+                    width: 50,
+                    height: 50,
+                    borderColor: Colors?.tertieryButton,
+                  },
+                ]}
+              />
+              {!showProfile && (
+                <BadgeComponent
+                  style={{
+                    backgroundColor: isSelected
+                      ? Colors?.tertiery
+                      : Colors?.primary,
+                  }}
+                  count={4}
+                />
+              )}
+            </View>
+          </Animated.View>
+          {/* <Animated.Text
+            style={[
+              styles.customButtonText,
+              {
+                fontSize: getFontSize(locale, 13),
+                color: isSelected ? Colors?.tertiery : Colors.primary,
+              },
+            ]}
+          >
+            {showProfile ? t("myProfile") : t("notifications")}
+          </Animated.Text> */}
+        </TouchableOpacity>
+      </>
     );
   };
 
@@ -201,15 +245,16 @@ export default function Layout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            height: 75,
+            height: 70,
             display: "flex",
             alignContent: "center",
             justifyContent: "center",
             backgroundColor: Colors.white,
-            elevation: 5,
+            elevation: 10, // Shadow for Android
             shadowColor: "#000",
-            shadowOpacity: 0.1,
+            shadowOpacity: 0.15,
             shadowRadius: 10,
+            shadowOffset: { width: 0, height: 5 },
           },
         }}
       >
@@ -283,18 +328,34 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     paddingVertical: 5,
   },
   customButtonText: {
     color: Colors?.primary,
-    fontWeight: "bold",
+    fontWeight: "500",
     textAlign: "center",
-    marginTop: 5,
   },
   notificationWrapper: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    borderWidth: 0.7,
+    borderColor: Colors?.white,
+    backgroundColor: Colors?.white,
+    borderRadius: 8,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  doubleIcon: {
+    borderWidth: 0.7,
+    borderColor: Colors?.white,
+    borderRadius: 8,
+    width: 50,
+    height: 50,
   },
 });

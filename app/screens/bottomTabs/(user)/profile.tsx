@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   StatusBar,
+  Platform,
 } from "react-native";
 // import { StatusBar } from "expo-status-bar";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -44,6 +45,7 @@ import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "./tabsSwitcher";
+import { Portal, Provider } from "react-native-paper";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
@@ -118,10 +120,14 @@ const UserProfile = () => {
         response?.data?.data?.email
       );
       let user = response?.data?.data;
+      console.log("user--", user);
+
       setIsEditProfile(false);
+      setProfilePicture(user?.profilePicture);
       setUserDetails({
         ...userDetails,
         name: user?.name,
+        profilePicture: user?.profilePicture,
         email: {
           value: user?.email?.value,
           isVerified: false,
@@ -134,21 +140,45 @@ const UserProfile = () => {
     },
   });
 
-  // const mutationUploadProfileImage = useMutation({
-  //   mutationKey: ["uploadProfileImage"],
-  //   mutationFn: (payload) => handleUploadAvatar(payload),
-  //   onSuccess: (response) => {
-  //     console.log("Response from profilePicture image uploading - ", response);
-  //     setUserDetails({
-  //       ...userDetails,
-  //       profilePicture: response?.data,
-  //     });
-  //     setProfilePicture(response?.data);
-  //   },
-  //   onError: (err) => {
-  //     console.log("Error while uploading profilePicture image - ", err);
-  //   },
-  // });
+  const mutationUpdateProfilePicture = useMutation({
+    mutationKey: ["updateProfilePicture"],
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
+    onSuccess: (response) => {
+      let user = response?.data?.data;
+      setProfilePicture(user?.profilePicture);
+      setUserDetails({
+        ...userDetails,
+        profilePicture: user?.profilePicture,
+      });
+    },
+  });
+
+  const handleProfilePictureSubmit = async (profileImage: any) => {
+    if (
+      !profileImage ||
+      typeof profileImage !== "string" ||
+      profileImage.trim() === ""
+    ) {
+      TOAST?.showToast?.error(t("pleaseSelectAProfilePicture"));
+      return;
+    }
+
+    const formData: any = new FormData();
+    const imageName = profileImage.split("/").pop();
+    formData.append("profileImage", {
+      uri:
+        Platform.OS === "android"
+          ? profileImage
+          : profileImage.replace("file://", ""),
+      type: "image/jpeg",
+      name: imageName || "photo.jpg",
+    });
+    formData?.append("_id", userDetails?._id);
+
+    console.log("Forrr---", formData);
+
+    await mutationUpdateProfilePicture.mutate(formData);
+  };
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
@@ -184,89 +214,73 @@ const UserProfile = () => {
     setIsEditProfile(true);
   };
 
-  // const handleUploadAvatar = async (profileImage: any) => {
-  //   const formData: any = new FormData();
-  //   const avatarFile = profileImage.split("/").pop();
-  //   formData.append("profilePicture", {
-  //     uri: profileImage,
-  //     type: "image/jpeg",
-  //     name: avatarFile,
-  //   });
-  //   return await USER?.uploadFile(formData);
-  // };
-
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        {/* <View style={{ marginBottom: 0 }}>
-          <AvatarComponent
-            isEditable={true}
-            isLoading={mutationUploadProfileImage?.isPending}
-            profileImage={profilePicture}
-            onUpload={mutationUploadProfileImage?.mutate}
-          />
-        </View> */}
-        <View style={{ flexDirection: "column", gap: 10 }}>
-          <Controller
-            control={control}
-            name="name"
-            defaultValue=""
-            rules={{
-              required: t("firstNameIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("name")}
-                name="name"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourFirstName")}
-                containerStyle={errors?.name && styles.errorInput}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name="person"
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
+        <AvatarComponent
+          isEditable={true}
+          isLoading={mutationUpdateProfilePicture?.isPending}
+          profileImage={profilePicture}
+          onUpload={handleProfilePictureSubmit}
+        />
+        <Controller
+          control={control}
+          name="name"
+          defaultValue=""
+          rules={{
+            required: t("firstNameIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              label="name"
+              name="name"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder={t("enterYourFirstName")}
+              errors={errors}
+              icon={
+                <Ionicons
+                  name="person"
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
 
-          <Controller
-            control={control}
-            name="email"
-            defaultValue=""
-            // rules={{
-            //   required: t("emailAddressIsRequired"),
-            //   pattern: {
-            //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-            //     message: t("enterAValidEmailAddress"),
-            //   },
-            // }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <EmailAddressField
-                name="email"
-                email={value}
-                setEmail={onChange}
-                onBlur={onBlur}
-                errors={errors}
-                placeholder={t("enterYourEmailAddress")}
-                icon={
-                  <Ionicons
-                    name={"mail-outline"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, marginRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="email"
+          defaultValue=""
+          // rules={{
+          //   required: t("emailAddressIsRequired"),
+          //   pattern: {
+          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+          //     message: t("enterAValidEmailAddress"),
+          //   },
+          // }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <EmailAddressField
+              name="email"
+              email={value}
+              setEmail={onChange}
+              onBlur={onBlur}
+              errors={errors}
+              placeholder={t("enterYourEmailAddress")}
+              icon={
+                <Ionicons
+                  name={"mail-outline"}
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, marginRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
       </View>
     );
   };
@@ -291,7 +305,6 @@ const UserProfile = () => {
 
   return (
     <>
-      <StatusBar backgroundColor={Colors?.white} />
       <Loader
         loading={
           mutationUpdateProfileInfo?.isPending ||
@@ -312,32 +325,16 @@ const UserProfile = () => {
         {selectedTab === "Profile Information" ? (
           <ScrollView>
             <View style={styles.userInfoSection}>
-              <View
-                style={{
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  marginTop: 10,
-                }}
-              >
-                <AvatarComponent
-                  isEditable={false}
-                  // isLoading={mutationUploadProfileImage?.isPending}
-                  profileImage={profilePicture}
-                  // onUpload={mutationUploadProfileImage?.mutate}
-                />
-                <View
-                  style={{
-                    flex: 1,
-                    marginHorizontal: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 5,
-                  }}
-                >
-                  <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
-                </View>
-              </View>
+              <AvatarComponent
+                isLoading={mutationUpdateProfilePicture?.isPending}
+                isEditable={false}
+                profileImage={profilePicture}
+              />
+              <CustomHeading baseFont={22} style={{ marginTop: 10 }}>
+                {userDetails?.name || "Name"}
+              </CustomHeading>
             </View>
+
             {(!userDetails?.email?.value ||
               !userDetails?.address ||
               !userDetails?.dateOfBirth ||
@@ -345,31 +342,25 @@ const UserProfile = () => {
 
             {(userDetails?.status === "SUSPENDED" ||
               userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
+
             {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
+
             <View style={styles?.changeRoleWrapper}>
               <Button
                 disabled={false}
-                style={{ ...styles?.mediatorButton, width: "45%" }}
+                style={{ ...styles?.mediatorButton }}
                 textStyle={styles?.mediatorButtonText}
                 isPrimary={true}
                 title={t("refreshUser")}
                 onPress={handleRefreshUser}
               />
-              <View
-                style={[
-                  { justifyContent: "flex-end" },
-                  userDetails?.status !== "ACTIVE" && styles?.disableButton,
-                  { width: "45%" },
-                ]}
-              >
+              <View style={[{ justifyContent: "flex-end" }, { width: "45%" }]}>
                 <Button
                   textStyle={styles?.mediatorButtonText}
                   isPrimary={true}
                   title={t("editProfile")}
-                  onPress={() => {
-                    return !isEditProfile && handleEditProfile();
-                  }}
-                  style={[styles?.mediatorButton]}
+                  onPress={() => !isEditProfile && handleEditProfile()}
+                  style={{ flex: 1 }}
                 />
               </View>
               <ModalComponent
@@ -389,10 +380,11 @@ const UserProfile = () => {
             {userDetails?.employedBy && (
               <TeamAdminCard admin={userDetails?.employedBy} />
             )}
+
             <StatsCard />
 
             <SkillSelector
-              canAddSkills={userDetails?.status === "ACTIVE"}
+              canAddSkills={true}
               role={userDetails?.role}
               isShowLabel={true}
               style={styles?.skillsContainer}
@@ -469,22 +461,11 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  caption: {
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 0,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    width: 130,
-    padding: 6,
-    borderRadius: 30,
-    textAlign: "center",
-    textTransform: "uppercase",
-    backgroundColor: "#d6ecdd",
+    paddingTop: 30,
+    paddingBottom: 15,
   },
   mediatorButton: {
+    flex: 1,
     borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",
@@ -495,6 +476,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingVertical: 20,
+    gap: 20,
   },
   inputContainer: {
     height: 53,
@@ -510,17 +492,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+
   skillsContainer: {
     padding: 12,
     marginHorizontal: 20,
     flexDirection: "column",
     marginBottom: 5,
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.background,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
   },

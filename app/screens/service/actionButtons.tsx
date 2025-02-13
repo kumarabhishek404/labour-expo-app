@@ -243,7 +243,7 @@ const ServiceActionButtons = ({
             isPrimary={false}
             title={t("restoreService")}
             onPress={mutationRestoreService.mutate}
-            style={styles.footerBtn}
+            style={styles.restoreBtn}
             bgColor={Colors?.tertiery}
             textStyle={{ color: Colors?.white }}
           />
@@ -260,7 +260,7 @@ const ServiceActionButtons = ({
                 title={t("removeFromService")}
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
-                style={{ width: "60%" }}
+                style={{ flex: 1 }}
                 onPress={mutationCancelServiceByWorkerAfterSelection.mutate}
               />
             ) : (
@@ -268,7 +268,7 @@ const ServiceActionButtons = ({
                 isPrimary={true}
                 title={isServiceApplied ? t("cancelApply") : t("applyNow")}
                 onPress={isServiceApplied ? handleCancelApply : handleApply}
-                style={{ width: "65%" }}
+                style={{ width: "50%" }}
                 bgColor={isServiceApplied ? Colors?.danger : Colors?.primary}
                 borderColor={
                   isServiceApplied ? Colors?.danger : Colors?.primary
@@ -374,8 +374,6 @@ const ServiceActionButtons = ({
   };
 
   const RenderMemberItem = ({ item }: any) => {
-    console.log("item--", item);
-
     return (
       <TouchableOpacity
         onPress={() => toggleUserSelection(item?._id)}
@@ -383,10 +381,10 @@ const ServiceActionButtons = ({
         key={item?._id}
       >
         <CustomCheckbox
+          checkboxStyle={{ marginRight: 6 }}
           disabled={!!isServiceApplied}
           isChecked={selectedWorkers?.includes(item?._id)}
           onToggle={() => toggleUserSelection(item?._id)}
-          containerStyle={{ marginRight: 8 }}
         />
         <ProfilePicture uri={item?.profilePicture} />
         <View style={styles.userInfo}>
@@ -568,6 +566,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     gap: 10,
     position: "absolute",
     bottom: 0,
@@ -576,7 +575,11 @@ const styles = StyleSheet.create({
     width: width,
   },
   footerBtn: {
-    flex: 1,
+    width: "35%",
+    alignItems: "center",
+  },
+  restoreBtn: {
+    width: "50%",
     alignItems: "center",
   },
   deleteBtn: {
@@ -587,7 +590,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   completeBtn: {
-    width: "48%",
+    // width: "48%",
+    flex: 1,
     backgroundColor: Colors?.primary,
     borderColor: Colors?.primary,
     paddingHorizontal: 8,
@@ -662,8 +666,6 @@ const styles = StyleSheet.create({
   },
 
   modalContent: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
     paddingVertical: 10,
   },
   userItem: {

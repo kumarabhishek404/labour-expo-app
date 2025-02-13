@@ -116,7 +116,6 @@ const Bookings = () => {
           ),
         }}
       />
-      <StatusBar backgroundColor={Colors?.fourth} />
       <View style={{ flex: 1 }}>
         <Loader
           loading={
@@ -164,7 +163,7 @@ const Bookings = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors?.fourth,
+    backgroundColor: Colors?.background,
     paddingHorizontal: 10,
   },
   paginationTabs: {

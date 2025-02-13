@@ -14,6 +14,7 @@ import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import ProfilePicture from "../commons/ProfilePicture";
+import ErrorText from "../commons/ErrorText";
 
 interface SelfieScreenProps {
   name: string;
@@ -121,11 +122,7 @@ const SelfieScreen = ({
           </TouchableOpacity>
           <View style={styles.instructionContainer}>
             <CustomText>{t("ifYouWantToClickMoreBetterSelfie")}</CustomText>
-            {errors[name] && (
-              <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-                {errors[name]?.message || ""}
-              </CustomText>
-            )}
+            {errors?.[name] && <ErrorText>{errors?.[name]?.message}</ErrorText>}
           </View>
         </View>
       ) : (
@@ -134,7 +131,7 @@ const SelfieScreen = ({
             <View
               style={[
                 styles.cameraBorderContainer,
-                errors[name] && styles?.errorInput,
+                errors?.[name] && {borderColor: Colors?.error},
               ]}
             >
               <CameraView
@@ -173,11 +170,7 @@ const SelfieScreen = ({
           )}
           <View style={styles.instructionContainer}>
             <CustomText>{t("positionYourFaceInTheOvalAbove")}</CustomText>
-            {errors[name] && (
-              <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-                {errors[name]?.message || ""}
-              </CustomText>
-            )}
+            {errors?.[name] && <ErrorText>{errors?.[name]?.message}</ErrorText>}
           </View>
         </>
       )}
@@ -253,13 +246,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-  },
-  errorInput: {
-    borderWidth: 4,
-    borderColor: "red",
-    width: 250,
-    height: 350,
-    borderRadius: 200,
   },
   footerContainer: {
     width: "100%",

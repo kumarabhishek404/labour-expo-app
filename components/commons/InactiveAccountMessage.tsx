@@ -52,7 +52,7 @@ const InactiveAccountMessage = () => {
           <CustomHeading baseFont={20} color={Colors?.white}>
             {t("inactiveHeading")}
           </CustomHeading>
-          <CustomText color={Colors?.white} baseFont={14}>
+          <CustomText color={Colors?.white} baseFont={16}>
             {t("inactiveMessage")}
           </CustomText>
 
@@ -115,55 +115,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 15,
     alignItems: "center",
-    backgroundColor: Colors?.danger,
+    backgroundColor: Colors?.error,
     gap: 10,
   },
   iconContainer: {
     marginBottom: 10,
-  },
-  message: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  subMessage: {
-    fontSize: 16,
-    color: "#FFF",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  restoreButton: {
-    backgroundColor: "#fff",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-  },
-  restoreButtonText: {
-    color: "#ff4757",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   modalContentContainer: {
     paddingVertical: 20,
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  modalDescription: {
-    fontSize: 16,
-    color: "#666",
-    lineHeight: 24,
-    textAlign: "center",
-    marginBottom: 20,
   },
 });
 

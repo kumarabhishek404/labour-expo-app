@@ -164,7 +164,7 @@ const SkillSelector = ({
     return (
       <View style={styles.priceInputContainer}>
         <TextInputComponent
-          label={t("enterPricePerDay")}
+          label="enterPricePerDay"
           name="pricePerDay"
           placeholder={t("enterPricePerDay")}
           type="number"
@@ -246,7 +246,13 @@ const SkillSelector = ({
 
       <View style={styles.skillContainer}>{renderSkills()}</View>
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 5,
+        }}
+      >
         {canAddSkills && (
           <TouchableOpacity style={style?.addNewSkill} onPress={toggleModal}>
             <CustomHeading color={Colors?.link} fontWeight="bold">
@@ -273,8 +279,10 @@ const SkillSelector = ({
           <View style={{ paddingVertical: 20 }}>
             <DropdownWithMenu
               id="addSkill"
-              placeholder={t("searchAndSelectSkills")}
+              label="selectSkill"
+              placeholder="searchAndSelectSkills"
               searchEnabled={false}
+              translationEnabled
               options={filteredSkills || []}
               icon={
                 <MaterialCommunityIcons
@@ -355,9 +363,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-end",
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
   skillBox: {
-    backgroundColor: Colors?.fourth,
+    backgroundColor: Colors?.white,
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 10,

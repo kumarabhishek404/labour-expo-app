@@ -16,6 +16,7 @@ import { MYSERVICES, SERVICES, WORKERTYPES, WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
+import Colors from "@/constants/Colors";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -160,7 +161,7 @@ const Services = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: Colors?.background,
     paddingHorizontal: 10,
   },
 });

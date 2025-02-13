@@ -6,6 +6,7 @@ import CustomText from "../commons/CustomText";
 import Colors from "@/constants/Colors";
 import CustomHeading from "../commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
+import ErrorText from "../commons/ErrorText";
 
 const PaperDropdown = ({
   options,
@@ -14,8 +15,8 @@ const PaperDropdown = ({
   value,
   disabled = false,
   translationEnabled,
+  searchEnabled,
   placeholder,
-  containerStyle,
   name,
   label,
   errors,
@@ -44,15 +45,20 @@ const PaperDropdown = ({
   return (
     <View style={[styles.container]}>
       {label && (
-        <CustomHeading textAlign="left" color={Colors?.primary}>
-          {label}
+        <CustomHeading
+          textAlign="left"
+          color={Colors?.inputLabel}
+          baseFont={16}
+          fontWeight="500"
+        >
+          {t(label)}
         </CustomHeading>
       )}
       <TouchableOpacity
         style={[
           styles.dropdownHeader,
           disabled && styles.disabledDropdown,
-          !disabled && containerStyle,
+          errors?.[name] && { borderColor: Colors?.error },
         ]}
         onPress={() => {
           if (!disabled) {
@@ -62,22 +68,37 @@ const PaperDropdown = ({
         }}
         disabled={disabled}
       >
-        <Text style={[styles.selectedText]}>
+        <CustomText
+          baseFont={16}
+          textAlign="left"
+          style={[
+            styles.selectedText,
+            disabled
+              ? { color: Colors?.disabledButtonText }
+              : selectedValue
+              ? { color: Colors?.inputText }
+              : { color: Colors?.inputPlaceholder },
+          ]}
+        >
           {translationEnabled
             ? t(selectedValue || placeholder)
             : selectedValue || placeholder}
-        </Text>
+        </CustomText>
         <Ionicons
           name={visible ? "chevron-up" : "chevron-down"}
           size={20}
-          color={disabled ? "#aaa" : "#555"}
+          color={
+            disabled
+              ? Colors?.disabledButtonText
+              : selectedValue
+              ? Colors?.inputText
+              : Colors?.inputPlaceholder
+          }
         />
       </TouchableOpacity>
 
       {!disabled && name && errors?.[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
+        <ErrorText>{errors?.[name]?.message || ""}</ErrorText>
       )}
 
       {/* Modal for Dropdown */}
@@ -88,38 +109,50 @@ const PaperDropdown = ({
           contentContainerStyle={styles.modalContainer}
         >
           {/* Search Bar */}
-          <TextInput
-            label="Search..."
-            value={searchText}
-            onChangeText={setSearchText}
-            mode="outlined"
-            style={styles.searchInput}
-          />
+          {filteredOptions && filteredOptions?.length > 0 && searchEnabled && (
+            <TextInput
+              label="Search..."
+              value={searchText}
+              onChangeText={setSearchText}
+              mode="outlined"
+              style={styles.searchInput}
+            />
+          )}
 
           {/* Scrollable Dropdown List */}
           <ScrollView
             style={styles.listContainer}
             keyboardShouldPersistTaps="handled"
           >
-            {filteredOptions.map((item: any) => (
-              <TouchableOpacity
-                key={item.value}
-                style={styles.optionItem}
-                onPress={() => handleSelect(item.value)}
-              >
-                <View style={styles.optionContent}>
-                  {item.icon && (
-                    <View style={styles.iconContainer}>{item.icon}</View>
+            {filteredOptions && filteredOptions?.length > 0 ? (
+              filteredOptions.map((item: any) => (
+                <TouchableOpacity
+                  key={item.value}
+                  style={styles.optionItem}
+                  onPress={() => handleSelect(item.value)}
+                >
+                  <View style={styles.optionContent}>
+                    {item.icon && (
+                      <View style={styles.iconContainer}>{item.icon}</View>
+                    )}
+                    <Text style={styles.optionText}>
+                      {translationEnabled ? t(item.label) : item?.label}
+                    </Text>
+                  </View>
+                  {selectedValue === item.value && (
+                    <Ionicons name="checkmark" size={20} color="black" />
                   )}
-                  <Text style={styles.optionText}>
-                    {translationEnabled ? t(item.label) : item?.label}
-                  </Text>
-                </View>
-                {selectedValue === item.value && (
-                  <Ionicons name="checkmark" size={20} color="black" />
-                )}
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <CustomText
+                style={{ marginVertical: 20 }}
+                baseFont={20}
+                color={Colors?.inputPlaceholder}
+              >
+                {t(placeholder)}
+              </CustomText>
+            )}
           </ScrollView>
 
           {/* Close Button */}
@@ -138,34 +171,32 @@ const PaperDropdown = ({
 
 export default PaperDropdown;
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: "white",
+    backgroundColor: Colors?.background,
     flexGrow: 1,
     gap: 5,
   },
   dropdownHeader: {
+    minHeight: 53,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Colors?.inputBorder,
     borderRadius: 8,
-    backgroundColor: "#fff",
+    backgroundColor: Colors?.white,
     gap: 5,
   },
   disabledDropdown: {
-    backgroundColor: "#f0f0f0",
-    borderColor: "#bbb",
+    backgroundColor: Colors?.disabledButton,
+    borderColor: Colors?.disabledButton,
   },
   selectedText: {
     width: "90%",
-    fontSize: 16,
-    color: "#333",
   },
   errorBorder: {
     borderColor: "red",

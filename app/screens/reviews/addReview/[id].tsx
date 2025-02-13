@@ -17,6 +17,7 @@ import RATING from "@/app/api/rating";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import ErrorText from "@/components/commons/ErrorText";
 
 const AddReview = () => {
   const { id, type, data }: any = useLocalSearchParams();
@@ -172,9 +173,7 @@ const AddReview = () => {
         />
 
         {errors?.feedbackType && (
-          <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-            {errors.feedbackType.message}
-          </CustomText>
+          <ErrorText>{errors.feedbackType.message}</ErrorText>
         )}
 
         <Controller
@@ -195,7 +194,6 @@ const AddReview = () => {
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder={t("weWouldLoveToGiveYou")}
-              containerStyle={errors?.comment && styles.errorInput}
               errors={errors}
               icon={
                 <MaterialIcons
@@ -238,8 +236,5 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginVertical: 30,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-  },
+  
 });

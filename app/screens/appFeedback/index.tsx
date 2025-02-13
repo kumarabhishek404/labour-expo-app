@@ -19,6 +19,7 @@ import Atoms from "@/app/AtomStore";
 import * as DeviceInfo from "expo-device";
 import { Platform } from "react-native";
 import ReasoneSelection from "../allFeedback/reasons";
+import ErrorText from "@/components/commons/ErrorText";
 const FeedbackForm = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [deviceInfo, setDeviceInfo] = useState<any>(null);
@@ -62,7 +63,9 @@ const FeedbackForm = () => {
       TOAST?.showToast?.success("Feedback submitted successfully");
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(error?.response?.data?.message || "An error occurred");
+      TOAST?.showToast?.error(
+        error?.response?.data?.message || "An error occurred"
+      );
     },
   });
 
@@ -164,9 +167,7 @@ const FeedbackForm = () => {
           />
 
           {errors?.feedbackType && (
-            <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-              {errors.feedbackType.message}
-            </CustomText>
+            <ErrorText>{errors.feedbackType.message}</ErrorText>
           )}
 
           <Controller
@@ -187,7 +188,6 @@ const FeedbackForm = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder={t("weDLoveToGiveYouTheFullExperience")}
-                containerStyle={errors?.description && styles.errorInput}
                 errors={errors}
                 icon={
                   <MaterialIcons
@@ -251,11 +251,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: 0,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: Colors.danger,
-    borderRadius: 8,
   },
   submitButton: {
     marginHorizontal: 20,

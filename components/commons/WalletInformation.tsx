@@ -64,17 +64,43 @@ const WallletInformation = ({
     <View style={styles?.container}>
       {(type === "spents" || type === "both") && (
         <>
-          <CustomHeading textAlign="left" style={[style]}>
-            {t("spents")}
+          <CustomHeading
+            textAlign="left"
+            style={[style]}
+            color={Colors?.heading}
+            baseFont={22}
+          >
+            {t("spents")}{" "}
           </CustomHeading>
+          <CustomText
+            style={[style]}
+            textAlign="left"
+            color={Colors?.tertieryButton}
+            baseFont={18}
+          >
+            (Money you spent on the workers for completing your services)
+          </CustomText>
           {renderSpentsSection()}
         </>
       )}
       {(type === "earnings" || type === "both") && (
         <>
-          <CustomHeading textAlign="left" style={[style]}>
-            {t("earnings")}
+          <CustomHeading
+            textAlign="left"
+            style={[style]}
+            color={Colors?.heading}
+            baseFont={22}
+          >
+            {t("earnings")}{" "}
           </CustomHeading>
+          <CustomText
+            style={[style]}
+            textAlign="left"
+            color={Colors?.tertieryButton}
+            baseFont={18}
+          >
+            (Money which you have earned by working in the services)
+          </CustomText>
           {renderEarningsSection()}
         </>
       )}
@@ -101,7 +127,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors?.background,
     flexDirection: "row",
     height: 100,
   },

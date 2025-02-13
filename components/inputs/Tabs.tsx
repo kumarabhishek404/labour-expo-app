@@ -1,4 +1,5 @@
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 import React, { useState, useRef } from "react";
 import {
   View,
@@ -8,12 +9,13 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
+import CustomText from "../commons/CustomText";
 
 const TabSwitcher = ({ tabs, actvieTab, setActiveTab }: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
 
   const screenWidth = Dimensions.get("window").width;
-  const tabWidth = (screenWidth - 80) / tabs.length; // Adjust width dynamically
+  const tabWidth = (screenWidth - 40) / tabs.length; // Adjust width dynamically
 
   const handleTabPress = (index: number) => {
     setActiveTab(index);
@@ -39,18 +41,36 @@ const TabSwitcher = ({ tabs, actvieTab, setActiveTab }: any) => {
         {/* Tab Options */}
         {tabs.map((tab: any, index: any) => (
           <TouchableOpacity
-            key={tab}
+            key={tab?.label}
             style={styles.tab}
             onPress={() => handleTabPress(index)}
           >
             <Text
               style={[styles.tabText, actvieTab === index && styles.activeText]}
             >
-              {tab}
+              {t(tab?.label)}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
+      {tabs[actvieTab]?.description && (
+        <View style={{ paddingHorizontal: 18, paddingBottom: 10 }}>
+          <CustomText
+            baseFont={14}
+            textAlign={actvieTab === 0 ? "left" : "right"}
+            color={Colors?.subHeading}
+          >
+            <CustomText
+              color={Colors?.tertieryButton}
+              baseFont={15}
+              fontWeight="600"
+            >
+              NOTE :{" "}
+            </CustomText>
+            {tabs[actvieTab]?.description}
+          </CustomText>
+        </View>
+      )}
     </View>
   );
 };
@@ -61,17 +81,19 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors?.white, // Background color from image
-    paddingVertical: 20,
+    backgroundColor: Colors?.background, // Background color from image
+    paddingVertical: 5,
+    paddingBottom: 10,
   },
   tabContainer: {
+    width: "100%",
     flexDirection: "row",
     // backgroundColor: Colors?.primary, // Transparent background
     borderRadius: 30,
     paddingVertical: 8,
     paddingHorizontal: 8,
     position: "relative",
-    gap: 8,
+    gap: 20,
     // height: 50, // Fixed height for consistency
   },
   tab: {
@@ -80,6 +102,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     zIndex: 1,
+    borderWidth: 1,
+    borderColor: Colors?.primary,
+    borderRadius: 100,
   },
   tabText: {
     fontSize: 16,
@@ -98,5 +123,8 @@ const styles = StyleSheet.create({
     elevation: 3, // Shadow effect
     top: 8,
     left: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

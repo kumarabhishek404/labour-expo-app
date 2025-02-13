@@ -7,21 +7,31 @@ import SearchServices from "./searchServices";
 
 const Search = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const TABS = [
+    {
+      label: "workers",
+      description: "Search all the active workers by search filter (name and skill) below",
+    },
+    {
+      label: "services",
+      description:
+        "Search all the active services by search filter (work type and sub type) below",
+    },
+  ];
 
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     >
-      <StatusBar backgroundColor={Colors?.white} />
-      <View>
+      <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
         <TabSwitcher
-          tabs={["Workers", "Services"]}
+          tabs={TABS}
           actvieTab={selectedTab}
           setActiveTab={setSelectedTab}
         />
-        {selectedTab === 0 && <SearchWorkers />}
-        {selectedTab === 1 && <SearchServices />}
+        {selectedTab === 0 && <SearchWorkers style={styles?.shadowBox} />}
+        {selectedTab === 1 && <SearchServices style={styles?.shadowBox} />}
       </View>
     </ScrollView>
   );
@@ -35,33 +45,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF0FF",
     justifyContent: "space-between",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: Colors?.white,
-    padding: 20,
-    position: "relative",
-  },
-  tab: {
-    alignItems: "center",
-    alignSelf: "flex-start",
-    padding: 10,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: Colors?.primary,
-    paddingHorizontal: 15,
-  },
-  activeTab: {
-    backgroundColor: Colors?.primary,
-  },
-  tabText: {
-    fontSize: 14,
-    color: Colors?.primary,
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-  activeTabText: {
-    color: Colors?.white,
+  shadowBox: {
+    shadowColor: "#000", // Subtle black shadow
+    shadowOffset: { width: 0, height: 4 }, // Shadow position
+    shadowOpacity: 0.1, // Light shadow for elegance
+    shadowRadius: 6, // Smooth blur effect
+    elevation: 4, // Works for Android
   },
 });

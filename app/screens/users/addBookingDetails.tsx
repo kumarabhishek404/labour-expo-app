@@ -89,7 +89,6 @@ const AddBookingDetails = ({
                 placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
-                containerStyle={errors?.type && styles.errorInput}
                 search={false}
                 icon={
                   <Ionicons
@@ -140,31 +139,6 @@ const AddBookingDetails = ({
                 openDropdownId={openDropdownId}
                 setOpenDropdownId={setOpenDropdownId}
               />
-
-              // <DropdownComponent
-              //   name="subType"
-              //   label={t("workSubType")}
-              //   value={value}
-              //   setValue={onChange}
-              // placeholder={
-              //   watch("type")
-              //     ? t("selectWorkSubType")
-              //     : t("pleaseSelectWorkTypeFirst")
-              // }
-              //   // emptyPlaceholder={t("pleaseSelectWorkTypeFirst")}
-              //   options={filterSubCategories(watch("type"))}
-              //   errors={errors}
-              //   containerStyle={errors?.subType && styles.errorInput}
-              //   search={false}
-              //   icon={
-              // <Ionicons
-              //   name={"mail-outline"}
-              //   size={30}
-              //   color={Colors.secondary}
-              //   style={{ paddingVertical: 10, paddingRight: 10 }}
-              // />
-              //   }
-              // />
             )}
           />
           <Controller
@@ -280,7 +254,6 @@ const AddBookingDetails = ({
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder="Enter work description"
-                containerStyle={errors?.description && styles.errorInput}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -357,9 +330,5 @@ const styles = StyleSheet.create({
   modalContent: {
     paddingVertical: 20,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
 });

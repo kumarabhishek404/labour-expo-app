@@ -152,35 +152,8 @@ const MobileNumberField = ({
         loading={mutationSendOtp.isPending || mutationVerifyCode.isPending}
       />
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <CustomHeading textAlign="left">{t("phoneNumber")}</CustomHeading>
-        {/* {countriesPhoneCode && countriesPhoneCode?.length > 0 && (
-          <Dropdown
-            style={[styles.dropdown, isFocus && styles?.focusStyle]}
-            data={countriesPhoneCode?.map((item: any) => ({
-              label: t(item?.label),
-              value: item?.value,
-            }))}
-            selectedTextStyle={styles.selectedTextStyle}
-            containerStyle={isFocus && styles?.containerStyle}
-            labelField="label"
-            valueField="value"
-            placeholder={t("selectCountry")}
-            value={countryCode}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={(item) => setCountryCode(item.value)}
-            showsVerticalScrollIndicator={true}
-            renderLeftIcon={() => (
-              <CustomHeading textAlign="left" baseFont={14}>
-                {t("countryCode")}
-              </CustomHeading>
-            )}
-          />
-        )} */}
-
         <View
           style={{
-            // marginBottom: 10,
             flexDirection: "row",
             alignItems: "flex-start",
           }}
@@ -188,14 +161,14 @@ const MobileNumberField = ({
           <CustomHeading
             textAlign="left"
             baseFont={16}
-            color={Colors?.secondaryText}
+            color={Colors?.tertieryButton}
           >
             {t("note")}
             {"  "}
             <CustomText
               textAlign="left"
               baseFont={15}
-              color={Colors?.secondaryText}
+              color={Colors?.tertieryButton}
             >
               {t("enterActiveNumber")}
             </CustomText>
@@ -209,11 +182,8 @@ const MobileNumberField = ({
           onChangeText={setPhoneNumber}
           placeholder={placeholder}
           maxLength={10}
-          label=""
+          label="phoneNumber"
           name={name}
-          containerStyle={
-            (errors[name] || isMobileNumberExist) && styles.errorInput
-          }
           isMobileNumberExist={isMobileNumberExist}
           errors={errors}
           loading={loading}
@@ -233,7 +203,7 @@ const MobileNumberField = ({
           }
         />
 
-        {/* {phoneNumber && phoneNumber?.length === 10 && !errors[name] && (
+        {/* {phoneNumber && phoneNumber?.length === 10 && !errors?.[name] && (
           <TouchableOpacity style={styles.verifyBtn} onPress={handleSendOtp}>
             <CustomHeading color={Colors?.white}>{t("verify")}</CustomHeading>
           </TouchableOpacity>
@@ -292,18 +262,6 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     textAlign: "right",
     marginRight: 10,
-  },
-  containerStyle: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    borderWidth: 0,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
   verifyBtn: {
     position: "absolute",

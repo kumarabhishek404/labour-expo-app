@@ -10,6 +10,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
+import ErrorText from "../commons/ErrorText";
 
 type TextInputProps = {
   label: string;
@@ -26,10 +28,10 @@ type TextInputProps = {
   errors?: any;
   isMobileNumberExist?: boolean | null;
   style?: any;
+  inputStyle?: any;
   textStyles?: any;
   disabled?: boolean | null;
   loading?: boolean;
-  containerStyle?: any;
 };
 
 const TextInputComponent = ({
@@ -47,10 +49,10 @@ const TextInputComponent = ({
   errors,
   isMobileNumberExist,
   style,
+  inputStyle,
   textStyles,
   disabled,
   loading,
-  containerStyle,
 }: TextInputProps) => {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -72,11 +74,21 @@ const TextInputComponent = ({
       style={[styles?.inputField, style, disabled && styles?.disabledInput]}
     >
       {label && (
-        <CustomHeading textAlign="left" color={Colors?.primary}>
-          {label}
+        <CustomHeading
+          textAlign="left"
+          color={Colors?.inputLabel}
+          baseFont={16}
+          fontWeight="500"
+        >
+          {t(label)}
         </CustomHeading>
       )}
-      <View style={[styles.inputContainer, containerStyle]}>
+      <View
+        style={[
+          styles.inputContainer,
+          errors?.[name] && { borderColor: Colors?.error }, inputStyle
+        ]}
+      >
         {icon && (
           <TouchableOpacity activeOpacity={1} onPress={handleLabelPress}>
             {icon}
@@ -92,7 +104,7 @@ const TextInputComponent = ({
           onBlur={handleBlur}
           secureTextEntry={secureTextEntry}
           onChangeText={onChangeText}
-          placeholder={placeholder ?? "Work Title"}
+          placeholder={placeholder}
           placeholderTextColor={Colors.secondary}
         />
         {secondIcon && secondIcon}
@@ -105,15 +117,11 @@ const TextInputComponent = ({
         )}
       </View>
       {isMobileNumberExist && !errors?.[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
+        <ErrorText>
           {loading ? "Wait..." : "Mobile number already exists"}
-        </CustomText>
+        </ErrorText>
       )}
-      {errors?.[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText>{errors?.[name]?.message || ""}</ErrorText>}
     </View>
   );
 };
@@ -122,7 +130,7 @@ export default TextInputComponent;
 
 const styles = StyleSheet.create({
   inputField: {
-    gap: 5,
+    gap: 5
   },
   disabledInput: {
     opacity: 0.5,
@@ -131,7 +139,8 @@ const styles = StyleSheet.create({
   inputContainer: {
     height: 53,
     borderWidth: 1,
-    borderColor: Colors.secondary,
+    borderColor: Colors.inputBorder,
+    backgroundColor: Colors?.white,
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",

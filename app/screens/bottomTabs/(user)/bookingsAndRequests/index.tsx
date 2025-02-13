@@ -15,13 +15,22 @@ import Requests from "./requests";
 
 const BookingsAndRequests = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-
+  const TABS = [
+    {
+      label: "allBookings",
+      description: "Services in which you are selected or booked directly",
+    },
+    {
+      label: "allRequests",
+      description:
+        "These are the requests which you have recieved from the employer and you send to the workers",
+    },
+  ];
   return (
     <>
-      <StatusBar backgroundColor={Colors?.white} />
       <View style={styles.container}>
         <TabSwitcher
-          tabs={["Bookings", "Requests"]}
+          tabs={TABS}
           actvieTab={selectedTab}
           setActiveTab={setSelectedTab}
         />

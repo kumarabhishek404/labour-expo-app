@@ -199,7 +199,6 @@ const ProfileNotification: React.FC = () => {
                   ]}
                   gender={value}
                   setGender={onChange}
-                  containerStyle={errors?.gender && styles.errorInput}
                   errors={errors}
                 />
               )}
@@ -215,8 +214,9 @@ const ProfileNotification: React.FC = () => {
       <Loader loading={mutationUpdateProfileInfo?.isPending || isLoading} />
       <CustomText
         textAlign="left"
-        baseFont={14}
+        baseFont={16}
         color={Colors?.white}
+        fontWeight="600"
         style={styles?.text}
       >
         {t("completeYourProfileToUnlockAllFeatures")}
@@ -226,6 +226,7 @@ const ProfileNotification: React.FC = () => {
         title={t("completeProfile")}
         onPress={() => setIsCompleteProfileModel(true)}
         style={styles.completeButton}
+        textStyle={{ fontSize: 18 }}
       />
 
       <ModalComponent
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
     width: "40%",
     backgroundColor: Colors.primary,
     paddingVertical: 6,
-    paddingHorizontal: 13,
+    paddingHorizontal: 6,
     borderRadius: 8,
     marginLeft: 10,
   },
@@ -271,11 +272,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingVertical: 20,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
 });
 

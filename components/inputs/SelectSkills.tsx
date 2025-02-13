@@ -10,6 +10,7 @@ import ModalComponent from "../commons/Modal";
 import TextInputComponent from "./TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import TOAST from "@/app/hooks/toast";
+import ErrorText from "../commons/ErrorText";
 
 interface SkillsSelectorProps {
   name: string;
@@ -128,7 +129,6 @@ const SkillsSelector = ({
               maxLength={4}
               placeholder={t("enterPricePerDay")}
               value={value}
-              containerStyle={priceErrors?.pricePerDay && styles.errorInput}
               errors={priceErrors}
               textStyles={{ fontSize: 16 }}
               onChangeText={onChange}
@@ -137,15 +137,15 @@ const SkillsSelector = ({
         />
       </View>
     );
-  };  
+  };
 
   return (
     <View style={styles.container}>
-      <CustomHeading textAlign="left">{t("selectAnySkills")}</CustomHeading>
+      <CustomHeading textAlign="left" color={Colors?.inputLabel}>{t("selectAnySkills")}</CustomHeading>
 
       {/* Selected Skills */}
       <View
-        style={[styles.selectedContainer, errors[name] && styles?.errorInput]}
+        style={[styles.selectedContainer]}
       >
         {selectedInterests && selectedInterests?.length > 0 ? (
           selectedInterests.map((interest: any, index: number) => (
@@ -173,11 +173,7 @@ const SkillsSelector = ({
         )}
       </View>
 
-      {errors[name] && (
-        <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-          {errors[name]?.message || ""}
-        </CustomText>
-      )}
+      {errors?.[name] && <ErrorText>{errors?.[name]?.message || ""}</ErrorText>}
 
       {/* Available Skills */}
       <View style={styles.interestsContainer}>
@@ -270,11 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     margin: 5,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
-  },
+  
 });
 
 export default SkillsSelector;

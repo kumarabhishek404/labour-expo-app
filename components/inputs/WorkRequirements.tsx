@@ -13,6 +13,7 @@ import TextInputComponent from "./TextInputWithIcon";
 import { t } from "@/utils/translationHelper";
 import { filterWorkerTypes } from "@/constants/functions";
 import DropdownComponent from "@/components/inputs/Dropdown";
+import PaperDropdown from "@/components/inputs/Dropdown";
 
 interface WorkRequirmentProps {
   label?: string;
@@ -22,7 +23,6 @@ interface WorkRequirmentProps {
   subType: string;
   requirements: any;
   setRequirements: any;
-  onBlur: any;
   errors: any;
   errorField: any;
 }
@@ -35,7 +35,6 @@ const WorkRequirment = ({
   subType,
   requirements,
   setRequirements,
-  onBlur,
   errors,
   errorField,
 }: WorkRequirmentProps) => {
@@ -87,11 +86,11 @@ const WorkRequirment = ({
 
   return (
     <View style={styles.addRequirmentWrapper}>
-      {label && (
-        <CustomHeading textAlign="left" color={Colors?.primary}>
+      {/* {label && (
+        <CustomHeading textAlign="left" color={Colors?.primary} baseFont={16} fontWeight="500">
           {label}
         </CustomHeading>
-      )}
+      )} */}
       {requirements &&
         requirements.length > 0 &&
         requirements?.map((requirement: any, index: number) => {
@@ -99,12 +98,9 @@ const WorkRequirment = ({
             <View style={{ width: "100%" }} key={index}>
               <View style={styles.addRequirment}>
                 <View style={{ zIndex: 7 }}>
-                  <DropdownComponent
-                    style={
-                      errorField?.index === index &&
-                      errorField?.name === "dropdown" &&
-                      styles?.errorInput
-                    }
+                  <PaperDropdown
+                    // name={name}
+                    // label={t(label as string)}
                     value={requirement?.name}
                     onSelect={(name: any) =>
                       handleRequirementTypeChange(index, name)
@@ -115,8 +111,10 @@ const WorkRequirment = ({
                         ? "selectWorkRequirementType"
                         : "pleaseSelectWorkTypeAndSubTypeFirst"
                     }
-                    disabled={!watch("subType")}
+                    // disabled={!watch("subType")}
                     options={filterWorkerTypes(type, subType) ?? []}
+                    errors={errors}
+                    search={false}
                     icon={
                       <CustomHeading baseFont={20} color={Colors?.secondary}>
                         {index + 1}
@@ -126,39 +124,30 @@ const WorkRequirment = ({
                 </View>
                 <View style={styles.counterContainer}>
                   <Counter
-                    label="Number Of Workers"
+                    label={"count"}
                     counter={requirement?.count}
                     setCounter={(count: any) =>
                       handleRequirementCountChange(index, count)
                     }
                     style={
                       errorField?.index === index &&
-                      errorField?.name === "counter" &&
-                      styles?.errorInput
+                      errorField?.name === "counter" && {
+                        borderColol: Colors?.error,
+                      }
                     }
                   />
                   <TextInputComponent
-                    label="Rupess Per Daye"
+                    label="rupessPerDay"
                     name="payPerDay"
                     value={requirement?.payPerDay.toString()}
                     placeholder={t("ratePerDay")}
                     type="number"
                     maxLength={4}
                     onChangeText={(payPerDay: string) => {
-                      const tempPayPerDay = payPerDay;
                       handleRequirementPriceChange(index, payPerDay);
                     }}
                     style={styles.textInput}
-                    containerStyle={[
-                      {
-                        height: 44,
-                        borderColor: Colors.secondary,
-                        backgroundColor: Colors?.white,
-                      },
-                      errorField?.index === index &&
-                        errorField?.name === "price" &&
-                        styles?.errorInput,
-                    ]}
+                    inputStyle={{ height: 38 }}
                     icon={
                       <MaterialIcons
                         name={"currency-rupee"}
@@ -181,10 +170,15 @@ const WorkRequirment = ({
             </View>
           );
         })}
-      <View style={errors[name] && styles?.addMore}>
-        {errors[name] && (
-          <CustomText textAlign="left" baseFont={10} color={Colors?.danger}>
-            {errors[name]?.message || ""}
+      <View style={errors?.[name] && styles?.addMore}>
+        {errors?.[name] && (
+          <CustomText
+            textAlign="left"
+            baseFont={10}
+            color={Colors?.danger}
+            style={{ width: "60%" }}
+          >
+            {errors?.[name]?.message || ""}
           </CustomText>
         )}
         <TouchableOpacity
@@ -192,8 +186,8 @@ const WorkRequirment = ({
           style={styles.addMoreWrapper}
         >
           <View style={styles.addMoreBox}>
-            <Entypo color={Colors?.white} name="plus" size={18} />
-            <CustomHeading textAlign="left" color={Colors?.white}>
+            <Entypo color={Colors?.tertieryButtonText} name="plus" size={18} />
+            <CustomHeading textAlign="left" color={Colors?.tertieryButtonText}>
               {t("addMore")}
             </CustomHeading>
           </View>
@@ -243,7 +237,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     borderRadius: 8,
-    backgroundColor: Colors.tertiery,
+    borderWidth: 1,
+    borderColor: Colors?.tertieryButtonText,
+    backgroundColor: Colors.tertieryButton,
   },
   deleteIcon: {
     width: "40%",
@@ -256,10 +252,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     padding: 0,
     margin: 0,
-  },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
   },
 });
