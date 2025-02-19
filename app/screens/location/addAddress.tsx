@@ -1,40 +1,29 @@
-import { ScrollView, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import {
-  Feather,
-  FontAwesome,
-  FontAwesome5,
-  FontAwesome6,
-  Fontisto,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { Feather, FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
-import Button from "@/components/inputs/Button";
-import { STETESOFINDIA } from "@/constants";
-import TOAST from "@/app/hooks/toast";
-import ModalComponent from "@/components/commons/Modal";
+import PaperDropdown from "@/components/inputs/Dropdown";
+import { useAtom, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
-import { useAtom } from "jotai";
-import { Controller, useForm } from "react-hook-form";
-import { t } from "@/utils/translationHelper";
+import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
+import { useForm } from "react-hook-form";
+import { t } from "@/utils/translationHelper";
 import { ALL_INDIAN_VILLAGES } from "@/constants/india";
-import DropdownWithMenu from "@/components/inputs/DropdownWithMenu";
-// import DropdownWithMenu from "@/components/inputs/dropdownWithMenu";
+import { STATES, STETESOFINDIA } from "@/constants";
+import SERVICE from "@/app/api/services";
 
-const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
+const AddAddressDrawer = ({ visible, onClose }: any) => {
+  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
+  const [districts, setDistricts]: any = useState([]);
+  const [subDistricts, setSubDistricts]: any = useState([]);
+  const [villages, setVillages]: any = useState([]);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const {
-    control,
-    watch,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const [allStateVillages, setAllStateVillages]: any = useState([]);
+  const { watch, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
       country: "India",
       state: "",
@@ -44,122 +33,119 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
       pinCode: "",
     },
   });
-  const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [districts, setDistricts]: any = useState([]);
-  const [subDistricts, setSubDistricts]: any = useState([]);
-  const [villages, setVillages]: any = useState([]);
 
   const selectedState = watch("state");
   const selectedDistrict = watch("district");
   const selectedSubDistrict = watch("subDistrict");
 
+  console.log("state --", selectedState, districts);
+  console.log("district -- ", selectedDistrict, subDistricts);
+  console.log("sub-disctrict --", subDistricts, villages);
+
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
     mutationFn: (payload: any) => USER?.updateUserById(payload),
     onSuccess: (response) => {
-      console.log(
-        "Response while updating the profile - ",
-        response?.data?.data
-      );
+      console.log("Address updated successfully", response?.data?.data);
     },
     onError: (err) => {
-      console.error("error while updating the profile ", err);
+      console.error("Error updating address", err);
     },
   });
 
+  const fetchStateDetailsMutation = useMutation({
+    mutationKey: ["fetchStateDetails"],
+    mutationFn: (payload: any) => SERVICE?.fetchAllVillages(payload),
+    onSuccess: (response: any) => {
+      // Extract districts, subDistricts, and villages from the API response
+      setAllStateVillages(response);
+    },
+    onError: (error) => {
+      console.error("Error fetching state details:", error);
+      TOAST?.showToast?.error(
+        "Failed to fetch location details. Please try again later."
+      );
+    },
+  });
+
+  // API Trigger on State Selection
   useEffect(() => {
     if (selectedState) {
-      const foundDistricts =
-        ALL_INDIAN_VILLAGES.find(
-          (item) => item.state === selectedState
-        )?.districts.map((item) => ({
-          label: item.district,
-          value: item.district,
-        })) || [];
-      setDistricts(foundDistricts);
-      setValue("district", ""); // Reset dependent dropdowns
-      setValue("subDistrict", "");
-      setValue("village", "");
+      setDistricts([]);
+      setSubDistricts([]);
+      setVillages([]);
+      fetchStateDetailsMutation.mutate({ stateName: selectedState });
     }
   }, [selectedState]);
 
   useEffect(() => {
+    if (selectedState) {
+      const foundDistricts =
+        allStateVillages?.districts?.map((item: any) => ({
+          label: item.district,
+          value: item.district,
+        })) || [];
+
+      setDistricts(foundDistricts);
+      setSubDistricts([]);
+      setVillages([]);
+
+      setValue("district", "");
+      setValue("subDistrict", "");
+      setValue("village", "");
+      setValue("pinCode", "");
+    }
+  }, [selectedState, allStateVillages]);
+
+  useEffect(() => {
     if (selectedDistrict) {
       const foundSubDistricts =
-        ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-          ?.districts.find((item) => item.district === selectedDistrict)
-          ?.subDistricts.map((item) => ({
+        allStateVillages?.districts
+          ?.find((item: any) => item?.district === selectedDistrict)
+          ?.subDistricts?.map((item: any) => ({
             label: item.subDistrict,
             value: item.subDistrict,
           })) || [];
+
       setSubDistricts(foundSubDistricts);
-      setValue("subDistrict", ""); // Reset subDistrict and village
+      setVillages([]); // Reset villages
+
+      setValue("subDistrict", "");
       setValue("village", "");
+      setValue("pinCode", "");
     }
-  }, [selectedDistrict]);
+  }, [selectedDistrict, allStateVillages]);
 
   useEffect(() => {
     if (selectedSubDistrict) {
-      const foundVillages: any =
-        ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-          ?.districts.find((item) => item.district === selectedDistrict)
-          ?.subDistricts.find(
-            (item) => item.subDistrict === selectedSubDistrict
+      const foundVillages =
+        allStateVillages?.districts
+          ?.find((item: any) => item?.district === selectedDistrict)
+          ?.subDistricts?.find(
+            (item: any) => item.subDistrict === selectedSubDistrict
           )
-          ?.villages.map((item) => ({
+          ?.villages?.map((item: any) => ({
             label: item,
             value: item,
           })) || [];
-      setVillages(foundVillages);
-      setValue("village", ""); // Reset village when sub-district changes
-    }
-  }, [selectedSubDistrict]);
 
-  const states = ALL_INDIAN_VILLAGES.map((item) => ({
-    label: item.state,
-    value: item.state,
+      setVillages(foundVillages);
+      setValue("village", "");
+      setValue("pinCode", "");
+    }
+  }, [selectedSubDistrict, allStateVillages]);
+
+  const states = STATES.map((item) => ({
+    label: item,
+    value: item,
   }));
 
-  // const districts =
-  //   selectedState &&
-  //   ALL_INDIAN_VILLAGES.find(
-  //     (item) => item.state === selectedState
-  //   )?.districts.map((item) => ({
-  //     label: item.district,
-  //     value: item.district,
-  //   }));
-
-  // const subDistricts =
-  //   selectedDistrict &&
-  //   ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-  //     ?.districts.find((item) => item.district === selectedDistrict)
-  //     ?.subDistricts.map((item) => ({
-  //       label: item.subDistrict,
-  //       value: item.subDistrict,
-  //     }));
-
-  // const villages =
-  //   selectedSubDistrict &&
-  //   ALL_INDIAN_VILLAGES.find((item) => item.state === selectedState)
-  //     ?.districts.find((item) => item.district === selectedDistrict)
-  //     ?.subDistricts.find((item) => item.subDistrict === selectedSubDistrict)
-  //     ?.villages.map((item) => ({
-  //       label: item,
-  //       value: item,
-  //     }));
-
-  const onSubmit = async (data: any) => {
+  const onAddAddress = async (data: any) => {
     const address = `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`;
-
     if (userDetails?.savedAddresses?.includes(address)) {
       TOAST?.showToast?.error(t("addressAlreadyExists"));
       return;
     }
-
-    setAddress({
-      address,
-      selected: true,
-    });
 
     setUserDetails({
       ...userDetails,
@@ -172,209 +158,149 @@ const AddAddressModal = ({ visible, onClose, setAddress }: any) => {
         savedAddresses: address,
       });
     }
-    reset();
+
+    setDrawerState({
+      visible: false,
+      title: "",
+      content: () => null,
+      primaryButton: null,
+      secondaryButton: null,
+    });
     onClose();
+    reset();
     TOAST?.showToast?.success(t("addressAddedSuccessfully"));
   };
 
-  const modalContent = () => {
-    return (
-      <ScrollView
-        style={styles?.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <Loader loading={mutationUpdateProfileInfo?.isPending} />
-        <View style={styles.formContainer}>
-          <View style={{ zIndex: 9 }}>
-            <Controller
-              control={control}
-              name="state"
-              rules={{
-                required: t("stateIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DropdownWithMenu
-                  name="state"
-                  label={"state"}
-                  options={states}
-                  selectedValue={value}
-                  onSelect={(value: any) => onChange(value)}
-                  placeholder={"selectState"}
-                  errors={errors}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                  icon={
-                    <FontAwesome6
-                      style={styles.icon}
-                      color="black"
-                      name="map-location"
-                      size={20}
-                    />
-                  }
-                />
-              )}
+  const modalContent = () => (
+    <View style={{ marginVertical: 20 }}>
+      <Loader loading={mutationUpdateProfileInfo?.isPending} />
+      <View style={styles.formContainer}>
+        <PaperDropdown
+          name="state"
+          label="state"
+          options={states}
+          selectedValue={selectedState}
+          onSelect={(value: any) => setValue("state", value)}
+          placeholder={t("selectState")}
+          searchEnabled
+          icon={
+            <FontAwesome6
+              style={styles.icon}
+              color="black"
+              name="map-location"
+              size={20}
             />
-          </View>
-
-          <View style={{ zIndex: 8 }}>
-            <Controller
-              control={control}
-              name="district"
-              rules={{
-                required: t("districtIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DropdownWithMenu
-                  name="district"
-                  label={"district"}
-                  options={districts || []}
-                  selectedValue={value}
-                  onSelect={(value: any) => onChange(value)}
-                  errors={errors}
-                  placeholder={
-                    selectedState ? "selectDistrict" : "pleaseSelectStateFirst"
-                  }
-                  searchEnabled={false}
-                  disabled={!selectedState}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                  icon={
-                    <FontAwesome6
-                      style={styles.icon}
-                      color="black"
-                      name="map-location"
-                      size={20}
-                    />
-                  }
-                />
-              )}
+          }
+        />
+        <PaperDropdown
+          name="district"
+          label="district"
+          options={districts}
+          selectedValue={selectedDistrict}
+          onSelect={(value: any) => setValue("district", value)}
+          placeholder={t("selectDistrict")}
+          searchEnabled
+          icon={
+            <FontAwesome6
+              style={styles.icon}
+              color="black"
+              name="map-location"
+              size={20}
             />
-          </View>
-          <View style={{ zIndex: 7 }}>
-            <Controller
-              control={control}
-              name="subDistrict"
-              rules={{
-                required: t("subDistrictIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DropdownWithMenu
-                  name="subDistrict"
-                  label={"subDistrict"}
-                  placeholder={
-                    selectedDistrict
-                      ? "selectSubDistrict"
-                      : "pleaseSelectDistrictFirst"
-                  }
-                  disabled={!selectedDistrict}
-                  errors={errors}
-                  searchEnabled={false}
-                  options={subDistricts || []}
-                  icon={
-                    <FontAwesome6
-                      style={styles.icon}
-                      color="black"
-                      name="map-location"
-                      size={20}
-                    />
-                  }
-                  selectedValue={value}
-                  onSelect={(value: any) => onChange(value)}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                />
-              )}
+          }
+          disabled={!selectedState}
+        />
+        <PaperDropdown
+          name="subDistrict"
+          label="subDistrict"
+          options={subDistricts}
+          selectedValue={selectedSubDistrict}
+          onSelect={(value: any) => setValue("subDistrict", value)}
+          placeholder={t("selectSubDistrict")}
+          searchEnabled
+          icon={
+            <FontAwesome6
+              style={styles.icon}
+              color="black"
+              name="map-location"
+              size={20}
             />
-          </View>
-
-          <View style={{ zIndex: 6 }}>
-            <Controller
-              control={control}
-              name="village"
-              rules={{
-                required: t("villageIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <DropdownWithMenu
-                  name="village"
-                  label={"village"}
-                  placeholder={
-                    selectedSubDistrict
-                      ? "selectVillage"
-                      : "pleaseSelectSubDistrictFirst"
-                  }
-                  disabled={!selectedSubDistrict}
-                  errors={errors}
-                  searchEnabled={false}
-                  options={villages || []}
-                  icon={
-                    <FontAwesome6
-                      style={styles.icon}
-                      color="black"
-                      name="map-location"
-                      size={20}
-                    />
-                  }
-                  selectedValue={value}
-                  onSelect={(value: any) => onChange(value)}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                />
-              )}
+          }
+          disabled={!selectedDistrict}
+        />
+        <PaperDropdown
+          name="village"
+          label="village"
+          options={villages}
+          selectedValue={watch("village")}
+          onSelect={(value: any) => setValue("village", value)}
+          placeholder={t("selectVillage")}
+          searchEnabled
+          icon={
+            <FontAwesome6
+              style={styles.icon}
+              color="black"
+              name="map-location"
+              size={20}
             />
-          </View>
-          <View style={{ zIndex: 5 }}>
-            <Controller
-              control={control}
-              name="pinCode"
-              rules={{
-                required: t("pinCodeIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  value={value}
-                  style={styles.textInput}
-                  placeholder={t("pinCode")}
-                  onChangeText={onChange}
-                  label={t("pinCode")}
-                  maxLength={6}
-                  name="pinCode"
-                  type="number"
-                  errors={errors}
-                  icon={
-                    <Feather
-                      name="map-pin"
-                      style={styles.icon}
-                      size={22}
-                      color={Colors.secondary}
-                    />
-                  }
-                />
-              )}
+          }
+          disabled={!selectedSubDistrict}
+        />
+        <TextInputComponent
+          name="pinCode"
+          label="pinCode"
+          placeholder={t("pinCode")}
+          type="number"
+          style={styles.textInput}
+          value={watch("pinCode")}
+          onChangeText={(value: any) => setValue("pinCode", value)}
+          icon={
+            <Feather
+              name="map-pin"
+              style={styles.icon}
+              size={22}
+              color={Colors.secondary}
             />
-          </View>
-        </View>
-      </ScrollView>
-    );
-  };
-
-  return (
-    <ModalComponent
-      visible={visible}
-      onClose={onClose}
-      title={t("addAddress")}
-      content={modalContent}
-      primaryButton={{
-        action: handleSubmit(onSubmit),
-      }}
-      secondaryButton={{
-        action: onClose,
-      }}
-    />
+          }
+        />
+      </View>
+    </View>
   );
-};
 
-export default AddAddressModal;
+  useEffect(() => {
+    if (visible) {
+      setDrawerState({
+        visible: true,
+        title: "addAddress",
+        content: modalContent,
+        primaryButton: {
+          title: "addAddress",
+          action: handleSubmit(onAddAddress),
+          disabled: !watch("village") || !watch("pinCode"),
+        },
+        secondaryButton: {
+          title: "cancel",
+          action: () => {
+            onClose();
+            setDrawerState({ visible: false });
+          },
+        },
+      });
+    }
+  }, [
+    visible,
+    selectedState,
+    districts,
+    selectedDistrict,
+    subDistricts,
+    selectedSubDistrict,
+    villages,
+    watch("village"),
+    watch("pinCode"),
+  ]);
+
+  return <Loader loading={mutationUpdateProfileInfo?.isPending} />;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -391,3 +317,5 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
 });
+
+export default AddAddressDrawer;

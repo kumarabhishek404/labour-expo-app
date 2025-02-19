@@ -118,11 +118,6 @@ const Requests = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          {/* <SearchFilter
-            type="users"
-            data={response?.pages}
-            setFilteredData={setFilteredData}
-          /> */}
           <View style={styles?.paginationTabs}>
             <CustomSegmentedButton
               buttons={ALLREQUEST}
@@ -130,10 +125,6 @@ const Requests = () => {
               onValueChange={onCategoryChanged}
             />
           </View>
-          {/* <CategoryButtons
-            options={ALLREQUEST}
-            onCagtegoryChanged={onCategoryChanged}
-          /> */}
           <PaginationString
             type="requests"
             isLoading={isLoading || isRefetching}

@@ -80,11 +80,11 @@ const SearchServices = ({ style }: any) => {
   };
 
   const onSubmit = (data: any) => {
-    console.log("Data---", data);
+    
     const searchCategory = {
-      type: data?.type || "",
-      subType: data?.subType || "",
-      skill: data?.skill || "",
+      type: data?.type,
+      subType: data?.subType,
+      skill: data?.skill,
     };
 
     router?.push({
@@ -149,7 +149,7 @@ const SearchServices = ({ style }: any) => {
                 <PaperDropdown
                   name="type"
                   label="workType"
-                  value={value}
+                  selectedValue={value}
                   onSelect={(selectedValue: any) => {
                     onChange(selectedValue); // Update the type field
                     setValue("subType", ""); // Reset the subType field
@@ -181,7 +181,7 @@ const SearchServices = ({ style }: any) => {
                   key={watch("type")}
                   name="subType"
                   label="workSubType"
-                  value={value}
+                  selectedValue={value}
                   onSelect={onChange}
                   placeholder={
                     watch("type")

@@ -76,8 +76,6 @@ const SelectedApplicants = ({
     }).start();
   };
 
-  console.log("selectedApplicants--", selectedApplicants);
-
   return (
     <>
       <Loader loading={mutationCancelSelectedWorker?.isPending} />
@@ -114,6 +112,7 @@ const SelectedApplicants = ({
                 >
                   <Button
                     style={{
+                      minHeight: 20,
                       paddingVertical: 4,
                       paddingHorizontal: 6,
                       marginTop: 6,
@@ -208,13 +207,14 @@ const SelectedApplicants = ({
                   width: "100%",
                   flexDirection: "row",
                   justifyContent: "flex-end",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   gap: 10,
                   marginTop: 10,
                 }}
               >
                 <Button
                   style={{
+                    minHeight: 35,
                     width: "30%",
                     paddingVertical: 4,
                     paddingHorizontal: 6,
@@ -240,6 +240,7 @@ const SelectedApplicants = ({
                 />
                 <Button
                   style={{
+                    minHeight: 35,
                     width: "40%",
                     paddingVertical: 4,
                     paddingHorizontal: 8,

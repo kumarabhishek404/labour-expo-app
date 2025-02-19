@@ -97,6 +97,20 @@ const ButtonContainer = ({
           }}
         />
 
+        {/* Button for liking/unliking */}
+        <Button
+          isPrimary={true}
+          bgColor={isUserLiked ? Colors.danger : Colors.primary}
+          borderColor={isUserLiked ? Colors.danger : Colors.primary}
+          title={isUserLiked ? t("removeFromSaved") : t("save")}
+          style={styles.saveServiceBtn}
+          onPress={() =>
+            isUserLiked
+              ? mutationUnLikeUser.mutate()
+              : mutationLikeUser.mutate()
+          }
+        />
+
         {/* Button for booking related actions */}
         <Button
           isPrimary={true}
@@ -126,20 +140,7 @@ const ButtonContainer = ({
               setIsAddBookingModal(true);
             }
           }}
-        />
-
-        {/* Button for liking/unliking */}
-        <Button
-          isPrimary={true}
-          bgColor={isUserLiked ? Colors.danger : Colors.primary}
-          borderColor={isUserLiked ? Colors.danger : Colors.primary}
-          title={isUserLiked ? t("removeFromSaved") : t("save")}
           style={styles.footerBtn}
-          onPress={() =>
-            isUserLiked
-              ? mutationUnLikeUser.mutate()
-              : mutationLikeUser.mutate()
-          }
         />
       </Animated.View>
 
@@ -178,5 +179,8 @@ const styles = StyleSheet.create({
   footerBtn: {
     flex: 1, // ✅ Ensures button takes available space
     minWidth: "30%", // ✅ Allows buttons to fit in a row
+  },
+  saveServiceBtn: {
+    minWidth: "30%",
   },
 });

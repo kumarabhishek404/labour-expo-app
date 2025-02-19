@@ -1,32 +1,20 @@
 import React, { useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  Keyboard, // Import Keyboard
-} from "react-native";
+import { View, StyleSheet, Keyboard } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
-import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
 import { WORKERTYPES } from "@/constants";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import WORKER from "@/app/api/workers";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
-import CustomText from "@/components/commons/CustomText";
-import DropdownComponent from "@/components/inputs/Dropdown";
 import ButtonComp from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { Button } from "react-native-paper";
 import USER from "@/app/api/user";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
+import PaperDropdown from "@/components/inputs/Dropdown";
 
 const SearchWorkers = ({ style }: any) => {
   const {
@@ -102,16 +90,17 @@ const SearchWorkers = ({ style }: any) => {
     <View style={styles.container}>
       <TopHeaderLinks
         title={["SHOW ALL WORKERS"]}
-        onPress={() =>
-          router?.push({
-            pathname: "/screens/users",
-            params: {
-              title: "All Workers",
-              type: "all",
-              searchCategory: JSON.stringify({ name: "", skill: "" }),
-            },
-          })
-        }
+        onPress={[
+          () =>
+            router?.push({
+              pathname: "/screens/users",
+              params: {
+                title: "All Workers",
+                type: "all",
+                searchCategory: JSON.stringify({ name: "", skill: "" }),
+              },
+            }),
+        ]}
         icon={[
           <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
         ]}
@@ -173,10 +162,10 @@ const SearchWorkers = ({ style }: any) => {
             },
           }}
           render={({ field: { onChange, value } }) => (
-            <DropdownComponent
+            <PaperDropdown
               name="skill"
               label="workerSkill"
-              value={value}
+              selectedValue={value}
               translationEnabled
               onSelect={(selectedValue: any) => {
                 onChange(selectedValue);

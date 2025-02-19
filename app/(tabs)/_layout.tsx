@@ -19,12 +19,7 @@ import { t } from "@/utils/translationHelper";
 import LanguageSelectionScreen from "../languageSelection";
 import ProfileScreen from "../screens/bottomTabs/(user)/profile";
 import { getFontSize } from "@/constants/functions";
-import { Badge } from "react-native-paper";
 import BadgeComponent from "@/components/commons/Badge";
-import BottomNavTutorial from "../screens/tutorials/bootomNavigation";
-import SEARCH from "../../assets/search.gif";
-import ADD from "../../assets/add.gif";
-import BOOKINGS from "../../assets/bookings.gif";
 import NOTIFICATIONS from "../../assets/notifications.gif";
 import PROFILE from "../../assets/profile.gif";
 
@@ -52,12 +47,6 @@ export default function Layout() {
     return <Login />;
   }
 
-  console.log(
-    "isAccountInactiveLocal---",
-    isAccountInactiveLocal,
-    isAccountInactive
-  );
-
   if (isAccountInactiveLocal) {
     return <ProfileScreen />;
   }
@@ -66,11 +55,7 @@ export default function Layout() {
     const { onPress, accessibilityState } = props;
     const isSelected = accessibilityState?.selected;
 
-    // Animations
     const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
-    // const opacityAnim = useRef(
-    //   new Animated.Value(isSelected ? 1 : 0.7)
-    // ).current;
     const translateYAnim = useRef(
       new Animated.Value(isSelected ? -5 : 0)
     ).current;
@@ -98,10 +83,17 @@ export default function Layout() {
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
-            // opacity: opacityAnim, // Opacity effect on icon
           }}
         >
-          <View style={[styles?.icon, isSelected && {backgroundColor: Colors?.tertieryButton}]}>
+          <View
+            style={[
+              styles?.icon,
+              isSelected && {
+                backgroundColor: Colors?.tertieryButton,
+                borderColor: Colors?.white,
+              },
+            ]}
+          >
             <MaterialIcons
               name={iconName}
               size={32}
@@ -114,9 +106,9 @@ export default function Layout() {
             styles.customButtonText,
             {
               fontSize: getFontSize(locale, 13),
-              // opacity: opacityAnim,
               color: isSelected ? Colors?.tertiery : Colors.primary,
-            }, // Opacity effect on text
+              marginBottom: isSelected ? 10 : 0,
+            },
           ]}
         >
           {title}
@@ -126,38 +118,16 @@ export default function Layout() {
   };
 
   const TabButtonProfile = ({ props }: any) => {
-    const { onPress, accessibilityState } = props;
+    const { onPress, accessibilityState, iconName } = props;
     const isSelected = accessibilityState?.selected;
 
-    // Local state for toggling between Profile and Notifications
     const [showProfile, setShowProfile] = useState(true);
-    // const fadeAnim = useRef(new Animated.Value(1)).current;
 
-    // Animations
-    // const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
-    // const opacityAnim = useRef(
-    //   new Animated.Value(isSelected ? 1 : 0.7)
-    // ).current;
-    // const translateYAnim = useRef(
-    //   new Animated.Value(isSelected ? -5 : 0)
-    // ).current;
-
-    // useEffect(() => {
-    //   Animated.parallel([
-    //     Animated.spring(scaleAnim, {
-    //       toValue: isSelected ? 1 : 0.9,
-    //       useNativeDriver: true,
-    //       friction: 4,
-    //     }),
-    //     Animated.spring(translateYAnim, {
-    //       toValue: isSelected ? -5 : 0,
-    //       useNativeDriver: true,
-    //       friction: 5,
-    //     }),
-    //   ]).start();
-    // }, [isSelected]);
-
+    const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
     const fadeAnim = useRef(new Animated.Value(1)).current;
+    const translateYAnim = useRef(
+      new Animated.Value(isSelected ? -5 : 0)
+    ).current;
 
     useEffect(() => {
       const interval = setInterval(() => {
@@ -168,10 +138,7 @@ export default function Layout() {
             useNativeDriver: true,
           }),
         ]).start(() => {
-          // Change the icon only after fade-out completes
           setShowProfile((prev) => !prev);
-
-          // Start fade-in animation after state change
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 300,
@@ -182,6 +149,20 @@ export default function Layout() {
 
       return () => clearInterval(interval);
     }, []);
+    useEffect(() => {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: isSelected ? 1.2 : 0.9,
+          useNativeDriver: true,
+          friction: 4,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: isSelected ? -5 : 0,
+          useNativeDriver: true,
+          friction: 5,
+        }),
+      ]).start();
+    }, [isSelected]);
 
     return (
       <>
@@ -190,50 +171,54 @@ export default function Layout() {
           onPress={() => router?.push("/(tabs)/fifth")}
         >
           <Animated.View
-            style={[
-              {
-                transform: [
-                  { scale: fadeAnim },
-                  // { translateY: translateYAnim },
-                ],
-              },
-            ]}
+            style={{
+              transform: [{ scale: fadeAnim }, { translateY: translateYAnim }],
+            }}
           >
             <View style={styles?.notificationWrapper}>
-              <Image
-                source={showProfile ? PROFILE : NOTIFICATIONS} // Local GIF
+              <View
                 style={[
-                  styles.doubleIcon,
+                  styles?.icon,
+                  styles?.doubleIcon,
                   isSelected && {
-                    width: 50,
-                    height: 50,
-                    borderColor: Colors?.tertieryButton,
+                    backgroundColor: Colors?.tertieryButton,
+                    borderColor: Colors?.white,
                   },
                 ]}
-              />
-              {!showProfile && (
+              >
+                <MaterialIcons
+                  name={showProfile ? "person" : "notifications"}
+                  size={32}
+                  color={
+                    isSelected ? Colors?.tertieryButtonText : Colors.primary
+                  }
+                />
+              </View>
+              {
                 <BadgeComponent
                   style={{
                     backgroundColor: isSelected
-                      ? Colors?.tertiery
+                      ? Colors?.tertieryButton
                       : Colors?.primary,
+                    marginLeft: -10,
                   }}
                   count={4}
                 />
-              )}
+              }
             </View>
           </Animated.View>
-          {/* <Animated.Text
+          <Animated.Text
             style={[
               styles.customButtonText,
               {
                 fontSize: getFontSize(locale, 13),
                 color: isSelected ? Colors?.tertiery : Colors.primary,
+                marginBottom: isSelected ? 10 : 0,
               },
             ]}
           >
             {showProfile ? t("myProfile") : t("notifications")}
-          </Animated.Text> */}
+          </Animated.Text>
         </TouchableOpacity>
       </>
     );
@@ -315,7 +300,12 @@ export default function Layout() {
             tabPress: () => setAddService({}),
           }}
           options={{
-            tabBarButton: (props) => <TabButtonProfile props={props} />,
+            tabBarButton: (props) => (
+              <TabButtonProfile
+                props={props}
+                iconName={userDetails?.isAdmin ? "profile" : "calendar-month"}
+              />
+            ),
           }}
         />
       </Tabs>
@@ -342,7 +332,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   icon: {
-    borderWidth: 0.7,
+    borderWidth: 3,
     borderColor: Colors?.white,
     backgroundColor: Colors?.white,
     borderRadius: 8,
@@ -352,10 +342,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   doubleIcon: {
-    borderWidth: 0.7,
-    borderColor: Colors?.white,
     borderRadius: 8,
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
   },
 });

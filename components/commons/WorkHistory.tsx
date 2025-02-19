@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, FlatList } from "react-native";
+import { StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
@@ -7,19 +7,7 @@ import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import Requirements from "./Requirements";
 
-interface WorkHistoryProps {
-  workHistory: Array<{
-    _id: string;
-    serviceName: string;
-    requirements: string;
-    description: string;
-    address: string;
-    startDate: string;
-    duration: number;
-  }>;
-}
-
-const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
+const WorkHistory = ({ workHistory }: any) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2;
@@ -30,46 +18,6 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
       params: { id: serviceId },
     });
   };
-
-  const renderWorkItem = ({ item: work }: { item: any }) => (
-    <TouchableOpacity
-      key={work._id}
-      style={styles.workItem}
-      onPress={() => handleServicePress(work._id)}
-    >
-      <View style={styles.headerRow}>
-        {(work?.type || work?.subType) && (
-          <CustomHeading
-            baseFont={16}
-            textAlign="left"
-            style={styles.serviceName}
-          >
-            {work?.type} - {work?.subType}
-          </CustomHeading>
-        )}
-        <CustomText style={styles.date}>
-          {new Date(work.startDate).toLocaleDateString()}
-        </CustomText>
-      </View>
-
-      <Requirements type="small" requirements={work?.requirements} />
-
-      <View>
-        <View style={styles.detailRow}>
-          <CustomText style={styles.description}>{work.description}</CustomText>
-        </View>
-
-        <View style={styles.footerRow}>
-          <CustomText style={styles.address} textAlign="left">
-            📍 {work.address}
-          </CustomText>
-          <CustomText style={styles.duration}>
-            ⏱️ {work.duration} {t("days")}
-          </CustomText>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
 
   const renderPagination = () => {
     const totalPages = Math.ceil(workHistory.length / itemsPerPage);
@@ -106,15 +54,49 @@ const WorkHistory = ({ workHistory }: WorkHistoryProps) => {
 
       {workHistory?.length > 0 ? (
         <>
-          <FlatList
-            data={workHistory.slice(
-              currentPage * itemsPerPage,
-              (currentPage + 1) * itemsPerPage
-            )}
-            renderItem={renderWorkItem}
-            keyExtractor={(item) => item._id}
-            showsVerticalScrollIndicator={false}
-          />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {workHistory
+              .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
+              .map((work: any) => (
+                <TouchableOpacity
+                  key={work?._id}
+                  style={styles.workItem}
+                  onPress={() => handleServicePress(work?._id)}
+                >
+                  <View style={styles.headerRow}>
+                    <CustomHeading
+                      baseFont={16}
+                      textAlign="left"
+                      style={styles.serviceName}
+                    >
+                      {t(work?.type)} - {t(work?.subType)}
+                    </CustomHeading>
+                    <CustomText style={styles.date}>
+                      {new Date(work?.startDate).toLocaleDateString()}
+                    </CustomText>
+                  </View>
+
+                  <Requirements type="small" requirements={work?.requirements} />
+
+                  <View>
+                    <View style={styles.detailRow}>
+                      <CustomText style={styles.description}>
+                        Service Type - {t(work?.bookingType)}
+                      </CustomText>
+                    </View>
+
+                    <View style={styles.footerRow}>
+                      <CustomText style={styles.address} textAlign="left">
+                        📍 {work?.address}
+                      </CustomText>
+                      <CustomText style={styles.duration}>
+                        ⏱️ {work?.duration} {t("days")}
+                      </CustomText>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
           {renderPagination()}
         </>
       ) : (
@@ -198,10 +180,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 5,
     flexWrap: "wrap",
-  },
-  label: {
-    fontWeight: "600",
-    marginRight: 5,
   },
   emptyContainer: {
     borderWidth: 1,

@@ -20,8 +20,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    marginRight: 15,
+    borderRadius: 100,
   },
 });
 

@@ -101,7 +101,6 @@ const SignupScreen = () => {
       // formData.append("locale", JSON.stringify(locale));
       // formData.append("location", JSON.stringify(cleanLocation));
       // formData.append("email", email);
-      // formData.append("role", role);
       // formData.append("gender", gender);
       // formData.append(
       //   "dateOfBirth",

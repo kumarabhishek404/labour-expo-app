@@ -142,7 +142,6 @@ const addBookingRequest = async (payload: any) => {
 };
 
 const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
-  console.log("pageParam", pageParam);
   try {
     const data = await API_CLIENT.makeGetRequest(
       `/employer/booking/invitations/sent?page=${pageParam}&limit=5`

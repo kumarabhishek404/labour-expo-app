@@ -18,7 +18,7 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
         style={{
           flex: 1,
           flexDirection: "row",
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: 8,
         }}
         onPress={title?.length > 0 ? onPress[0] : onPress}
@@ -43,7 +43,7 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
           style={{
             flex: 1,
             flexDirection: "row",
-            alignItems: "flex-start",
+            alignItems: "center",
             gap: 8,
           }}
           onPress={onPress[1]}

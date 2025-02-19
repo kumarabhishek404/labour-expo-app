@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 2,
     borderColor: Colors?.primary,
-    paddingHorizontal: 13,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
     borderRadius: 8,
   },
   categoryBtnActive: {
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   categoryBtnTxt: {
     marginLeft: 5,
     color: Colors?.primary,
+    fontWeight: 600
   },
   categoryBtnTxtActive: {
     marginLeft: 5,

@@ -26,7 +26,7 @@ const Users = () => {
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { title, type, searchCategory } = useGlobalSearchParams();
-
+  
   const {
     data: response,
     isLoading,
@@ -41,17 +41,17 @@ const Users = () => {
       (await type) === "booked"
         ? EMPLOYER?.fetchAllBookedWorkers({
             pageParam,
-            skill: JSON?.parse(searchCategory as string)?.skill,
+            skill: JSON.parse(searchCategory as string)?.skill,
           })
         : (await type) === "saved"
         ? USER?.fetchAllLikedUsers({
             pageParam,
-            skill: JSON?.parse(searchCategory as string)?.skill,
+            skill: JSON.parse(searchCategory as string)?.skill,
           })
         : USER?.fetchAllUsers({
             pageParam,
-            name: JSON?.parse(searchCategory as string)?.name,
-            skill: JSON?.parse(searchCategory as string)?.skill,
+            name: JSON.parse(searchCategory as string)?.name,
+            skill: JSON.parse(searchCategory as string)?.skill,
           }),
     retry: false,
     initialPageParam: 1,
@@ -80,8 +80,6 @@ const Users = () => {
       fetchNextPage();
     }
   };
-
-  // console.log("filteredData--", filteredData);
 
   const memoizedData = useMemo(
     () => filteredData?.flatMap((data: any) => data),

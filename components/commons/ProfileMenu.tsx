@@ -134,7 +134,6 @@ const ProfileMenu = ({ disabled }: any) => {
       </View>
     </View>
   );
-  console.log("userDetails--", userDetails?.team?._id);
 
   const menus = [
     {

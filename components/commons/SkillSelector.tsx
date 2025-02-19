@@ -1,74 +1,53 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  Text,
-} from "react-native";
-import {
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import ModalComponent from "./Modal";
 import { getWorkLabel, removeEmptyStrings } from "@/constants/functions";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
-import DropdownComponent from "../inputs/Dropdown";
 import TextInputComponent from "../inputs/TextInputWithIcon";
-import DropdownWithMenu from "../inputs/DropdownWithMenu";
-import DropdownNew from "../inputs/DropdownNew";
-
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
+import PaperDropdown from "../inputs/Dropdown";
 interface SkillSelectorProps {
   canAddSkills: boolean;
-  role: string;
   isShowLabel?: boolean;
   style?: any;
   tagStyle?: any;
   tagTextStyle?: any;
-  selectedSkills?: Array<string>;
-  setSelectedSkills?: any;
   userSkills: Array<string>;
   availableSkills: any;
   handleAddSkill?: any;
-  handleRemoveSkill?: any; // Function to handle removing a skill
-  count?: number; // Optional prop to control the number of displayed skills
+  handleRemoveSkill?: any;
+  count?: number;
 }
 
 const SkillSelector = ({
   canAddSkills,
-  role,
   isShowLabel,
   style,
   tagStyle,
   tagTextStyle,
-  selectedSkills,
-  setSelectedSkills,
   userSkills,
   availableSkills,
   handleAddSkill,
   handleRemoveSkill,
   count,
 }: SkillSelectorProps) => {
-  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false); // For remove skill modal
-  const [skillPrices, setSkillPrices] = useState<any>({});
+  const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
   const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [selectedSkillToRemove, setSelectedSkillToRemove] = useState<
     string | null
-  >(null); // Track selected skill for removal
+  >(null);
 
-  // New state to hold filtered available skills (skills that are not already selected by the user)
   const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [selectedUserSkills, setSelectedUserSkills] = useState<any[]>([]);
 
   useEffect(() => {
-    // Filter available skills by excluding the ones already present in userSkills
     const filteredSkills = availableSkills?.filter(
       (availableSkill: any) =>
         !userSkills?.some((userSkill: any) => {
@@ -83,7 +62,6 @@ const SkillSelector = ({
   }, [availableSkills, userSkills]);
 
   useEffect(() => {
-    // Filter available skills by excluding the ones already present in userSkills
     const filteredSkills = availableSkills?.filter((availableSkill: any) =>
       userSkills?.some((userSkill: any) => {
         return (
@@ -119,46 +97,90 @@ const SkillSelector = ({
     });
   };
 
-  const onAddSkills = async () => {
-    try {
-      if (!skillWithPrice || !skillWithPrice.pricePerDay) {
-        return console.log("Please enter both skill and price.");
-      }
+  useEffect(() => {
+    if (!selectedSkill && !skillWithPrice) return;
 
-      console.log("skill---", skillWithPrice, selectedSkill);
+    setDrawerState({
+      visible: true,
+      title: "addNewSkills",
+      content: () => (
+        <View style={{ paddingVertical: 20 }}>
+          <PaperDropdown
+            name="addSkill"
+            label="selectSkill"
+            selectedValue={selectedSkill}
+            onSelect={(skill: string) => handleSkillSelection(skill)}
+            placeholder="searchAndSelectSkills"
+            options={filteredSkills}
+            search={false}
+            translationEnabled
+            icon={
+              <MaterialCommunityIcons
+                style={styles.icon}
+                color="black"
+                name="hammer-sickle"
+                size={30}
+              />
+            }
+          />
+          {selectedSkill && renderPriceInput()}
+        </View>
+      ),
+      primaryButton: {
+        title: "addSkill",
+        action: onAddSkills,
+        disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => {
+          setDrawerState({ visible: false });
+        },
+      },
+    });
+  }, [selectedSkill, skillWithPrice]);
 
-      await handleAddSkill(skillWithPrice);
+  useEffect(() => {
+    if (!selectedSkillToRemove) return;
 
-      setIsModalVisible(false);
-      setSkillPrices({});
-      setSelectedSkill(null); // Reset selected skill
-      setSkillWithPrice(null); // Reset skill with price
-    } catch (err) {
-      console.log("Error adding skill:", err);
-    }
-  };
-
-  const onRemoveSkill = async () => {
-    try {
-      // Ensure a skill is selected to be removed
-      if (!selectedSkillToRemove) {
-        return console.log("Please select a skill to remove.");
-      }
-
-      // Ensure at least one skill remains
-      if (userSkills?.length <= 1) {
-        return console.log("At least one skill is required.");
-      }
-
-      // Call remove skill API
-      await handleRemoveSkill(selectedSkillToRemove);
-
-      setIsRemoveModalVisible(false);
-      setSelectedSkillToRemove(null); // Reset selected skill to remove
-    } catch (err) {
-      console.log("Error removing skill:", err);
-    }
-  };
+    setDrawerState({
+      visible: true,
+      title: "removeSkill",
+      content: () => (
+        <View style={{ paddingVertical: 20 }}>
+          <PaperDropdown
+            name="removeSkill"
+            label="removeSkill"
+            selectedValue={selectedSkillToRemove}
+            onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
+            placeholder="selectSkillToRemove"
+            options={selectedUserSkills}
+            search={false}
+            translationEnabled
+            icon={
+              <MaterialCommunityIcons
+                style={styles.icon}
+                color="black"
+                name="hammer-sickle"
+                size={30}
+              />
+            }
+          />
+        </View>
+      ),
+      primaryButton: {
+        title: "removeSkill",
+        action: onRemoveSkill,
+        disabled: !selectedSkillToRemove || userSkills?.length <= 1,
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => {
+          setDrawerState({ visible: false });
+        },
+      },
+    });
+  }, [selectedSkillToRemove]);
 
   const renderPriceInput = () => {
     return (
@@ -225,140 +247,197 @@ const SkillSelector = ({
     );
   };
 
+  const handleOpenSkillDrawer = () => {
+    setDrawerState({
+      visible: true,
+      title: "addNewSkills",
+      content: () => (
+        <View style={{ paddingVertical: 20 }}>
+          {/* Skill Selection Dropdown */}
+          <PaperDropdown
+            name="addSkill"
+            label="selectSkill"
+            selectedValue={selectedSkill}
+            onSelect={(skill: string) => handleSkillSelection(skill)}
+            placeholder="searchAndSelectSkills"
+            options={filteredSkills}
+            search={false}
+            translationEnabled
+            icon={
+              <MaterialCommunityIcons
+                style={styles.icon}
+                color="black"
+                name="hammer-sickle"
+                size={30}
+              />
+            }
+          />
+          {/* Render Price Input Only if Skill is Selected */}
+          {selectedSkill && renderPriceInput()}
+        </View>
+      ),
+      primaryButton: {
+        title: "addSkill",
+        action: onAddSkills,
+        disabled: !selectedSkillToRemove || userSkills?.length <= 1,
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => {
+          setDrawerState({ visible: false });
+        },
+      },
+    });
+  };
+
+  const handleOpenRemoveSkillDrawer = () => {
+    setDrawerState({
+      visible: true,
+      title: "removeSkill",
+      content: () => (
+        <View style={{ paddingVertical: 20 }}>
+          <PaperDropdown
+            name="removeSkill"
+            label="removeSkill"
+            selectedValue={selectedSkillToRemove}
+            onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
+            placeholder="selectSkillToRemove"
+            options={selectedUserSkills}
+            search={false}
+            translationEnabled
+            icon={
+              <MaterialCommunityIcons
+                style={styles.icon}
+                color="black"
+                name="hammer-sickle"
+                size={30}
+              />
+            }
+          />
+        </View>
+      ),
+      primaryButton: {
+        title: "removeSkill",
+        action: onAddSkills,
+        disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => {
+          setDrawerState({ visible: false });
+        },
+      },
+    });
+  };
+
+  const onAddSkills = async () => {
+    try {
+      if (!skillWithPrice || !skillWithPrice.pricePerDay) {
+        console.log("Please enter both skill and price.");
+        return;
+      }
+
+      await handleAddSkill(skillWithPrice, {
+        onSuccess: () => {
+          console.log(
+            "Skill added successfully:",
+            skillWithPrice,
+            selectedSkill
+          );
+          setDrawerState({ visible: false });
+          setSelectedSkill(null);
+          setSkillWithPrice(null);
+        },
+        onError: (err: any) => {
+          console.error("Error adding skill:", err);
+        },
+      });
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
+  };
+
+  const onRemoveSkill = async () => {
+    try {
+      if (!selectedSkillToRemove) {
+        console.log("Please enter a skill.");
+        return;
+      }
+
+      await handleRemoveSkill(selectedSkillToRemove, {
+        onSuccess: () => {
+          console.log("Skill removed successfully:", selectedSkillToRemove);
+          setDrawerState({ visible: false });
+          setSelectedSkillToRemove(null);
+        },
+        onError: (err: any) => {
+          console.error("Error while remove the skill:", err);
+        },
+      });
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
+  };
+
   return (
-    <View style={[styles.container, style]}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}
-      >
-        {isShowLabel && (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <View style={styles.highlightIcon}>
-              <FontAwesome name="users" size={14} color={Colors.primary} />
+    <>
+      <View style={[styles.container, style]}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          {isShowLabel && (
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+            >
+              <View style={styles.highlightIcon}>
+                <FontAwesome name="users" size={14} color={Colors.primary} />
+              </View>
+              <CustomHeading>{t("skills")}</CustomHeading>
             </View>
-            <CustomHeading>{t("skills")}</CustomHeading>
-          </View>
-        )}
+          )}
+        </View>
+
+        <View style={styles.skillContainer}>{renderSkills()}</View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 5,
+          }}
+        >
+          {canAddSkills && (
+            <TouchableOpacity
+              style={style?.addNewSkill}
+              onPress={handleOpenSkillDrawer}
+            >
+              <CustomHeading color={Colors?.link} fontWeight="bold">
+                {t("addNewSkills")}
+              </CustomHeading>
+            </TouchableOpacity>
+          )}
+
+          {canAddSkills && (
+            <TouchableOpacity onPress={handleOpenRemoveSkillDrawer}>
+              <CustomHeading color={Colors?.danger} fontWeight="bold">
+                {t("removeSkill")}
+              </CustomHeading>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-
-      <View style={styles.skillContainer}>{renderSkills()}</View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingHorizontal: 5,
-        }}
-      >
-        {canAddSkills && (
-          <TouchableOpacity style={style?.addNewSkill} onPress={toggleModal}>
-            <CustomHeading color={Colors?.link} fontWeight="bold">
-              {t("addNewSkills")}
-            </CustomHeading>
-          </TouchableOpacity>
-        )}
-
-        {canAddSkills && (
-          <TouchableOpacity onPress={toggleRemoveModal}>
-            <CustomHeading color={Colors?.danger} fontWeight="bold">
-              {t("removeSkill")}
-            </CustomHeading>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Add Skill Modal */}
-      <ModalComponent
-        title={t("addNewSkills")}
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        content={() => (
-          <View style={{ paddingVertical: 20 }}>
-            <DropdownWithMenu
-              id="addSkill"
-              label="selectSkill"
-              placeholder="searchAndSelectSkills"
-              searchEnabled={false}
-              translationEnabled
-              options={filteredSkills || []}
-              icon={
-                <MaterialCommunityIcons
-                  style={styles.icon}
-                  color="black"
-                  name="hammer-sickle"
-                  size={30}
-                />
-              }
-              selectedValue={selectedSkill}
-              onSelect={(skill: string) => handleSkillSelection(skill)}
-              openDropdownId={openDropdownId}
-              setOpenDropdownId={setOpenDropdownId}
-            />
-            {selectedSkill && renderPriceInput()}
-          </View>
-        )}
-        primaryButton={{
-          title: t("addSkill"),
-          action: onAddSkills,
-          disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
-        }}
-        secondaryButton={{
-          action: () => setIsModalVisible(false),
-        }}
-      />
-
-      {/* Remove Skill Modal */}
-      <ModalComponent
-        title={t("removeSkill")}
-        visible={isRemoveModalVisible}
-        onClose={() => setIsRemoveModalVisible(false)}
-        content={() => (
-          <View style={{ paddingVertical: 20 }}>
-            <DropdownWithMenu
-              id="removeSkill"
-              placeholder={t("selectSkillToRemove")}
-              searchEnabled={false}
-              options={selectedUserSkills || []}
-              icon={
-                <MaterialCommunityIcons
-                  style={styles.icon}
-                  color="black"
-                  name="hammer-sickle"
-                  size={30}
-                />
-              }
-              selectedValue={selectedUserSkills}
-              onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
-              openDropdownId={openDropdownId}
-              setOpenDropdownId={setOpenDropdownId}
-            />
-          </View>
-        )}
-        primaryButton={{
-          title:
-            userSkills?.length <= 1
-              ? t("atLeastOneSkillRequired")
-              : t("removeSkill"),
-          action: onRemoveSkill,
-          disabled: !selectedSkillToRemove || userSkills?.length <= 1,
-        }}
-        secondaryButton={{
-          action: () => setIsRemoveModalVisible(false),
-        }}
-      />
-    </View>
+    </>
   );
 };
 
 export default SkillSelector;
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 5,
-  },
+  container: {},
   skillContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

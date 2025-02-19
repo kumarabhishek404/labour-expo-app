@@ -39,8 +39,6 @@ const fetchAllServices = async ({
   subType,
   skill,
 }: any) => {
-  console.log("Paylaod--service -", pageParam, status, type, subType, skill);
-
   try {
     const data = await API_CLIENT.makeGetRequest(
       `/service/all?status=${status}&type=${type}&subType=${subType}&skill=${skill}&page=${pageParam}&limit=5`
@@ -89,11 +87,31 @@ const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
   }
 };
 
+const fetchAllVillages = async (payload: any) => {
+  console.log("Paylaod ---", payload);
+  
+  try {
+    const data = await API_CLIENT.makePostRequest(`/service/villages`, payload);
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching villages of selected state : `,
+      error?.response?.data?.message
+    );
+    TOAST?.showToast?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching villages of selected state"
+    );
+    throw error;
+  }
+};
+
 const SERVICE = {
   fetchAllServices,
   getServiceById,
   fetchMyAppliedWorkers,
   fetchSelectedWorkers,
+  fetchAllVillages
 };
 
 export default SERVICE;

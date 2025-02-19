@@ -23,7 +23,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
-import Step2 from "../../../assets/app/adaptive-icon.png";
+import WORKER1 from "../../../assets/worker1.png";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import AUTH from "@/app/api/auth";
 import useFirstTimeLaunch from "@/app/hooks/useFirstTimeLaunch";
@@ -156,7 +156,7 @@ const LoginScreen = () => {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        <Image source={Step2} style={styles.image} />
+        <Image source={WORKER1} style={styles.image} />
         <View style={styles.textContainer}>
           <CustomHeading baseFont={24}>
             {t("welcome")} {t("users")}
@@ -267,7 +267,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     gap: 15,
   },
-
   forgetPasswordContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -287,9 +286,9 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   image: {
-    width: "80%",
-    height: 250,
-    resizeMode: "cover",
+    // width: "100%",
+    height: 270,
+    resizeMode: "contain",
     alignSelf: "center",
   },
 });

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import CustomText from "../commons/CustomText";
 
-const TabSwitcher = ({ tabs, actvieTab, setActiveTab }: any) => {
+const TabSwitcher = ({ tabs, actvieTab, setActiveTab, textStyle }: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
 
   const screenWidth = Dimensions.get("window").width;
@@ -46,7 +46,11 @@ const TabSwitcher = ({ tabs, actvieTab, setActiveTab }: any) => {
             onPress={() => handleTabPress(index)}
           >
             <Text
-              style={[styles.tabText, actvieTab === index && styles.activeText]}
+              style={[
+                styles.tabText,
+                textStyle,
+                actvieTab === index && styles.activeText,
+              ]}
             >
               {t(tab?.label)}
             </Text>
@@ -101,13 +105,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
+    paddingHorizontal: 5,
     zIndex: 1,
     borderWidth: 1,
     borderColor: Colors?.primary,
     borderRadius: 100,
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "bold",
     color: Colors?.primary, // Inactive text color
   },

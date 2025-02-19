@@ -27,7 +27,6 @@ const ListingsVerticalWorkers = ({
   type,
 }: any) => {
   const RenderItem = React.memo(({ item }: any) => {
-    console.log("role", type);
     return (
       <View style={styles.container}>
         <TouchableOpacity

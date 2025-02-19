@@ -25,6 +25,9 @@ import { router } from "expo-router";
 import USER from "@/app/api/user";
 import WORKER from "@/app/api/workers";
 import EMPLOYER from "@/app/api/employer";
+import { useAtom, useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
+import AddSkillDrawer from "@/components/commons/AddSkillModal";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -34,6 +37,7 @@ interface ServiceActionButtonsProps {
   userDetails: any;
   isAdmin: boolean;
   isSelected: boolean;
+  isWorkerBooked: boolean;
   isServiceApplied: boolean;
   isServiceLiked: boolean;
   id: string;
@@ -60,9 +64,9 @@ const ServiceActionButtons = ({
   members,
   isMemberLoading,
   isMemberFetchingNextPage,
-  userDetails,
   isAdmin,
   isSelected,
+  isWorkerBooked,
   isServiceApplied,
   isServiceLiked,
   id,
@@ -80,7 +84,9 @@ const ServiceActionButtons = ({
   modalVisible,
   isWorkerSelectModal,
 }: ServiceActionButtonsProps) => {
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedWorkers, setSelectedWorkers] = useState(selectedWorkersIds);
+  const [isAddSkill, setIsAddSkill] = useState(false);
 
   useEffect(() => {
     setSelectedWorkers(selectedWorkersIds);
@@ -147,9 +153,9 @@ const ServiceActionButtons = ({
     },
   });
 
-  const mutationCancelServiceByWorkerAfterSelection = useMutation({
+  const mutationCancelBooking = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
+    mutationFn: () => WORKER?.cancelBooking({ bookingId: id }),
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
@@ -189,7 +195,7 @@ const ServiceActionButtons = ({
     },
   });
 
-  const mutationDeleteService = useMutation({
+  const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
     mutationFn: () => EMPLOYER?.cancelBooking(id),
     onSuccess: async (response) => {
@@ -215,12 +221,13 @@ const ServiceActionButtons = ({
   });
 
   const handleDelete = () => {
-    mutationDeleteService.mutate();
+    mutationCancelBookingByEmployer.mutate();
   };
 
-  console.log("selectedWorkersIds--12345", selectedWorkers);
-
   const handleApply = () => {
+    if (userDetails?.skills && userDetails?.skills?.length === 0) {
+      return setIsAddSkill(true);
+    }
     if (members && members?.length > 0) setIsWorkerSelectModal(true);
     // for worker
     else mutationApplyService.mutate({ workers: [], serviceId: id });
@@ -237,7 +244,7 @@ const ServiceActionButtons = ({
 
     switch (true) {
       case service.status === "CANCELLED" &&
-        service.employer?._id === userDetails?._id:
+        service.employer === userDetails?._id:
         return (
           <Button
             isPrimary={false}
@@ -249,7 +256,7 @@ const ServiceActionButtons = ({
           />
         );
 
-      case service.employer?._id !== userDetails?._id &&
+      case service.employer !== userDetails?._id &&
         !isAdmin &&
         service.status === "HIRING":
         return (
@@ -261,14 +268,14 @@ const ServiceActionButtons = ({
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
                 style={{ flex: 1 }}
-                onPress={mutationCancelServiceByWorkerAfterSelection.mutate}
+                onPress={mutationCancelBooking.mutate}
               />
             ) : (
               <Button
                 isPrimary={true}
                 title={isServiceApplied ? t("cancelApply") : t("applyNow")}
                 onPress={isServiceApplied ? handleCancelApply : handleApply}
-                style={{ width: "50%" }}
+                style={{ flex: 1 }}
                 bgColor={isServiceApplied ? Colors?.danger : Colors?.primary}
                 borderColor={
                   isServiceApplied ? Colors?.danger : Colors?.primary
@@ -291,7 +298,7 @@ const ServiceActionButtons = ({
           </>
         );
 
-      case service.employer?._id === userDetails?._id &&
+      case service.employer === userDetails?._id &&
         service.status !== "CANCELLED" &&
         service.status !== "COMPLETED":
         return (
@@ -299,7 +306,7 @@ const ServiceActionButtons = ({
             <Button
               isPrimary={true}
               title={t("deleteService")}
-              onPress={mutationDeleteService.mutate}
+              onPress={mutationCancelBookingByEmployer.mutate}
               style={styles.deleteBtn}
             />
             {service?.appliedUsers?.length > 0 ||
@@ -332,7 +339,7 @@ const ServiceActionButtons = ({
             <Button
               isPrimary={true}
               title={t("deleteService")}
-              onPress={mutationDeleteService.mutate}
+              onPress={mutationCancelBookingByEmployer.mutate}
               style={styles.deleteBtn}
             />
             <Button
@@ -420,10 +427,6 @@ const ServiceActionButtons = ({
     }
   };
 
-  console.log("members---", members);
-
-  console.log("seleced---", selectedWorkersIds);
-
   RenderMemberItem.displayName = "RenderMemberItem";
   const renderItem = ({ item }: any) => <RenderMemberItem item={item} />;
 
@@ -486,8 +489,8 @@ const ServiceActionButtons = ({
           mutationApplyService?.isPending ||
           mutationUnApplyService?.isPending ||
           mutationCompleteService?.isPending ||
-          mutationDeleteService?.isPending ||
-          mutationCancelServiceByWorkerAfterSelection?.isPending ||
+          mutationCancelBookingByEmployer?.isPending ||
+          mutationCancelBooking?.isPending ||
           mutationCancelServiceByMediatorAfterSelection?.isPending
         }
       />
@@ -555,6 +558,11 @@ const ServiceActionButtons = ({
           title: t("cancel"),
           action: () => setIsWorkerSelectModal(false),
         }}
+      />
+
+      <AddSkillDrawer
+        isDrawerVisible={isAddSkill}
+        setIsDrawerVisible={setIsAddSkill}
       />
     </>
   );
@@ -712,5 +720,20 @@ const styles = StyleSheet.create({
   emptyContainer: {
     paddingHorizontal: 10,
     paddingVertical: 20,
+  },
+  skillContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+  },
+  icon: {
+    marginRight: 10,
+    color: Colors.secondary,
+  },
+  priceInputContainer: {
+    marginTop: 20,
+    marginBottom: 10,
   },
 });

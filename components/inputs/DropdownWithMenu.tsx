@@ -30,14 +30,24 @@ const DropdownWithMenu = ({
     }).start();
   };
 
+  // Transform options with translations
+  const transformedOptions = options.map((item: any) => ({
+    key: item.value,
+    value: translationEnabled ? t(item.label) : item.label,
+  }));
+
+  // Get translated selected value
+  const translatedSelectedValue =
+    transformedOptions.find((item: any) => item.key === selected)?.value || "";
+
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       {label && (
         <CustomHeading
           textAlign="left"
           baseFont={16}
           fontWeight="500"
-          color={Colors?.inputLabel}
+          color={Colors.inputLabel}
         >
           {t(label)}
         </CustomHeading>
@@ -49,16 +59,11 @@ const DropdownWithMenu = ({
       >
         <SelectList
           setSelected={(val: any) => {
-            console.log("valuee---", val);
-
             setSelected(val);
             onSelect(val);
             animateDropdown(1); // Show animation on selection
           }}
-          data={options.map((item: any) => ({
-            key: item?.label,
-            value: translationEnabled ? t(item.label) : item?.label,
-          }))}
+          data={transformedOptions}
           save="key"
           arrowicon={
             <FontAwesome
@@ -71,12 +76,15 @@ const DropdownWithMenu = ({
           boxStyles={StyleSheet.flatten([
             styles.input,
             disabled && styles.disabledInput,
-            errors?.[name] && { borderColol: Colors?.error },
+            errors?.[name] && { borderColor: Colors.error },
           ])}
           dropdownItemStyles={{ paddingVertical: 8, paddingHorizontal: 12 }}
-          dropdownStyles={StyleSheet.flatten([styles.dropdown])}
+          dropdownStyles={styles.dropdown}
           placeholder={t(placeholder) || "Select an option"}
-          defaultOption={options.find((item: any) => item.value === selected)}
+          defaultOption={{
+            key: selected,
+            value: translatedSelectedValue,
+          }}
         />
 
         {/* Animated Dropdown */}
@@ -98,14 +106,13 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    // borderColor: Colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 14,
     backgroundColor: "#fff",
     borderRadius: 8,
   },
   disabledInput: {
-    backgroundColor: Colors?.gray,
+    backgroundColor: Colors.gray,
     borderColor: "#ddd",
   },
   dropdown: {

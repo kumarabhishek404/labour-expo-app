@@ -52,6 +52,7 @@ const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
           </View>
           <Button
             isPrimary={false}
+            style={{ minHeight: 30 }}
             title={t("viewAllMembers")}
             onPress={() =>
               router?.push({

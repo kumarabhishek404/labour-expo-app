@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -23,84 +22,6 @@ import Atoms from "@/app/AtomStore";
 import ProfilePicture from "./ProfilePicture";
 import OnPageLoader from "./Loaders/OnPageLoader";
 
-type UserType = {
-  _id: string;
-  name: string;
-  coverImage: string;
-  profilePicture: string;
-  email: string;
-  location: any;
-  skills: string[];
-  gender: string;
-  rating: string;
-  reviews: string;
-  price: string;
-  address: string;
-  role: string;
-};
-
-type RequestCardProps = {
-  item: {
-    _id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    status: string;
-    sender: UserType;
-    receiver: UserType;
-  };
-  requestType: any;
-  onAcceptRequest: (id: string) => void;
-  onRejectRequest: (id: string) => void;
-  onCancelRequest: (id: string) => void;
-};
-
-type RenderItemTypes = {
-  item: {
-    _id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    status: string;
-    receiver: {
-      _id: string;
-      name: string;
-      coverImage: string;
-      profilePicture: string;
-      email: string;
-      location: any;
-      skills: string[];
-      rating: string;
-      reviews: string;
-      price: string;
-      address: string;
-    };
-    sender: {
-      _id: string;
-      name: string;
-      coverImage: string;
-      profilePicture: string;
-      email: string;
-      location: any;
-      skills: string[];
-      rating: string;
-      reviews: string;
-      price: string;
-      address: string;
-    };
-  };
-};
-
-type Props = {
-  listings: Array<RequestCardProps["item"]>;
-  requestType: any;
-  loadMore: () => void;
-  isLoading: boolean;
-  isFetchingNextPage: boolean;
-  refreshControl?: any;
-  onCancelRequest?: any;
-  onAcceptRequest?: any;
-  onRejectRequest?: any;
-};
-
 const getStatusColor = (status: string): string => {
   const statusColors = {
     pending: "#F59E0B",
@@ -115,7 +36,7 @@ const getStatusColor = (status: string): string => {
   );
 };
 
-const RequestCardAdmin = React.memo(({ item }: RequestCardProps) => {
+const RequestCardAdmin = React.memo(({ item }: any) => {
   const sender = item?.sender;
   const receiver = item?.receiver;
   const status = item?.status;
@@ -261,23 +182,8 @@ const RequestCardUser = React.memo(
 
     const user = isSender ? item?.receiver : item?.employer;
 
-    console.log("user---", item);
-
     return (
-      <TouchableOpacity
-        onPress={() =>
-          router.push({
-            pathname: "/screens/users/[id]",
-            params: {
-              id: user?._id,
-              role: "workers",
-              title: "Workers",
-              type: "all",
-            },
-          })
-        }
-        style={styles.card}
-      >
+      <TouchableOpacity style={styles.card}>
         <View style={styles.requestContainer}>
           <ProfilePicture
             uri={user?.profilePicture}
@@ -466,7 +372,7 @@ const ListingVerticalRequests = ({
   onAcceptRequest,
   onRejectRequest,
   refreshControl,
-}: Props) => {
+}: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const renderLoader = () =>
@@ -711,7 +617,7 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
   },
   requestContainer: {
     flexDirection: "row",

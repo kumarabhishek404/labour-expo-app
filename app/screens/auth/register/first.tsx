@@ -18,6 +18,8 @@ import TOAST from "@/app/hooks/toast";
 import { Link, router, Stack } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import AUTH from "@/app/api/auth";
+import REGISTRATION from "../../../../assets/registration.png";
+import { Image } from "react-native";
 
 const RegisterScreen = () => {
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
@@ -105,129 +107,150 @@ const RegisterScreen = () => {
   );
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Loader loading={mutationRegister?.isPending} />
+    <>
       <Stack.Screen options={{ headerShown: false }} />
-      <CustomHeading style={{ marginBottom: 50 }} baseFont={45}>
-        {t("registerNow")}
-      </CustomHeading>
-      <View style={{ gap: 20, marginBottom: 15 }}>
-        <Controller
-          control={control}
-          name="phoneNumber"
-          rules={{
-            required: t("mobileNumberIsRequired"),
-            pattern: {
-              value: /^\d{10}$/,
-              message: t("enterAValidMobileNumber"),
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <MobileNumberField
-              name="phoneNumber"
-              countriesPhoneCode={COUNTRYPHONECODE}
-              countryCode={countryCode}
-              setCountryCode={setCountryCode}
-              phoneNumber={value}
-              setPhoneNumber={async (val: any) => {
-                setMobileNumberExist("notSet");
-                if (val.length === 10) {
-                  await mutationCheckMobileNumber.mutate({ mobile: val });
+      <Loader loading={mutationRegister?.isPending} />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Image source={REGISTRATION} style={styles.image} />
+        <View style={styles.textContainer}>
+          <CustomHeading baseFont={24}>{t("registerNow")}</CustomHeading>
+        </View>
+
+        <View style={styles.formContainer}>
+          <Controller
+            control={control}
+            name="phoneNumber"
+            rules={{
+              required: t("mobileNumberIsRequired"),
+              pattern: {
+                value: /^\d{10}$/,
+                message: t("enterAValidMobileNumber"),
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <MobileNumberField
+                name="phoneNumber"
+                countriesPhoneCode={COUNTRYPHONECODE}
+                countryCode={countryCode}
+                setCountryCode={setCountryCode}
+                phoneNumber={value}
+                setPhoneNumber={async (val: any) => {
+                  setMobileNumberExist("notSet");
+                  if (val.length === 10) {
+                    await mutationCheckMobileNumber.mutate({ mobile: val });
+                  }
+                  onChange(val);
+                }}
+                loading={mutationCheckMobileNumber?.isPending}
+                errors={errors}
+                isMobileNumberExist={mobileNumberExist === "exist"}
+                placeholder={t("enterYourMobileNumber")}
+                icon={
+                  <Feather
+                    name={"phone"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
                 }
-                onChange(val);
-              }}
-              loading={mutationCheckMobileNumber?.isPending}
-              errors={errors}
-              isMobileNumberExist={mobileNumberExist === "exist"}
-              placeholder={t("enterYourMobileNumber")}
-              icon={
-                <Feather
-                  name={"phone"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="name"
-          rules={{ required: t("firstNameIsRequired") }}
-          render={({ field: { onChange, value } }) => (
-            <TextInputComponent
-              name="name"
-              label="name"
-              value={value}
-              onChangeText={onChange}
-              placeholder={t("enterYourFirstName")}
-              textStyles={{ fontSize: 16 }}
-              errors={mobileNumberExist === "notExist" ? errors : []}
-              disabled={mobileNumberExist !== "notExist"}
-            />
-          )}
-        />
-      </View>
-      <Button
-        isPrimary
-        title={t("saveAndNext")}
-        onPress={handleSubmit(onSubmit)}
-        style={styles.submitButton}
-      />
+          <Controller
+            control={control}
+            name="name"
+            rules={{ required: t("firstNameIsRequired") }}
+            render={({ field: { onChange, value } }) => (
+              <TextInputComponent
+                name="name"
+                label="name"
+                value={value}
+                onChangeText={onChange}
+                placeholder={t("enterYourFirstName")}
+                textStyles={{ fontSize: 16 }}
+                errors={mobileNumberExist === "notExist" ? errors : []}
+                disabled={mobileNumberExist !== "notExist"}
+              />
+            )}
+          />
 
-      <View style={styles.footerContainer}>
-        <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
-        <Link href="/screens/auth/login" asChild>
-          <TouchableOpacity>
-            <CustomHeading baseFont={24} color={Colors.tertieryButton}>
-              {t("signIn")}
-            </CustomHeading>
-          </TouchableOpacity>
-        </Link>
-      </View>
-      <ModalComponent
-        visible={isModalVisible}
-        content={modalContent}
-        transparent={true}
-        animationType="slide"
-        title={t("checkYourMobileNumber")}
-        onClose={() => setModalVisible(false)}
-        primaryButton={{
-          title: t("yesProceed"),
-          action: onConfirmMobileNumber,
-        }}
-        secondaryButton={{
-          title: t("noEdit"),
-          action: () => setModalVisible(false),
-        }}
-      />
-    </ScrollView>
+          <Button
+            isPrimary
+            title={t("saveAndNext")}
+            onPress={handleSubmit(onSubmit)}
+            style={styles.loginButtonWrapper}
+          />
+
+          <View style={styles.footerContainer}>
+            <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
+            <Link href="/screens/auth/login" asChild>
+              <TouchableOpacity>
+                <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                  {t("signIn")}
+                </CustomHeading>
+              </TouchableOpacity>
+            </Link>
+          </View>
+
+          <ModalComponent
+            visible={isModalVisible}
+            content={modalContent}
+            transparent={true}
+            animationType="slide"
+            title={t("checkYourMobileNumber")}
+            onClose={() => setModalVisible(false)}
+            primaryButton={{
+              title: t("yesProceed"),
+              action: onConfirmMobileNumber,
+            }}
+            secondaryButton={{
+              title: t("noEdit"),
+              action: () => setModalVisible(false),
+            }}
+          />
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.white,
-    paddingHorizontal: 10,
-    paddingTop: 20,
-    alignItems: "center",
+    backgroundColor: Colors.background,
+    paddingHorizontal: 20,
     justifyContent: "center",
+  },
+  textContainer: {
+    // marginVertical: 10,
+  },
+  formContainer: {
+    marginTop: 15,
     gap: 15,
   },
-  submitButton: {
-    width: "100%",
+  loginButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
   },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
+  },
+  image: {
+    // width: "70%",
+    height: 250,
+    resizeMode: "contain",
+    alignSelf: "center",
   },
 });
 

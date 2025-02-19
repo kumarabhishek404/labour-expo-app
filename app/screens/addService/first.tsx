@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { Ionicons } from "@expo/vector-icons";
-
 import { Controller, useForm } from "react-hook-form";
-import { useSetAtom } from "jotai";
-import DropdownComponent from "@/components/inputs/Dropdown";
 import WorkRequirment from "@/components/inputs/WorkRequirements";
-import Stepper from "@/components/commons/Stepper";
-import { ADDSERVICESTEPS, WORKTYPES } from "@/constants";
+import { WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
-import { router, Stack } from "expo-router";
-import CustomHeader from "@/components/commons/Header";
-import CustomText from "@/components/commons/CustomText";
-import DropdownExample from "@/components/inputs/Dropdown";
 import PaperDropdown from "@/components/inputs/Dropdown";
 
 interface FirstScreenProps {
@@ -40,6 +32,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   const {
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -79,8 +72,12 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             render={({ field: { value, onChange } }) => (
               <PaperDropdown
                 name="type"
-                value={value}
-                onSelect={onChange}
+                selectedValue={value}
+                onSelect={(selectedValue: any) => {
+                  onChange(selectedValue);
+                  setValue("subType", "");
+                  setValue("requirements", requirements);
+                }}
                 translationEnabled
                 placeholder="selectWorkType"
                 options={WORKTYPES}
@@ -107,10 +104,13 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
               required: t("workSubTypeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
+              <PaperDropdown
                 name="subType"
-                value={value}
-                onSelect={onChange}
+                selectedValue={value}
+                onSelect={(selectedValue: any) => {
+                  onChange(selectedValue);
+                  setValue("requirements", requirements);
+                }}
                 placeholder={
                   watch("type")
                     ? "selectWorkSubType"
@@ -198,7 +198,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           }}
           render={({ field: { onChange, value } }) => (
             <WorkRequirment
-              // label={"workerType"}
               name="requirements"
               watch={watch}
               type={watch("type") ?? ""}
@@ -214,7 +213,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
 
       <View style={styles?.buttonContainer}>
         <Button
-          style={{ width: "100%", }}
+          style={{ width: "100%" }}
           textStyle={{ fontSize: 18 }}
           isPrimary={true}
           title={t("next")}

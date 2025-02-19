@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,7 +6,6 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import AddAddressModal from "@/app/screens/location/addAddress";
 import { convertToLabelValueArray } from "@/constants/functions";
-import DropdownWithMenu from "./DropdownWithMenu";
 import { t } from "@/utils/translationHelper";
 import PaperDropdown from "./Dropdown";
 
@@ -25,17 +24,13 @@ const LocationField = ({
   setIsModalVisible,
   isError,
 }: LocationFieldProps) => {
-  const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     ...(userDetails?.savedAddresses?.length > 0
       ? convertToLabelValueArray(userDetails?.savedAddresses)
       : []),
-    // { label: t("addNewAddress"), value: "addAddress" },
   ]);
-  const dropdownRef = useRef<any>(null);
 
   useEffect(() => {
     if (userDetails?.savedAddresses) {
@@ -51,8 +46,6 @@ const LocationField = ({
         // { label: t("addNewAddress"), value: "addAddress" },
       ]);
 
-      // Auto-select the newly added address if it exists in savedAddresses
-      // but isn't currently selected
       if (
         userDetails.savedAddresses.includes(address) === false &&
         userDetails.savedAddresses.length > 0
@@ -70,7 +63,7 @@ const LocationField = ({
     <View style={styles.container}>
       <PaperDropdown
         name="selectAddress"
-        value={address}
+        selectedValue={address}
         onSelect={setAddress}
         placeholder={t("selectAddress")}
         options={allSavedAddresses}
@@ -90,7 +83,6 @@ const LocationField = ({
         onClose={() => setIsModalVisible(false)}
         setAddress={(address: any) => {
           setAddress(address?.address);
-          setIsFocus(false);
         }}
       />
     </View>

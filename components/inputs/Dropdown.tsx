@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { Text, TextInput, Modal, Portal, Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,7 +12,7 @@ const PaperDropdown = ({
   options,
   onSelect,
   onFocus,
-  value,
+  selectedValue,
   disabled = false,
   translationEnabled,
   searchEnabled,
@@ -23,27 +23,21 @@ const PaperDropdown = ({
 }: any) => {
   const [visible, setVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState<string>(value || "");
-
-  // Update selectedValue when value prop changes
-  useEffect(() => {
-    setSelectedValue(value);
-  }, [value]);
-
-  // Filter options based on search input
-  const filteredOptions = options.filter((item: any) =>
-    item.label.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   // Handle selection of an item
   const handleSelect = (selectedItem: string) => {
-    setSelectedValue(selectedItem);
+    onSelect(selectedItem);
     setVisible(false);
     onSelect(selectedItem);
   };
 
+  // Filter options based on search input
+  const filteredOptions = options?.filter((item: any) =>
+    item?.label?.toLowerCase()?.includes(searchText?.toLowerCase())
+  );
+
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       {label && (
         <CustomHeading
           textAlign="left"
@@ -109,7 +103,7 @@ const PaperDropdown = ({
           contentContainerStyle={styles.modalContainer}
         >
           {/* Search Bar */}
-          {filteredOptions && filteredOptions?.length > 0 && searchEnabled && (
+          {options.length > 0 && searchEnabled && (
             <TextInput
               label="Search..."
               value={searchText}
@@ -124,7 +118,7 @@ const PaperDropdown = ({
             style={styles.listContainer}
             keyboardShouldPersistTaps="handled"
           >
-            {filteredOptions && filteredOptions?.length > 0 ? (
+            {filteredOptions.length > 0 ? (
               filteredOptions.map((item: any) => (
                 <TouchableOpacity
                   key={item.value}
@@ -136,7 +130,7 @@ const PaperDropdown = ({
                       <View style={styles.iconContainer}>{item.icon}</View>
                     )}
                     <Text style={styles.optionText}>
-                      {translationEnabled ? t(item.label) : item?.label}
+                      {translationEnabled ? t(item.label) : item.label}
                     </Text>
                   </View>
                   {selectedValue === item.value && (
@@ -150,7 +144,7 @@ const PaperDropdown = ({
                 baseFont={20}
                 color={Colors?.inputPlaceholder}
               >
-                {t(placeholder)}
+                {translationEnabled ? t(placeholder) : placeholder}
               </CustomText>
             )}
           </ScrollView>
@@ -197,17 +191,6 @@ const styles = StyleSheet.create({
   },
   selectedText: {
     width: "90%",
-  },
-  errorBorder: {
-    borderColor: "red",
-  },
-  errorText: {
-    color: "red",
-  },
-  errorMessage: {
-    color: "red",
-    fontSize: 14,
-    marginTop: 5,
   },
   modalContainer: {
     backgroundColor: "white",

@@ -1,20 +1,18 @@
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { SlideInDown, useAnimatedRef } from "react-native-reanimated";
-import { useAtom } from "jotai";
+import Animated, { useAnimatedRef } from "react-native-reanimated";
+import SERVICE from "../../api/services";
+import Loader from "@/components/commons/Loaders/Loader";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "@react-navigation/native";
+import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Button from "@/components/inputs/Button";
 import moment from "moment";
+import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
 import ImageSlider from "@/components/commons/ImageSlider";
@@ -22,91 +20,91 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import WorkerCard from "@/components/commons/WorkerCard";
-import { useMutation } from "@tanstack/react-query";
-import TOAST from "@/app/hooks/toast";
-import Loader from "@/components/commons/Loaders/Loader";
-import Requirements from "@/components/commons/Requirements";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { handleCall } from "@/constants/functions";
+import BookingActionButtons from "./actionButtons";
+import SelectedUsers from "./selectedUsers";
 import EMPLOYER from "@/app/api/employer";
-import ShowSkills from "@/components/commons/ShowSkills";
+import TOAST from "@/app/hooks/toast";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
-interface ImageAsset {
-  uri: string;
-}
-
-const ServiceDetails = () => {
-  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const { title, data }: any = useLocalSearchParams();
-  const [booking, setBooking]: any = useState(JSON.parse(data));
+const BookingDetails = () => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const firstTimeRef = React.useRef(true);
+  const { id, data, category, title }: any = useLocalSearchParams();
+  const [booking, setBooking] = useState(JSON.parse(data));
+  const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const [isSelected, setIsSelected] = useState(
     booking?.selectedUsers?.find(
-      (worker: any) => worker?._id === userDetails?._id
+      (user: any) => user?.user?._id === userDetails?._id
     ) || false
   );
 
-  const mutationRemoveBookedUser = useMutation({
-    mutationKey: ["removeBookedUser"],
-    mutationFn: () =>
-      EMPLOYER?.removeBookedWorker({ userId: booking?.worker?._id }),
-    onSuccess: async (response) => {
-      TOAST?.showToast?.success(t("removedBookedWorkerSuccessfully"));
-      console.log("Response while removing a booked worker - ", response);
-    },
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
+  const { refreshUser, isLoading: isRefreshLoading } =
+    REFRESH_USER.useRefreshUser();
+
+  const [isAdmin] = useState(userDetails?.isAdmin);
+
+  const {
+    isLoading,
+    data: response,
+    refetch,
+  } = useQuery({
+    queryKey: ["bookingDetails", id],
+    queryFn: async () => await SERVICE?.getServiceById(id),
+    retry: false,
+    enabled:
+      !!id && category !== "recievedRequests" && category !== "sentRequests",
   });
 
-  const mutationCancelBooking = useMutation({
-    mutationKey: ["cancelBooking"],
-    mutationFn: () => EMPLOYER?.cancelBooking({ bookingId: booking?._id }),
-    onSuccess: async (response) => {
-      TOAST?.showToast?.success(t("bookingCancelledSuccessfully"));
-      console.log("Response while cancelling a booking - ", response);
-    },
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      if (firstTimeRef.current) {
+        firstTimeRef.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch])
+  );
 
-  const mutationCompleteBooking = useMutation({
-    mutationKey: ["completBooking"],
-    mutationFn: () => EMPLOYER?.completeBooking({ bookingId: booking?._id }),
-    onSuccess: async (response) => {
-      TOAST?.showToast?.success(t("bookingCompletedSuccessfully"));
-      console.log("Response while cancelling a booking - ", response);
-    },
-  });
+  console.log("booking--", booking);
 
   useEffect(() => {
     setIsSelected(
       booking?.selectedUsers?.find(
-        (worker: any) => worker?._id === userDetails?._id
+        (user: any) => user?.user?._id === userDetails?._id
       ) || false
     );
   }, [booking]);
 
-  const workersList =
-    booking?.selectedUsers?.length > 0
-      ? booking?.selectedUsers
-      : [booking?.bookedWorker ?? ""];
-  console.log("data---", workersList);
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = setBooking(response?.data || JSON.parse(data));
+      return () => unsubscribe;
+    }, [response])
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={title} left="back" right="notification" />
+            <CustomHeader
+              title={t(title || "directBookingDetails")}
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
-      <Loader
-        loading={
-          mutationCancelBooking?.isPending ||
-          mutationCompleteBooking?.isPending ||
-          mutationRemoveBookedUser?.isPending
-        }
-      />
+
+      <Loader loading={isLoading} />
+
       <ScrollView style={styles.container}>
         <Animated.ScrollView
           ref={scrollRef}
@@ -172,6 +170,16 @@ const ServiceDetails = () => {
             <CustomHeading baseFont={18} textAlign="left">
               {t(booking?.type)} - {t(booking?.subType)}
             </CustomHeading>
+            <CustomHeading baseFont={18} textAlign="left">
+              Service Type{" - "}
+              <CustomText
+                color={Colors?.tertieryButton}
+                fontWeight="600"
+                baseFont={20}
+              >
+                {t(booking?.bookingType || "direct")}
+              </CustomText>
+            </CustomHeading>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
@@ -193,113 +201,78 @@ const ServiceDetails = () => {
               </CustomText>
             </View>
 
-            <Highlights service={booking} />
+            <Highlights booking={booking} />
 
-            <CustomText textAlign="left" baseFont={13}>
-              {booking?.description}
+            <CustomText
+              textAlign="left"
+              baseFont={14}
+              style={{ marginBottom: 10 }}
+            >
+              {booking?.description || "No description found"}
             </CustomText>
 
             {booking && booking?.requirements?.length > 0 && (
               <Requirements type="full" requirements={booking?.requirements} />
             )}
+
+            {booking?.employer && booking?.employer === userDetails?._id && (
+              <SelectedUsers
+                selectedApplicants={[
+                  ...(booking?.bookedWorker ? [booking?.bookedWorker] : []),
+                  ...(booking?.selectedUsers || []),
+                ].filter(Boolean)}
+                bookingId={booking?._id}
+                bookingType={booking?.bookingType}
+                refetch={refetch}
+              />
+            )}
           </View>
 
-          {workersList?.length > 0 && (
-            <View style={styles.workerListContainer}>
-              <CustomHeading baseFont={18} textAlign="left">
-                {t("selectedWorkers")}
-              </CustomHeading>
-
-              {workersList?.map((worker: any) => (
-                <View key={worker._id} style={styles.workerCard}>
-                  {/* Worker Image */}
-                  <Image
-                    source={{ uri: worker?.profilePicture }}
-                    style={styles.workerImage}
-                  />
-
-                  {/* Worker Details */}
-                  <View style={styles.workerInfo}>
-                    <CustomHeading baseFont={16} textAlign="left">
-                      {worker?.name}
-                    </CustomHeading>
-                    <ShowSkills userSkills={worker?.skills} />
-                    <View style={styles.workerLocation}>
-                      <Entypo
-                        name="location-pin"
-                        size={14}
-                        color={Colors.primary}
-                      />
-                      <CustomText textAlign="left" style={styles.workerAddress}>
-                        {worker?.address || "Address not found"}
-                      </CustomText>
-                    </View>
-                    <Button
-                      isPrimary={false}
-                      title={t("removeFromBooking")}
-                      onPress={() => mutationRemoveBookedUser.mutate()}
-                      style={styles.removeButton}
-                      bgColor={Colors?.danger}
-                      borderColor={Colors?.danger}
-                      textColor={Colors.danger}
-                    />
-                  </View>
-
-                  {/* Remove Button */}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {booking && booking?.employer !== userDetails?._id && (
-            <EmployerCard employer={booking?.employer} />
-          )}
+          {booking?.employer?._id &&
+            booking?.employer?._id !== userDetails?._id && (
+              <EmployerCard employer={booking?.employer} />
+            )}
         </Animated.ScrollView>
       </ScrollView>
 
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
-        <Button
-          isPrimary={false}
-          title={t("cancel")}
-          onPress={() => mutationCancelBooking.mutate()}
-          bgColor={Colors?.danger}
-          borderColor={Colors?.danger}
-          style={styles.cancelBtn}
-          textStyle={{ color: Colors?.white }}
-        />
-        <Button
-          isPrimary={false}
-          title={t("completeBooking")}
-          onPress={() => mutationCompleteBooking?.mutate()}
-          style={styles.completeBtn}
-          textStyle={{ color: Colors?.white }}
-        />
-      </Animated.View>
+      <BookingActionButtons
+        category={category}
+        booking={booking}
+        userDetails={userDetails}
+        isAdmin={isAdmin}
+        id={id as string}
+        refetch={refetch}
+        refreshUser={refreshUser}
+        setModalVisible={setModalVisible}
+        setIsCompleteModalVisible={setIsCompleteModalVisible}
+        isCompleteModalVisible={isCompleteModalVisible}
+        modalVisible={modalVisible}
+      />
     </>
   );
 };
 
-export default ServiceDetails;
+export default BookingDetails;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.fourth,
+    backgroundColor: Colors.background,
   },
   image: {
     width: width,
     height: IMG_HEIGHT,
   },
   contentWrapper: {
-    paddingHorizontal: 10,
-    paddingTop: 20,
-    backgroundColor: Colors.fourth,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    backgroundColor: Colors.background,
   },
   selectedWrapper: {
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: Colors?.tertiery,
+    backgroundColor: Colors?.success,
   },
   listingLocationWrapper: {
     flexDirection: "row",
@@ -319,6 +292,7 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     letterSpacing: 0.5,
   },
+
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -329,8 +303,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     width: width,
   },
-  cancelBtn: {
+  footerBtn: {
     flex: 1,
+    backgroundColor: Colors.black,
+    borderColor: Colors.black,
     alignItems: "center",
   },
   footerBookBtn: {
@@ -372,7 +348,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 8,
-    backgroundColor: "#FFD700", // Yellow circle
+    backgroundColor: "#FFD700",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -380,16 +356,12 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    // padding: 20,
-    // width: "90%",
-    // maxHeight: "80%",
   },
   userItem: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
     gap: 4,
-    // marginVertical: 10,
   },
   profilePic: {
     width: 50,
@@ -422,7 +394,7 @@ const styles = StyleSheet.create({
   },
   applicantContainer: {
     paddingHorizontal: 10,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
     gap: 5,
   },
   emptyContainer: {
@@ -432,57 +404,34 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray,
-  },
-  workerListContainer: {
-    marginTop: 20,
-    padding: 10,
-    margin: 10,
     backgroundColor: Colors.white,
-    borderRadius: 8,
-    elevation: 2, // Light shadow for elevation
   },
   workerCard: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    borderWidth: 2,
-    borderColor: Colors.fourth,
     borderRadius: 8,
-    padding: 10,
     marginVertical: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  workerImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  workerInfo: {
+    marginTop: 20,
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
-  workerSkills: {
-    fontSize: 14,
-    color: Colors.gray,
+  productCard: {
+    flexDirection: "row",
+    backgroundColor: Colors?.white,
+    padding: 8,
+    borderRadius: 8,
   },
-  workerLocation: {
+  productInfo: {
+    flex: 1,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 2,
+  },
+  recommendationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 3,
-  },
-  workerAddress: {
-    fontSize: 12,
-    color: Colors.secondary,
-    marginLeft: 5,
-  },
-  removeButton: {
-    flex: 1,
-    backgroundColor: "transparent",
-    paddingHorizontal: 6,
-    paddingVertical: 6,
-    marginTop: 10,
+    gap: 4,
   },
 });

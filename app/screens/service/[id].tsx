@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Entypo, FontAwesome5 } from "@expo/vector-icons";
+import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import SERVICE from "../../api/services";
@@ -34,6 +34,9 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ServiceActionButtons from "./actionButtons";
 import MEDIATOR from "@/app/api/mediator";
 import { handleCall } from "@/constants/functions";
+import ProfilePicture from "@/components/commons/ProfilePicture";
+import ButtonComp from "@/components/inputs/Button";
+import ShowSkills from "@/components/commons/ShowSkills";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -51,13 +54,16 @@ const ServiceDetails = () => {
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
-      (user: any) => user?.user?._id === userDetails?._id
+      (user: any) => user?.user === userDetails?._id
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
-      (user: any) => user?.user?._id === userDetails?._id
+      (user: any) => user?.user === userDetails?._id
     ) || false
+  );
+  const [isWorkerBooked, setIsWorkerBooked] = useState(
+    service?.bookedWorker === userDetails?._id
   );
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -74,10 +80,8 @@ const ServiceDetails = () => {
   const [isAdmin] = useState(userDetails?.isAdmin);
   const {
     isLoading,
-    isError,
     data: response,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["serviceDetails", id],
     queryFn: async () => await SERVICE?.getServiceById(id),
@@ -109,7 +113,7 @@ const ServiceDetails = () => {
     },
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id,
+    enabled: userDetails?._id === service?.employer,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -134,7 +138,7 @@ const ServiceDetails = () => {
       }),
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id !== service?.employer?._id,
+    enabled: userDetails?._id !== service?.employer,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -166,11 +170,6 @@ const ServiceDetails = () => {
     },
   });
 
-  console.log(
-    "members--",
-    members?.pages.flatMap((page: any) => page.data || [])[0]?.workers
-  );
-
   useFocusEffect(
     React.useCallback(() => {
       const unsubscribe = setWorkers(
@@ -180,10 +179,14 @@ const ServiceDetails = () => {
     }, [members])
   );
 
+  console.log("service--", service?.appliedUsers);
+
+  console.log("isServiceApplied--", isServiceApplied, userDetails?._id);
+
   useEffect(() => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
-        (user: any) => user?.user?._id === userDetails?._id
+        (user: any) => user?.user === userDetails?._id
       ) || false
     );
     setIsServiceLiked(
@@ -191,12 +194,11 @@ const ServiceDetails = () => {
     );
     setIsSelected(
       service?.selectedUsers?.find(
-        (user: any) => user?.user?._id === userDetails?._id
+        (user: any) => user?.user === userDetails?._id
       ) || false
     );
+    setIsWorkerBooked(service?.bookedWorker === userDetails?._id);
   }, [service]);
-
-  // console.log("appliedUsers--", response?.data?.appliedUsers);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -204,8 +206,6 @@ const ServiceDetails = () => {
       let appliedUsers = response?.data?.appliedUsers?.find(
         (mediator: any) => mediator?.user?._id === userDetails?._id
       );
-
-      console.log("appliedUsers--", appliedUsers);
 
       // Extract worker IDs if the logged-in user is found
       const workerIds =
@@ -234,7 +234,11 @@ const ServiceDetails = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t("serviceDetails")}
+              title={
+                service?.bookingType === "byService"
+                  ? t("serviceDetails")
+                  : t("bookingDetails")
+              }
               left="back"
               right="notification"
             />
@@ -309,6 +313,16 @@ const ServiceDetails = () => {
             <CustomHeading baseFont={18} textAlign="left">
               {t(service?.type)} - {t(service?.subType)}
             </CustomHeading>
+            <CustomHeading baseFont={18} textAlign="left">
+              Service Type{" - "}
+              <CustomText
+                color={Colors?.tertieryButton}
+                fontWeight="600"
+                baseFont={20}
+              >
+                {t(service?.bookingType)}
+              </CustomText>
+            </CustomHeading>
             <View style={styles.listingLocationWrapper}>
               <FontAwesome5
                 name="map-marker-alt"
@@ -339,10 +353,65 @@ const ServiceDetails = () => {
             {service && service?.requirements?.length > 0 && (
               <Requirements type="full" requirements={service?.requirements} />
             )}
+
+            {service?.bookedWorker && (
+              <View style={styles.workerCard}>
+                <View style={styles.productCard}>
+                  <ProfilePicture uri={service?.bookedWorker?.profilePicture} />
+                  <View style={styles.productInfo}>
+                    <View style={styles?.titleContainer}>
+                      <CustomHeading baseFont={14}>
+                        {service?.bookedWorker?.name}
+                      </CustomHeading>
+                    </View>
+                    <ShowSkills
+                      userSkills={service?.bookedWorker?.skills}
+                      tagStyle={{ backgroundColor: Colors?.darkGray }}
+                    />
+                    <View style={styles.recommendationContainer}>
+                      <Ionicons name="location" size={14} color="gray" />
+                      <CustomText textAlign="left">
+                        {service?.bookedWorker?.address || "Not Available"}
+                      </CustomText>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      alignContent: "flex-end",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    <ButtonComp
+                      style={{
+                        minHeight: 20,
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                        marginTop: 6,
+                      }}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      isPrimary={false}
+                      title="Details"
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/users/[id]",
+                          params: {
+                            id: service?.bookedWorker?._id,
+                            role: "workers",
+                            type: "applicant",
+                          },
+                        })
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
 
           {/* Selected Applicants */}
-          {(service?.employer?._id === userDetails?._id || isAdmin) && (
+          {(service?.employer === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">
                 {t("selectedApplicants")}
@@ -376,7 +445,7 @@ const ServiceDetails = () => {
           )}
 
           {/* Applicants */}
-          {(service?.employer?._id === userDetails?._id || isAdmin) && (
+          {(service?.employer === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">{t("applicants")}</CustomHeading>
               {applicants.length > 0 ? (
@@ -421,9 +490,10 @@ const ServiceDetails = () => {
             />
           )} */}
 
-          {service && service?.employer?._id !== userDetails?._id && (
-            <EmployerCard employer={service?.employer} />
-          )}
+          {service?.employer?._id &&
+            service?.employer?._id !== userDetails?._id && (
+              <EmployerCard employer={service?.employer} />
+            )}
         </Animated.ScrollView>
       </ScrollView>
 
@@ -435,6 +505,7 @@ const ServiceDetails = () => {
         userDetails={userDetails}
         isAdmin={isAdmin}
         isSelected={isSelected}
+        isWorkerBooked={isWorkerBooked}
         isServiceApplied={isServiceApplied}
         isServiceLiked={isServiceLiked}
         id={id as string}
@@ -467,7 +538,7 @@ const styles = StyleSheet.create({
     height: IMG_HEIGHT,
   },
   contentWrapper: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 20,
     backgroundColor: Colors.background,
   },
@@ -601,7 +672,7 @@ const styles = StyleSheet.create({
   },
   applicantContainer: {
     paddingHorizontal: 10,
-    backgroundColor: Colors.fourth,
+    backgroundColor: Colors.background,
     gap: 5,
   },
   emptyContainer: {
@@ -612,5 +683,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.gray,
     backgroundColor: Colors.white,
+  },
+  workerCard: {
+    borderRadius: 8,
+    marginBottom: 5,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    // borderColor: Colors?.secondary,
+    // borderWidth: 1,
+  },
+  productCard: {
+    flexDirection: "row",
+    backgroundColor: Colors?.white,
+    padding: 8,
+    borderRadius: 8,
+  },
+  productInfo: {
+    flex: 1,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 2,
+  },
+  recommendationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
 });

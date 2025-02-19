@@ -161,7 +161,9 @@ const FourthScreen = () => {
             title={t("back")}
             onPress={handlePasswordBack}
             style={{ width: "25%" }}
-            bgColor={Colors?.error}
+            bgColor={Colors?.danger}
+            borderColor={Colors?.danger}
+            textColor={Colors?.white}
           />
         )}
         <Button
@@ -171,6 +173,8 @@ const FourthScreen = () => {
             passwordStep === "create" ? handleSetPassword() : onSubmit()
           }
           style={{ flex: 1, paddingHorizontal: 5 }}
+          bgColor={Colors?.success}
+            borderColor={Colors?.success}
         />
       </View>
     </ScrollView>
@@ -196,6 +200,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     gap: 10,
+    marginTop: 40
   },
   heading: {
     marginBottom: 20,

@@ -11,6 +11,7 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import CustomSegmentedButton from "./customTabs";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import WORKER from "@/app/api/workers";
+import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 
 const Bookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -21,7 +22,7 @@ const Bookings = () => {
 
   const TABS: any = [
     { value: "selected", label: "selected" },
-    { value: "applied", label: "applied", count: 2 },
+    { value: "applied", label: "applied" },
   ];
 
   const {
@@ -52,8 +53,6 @@ const Bookings = () => {
       return undefined;
     },
   });
-
-  console.log("category--", category);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -151,12 +150,11 @@ const Bookings = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingTop: 10,
     paddingHorizontal: 10,
   },
   paginationTabs: {
     width: "100%",
-    paddingBottom: 10,
+    paddingBottom: 6,
   },
 });
 

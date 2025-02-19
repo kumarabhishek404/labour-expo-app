@@ -15,6 +15,7 @@ import AuthListener from "./context/AuthListner";
 import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "react-native";
 import Colors from "@/constants/Colors";
+import GlobalBottomDrawer from "@/components/commons/DrawerFromGlobal";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -78,6 +79,7 @@ function RootLayoutNav() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               </Stack>
               <Toast />
+              <GlobalBottomDrawer />
               <AuthListener />
             </PaperProvider>
           </QueryClientProvider>

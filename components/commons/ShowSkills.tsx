@@ -1,14 +1,14 @@
 import Colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 
 interface SkillSelectorProps {
   style?: any;
   tagStyle?: any;
-  userSkills: Array<string>;
+  userSkills: Array<{ skill: string; pricePerDay?: number }>;
 }
 
 const ShowSkills = ({ userSkills, style, tagStyle }: SkillSelectorProps) => {
@@ -18,13 +18,14 @@ const ShowSkills = ({ userSkills, style, tagStyle }: SkillSelectorProps) => {
         name="hammer-wrench"
         size={16}
         color={Colors.primary}
+        style={{ paddingTop: 5 }}
       />
-      <View style={{ flex: 1, flexDirection: "row", gap: 4 }}>
-        {userSkills?.map((skill: any, index: number) => (
-          <View key={index} style={[styles?.skillTag, tagStyle]}>
-            <CustomText color={Colors?.white} fontWeight="medium">
-              {t(skill?.skill)}{" "}
-              {skill?.pricePerDay && `- ₹${skill?.pricePerDay}`}
+      <View style={styles.skillWrapper}>
+        {userSkills?.map((skill, index) => (
+          <View key={index} style={[styles.skillTag, tagStyle]}>
+            <CustomText color={Colors.white} fontWeight="medium">
+              {t(skill.skill)}{" "}
+              {skill.pricePerDay ? `- ₹${skill.pricePerDay}` : ""}
             </CustomText>
           </View>
         ))}
@@ -37,14 +38,20 @@ export default ShowSkills;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
     gap: 5,
   },
+  skillWrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 4,
+    flex: 1, // Allows wrapping properly
+  },
   skillTag: {
-    backgroundColor: Colors?.tertiery,
+    backgroundColor: Colors.tertieryButton,
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 4,

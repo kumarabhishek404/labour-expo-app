@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  ScrollView,
-  StatusBar,
-} from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
+import { View, StyleSheet } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
 import Bookings from "./bookings";
 import Requests from "./requests";

@@ -12,6 +12,7 @@ import { DrawerActions } from "@react-navigation/native";
 import RippleDot from "./RippleDot";
 import { useQuery } from "@tanstack/react-query";
 import NOTIFICATION from "@/app/api/notification";
+import CustomText from "./CustomText";
 
 interface CustomHeaderProps {
   title?: string;
@@ -97,7 +98,7 @@ const CustomHeader = ({
           {title}
         </CustomHeading>
 
-        {right === "notification" && (
+        {right === "notification" ? (
           <TouchableOpacity
             onPress={() =>
               router?.push({
@@ -122,8 +123,7 @@ const CustomHeader = ({
               {unreadNotificationCount > 0 && <RippleDot />}
             </View>
           </TouchableOpacity>
-        )}
-        {right === "like" && (
+        ) : right === "like" ? (
           <TouchableOpacity
             onPress={() => {}}
             style={{
@@ -142,8 +142,9 @@ const CustomHeader = ({
               <Ionicons name="heart" size={20} color={Colors.primary} />
             </View>
           </TouchableOpacity>
+        ) : (
+          <View style={{ minWidth: 40, width: 40 }}></View>
         )}
-        {!right && <View></View>}
       </View>
     </>
   );

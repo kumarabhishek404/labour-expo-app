@@ -242,7 +242,7 @@ export const convertToLabelValueArray = (stringArray: string[]) => {
 };
 
 export const handleCall = (mobile: string) => {
-  Linking.openURL("tel:+1234567890");
+  Linking.openURL(`tel:${mobile}`);
 };
 
 export const handleMessage = () => {

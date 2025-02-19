@@ -88,7 +88,7 @@ const CustomSegmentedButton = ({
                   />
                 )}
                 <CustomText
-                  baseFont={17}
+                  baseFont={15}
                   fontWeight="500"
                   color={
                     isSelected
@@ -110,7 +110,7 @@ const CustomSegmentedButton = ({
                     ]}
                   >
                     <CustomText
-                      baseFont={18}
+                      baseFont={16}
                       fontWeight="500"
                       color={
                         isSelected

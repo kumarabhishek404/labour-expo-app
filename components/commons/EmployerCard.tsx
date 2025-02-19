@@ -9,6 +9,7 @@ import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { handleCall } from "@/constants/functions";
+import ProfilePicture from "./ProfilePicture";
 
 const EmployerCard = ({ employer }: any) => {
   return (
@@ -33,7 +34,9 @@ const EmployerCard = ({ employer }: any) => {
           },
         ]}
       >
-        <View style={{ width: "60%", gap: 10 }}>
+        <View
+          style={{ width: "60%", gap: 10, justifyContent: "space-between" }}
+        >
           <View style={{ gap: 2 }}>
             <CustomHeading textAlign="left">{t("employer")}</CustomHeading>
             <CustomText textAlign="left">
@@ -50,39 +53,29 @@ const EmployerCard = ({ employer }: any) => {
             </CustomText>
           </View>
 
-          <Button
-            isPrimary={false}
-            title={t('callEmployer')}
-            onPress={() => handleCall(employer?.mobile)}
-            icon={
-              <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
-            }
-            style={{
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
-          />
-
-          <Button
-            isPrimary={false}
-            title={t('messageEmployer')}
-            onPress={() => {}}
-            icon={
-              <FontAwesome5 name="whatsapp" size={18} color={Colors.primary} />
-            }
-            style={{
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
-          />
+          <View style={{ gap: 10 }}>
+            <Button
+              isPrimary={false}
+              title={t("callEmployer")}
+              onPress={() => handleCall(employer?.mobile)}
+              icon={
+                <FontAwesome5
+                  name="phone-alt"
+                  size={16}
+                  color={Colors.primary}
+                />
+              }
+              style={{
+                minHeight: 30,
+                paddingVertical: 6,
+                paddingHorizontal: 6,
+              }}
+              textStyle={{
+                marginLeft: 6,
+                fontSize: 12,
+              }}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -92,9 +85,9 @@ const EmployerCard = ({ employer }: any) => {
             gap: 10,
           }}
         >
-          <AvatarComponent
-            isEditable={false}
-            profileImage={employer?.profilePicture}
+          <ProfilePicture
+            uri={employer?.profilePicture}
+            style={{ width: 90, height: 90, marginLeft: 10 }}
           />
           <Button
             isPrimary={true}
@@ -112,8 +105,9 @@ const EmployerCard = ({ employer }: any) => {
             }
             icon={<AntDesign name="eye" size={18} color={Colors.white} />}
             style={{
+              minHeight: 30,
               paddingVertical: 6,
-              paddingHorizontal: 6,
+              paddingHorizontal: 14,
             }}
             textStyle={{
               marginLeft: 6,

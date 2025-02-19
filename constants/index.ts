@@ -50,6 +50,45 @@ export const STETESOFINDIA = [
   ],
 ];
 
+export const STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Lakshadweep",
+  "Delhi",
+  "Puducherry",
+  "Ladakh",
+  "Jammu and Kashmir",
+];
+
 export const COUNTRYPHONECODE = [{ label: "india", value: "+91" }];
 
 export const REGISTERSTEPS = [
@@ -67,18 +106,77 @@ export const ADDSERVICESTEPS = [
 ];
 
 export const WORKERTYPES = [
-  { label: "construction", value: "construction", iconName: "beach" },
-  { label: "labour", value: "labour", iconName: "beach" },
+  { label: "construction", value: "construction", iconName: "building" },
+  { label: "labour", value: "labour", iconName: "construction" },
   { label: "brickLayer", value: "brickLayer", iconName: "terrain" },
   { label: "stoneMason", value: "stoneMason", iconName: "city" },
-  { label: "mistri", value: "mistri", iconName: "tree" },
-  { label: "mason", value: "mason", iconName: "swim" },
-  { label: "carpenter", value: "carpenter", iconName: "swim" },
-  { label: "electrician", value: "electrician", iconName: "swim" },
-  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "swim" },
-  { label: "dhaanPitai", value: "dhaanPitai", iconName: "swim" },
-  { label: "alooBuwai", value: "alooBuwai", iconName: "swim" },
-  { label: "bazraaKatai", value: "bazraaKatai", iconName: "swim" },
+  { label: "mistri", value: "mistri", iconName: "tools" },
+  { label: "mason", value: "mason", iconName: "hammer" },
+  { label: "carpenter", value: "carpenter", iconName: "wood" },
+  { label: "electrician", value: "electrician", iconName: "bolt" },
+  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "grass" },
+  { label: "dhaanPitai", value: "dhaanPitai", iconName: "agriculture" },
+  { label: "alooBuwai", value: "alooBuwai", iconName: "potato" },
+  { label: "bazraaKatai", value: "bazraaKatai", iconName: "grass" },
+  { label: "tractorDriver", value: "tractorDriver", iconName: "tractor" },
+  { label: "equipmentSupplier", value: "equipmentSupplier", iconName: "tools" },
+  { label: "wellDigger", value: "wellDigger", iconName: "water" },
+  { label: "pumpMechanic", value: "pumpMechanic", iconName: "wrench" },
+  {
+    label: "borewellTechnician",
+    value: "borewellTechnician",
+    iconName: "water",
+  },
+  { label: "soilTester", value: "soilTester", iconName: "science" },
+  { label: "agricultureExpert", value: "agricultureExpert", iconName: "eco" },
+  { label: "pesticideSupplier", value: "pesticideSupplier", iconName: "eco" },
+  {
+    label: "fertilizerSupplier",
+    value: "fertilizerSupplier",
+    iconName: "nature",
+  },
+  { label: "farmConsultant", value: "farmConsultant", iconName: "person" },
+  { label: "steelFixer", value: "steelFixer", iconName: "construction" },
+  { label: "painter", value: "painter", iconName: "brush" },
+  {
+    label: "wallPlasteringWorker",
+    value: "wallPlasteringWorker",
+    iconName: "paint",
+  },
+  {
+    label: "scaffoldingLaborer",
+    value: "scaffoldingLaborer",
+    iconName: "construction",
+  },
+  { label: "roofMason", value: "roofMason", iconName: "home" },
+  {
+    label: "waterproofingExpert",
+    value: "waterproofingExpert",
+    iconName: "water",
+  },
+  { label: "thatcher", value: "thatcher", iconName: "roofing" },
+  { label: "plumber", value: "plumber", iconName: "plumbing" },
+  { label: "waterTankRepairer", value: "waterTankRepairer", iconName: "water" },
+  { label: "welders", value: "welders", iconName: "fire" },
+  { label: "movers", value: "movers", iconName: "truck" },
+  {
+    label: "warehouseWorkers",
+    value: "warehouseWorkers",
+    iconName: "inventory",
+  },
+  { label: "securityGuards", value: "securityGuards", iconName: "security" },
+  { label: "truckDrivers", value: "truckDrivers", iconName: "truck" },
+  {
+    label: "transportOperators",
+    value: "transportOperators",
+    iconName: "local_shipping",
+  },
+  { label: "cartPullers", value: "cartPullers", iconName: "agriculture" },
+  { label: "packers", value: "packers", iconName: "package" },
+  { label: "doctor", value: "doctor", iconName: "medical" },
+  { label: "nurse", value: "nurse", iconName: "healing" },
+  { label: "ambulanceDriver", value: "ambulanceDriver", iconName: "ambulance" },
+  { label: "paramedic", value: "paramedic", iconName: "medical_services" },
 ];
 
 export const MEDIATORTYPES = [
@@ -294,12 +392,82 @@ export const WORKER_BOOKINGS = [
 
 export const WORKTYPES = [
   {
-    label: "buildingAndRenovation",
-    value: "buildingAndRenovation",
+    label: "agricultureAndFarming",
+    value: "agricultureAndFarming",
     subTypes: [
       {
-        label: "homeConstruction",
-        value: "homeConstruction",
+        label: "tractorRental",
+        value: "tractorRental",
+        workerTypes: [
+          {
+            label: "tractorDriver",
+            value: "tractorDriver",
+          },
+          {
+            label: "equipmentSupplier",
+            value: "equipmentSupplier",
+          },
+        ],
+      },
+      {
+        label: "irrigationManagement",
+        value: "irrigationManagement",
+        workerTypes: [
+          {
+            label: "wellDigger",
+            value: "wellDigger",
+          },
+          {
+            label: "pumpMechanic",
+            value: "pumpMechanic",
+          },
+          {
+            label: "borewellTechnician",
+            value: "borewellTechnician",
+          },
+        ],
+      },
+      {
+        label: "soilTesting",
+        value: "soilTesting",
+        workerTypes: [
+          {
+            label: "soilTester",
+            value: "soilTester",
+          },
+          {
+            label: "agricultureExpert",
+            value: "agricultureExpert",
+          },
+        ],
+      },
+      {
+        label: "cropProtection",
+        value: "cropProtection",
+        workerTypes: [
+          {
+            label: "pesticideSupplier",
+            value: "pesticideSupplier",
+          },
+          {
+            label: "fertilizerSupplier",
+            value: "fertilizerSupplier",
+          },
+          {
+            label: "farmConsultant",
+            value: "farmConsultant",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "homeAndConstruction",
+    value: "homeAndConstruction",
+    subTypes: [
+      {
+        label: "buildingAndRenovation",
+        value: "buildingAndRenovation",
         workerTypes: [
           {
             label: "mason",
@@ -378,6 +546,10 @@ export const WORKTYPES = [
         value: "fixingLeaks",
         workerTypes: [
           {
+            label: "plumber",
+            value: "plumber",
+          },
+          {
             label: "roofMason",
             value: "roofMason",
           },
@@ -388,8 +560,8 @@ export const WORKTYPES = [
         value: "pipeInstallations",
         workerTypes: [
           {
-            label: "roofMason",
-            value: "roofMason",
+            label: "plumber",
+            value: "plumber",
           },
         ],
       },
@@ -398,8 +570,142 @@ export const WORKTYPES = [
         value: "repairingWaterTanks",
         workerTypes: [
           {
-            label: "roofMason",
-            value: "roofMason",
+            label: "plumber",
+            value: "plumber",
+          },
+          {
+            label: "waterTankRepairer",
+            value: "waterTankRepairer",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "dailyWageAndSkilledLabor",
+    value: "dailyWageAndSkilledLabor",
+    subTypes: [
+      {
+        label: "constructionWorkers",
+        value: "constructionWorkers",
+        workerTypes: [
+          {
+            label: "laborers",
+            value: "laborers",
+          },
+          {
+            label: "masons",
+            value: "masons",
+          },
+          {
+            label: "carpenters",
+            value: "carpenters",
+          },
+          {
+            label: "welders",
+            value: "welders",
+          },
+        ],
+      },
+      {
+        label: "loadingAndUnloading",
+        value: "loadingAndUnloading",
+        workerTypes: [
+          {
+            label: "movers",
+            value: "movers",
+          },
+          {
+            label: "warehouseWorkers",
+            value: "warehouseWorkers",
+          },
+        ],
+      },
+      {
+        label: "securityGuards",
+        value: "securityGuards",
+        workerTypes: [
+          {
+            label: "securityGuards",
+            value: "securityGuards",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "transportationAndLogistics",
+    value: "transportationAndLogistics",
+    subTypes: [
+      {
+        label: "tempoTruckRental",
+        value: "tempoTruckRental",
+        workerTypes: [
+          {
+            label: "truckDrivers",
+            value: "truckDrivers",
+          },
+          {
+            label: "transportOperators",
+            value: "transportOperators",
+          },
+        ],
+      },
+      {
+        label: "bullockCartServices",
+        value: "bullockCartServices",
+        workerTypes: [
+          {
+            label: "cartPullers",
+            value: "cartPullers",
+          },
+        ],
+      },
+      {
+        label: "packAndMove",
+        value: "packAndMove",
+        workerTypes: [
+          {
+            label: "packers",
+            value: "packers",
+          },
+          {
+            label: "movers",
+            value: "movers",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "healthAndMedicalServices",
+    value: "healthAndMedicalServices",
+    subTypes: [
+      {
+        label: "generalPhysician",
+        value: "generalPhysician",
+        workerTypes: [
+          {
+            label: "doctor",
+            value: "doctor",
+          },
+          {
+            label: "nurse",
+            value: "nurse",
+          },
+        ],
+      },
+      {
+        label: "ambulanceServices",
+        value: "ambulanceServices",
+        workerTypes: [
+          {
+            label: "ambulanceDriver",
+            value: "ambulanceDriver",
+          },
+          {
+            label: "paramedic",
+            value: "paramedic",
           },
         ],
       },

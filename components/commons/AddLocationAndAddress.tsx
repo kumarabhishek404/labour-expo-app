@@ -92,41 +92,21 @@ const AddLocationAndAddress = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
-        <CustomHeading color={Colors?.primary} baseFont={16} fontWeight="500">
+        <CustomHeading
+          color={Colors?.inputLabel}
+          baseFont={16}
+          fontWeight="500"
+        >
           {label}
         </CustomHeading>
         <TouchableOpacity
           style={styles.radioButton}
           onPress={() => setIsModalVisible(true)}
         >
-          <CustomHeading color={Colors?.link} baseFont={16} fontWeight="500">
+          <CustomHeading color={Colors?.primary} baseFont={16} fontWeight="500">
             {t("addNewAddress")}
           </CustomHeading>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={styles.radioButton}
-          onPress={() => setSelectedOption("address")}
-        >
-          <View style={styles.radioCircle}>
-            {selectedOption === "address" && (
-              <View style={styles.radioChecked} />
-            )}
-          </View>
-          {label && <CustomHeading>{label}</CustomHeading>}
-        </TouchableOpacity> */}
-
-        {/* <TouchableOpacity
-          style={styles.radioButton}
-          onPress={() => setSelectedOption("currentLocation")}
-        >
-          <View style={styles.radioCircle}>
-            {selectedOption === "currentLocation" && (
-              <View style={styles.radioChecked} />
-            )}
-          </View>
-          <CustomHeading>{t("currentLocation")}</CustomHeading>
-        </TouchableOpacity> */}
       </View>
 
       {selectedOption === "address" ? (
@@ -168,7 +148,9 @@ const AddLocationAndAddress = ({
           </View>
         </>
       )}
-      {errors?.[name] && <ErrorText> {errors?.[name]?.message || ""}</ErrorText>}
+      {errors?.[name] && (
+        <ErrorText> {errors?.[name]?.message || ""}</ErrorText>
+      )}
     </View>
   );
 };

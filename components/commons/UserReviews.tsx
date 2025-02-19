@@ -164,16 +164,41 @@ const UserReviews = forwardRef(
     });
 
     const renderReview = ({ item }: { item: any }) => (
-      <View style={styles.reviewCard}>
-        <ProfilePicture uri={item?.reviewer?.profilePicture} />
-        <View style={styles.textContainer}>
-          <View style={styles.headerContainer}>
-            <View style={styles.nameContainer}>
-              <Text style={styles.name} numberOfLines={2}>
-                {item?.reviewer?.name}
-              </Text>
+      <View style={styles.reviewWrapper}>
+        <View style={styles.reviewCard}>
+          <ProfilePicture uri={item?.reviewer?.profilePicture} />
+          <View style={styles.textContainer}>
+            <Text style={styles.name} numberOfLines={2}>
+              {item?.reviewer?.name}
+            </Text>
+            <Text style={styles.date}>{getTimeAgo(item?.createdAt)}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          <View style={{ flexDirection: "column" }}>
+            <View style={styles.ratingContainer}>
+              <Text style={styles.rating}>{item?.rating}</Text>
+              <StarRating rating={item?.rating} />
             </View>
-            {item?.reviewer?._id === userDetails?._id && (
+            <CustomText textAlign="left" baseFont={14} fontWeight="600">
+              {t(item?.ratingType)}
+            </CustomText>
+          </View>
+          {item?.reviewer?._id === userDetails?._id && (
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "flex-end",
+                gap: 5,
+                width: "40%",
+              }}
+            >
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.actionButton}
@@ -192,18 +217,12 @@ const UserReviews = forwardRef(
                   </Text>
                 </TouchableOpacity>
               </View>
-            )}
-          </View>
-          <Text style={styles.date}>{getTimeAgo(item?.createdAt)}</Text>
-          <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>{item?.rating}</Text>
-            <StarRating rating={item?.rating} />
-          </View>
-          <CustomText textAlign="left" baseFont={14} fontWeight="600">
-            {t(item?.ratingType)}
-          </CustomText>
-          <CustomText textAlign="left">{item?.comment}</CustomText>
+            </View>
+          )}
         </View>
+        <CustomText textAlign="left" style={{ flex: 1 }}>
+          {item?.comment}
+        </CustomText>
       </View>
     );
 
@@ -324,8 +343,7 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: "row",
   },
-  reviewCard: {
-    flexDirection: "row",
+  reviewWrapper: {
     padding: 10,
     borderRadius: 8,
     backgroundColor: "#f9f9f9",
@@ -335,6 +353,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 1,
+    gap: 10,
+  },
+  reviewCard: {
+    flexDirection: "row",
+    gap: 10,
   },
   avatar: {
     width: 50,

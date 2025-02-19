@@ -94,7 +94,9 @@ const TeamAdminCard = ({ admin }: any) => {
       >
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
-            <CustomHeading textAlign="left">{t("teamAdmin")}</CustomHeading>
+            <CustomHeading textAlign="left">
+              {t("teamAdmin")} in which you are a worker
+            </CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
@@ -117,6 +119,7 @@ const TeamAdminCard = ({ admin }: any) => {
               <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
             }
             style={{
+              minHeight: 35,
               paddingVertical: 6,
               paddingHorizontal: 6,
             }}
@@ -138,6 +141,7 @@ const TeamAdminCard = ({ admin }: any) => {
               />
             }
             style={{
+              minHeight: 35,
               paddingVertical: 6,
               paddingHorizontal: 6,
             }}
@@ -176,6 +180,7 @@ const TeamAdminCard = ({ admin }: any) => {
             }
             icon={<AntDesign name="eye" size={18} color={Colors.white} />}
             style={{
+              minHeight: 35,
               paddingVertical: 6,
               paddingHorizontal: 6,
             }}

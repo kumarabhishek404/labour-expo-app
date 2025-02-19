@@ -153,7 +153,12 @@ const NotificationScreen = () => {
   const renderNotification = ({ item }: any) => (
     <View style={styles?.notificationItem}>
       <View
-        style={{ width: "55%", flexDirection: "row", position: "relative" }}
+        style={{
+          width: "55%",
+          flexDirection: "row",
+          position: "relative",
+          gap: 10,
+        }}
       >
         <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
         <View style={styles?.notificationContent}>
@@ -244,7 +249,7 @@ const NotificationScreen = () => {
           header: () => <CustomHeader title="Notifications" left="back" />,
         }}
       />
-      <Loader loading={isLoading || isRefetching || isFetchingNextPage} />
+      <Loader loading={isLoading || isFetchingNextPage} />
       <View style={styles?.container}>
         {!hasPermission && RequestPermission()}
 
@@ -297,11 +302,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     marginTop: 10,
+    backgroundColor: Colors?.background,
   },
   permissionItems: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: Colors?.background,
     marginBottom: 20,
   },
   buttonContainer: {
@@ -324,6 +330,7 @@ const styles = StyleSheet.create({
   notificationItem: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",

@@ -39,13 +39,13 @@ export default function ButtonComp({
   };
 
   const containerStyles = {
-    minHeight: 53,
+    minHeight: 30,
     backgroundColor: disabled
       ? Colors.gray // Faded color when disabled
       : bgColor || (isPrimary ? Colors?.primaryButton : Colors.white),
     borderWidth: 2,
     borderColor: disabled ? Colors.gray : borderColor || Colors.primary,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 30,
     flexDirection: loading || icon ? "row" : "column",

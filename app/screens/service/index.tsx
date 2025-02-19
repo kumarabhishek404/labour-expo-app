@@ -24,6 +24,8 @@ const Services = () => {
   const [category, setCategory] = useState("HIRING");
   const { title, type, searchCategory } = useGlobalSearchParams();
 
+  console.log("type--", type, searchCategory);
+
   const {
     data: response,
     isLoading,
@@ -49,7 +51,7 @@ const Services = () => {
         : type === "myServices"
         ? EMPLOYER?.fetchMyServices({
             pageParam,
-            status: "",
+            status: category,
           })
         : type === "booked"
         ? EMPLOYER?.fetchAllBookedWorkers({
@@ -59,11 +61,9 @@ const Services = () => {
         : SERVICE?.fetchAllServices({
             pageParam,
             status: "ACTIVE",
-            type: searchCategory && JSON?.parse(searchCategory as string)?.type,
-            subType:
-              searchCategory && JSON?.parse(searchCategory as string)?.subType,
-            skill:
-              searchCategory && JSON?.parse(searchCategory as string)?.skill,
+            type: JSON.parse(searchCategory as string)?.type,
+            subType: JSON.parse(searchCategory as string)?.subType,
+            skill: JSON.parse(searchCategory as string)?.skill,
           }),
     initialPageParam: 1,
     retry: false,
@@ -119,17 +119,12 @@ const Services = () => {
       <View style={{ flex: 1 }}>
         <Loader loading={isLoading} />
         <View style={styles.container}>
-          {/* <SearchFilter
-            type="services"
-            data={response?.pages}
-            setFilteredData={setFilteredData}
-          /> */}
-          {/* 
-          <CategoryButtons
-            options={WORKTYPES}
-            onCagtegoryChanged={onCatChanged}
-          /> */}
-
+          {type === "myServices" && (
+            <CategoryButtons
+              options={MYSERVICES}
+              onCagtegoryChanged={onCatChanged}
+            />
+          )}
           <PaginationString
             type="services"
             isLoading={isLoading || isRefetching}

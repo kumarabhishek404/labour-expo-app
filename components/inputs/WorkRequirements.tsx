@@ -99,9 +99,7 @@ const WorkRequirment = ({
               <View style={styles.addRequirment}>
                 <View style={{ zIndex: 7 }}>
                   <PaperDropdown
-                    // name={name}
-                    // label={t(label as string)}
-                    value={requirement?.name}
+                    selectedValue={requirement?.name}
                     onSelect={(name: any) =>
                       handleRequirementTypeChange(index, name)
                     }
@@ -111,7 +109,6 @@ const WorkRequirment = ({
                         ? "selectWorkRequirementType"
                         : "pleaseSelectWorkTypeAndSubTypeFirst"
                     }
-                    // disabled={!watch("subType")}
                     options={filterWorkerTypes(type, subType) ?? []}
                     errors={errors}
                     search={false}

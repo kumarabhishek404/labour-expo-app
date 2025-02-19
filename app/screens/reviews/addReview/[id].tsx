@@ -43,7 +43,6 @@ const AddReview = () => {
         data: {
           rating: reviewData.rating,
           comment: reviewData?.comment,
-          reviewedUserRole: userDetails?.role,
           ratingType: reviewData?.feedbackType,
         },
       }),
@@ -73,7 +72,6 @@ const AddReview = () => {
         data: {
           rating: reviewData.rating,
           comment: reviewData?.comment,
-          reviewedUserRole: userDetails?.role,
           ratingType: reviewData?.feedbackType,
         },
       }),
@@ -188,7 +186,7 @@ const AddReview = () => {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextAreaInputComponent
-              label={t("whatWouldYouLike")}
+              label="whatWouldYouLike"
               name="comment"
               value={value}
               onBlur={onBlur}
@@ -236,5 +234,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginVertical: 30,
   },
-  
 });

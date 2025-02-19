@@ -1,104 +1,83 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
-import {
-  AntDesign,
-  Entypo,
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import Button from "../inputs/Button";
+import { View, StyleSheet, Animated, TouchableOpacity } from "react-native";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useMutation } from "@tanstack/react-query";
-import TOAST from "@/app/hooks/toast";
-import Loader from "./Loaders/Loader";
-import CustomHeading from "./CustomHeading";
-import CustomText from "./CustomText";
-import ProfilePicture from "./ProfilePicture";
+import { handleCall } from "@/constants/functions";
+import ProfilePicture from "@/components/commons/ProfilePicture";
+import CustomHeading from "@/components/commons/CustomHeading";
+import ShowSkills from "@/components/commons/ShowSkills";
+import CustomText from "@/components/commons/CustomText";
+import ButtonComp from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
+import Loader from "@/components/commons/Loaders/Loader";
+import { useMutation } from "@tanstack/react-query";
 import EMPLOYER from "@/app/api/employer";
-import ShowSkills from "./ShowSkills";
+import TOAST from "@/app/hooks/toast";
 
-interface ApplicantsProps {
-  applicants: any;
-  serviceId: string;
-  refetchApplicants: any;
-  refetchSelectedApplicants: any;
+interface SelectedApplicantsProps {
+  selectedApplicants: any;
+  bookingId?: string;
+  bookingType: string;
+  refetch: any;
 }
 
-const Applicants = ({
-  applicants,
-  serviceId,
-  refetchApplicants,
-  refetchSelectedApplicants,
-}: ApplicantsProps) => {
-  const mutationSelectWorker = useMutation({
-    mutationKey: ["selectWorker", { serviceId }],
-    mutationFn: (userId) =>
-      EMPLOYER?.selectWorker({ serviceId: serviceId, userId: userId }),
-    onSuccess: (response) => {
-      refetchApplicants();
-      refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("workerSelectedSuccessfully"));
-      console.log("Response while seleting an worker for service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while seleting an worker for service ", err);
-    },
-  });
+const SelectedUsers = ({
+  selectedApplicants,
+  bookingId,
+  bookingType,
+  refetch,
+}: SelectedApplicantsProps) => {
+  const [expandedItems, setExpandedItems] = React.useState<{
+    [key: string]: boolean;
+  }>({});
 
-  const mutationRejectWorker = useMutation({
-    mutationKey: ["rejectWorker", { serviceId }],
-    mutationFn: (userId) =>
-      EMPLOYER?.rejectWorker({ serviceId: serviceId, userId: userId }),
+  React.useEffect(() => {
+    selectedApplicants?.forEach((item: any) => {
+      if (!animatedHeights.current[item._id]) {
+        animatedHeights.current[item._id] = new Animated.Value(0);
+      }
+    });
+  }, [selectedApplicants]);
+
+  const mutationRemoveBookedWorker = useMutation({
+    mutationKey: ["removeBookedWorker"],
+    mutationFn: (payload: any) => EMPLOYER?.removeBookedWorker(payload),
     onSuccess: (response) => {
-      refetchApplicants();
-      refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("workerRejectedSuccessfully"));
-      console.log("Response while rejecting an selected worker - ", response);
-    },
-    onError: (err) => {
-      console.error("error while rejecting an selected worker ", err);
+      refetch();
+      TOAST?.showToast?.success(t("removedBookedWorkerSuccessfully"));
+      console.log("Response while removing booked worker - ", response);
     },
   });
 
   const animatedHeights = React.useRef<{ [key: string]: Animated.Value }>({});
 
-  const [expandedItem, setExpandedItem] = React.useState<string | null>(null);
-
   const toggleAccordion = (itemId: string) => {
-    const isExpanded = expandedItem === itemId;
-    setExpandedItem(isExpanded ? null : itemId);
+    if (!animatedHeights.current[itemId]) {
+      animatedHeights.current[itemId] = new Animated.Value(0);
+    }
+
+    setExpandedItems((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
 
     Animated.timing(animatedHeights.current[itemId], {
-      toValue: isExpanded ? 0 : 1,
+      toValue: expandedItems[itemId] ? 0 : 1,
       duration: 300,
       useNativeDriver: false,
     }).start();
   };
 
-  React.useEffect(() => {
-    applicants?.forEach((item: any) => {
-      if (!animatedHeights.current[item._id]) {
-        animatedHeights.current[item._id] = new Animated.Value(0);
-      }
-    });
-  }, [applicants]);
-
   return (
     <>
-      <Loader
-        loading={
-          mutationSelectWorker?.isPending || mutationRejectWorker?.isPending
-        }
-      />
+      <Loader loading={mutationRemoveBookedWorker?.isPending} />
       <View style={styles.applicantContainer}>
-        {applicants?.map((item: any, index: number) => {
-          const appliedUser = item?.user;
-          const workers = item?.workers;
+        {selectedApplicants?.map((mediator: any, index: number) => {
+          const appliedUser = mediator?.name ? mediator : mediator?.user;
+          const workers = mediator?.workers;
           return (
-            <View key={index} style={styles.mediatorCard}>
+            <View key={index} style={styles.workerCard}>
               <View style={styles.productCard}>
                 <ProfilePicture uri={appliedUser?.profilePicture} />
                 <View style={styles.productInfo}>
@@ -107,14 +86,14 @@ const Applicants = ({
                       {appliedUser?.name}
                     </CustomHeading>
                   </View>
-
                   <ShowSkills
                     userSkills={appliedUser?.skills}
+                    tagStyle={{ backgroundColor: Colors?.darkGray }}
                   />
                   <View style={styles.recommendationContainer}>
                     <Ionicons name="location" size={14} color="gray" />
                     <CustomText textAlign="left">
-                      {appliedUser?.address || "Not provided"}
+                      {appliedUser?.address || "Not Available"}
                     </CustomText>
                   </View>
                 </View>
@@ -124,12 +103,12 @@ const Applicants = ({
                     justifyContent: "flex-start",
                   }}
                 >
-                  <Button
+                  <ButtonComp
                     style={{
+                      minHeight: 20,
                       paddingVertical: 4,
-                      paddingHorizontal: 8,
+                      paddingHorizontal: 6,
                       marginTop: 6,
-                      minHeight: 30,
                     }}
                     textStyle={{
                       fontSize: 14,
@@ -149,12 +128,12 @@ const Applicants = ({
                   />
                 </View>
               </View>
-              {/* Add workers section */}
+
               {workers?.length > 0 && (
                 <View style={styles.workersContainer}>
                   <TouchableOpacity
                     style={styles.workersTitleContainer}
-                    onPress={() => toggleAccordion(item._id)}
+                    onPress={() => toggleAccordion(mediator._id)}
                     activeOpacity={0.7}
                   >
                     <View style={styles.workersTitleLeft}>
@@ -172,7 +151,7 @@ const Applicants = ({
                         transform: [
                           {
                             rotate: (
-                              animatedHeights.current[item._id] ||
+                              animatedHeights.current[mediator._id] ||
                               new Animated.Value(0)
                             ).interpolate({
                               inputRange: [0, 1],
@@ -190,13 +169,13 @@ const Applicants = ({
                     </Animated.View>
                   </TouchableOpacity>
 
-                  {expandedItem === item._id && (
+                  {expandedItems[mediator._id] && (
                     <Animated.View
                       style={[
                         styles.workersGrid,
                         {
                           opacity:
-                            animatedHeights.current[item._id] ||
+                            animatedHeights.current[mediator._id] ||
                             new Animated.Value(0),
                         },
                       ]}
@@ -216,44 +195,52 @@ const Applicants = ({
                   )}
                 </View>
               )}
+
               <View
                 style={{
                   width: "100%",
                   flexDirection: "row",
                   justifyContent: "flex-end",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   gap: 10,
                   marginTop: 10,
                 }}
               >
-                <Button
+                {bookingType === "byService" && (
+                  <ButtonComp
+                    style={{
+                      minHeight: 35,
+                      width: "60%",
+                      paddingVertical: 4,
+                      paddingHorizontal: 6,
+                    }}
+                    bgColor={Colors?.danger}
+                    borderColor={Colors?.danger}
+                    textStyle={{
+                      fontSize: 16,
+                    }}
+                    icon={
+                      <FontAwesome
+                        name="remove"
+                        size={14}
+                        color="white"
+                        style={{ marginRight: 4 }}
+                      />
+                    }
+                    isPrimary={true}
+                    title={t("removeBookedWorker")}
+                    onPress={() =>
+                      mutationRemoveBookedWorker?.mutate({
+                        serviceId: bookingId,
+                        userId: appliedUser?._id,
+                      })
+                    }
+                  />
+                )}
+                <ButtonComp
                   style={{
-                    minHeight: 30,
-                    width: "30%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 6,
-                  }}
-                  bgColor={Colors?.danger}
-                  borderColor={Colors?.danger}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <FontAwesome
-                      name="remove"
-                      size={14}
-                      color="white"
-                      style={{ marginRight: 4 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title={t("reject")}
-                  onPress={() => mutationRejectWorker?.mutate(appliedUser?._id)}
-                />
-                <Button
-                  style={{
-                    minHeight: 30,
-                    width: "40%",
+                    minHeight: 35,
+                    width: "25%",
                     paddingVertical: 4,
                     paddingHorizontal: 8,
                   }}
@@ -263,16 +250,16 @@ const Applicants = ({
                     fontSize: 14,
                   }}
                   icon={
-                    <Entypo
-                      name="check"
-                      size={14}
+                    <FontAwesome
+                      name="phone"
+                      size={16}
                       color="white"
-                      style={{ marginRight: 4 }}
+                      style={{ marginRight: 6 }}
                     />
                   }
                   isPrimary={true}
-                  title="Select"
-                  onPress={() => mutationSelectWorker?.mutate(appliedUser?._id)}
+                  title="Call"
+                  onPress={() => handleCall(appliedUser?.mobile)}
                 />
               </View>
             </View>
@@ -284,33 +271,25 @@ const Applicants = ({
 };
 
 const styles = StyleSheet.create({
-  applicantList: {
-    flex: 1,
-  },
   applicantContainer: {
     gap: 5,
+    backgroundColor: Colors?.background,
   },
-  mediatorCard: {
-    backgroundColor: "#fff",
+  workerCard: {
     borderRadius: 8,
     padding: 8,
     marginBottom: 5,
     flex: 1,
     flexDirection: "column",
     alignItems: "flex-start",
-    borderColor: "gray",
+    borderColor: Colors?.secondary,
     borderWidth: 1,
   },
   productCard: {
     flexDirection: "row",
-    backgroundColor: "#fff",
   },
   productInfo: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingBottom: 10,
-    display: "flex",
-    flexDirection: "column",
   },
   titleContainer: {
     flexDirection: "row",
@@ -321,17 +300,7 @@ const styles = StyleSheet.create({
   recommendationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 5,
-  },
-  caption: {
-    fontWeight: "600",
-    letterSpacing: 0,
-    width: 90,
-    padding: 2,
-    borderRadius: 30,
-    textAlign: "center",
-    backgroundColor: "#d6ecdd",
+    gap: 4,
   },
   workersContainer: {
     width: "100%",
@@ -385,4 +354,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Applicants;
+export default SelectedUsers;

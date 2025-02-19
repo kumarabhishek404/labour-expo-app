@@ -1,34 +1,25 @@
 import React, { useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
-import { useAtomValue } from "jotai";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loaders/Loader";
-import Atoms from "@/app/AtomStore";
-import ListingVerticalRequests from "@/components/commons/ListingVerticalRequests";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import TOAST from "@/app/hooks/toast";
-import { t } from "@/utils/translationHelper";
-import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import CustomSegmentedButton from "./customTabs";
 import WORKER from "@/app/api/workers";
-import MEDIATOR from "@/app/api/mediator";
 import EMPLOYER from "@/app/api/employer";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
+import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 
 const Requests = () => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("recievedRequests");
 
   const TABS = [
-    { value: "recievedRequests", label: "received", count: 2 },
-    { value: "sentRequests", label: "sent", count: 4 },
+    { value: "recievedRequests", label: "received" },
+    { value: "sentRequests", label: "sent" },
   ];
 
   const {
@@ -78,45 +69,6 @@ const Requests = () => {
     }, [response])
   );
 
-  const mutationCancelRequest = useMutation({
-    mutationKey: ["cancelRequest"],
-    mutationFn: (id) => MEDIATOR?.cancelTeamRequest({ userId: id }),
-    onSuccess: (response) => {
-      refetch();
-      console.log("Response while liking a worker - ", response);
-    },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
-  });
-
-  const mutationAcceptRequest = useMutation({
-    mutationKey: ["acceptRequest"],
-    mutationFn: (id) => WORKER?.acceptBookingRequest({ invitationId: id }),
-    onSuccess: (response) => {
-      refetch();
-      refreshUser();
-      TOAST?.showToast?.success(t("requestAcceptedSuccessfully"));
-      console.log("Response while accepting a request - ", response);
-    },
-    onError: (err) => {
-      console.error("error while accepting team joining request ", err);
-    },
-  });
-
-  const mutationRejectRequest = useMutation({
-    mutationKey: ["rejectRequest"],
-    mutationFn: (id) => WORKER?.rejectBookingRequest({ invitationId: id }),
-    onSuccess: (response) => {
-      refetch();
-      TOAST?.showToast?.success(t("requestRejectedSuccessfully"));
-      console.log("Response while rejecting request - ", response);
-    },
-    // onError: (err) => {
-    //   console.error("error while liking the worker ", err);
-    // },
-  });
-
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -162,14 +114,9 @@ const Requests = () => {
                   totalData={totalData}
                 />
               </View>
-              <ListingVerticalRequests
+              <ListingsVerticalBookings
                 listings={memoizedData || []}
-                requestType="bookingRequest"
-                isLoading={
-                  mutationAcceptRequest?.isPending ||
-                  mutationRejectRequest?.isPending ||
-                  mutationCancelRequest?.isPending
-                }
+                category={category}
                 loadMore={loadMore}
                 refreshControl={
                   <RefreshControl
@@ -178,9 +125,6 @@ const Requests = () => {
                   />
                 }
                 isFetchingNextPage={isFetchingNextPage}
-                onCancelRequest={mutationCancelRequest?.mutate}
-                onAcceptRequest={mutationAcceptRequest?.mutate}
-                onRejectRequest={mutationRejectRequest?.mutate}
               />
             </>
           ) : (
@@ -195,12 +139,11 @@ const Requests = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingTop: 10,
     paddingHorizontal: 10,
   },
   paginationTabs: {
     width: "100%",
-    paddingBottom: 10,
+    paddingBottom: 6,
   },
 });
 

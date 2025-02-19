@@ -2,9 +2,7 @@ import { StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
-import ModalComponent from "@/components/commons/Modal";
 import { Controller, useForm } from "react-hook-form";
-import DropdownComponent from "@/components/inputs/Dropdown";
 import { WORKTYPES } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
@@ -17,8 +15,9 @@ import Loader from "@/components/commons/Loaders/Loader";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import moment from "moment";
 import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
-import DropdownWithMenu from "@/components/inputs/DropdownWithMenu";
 import EMPLOYER from "@/app/api/employer";
+import PaperDropdown from "@/components/inputs/Dropdown";
+import Drawer from "@/components/commons/Drawer";
 
 interface AddBookingDetailsProps {
   refetch: any;
@@ -38,6 +37,7 @@ const AddBookingDetails = ({
   const {
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -80,12 +80,15 @@ const AddBookingDetails = ({
               required: t("workTypeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownWithMenu
+              <PaperDropdown
+                label="workType"
                 name="type"
-                label={t("workType")}
-                id="type"
-                value={value}
-                setValue={onChange}
+                selectedValue={value}
+                onSelect={(selectedValue: any) => {
+                  onChange(selectedValue);
+                  setValue("subType", "");
+                }}
+                translationEnabled
                 placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
@@ -98,11 +101,6 @@ const AddBookingDetails = ({
                     style={{ paddingVertical: 10, paddingRight: 10 }}
                   />
                 }
-                selectedValue={value}
-                searchEnabled={false}
-                onSelect={onChange}
-                openDropdownId={openDropdownId}
-                setOpenDropdownId={setOpenDropdownId}
               />
             )}
           />
@@ -115,18 +113,20 @@ const AddBookingDetails = ({
               required: t("workSubTypeIsRequired"),
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownWithMenu
-                name="subType"
+              <PaperDropdown
                 label="workSubType"
+                name="subType"
                 selectedValue={value}
-                id="subType"
+                onSelect={onChange}
                 placeholder={
                   watch("type")
                     ? "selectWorkSubType"
                     : "pleaseSelectWorkTypeFirst"
                 }
-                searchEnabled={false}
+                translationEnabled
                 options={filterSubCategories(watch("type"))}
+                errors={errors}
+                search={false}
                 icon={
                   <Ionicons
                     name={"mail-outline"}
@@ -135,9 +135,6 @@ const AddBookingDetails = ({
                     style={{ paddingVertical: 10, paddingRight: 10 }}
                   />
                 }
-                onSelect={onChange}
-                openDropdownId={openDropdownId}
-                setOpenDropdownId={setOpenDropdownId}
               />
             )}
           />
@@ -248,7 +245,7 @@ const AddBookingDetails = ({
             defaultValue=""
             render={({ field: { onChange, onBlur, value } }) => (
               <TextAreaInputComponent
-                label={t("workDescription")}
+                label="workDescription"
                 name="description"
                 value={value}
                 onBlur={onBlur}
@@ -305,7 +302,7 @@ const AddBookingDetails = ({
   return (
     <>
       <Loader loading={mutationAddBookingRequest?.isPending} />
-      <ModalComponent
+      <Drawer
         title={t("addBookingDetails")}
         visible={isAddBookingModal}
         content={addBookingModalContent}
@@ -329,6 +326,6 @@ export default AddBookingDetails;
 const styles = StyleSheet.create({
   modalContent: {
     paddingVertical: 20,
+    paddingBottom: 100,
   },
-  
 });

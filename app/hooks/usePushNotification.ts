@@ -2,8 +2,8 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
+import NOTIFICATION from "../api/notification";
 
 const registerForPushNotificationsAsync = async (
   notificationConsent: boolean
@@ -49,7 +49,7 @@ const registerForPushNotificationsAsync = async (
       ).data;
       console.log("push token - ", pushTokenString);
       try {
-        await USER?.registerDevice({
+        await NOTIFICATION?.registerDevice({
           pushToken: pushTokenString,
           notificationConsent: notificationConsent,
           deviceType: Device?.DeviceType[Device?.deviceType ?? 0],
@@ -62,7 +62,7 @@ const registerForPushNotificationsAsync = async (
       throw new Error(`${e}`);
     }
   } else {
-    handleRegistrationError("Must use physical device for push notifications");
+    // handleRegistrationError("Must use physical device for push notifications");
   }
 };
 

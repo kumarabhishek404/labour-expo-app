@@ -30,7 +30,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "eventemitter3": "^5.0.1",
-    "expo": "~52.0.32",
+    "expo": "~52.0.33",
     "expo-asset": "~11.0.2",
     "expo-av": "~15.0.2",
     "expo-camera": "~16.0.16",

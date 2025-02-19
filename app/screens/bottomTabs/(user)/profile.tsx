@@ -44,7 +44,7 @@ import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import ProfileTabs from "./tabsSwitcher";
+import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import { Portal, Provider } from "react-native-paper";
 
 const UserProfile = () => {
@@ -60,9 +60,6 @@ const UserProfile = () => {
     userDetails?.profilePicture
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(
-    !isEmptyObject(userDetails?.location) ? "currentLocation" : "address"
-  );
 
   const {
     control,
@@ -385,11 +382,8 @@ const UserProfile = () => {
 
             <SkillSelector
               canAddSkills={true}
-              role={userDetails?.role}
               isShowLabel={true}
               style={styles?.skillsContainer}
-              selectedSkills={selectedSkills}
-              setSelectedSkills={setSelectedSkills}
               userSkills={userDetails?.skills}
               handleAddSkill={mutationAddSkills?.mutate}
               handleRemoveSkill={mutationRemoveSkill?.mutate}

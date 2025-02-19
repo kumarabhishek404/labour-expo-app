@@ -228,6 +228,7 @@ const User = () => {
                     title={hasUserReviewed ? t("viewReview") : t("addReview")}
                     onPress={handleReviewAction}
                     style={{
+                      minHeight: 30,
                       paddingVertical: 3,
                       paddingHorizontal: 6,
                       backgroundColor: "#fa6400",
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
     padding: 12,
     flexDirection: "column",
     marginBottom: 5,
-    backgroundColor: Colors?.white,
+    backgroundColor: Colors?.background,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
   },

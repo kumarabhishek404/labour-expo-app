@@ -12,6 +12,8 @@ import RoleSelection from "@/components/inputs/SelectRole";
 import SkillsSelector from "@/components/inputs/SelectSkills";
 import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import ButtonComp from "@/components/inputs/Button";
+import CustomText from "@/components/commons/CustomText";
+import CustomHeading from "@/components/commons/CustomHeading";
 
 const UpdateUserSkillsScreen = () => {
   const [previousRole, setPreviousRole] = useState("WORKER");
@@ -76,86 +78,91 @@ const UpdateUserSkillsScreen = () => {
   console.log("selectedInterests32423424--", watch("skills"));
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
+    <>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending} />
-      <Text style={styles.heading}>{t("updateYourSkillsAndRole")}</Text>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <CustomHeading baseFont={26}>
+          {t("updateYourSkillsAndRole")}
+        </CustomHeading>
 
-      <View style={{ flexDirection: "column", gap: 20 }}>
-        <Controller
-          control={control}
-          name="role"
-          rules={{
-            required: t("selectAtLeastOneSkill"),
-          }}
-          render={({ field: { onChange, value } }) => (
-            <RoleSelection role={value} setRole={onChange} />
+        <View style={{ flexDirection: "column", gap: 20 }}>
+          <Controller
+            control={control}
+            name="role"
+            rules={{
+              required: t("selectAtLeastOneSkill"),
+            }}
+            render={({ field: { onChange, value } }) => (
+              <RoleSelection role={value} setRole={onChange} />
+            )}
+          />
+
+          {watch("role") === "WORKER" && (
+            <Controller
+              control={control}
+              name="skills"
+              rules={{
+                required: t("selectAtLeastOneSkill"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <SkillsSelector
+                  name="skills"
+                  isPricePerDayNeeded={true}
+                  selectedInterests={value}
+                  setSelectedInterests={onChange}
+                  availableOptions={WORKERTYPES}
+                  onBlur={onBlur}
+                  errors={errors}
+                />
+              )}
+            />
           )}
-        />
 
-        {watch("role") === "WORKER" && (
-          <Controller
-            control={control}
-            name="skills"
-            rules={{
-              required: t("selectAtLeastOneSkill"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <SkillsSelector
-                name="skills"
-                isPricePerDayNeeded={true}
-                selectedInterests={value}
-                setSelectedInterests={onChange}
-                availableOptions={WORKERTYPES}
-                onBlur={onBlur}
-                errors={errors}
-              />
-            )}
+          {watch("role") === "MEDIATOR" && (
+            <Controller
+              control={control}
+              name="skills"
+              rules={{
+                required: t("selectAtLeastOneSkill"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <SkillsSelector
+                  name="skills"
+                  isPricePerDayNeeded={false}
+                  selectedInterests={value}
+                  setSelectedInterests={onChange}
+                  availableOptions={MEDIATORTYPES}
+                  onBlur={onBlur}
+                  errors={errors}
+                />
+              )}
+            />
+          )}
+        </View>
+        <View style={styles?.buttonContainer}>
+          <ButtonComp
+            isPrimary={true}
+            title={t("back")}
+            onPress={() => router?.back()}
+            style={{ width: "30%" }}
+            bgColor={Colors?.danger}
+            borderColor={Colors?.danger}
           />
-        )}
-
-        {watch("role") === "MEDIATOR" && (
-          <Controller
-            control={control}
-            name="skills"
-            rules={{
-              required: t("selectAtLeastOneSkill"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <SkillsSelector
-                name="skills"
-                isPricePerDayNeeded={false}
-                selectedInterests={value}
-                setSelectedInterests={onChange}
-                availableOptions={MEDIATORTYPES}
-                onBlur={onBlur}
-                errors={errors}
-              />
-            )}
+          <ButtonComp
+            isPrimary={true}
+            title={t("saveAndNext")}
+            onPress={handleSubmit(handleUpdate)}
+            style={{ flex: 1 }}
+            bgColor={Colors?.success}
+            borderColor={Colors?.success}
           />
-        )}
-      </View>
-      <View style={styles?.buttonContainer}>
-        <ButtonComp
-          isPrimary={false}
-          title={t("back")}
-          onPress={() => router?.back()}
-          style={{ width: "30%" }}
-          bgColor={Colors?.error}
-          borderColor={Colors?.error}
-          textColor={Colors?.white}
-        />
-        <ButtonComp
-          isPrimary={true}
-          title={t("saveAndNext")}
-          onPress={handleSubmit(handleUpdate)}
-          style={{ flex: 1 }}
-        />
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
@@ -166,22 +173,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: Colors?.background,
     paddingHorizontal: 20,
+    gap: 20,
     paddingTop: 20,
-    // alignItems: 'center',
-    // justifyContent: 'center'
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: Colors.primary,
-    textAlign: "center",
-    marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 20,
     gap: 10,
+    marginTop: 30,
   },
 });

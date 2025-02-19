@@ -1,11 +1,13 @@
 import {
   ActivityIndicator,
   BackHandler,
+  Keyboard,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -356,67 +358,63 @@ const AddServiceScreen = () => {
   const ClickMyAllServices = () =>
     router?.push({
       pathname: "/screens/service",
-      params: { title: "My All Services", type: "myServices" },
+      params: { title: "My All Services and Bookings", type: "myServices" },
     });
 
   return (
     <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          flexGrow: 1,
+          backgroundColor: Colors?.secondaryBackground,
+          minHeight: "100%",
+        }}
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: Colors?.secondaryBackground,
-          }}
-        >
-          <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
-            <View style={styles.header}>
-              <Stepper currentStep={step} steps={ADDSERVICESTEPS} />
-            </View>
-            {step === 1 && (
-              <TopHeaderLinks
-                title={["BOOKED WORKERS", "MY ALL SERVICES"]}
-                onPress={[ClickBookedWorker, ClickMyAllServices]}
-                icon={[
-                  <Ionicons
-                    key={0}
-                    name="people"
-                    size={22}
-                    color={Colors.primary}
-                  />,
-                  <MaterialIcons
-                    key={1}
-                    name="work"
-                    size={22}
-                    color={Colors.primary}
-                    style={{ marginLeft: 8 }}
-                  />,
-                ]}
-              />
-            )}
-
-            <View style={[styles.searchContainer, styles.shadowBox]}>
-              <CustomHeading
-                textAlign="left"
-                baseFont={22}
-                style={{ marginBottom: 20 }}
-                color={Colors?.heading}
-              >
-                {step === 1 && "CREATE NEW SERVICE"}
-                {step === 2 && "ADDRESS AND DATE"}
-                {step === 3 && "ADD IMAGES AND DESCRIPTION"}
-                {step === 4 && "CHECK ALL DETAILS AND POST SERVICE"}
-              </CustomHeading>
-              <Loader loading={mutationAddService?.isPending} />
-              <View>{renderFormComponents()}</View>
-            </View>
-            <View></View>
+        <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
+          <View style={styles.header}>
+            <Stepper currentStep={step} steps={ADDSERVICESTEPS} />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          {step === 1 && (
+            <TopHeaderLinks
+              title={["BOOKED WORKERS", "MY ALL SERVICES"]}
+              onPress={[ClickBookedWorker, ClickMyAllServices]}
+              icon={[
+                <Ionicons
+                  key={0}
+                  name="people"
+                  size={22}
+                  color={Colors.primary}
+                />,
+                <MaterialIcons
+                  key={1}
+                  name="work"
+                  size={22}
+                  color={Colors.primary}
+                  style={{ marginLeft: 8 }}
+                />,
+              ]}
+            />
+          )}
+
+          <View style={[styles.searchContainer, styles.shadowBox]}>
+            <CustomHeading
+              textAlign="left"
+              baseFont={22}
+              style={{ marginBottom: 20 }}
+              color={Colors?.heading}
+            >
+              {step === 1 && "CREATE NEW SERVICE"}
+              {step === 2 && "ADDRESS AND DATE"}
+              {step === 3 && "ADD IMAGES AND DESCRIPTION"}
+              {step === 4 && "CHECK ALL DETAILS AND POST SERVICE"}
+            </CustomHeading>
+            <Loader loading={mutationAddService?.isPending} />
+            <View>{renderFormComponents()}</View>
+          </View>
+          <View></View>
+        </View>
+      </ScrollView>
     </>
   );
 };
@@ -426,9 +424,7 @@ export default AddServiceScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors?.background,
     justifyContent: "space-between",
-    minHeight: "100%",
   },
   header: {
     backgroundColor: Colors?.background,
