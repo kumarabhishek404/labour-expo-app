@@ -86,7 +86,7 @@ const ForgetPasswordScreen = () => {
       // if (response?.status === 201) {
       // setIsResetCodeSent(false);
       // router.push("/screens/auth/login");
-      TOAST?.showToast?.success(t("problemSubmittedSuccessfully"));
+      TOAST?.success(t("problemSubmittedSuccessfully"));
       // }
     },
   });

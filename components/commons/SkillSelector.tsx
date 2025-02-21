@@ -36,8 +36,6 @@ const SkillSelector = ({
   count,
 }: SkillSelectorProps) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
   const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [selectedSkillToRemove, setSelectedSkillToRemove] = useState<
@@ -74,16 +72,12 @@ const SkillSelector = ({
     setSelectedUserSkills(filteredSkills);
   }, [availableSkills, userSkills]);
 
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
-
-  const toggleRemoveModal = () => {
-    setIsRemoveModalVisible(!isRemoveModalVisible);
-  };
-
   const handleSkillSelection = (skill: string) => {
     setSelectedSkill(skill);
+    setSkillWithPrice({
+      skill: skill,
+      pricePerDay: 0,
+    });
   };
 
   const handleSkillToRemoveSelection = (skill: string) => {
@@ -98,7 +92,7 @@ const SkillSelector = ({
   };
 
   useEffect(() => {
-    if (!selectedSkill && !skillWithPrice) return;
+    if (!skillWithPrice?.skill && !skillWithPrice?.price) return;
 
     setDrawerState({
       visible: true,
@@ -129,7 +123,8 @@ const SkillSelector = ({
       primaryButton: {
         title: "addSkill",
         action: onAddSkills,
-        disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
+        disabled:
+          !selectedSkill || !skillWithPrice || !skillWithPrice.pricePerDay,
       },
       secondaryButton: {
         title: "cancel",
@@ -138,7 +133,7 @@ const SkillSelector = ({
         },
       },
     });
-  }, [selectedSkill, skillWithPrice]);
+  }, [JSON?.stringify(skillWithPrice)]);
 
   useEffect(() => {
     if (!selectedSkillToRemove) return;
@@ -253,7 +248,6 @@ const SkillSelector = ({
       title: "addNewSkills",
       content: () => (
         <View style={{ paddingVertical: 20 }}>
-          {/* Skill Selection Dropdown */}
           <PaperDropdown
             name="addSkill"
             label="selectSkill"
@@ -272,14 +266,13 @@ const SkillSelector = ({
               />
             }
           />
-          {/* Render Price Input Only if Skill is Selected */}
-          {selectedSkill && renderPriceInput()}
+          {skillWithPrice && renderPriceInput()}
         </View>
       ),
       primaryButton: {
         title: "addSkill",
         action: onAddSkills,
-        disabled: !selectedSkillToRemove || userSkills?.length <= 1,
+        disabled: !selectedSkill || userSkills?.length <= 1,
       },
       secondaryButton: {
         title: "cancel",
@@ -345,11 +338,8 @@ const SkillSelector = ({
             selectedSkill
           );
           setDrawerState({ visible: false });
-          setSelectedSkill(null);
           setSkillWithPrice(null);
-        },
-        onError: (err: any) => {
-          console.error("Error adding skill:", err);
+          setSelectedSkill(null);
         },
       });
     } catch (err) {
@@ -369,9 +359,6 @@ const SkillSelector = ({
           console.log("Skill removed successfully:", selectedSkillToRemove);
           setDrawerState({ visible: false });
           setSelectedSkillToRemove(null);
-        },
-        onError: (err: any) => {
-          console.error("Error while remove the skill:", err);
         },
       });
     } catch (err) {

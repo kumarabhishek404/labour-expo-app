@@ -97,7 +97,7 @@ const ServiceActionButtons = ({
     mutationFn: () => USER?.likeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
-      TOAST?.showToast?.success(t("serviceAddedInFavourites"));
+      TOAST?.success(t("serviceAddedInFavourites"));
       console.log("Response while liking a service - ", response);
     },
     onError: (err) => {
@@ -110,7 +110,7 @@ const ServiceActionButtons = ({
     mutationFn: () => USER?.unLikeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
-      TOAST?.showToast?.success(t("serviceRemovedInFavourites"));
+      TOAST?.success(t("serviceRemovedInFavourites"));
       console.log("Response while unliking a service - ", response);
     },
     onError: (err) => {
@@ -126,7 +126,7 @@ const ServiceActionButtons = ({
       setSelectedWorkersIds([]);
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("serviceAppliedSuccessfully"));
+      TOAST?.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
     onError: (err: any) => {
@@ -142,11 +142,11 @@ const ServiceActionButtons = ({
       setSelectedWorkersIds([]);
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("yourApplicationCancelledSuccessfully"));
+      TOAST?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
     onError: (err: any) => {
-      TOAST?.showToast?.error(
+      TOAST?.error(
         `Error while cancelling your application in the service - ${err?.response?.data?.message}`
       );
       console.error("error while unapplying the service ", err);
@@ -159,7 +159,7 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("yourSelectionCancelledSuccessfully"));
+      TOAST?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
@@ -173,7 +173,7 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("yourSelectionCancelledSuccessfully"));
+      TOAST?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
@@ -187,7 +187,7 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("serviceCompletedSuccessfully"));
+      TOAST?.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a service - ", response);
     },
     onError: (err) => {
@@ -215,7 +215,7 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("serviceRestoredSuccessfully"));
+      TOAST?.success(t("serviceRestoredSuccessfully"));
       console.log("Response while restoring a service - ", response);
     },
   });
@@ -234,7 +234,8 @@ const ServiceActionButtons = ({
   };
 
   const handleCancelApply = () => {
-    if (members && members?.length > 0) setIsWorkerSelectModal(true);
+    if (members && members?.length > 0 && selectedWorkersIds?.length > 0)
+      setIsWorkerSelectModal(true);
     // for worker
     else mutationUnApplyService.mutate();
   };
@@ -386,6 +387,7 @@ const ServiceActionButtons = ({
         onPress={() => toggleUserSelection(item?._id)}
         style={[styles.userItem]}
         key={item?._id}
+        disabled={!!isServiceApplied}
       >
         <CustomCheckbox
           checkboxStyle={{ marginRight: 6 }}
@@ -540,8 +542,11 @@ const ServiceActionButtons = ({
         content={mediatorModelContent}
         onClose={() => setIsWorkerSelectModal(false)}
         primaryButton={{
-          disabled: selectedWorkers?.length === 0,
-          title: isServiceApplied ? t("cancelApply") : t("applyNow"),
+          title: isServiceApplied
+            ? t("cancelApply")
+            : selectedWorkersIds?.length > 0
+            ? t("applyNowWithWorkers", { count: selectedWorkersIds?.length })
+            : t("applyNowWithOutWorkers"),
           styles: {
             backgroundColor: Colors?.danger,
             borderColor: Colors?.danger,

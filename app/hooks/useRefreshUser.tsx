@@ -29,7 +29,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
       const response = await USER?.getUserInfo();
       if (response?.success) {
         setUserDetails({ ...userDetails, ...response.data });
-        TOAST?.showToast?.success(t("userDetailsFetchedSuccessfully"));
+        TOAST?.success(t("userDetailsFetchedSuccessfully"));
         if (response.data?.status === "ACTIVE") setIsAccountInactive(false);
         else setIsAccountInactive(true);
         return response.data;
@@ -37,7 +37,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
     } catch (error: any) {
       const errorMessage = error?.message || "Error refreshing user details";
       setError(new Error(errorMessage));
-      TOAST?.showToast?.error(errorMessage);
+      TOAST?.error(errorMessage);
       console.error("Error refreshing user details:", error);
     } finally {
       setIsLoading(false);

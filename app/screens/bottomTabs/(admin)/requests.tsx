@@ -59,7 +59,7 @@ const AdminRequests = () => {
     onSuccess: (response) => {
       refetch();
       refreshUser();
-      TOAST?.showToast?.success(t("requestAcceptedSuccessfully"));
+      TOAST?.success(t("requestAcceptedSuccessfully"));
     },
   });
 
@@ -115,8 +115,9 @@ const AdminRequests = () => {
           />
 
           <CategoryButtons
+            type="workerType"
             options={ADMINREQUEST}
-            onCagtegoryChanged={onCatChanged}
+            onCategoryChanged={onCatChanged}
           />
 
           <PaginationString

@@ -19,7 +19,7 @@ const checkMobileExistance = async (payload: any) => {
     );
 
     // Display error message if the API call fails
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while checking mobile number existence."
     );
@@ -32,7 +32,7 @@ const register = async (payload: any) => {
 
   try {
     const data = await API_CLIENT.makePostRequest("/auth/register", payload);
-    TOAST?.showToast?.success("Your account has registered successfully");
+    TOAST?.success("Your account has registered successfully");
     router.push("/screens/auth/login");
     return data?.data;
   } catch (error: any) {
@@ -40,7 +40,7 @@ const register = async (payload: any) => {
       `[userService] An error occurred while adding new user : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while adding user"
     );
     throw error;
@@ -64,7 +64,7 @@ const signIn = async (payload: any) => {
       `[Sign In] [userService] An error occurred while signing the user `,
       error?.response?.data
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while login user"
     );
     throw error;
@@ -77,7 +77,7 @@ const forgotPassword = async (payload: any) => {
       `/auth/forgot-password-code`,
       payload
     );
-    TOAST?.showToast?.success(
+    TOAST?.success(
       "Password reset code is sent to your email successfully"
     );
     return response;
@@ -86,7 +86,7 @@ const forgotPassword = async (payload: any) => {
       `[Forget Password] [userService] An error occured while sending reset password code to your email : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occured while sending reset password code to your email"
     );
@@ -100,14 +100,14 @@ const resetPassword = async (payload: any) => {
       `/auth/set-forgot-password`,
       payload
     );
-    TOAST?.showToast?.success("Password Reset successfully");
+    TOAST?.success("Password Reset successfully");
     return data;
   } catch (error: any) {
     console.log(
       `[Forget Password] [userService] An error occured while reseting password : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while reseting password"
     );

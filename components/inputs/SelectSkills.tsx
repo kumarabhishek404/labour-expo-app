@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Requires @expo/vector-icons or similar icon library
-import { getWorkLabel } from "@/constants/functions";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import CustomHeading from "../commons/CustomHeading";
 import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
@@ -10,7 +15,8 @@ import ModalComponent from "../commons/Modal";
 import TextInputComponent from "./TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import TOAST from "@/app/hooks/toast";
-import ErrorText from "../commons/ErrorText";
+
+const { height } = Dimensions.get("window");
 
 interface SkillsSelectorProps {
   name: string;
@@ -20,8 +26,14 @@ interface SkillsSelectorProps {
   availableOptions: Array<any>;
   onBlur: any;
   errors: any;
-  icon?: any;
 }
+
+const flattenSkills = (options: any[]) =>
+  options.map((type) => ({
+    label: type.label,
+    value: type.value,
+    skills: type?.subTypes?.flatMap((subType: any) => subType.workerTypes),
+  }));
 
 const SkillsSelector = ({
   name,
@@ -34,31 +46,27 @@ const SkillsSelector = ({
 }: SkillsSelectorProps) => {
   const [pricePopupVisible, setPricePopupVisible] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<any>(null);
-  const [isEditMode, setIsEditMode] = useState(false); // Flag for edit mode
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedContainerHeight, setSelectedContainerHeight] = useState(0);
+  const flattenedOptions = flattenSkills(availableOptions);
+
   const {
     control,
     handleSubmit,
-    watch,
     reset,
     formState: { errors: priceErrors },
-  } = useForm({
-    defaultValues: {
-      pricePerDay: "",
-    },
-  });
+  } = useForm({ defaultValues: { pricePerDay: "" } });
 
   const handleSelect = (skill: any) => {
     if (selectedInterests.length >= 5) {
-      TOAST?.showToast?.error(t("skillLimitReached")); // Limit to 5 skills
+      TOAST?.error(t("skillLimitReached"));
       return;
     }
-
     if (isPricePerDayNeeded) {
       setSelectedSkill(skill);
-      setIsEditMode(false); // Ensure edit mode is off
-      setPricePopupVisible(true); // Show popup for pricePerDay input
+      setIsEditMode(false);
+      setPricePopupVisible(true);
     } else {
-      // Add skill without pricePerDay
       setSelectedInterests([
         ...selectedInterests,
         { skill: skill.value, pricePerDay: null },
@@ -72,137 +80,141 @@ const SkillsSelector = ({
       pricePerDay: isPricePerDayNeeded ? data.pricePerDay : null,
     };
 
-    if (isEditMode) {
-      const updatedInterests = selectedInterests.map((item) =>
-        item.skill === selectedSkill.value ? newSkill : item
-      );
-      setSelectedInterests(updatedInterests);
-    } else {
-      setSelectedInterests([...selectedInterests, newSkill]);
-    }
+    const updatedInterests = isEditMode
+      ? selectedInterests.map((item) =>
+          item.skill === selectedSkill.value ? newSkill : item
+        )
+      : [...selectedInterests, newSkill];
 
+    setSelectedInterests(updatedInterests);
     reset({ pricePerDay: "" });
     setPricePopupVisible(false);
   };
 
-  const handleRemove = (skill: any) => {
-    const updatedInterests = selectedInterests.filter(
-      (item: any) => item.skill !== skill
+  const handleRemove = (skill: any) =>
+    setSelectedInterests(
+      selectedInterests.filter((item: any) => item.skill !== skill)
     );
-    setSelectedInterests(updatedInterests);
-  };
 
   const handleEdit = (skill: any) => {
     const existingSkill = selectedInterests.find(
       (item) => item.skill === skill
     );
-
-    setSelectedSkill({
-      value: skill,
-      label: getWorkLabel(availableOptions, skill),
-    });
-
+    setSelectedSkill(existingSkill);
     if (isPricePerDayNeeded) {
       setIsEditMode(true);
       reset({ pricePerDay: existingSkill?.pricePerDay || "" });
       setPricePopupVisible(true);
-    } else {
-      TOAST?.showToast?.error(t("priceEditNotAllowed")); // Optional toast for feedback
     }
   };
 
-  const modalContent = () => {
-    if (!isPricePerDayNeeded) return null;
-
-    return (
-      <View style={{ paddingVertical: 20 }}>
-        <Controller
-          control={control}
-          name="pricePerDay"
-          defaultValue=""
-          rules={{ required: t("priceIsRequired") }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputComponent
-              name="pricePerDay"
-              label={t("pricePerDay")}
-              type="number"
-              maxLength={4}
-              placeholder={t("enterPricePerDay")}
-              value={value}
-              errors={priceErrors}
-              textStyles={{ fontSize: 16 }}
-              onChangeText={onChange}
-            />
-          )}
-        />
-      </View>
-    );
-  };
+  const modalContent = () => (
+    <View style={{ paddingVertical: 20 }}>
+      <Controller
+        control={control}
+        name="pricePerDay"
+        rules={{ required: t("priceIsRequired") }}
+        render={({ field: { onChange, value } }) => (
+          <TextInputComponent
+            name="pricePerDay"
+            label="pricePerDay"
+            type="number"
+            maxLength={4}
+            placeholder={t("enterPricePerDay")}
+            value={value}
+            errors={priceErrors}
+            textStyles={{ fontSize: 16 }}
+            onChangeText={onChange}
+          />
+        )}
+      />
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <CustomHeading textAlign="left" color={Colors?.inputLabel}>{t("selectAnySkills")}</CustomHeading>
-
-      {/* Selected Skills */}
-      <View
-        style={[styles.selectedContainer]}
+    <View style={styles.mainContainer}>
+      <CustomHeading
+        textAlign="left"
+        color={Colors?.inputLabel}
+        style={{ marginBottom: 10 }}
       >
-        {selectedInterests && selectedInterests?.length > 0 ? (
-          selectedInterests.map((interest: any, index: number) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.selectedItem}
-              onPress={() => handleEdit(interest.skill)}
-            >
-              <CustomHeading color={Colors?.white}>
-                {getWorkLabel(availableOptions, interest.skill)}{" "}
-                {isPricePerDayNeeded && interest.pricePerDay
-                  ? `- ₹ ${interest.pricePerDay} / ${t("perDay")}`
-                  : ""}
-              </CustomHeading>
-              <TouchableOpacity
-                onPress={() => handleRemove(interest.skill)}
-                style={{ marginLeft: 8 }}
-              >
-                <Ionicons name="close-circle" size={20} color="white" />
-              </TouchableOpacity>
+        {t("selectAnySkills")} from below categories
+      </CustomHeading>
+
+      {/* Selected Skills - Fixed Section with dynamic height tracking */}
+      <View
+        style={styles.selectedContainer}
+        onLayout={(event) =>
+          setSelectedContainerHeight(event.nativeEvent.layout.height)
+        }
+      >
+        {selectedInterests.map((interest: any, index: number) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.selectedItem}
+            onPress={() => handleEdit(interest.skill)}
+          >
+            <CustomHeading color={Colors?.white}>
+              {t(interest.skill)}
+              {isPricePerDayNeeded && interest.pricePerDay
+                ? ` - ₹ ${interest.pricePerDay} / ${t("perDay")}`
+                : ""}
+            </CustomHeading>
+            <TouchableOpacity onPress={() => handleRemove(interest.skill)}>
+              <Ionicons name="close-circle" size={20} color="white" />
             </TouchableOpacity>
-          ))
-        ) : (
-          <CustomText baseFont={14}>{t("whatYouCanDo")}</CustomText>
-        )}
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {errors?.[name] && <ErrorText>{errors?.[name]?.message || ""}</ErrorText>}
-
-      {/* Available Skills */}
-      <View style={styles.interestsContainer}>
-        {availableOptions
-          .filter(
-            (interest) =>
-              !selectedInterests.find((item) => item.skill === interest?.value)
-          ) // Filter out already selected skills
-          .map((interest, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.interestItem}
-              onPress={() => handleSelect(interest)}
+      {/* Scrollable Available Skills Section with dynamic height */}
+      <ScrollView
+        style={{
+          ...styles.scrollContainer,
+          height: height * 0.65 - selectedContainerHeight, // Dynamic height calculation
+        }}
+        contentContainerStyle={styles.skillContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {flattenedOptions.map((item, idx) => (
+          <View style={styles.skillBox} key={idx}>
+            <CustomHeading
+              textAlign="left"
+              baseFont={20}
+              color={Colors?.inputLabel}
             >
-              <CustomHeading>+ {t(interest?.label)}</CustomHeading>
-            </TouchableOpacity>
-          ))}
-      </View>
+              {t(item.label)}
+            </CustomHeading>
+            <View style={styles.interestsContainer}>
+              {item.skills
+                .filter(
+                  (skill: any) =>
+                    !selectedInterests.find((sel) => sel.skill === skill.value)
+                )
+                .map((skill: any, index: number) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.interestItem}
+                    onPress={() => handleSelect(skill)}
+                  >
+                    <CustomHeading>+ {t(skill.label)}</CustomHeading>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
 
+      {/* Modal for price per day */}
       {isPricePerDayNeeded && (
         <ModalComponent
           visible={pricePopupVisible}
           content={modalContent}
           transparent={true}
           animationType="slide"
-          title={
-            (isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")) +
-            ` (${selectedSkill?.label})`
-          }
+          title={`$${
+            isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")
+          } (${t(selectedSkill?.label)})`}
           onClose={() => {
             setPricePopupVisible(false);
             reset({ pricePerDay: "" });
@@ -225,48 +237,52 @@ const SkillsSelector = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    gap: 5,
+  mainContainer: {
+    flexGrow: 1,
+    backgroundColor: Colors?.background,
   },
   selectedContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    alignItems: "center",
     borderWidth: 2,
     borderColor: "#DDD",
     width: "100%",
-    minHeight: 110,
+    minHeight: 80,
     padding: 6,
-  },
-  selectedItem: {
-    backgroundColor: "#FF6B6B",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
     borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    margin: 5,
-    gap: 5,
+  },
+  scrollContainer: {
+    paddingTop: 10,
+  },
+  skillContainer: {
+    paddingBottom: 100,
+  },
+  skillBox: {
+    marginBottom: 20,
   },
   interestsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
     marginTop: 10,
   },
   interestItem: {
-    backgroundColor: "#EEE",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    backgroundColor: Colors?.white,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderRadius: 8,
-    margin: 5,
+    marginRight: 10,
+    marginBottom: 10,
   },
-  
+  selectedItem: {
+    backgroundColor: "#FF6B6B",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 5,
+    gap: 10,
+  },
 });
 
 export default SkillsSelector;

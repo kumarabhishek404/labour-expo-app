@@ -37,7 +37,7 @@ const SelectedApplicants = ({
       EMPLOYER?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("cancelSelectedWorkerSuccess"));
+      TOAST?.success(t("cancelSelectedWorkerSuccess"));
       console.log("Response while cancelling an selected worker - ", response);
     },
     onError: (err) => {

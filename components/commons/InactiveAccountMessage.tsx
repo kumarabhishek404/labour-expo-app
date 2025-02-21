@@ -26,7 +26,7 @@ const InactiveAccountMessage = () => {
     mutationKey: ["updateProfile"],
     mutationFn: () => USER?.enableAccount(),
     onSuccess: (response) => {
-      TOAST?.showToast?.success(t("successActivatedMessage"));
+      TOAST?.success(t("successActivatedMessage"));
       refreshUser();
       setModalVisible(false);
       setIsAccountInactive(false);

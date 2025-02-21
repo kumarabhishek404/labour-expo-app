@@ -12,7 +12,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => USER?.likeUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("userAddedToFavourites"));
+      TOAST?.success(t("userAddedToFavourites"));
     },
   });
 
@@ -21,7 +21,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => USER?.unlikeUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("userRemovedFromFavourites"));
+      TOAST?.success(t("userRemovedFromFavourites"));
     },
   });
 
@@ -30,7 +30,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => EMPLOYER?.cancelBookingRequest({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
+      TOAST?.success(t("bookingRequestCancelledSuccessfully"));
     },
   });
 
@@ -39,7 +39,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => EMPLOYER?.removeBookedWorker({ bookingID: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("bookingCancelledWorker"));
+      TOAST?.success(t("bookingCancelledWorker"));
     },
   });
 
@@ -48,7 +48,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => MEDIATOR?.sendTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("requestSentSuccessfully"));
+      TOAST?.success(t("requestSentSuccessfully"));
     },
   });
 
@@ -57,7 +57,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => ADMIN?.activateUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("userActivated"));
+      TOAST?.success(t("userActivated"));
     },
   });
 
@@ -66,7 +66,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => ADMIN?.suspendUser({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("userSuspended"));
+      TOAST?.success(t("userSuspended"));
     },
   });
 
@@ -75,7 +75,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => MEDIATOR?.cancelTeamRequest({ userId: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("requestCancelledSuccessfully"));
+      TOAST?.success(t("requestCancelledSuccessfully"));
     },
   });
 
@@ -84,7 +84,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => MEDIATOR?.removeMemberFromTeam({ memberID: id }),
     onSuccess: () => {
       refetch();
-      TOAST?.showToast?.success(t("successfullyLeftFromTeam"));
+      TOAST?.success(t("successfullyLeftFromTeam"));
     },
   });
 

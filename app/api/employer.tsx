@@ -10,7 +10,7 @@ const handleServiceError = (error: any, operation: string) => {
     error: error?.response?.data || error,
     operation,
   });
-  TOAST?.showToast?.error(errorMessage);
+  TOAST?.error(errorMessage);
   throw error;
 };
 
@@ -38,7 +38,7 @@ const editService = async (payload: any) => {
       `[userService] An error occurred while updating service : `,
       error?.response?.data
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while updating service"
     );
@@ -58,7 +58,7 @@ const fetchMyServices = async ({ pageParam, status }: any) => {
       `[userService] An error occurred while fetching my services : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching services"
     );
@@ -90,7 +90,7 @@ const rejectWorker = async (payload: any) => {
       `[userService] An error occurred while rejecting worker : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while rejecting worker"
     );
@@ -112,7 +112,7 @@ const cancelSelectedWorker = async (payload: any) => {
       `[userService] An error occurred while canceling selected worker : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while canceling selected worker"
     );
@@ -133,7 +133,7 @@ const addBookingRequest = async (payload: any) => {
       `[userService] An error occurred while sending booking request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while sending booking request"
     );
@@ -152,7 +152,7 @@ const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching sent bookings : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching sent bookings"
     );
@@ -174,7 +174,7 @@ const cancelBookingRequest = async (payload: any) => {
       `[userService] An error occurred while cancelling booking request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling booking request"
     );
@@ -193,7 +193,7 @@ const fetchAllBookedWorkers = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching booked workers : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching booked workers"
     );
@@ -213,7 +213,7 @@ const removeBookedWorker = async (payload: any) => {
       `[userService] An error occurred while removing booked worker : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while removing booked worker"
     );
@@ -233,7 +233,7 @@ const completeBooking = async (payload: any) => {
       `[userService] An error occurred while completing booking : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while completing booking"
     );
@@ -253,7 +253,7 @@ const cancelBooking = async (payload: any) => {
       `[userService] An error occurred while cancelling booking : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling booking"
     );

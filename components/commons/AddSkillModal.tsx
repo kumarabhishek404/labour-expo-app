@@ -26,7 +26,7 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
-      TOAST?.showToast?.success(t("skillsAddedSuccessfully"));
+      TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {

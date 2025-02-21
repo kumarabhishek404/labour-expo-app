@@ -64,7 +64,7 @@ const AdminProfile = () => {
   useEffect(() => {
     const backAction = () => {
       if (isAccountInactive) {
-        TOAST?.showToast?.error(
+        TOAST?.error(
           userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
             ? "Profile Suspended"
@@ -147,7 +147,7 @@ const AdminProfile = () => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      TOAST?.showToast?.success(t("skillsAddedSuccessfully"));
+      TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
@@ -238,7 +238,7 @@ const AdminProfile = () => {
       await refreshUser();
     } catch (error) {
       console.error("Error while refreshing user - ", error);
-      TOAST?.showToast?.error("Error while refreshing user");
+      TOAST?.error("Error while refreshing user");
     }
   };
 

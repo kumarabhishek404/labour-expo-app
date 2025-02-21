@@ -11,7 +11,7 @@ const getUserInfo = async () => {
       `[Users] [userService] An error occurred while refreshing user details  : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while getting user details"
     );
@@ -25,14 +25,14 @@ const updateUserById = async (payload: any) => {
       `/user/info`,
       payload
     );
-    TOAST?.showToast?.success(t("profileUpdatedSuccessfully"));
+    TOAST?.success(t("profileUpdatedSuccessfully"));
     return response;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while updating user : `,
       error?.response?.data
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while updating user"
     );
     throw error;
@@ -50,7 +50,7 @@ const updateSkills = async (payload: any) => {
       `[userService] An error occurred while adding skills in the worker : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while adding skills in the worker"
     );
@@ -70,7 +70,7 @@ const removeSkill = async (payload: any) => {
       `[userService] An error occurred while remove skill from the user profile : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while remove skill from the user profile"
     );
@@ -87,7 +87,7 @@ const disableAccount = async () => {
       `[Forget Password] [userService] An error occured while disabling account : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while disabling account"
     );
@@ -104,7 +104,7 @@ const enableAccount = async () => {
       `[Forget Password] [userService] An error occured while enabling account : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while enabling account"
     );
@@ -123,7 +123,7 @@ const fetchAllUsers = async ({ pageParam, name, skill }: any) => {
       `[userService] An error occurred while fetching users : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;
@@ -139,7 +139,7 @@ const getUserDetails = async (id: any) => {
       `[Users] [userService] An error occurred while fetching user details : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while getting user details"
     );
@@ -160,7 +160,7 @@ const likeUser = async (payload: any) => {
       `[userService] An error occurred while liking user : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while liking user"
     );
     throw error;
@@ -177,7 +177,7 @@ const unlikeUser = async ({ userId }: any) => {
       `[userService] An error occurred while unliking user : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while unliking user"
     );
     throw error;
@@ -197,7 +197,7 @@ const fetchAllLikedUsers = async ({ pageParam, skill }: any) => {
       `[userService] An error occurred while fetching liked users : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching liked users"
     );
@@ -217,7 +217,7 @@ const likeService = async (payload: any) => {
       `[userService] An error occurred while liking service : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while liking services"
     );
@@ -237,7 +237,7 @@ const unLikeService = async (payload: any) => {
       `[userService] An error occurred while unliking service : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching services"
     );
@@ -256,7 +256,7 @@ const fetchAllLikedServices = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching services : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching services"
     );
@@ -268,14 +268,14 @@ const addAppFeedback = async (payload: any) => {
   console.log("Payload --", payload);
   try {
     const data = await API_CLIENT.makePostRequest("/feedback/submit", payload);
-    TOAST?.showToast?.success(t("feedbackSubmittedSuccessfully"));
+    TOAST?.success(t("feedbackSubmittedSuccessfully"));
     return data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding app feedback : `,
       error?.response?.data?.data?.errors
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while adding app feedback"
     );

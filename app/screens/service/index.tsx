@@ -121,8 +121,9 @@ const Services = () => {
         <View style={styles.container}>
           {type === "myServices" && (
             <CategoryButtons
+              type="workerType"
               options={MYSERVICES}
-              onCagtegoryChanged={onCatChanged}
+              onCategoryChanged={onCatChanged}
             />
           )}
           <PaginationString

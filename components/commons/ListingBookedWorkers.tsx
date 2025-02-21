@@ -6,6 +6,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { router } from "expo-router";
 import ProfilePicture from "./ProfilePicture";
+import ButtonComp from "../inputs/Button";
 
 const ListingsBookedWorkers = ({ title, item, category }: any) => {
   let workersList =
@@ -15,7 +16,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
           ...item.selectedUsers.flatMap((user: any) => user?.workers || []),
         ]
       : [item?.bookedWorker];
-
+      
   const firstWorker = workersList?.[0];
 
   return (
@@ -83,12 +84,37 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
             <CustomText textAlign="left">
               🏠 {item?.address || "Location Unknown"}
             </CustomText>
-            <CustomText textAlign="left">
-              📅 {item?.startDate?.split("T")[0] || "No Date"}
-            </CustomText>
-            <CustomText textAlign="left">
-              ⏳ {item?.duration || "N/A"} days
-            </CustomText>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <View>
+                <CustomText textAlign="left">
+                  📅 {item?.startDate?.split("T")[0] || "No Date"}
+                </CustomText>
+                <CustomText textAlign="left">
+                  ⏳ {item?.duration || "N/A"} days
+                </CustomText>
+              </View>
+              <ButtonComp
+                isPrimary={true}
+                title="Add Attendance"
+                onPress={() =>
+                  router?.push({
+                    pathname: "/screens/bookings/addAttendance",
+                    params: {
+                      bookingDetails: JSON.stringify(item),
+                      workers: JSON.stringify(workersList),
+                    },
+                  })
+                }
+                textStyle={{ fontSize: 16 }}
+                style={{ width: "50%", marginTop: 10, paddingVertical: 6 }}
+              />
+            </View>
           </View>
         </View>
       </TouchableOpacity>

@@ -30,7 +30,7 @@ const FifthScreen = () => {
     mutationFn: (payload: any) => USER.updateUserById(payload),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.showToast?.success(t("profileUpdated"));
+      TOAST?.success(t("profileUpdated"));
       router?.push("/screens/auth/login");
     },
     onError: (error) => {
@@ -44,7 +44,7 @@ const FifthScreen = () => {
       typeof data.profilePicture !== "string" ||
       data.profilePicture.trim() === ""
     ) {
-      TOAST?.showToast?.error(t("pleaseSelectAProfilePicture"));
+      TOAST?.error(t("pleaseSelectAProfilePicture"));
       return;
     }
 

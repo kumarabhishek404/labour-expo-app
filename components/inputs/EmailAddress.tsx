@@ -52,18 +52,18 @@ const EmailAddressField = ({
   const handleSendOtp = () => {
     if (isEmailValid) {
       setModalVisible(true);
-      TOAST?.showToast?.success(t("otpSentTo"), `${email}`);
+      TOAST?.success(t("otpSentTo"), `${email}`);
     } else {
-      TOAST?.showToast?.error(t("pleaseEnterAValidEmailAddress"));
+      TOAST?.error(t("pleaseEnterAValidEmailAddress"));
     }
   };
 
   const handleVerifyOtp = () => {
     if (otp.join("") === "1234") {
-      TOAST?.showToast?.success(t("emailAddressVerifiedSuccessfully"));
+      TOAST?.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.error(t("incorrectOTPTryAgain"));
     }
   };
 
@@ -93,15 +93,15 @@ const EmailAddressField = ({
 
   const handleVerify = () => {
     if (otp.join("") === "1234") {
-      TOAST?.showToast?.success(t("emailAddressVerifiedSuccessfully"));
+      TOAST?.success(t("emailAddressVerifiedSuccessfully"));
       setModalVisible(false);
     } else {
-      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.error(t("incorrectOTPTryAgain"));
     }
   };
 
   const resendOtp = () => {
-    TOAST?.showToast?.success(t("otpResent"));
+    TOAST?.success(t("otpResent"));
   };
 
   return (

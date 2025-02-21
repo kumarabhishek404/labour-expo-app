@@ -52,7 +52,7 @@ const BookingActionButtons = ({
     onSuccess: async (response) => {
       await refetch();
       await refreshUser();
-      TOAST?.showToast?.success(t("yourSelectionCancelledSuccessfully"));
+      TOAST?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the booking - ", response);
     },
     onError: (err) => {
@@ -67,7 +67,7 @@ const BookingActionButtons = ({
       await refetch();
       await refreshUser();
       queryClient.invalidateQueries({ queryKey: ["bookedWorkers"] });
-      TOAST?.showToast?.success(t("serviceCompletedSuccessfully"));
+      TOAST?.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a booking - ", response);
     },
     onError: (err) => {
@@ -95,7 +95,7 @@ const BookingActionButtons = ({
     onSuccess: (response) => {
       refetch();
       router?.back();
-      TOAST?.showToast?.success(t("bookingRequestCancelledSuccessfully"));
+      TOAST?.success(t("bookingRequestCancelledSuccessfully"));
     },
   });
 
@@ -105,7 +105,7 @@ const BookingActionButtons = ({
     onSuccess: (response) => {
       refetch();
       router?.back();
-      TOAST?.showToast?.success(t("bookingRequestAcceptedSuccessfully"));
+      TOAST?.success(t("bookingRequestAcceptedSuccessfully"));
       console.log("Response while accepting a request - ", response);
     },
   });
@@ -116,7 +116,7 @@ const BookingActionButtons = ({
     onSuccess: (response) => {
       refetch();
       router?.back();
-      TOAST?.showToast?.success(t("bookingRequestRejectedSuccessfully"));
+      TOAST?.success(t("bookingRequestRejectedSuccessfully"));
       console.log("Response while rejecting request - ", response);
     },
   });

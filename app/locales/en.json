@@ -694,7 +694,7 @@
   "noReviews": "No reviews found",
   "registerNow": "New Registration",
   "enterMobileAndName": "Enter Your Mobile And Full Name",
-  "updateYourSkillsAndRole": "Selected Your Role",
+  "updateYourSkillsAndRole": "Select Your Role",
   "InDays": "In Days",
   "selectedApplicants": "Selected Applicants",
   "applicants": "Applicants",
@@ -783,5 +783,13 @@
   "rejectBookingRequest": "Reject Request",
   "bookingRequestDetails": "Booking Request Details",
   "bookedWorkerDetails": "Booked Worker Details",
-  "directBookingDetails": "Direct Booking Details"
+  "directBookingDetails": "Direct Booking Details",
+  "doWork": "I want to work",
+  "beMediator": "I want to be a mediator",
+  "giveWork": "I want to give work",
+  "no": "No",
+  "applyNowWithWorkers": "Apply now with {{count}} workers",
+  "applyNowWithOutWorkers": "Apply for ourself without workers",
+  "addAttendance": "Add Worker Attendance",
+  "attendanceDetails": "Attendance Details"
 }

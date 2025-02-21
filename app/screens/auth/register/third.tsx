@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, Text } from "react-native";
+import { ScrollView, StyleSheet, View, Text, Dimensions } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -10,10 +10,11 @@ import { t } from "@/utils/translationHelper";
 import { Controller, useForm } from "react-hook-form";
 import RoleSelection from "@/components/inputs/SelectRole";
 import SkillsSelector from "@/components/inputs/SelectSkills";
-import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import { MEDIATORTYPES, WORKERTYPES, WORKTYPES } from "@/constants";
 import ButtonComp from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
+const { width } = Dimensions.get("window");
 
 const UpdateUserSkillsScreen = () => {
   const [previousRole, setPreviousRole] = useState("WORKER");
@@ -40,7 +41,7 @@ const UpdateUserSkillsScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.showToast?.success(t("profileUpdated"));
+      TOAST?.success(t("profileUpdated"));
       router.push({
         pathname: "/screens/auth/register/fourth",
         params: { userId: userId },
@@ -48,7 +49,7 @@ const UpdateUserSkillsScreen = () => {
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      TOAST?.showToast?.error(error?.message || t("updateFailed"));
+      TOAST?.error(error?.message || t("updateFailed"));
     },
   });
 
@@ -63,27 +64,24 @@ const UpdateUserSkillsScreen = () => {
 
   const handleUpdate = () => {
     if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
-      TOAST?.showToast?.error(t("pleaseSelectSkills"));
+      TOAST?.error(t("pleaseSelectSkills"));
       return;
     }
 
     const payload = {
       skills: watch("skills"),
     };
-    console.log("Paylaod---", payload);
 
     mutationUpdateProfile.mutate(payload);
   };
-
-  console.log("selectedInterests32423424--", watch("skills"));
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending} />
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
+      <View
+        style={styles.container}
+        // keyboardShouldPersistTaps="handled"
       >
         <CustomHeading baseFont={26}>
           {t("updateYourSkillsAndRole")}
@@ -114,7 +112,7 @@ const UpdateUserSkillsScreen = () => {
                   isPricePerDayNeeded={true}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
-                  availableOptions={WORKERTYPES}
+                  availableOptions={WORKTYPES}
                   onBlur={onBlur}
                   errors={errors}
                 />
@@ -135,7 +133,7 @@ const UpdateUserSkillsScreen = () => {
                   isPricePerDayNeeded={false}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
-                  availableOptions={MEDIATORTYPES}
+                  availableOptions={WORKTYPES}
                   onBlur={onBlur}
                   errors={errors}
                 />
@@ -161,7 +159,7 @@ const UpdateUserSkillsScreen = () => {
             borderColor={Colors?.success}
           />
         </View>
-      </ScrollView>
+      </View>
     </>
   );
 };
@@ -178,9 +176,15 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    flexWrap: "wrap", // ✅ Allows buttons to wrap if needed
+    justifyContent: "space-evenly", // ✅ Ensures even spacing
     alignItems: "center",
     gap: 10,
-    marginTop: 30,
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
+    paddingBottom: 20,
+    width: width,
+    backgroundColor: "transparent",
   },
 });

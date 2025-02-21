@@ -1,11 +1,7 @@
 import Colors from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  FontAwesome,
-  FontAwesome5,
-  Ionicons,
-} from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { dateDifference } from "@/constants/functions";
 import { openGoogleMaps } from "@/app/hooks/map";
@@ -31,8 +27,7 @@ const Highlights = ({ service }: any) => {
           <View style={{ flex: 1 }}>
             <CustomText textAlign="left">{t("duration")}</CustomText>
             <CustomHeading textAlign="left">
-              {service?.duration ||
-                dateDifference(service?.startDate, service?.endDate)}
+              {service?.duration} {service?.duration > 1 ? t("days") : t("day")}
             </CustomHeading>
           </View>
         </View>
@@ -43,9 +38,11 @@ const Highlights = ({ service }: any) => {
           </View>
           <View style={{ flex: 1 }}>
             <CustomText textAlign="left">{t("travelling")}</CustomText>
-            <CustomHeading textAlign="left">Yes</CustomHeading>
+            <CustomHeading textAlign="left">
+              {service?.travelling || t("no")}
+            </CustomHeading>
           </View>
-        </View>   
+        </View>
       </View>
 
       <View style={[styles.highlightWrapper, {}]}>

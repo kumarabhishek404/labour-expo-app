@@ -54,12 +54,16 @@ const ServiceDetails = () => {
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
-      (user: any) => user?.user === userDetails?._id
+      (user: any) =>
+        user?.user === userDetails?._id ||
+        user?.workers?.includes(userDetails?._id)
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
-      (user: any) => user?.user === userDetails?._id
+      (user: any) =>
+        user?.user === userDetails?._id ||
+        user?.workers.includes(userDetails?._id)
     ) || false
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
@@ -179,14 +183,12 @@ const ServiceDetails = () => {
     }, [members])
   );
 
-  console.log("service--", service?.appliedUsers);
-
-  console.log("isServiceApplied--", isServiceApplied, userDetails?._id);
-
   useEffect(() => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
-        (user: any) => user?.user === userDetails?._id
+        (user: any) =>
+          user?.user === userDetails?._id ||
+          user?.workers?.includes(userDetails?._id)
       ) || false
     );
     setIsServiceLiked(
@@ -194,7 +196,9 @@ const ServiceDetails = () => {
     );
     setIsSelected(
       service?.selectedUsers?.find(
-        (user: any) => user?.user === userDetails?._id
+        (user: any) =>
+          user?.user === userDetails?._id ||
+          user?.workers?.includes(userDetails?._id)
       ) || false
     );
     setIsWorkerBooked(service?.bookedWorker === userDetails?._id);
@@ -204,12 +208,11 @@ const ServiceDetails = () => {
     React.useCallback(() => {
       // Filter appliedUsers to find the logged-in user's entry
       let appliedUsers = response?.data?.appliedUsers?.find(
-        (mediator: any) => mediator?.user?._id === userDetails?._id
+        (mediator: any) => mediator?.user === userDetails?._id
       );
 
       // Extract worker IDs if the logged-in user is found
-      const workerIds =
-        appliedUsers?.workers?.map((worker: any) => worker?._id) || [];
+      const workerIds = appliedUsers?.workers?.map((id: any) => id) || [];
 
       setSelectedWorkersIds(workerIds);
 
@@ -294,19 +297,36 @@ const ServiceDetails = () => {
                 >
                   {t("doYourBest")}
                 </CustomText>
-                <Button
-                  isPrimary={true}
-                  title={t("callEmployer")}
-                  onPress={handleCall}
-                  icon={
-                    <FontAwesome5
-                      name="phone-alt"
-                      size={16}
-                      color={Colors.white}
-                      style={{ marginRight: 10 }}
-                    />
-                  }
-                />
+                <View style={{ gap: 20 }}>
+                  <ButtonComp
+                    isPrimary={true}
+                    title={t("callEmployer")}
+                    onPress={handleCall}
+                    icon={
+                      <FontAwesome5
+                        name="phone-alt"
+                        size={16}
+                        color={Colors.white}
+                        style={{ marginRight: 10 }}
+                      />
+                    }
+                  />
+                  <ButtonComp
+                    isPrimary={true}
+                    title="Show Your Attendance"
+                    onPress={() =>
+                      router?.push({
+                        pathname: "/screens/bookings/showAttendance",
+                        params: {
+                          bookingDetails: JSON.stringify(service),
+                        },
+                      })
+                    }
+                    bgColor={Colors?.tertieryButton}
+                    borderColor={Colors?.tertieryButton}
+                    style={{ flex: 1, paddingVertical: 6 }}
+                  />
+                </View>
               </View>
             )}
 
@@ -532,6 +552,7 @@ export default ServiceDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.background,
   },
   image: {
     width: width,
@@ -540,7 +561,6 @@ const styles = StyleSheet.create({
   contentWrapper: {
     paddingHorizontal: 15,
     paddingVertical: 20,
-    backgroundColor: Colors.background,
   },
   selectedWrapper: {
     padding: 15,

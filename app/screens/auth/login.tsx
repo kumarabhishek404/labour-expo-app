@@ -73,7 +73,7 @@ const LoginScreen = () => {
 
       console.log("user---", user);
 
-      TOAST?.showToast?.success(t("loggedInSuccessfully"));
+      TOAST?.success(t("loggedInSuccessfully"));
       if (isFirstLaunch) {
         return router?.push("/screens/tutorials/bootomNavigation");
       } else if (user?.status === "ACTIVE" && user?.profilePicture) {

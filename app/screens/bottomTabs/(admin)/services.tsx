@@ -125,13 +125,15 @@ const AdminServices = () => {
           />
 
           <CategoryButtons
+            type="workerType"
             options={MYSERVICES}
-            onCagtegoryChanged={onCatChanged}
+            onCategoryChanged={onCatChanged}
           />
 
           <CategoryButtons
+            type="workerType"
             options={WORKERS}
-            onCagtegoryChanged={onSecondaryCatChanged}
+            onCategoryChanged={onSecondaryCatChanged}
           />
           <PaginationString
             type="services"

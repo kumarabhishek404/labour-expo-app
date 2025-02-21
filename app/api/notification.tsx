@@ -18,7 +18,7 @@ const registerDevice = async (payload: any) => {
       `[Sign In] [userService] An error occurred while registering user device `,
       error?.response?.data
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while registering user device"
     );
@@ -37,7 +37,7 @@ const fetchAllNotifications = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching all notifications : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all notifications"
     );
@@ -54,7 +54,7 @@ const fetchUnreadNotificationsCount = async () => {
       `[userService] An error occurred while fetching unread notifications count : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching unread notifications count "
     );
@@ -76,7 +76,7 @@ const markAsReadNotification = async (payload: any) => {
       `[userService] An error occurred while marking as read notification : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while marking as read notification"
     );

@@ -5,7 +5,6 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
 import LOCAL_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -16,6 +15,7 @@ import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "react-native";
 import Colors from "@/constants/Colors";
 import GlobalBottomDrawer from "@/components/commons/DrawerFromGlobal";
+import { ToastProvider } from "./hooks/toast";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -30,7 +30,7 @@ export {
 } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "/drawer/(tabs)", // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "/(tabs)", // Ensure that reloading on `/modal` keeps a back button present.
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -74,13 +74,17 @@ function RootLayoutNav() {
         <LOCAL_CONTEXT.LocaleProvider>
           <QueryClientProvider client={queryClient}>
             <PaperProvider>
-              <StatusBar backgroundColor={Colors?.background} />
-              <Stack screenOptions={{ headerShown: true }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
-              <Toast />
-              <GlobalBottomDrawer />
-              <AuthListener />
+              <ToastProvider>
+                <StatusBar backgroundColor={Colors?.background} />
+                <Stack screenOptions={{ headerShown: true }}>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+                <GlobalBottomDrawer />
+                <AuthListener />
+              </ToastProvider>
             </PaperProvider>
           </QueryClientProvider>
         </LOCAL_CONTEXT.LocaleProvider>

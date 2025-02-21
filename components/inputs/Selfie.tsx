@@ -67,7 +67,7 @@ const SelfieScreen = ({
         console.log("error while capturing image ", err);
         setLoading(false);
         setProfilePicture("");
-        TOAST?.showToast?.error(t("failedToCaptureImageRetryAgain"));
+        TOAST?.error(t("failedToCaptureImageRetryAgain"));
       }
     } else {
       setLoading(false);

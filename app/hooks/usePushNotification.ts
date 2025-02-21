@@ -18,7 +18,7 @@ const registerForPushNotificationsAsync = async (
   }
 
   function handleRegistrationError(errorMessage: string) {
-    TOAST?.showToast?.error(errorMessage);
+    TOAST?.error(errorMessage);
     throw new Error(errorMessage);
   }
 
@@ -87,7 +87,7 @@ const unregisterPushNotifications = async () => {
       return true;
     }
   } catch (error) {
-    TOAST?.showToast?.error("Failed to disable notifications");
+    TOAST?.error("Failed to disable notifications");
     console.error("Error disabling notifications:", error);
     return false;
   }

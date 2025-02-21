@@ -139,8 +139,9 @@ const UserWorkers = () => {
           />
 
           <CategoryButtons
+            type="workerType"
             options={WORKERS}
-            onCagtegoryChanged={onCatChanged}
+            onCategoryChanged={onCatChanged}
           />
 
           <PaginationString

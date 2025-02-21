@@ -43,7 +43,7 @@ const SignupScreen = () => {
     },
     onError: (error) => {
       console.error("Registration error:", error);
-      TOAST?.showToast?.error(error?.message || t("registrationFailed"));
+      TOAST?.error(error?.message || t("registrationFailed"));
     },
   });
 
@@ -61,7 +61,7 @@ const SignupScreen = () => {
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      TOAST?.showToast?.error(error?.message || t("updateFailed"));
+      TOAST?.error(error?.message || t("updateFailed"));
     },
   });
 
@@ -69,7 +69,7 @@ const SignupScreen = () => {
   const handleSubmit = async () => {
     if (step === 1) {
       if (!name || !phoneNumber) {
-        TOAST?.showToast?.error(t("pleaseFillAllFields"));
+        TOAST?.error(t("pleaseFillAllFields"));
         return;
       }
       const payload: any = {

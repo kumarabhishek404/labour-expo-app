@@ -78,7 +78,7 @@ const UserProfile = () => {
   useEffect(() => {
     const backAction = () => {
       if (isAccountInactive) {
-        TOAST?.showToast?.error(
+        TOAST?.error(
           userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
             ? "Profile Suspended"
@@ -156,7 +156,7 @@ const UserProfile = () => {
       typeof profileImage !== "string" ||
       profileImage.trim() === ""
     ) {
-      TOAST?.showToast?.error(t("pleaseSelectAProfilePicture"));
+      TOAST?.error(t("pleaseSelectAProfilePicture"));
       return;
     }
 
@@ -184,7 +184,7 @@ const UserProfile = () => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      TOAST?.showToast?.success(t("skillsAddedSuccessfully"));
+      TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
@@ -199,7 +199,7 @@ const UserProfile = () => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
       setSelectedSkills([]);
-      TOAST?.showToast?.success(t("skillRemovedSuccessfully"));
+      TOAST?.success(t("skillRemovedSuccessfully"));
       console.log("Response while removing skill from the worker - ", response);
     },
     onError: (err) => {
@@ -296,7 +296,7 @@ const UserProfile = () => {
       await refreshUser();
     } catch (error) {
       console.error("Error while refreshing user - ", error);
-      TOAST?.showToast?.error("Error while refreshing user");
+      TOAST?.error("Error while refreshing user");
     }
   };
 

@@ -27,7 +27,7 @@ const Requests = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData] = useState([]);
   const [category, setCategory] = useState("RECEIVED");
-  const {title} = useLocalSearchParams()
+  const { title } = useLocalSearchParams();
 
   const fetchRequests =
     category === "RECEIVED"
@@ -73,7 +73,7 @@ const Requests = () => {
     onSuccess: () => {
       refetch();
       refreshUser();
-      TOAST.showToast.success(t("requestAcceptedSuccessfully"));
+      TOAST?.success(t("requestAcceptedSuccessfully"));
     },
   });
 
@@ -111,7 +111,11 @@ const Requests = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title={title as string} left="back" right="notification" />
+            <CustomHeader
+              title={title as string}
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />

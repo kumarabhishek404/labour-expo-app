@@ -10,7 +10,7 @@ const submitUserProblem = async (payload: any) => {
       `[userService] An error occurred while submitting problem : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while while submitting problem"
     );
@@ -29,7 +29,7 @@ const cancelUserProblem = async (payload: any) => {
       `[userService] An error occurred while cancelling problem : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while while cancelling problem"
     );
@@ -48,7 +48,7 @@ const completeUserProblem = async (payload: any) => {
       `[userService] An error occurred while completing problem : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while while completing problem"
     );

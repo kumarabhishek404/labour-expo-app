@@ -45,7 +45,7 @@ const SelectedUsers = ({
     mutationFn: (payload: any) => EMPLOYER?.removeBookedWorker(payload),
     onSuccess: (response) => {
       refetch();
-      TOAST?.showToast?.success(t("removedBookedWorkerSuccessfully"));
+      TOAST?.success(t("removedBookedWorkerSuccessfully"));
       console.log("Response while removing booked worker - ", response);
     },
   });

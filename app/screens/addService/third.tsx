@@ -41,7 +41,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     console.log("data?.images?.length--", data?.images?.length);
 
     if (data?.images && data?.images?.length > 3) {
-      TOAST?.showToast?.error("You can not upload more than 3 images");
+      TOAST?.error("You can not upload more than 3 images");
     } else {
       setDescription(data?.description);
       if (data?.images && data?.images?.length > 0) setImages(data?.images);

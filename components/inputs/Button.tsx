@@ -62,7 +62,7 @@ export default function ButtonComp({
       : textColor || (isPrimary ? Colors.white : Colors.primary),
     fontWeight: "700",
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 18,
     display: "flex",
     flexWrap: "wrap",
     ...textStyle,

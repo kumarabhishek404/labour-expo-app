@@ -26,6 +26,7 @@ import BookingActionButtons from "./actionButtons";
 import SelectedUsers from "./selectedUsers";
 import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
+import ButtonComp from "@/components/inputs/Button";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -50,6 +51,14 @@ const BookingDetails = () => {
 
   const [isAdmin] = useState(userDetails?.isAdmin);
 
+  let workersList =
+    booking?.bookingType === "byService"
+      ? [
+          ...(booking?.selectedUsers || []),
+          ...booking.selectedUsers.flatMap((user: any) => user?.workers || []),
+        ]
+      : [booking?.bookedWorker];
+
   const {
     isLoading,
     data: response,
@@ -71,8 +80,6 @@ const BookingDetails = () => {
       refetch();
     }, [refetch])
   );
-
-  console.log("booking--", booking);
 
   useEffect(() => {
     setIsSelected(
@@ -215,6 +222,58 @@ const BookingDetails = () => {
               <Requirements type="full" requirements={booking?.requirements} />
             )}
 
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 10,
+              }}
+            >
+              {booking?.employer === userDetails?._id ? (
+                <ButtonComp
+                  isPrimary={true}
+                  title="Add Attendance"
+                  onPress={() =>
+                    router?.push({
+                      pathname: "/screens/bookings/addAttendance",
+                      params: {
+                        bookingDetails: JSON.stringify(booking),
+                        workers: JSON.stringify(workersList),
+                      },
+                    })
+                  }
+                  style={{ flex: 1, paddingVertical: 6 }}
+                />
+              ) : (
+                <ButtonComp
+                  isPrimary={true}
+                  title="Show Your Attendance"
+                  onPress={() =>
+                    router?.push({
+                      pathname: "/screens/bookings/showAttendance",
+                      params: {
+                        bookingDetails: JSON.stringify(booking),
+                      },
+                    })
+                  }
+                  bgColor={Colors?.tertieryButton}
+                  borderColor={Colors?.tertieryButton}
+                  style={{ flex: 1, paddingVertical: 6 }}
+                />
+              )}
+            </View>
+
+            {booking?.employer === userDetails?._id && (
+              <CustomHeading
+                textAlign="left"
+                color={Colors?.heading}
+                baseFont={20}
+                style={{ width: "50%", marginBottom: 10 }}
+              >
+                All Booked Workers
+              </CustomHeading>
+            )}
             {booking?.employer && booking?.employer === userDetails?._id && (
               <SelectedUsers
                 selectedApplicants={[

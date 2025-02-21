@@ -116,7 +116,7 @@ export const fetchCurrentLocation = async () => {
     await Location.hasServicesEnabledAsync();
     // // Prompt user to enable GPS if it's off
     // if (!isLocationServicesEnabled) {
-    //   TOAST?.showToast?.error("Please enable GPS to get your location.");
+    //   TOAST?.error("Please enable GPS to get your location.");
     //   return { location: {}, address: "" }; // Return early with empty location if GPS is off
     // }
 
@@ -147,7 +147,7 @@ export const fetchCurrentLocation = async () => {
     };
   } catch (err) {
     // Handle any errors during location fetching
-    TOAST?.showToast?.error(
+    TOAST?.error(
       `Error while fetching current location ${JSON?.stringify(err)}`
     );
     console.log("Error while fetching location:", err);

@@ -9,7 +9,7 @@ const handleServiceError = (error: any, operation: string) => {
     error: error?.response?.data || error,
     operation,
   });
-  TOAST?.showToast?.error(errorMessage);
+  TOAST?.error(errorMessage);
   throw error;
 };
 
@@ -24,7 +24,7 @@ const getServiceById = async (id: any) => {
       `[Users] [userService] An error occurred while fetching service details : `,
       error
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching service details"
     );
@@ -60,7 +60,7 @@ const fetchMyAppliedWorkers = async ({ pageParam, serviceId }: any) => {
       `[userService] An error occurred while fetching all applied workers : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all applied workers"
     );
@@ -79,7 +79,7 @@ const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
       `[userService] An error occurred while fetching selected workers of service : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching selected workers of service"
     );
@@ -98,7 +98,7 @@ const fetchAllVillages = async (payload: any) => {
       `[userService] An error occurred while fetching villages of selected state : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching villages of selected state"
     );

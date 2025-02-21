@@ -755,5 +755,8 @@
   "nurse": "नर्स",
   "ambulanceServices": "एम्बुलेंस सेवाएं",
   "ambulanceDriver": "एम्बुलेंस चालक",
-  "paramedic": "पैरामेडिक"
+  "paramedic": "पैरामेडिक",
+  "doWork": "मैं काम करना चाहता हूँ",
+  "beMediator": "मैं ठेकेदार बनना चाहता हूँ",
+  "giveWork": "मैं काम देना चाहता हूँ"
 }

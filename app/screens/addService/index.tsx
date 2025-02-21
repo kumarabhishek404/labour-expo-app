@@ -99,7 +99,7 @@ const AddServiceScreen = () => {
       addService?._id ? handleEditSubmit(addService?._id) : handleSubmit(),
     onSuccess: () => {
       refreshUser();
-      TOAST?.showToast?.success(
+      TOAST?.success(
         addService?._id
           ? t("serviceUpdatedSuccessfully")
           : t("servicePostedSuccessfully")
@@ -143,7 +143,7 @@ const AddServiceScreen = () => {
         error: err,
       });
 
-      TOAST?.showToast?.error(
+      TOAST?.error(
         err?.response?.data?.message ||
           "Failed to update service. Please try again."
       );

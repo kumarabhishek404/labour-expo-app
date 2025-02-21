@@ -13,7 +13,7 @@ const sendTeamRequest = async (payload: any) => {
       `[userService] An error occurred while sending request to the Worker : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while sending request to the Worker"
     );
@@ -32,7 +32,7 @@ const fetchSentTeamRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching sent requests : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching sent requests"
     );
@@ -46,14 +46,14 @@ const cancelTeamRequest = async (payload: any) => {
       "/mediator/team/request/cancel",
       payload
     );
-    TOAST?.showToast?.success("Request cancelled successfully");
+    TOAST?.success("Request cancelled successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while cancelling sent request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while cancelling sent requestr"
     );
@@ -78,7 +78,7 @@ const fetchAllMembers = async ({
       `[userService] An error occurred while fetching all members : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all members"
     );
@@ -97,7 +97,7 @@ const removeMemberFromTeam = async (payload: any) => {
       `[mediatorService] An error occurred while removing member : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while removing member from team"
     );

@@ -62,7 +62,7 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
     },
     onError: (error) => {
       console.error("Error fetching state details:", error);
-      TOAST?.showToast?.error(
+      TOAST?.error(
         "Failed to fetch location details. Please try again later."
       );
     },
@@ -143,7 +143,7 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
   const onAddAddress = async (data: any) => {
     const address = `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`;
     if (userDetails?.savedAddresses?.includes(address)) {
-      TOAST?.showToast?.error(t("addressAlreadyExists"));
+      TOAST?.error(t("addressAlreadyExists"));
       return;
     }
 
@@ -168,7 +168,7 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
     });
     onClose();
     reset();
-    TOAST?.showToast?.success(t("addressAddedSuccessfully"));
+    TOAST?.success(t("addressAddedSuccessfully"));
   };
 
   const modalContent = () => (

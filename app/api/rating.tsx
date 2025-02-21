@@ -8,14 +8,14 @@ const addReview = async (payload: any) => {
       `/review/add/${payload?.id}`,
       payload?.data
     );
-    TOAST?.showToast?.success("Review added successfully");
+    TOAST?.success("Review added successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding review : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while adding review"
     );
     throw error;
@@ -29,14 +29,14 @@ const editReview = async (payload: any) => {
       `/review/update/${payload?.id}`,
       payload?.data
     );
-    TOAST?.showToast?.success("Review edited successfully");
+    TOAST?.success("Review edited successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while editing review : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while editing review"
     );
     throw error;
@@ -49,14 +49,14 @@ const deleteReview = async (payload: any) => {
     const data = await API_CLIENT.makeDeleteRequest(
       `/review/delete/${payload?.id}`
     );
-    TOAST?.showToast?.success("Review deleted successfully");
+    TOAST?.success("Review deleted successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while deleting review : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while deleting review"
     );

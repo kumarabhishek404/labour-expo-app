@@ -33,7 +33,9 @@ const ListingsServices = ({ item }: any) => {
             <View style={styles.item}>
               <Image
                 source={
-                  item?.images ? { uri: item?.images[0] } : coverImage
+                  item?.images?.length > 0
+                    ? { uri: item?.images[0] }
+                    : coverImage
                 }
                 style={styles.image}
               />
@@ -76,7 +78,7 @@ const ListingsServices = ({ item }: any) => {
                   justifyContent: "space-between",
                 }}
               >
-                <View style={{ width: "80%", flexDirection: "column" }}>
+                <View style={{ width: "75%", flexDirection: "column" }}>
                   <CustomHeading
                     textAlign="left"
                     style={{ textTransform: "capitalize", marginRight: 10 }}
@@ -85,7 +87,9 @@ const ListingsServices = ({ item }: any) => {
                     {t(item?.type)} - {t(item?.subType)}
                   </CustomHeading>
                 </View>
-                <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
+                <CustomText textAlign="right" style={{ width: "25%" }}>
+                  {getTimeAgo(item?.createdAt)}
+                </CustomText>
               </View>
               <View
                 style={{
@@ -135,7 +139,7 @@ const ListingsServices = ({ item }: any) => {
                 </View>
 
                 <View style={styles?.actionContainer}>
-                  <CustomText>
+                  <CustomText textAlign="right">
                     {t("duration")}{" "}
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}{" "}

@@ -97,11 +97,13 @@ const AdminUsers = () => {
     mutationKey: ["suspendUser"],
     mutationFn: (payload: any) => ADMIN?.suspendUser(payload),
     onSuccess: () => {
-      TOAST?.showToast?.success("User suspended successfully");
+      TOAST?.success("User suspended successfully");
       refetch();
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(error?.message || "An error occurred while suspending user");
+      TOAST?.error(
+        error?.message || "An error occurred while suspending user"
+      );
     },
   });
 
@@ -109,11 +111,13 @@ const AdminUsers = () => {
     mutationKey: ["activateUser"],
     mutationFn: (payload: any) => ADMIN?.activateUser(payload),
     onSuccess: () => {
-      TOAST?.showToast?.success("User activated successfully");
+      TOAST?.success("User activated successfully");
       refetch();
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(error?.message || "An error occurred while activating user");
+      TOAST?.error(
+        error?.message || "An error occurred while activating user"
+      );
     },
   });
 
@@ -150,9 +154,11 @@ const AdminUsers = () => {
     setRole(role);
   };
 
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(async () => {
-    await refetch();
-  });
+  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
+    async () => {
+      await refetch();
+    }
+  );
 
   return (
     <>
@@ -172,14 +178,23 @@ const AdminUsers = () => {
           }
         />
         <View style={styles.container}>
-          <SearchFilter type="users" data={response?.pages} setFilteredData={setFilteredData} />
-
-          <CategoryButtons
-            options={USERS}
-            onCagtegoryChanged={onStatusChanged}
+          <SearchFilter
+            type="users"
+            data={response?.pages}
+            setFilteredData={setFilteredData}
           />
 
-          <CategoryButtons options={ROLES} onCagtegoryChanged={onRoleChanged} />
+          <CategoryButtons
+            type="workerType"
+            options={USERS}
+            onCategoryChanged={onStatusChanged}
+          />
+
+          <CategoryButtons
+            type="workerType"
+            options={ROLES}
+            onCategoryChanged={onRoleChanged}
+          />
 
           <PaginationString
             type="services"

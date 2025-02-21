@@ -58,8 +58,8 @@ const ModalComponent = ({
               isPrimary={false}
               title={secondaryButton?.title || t("cancel")}
               onPress={secondaryButton?.action}
-              borderColor={Colors?.error}
-              bgColor={Colors?.error}
+              borderColor={Colors?.danger}
+              bgColor={Colors?.danger}
               textColor={Colors?.white}
               style={{ width: "30%", paddingVertical: 8, minHeight: 30 }}
             />

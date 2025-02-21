@@ -60,10 +60,10 @@ const FeedbackForm = () => {
     mutationFn: (data: any) => USER?.addAppFeedback(data),
     onSuccess: () => {
       router.back();
-      TOAST?.showToast?.success("Feedback submitted successfully");
+      TOAST?.success("Feedback submitted successfully");
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(
+      TOAST?.error(
         error?.response?.data?.message || "An error occurred"
       );
     },

@@ -101,7 +101,7 @@ const Favourite = (props: any) => {
           setFilteredData={setFilteredData}
         />
 
-        <CategoryButtons options={SERVICES} onCagtegoryChanged={onCatChanged} />
+        <CategoryButtons type="workerType" options={SERVICES} onCategoryChanged={onCatChanged} />
 
         <PaginationString
           type="services"

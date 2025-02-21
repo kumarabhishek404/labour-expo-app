@@ -44,7 +44,7 @@ const ProfileMenu = ({ disabled }: any) => {
     mutationKey: ["updateProfile"],
     mutationFn: () => USER?.disableAccount(),
     onSuccess: (response) => {
-      TOAST?.showToast?.success(t("successDeactivatedMessage"));
+      TOAST?.success(t("successDeactivatedMessage"));
       refreshUser();
       setModalVisible(false);
       setIsAccountInactive(true);
@@ -73,7 +73,7 @@ const ProfileMenu = ({ disabled }: any) => {
         notificationConsent
       );
       setNotificationConsent(true);
-      TOAST?.showToast?.success("Notifications enabled");
+      TOAST?.success("Notifications enabled");
       console.log("Notifications enabled");
     } catch (err) {
       console.error("Failed to enable notifications", err);
@@ -83,7 +83,7 @@ const ProfileMenu = ({ disabled }: any) => {
   const unregisterNotification = async () => {
     try {
       await PUSH_NOTIFICATION?.unregisterPushNotifications();
-      TOAST?.showToast?.success("Notifications disabled");
+      TOAST?.success("Notifications disabled");
       console.log("Notifications disabled");
       setNotificationConsent(false);
     } catch (err) {
@@ -110,7 +110,7 @@ const ProfileMenu = ({ disabled }: any) => {
         await unregisterNotification();
       }
     } catch (err) {
-      TOAST?.showToast?.error("Failed to change notification preference");
+      TOAST?.error("Failed to change notification preference");
       console.error(err);
     }
   };

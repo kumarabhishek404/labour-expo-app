@@ -35,7 +35,7 @@ const FourthScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.showToast?.success(t("profileUpdated"));
+      TOAST?.success(t("profileUpdated"));
       router.push({
         pathname: "/screens/auth/register/third",
         params: { userId: userId },
@@ -52,7 +52,7 @@ const FourthScreen = () => {
         password,
       });
     } else {
-      TOAST?.showToast?.error("Passwords do not match. Please try again.");
+      TOAST?.error("Passwords do not match. Please try again.");
       setConfirmPassword("");
     }
   };
@@ -61,7 +61,7 @@ const FourthScreen = () => {
     if (password?.length === 4) {
       setPasswordStep("confirm");
     } else {
-      TOAST?.showToast?.error("Please enter full password");
+      TOAST?.error("Please enter full password");
     }
   };
 

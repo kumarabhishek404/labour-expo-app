@@ -148,7 +148,7 @@ const UserReviews = forwardRef(
           reviewId,
         }),
       onSuccess: (response) => {
-        TOAST?.showToast?.success(t("reviewDeletedSuccessfully"));
+        TOAST?.success(t("reviewDeletedSuccessfully"));
         refetch();
         queryClient.invalidateQueries({
           queryKey: ["userDetails", workerId],

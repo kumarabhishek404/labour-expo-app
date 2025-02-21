@@ -13,19 +13,19 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
   const roles = [
     {
       id: "WORKER",
-      title: t("worker"),
+      title: t("doWork"),
       description: t("workerDescription"),
       price: "$0.00",
     },
     {
       id: "MEDIATOR",
-      title: t("mediator"),
+      title: t("beMediator"),
       description: t("mediatorDescription"),
       price: "$10.00",
     },
     {
       id: "EMPLOYER",
-      title: t("employer"),
+      title: t("giveWork"),
       description: t("employerDescription"),
       price: "$20.00",
     },
@@ -47,9 +47,6 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
           >
             <View style={styles.roleContent}>
               <CustomHeading>{selectedRole.title}</CustomHeading>
-              <CustomText fontWeight="600" color={Colors?.subHeading}>
-                {selectedRole.description}
-              </CustomText>
             </View>
             <View
               style={[
@@ -66,7 +63,7 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "flex-start",
     gap: 5,

@@ -19,9 +19,9 @@ const useSMS = async () => {
     );
 
     if (result === "sent") {
-      TOAST?.showToast?.success("Message sent successfully");
+      TOAST?.success("Message sent successfully");
     } else {
-      TOAST?.showToast?.error("Message failed to send");
+      TOAST?.error("Message failed to send");
     }
   } else {
     // misfortune... there's no SMS available on this device

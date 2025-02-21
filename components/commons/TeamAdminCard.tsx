@@ -28,12 +28,12 @@ const TeamAdminCard = ({ admin }: any) => {
     mutationFn: (payload: any) => WORKER?.leftTeam(payload),
     onSuccess: (response) => {
       setModalVisible(false);
-      TOAST?.showToast?.success(t("leftTeamSuccessfully"));
+      TOAST?.success(t("leftTeamSuccessfully"));
       refreshUser();
     },
     onError: (error) => {
       setModalVisible(false);
-      TOAST?.showToast?.error(
+      TOAST?.error(
         error?.message || "An error occurred while leaving team"
       );
     },

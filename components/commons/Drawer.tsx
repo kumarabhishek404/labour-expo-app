@@ -83,27 +83,33 @@ const Drawer = ({
         </ScrollView>
 
         {/* Footer Buttons */}
-        <Animated.View style={styles.footer}>
-          <ButtonComp
-            isPrimary={false}
-            title={secondaryButton?.title}
-            onPress={secondaryButton?.action}
-            bgColor={Colors?.danger}
-            borderColor={Colors?.danger}
-            textColor={Colors?.white}
-            style={{ width: "35%" }}
-          />
-          <ButtonComp
-            isPrimary={true}
-            title={primaryButton?.title}
-            onPress={primaryButton?.action}
-            disabled={primaryButton?.disabled}
-            bgColor={Colors?.success}
-            borderColor={Colors?.success}
-            textColor={Colors?.white}
-            style={{ flex: 1 }}
-          />
-        </Animated.View>
+        {(primaryButton || secondaryButton) && (
+          <Animated.View style={styles.footer}>
+            {secondaryButton && (
+              <ButtonComp
+                isPrimary={false}
+                title={secondaryButton?.title}
+                onPress={secondaryButton?.action}
+                bgColor={Colors?.danger}
+                borderColor={Colors?.danger}
+                textColor={Colors?.white}
+                style={{ width: "35%" }}
+              />
+            )}
+            {primaryButton && (
+              <ButtonComp
+                isPrimary={true}
+                title={primaryButton?.title}
+                onPress={primaryButton?.action}
+                disabled={primaryButton?.disabled}
+                bgColor={Colors?.success}
+                borderColor={Colors?.success}
+                textColor={Colors?.white}
+                style={{ flex: 1 }}
+              />
+            )}
+          </Animated.View>
+        )}
       </Animated.View>
     </>
   );

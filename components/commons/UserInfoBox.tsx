@@ -27,11 +27,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
     mutationKey: ["verifyEmail"],
     mutationFn: (payload: any) => AUTH?.sendEmailCode(payload),
     onSuccess: (data: any) => {
-      TOAST?.showToast?.success(t("otpSentTo"), data);
+      TOAST?.success(t("otpSentTo"), data);
       setModalVisible(true);
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(t("errorWhileSendingCode"), error?.message);
+      TOAST?.error(t("errorWhileSendingCode"), error?.message);
     },
   });
 
@@ -39,12 +39,12 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
     mutationKey: ["verifyEmailCode"],
     mutationFn: (payload: any) => AUTH?.verifyEmailCode(payload?.code),
     onSuccess: (data: any) => {
-      TOAST?.showToast?.success(t("emailVerifiedSuccessfully"));
+      TOAST?.success(t("emailVerifiedSuccessfully"));
       setModalVisible(false);
       refreshUser();
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.error(t("incorrectOTPTryAgain"));
     },
   });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -57,7 +57,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       await mutationSendOtp.mutateAsync(user?.email?.value);
       setModalVisible(true);
     } catch (err) {
-      TOAST?.showToast?.error(t("errorWhileSendingCode"));
+      TOAST?.error(t("errorWhileSendingCode"));
     }
   };
 
@@ -66,7 +66,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       await mutationVerifyCode.mutateAsync({ code: otp?.join("") });
       setOtp(["", "", "", ""]);
     } else {
-      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.error(t("incorrectOTPTryAgain"));
     }
   };
 

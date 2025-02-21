@@ -12,7 +12,7 @@ const applyService = async (payload: any) => {
       `[userService] An error occurred while applying in service : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while applying in service"
     );
@@ -32,7 +32,7 @@ const unApplyService = async (payload: any) => {
       `[userService] An error occurred while cancel applying the service : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while cancel apply service"
     );
@@ -51,7 +51,7 @@ const fetchMyAppliedServices = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching my applied services : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching my applied services"
     );
@@ -70,7 +70,7 @@ const fetchAllBookingReceivedInvitations = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching recieved booking requests : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching recieved booking requests"
     );
@@ -90,7 +90,7 @@ const acceptBookingRequest = async (payload: any) => {
       `[userService] An error occurred while accepting booking request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while accepting booking request"
     );
@@ -110,7 +110,7 @@ const rejectBookingRequest = async (payload: any) => {
       `[userService] An error occurred while rejecting booking request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while rejecting booking request"
     );
@@ -129,7 +129,7 @@ const fetchAllMyBookings = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching my bookings : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching my bookings"
     );
@@ -151,7 +151,7 @@ const cancelBooking = async (payload: any) => {
       `[userService] An error occurred while removing worker after selection : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while removing worker after selection"
     );
@@ -170,7 +170,7 @@ const fetchAllRecievedTeamRequests = async ({ pageParam }: any) => {
       `[userService] An error occurred while fetching recieved requests : `,
       error?.response
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching recieved requests"
     );
@@ -184,14 +184,14 @@ const acceptTeamRequest = async (payload: any) => {
       "/worker/team/request/accept",
       payload
     );
-    TOAST?.showToast?.success("Request accepted successfully");
+    TOAST?.success("Request accepted successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while accepting joining request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while accepting joining request"
     );
@@ -207,14 +207,14 @@ const rejectTeamRequest = async (payload: any) => {
       "/worker/team/request/reject",
       payload
     );
-    TOAST?.showToast?.success("Request rejected successfully");
+    TOAST?.success("Request rejected successfully");
     return data.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while rejecting joining request : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while rejecting joining request"
     );
@@ -234,7 +234,7 @@ const leftTeam = async (payload: any) => {
       `[userService] An error occurred while leaving from team : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while leaving from team"
     );

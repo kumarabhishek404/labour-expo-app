@@ -13,7 +13,7 @@ const fetchAllUsers = async ({ pageParam, status }: any) => {
       `[adminService] An error occurred while fetching users : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;
@@ -32,7 +32,7 @@ const fetchAllRequestsForAdmin = async ({ pageParam, type }: any) => {
       `[adminService] An error occurred while fetching all requests : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while fetching all requests"
     );
@@ -52,7 +52,7 @@ const suspendUser = async (payload: any) => {
       `[adminService] An error occurred while suspending user : `,
       error?.response?.data
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while suspending user"
     );
@@ -73,7 +73,7 @@ const activateUser = async (payload: any) => {
       `[adminService] An error occurred while activating user : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while activating user"
     );
@@ -90,7 +90,7 @@ const fetchAllFeedbacks = async () => {
       `[adminService] An error occurred while fetching feedbacks : `,
       error?.response?.data?.message
     );
-    TOAST?.showToast?.error(
+    TOAST?.error(
       error?.response?.data?.message || "An error occurred while fetching users"
     );
     throw error;

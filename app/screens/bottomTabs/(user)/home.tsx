@@ -167,8 +167,9 @@ const UserHome = () => {
             <View style={styles.divider}></View>
 
             <CategoryButtons
+              type="workerType"
               options={WORKERS}
-              onCagtegoryChanged={onCatChanged}
+              onCategoryChanged={onCatChanged}
               stylesProp={styles.categoryContainer}
             />
 

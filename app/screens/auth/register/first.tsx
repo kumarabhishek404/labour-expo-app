@@ -83,7 +83,7 @@ const RegisterScreen = () => {
   const onConfirmMobileNumber = () => {
     setModalVisible(false);
     if (!watch("name") || !watch("phoneNumber")) {
-      TOAST?.showToast?.error(t("pleaseFillAllFields"));
+      TOAST?.error(t("pleaseFillAllFields"));
       return;
     }
     const payload: any = {

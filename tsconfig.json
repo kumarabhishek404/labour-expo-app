@@ -4,14 +4,9 @@
     "strict": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": [
     "**/*.ts",
@@ -21,7 +16,8 @@
     "images.d.ts",
     "utils/i18n.js",
     "app/i18n.js",
-    "eslint.config.js"
+    "eslint.config.js",
+    "app/hooks/toast.tsx"
   ],
   "extends": "expo/tsconfig.base"
 }

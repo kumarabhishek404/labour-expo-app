@@ -26,7 +26,7 @@ const Users = () => {
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { title, type, searchCategory } = useGlobalSearchParams();
-  
+
   const {
     data: response,
     isLoading,
@@ -107,17 +107,6 @@ const Users = () => {
       />
       <Loader loading={isLoading} />
       <View style={styles.container}>
-        {/* <SearchFilter
-          type="users"
-          data={response?.pages}
-          setFilteredData={setFilteredData}
-        /> */}
-
-        {/* <CategoryButtons
-          options={WORKERTYPES}
-          onCagtegoryChanged={onCatChanged}
-        /> */}
-
         <PaginationString
           type="workers"
           isLoading={isLoading || isRefetching}

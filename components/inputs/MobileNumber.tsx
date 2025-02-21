@@ -50,12 +50,12 @@ const MobileNumberField = ({
     mutationKey: ["signInWithPhoneNumber"],
     mutationFn: (payload: any) => AUTH?.sendOTP(payload),
     onSuccess: (data: any) => {
-      TOAST?.showToast?.success(t("otpSentTo"), data);
+      TOAST?.success(t("otpSentTo"), data);
       setConfirmation(data);
       setModalVisible(true);
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(t("errorWhileSendingCode"), error?.message);
+      TOAST?.error(t("errorWhileSendingCode"), error?.message);
     },
   });
 
@@ -64,11 +64,11 @@ const MobileNumberField = ({
     mutationFn: (payload: any) =>
       AUTH?.verifyOTP(payload?.confirmation, payload?.otp),
     onSuccess: (data: any) => {
-      TOAST?.showToast?.success(t("mobileNumberVerifiedSuccessfully"));
+      TOAST?.success(t("mobileNumberVerifiedSuccessfully"));
       setModalVisible(false);
     },
     onError: (error: any) => {
-      TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+      TOAST?.error(t("incorrectOTPTryAgain"));
     },
   });
 
@@ -76,7 +76,7 @@ const MobileNumberField = ({
   //   try {
   //     mutationSendOtp.mutate(`${countryCode}${phoneNumber}`);
   //   } catch (err) {
-  //     TOAST?.showToast?.error(t("errorWhileSendingCode"));
+  //     TOAST?.error(t("errorWhileSendingCode"));
   //   }
   // };
 
@@ -84,7 +84,7 @@ const MobileNumberField = ({
   //   if (otp?.join("") && confirmation && otp?.join("")?.length === 4) {
   //     mutationVerifyCode.mutate({ confirmation, otp: otp?.join("") });
   //   } else {
-  //     TOAST?.showToast?.error(t("incorrectOTPTryAgain"));
+  //     TOAST?.error(t("incorrectOTPTryAgain"));
   //   }
   // };
 
@@ -111,7 +111,7 @@ const MobileNumberField = ({
 
   // const resendOtp = () => {
   //   handleSendOtp();
-  //   TOAST?.showToast?.success(t("otpResent"));
+  //   TOAST?.success(t("otpResent"));
   // };
 
   // const modalContent = () => (

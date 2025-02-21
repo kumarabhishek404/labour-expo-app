@@ -40,7 +40,7 @@ const Applicants = ({
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("workerSelectedSuccessfully"));
+      TOAST?.success(t("workerSelectedSuccessfully"));
       console.log("Response while seleting an worker for service - ", response);
     },
     onError: (err) => {
@@ -55,7 +55,7 @@ const Applicants = ({
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
-      TOAST?.showToast?.success(t("workerRejectedSuccessfully"));
+      TOAST?.success(t("workerRejectedSuccessfully"));
       console.log("Response while rejecting an selected worker - ", response);
     },
     onError: (err) => {

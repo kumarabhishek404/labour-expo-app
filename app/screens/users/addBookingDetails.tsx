@@ -63,7 +63,7 @@ const AddBookingDetails = ({
     mutationFn: (payload: any) => EMPLOYER?.addBookingRequest(payload),
     onSuccess: (response) => {
       refetch();
-      TOAST?.showToast?.success(t("bookRequestSentSuccessfully"));
+      TOAST?.success(t("bookRequestSentSuccessfully"));
       setIsAddBookingModal(false);
     },
   });
