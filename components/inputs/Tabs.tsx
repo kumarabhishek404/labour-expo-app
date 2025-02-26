@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   tabText: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "bold",
     color: Colors?.primary, // Inactive text color
   },

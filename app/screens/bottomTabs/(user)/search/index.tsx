@@ -30,7 +30,6 @@ const Search = () => {
           tabs={TABS}
           actvieTab={selectedTab}
           setActiveTab={setSelectedTab}
-          textStyle={{fontSize: 16}}
         />
         {selectedTab === 0 && <SearchWorkers style={styles?.shadowBox} />}
         {selectedTab === 1 && <SearchServices style={styles?.shadowBox} />}
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#EAF0FF",
     justifyContent: "space-between",
-    minHeight: "100%"
+    minHeight: "100%",
   },
   shadowBox: {
     shadowColor: "#000", // Subtle black shadow
