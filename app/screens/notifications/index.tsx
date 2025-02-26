@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   date: {
-    width: "37%",
+    width: "40%",
   },
 });
 
