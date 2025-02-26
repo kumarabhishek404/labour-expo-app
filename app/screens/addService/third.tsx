@@ -1,29 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import Button from "@/components/inputs/Button";
-import { Controller, useForm } from "react-hook-form";
-import Step4 from "../../../assets/step4.jpg";
-import ImageUpload from "@/components/inputs/ImagePicker";
-import TOAST from "@/app/hooks/toast";
-import TextAreaInputComponent from "@/components/inputs/TextArea";
-import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import Button from "@/components/inputs/Button";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
+import { Controller, useForm } from "react-hook-form";
+import Step2 from "../../../assets/step2.jpg";
+import DateField from "@/components/inputs/DateField";
+import { isEmptyObject } from "@/constants/functions";
+import { useSetAtom } from "jotai";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import moment from "moment";
+import Duration from "@/components/inputs/Duration";
+import TextAreaInputComponent from "@/components/inputs/TextArea";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ThirdScreenProps {
   setStep: any;
-  images: string;
-  setImages: any;
-  description: string;
+  address: string;
+  setAddress: any;
+  location: object;
+  setLocation: any;
+  startDate: Date;
+  setStartDate: any;
+  duration: number;
+  setDuration: any;
+  description: any;
   setDescription: any;
 }
 
 const ThirdScreen: React.FC<ThirdScreenProps> = ({
   setStep,
-  images,
-  setImages,
+  address,
+  setAddress,
+  location,
+  setLocation,
+  startDate,
+  setStartDate,
+  duration,
+  setDuration,
   description,
   setDescription,
 }: ThirdScreenProps) => {
@@ -33,34 +49,75 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      images: images,
+      address: address,
+      location: location,
+      startDate: startDate,
+      duration: duration,
       description: description,
     },
   });
-  const onSubmit = (data: any) => {
-    console.log("data?.images?.length--", data?.images?.length);
 
-    if (data?.images && data?.images?.length > 3) {
-      TOAST?.error("You can not upload more than 3 images");
-    } else {
-      setDescription(data?.description);
-      if (data?.images && data?.images?.length > 0) setImages(data?.images);
-      setStep(4);
-    }
+  const [selectedOption, setSelectedOption] = useState(
+    !isEmptyObject(location) ? "currentLocation" : "address"
+  );
+
+  const onSubmit = (data: any) => {
+    setAddress(data?.address);
+    setStartDate(data?.startDate);
+    setDuration(data?.duration);
+    setDescription(data?.description);
+    setStep(4);
   };
 
   return (
     <View style={styles?.container}>
       <View style={{ flexDirection: "column", gap: 25 }}>
+        <View style={{ zIndex: 9 }}>
+          <Controller
+            control={control}
+            name="address"
+            defaultValue=""
+            rules={{
+              required: t("addressIsRequired"),
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AddLocationAndAddress
+                label={t("address")}
+                name="address"
+                address={value}
+                setAddress={onChange}
+                onBlur={onBlur}
+                location={location}
+                setLocation={setLocation}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                errors={errors}
+              />
+            )}
+          />
+        </View>
+
         <Controller
           control={control}
-          name="images"
-          defaultValue=""
+          name="startDate"
+          defaultValue={new Date()}
+          rules={{
+            required: t("startDateIsRequired"),
+            validate: (value) => {
+              if (new Date(value) < new Date()) {
+                return t("startDateNotEarlierThanToday");
+              } else {
+                return true;
+              }
+            },
+          }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <ImageUpload
-              name="images"
-              images={value}
-              setImages={onChange}
+            <DateField
+              title={t("startDate")}
+              name="startDate"
+              type="serviceDate"
+              date={moment(value)}
+              setDate={onChange}
               onBlur={onBlur}
               errors={errors}
             />
@@ -69,43 +126,70 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
 
         <Controller
           control={control}
-          name="description"
-          defaultValue=""
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextAreaInputComponent
-              label="workDescription"
-              name="description"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder="Enter work description"
-              errors={errors}
-              icon={
-                <Ionicons
-                  name={"mail-outline"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, paddingRight: 10 }}
-                />
+          name="duration"
+          defaultValue={0}
+          rules={{
+            required: t("durationIsRequired"),
+            validate: (value) => {
+              if (value <= 0) {
+                return t("durationMustBeGreaterThanZero");
+              } else {
+                return true;
               }
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Duration
+              duration={value}
+              setDuration={onChange}
+              errors={errors}
+              name="duration"
             />
           )}
         />
+
+        <View style={{ marginBottom: 20 }}>
+          <Controller
+            control={control}
+            name="description"
+            defaultValue=""
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextAreaInputComponent
+                name="description"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Enter work description"
+                errors={errors}
+                icon={
+                  <Ionicons
+                    name={"mail-outline"}
+                    size={30}
+                    color={Colors.secondary}
+                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                  />
+                }
+              />
+            )}
+          />
+        </View>
       </View>
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={true}
           title={t("back")}
-          onPress={() => setStep(2)}
+          onPress={() => {
+            setStep(2);
+          }}
           bgColor={Colors?.danger}
           borderColor={Colors?.danger}
-          style={{ width: "30%" }}
+          style={{ width: "30%", paddingVertical: 8 }}
         />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
-          style={{ flex: 1 }}
+          style={{ flex: 1, paddingVertical: 8 }}
         />
       </View>
     </View>
@@ -126,9 +210,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 20,
+    justifyContent: "space-between",
     gap: 10,
   },
 });

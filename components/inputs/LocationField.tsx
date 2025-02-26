@@ -57,8 +57,6 @@ const LocationField = ({
     }
   }, [userDetails?.savedAddresses]);
 
-  console.log("address---", address);
-
   return (
     <View style={styles.container}>
       <PaperDropdown

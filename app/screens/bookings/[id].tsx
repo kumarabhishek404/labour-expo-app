@@ -27,6 +27,7 @@ import SelectedUsers from "./selectedUsers";
 import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import ButtonComp from "@/components/inputs/Button";
+import WORKER from "@/app/api/workers";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -59,16 +60,20 @@ const BookingDetails = () => {
         ]
       : [booking?.bookedWorker];
 
+  console.log("category--", category, id);
+
   const {
     isLoading,
     data: response,
     refetch,
   } = useQuery({
     queryKey: ["bookingDetails", id],
-    queryFn: async () => await SERVICE?.getServiceById(id),
+    queryFn: async () =>
+      category === "recievedRequests" || category === "sentRequests"
+        ? await WORKER?.fetchBookingInvitationsDetails(id)
+        : await SERVICE?.getServiceById(id),
     retry: false,
-    enabled:
-      !!id && category !== "recievedRequests" && category !== "sentRequests",
+    enabled: !!id,
   });
 
   useFocusEffect(
@@ -95,6 +100,8 @@ const BookingDetails = () => {
       return () => unsubscribe;
     }, [response])
   );
+
+  console.log("booking?.employer--", booking?.bookedWorker);
 
   return (
     <>
@@ -208,82 +215,89 @@ const BookingDetails = () => {
               </CustomText>
             </View>
 
-            <Highlights booking={booking} />
+            <Highlights service={booking} />
 
-            <CustomText
-              textAlign="left"
-              baseFont={14}
-              style={{ marginBottom: 10 }}
-            >
-              {booking?.description || "No description found"}
-            </CustomText>
+            {booking?.description && (
+              <View style={{ marginVertical: 20 }}>
+                <CustomHeading
+                  textAlign="left"
+                  baseFont={18}
+                  color={Colors?.inputLabel}
+                >
+                  {t("description")}
+                </CustomHeading>
+                <CustomText textAlign="left" baseFont={16}>
+                  {booking?.description}
+                </CustomText>
+              </View>
+            )}
 
             {booking && booking?.requirements?.length > 0 && (
               <Requirements type="full" requirements={booking?.requirements} />
             )}
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 10,
-              }}
-            >
-              {booking?.employer === userDetails?._id ? (
-                <ButtonComp
-                  isPrimary={true}
-                  title="Add Attendance"
-                  onPress={() =>
-                    router?.push({
-                      pathname: "/screens/bookings/addAttendance",
-                      params: {
-                        bookingDetails: JSON.stringify(booking),
-                        workers: JSON.stringify(workersList),
-                      },
-                    })
-                  }
-                  style={{ flex: 1, paddingVertical: 6 }}
-                />
-              ) : (
-                <ButtonComp
-                  isPrimary={true}
-                  title="Show Your Attendance"
-                  onPress={() =>
-                    router?.push({
-                      pathname: "/screens/bookings/showAttendance",
-                      params: {
-                        bookingDetails: JSON.stringify(booking),
-                      },
-                    })
-                  }
-                  bgColor={Colors?.tertieryButton}
-                  borderColor={Colors?.tertieryButton}
-                  style={{ flex: 1, paddingVertical: 6 }}
-                />
-              )}
-            </View>
-
-            {booking?.employer === userDetails?._id && (
-              <CustomHeading
-                textAlign="left"
-                color={Colors?.heading}
-                baseFont={20}
-                style={{ width: "50%", marginBottom: 10 }}
+            {booking?.status === "HIRING" && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginVertical: 20,
+                }}
               >
-                All Booked Workers
-              </CustomHeading>
+                {booking?.employer === userDetails?._id ? (
+                  <ButtonComp
+                    isPrimary={true}
+                    title="Add Attendance"
+                    onPress={() =>
+                      router?.push({
+                        pathname: "/screens/bookings/addAttendance",
+                        params: {
+                          bookingDetails: JSON.stringify(booking),
+                          workers: JSON.stringify(workersList),
+                        },
+                      })
+                    }
+                    style={{ flex: 1, paddingVertical: 6 }}
+                  />
+                ) : (
+                  <ButtonComp
+                    isPrimary={true}
+                    title="Show Your Attendance"
+                    onPress={() =>
+                      router?.push({
+                        pathname: "/screens/bookings/showAttendance",
+                        params: {
+                          bookingDetails: JSON.stringify(booking),
+                        },
+                      })
+                    }
+                    bgColor={Colors?.tertieryButton}
+                    borderColor={Colors?.tertieryButton}
+                    style={{ flex: 1, paddingVertical: 6 }}
+                  />
+                )}
+              </View>
             )}
             {booking?.employer && booking?.employer === userDetails?._id && (
-              <SelectedUsers
-                selectedApplicants={[
-                  ...(booking?.bookedWorker ? [booking?.bookedWorker] : []),
-                  ...(booking?.selectedUsers || []),
-                ].filter(Boolean)}
-                bookingId={booking?._id}
-                bookingType={booking?.bookingType}
-                refetch={refetch}
-              />
+              <View style={{ marginVertical: 20 }}>
+                <CustomHeading
+                  textAlign="left"
+                  color={Colors?.heading}
+                  baseFont={20}
+                  style={{ width: "50%", marginBottom: 10 }}
+                >
+                  All Booked Workers
+                </CustomHeading>
+                <SelectedUsers
+                  selectedApplicants={[
+                    ...(booking?.bookedWorker ? [booking?.bookedWorker] : []),
+                  ].filter(Boolean)}
+                  bookingId={booking?._id}
+                  bookingType={booking?.bookingType}
+                  refetch={refetch}
+                />
+              </View>
             )}
           </View>
 

@@ -16,7 +16,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
           ...item.selectedUsers.flatMap((user: any) => user?.workers || []),
         ]
       : [item?.bookedWorker];
-      
+
   const firstWorker = workersList?.[0];
 
   return (
@@ -26,10 +26,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
           router.push({
             pathname: "/screens/bookings/[id]",
             params: {
-              id:
-                category !== "recievedRequests" &&
-                category !== "sentRequests" &&
-                item?._id,
+              id: item?._id,
               title: title || `Worker Details`,
               data: JSON.stringify(item),
               category: category,
@@ -99,21 +96,23 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
                   ⏳ {item?.duration || "N/A"} days
                 </CustomText>
               </View>
-              <ButtonComp
-                isPrimary={true}
-                title="Add Attendance"
-                onPress={() =>
-                  router?.push({
-                    pathname: "/screens/bookings/addAttendance",
-                    params: {
-                      bookingDetails: JSON.stringify(item),
-                      workers: JSON.stringify(workersList),
-                    },
-                  })
-                }
-                textStyle={{ fontSize: 16 }}
-                style={{ width: "50%", marginTop: 10, paddingVertical: 6 }}
-              />
+              {item?.status === "HIRING" && (
+                <ButtonComp
+                  isPrimary={true}
+                  title="Add Attendance"
+                  onPress={() =>
+                    router?.push({
+                      pathname: "/screens/bookings/addAttendance",
+                      params: {
+                        bookingDetails: JSON.stringify(item),
+                        workers: JSON.stringify(workersList),
+                      },
+                    })
+                  }
+                  textStyle={{ fontSize: 16 }}
+                  style={{ width: "50%", marginTop: 10, paddingVertical: 6 }}
+                />
+              )}
             </View>
           </View>
         </View>

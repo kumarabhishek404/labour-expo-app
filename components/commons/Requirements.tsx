@@ -4,6 +4,8 @@ import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import CustomeAnimatedHeading from "./CustomeAnimatedHeading";
 
 interface RequirementsProps {
   type: string;
@@ -44,6 +46,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
         </View>
       ) : (
         <View style={styles.requirmentContainer}>
+          <CustomeAnimatedHeading color={Colors?.inputLabel} />
           {requirements?.map((requirement: any, index: number) => {
             return (
               <View style={styles.card} key={index}>
@@ -51,7 +54,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                   <CustomHeading style={{ textTransform: "capitalize" }}>
                     {t(`${requirement?.name}`)}
                   </CustomHeading>
-                  <CustomText baseFont={14}>
+                  <CustomText baseFont={17} color={Colors?.primary} fontWeight="bold">
                     ₹ {requirement?.payPerDay} {t("perDay")}
                   </CustomText>
                 </View>
@@ -67,14 +70,6 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                   </View>
                   <View style={styles?.detailBox}>
                     <CustomText fontWeight="700" color={Colors?.tertieryButton}>
-                      {t("food")}
-                    </CustomText>
-                    <CustomText fontWeight="800" textAlign="left">
-                      {requirement?.food ? "Yes" : "No"}
-                    </CustomText>
-                  </View>
-                  <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
                       {t("living")}
                     </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
@@ -83,7 +78,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                   </View>
                   <View style={styles?.detailBox}>
                     <CustomText fontWeight="700" color={Colors?.tertieryButton}>
-                      {t("esi/pf")}
+                      {t("esi_pf")}
                     </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
                       No
@@ -107,8 +102,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   requirmentContainer: {
-    marginVertical: 10,
     borderRadius: 8,
+    paddingTop: 20
   },
   card: {
     backgroundColor: Colors?.white,
@@ -154,6 +149,12 @@ const styles = StyleSheet.create({
   smallRequirementText: {
     color: Colors.white,
     fontSize: 12,
+  },
+  requirementsHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 5,
   },
 });
 

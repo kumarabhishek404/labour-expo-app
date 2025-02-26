@@ -1,10 +1,16 @@
 import Colors from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { dateDifference } from "@/constants/functions";
-import { openGoogleMaps } from "@/app/hooks/map";
+// import { openGoogleMaps } from "@/app/hooks/map";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
@@ -22,7 +28,7 @@ const Highlights = ({ service }: any) => {
       <View style={styles.highlightWrapper}>
         <View style={styles?.highlightBox}>
           <View style={styles.highlightIcon}>
-            <Ionicons name="time" size={18} color={Colors.primary} />
+            <Ionicons name="time" size={18} color={Colors.tertieryButton} />
           </View>
           <View style={{ flex: 1 }}>
             <CustomText textAlign="left">{t("duration")}</CustomText>
@@ -31,20 +37,86 @@ const Highlights = ({ service }: any) => {
             </CustomHeading>
           </View>
         </View>
+      </View>
 
-        <View style={styles?.highlightBox}>
-          <View style={styles.highlightIcon}>
-            <FontAwesome name="users" size={18} color={Colors.primary} />
+      <View style={styles?.facilitiesHeading}>
+        <CustomHeading
+          textAlign="left"
+          baseFont={18}
+          color={Colors?.inputLabel}
+        >
+          Facilities provided by employer
+        </CustomHeading>
+        <MaterialCommunityIcons
+          name="hand-pointing-down"
+          size={18}
+          color={Colors.inputLabel}
+        />
+      </View>
+      <View style={styles?.facilitiesContainer}>
+        <View style={styles.highlightWrapper}>
+          <View style={styles?.highlightBox}>
+            <View style={styles.highlightIcon}>
+              <MaterialCommunityIcons
+                name="food-apple"
+                size={20}
+                color={Colors.tertieryButton}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CustomText textAlign="left">{t("food")}</CustomText>
+              <CustomHeading textAlign="left">
+                {service?.facilities?.food ? t("yes") : t("no")}
+              </CustomHeading>
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <CustomText textAlign="left">{t("travelling")}</CustomText>
-            <CustomHeading textAlign="left">
-              {service?.travelling || t("no")}
-            </CustomHeading>
+
+          <View style={styles?.highlightBox}>
+            <View style={styles.highlightIcon}>
+              <Ionicons name="home" size={20} color={Colors.tertieryButton} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CustomText textAlign="left">{t("living")}</CustomText>
+              <CustomHeading textAlign="left">
+                {service?.facilities?.living ? t("yes") : t("no")}
+              </CustomHeading>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.highlightWrapper}>
+          <View style={styles?.highlightBox}>
+            <View style={styles.highlightIcon}>
+              <FontAwesome5
+                name="shuttle-van"
+                size={16}
+                color={Colors.tertieryButton}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CustomText textAlign="left">{t("travelling")}</CustomText>
+              <CustomHeading textAlign="left">
+                {service?.facilities?.travelling ? t("yes") : t("no")}
+              </CustomHeading>
+            </View>
+          </View>
+          <View style={styles?.highlightBox}>
+            <View style={styles.highlightIcon}>
+              <FontAwesome5
+                name="coins"
+                size={18}
+                color={Colors.tertieryButton}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CustomText textAlign="left">{t("esi_pf")}</CustomText>
+              <CustomHeading textAlign="left">
+                {service?.facilities?.esi_pf ? t("yes") : t("no")}
+              </CustomHeading>
+            </View>
           </View>
         </View>
       </View>
-
       <View style={[styles.highlightWrapper, {}]}>
         {service?.location && service?.location?.latitude && (
           <View
@@ -69,7 +141,7 @@ const Highlights = ({ service }: any) => {
             <Button
               isPrimary={false}
               title="Get Direction"
-              onPress={() => openGoogleMaps(destination)}
+              onPress={() => {}}
               icon={
                 <FontAwesome
                   name="users"
@@ -99,25 +171,26 @@ const Highlights = ({ service }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
+    marginTop: 20,
   },
   highlightWrapper: {
     flexDirection: "row",
-    marginBottom: 10,
     justifyContent: "space-between",
+    alignItems: "center",
   },
   highlightBox: {
     flexDirection: "row",
     width: "48%",
   },
   highlightIcon: {
-    backgroundColor: "#F4F4F4",
+    backgroundColor: Colors?.white,
     paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 8,
-    marginRight: 5,
+    marginRight: 8,
+    display: "flex",
+    justifyContent: "center",
     alignItems: "center",
-    height: 30,
   },
   highlightTxt: {
     fontSize: 12,
@@ -133,6 +206,22 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginRight: 10,
     textAlign: "left",
+  },
+  facilitiesContainer: {
+    borderWidth: 0.5,
+    borderColor: Colors?.disabled,
+    backgroundColor: Colors?.fourth,
+    borderRadius: 8,
+    gap: 10,
+    padding: 10,
+    elevation: 1
+  },
+  facilitiesHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    marginTop: 20,
+    gap: 5,
   },
 });
 

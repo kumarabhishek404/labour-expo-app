@@ -99,10 +99,10 @@ export const REGISTERSTEPS = [
 ];
 
 export const ADDSERVICESTEPS = [
-  { label: "titleDescription" },
-  { label: "addressDate" },
+  { label: "typeAndSubType" },
   { label: "requirements" },
-  { label: "images" },
+  { label: "addressDate" },
+  { label: "checkDetails" },
 ];
 
 export const WORKERTYPES = [

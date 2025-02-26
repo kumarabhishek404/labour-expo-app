@@ -71,8 +71,6 @@ const LoginScreen = () => {
         ...user,
       });
 
-      console.log("user---", user);
-
       TOAST?.success(t("loggedInSuccessfully"));
       if (isFirstLaunch) {
         return router?.push("/screens/tutorials/bootomNavigation");

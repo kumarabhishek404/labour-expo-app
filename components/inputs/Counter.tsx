@@ -53,7 +53,7 @@ const Counter = ({ label, counter, setCounter, style, errors, name }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 44,
+    height: 42,
     gap: 5,
   },
   buttons: {
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    padding: 10,
-    // height: 44,
+    paddingHorizontal: 12,
+    height: 42,
     justifyContent: "center",
     borderRadius: 8,
     backgroundColor: Colors.white,

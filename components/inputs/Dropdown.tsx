@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Text, TextInput, Modal, Portal, Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import CustomText from "../commons/CustomText";
@@ -20,6 +26,7 @@ const PaperDropdown = ({
   name,
   label,
   errors,
+  isLoading,
 }: any) => {
   const [visible, setVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -103,7 +110,7 @@ const PaperDropdown = ({
           contentContainerStyle={styles.modalContainer}
         >
           {/* Search Bar */}
-          {options.length > 0 && searchEnabled && (
+          {!isLoading && options.length > 0 && searchEnabled && (
             <TextInput
               label="Search..."
               value={searchText}
@@ -114,40 +121,54 @@ const PaperDropdown = ({
           )}
 
           {/* Scrollable Dropdown List */}
-          <ScrollView
-            style={styles.listContainer}
-            keyboardShouldPersistTaps="handled"
-          >
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((item: any) => (
-                <TouchableOpacity
-                  key={item.value}
-                  style={styles.optionItem}
-                  onPress={() => handleSelect(item.value)}
-                >
-                  <View style={styles.optionContent}>
-                    {item.icon && (
-                      <View style={styles.iconContainer}>{item.icon}</View>
+          {isLoading ? (
+            <View
+              style={{
+                minHeight: 100,
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <ActivityIndicator size={30} color={Colors?.tertieryButton} />
+              <CustomText color={Colors?.tertieryButton}>Loading...</CustomText>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.listContainer}
+              keyboardShouldPersistTaps="handled"
+            >
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((item: any) => (
+                  <TouchableOpacity
+                    key={item.value}
+                    style={styles.optionItem}
+                    onPress={() => handleSelect(item.value)}
+                  >
+                    <View style={styles.optionContent}>
+                      {item.icon && (
+                        <View style={styles.iconContainer}>{item.icon}</View>
+                      )}
+                      <Text style={styles.optionText}>
+                        {translationEnabled ? t(item.label) : item.label}
+                      </Text>
+                    </View>
+                    {selectedValue === item.value && (
+                      <Ionicons name="checkmark" size={20} color="black" />
                     )}
-                    <Text style={styles.optionText}>
-                      {translationEnabled ? t(item.label) : item.label}
-                    </Text>
-                  </View>
-                  {selectedValue === item.value && (
-                    <Ionicons name="checkmark" size={20} color="black" />
-                  )}
-                </TouchableOpacity>
-              ))
-            ) : (
-              <CustomText
-                style={{ marginVertical: 20 }}
-                baseFont={20}
-                color={Colors?.inputPlaceholder}
-              >
-                {translationEnabled ? t(placeholder) : placeholder}
-              </CustomText>
-            )}
-          </ScrollView>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <CustomText
+                  style={{ marginVertical: 20 }}
+                  baseFont={20}
+                  color={Colors?.inputPlaceholder}
+                >
+                  {translationEnabled ? t(placeholder) : placeholder}
+                </CustomText>
+              )}
+            </ScrollView>
+          )}
 
           {/* Close Button */}
           <Button

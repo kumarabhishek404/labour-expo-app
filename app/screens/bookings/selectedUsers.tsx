@@ -290,6 +290,7 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     flex: 1,
+    marginLeft: 10,
   },
   titleContainer: {
     flexDirection: "row",

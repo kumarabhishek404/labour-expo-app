@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LOCAL_CONTEXT from "./context/locale";
@@ -16,7 +16,9 @@ import { StatusBar } from "react-native";
 import Colors from "@/constants/Colors";
 import GlobalBottomDrawer from "@/components/commons/DrawerFromGlobal";
 import { ToastProvider } from "./hooks/toast";
+import NotificationBanner from "@/components/commons/InAppNotificationBanner";
 
+// ✅ Notification Handler for foreground handling
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -25,18 +27,13 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export {
-  ErrorBoundary, // Catch any errors thrown by the Layout component.
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "/(tabs)", // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "/(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
-// Set the animation options. This is optional.
 SplashScreen.setOptions({
   duration: 1000,
   fade: true,
@@ -53,20 +50,17 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
 
   return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
   const queryClient = new QueryClient();
+  const [notification, setNotification] = useState<any>(null);
 
   return (
     <SafeAreaProvider>
@@ -75,6 +69,13 @@ function RootLayoutNav() {
           <QueryClientProvider client={queryClient}>
             <PaperProvider>
               <ToastProvider>
+                {notification && (
+                  <NotificationBanner
+                    title={notification.title}
+                    body={notification.body}
+                    onClose={() => setNotification(null)}
+                  />
+                )}
                 <StatusBar backgroundColor={Colors?.background} />
                 <Stack screenOptions={{ headerShown: true }}>
                   <Stack.Screen

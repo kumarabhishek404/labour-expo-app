@@ -16,11 +16,12 @@ import { ALL_INDIAN_VILLAGES } from "@/constants/india";
 import { STATES, STETESOFINDIA } from "@/constants";
 import SERVICE from "@/app/api/services";
 
-const AddAddressDrawer = ({ visible, onClose }: any) => {
+const AddAddressDrawer = ({ userId, visible, onClose, onAfterSuccess }: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [districts, setDistricts]: any = useState([]);
   const [subDistricts, setSubDistricts]: any = useState([]);
   const [villages, setVillages]: any = useState([]);
+  const [isLoading, setIsLoading]: any = useState(false);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [allStateVillages, setAllStateVillages]: any = useState([]);
   const { watch, handleSubmit, setValue, reset } = useForm({
@@ -38,14 +39,27 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
   const selectedDistrict = watch("district");
   const selectedSubDistrict = watch("subDistrict");
 
-  console.log("state --", selectedState, districts);
-  console.log("district -- ", selectedDistrict, subDistricts);
-  console.log("sub-disctrict --", subDistricts, villages);
+  console.log("userId --", userId);
 
   const mutationUpdateProfileInfo = useMutation({
-    mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => USER?.updateUserById(payload),
-    onSuccess: (response) => {
+    mutationKey: ["updateAddress"],
+    mutationFn: (payload: any) =>
+      USER?.updateUserById({
+        _id: userId,
+        ...payload,
+      }),
+    onSuccess: async (response) => {
+      setDrawerState({
+        visible: false,
+        title: "",
+        content: () => null,
+        primaryButton: null,
+        secondaryButton: null,
+      });
+      onClose();
+      reset();
+      TOAST?.success(t("addressAddedSuccessfully"));
+      await onAfterSuccess();
       console.log("Address updated successfully", response?.data?.data);
     },
     onError: (err) => {
@@ -57,20 +71,21 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
     mutationKey: ["fetchStateDetails"],
     mutationFn: (payload: any) => SERVICE?.fetchAllVillages(payload),
     onSuccess: (response: any) => {
+      setIsLoading(false);
       // Extract districts, subDistricts, and villages from the API response
       setAllStateVillages(response);
     },
     onError: (error) => {
+      setIsLoading(false);
       console.error("Error fetching state details:", error);
-      TOAST?.error(
-        "Failed to fetch location details. Please try again later."
-      );
+      TOAST?.error("Failed to fetch location details. Please try again later.");
     },
   });
 
   // API Trigger on State Selection
   useEffect(() => {
     if (selectedState) {
+      setIsLoading(true);
       setDistricts([]);
       setSubDistricts([]);
       setVillages([]);
@@ -152,23 +167,9 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
       savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
     });
 
-    if (userDetails?.isAuth) {
-      await mutationUpdateProfileInfo.mutate({
-        _id: userDetails?._id,
-        savedAddresses: address,
-      });
-    }
-
-    setDrawerState({
-      visible: false,
-      title: "",
-      content: () => null,
-      primaryButton: null,
-      secondaryButton: null,
+    await mutationUpdateProfileInfo.mutate({
+      address: address,
     });
-    onClose();
-    reset();
-    TOAST?.success(t("addressAddedSuccessfully"));
   };
 
   const modalContent = () => (
@@ -209,6 +210,7 @@ const AddAddressDrawer = ({ visible, onClose }: any) => {
             />
           }
           disabled={!selectedState}
+          isLoading={fetchStateDetailsMutation?.isPending}
         />
         <PaperDropdown
           name="subDistrict"

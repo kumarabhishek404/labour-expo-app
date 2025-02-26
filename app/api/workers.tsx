@@ -78,6 +78,27 @@ const fetchAllBookingReceivedInvitations = async ({ pageParam }: any) => {
   }
 };
 
+const fetchBookingInvitationsDetails = async (id: any) => {
+  console.log("Idd----", id);
+  
+  try {
+    const data = await API_CLIENT.makeGetRequest(
+      `/worker/booking/invitation/${id}`
+    );
+    return data.data;
+  } catch (error: any) {
+    console.error(
+      `[userService] An error occurred while fetching booking requests details : `,
+      error?.response?.data?.message
+    );
+    TOAST?.error(
+      error?.response?.data?.message ||
+        "An error occurred while fetching booking requests details"
+    );
+    throw error;
+  }
+};
+
 const acceptBookingRequest = async (payload: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
@@ -200,8 +221,6 @@ const acceptTeamRequest = async (payload: any) => {
 };
 
 const rejectTeamRequest = async (payload: any) => {
-  console.log("Paylaof --", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest(
       "/worker/team/request/reject",
@@ -247,6 +266,7 @@ const WORKER = {
   unApplyService,
   fetchMyAppliedServices,
   fetchAllBookingReceivedInvitations,
+  fetchBookingInvitationsDetails,
   acceptBookingRequest,
   rejectBookingRequest,
   fetchAllMyBookings,

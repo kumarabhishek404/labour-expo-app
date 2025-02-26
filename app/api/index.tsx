@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from "axios";
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
 // AsyncStorage?.removeItem("user")
-// AsyncStorage?.removeItem("selectedLanguage")
+// AsyncStorage?.removeItem("appearedNotifications")
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {

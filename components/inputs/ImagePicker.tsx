@@ -59,6 +59,8 @@ const ImageUpload = ({
             isPrimary={true}
             title="Choose images"
             onPress={pickImage}
+            bgColor={Colors?.tertieryButton}
+            borderColor={Colors?.tertieryButton}
             style={styles.imageUploadButton}
           />
         </View>
@@ -100,7 +102,7 @@ export default ImageUpload;
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: Colors.secondary,
+    borderColor: Colors.inputBorder,
     backgroundColor: Colors.white,
     borderRadius: 8,
     flexDirection: "column",
@@ -128,9 +130,8 @@ const styles = StyleSheet.create({
   },
   imageUploadButton: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: 8,
-    minHeight: 40,
   },
   cancelImage: {
     position: "absolute",

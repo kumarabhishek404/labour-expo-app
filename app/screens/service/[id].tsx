@@ -165,7 +165,7 @@ const ServiceDetails = () => {
     },
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer?._id,
+    enabled: userDetails?._id === service?.employer,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -260,7 +260,7 @@ const ServiceDetails = () => {
 
           <View style={styles.contentWrapper}>
             {service?.status === "CANCELLED" && (
-              <View style={styles?.selectedWrapper}>
+              <View style={styles?.cancelledService}>
                 <View style={{ width: "100%" }}>
                   <CustomHeading color={Colors?.white} textAlign="left">
                     {t("thisServiceIsCancelled")}
@@ -366,9 +366,20 @@ const ServiceDetails = () => {
 
             <Highlights service={service} />
 
-            <CustomText textAlign="left" baseFont={13}>
-              {service?.description}
-            </CustomText>
+            {service?.description && (
+              <View style={{ marginVertical: 10 }}>
+                <CustomHeading
+                  textAlign="left"
+                  baseFont={18}
+                  color={Colors?.inputLabel}
+                >
+                  {t("description")}
+                </CustomHeading>
+                <CustomText textAlign="left" baseFont={16}>
+                  {service?.description}
+                </CustomText>
+              </View>
+            )}
 
             {service && service?.requirements?.length > 0 && (
               <Requirements type="full" requirements={service?.requirements} />
@@ -567,6 +578,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors?.success,
+  },
+  cancelledService: {
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: Colors?.danger,
   },
   listingLocationWrapper: {
     flexDirection: "row",

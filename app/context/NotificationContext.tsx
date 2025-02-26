@@ -50,7 +50,9 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   useEffect(() => {
     // Register push notifications
-    PUSH_NOTIFICATION?.registerForPushNotificationsAsync(notificationConsent).then(
+    PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+      notificationConsent
+    ).then(
       (token: any) => setExpoPushToken(token),
       (error: React.SetStateAction<Error | null>) => setError(error)
     );
@@ -60,7 +62,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
       Notifications.addNotificationReceivedListener((notification) => {
         console.log("🔔 Notification Received: ", notification);
         setNotification(notification);
-        setHasNewNotification(true); // Update state for global notification indicator
+        setHasNewNotification(true);
       });
 
     responseListener.current =
@@ -89,7 +91,6 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
   // Logic for handling logged-in users (Optional)
   useEffect(() => {
     if (userDetails?.isAuth) {
-      // console.log("User is authenticated. Additional notification handling.");
       // Perform additional notification handling for logged-in users
     }
   }, [userDetails]);

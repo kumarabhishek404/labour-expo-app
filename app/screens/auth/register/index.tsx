@@ -140,7 +140,7 @@ const SignupScreen = () => {
         return <ThirdScreen />;
 
       case 3:
-        return <FourthScreen setStep={setStep} handleUpdate={handleSubmit} />;
+        return <FourthScreen />;
 
       case 4:
         return <FifthScreen />;

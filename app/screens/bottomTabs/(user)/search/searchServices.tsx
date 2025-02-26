@@ -40,8 +40,6 @@ const SearchServices = ({ style }: any) => {
   });
 
   const userDetails = useAtomValue(Atoms?.UserAtom);
-  console.log("watchhh---", watch("subType"));
-
   const {
     data: secondResponse,
     isFetchingNextPage: secondIsFetchingNextPage,

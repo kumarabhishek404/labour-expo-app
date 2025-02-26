@@ -1,15 +1,14 @@
 import {
   StyleSheet,
-  Text,
   TouchableOpacity,
   Animated,
   View,
-  Image,
+  BackHandler,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
-import { router, Tabs } from "expo-router";
+import { router, Tabs, useFocusEffect, useNavigation } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Colors from "@/constants/Colors";
 import Login from "../screens/auth/login";
@@ -18,24 +17,65 @@ import LOCAL_CONTEXT from "@/app/context/locale";
 import { t } from "@/utils/translationHelper";
 import LanguageSelectionScreen from "../languageSelection";
 import ProfileScreen from "../screens/bottomTabs/(user)/profile";
-import { getFontSize } from "@/constants/functions";
+import { getFontSize, isEmptyObject } from "@/constants/functions";
 import BadgeComponent from "@/components/commons/Badge";
-import NOTIFICATIONS from "../../assets/notifications.gif";
-import PROFILE from "../../assets/profile.gif";
+import { useQuery } from "@tanstack/react-query";
+import NOTIFICATION from "../api/notification";
+import triggerLocalNotification from "../hooks/triggerNotificationAdmin";
+import useUnreadNotificationsHandler from "../hooks/useInAppNotifications";
 
 export default function Layout() {
+  const navigation = useNavigation();
+  const setNotificationCount = useSetAtom(Atoms?.notificationCount);
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
+  const notificationCount = useAtomValue(Atoms?.notificationCount);
   const [isAccountInactiveLocal, setIsAccountInactiveLocal] =
     useState(isAccountInactive);
-  const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
+  const [addServiceStep, setAddServiceStep] = useAtom(
+    Atoms?.AddServiceStepAtom
+  );
   LOCAL_CONTEXT?.useLocale();
   const isFirstLaunch = useFirstTimeLaunch();
   const { locale } = LOCAL_CONTEXT.useLocale();
 
+  const { data: response } = useQuery({
+    queryKey: ["allNotificationsCount", userDetails?._id],
+    queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
+    retry: false,
+    refetchInterval: 10000,
+    enabled: !!userDetails?._id, // API will stop when userDetails is null
+  });
+  useUnreadNotificationsHandler(response, triggerLocalNotification);
+
+  useEffect(() => {
+    if (response) {
+      // console.log("(response?.unreadCount --", response);
+      setNotificationCount(response?.unreadCount);
+    }
+  }, [response]);
+
   useEffect(() => {
     setIsAccountInactiveLocal(isAccountInactive);
   }, [isAccountInactive]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+          return true; // prevent default behavior
+        }
+        BackHandler.exitApp(); // close the app when no more routes
+        return false;
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [navigation])
+  );
 
   if (isFirstLaunch === null) {
     return null;
@@ -77,7 +117,12 @@ export default function Layout() {
 
     return (
       <TouchableOpacity
-        style={[styles.customButton]}
+        style={[
+          styles.customButton,
+          // addServiceStep > 1 &&
+          //   title !== "Post Service" &&
+          //   styles?.disableClick,
+        ]}
         onPress={path ? () => router?.push(path) : onPress()}
       >
         <Animated.View
@@ -167,7 +212,10 @@ export default function Layout() {
     return (
       <>
         <TouchableOpacity
-          style={[styles.customButton]}
+          style={[
+            styles.customButton,
+            // addServiceStep > 1 && styles?.disableClick,
+          ]}
           onPress={() => router?.push("/(tabs)/fifth")}
         >
           <Animated.View
@@ -202,7 +250,7 @@ export default function Layout() {
                       : Colors?.primary,
                     marginLeft: -10,
                   }}
-                  count={4}
+                  count={notificationCount ?? 0}
                 />
               }
             </View>
@@ -231,7 +279,7 @@ export default function Layout() {
           headerShown: false,
           tabBarStyle: {
             height: 70,
-            display: "flex",
+            display: addServiceStep > 1 ? "none" : "flex",
             alignContent: "center",
             justifyContent: "center",
             backgroundColor: Colors.white,
@@ -245,9 +293,9 @@ export default function Layout() {
       >
         <Tabs.Screen
           name="index"
-          listeners={{
-            tabPress: () => setAddService({}),
-          }}
+          // listeners={{
+          //   tabPress: () => setAddServiceStep({}),
+          // }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -262,9 +310,9 @@ export default function Layout() {
 
         <Tabs.Screen
           name="fourth"
-          listeners={{
-            tabPress: () => setAddService({}),
-          }}
+          // listeners={{
+          //   tabPress: () => setAddService({}),
+          // }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -279,9 +327,9 @@ export default function Layout() {
 
         <Tabs.Screen
           name="second"
-          listeners={{
-            tabPress: () => setAddService({}),
-          }}
+          // listeners={{
+          //   tabPress: () => setAddService({}),
+          // }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -296,9 +344,9 @@ export default function Layout() {
 
         <Tabs.Screen
           name="fifth"
-          listeners={{
-            tabPress: () => setAddService({}),
-          }}
+          // listeners={{
+          //   tabPress: () => setAddService({}),
+          // }}
           options={{
             tabBarButton: (props) => (
               <TabButtonProfile
@@ -320,6 +368,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 5,
     paddingVertical: 5,
+  },
+  disableClick: {
+    opacity: 0,
+    pointerEvents: "none",
   },
   customButtonText: {
     color: Colors?.primary,

@@ -6,14 +6,15 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   ScrollView,
+  BackHandler,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
 import { Ionicons } from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
-import { SlideInDown } from "react-native-reanimated";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 const Drawer = ({
   title,
@@ -23,18 +24,34 @@ const Drawer = ({
   primaryButton,
   secondaryButton,
 }: any) => {
-  const slideAnim = useRef(new Animated.Value(width)).current; // Start off-screen
+  const slideAnim = useRef(new Animated.Value(width)).current;
+
+  // Handle Android back button when drawer is open
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (visible) {
+          onClose();
+          return true; // Prevent default back action
+        }
+        return false;
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [visible, onClose])
+  );
 
   useEffect(() => {
     if (visible) {
-      // Open animation
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }).start();
     } else {
-      // Close animation
       Animated.timing(slideAnim, {
         toValue: width,
         duration: 300,
@@ -45,21 +62,18 @@ const Drawer = ({
 
   return (
     <>
-      {/* Backdrop to close on click */}
       {visible && (
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.backdrop} />
         </TouchableWithoutFeedback>
       )}
 
-      {/* Sliding Drawer */}
       <Animated.View
         style={[
           styles.drawerContainer,
           { transform: [{ translateX: slideAnim }] },
         ]}
       >
-        {/* Header */}
         <View style={styles.header}>
           <CustomHeading baseFont={20} fontWeight="bold">
             {title}
@@ -72,7 +86,6 @@ const Drawer = ({
           />
         </View>
 
-        {/* Scrollable Drawer Content */}
         <ScrollView
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentContainer}
@@ -82,7 +95,6 @@ const Drawer = ({
           {content()}
         </ScrollView>
 
-        {/* Footer Buttons */}
         {(primaryButton || secondaryButton) && (
           <Animated.View style={styles.footer}>
             {secondaryButton && (
@@ -131,7 +143,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    width: "100%", // Adjust width of drawer
+    width: "100%",
     backgroundColor: Colors.background,
     paddingHorizontal: 20,
     shadowColor: "#000",
@@ -150,11 +162,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    // maxHeight: height * 0.75, // Prevents overflow beyond 75% of screen height
   },
-  contentContainer: {
-    // paddingBottom: 20, // Adds spacing at the bottom
-  },
+  contentContainer: {},
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",

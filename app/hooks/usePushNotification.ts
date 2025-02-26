@@ -17,10 +17,10 @@ const registerForPushNotificationsAsync = async (
     });
   }
 
-  function handleRegistrationError(errorMessage: string) {
-    TOAST?.error(errorMessage);
-    throw new Error(errorMessage);
-  }
+  // function handleRegistrationError(errorMessage: string) {
+  //   TOAST?.error(errorMessage);
+  //   throw new Error(errorMessage);
+  // }
 
   if (Device.isDevice) {
     const { status: existingStatus } =
@@ -77,7 +77,7 @@ const unregisterPushNotifications = async () => {
       return false;
     } else {
       // On Android, we can directly disable the notifications
-      await Notifications.setNotificationHandler({
+      Notifications.setNotificationHandler({
         handleNotification: async () => ({
           shouldShowAlert: false,
           shouldPlaySound: false,

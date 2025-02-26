@@ -1,41 +1,31 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import Colors from "@/constants/Colors";
+import { View, StyleSheet } from "react-native";
 import Button from "@/components/inputs/Button";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
-import Step2 from "../../../assets/step2.jpg";
-import DateField from "@/components/inputs/DateField";
-import { isEmptyObject } from "@/constants/functions";
-import { useSetAtom } from "jotai";
-import Stepper from "@/components/commons/Stepper";
-import { ADDSERVICESTEPS } from "@/constants";
+import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
-import moment from "moment";
-import Duration from "@/components/inputs/Duration";
+import WorkRequirment from "@/components/inputs/WorkRequirements";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 interface SecondScreenProps {
   setStep: any;
-  address: string;
-  setAddress: any;
-  location: object;
-  setLocation: any;
-  startDate: Date;
-  setStartDate: any;
-  duration: number;
-  setDuration: any;
+  requirements: string;
+  setRequirements: any;
+  facilities: any;
+  setFacilities: any;
+  type: string;
+  subType: string;
 }
 
 const SecondScreen: React.FC<SecondScreenProps> = ({
   setStep,
-  address,
-  setAddress,
-  location,
-  setLocation,
-  startDate,
-  setStartDate,
-  duration,
-  setDuration,
+  requirements,
+  setRequirements,
+  facilities,
+  setFacilities,
+  type,
+  subType,
 }: SecondScreenProps) => {
   const {
     control,
@@ -44,121 +34,119 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      address: address,
-      location: location,
-      startDate: startDate,
-      duration: duration,
+      requirements: requirements,
     },
   });
-
-  const [selectedOption, setSelectedOption] = useState(
-    !isEmptyObject(location) ? "currentLocation" : "address"
-  );
+  const [errorField, setErrorField] = useState({});
+  const setAddServiceStep = useSetAtom(Atoms?.AddServiceStepAtom);
 
   const onSubmit = (data: any) => {
-    setAddress(data?.address);
-    setStartDate(data?.startDate);
-    setDuration(data?.duration);
+    console.log("Data--", data);
+
+    setRequirements(data?.requirements);
     setStep(3);
   };
 
   return (
     <View style={styles?.container}>
       <View style={{ flexDirection: "column", gap: 25 }}>
-        <View style={{ zIndex: 9 }}>
-          <Controller
-            control={control}
-            name="address"
-            defaultValue=""
-            rules={{
-              required: t("addressIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AddLocationAndAddress
-                label={t("address")}
-                name="address"
-                address={value}
-                setAddress={onChange}
-                onBlur={onBlur}
-                location={location}
-                setLocation={setLocation}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
-                errors={errors}
-              />
-            )}
-          />
-        </View>
-
         <Controller
           control={control}
-          name="startDate"
-          defaultValue={new Date()}
+          name="requirements"
+          defaultValue=""
           rules={{
-            required: t("startDateIsRequired"),
+            required: t("workRequirementsIsRequired"),
             validate: (value) => {
-              if (new Date(value) < new Date()) {
-                return t("startDateNotEarlierThanToday");
-              } else {
-                return true;
+              if (!value || value.length === 0) {
+                return t("atLeastOneRequirementIsNeeded");
               }
+
+              for (let i = 0; i < value.length; i++) {
+                const item: any = value[i];
+                if (!item?.name) {
+                  setErrorField({
+                    index: i,
+                    name: "dropdown",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t("selectAWorker")}`;
+                }
+                if (!item?.payPerDay) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayIsRequired"
+                  )}`;
+                }
+                if (isNaN(parseInt(item?.payPerDay))) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayShouldBeInNumber"
+                  )}`;
+                }
+                if (item?.payPerDay === 0 || !item?.payPerDay) {
+                  setErrorField({
+                    index: i,
+                    name: "price",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "payPerDayMustBeGreaterThan0"
+                  )}`;
+                }
+                if (item?.count === 0 || !item?.count) {
+                  setErrorField({
+                    index: i,
+                    name: "counter",
+                  });
+                  return `${t("requirement")} #${i + 1}: ${t(
+                    "totalRequiredMustBeGreaterThan0"
+                  )}`;
+                }
+              }
+              setErrorField({
+                index: -1,
+                name: "",
+              });
+              return true;
             },
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("startDate")}
-              name="startDate"
-              type="serviceDate"
-              date={moment(value)}
-              setDate={onChange}
-              onBlur={onBlur}
+          render={({ field: { onChange, value } }) => (
+            <WorkRequirment
+              name="requirements"
+              watch={watch}
+              type={type ?? ""}
+              subType={subType ?? ""}
+              requirements={value}
+              setRequirements={onChange}
+              facilities={facilities}
+              setFacilities={setFacilities}
               errors={errors}
+              errorField={errorField}
             />
           )}
         />
-
-        <View style={{ marginBottom: 20 }}>
-          <Controller
-            control={control}
-            name="duration"
-            defaultValue={0}
-            rules={{
-              required: t("durationIsRequired"),
-              validate: (value) => {
-                if (value <= 0) {
-                  return t("durationMustBeGreaterThanZero");
-                } else {
-                  return true;
-                }
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Duration
-                duration={value}
-                setDuration={onChange}
-                errors={errors}
-                name="duration"
-              />
-            )}
-          />
-        </View>
       </View>
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={true}
           title={t("back")}
           onPress={() => {
+            setAddServiceStep(1)
             setStep(1);
           }}
           bgColor={Colors?.danger}
           borderColor={Colors?.danger}
-          style={{ width: "30%", paddingVertical: 8 }}
+          style={{ width: "30%" }}
         />
         <Button
           isPrimary={true}
           title={t("saveAndNext")}
           onPress={handleSubmit(onSubmit)}
-          style={{ flex: 1, paddingVertical: 8 }}
+          style={{ flex: 1 }}
         />
       </View>
     </View>
@@ -179,9 +167,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    gap: 10
+    alignItems: "center",
+    marginTop: 20,
+    gap: 10,
   },
 });
 

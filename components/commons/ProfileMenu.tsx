@@ -30,9 +30,8 @@ import BadgeComponent from "./Badge";
 const ProfileMenu = ({ disabled }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const notificationCount = useAtomValue(Atoms?.notificationCount);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
-  // const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
-  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [notificationConsent, setNotificationConsent] = useAtom(
@@ -139,20 +138,23 @@ const ProfileMenu = ({ disabled }: any) => {
     {
       title: t("notifications"),
       icon: notificationConsent ? (
-        <Ionicons
-          name="notifications-off-outline"
-          size={26}
-          color={Colors.primary}
-        />
-      ) : (
         <View style={styles?.notificationWrapper}>
           <Ionicons
             name="notifications-outline"
             size={26}
             color={Colors.primary}
           />
-          <BadgeComponent style={{ marginTop: -12 }} count={32} />
+          <BadgeComponent
+            style={{ marginTop: -12 }}
+            count={notificationCount ?? 0}
+          />
         </View>
+      ) : (
+        <Ionicons
+          name="notifications-off-outline"
+          size={26}
+          color={Colors.primary}
+        />
       ),
       onPress: () =>
         router?.push({
@@ -160,7 +162,7 @@ const ProfileMenu = ({ disabled }: any) => {
           params: { title: t("notifications"), type: "all" },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("yourTeam"),
@@ -271,7 +273,7 @@ const ProfileMenu = ({ disabled }: any) => {
       switchValue: notificationConsent,
       onSwitchToggle: () => handleNotificationToggle(notificationConsent),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("changeLanguage"),
@@ -285,7 +287,7 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("support"),
@@ -302,7 +304,7 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("tellFriends"),
@@ -316,7 +318,7 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("appFeedback"),
@@ -346,7 +348,7 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("termsAndConditions"),
@@ -362,7 +364,7 @@ const ProfileMenu = ({ disabled }: any) => {
           },
         }),
       style: [styles?.menuItem],
-      isSuspended: disabled,
+      isSuspended: false,
     },
     {
       title: t("deactivateAccount"),
@@ -543,7 +545,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   modalView: {
-    backgroundColor: "white",
     borderRadius: 8,
     paddingVertical: 20,
     alignItems: "center",

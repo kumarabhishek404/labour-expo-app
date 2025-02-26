@@ -18,6 +18,9 @@ const NotificationConsentAtom = atomWithStorage<any>(
   asyncStorage
 );
 
+// Atom to store unread notification IDs
+const unreadNotificationIdsAtom = atom<string[]>([]);
+
 const LocationAtom = atomWithStorage<any>("location", {}, asyncStorage);
 
 const AccountStatusAtom = atomWithStorage<any>(
@@ -28,11 +31,30 @@ const AccountStatusAtom = atomWithStorage<any>(
 
 const AddServiceAtom = atom<any>({});
 
+const AddServiceStepAtom = atom<any>(1);
+
 const hasNewNotificationAtom = atomWithStorage(
   "isNewNotification",
   false,
   asyncStorage
 );
+const notificationCount = atomWithStorage("notficationCount", 0, asyncStorage);
+
+const APPEARED_NOTIFICATIONS_KEY = "appearedNotifications";
+
+const appearedNotificationsAtom = atom<string[]>([]);
+
+const getAppearedNotifications = async (): Promise<string[]> => {
+  const stored = await AsyncStorage.getItem(APPEARED_NOTIFICATIONS_KEY);
+  return stored ? JSON.parse(stored) : [];
+};
+
+const saveAppearedNotifications = async (notifications: string[]) => {
+  await AsyncStorage.setItem(
+    APPEARED_NOTIFICATIONS_KEY,
+    JSON.stringify(notifications)
+  );
+};
 
 const LocaleAtom = atomWithStorage<any>("locale", {}, asyncStorage);
 
@@ -53,9 +75,15 @@ const Atoms = {
   LocationAtom,
   AccountStatusAtom,
   AddServiceAtom,
+  AddServiceStepAtom,
   hasNewNotificationAtom,
+  appearedNotificationsAtom,
+  getAppearedNotifications,
+  saveAppearedNotifications,
+  unreadNotificationIdsAtom,
+  notificationCount,
   LocaleAtom,
-  BottomDrawerAtom
+  BottomDrawerAtom,
 };
 
 // Export the object as default

@@ -24,8 +24,6 @@ const Services = () => {
   const [category, setCategory] = useState("HIRING");
   const { title, type, searchCategory } = useGlobalSearchParams();
 
-  console.log("type--", type, searchCategory);
-
   const {
     data: response,
     isLoading,
@@ -97,8 +95,10 @@ const Services = () => {
     [filteredData]
   );
 
-  const onCatChanged = (category: string) => {
-    setCategory(category);
+  const onCatChanged = (category: any) => {
+    console.log("Caterrrrrr--", category);
+    
+    setCategory(category?.value);
   };
 
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(

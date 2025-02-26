@@ -102,7 +102,7 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
     if (isDrawerVisible) {
       setDrawerState({
         visible: true,
-        title: "Add at least one skill to apply in services",
+        title: "addAtLeastOneSkillApplyServices",
         content: () => (
           <View style={{ paddingVertical: 20 }}>
             <PaperDropdown
@@ -128,12 +128,12 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
           </View>
         ),
         primaryButton: {
-          title: t("addSkill"),
+          title: "addSkill",
           action: onAddSkills,
           disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
         },
         secondaryButton: {
-          title: t("cancel"),
+          title: "cancel",
           action: () => {
             setIsDrawerVisible(false);
             setDrawerState({ visible: false });

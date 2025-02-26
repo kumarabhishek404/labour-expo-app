@@ -11,8 +11,14 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
+import { isEmptyObject } from "@/constants/functions";
+import AddAddressModal from "@/app/screens/location/addAddress";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const FifthScreen = () => {
+  const [isAddAddress, setIsAddress] = useState(false);
+  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const { userId } = useLocalSearchParams();
   const {
     control,
@@ -22,6 +28,7 @@ const FifthScreen = () => {
   } = useForm({
     defaultValues: {
       profilePicture: "",
+      address: "",
     },
   });
 
@@ -30,13 +37,16 @@ const FifthScreen = () => {
     mutationFn: (payload: any) => USER.updateUserById(payload),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.success(t("profileUpdated"));
       router?.push("/screens/auth/login");
     },
     onError: (error) => {
       console.error("Profile update error:", error);
     },
   });
+
+  const handleAddAddress = (data: any) => {
+    setIsAddress(true);
+  };
 
   const handleProfilePictureSubmit = async (data: any) => {
     if (
@@ -59,8 +69,6 @@ const FifthScreen = () => {
       name: imageName || "photo.jpg",
     });
     formData?.append("_id", userId);
-
-    console.log("Forrr---", formData);
 
     mutationUpdateProfile.mutate(formData);
   };
@@ -101,10 +109,26 @@ const FifthScreen = () => {
         <Button
           isPrimary={true}
           title={t("saveProfilePicture")}
-          onPress={handleSubmit(handleProfilePictureSubmit)}
+          onPress={handleSubmit(handleAddAddress)}
           style={{ width: "60%", paddingHorizontal: 8 }}
         />
       </View>
+
+      <AddAddressModal
+        userId={userId}
+        visible={isAddAddress}
+        onClose={() => {
+          setDrawerState({
+            visible: false,
+            title: "",
+            content: () => null,
+            primaryButton: null,
+            secondaryButton: null,
+          });
+          setIsAddress(false);
+        }}
+        onAfterSuccess={handleSubmit(handleProfilePictureSubmit)}
+      />
     </View>
   );
 };
@@ -179,7 +203,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 10,
   },
-  
+
   conditionsContainer: {},
   conditionText: {
     fontSize: 13,

@@ -16,6 +16,7 @@ import Requirements from "./Requirements";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
+import ScrollingText from "./ScrollingText";
 
 const ListingsServices = ({ item }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -162,6 +163,23 @@ const ListingsServices = ({ item }: any) => {
                     )}
                 </View>
               </View>
+              {item?.facilities &&
+                Object.values(item.facilities).some(Boolean) && (
+                  <View style={styles?.facilitiesHeading}>
+                    <ScrollingText
+                      text={`Facilities of ${["food", "living", "travelling"]
+                        .filter((facility) => item.facilities[facility])
+                        .join(", ")} available`}
+                      icon={
+                        <Ionicons
+                          name="happy-outline"
+                          size={16}
+                          color={Colors.tertieryButton}
+                        />
+                      }
+                    />
+                  </View>
+                )}
             </View>
           </TouchableOpacity>
         </Link>
@@ -275,5 +293,10 @@ const styles = StyleSheet.create({
     color: Colors?.white,
     textAlign: "center",
     fontWeight: "600",
+  },
+  facilitiesHeading: {
+    width: "100%",
+    marginBottom: 10,
+    marginTop: 10,
   },
 });

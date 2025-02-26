@@ -89,7 +89,6 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
               />
               <SkillSelector
                 canAddSkills={false}
-                role={sender?.role}
                 isShowLabel={false}
                 style={[styles.skillsContainer, styles.leftAlignContainer]}
                 tagStyle={styles.skillTag}
@@ -139,7 +138,6 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
               />
               <SkillSelector
                 canAddSkills={false}
-                role={receiver?.role}
                 isShowLabel={false}
                 style={[styles.skillsContainer, styles.rightAlignContainer]}
                 tagStyle={styles.skillTag}
@@ -197,7 +195,6 @@ const RequestCardUser = React.memo(
             />
             <SkillSelector
               canAddSkills={false}
-              role={user?.role}
               isShowLabel={false}
               style={styles?.skillsContainer}
               tagStyle={styles?.skillTag}
@@ -272,8 +269,6 @@ const RequestCardTeamJoinng = React.memo(
 
     const user = isSender ? item?.receiver : item?.sender;
 
-    console.log("user---", item);
-
     return (
       <TouchableOpacity
         onPress={() =>
@@ -302,7 +297,6 @@ const RequestCardTeamJoinng = React.memo(
             />
             <SkillSelector
               canAddSkills={false}
-              role={user?.role}
               isShowLabel={false}
               style={styles?.skillsContainer}
               tagStyle={styles?.skillTag}

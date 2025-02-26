@@ -20,6 +20,7 @@ interface FinalScreenProps {
   startDate: Date;
   duration: number;
   requirements: Array<any>;
+  facilities: any;
   images: Array<string>;
   handleOnSubmit: any;
 }
@@ -34,6 +35,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
   startDate,
   duration,
   requirements,
+  facilities,
   images,
   handleOnSubmit,
 }: FinalScreenProps) => {
@@ -82,6 +84,53 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
           <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
             <CustomHeading color={Colors?.inputLabel} fontWeight="500">
+              {t("facilities")}
+            </CustomHeading>
+            <View style={styles.facilitiesContainer}>
+              <View style={styles.card}>
+                <View style={styles.details}>
+                  <CustomHeading
+                    baseFont={14}
+                    color={Colors?.white}
+                    style={styles?.facilitiesLabel}
+                  >
+                    {t("travelling")}
+                  </CustomHeading>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesLabel}>
+                    {t("food")}
+                  </CustomHeading>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesLabel}>
+                    {t("living")}
+                  </CustomHeading>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesLabel}>
+                    {t("esi_pf")}
+                  </CustomHeading>
+                </View>
+
+                <View style={[styles.values]}>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesValues}>
+                    {facilities?.travelling ? "Yes" : "No"}
+                  </CustomHeading>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesValues}>
+                    {facilities?.food ? "Yes" : "No"}
+                  </CustomHeading>
+                  <CustomHeading baseFont={14} style={styles?.facilitiesValues}>
+                    {facilities?.living ? "Yes" : "No"}
+                  </CustomHeading>
+                  <CustomHeading
+                    baseFont={14}
+                    color={Colors?.tertieryButton}
+                    style={styles?.facilitiesValues}
+                  >
+                    {facilities?.esi_pf ? "Yes" : "No"}
+                  </CustomHeading>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
+            <CustomHeading color={Colors?.inputLabel} fontWeight="500">
               {t("workRequirements")}
             </CustomHeading>
             <View style={styles.requirmentContainer}>
@@ -106,26 +155,23 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                         <CustomHeading
                           baseFont={14}
                           color={Colors?.tertieryButton}
+                          style={styles?.label}
                         >
                           {t("count")}
                         </CustomHeading>
                         <CustomHeading
                           baseFont={14}
                           color={Colors?.tertieryButton}
-                        >
-                          {t("food")}
-                        </CustomHeading>
-                        <CustomHeading
-                          baseFont={14}
-                          color={Colors?.tertieryButton}
+                          style={styles?.label}
                         >
                           {t("living")}
                         </CustomHeading>
                         <CustomHeading
                           baseFont={14}
                           color={Colors?.tertieryButton}
+                          style={styles?.label}
                         >
-                          {t("esi/pf")}
+                          {t("esi_pf")}
                         </CustomHeading>
                       </View>
 
@@ -135,14 +181,27 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                           requirements?.length - 1 !== index && styles?.divider,
                         ]}
                       >
-                        <CustomText>{requirement?.count}</CustomText>
-                        <CustomText>
-                          {requirement?.food ? "Yes" : "No"}
-                        </CustomText>
-                        <CustomText>
-                          {requirement?.shelterProvider ? "Yes" : "No"}
-                        </CustomText>
-                        <CustomText>No</CustomText>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.tertieryButton}
+                          style={styles?.item}
+                        >
+                          {requirement?.count}
+                        </CustomHeading>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.tertieryButton}
+                          style={styles?.item}
+                        >
+                          {requirement?.living ? "Yes" : "No"}
+                        </CustomHeading>
+                        <CustomHeading
+                          baseFont={14}
+                          color={Colors?.tertieryButton}
+                          style={styles?.item}
+                        >
+                          {requirement?.esi_pf ? "Yes" : "No"}
+                        </CustomHeading>
                       </View>
                     </View>
                   );
@@ -262,6 +321,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors?.fourth,
     borderRadius: 8,
   },
+  facilitiesContainer: {
+    width: "100%",
+    backgroundColor: Colors?.tertieryButton,
+    borderRadius: 8,
+  },
   card: {
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -281,6 +345,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  label: {
+    width: "20%",
+    textAlign: "left",
+    color: Colors?.tertieryButton,
+  },
+  facilitiesValues: {
+    width: "20%",
+    textAlign: "left",
+    color: Colors?.white,
+  },
+  facilitiesLabel: {
+    width: "20%",
+    textAlign: "left",
+    color: Colors?.white,
+  },
+  item: {
+    width: "20%",
+    textAlign: "left",
+    color: Colors?.primary,
   },
   divider: {
     paddingBottom: 8,

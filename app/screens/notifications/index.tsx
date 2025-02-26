@@ -154,22 +154,32 @@ const NotificationScreen = () => {
     <View style={styles?.notificationItem}>
       <View
         style={{
-          width: "55%",
+          width: "100%",
           flexDirection: "row",
           position: "relative",
-          gap: 10,
+          // gap: 10,
+          // borderWidth: 1,
+          // borderColor: "red",
         }}
       >
-        <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
+        <View style={{ width: "17%", marginRight: 10 }}>
+          <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
+        </View>
         <View style={styles?.notificationContent}>
           <View style={{ position: "absolute", top: 0, left: -20 }}>
             {!item?.read && <RippleDot />}
           </View>
-          <CustomHeading textAlign="left">{item?.title}</CustomHeading>
+          <View style={styles?.nameDate}>
+            <CustomHeading textAlign="left" style={styles?.name}>
+              {item?.title}
+            </CustomHeading>
+            <CustomText style={styles?.date} textAlign="right">
+              {getTimeAgo(item?.createdAt)}
+            </CustomText>
+          </View>
           <CustomText textAlign="left">{item?.body}</CustomText>
         </View>
       </View>
-      <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
     </View>
   );
 
@@ -336,11 +346,22 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
   },
   notificationContent: {
-    width: "100%",
+    width: "80%",
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginTop: 0,
+  },
+  nameDate: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 10,
+  },
+  name: {
+    flex: 1,
+  },
+  date: {
+    width: "37%",
   },
 });
 

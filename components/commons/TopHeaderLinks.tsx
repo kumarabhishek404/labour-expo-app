@@ -41,7 +41,6 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
       {title?.length > 1 && (
         <TouchableOpacity
           style={{
-            flex: 1,
             flexDirection: "row",
             alignItems: "center",
             gap: 8,
@@ -54,9 +53,8 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
             color={Colors?.primary}
             fontWeight="bold"
             style={{
-              flex: 1,
               flexWrap: "wrap",
-              textAlign: "left",
+              textAlign: "right",
             }}
           >
             {title[1]}

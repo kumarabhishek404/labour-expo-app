@@ -242,6 +242,8 @@ const completeBooking = async (payload: any) => {
 };
 
 const cancelBooking = async (payload: any) => {
+  console.log("Payload --", payload);
+  
   try {
     const data = await API_CLIENT.makePostRequest(
       "/employer/booking/cancel",

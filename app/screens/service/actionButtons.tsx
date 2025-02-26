@@ -197,7 +197,7 @@ const ServiceActionButtons = ({
 
   const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => EMPLOYER?.cancelBooking(id),
+    mutationFn: () => EMPLOYER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       setModalVisible(false);
       await refetch();
@@ -244,18 +244,19 @@ const ServiceActionButtons = ({
     if (!service) return null;
 
     switch (true) {
-      case service.status === "CANCELLED" &&
-        service.employer === userDetails?._id:
-        return (
-          <Button
-            isPrimary={false}
-            title={t("restoreService")}
-            onPress={mutationRestoreService.mutate}
-            style={styles.restoreBtn}
-            bgColor={Colors?.tertiery}
-            textStyle={{ color: Colors?.white }}
-          />
-        );
+      // case service.status === "CANCELLED" &&
+      //   service.employer === userDetails?._id:
+      //   return (
+      //     <Button
+      //       isPrimary={false}
+      //       title={t("restoreService")}
+      //       onPress={mutationRestoreService.mutate}
+      //       style={styles.restoreBtn}
+      //       bgColor={Colors?.tertiery}
+      //       borderColor={Colors?.tertiery}
+      //       textStyle={{ color: Colors?.white }}
+      //     />
+      //   );
 
       case service.employer !== userDetails?._id &&
         !isAdmin &&

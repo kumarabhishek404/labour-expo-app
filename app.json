@@ -19,7 +19,13 @@
       "expo-font",
       "expo-localization",
       "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "@react-native-firebase/auth",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/app/adaptive-icon.png"
+        }
+      ]
     ],
     "ios": {
       "jsEngine": "jsc",
@@ -28,6 +34,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
+      "useNextNotificationsApi": true,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {

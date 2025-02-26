@@ -64,7 +64,6 @@ const fetchUnreadNotificationsCount = async () => {
 
 const markAsReadNotification = async (payload: any) => {
   console.log("payloaf --", payload);
-
   try {
     const data = await API_CLIENT.makePutRequest(
       `/notification/mark-read`,

@@ -9,6 +9,10 @@ import { WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
 import PaperDropdown from "@/components/inputs/Dropdown";
+import ImageUpload from "@/components/inputs/ImagePicker";
+import TOAST from "@/app/hooks/toast";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 interface FirstScreenProps {
   setStep: any;
@@ -16,6 +20,8 @@ interface FirstScreenProps {
   setType: any;
   subType: string;
   setSubType: any;
+  images: any;
+  setImages: any;
   requirements: any;
   setRequirements: any;
 }
@@ -26,6 +32,8 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
   setType,
   subType,
   setSubType,
+  images,
+  setImages,
   requirements,
   setRequirements,
 }: FirstScreenProps) => {
@@ -39,23 +47,21 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
     defaultValues: {
       type: type,
       subType: subType,
-      requirements: requirements,
+      images: images,
     },
   });
-  const [errorField, setErrorField] = useState({});
+  const setAddServiceStep = useSetAtom(Atoms?.AddServiceStepAtom);
 
   const onSubmit = (data: any) => {
-    // console.log("data---", data);
-
-    setType(data?.type);
-    setSubType(data?.subType);
-    setRequirements(data?.requirements);
-    // setIsAddService(true);
-    setStep(2);
-  };
-
-  const handleValue = (value: any) => {
-    console.log("value --", value);
+    if (data?.images && data?.images?.length > 3) {
+      TOAST?.error("You can not upload more than 3 images");
+    } else {
+      if (data?.images && data?.images?.length > 0) setImages(data?.images);
+      setType(data?.type);
+      setSubType(data?.subType);
+      setAddServiceStep(2);
+      setStep(2);
+    }
   };
 
   return (
@@ -76,7 +82,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 onSelect={(selectedValue: any) => {
                   onChange(selectedValue);
                   setValue("subType", "");
-                  setValue("requirements", requirements);
+                  // setRequirements(requirements);
                 }}
                 translationEnabled
                 placeholder="selectWorkType"
@@ -109,7 +115,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 selectedValue={value}
                 onSelect={(selectedValue: any) => {
                   onChange(selectedValue);
-                  setValue("requirements", requirements);
+                  // setValue("requirements", requirements);
                 }}
                 placeholder={
                   watch("type")
@@ -132,80 +138,17 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
             )}
           />
         </View>
+
         <Controller
           control={control}
-          name="requirements"
-          defaultValue=""
-          rules={{
-            required: t("workRequirementsIsRequired"),
-            validate: (value) => {
-              if (!value || value.length === 0) {
-                return t("atLeastOneRequirementIsNeeded");
-              }
-
-              for (let i = 0; i < value.length; i++) {
-                const item = value[i];
-                if (!item?.name) {
-                  setErrorField({
-                    index: i,
-                    name: "dropdown",
-                  });
-                  return `${t("requirement")} #${i + 1}: ${t("selectAWorker")}`;
-                }
-                if (!item?.payPerDay) {
-                  setErrorField({
-                    index: i,
-                    name: "price",
-                  });
-                  return `${t("requirement")} #${i + 1}: ${t(
-                    "payPerDayIsRequired"
-                  )}`;
-                }
-                if (isNaN(parseInt(item?.payPerDay))) {
-                  setErrorField({
-                    index: i,
-                    name: "price",
-                  });
-                  return `${t("requirement")} #${i + 1}: ${t(
-                    "payPerDayShouldBeInNumber"
-                  )}`;
-                }
-                if (item?.payPerDay === 0 || !item?.payPerDay) {
-                  setErrorField({
-                    index: i,
-                    name: "price",
-                  });
-                  return `${t("requirement")} #${i + 1}: ${t(
-                    "payPerDayMustBeGreaterThan0"
-                  )}`;
-                }
-                if (item?.count === 0 || !item?.count) {
-                  setErrorField({
-                    index: i,
-                    name: "counter",
-                  });
-                  return `${t("requirement")} #${i + 1}: ${t(
-                    "totalRequiredMustBeGreaterThan0"
-                  )}`;
-                }
-              }
-              setErrorField({
-                index: -1,
-                name: "",
-              });
-              return true;
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <WorkRequirment
-              name="requirements"
-              watch={watch}
-              type={watch("type") ?? ""}
-              subType={watch("subType") ?? ""}
-              requirements={value}
-              setRequirements={onChange}
+          name="images"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <ImageUpload
+              name="images"
+              images={value}
+              setImages={onChange}
+              onBlur={onBlur}
               errors={errors}
-              errorField={errorField}
             />
           )}
         />

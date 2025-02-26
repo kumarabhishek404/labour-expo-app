@@ -287,7 +287,7 @@
   "count": "Count",
   "food": "Food",
   "living": "Living",
-  "esi/pf": "ESI / PF",
+  "esi_pf": "ESI / PF",
 
   "pendingApprovalHeading": "Profile Approval Pending",
   "pendingApprovalMessage": "Your profile is currently under review. Approval is required before you can access all features.",
@@ -788,8 +788,14 @@
   "beMediator": "I want to be a mediator",
   "giveWork": "I want to give work",
   "no": "No",
+  "yes": "Yes",
   "applyNowWithWorkers": "Apply now with {{count}} workers",
   "applyNowWithOutWorkers": "Apply for ourself without workers",
   "addAttendance": "Add Worker Attendance",
-  "attendanceDetails": "Attendance Details"
+  "attendanceDetails": "Attendance Details",
+  "addAtLeastOneSkillApplyServices": "Add at least one skill to apply in services",
+  "typeAndSubType": "Work Type & Subtype",
+  "checkDetails": "Verify Details",
+  "facilities": "Facilities",
+  "pleaseSelectAProfilePicture": "Please Select A Profile Picture"
 }

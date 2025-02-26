@@ -7,8 +7,10 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import { useAtom } from "jotai";
+import { useFocusEffect } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import ButtonComp from "@/components/inputs/Button";
@@ -21,6 +23,25 @@ const { height, width } = Dimensions.get("window");
 const GlobalBottomDrawer = () => {
   const [drawerState, setDrawerState]: any = useAtom(Atoms?.BottomDrawerAtom);
   const slideAnim = React.useRef(new Animated.Value(height)).current;
+
+  // Handle Android back button behavior
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (drawerState.visible) {
+          drawerState.secondaryButton?.action();
+          setDrawerState({ ...drawerState, visible: false });
+          return true; // Prevent default back action
+        }
+        return false;
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [drawerState, setDrawerState])
+  );
 
   React.useEffect(() => {
     if (drawerState.visible) {
@@ -42,10 +63,9 @@ const GlobalBottomDrawer = () => {
 
   return (
     <>
-      {/* <OnPageLoader loading={drawerState?.isLoading} /> */}
       <TouchableWithoutFeedback
         onPress={() => {
-          drawerState.secondaryButton.action();
+          drawerState.secondaryButton?.action();
           setDrawerState({ ...drawerState, visible: false });
         }}
       >
@@ -67,7 +87,7 @@ const GlobalBottomDrawer = () => {
             size={28}
             color={Colors.primary}
             onPress={() => {
-              drawerState.secondaryButton.action();
+              drawerState.secondaryButton?.action();
               setDrawerState({ ...drawerState, visible: false });
             }}
           />
@@ -77,8 +97,8 @@ const GlobalBottomDrawer = () => {
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentContainer}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={true} // Enables the scrollbar
-          nestedScrollEnabled={true} // Allows inner scrolling when inside another scrollable view
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
         >
           <View style={styles.content}>
             {drawerState.isLoading ? (
@@ -162,12 +182,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    flexGrow: 1, // Allows scrolling if content overflows
-    // paddingBottom: 20,
+    flexGrow: 1,
   },
   content: {
     flex: 1,
-    // paddingBottom: 20,
   },
   footer: {
     flexDirection: "row",
@@ -175,12 +193,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     gap: 10,
-    // marginBottom: 150
   },
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    minHeight: 100, // Ensures spacing inside the drawer
+    minHeight: 100,
   },
 });

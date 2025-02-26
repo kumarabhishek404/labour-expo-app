@@ -8,7 +8,7 @@ import ErrorText from "../commons/ErrorText";
 import { t } from "@/utils/translationHelper";
 
 type TextInputProps = {
-  label: string;
+  label?: string;
   name: string;
   placeholder: string;
   value: string;
@@ -30,9 +30,9 @@ const TextAreaInputComponent = ({
 }: TextInputProps) => {
   return (
     <View style={styles?.inputField}>
-      <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+      {label && <CustomHeading textAlign="left" color={Colors?.inputLabel}>
         {t(label)}
-      </CustomHeading>
+      </CustomHeading>}
       <View
         style={[
           styles.inputContainer,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   inputContainer: {
-    height: 140,
+    height: 100,
     borderWidth: 1,
     borderColor: Colors.secondary,
     backgroundColor: Colors.white,

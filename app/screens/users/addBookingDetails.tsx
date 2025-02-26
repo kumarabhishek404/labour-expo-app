@@ -18,6 +18,7 @@ import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
 import EMPLOYER from "@/app/api/employer";
 import PaperDropdown from "@/components/inputs/Dropdown";
 import Drawer from "@/components/commons/Drawer";
+import CustomCheckbox from "@/components/commons/CustomCheckbox";
 
 interface AddBookingDetailsProps {
   refetch: any;
@@ -50,13 +51,25 @@ const AddBookingDetails = ({
       duration: 0,
       noOfWorkers: 0,
       description: "",
+      facilities: {
+        food: false,
+        living: false,
+        esi_pf: false,
+        travelling: false,
+      },
     },
   });
-  const [openDropdownId, setOpenDropdownId] = useState(null);
+  
   const [location, setLocation] = useState({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
   );
+  const [facilities, setFacilities] = useState({
+    food: false,
+    living: false,
+    esi_pf: false,
+    travelling: false,
+  });
 
   const mutationAddBookingRequest = useMutation({
     mutationKey: ["addBookingRequest"],
@@ -67,6 +80,13 @@ const AddBookingDetails = ({
       setIsAddBookingModal(false);
     },
   });
+
+  const handleCheckboxChange = (key: string) => {
+    setFacilities((prevState: any) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
+  };
 
   const addBookingModalContent = () => {
     return (
@@ -213,6 +233,29 @@ const AddBookingDetails = ({
             )}
           />
 
+          <View style={styles.checkboxContainer}>
+            <CustomCheckbox
+              label={t("living")}
+              isChecked={facilities.living}
+              onToggle={() => handleCheckboxChange("living")}
+            />
+            <CustomCheckbox
+              label={t("food")}
+              isChecked={facilities.food}
+              onToggle={() => handleCheckboxChange("food")}
+            />
+            <CustomCheckbox
+              label={t("travelling")}
+              isChecked={facilities.travelling}
+              onToggle={() => handleCheckboxChange("travelling")}
+            />
+            <CustomCheckbox
+              label={t("esi_pf")}
+              isChecked={facilities.esi_pf}
+              onToggle={() => handleCheckboxChange("esi_pf")}
+            />
+          </View>
+
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Controller
               control={control}
@@ -292,10 +335,9 @@ const AddBookingDetails = ({
     formData.append("address", data?.address);
     formData.append("location", JSON.stringify(data?.location || {}));
     formData.append("startDate", moment(data?.startDate).format("YYYY-MM-DD"));
+    formData.append("facilities", JSON.stringify(facilities));
 
-    console.log("form Data --", formData);
-
-    const response: any = await mutationAddBookingRequest?.mutate(formData);
+    const response: any = mutationAddBookingRequest?.mutate(formData);
     return response?.data;
   };
 
@@ -327,5 +369,12 @@ const styles = StyleSheet.create({
   modalContent: {
     paddingVertical: 20,
     paddingBottom: 100,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    gap: 20,
   },
 });

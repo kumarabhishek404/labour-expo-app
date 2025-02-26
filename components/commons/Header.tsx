@@ -5,7 +5,7 @@ import { useNavigation, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import Atoms from "@/app/AtomStore";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
 import { DrawerActions } from "@react-navigation/native";
@@ -27,28 +27,12 @@ const CustomHeader = ({
   onLeftAction,
   right,
 }: CustomHeaderProps) => {
+  const notificationCount: number = useAtomValue(
+    Atoms?.notificationCount
+  ) as number;
   const userDetails = useAtomValue(Atoms?.UserAtom);
-  const hasNewNotification = Boolean(
-    useAtomValue(Atoms?.hasNewNotificationAtom)
-  );
   const router = useRouter();
   const navigation = useNavigation();
-  const [unreadNotificationCount, setUnreadNotificationCount] =
-    useState<number>(0);
-
-  const { data: response } = useQuery({
-    queryKey: ["allNotificationsCount", userDetails?._id],
-    queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
-    retry: false,
-    refetchInterval: 20000,
-    enabled: !!userDetails?._id, // API will stop when userDetails is null
-  });
-
-  useEffect(() => {
-    if (response) {
-      setUnreadNotificationCount(response?.unreadCount);
-    }
-  }, [response]);
 
   return (
     <>
@@ -120,7 +104,7 @@ const CustomHeader = ({
               }}
             >
               <Ionicons name="notifications" size={20} color={Colors.primary} />
-              {unreadNotificationCount > 0 && <RippleDot />}
+              {notificationCount > 0 && <RippleDot />}
             </View>
           </TouchableOpacity>
         ) : right === "like" ? (

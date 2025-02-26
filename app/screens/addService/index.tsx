@@ -1,45 +1,33 @@
-import {
-  ActivityIndicator,
-  BackHandler,
-  Keyboard,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
 import { useAtom, useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import SecondScreen from "./second";
 import moment from "moment";
-import ThirdScreen from "./third";
 import TOAST from "@/app/hooks/toast";
 import FinalScreen from "./final";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import { Platform, KeyboardAvoidingView } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
-import ListingHorizontalServices from "@/components/commons/ListingHorizontalServices";
-import { Button } from "react-native-paper";
 import EMPLOYER from "@/app/api/employer";
-import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
+import ThirdScreen from "./third";
+import SecondScreen from "./second";
+import ButtonComp from "@/components/inputs/Button";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
-  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const [addServiceStep, setAddServiceStep] = useAtom(
+    Atoms?.AddServiceStepAtom
+  );
   const [step, setStep] = useState(1);
   const [type, setType] = useState(addService?.type ?? "");
   const [subType, setSubType] = useState(addService?.subType ?? "");
@@ -58,41 +46,20 @@ const AddServiceScreen = () => {
         count: 0,
         payPerDay: 0,
         food: false,
-        shelter: false,
-        pf: false,
-        insurance: false,
+        living: false,
+        esi_pf: false,
       },
     ]
   );
+  const [facilities, setFacilities] = useState({
+    food: addService?.facilities?.food || false,
+    living: addService?.facilities?.living || false,
+    esi_pf: addService?.facilities?.esi_pf || false,
+    travelling: addService?.facilities?.travelling || false,
+  });
 
   const [images, setImages]: any = useState(addService?.images ?? []);
 
-  const {
-    data: response,
-    isLoading,
-    isRefetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ["myServices"],
-    queryFn: ({ pageParam }) => {
-      return EMPLOYER?.fetchMyServices({
-        pageParam,
-        status: "",
-      });
-    },
-    initialPageParam: 1,
-    retry: false,
-    enabled: !!userDetails?._id && userDetails?.status === "ACTIVE",
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
-  });
   const mutationAddService = useMutation({
     mutationKey: [addService?._id ? "editService" : "addService"],
     mutationFn: () =>
@@ -119,18 +86,18 @@ const AddServiceScreen = () => {
             count: 0,
             payPerDay: 0,
             food: false,
-            shelter: false,
-            pf: false,
-            insurance: false,
+            living: false,
+            esi_pf: false,
           },
         ]
       );
       setImages([]);
       setStep(1);
+      setAddServiceStep(1);
       router?.push({
         pathname: "/screens/service",
         params: {
-          title: "My All Services",
+          title: "My All Services and Bookings",
           type: "myServices",
         },
       });
@@ -149,6 +116,10 @@ const AddServiceScreen = () => {
       );
     },
   });
+
+  useEffect(() => {
+    setStep(1);
+  }, []);
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -192,20 +163,19 @@ const AddServiceScreen = () => {
     formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
     formData.append("duration", duration);
     formData.append("requirements", JSON.stringify(requirements));
-
-    console.log("form Data --", formData);
+    formData.append("facilities", JSON.stringify(facilities));
 
     const response: any = await EMPLOYER?.addNewService(formData);
     return response?.data;
   };
 
   const handleBackAction = () => {
-    if (step > 2) {
+    if (step > 1) {
       setStep(step - 1);
-    } else if (step > 1) {
-      setStep(step - 1);
-    } else {
+    } else if (router?.canGoBack()) {
       router?.back();
+    } else {
+      BackHandler?.exitApp();
     }
   };
 
@@ -253,8 +223,7 @@ const AddServiceScreen = () => {
       formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
       formData.append("duration", duration);
       formData.append("requirements", JSON.stringify(requirements));
-
-      console.log("form Data --", formData);
+      formData.append("facilities", JSON.stringify(facilities));
 
       const response: any = await EMPLOYER?.editService(formData);
 
@@ -269,17 +238,6 @@ const AddServiceScreen = () => {
     }
   };
 
-  const memoizedData = useMemo(
-    () => response?.pages?.flatMap((data: any) => data?.data),
-    [response]
-  );
-
-  const loadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
   const renderFormComponents = () => {
     switch (step) {
       case 1:
@@ -290,6 +248,8 @@ const AddServiceScreen = () => {
             setType={setType}
             subType={subType}
             setSubType={setSubType}
+            images={images}
+            setImages={setImages}
             requirements={requirements}
             setRequirements={setRequirements}
           />
@@ -297,6 +257,18 @@ const AddServiceScreen = () => {
       case 2:
         return (
           <SecondScreen
+            setStep={setStep}
+            requirements={requirements}
+            setRequirements={setRequirements}
+            facilities={facilities}
+            setFacilities={setFacilities}
+            type={type}
+            subType={subType}
+          />
+        );
+      case 3:
+        return (
+          <ThirdScreen
             setStep={setStep}
             address={address}
             setAddress={setAddress}
@@ -306,14 +278,6 @@ const AddServiceScreen = () => {
             setStartDate={setStartDate}
             duration={duration}
             setDuration={setDuration}
-          />
-        );
-      case 3:
-        return (
-          <ThirdScreen
-            setStep={setStep}
-            images={images}
-            setImages={setImages}
             description={description}
             setDescription={setDescription}
           />
@@ -332,6 +296,7 @@ const AddServiceScreen = () => {
             duration={duration}
             requirements={requirements}
             images={images}
+            facilities={facilities}
             handleOnSubmit={
               addService?._id
                 ? (data: any) => mutationAddService?.mutate(data)
@@ -401,13 +366,13 @@ const AddServiceScreen = () => {
             <CustomHeading
               textAlign="left"
               baseFont={22}
-              style={{ marginBottom: 20 }}
+              style={{ marginBottom: 20, paddingBottom: 10 }}
               color={Colors?.heading}
             >
-              {step === 1 && "CREATE NEW SERVICE"}
-              {step === 2 && "ADDRESS AND DATE"}
-              {step === 3 && "ADD IMAGES AND DESCRIPTION"}
-              {step === 4 && "CHECK ALL DETAILS AND POST SERVICE"}
+              {step === 1 && "Select Work Type and Sub Type"}
+              {step === 2 && "Add Requirments workers"}
+              {step === 3 && "Address, Start Date and Duration"}
+              {step === 4 && "Check all the details And Submit"}
             </CustomHeading>
             <Loader loading={mutationAddService?.isPending} />
             <View>{renderFormComponents()}</View>
