@@ -185,40 +185,38 @@ const NotificationScreen = () => {
 
   const RequestPermission = () => (
     <View style={styles?.container}>
-      <CustomHeading textAlign="left">
-        Get notifications about important things for you.
-      </CustomHeading>
+      <CustomHeading textAlign="left">{t("getNotifications")}</CustomHeading>
       <CustomText textAlign="left" style={{ marginBottom: 10 }}>
-        We&#39;ll notify you when
+        {t("notifyWhen")}
       </CustomText>
       <View style={styles?.permissionItems}>
         <CustomText baseFont={14} textAlign="left">
-          1. New service is arrived
+          {t("newServiceArrived")}
         </CustomText>
         <CustomText baseFont={14} textAlign="left">
-          2. When any mediator creates requirements
+          {t("mediatorCreatesRequirements")}
         </CustomText>
         <CustomText baseFont={14} textAlign="left">
-          3. When you got selected in the service
+          {t("selectedInService")}
         </CustomText>
         <CustomText baseFont={14} textAlign="left">
-          4. When someone likes you
+          {t("someoneLikesYou")}
         </CustomText>
         <CustomText baseFont={14} textAlign="left">
-          5. When any mediator requests you to join his team
+          {t("mediatorRequestsYou")}
         </CustomText>
       </View>
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={false}
-          title="Later"
+          title={t("later")}
           onPress={() => router?.back()}
           style={styles?.button}
           textStyle={styles?.buttonText}
         />
         <Button
           isPrimary={true}
-          title="Allow Notifications"
+          title={t("allowNotifications")}
           onPress={requestPermission}
           style={styles?.button}
           textStyle={styles?.buttonText}
@@ -234,13 +232,11 @@ const NotificationScreen = () => {
         size={100}
         style={styles?.notificationIcon}
       />
-      <CustomHeading>No notifications yet</CustomHeading>
-      <CustomText>
-        Your notifications will appear here once you’ve received them.
-      </CustomText>
+      <CustomHeading>{t("noNotificationsYet")}</CustomHeading>
+      <CustomText>{t("noNotificationsDesc")}</CustomText>
       <TouchableOpacity>
         <CustomText color={Colors?.link}>
-          Go to historical notifications.
+          {t("goToHistoricalNotifications")}
         </CustomText>
       </TouchableOpacity>
     </View>
@@ -256,7 +252,7 @@ const NotificationScreen = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Notifications" left="back" />,
+          header: () => <CustomHeader title="notifications" left="back" />,
         }}
       />
       <Loader loading={isLoading || isFetchingNextPage} />

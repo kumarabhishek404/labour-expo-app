@@ -79,15 +79,16 @@ const UserProfile = () => {
     const backAction = () => {
       if (isAccountInactive) {
         TOAST?.error(
-          userDetails?.status === "SUSPENDED" ||
-            userDetails?.status === "DISABLED"
-            ? "Profile Suspended"
-            : "Approval Is Pending",
-          `You can't go back until your profile is ${
+          `${
             userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
-              ? "suspended"
-              : "not approved"
+              ? t("profileSuspended")
+              : t("approvalIsPending")
+          }: ${t("youCantUntilYourProfileIs")} ${
+            userDetails?.status === "SUSPENDED" ||
+            userDetails?.status === "DISABLED"
+              ? t("suspended")
+              : t("notApproved")
           }.`
         );
         return true;

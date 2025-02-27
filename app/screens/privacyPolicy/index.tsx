@@ -10,7 +10,7 @@ const PrivacyPolicyScreen = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <CustomHeader title="Privacy Policy" left="back" right="notification" />,
+          header: () => <CustomHeader title="privacyPolicy" left="back" right="notification" />,
         }}
       />
       <View style={styles.container}>

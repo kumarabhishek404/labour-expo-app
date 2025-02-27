@@ -9,6 +9,7 @@ import CustomText from "@/components/commons/CustomText";
 import Stepper from "@/components/commons/Stepper";
 import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
+import ButtonComp from "@/components/inputs/Button";
 
 interface FinalScreenProps {
   setStep: any;
@@ -266,7 +267,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
         </View>
 
         <View style={styles?.buttonContainer}>
-          <Button
+          <ButtonComp
             isPrimary={true}
             title={t("back")}
             onPress={() => setStep(3)}
@@ -274,7 +275,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             borderColor={Colors?.danger}
             style={{ width: "35%" }}
           />
-          <Button
+          <ButtonComp
             isPrimary={true}
             title={t("submitAllDetails")}
             onPress={handleFinish}

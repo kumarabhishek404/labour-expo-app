@@ -11,7 +11,7 @@ const TermsAndConditions = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Terms And Conditions" left="back" right="notification" />
+            <CustomHeader title="termsAndConditions" left="back" right="notification" />
           ),
         }}
       />

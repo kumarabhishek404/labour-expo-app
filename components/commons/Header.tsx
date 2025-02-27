@@ -13,6 +13,7 @@ import RippleDot from "./RippleDot";
 import { useQuery } from "@tanstack/react-query";
 import NOTIFICATION from "@/app/api/notification";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 interface CustomHeaderProps {
   title?: string;
@@ -79,7 +80,7 @@ const CustomHeader = ({
         )}
 
         <CustomHeading baseFont={20} color={Colors?.primary}>
-          {title}
+          {t(title as string)}
         </CustomHeading>
 
         {right === "notification" ? (

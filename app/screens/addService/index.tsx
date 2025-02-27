@@ -97,7 +97,7 @@ const AddServiceScreen = () => {
       router?.push({
         pathname: "/screens/service",
         params: {
-          title: "My All Services and Bookings",
+          title: t('titleMyAllServicesAndBookings'),
           type: "myServices",
         },
       });
@@ -314,7 +314,7 @@ const AddServiceScreen = () => {
     router?.push({
       pathname: "/screens/bookings",
       params: {
-        title: "My Booked Workers",
+        title: "titleMyBookedWorkers",
         type: "booked",
         searchCategory: JSON.stringify({ name: "", skill: "" }),
       },
@@ -323,7 +323,7 @@ const AddServiceScreen = () => {
   const ClickMyAllServices = () =>
     router?.push({
       pathname: "/screens/service",
-      params: { title: "My All Services and Bookings", type: "myServices" },
+      params: { title: "titleMyAllServicesAndBookings", type: "myServices" },
     });
 
   return (
@@ -342,7 +342,7 @@ const AddServiceScreen = () => {
           </View>
           {step === 1 && (
             <TopHeaderLinks
-              title={["BOOKED WORKERS", "MY ALL SERVICES"]}
+              title={["bookedWorkers", "myAllServices"]}
               onPress={[ClickBookedWorker, ClickMyAllServices]}
               icon={[
                 <Ionicons
@@ -369,10 +369,10 @@ const AddServiceScreen = () => {
               style={{ marginBottom: 20, paddingBottom: 10 }}
               color={Colors?.heading}
             >
-              {step === 1 && "Select Work Type and Sub Type"}
-              {step === 2 && "Add Requirments workers"}
-              {step === 3 && "Address, Start Date and Duration"}
-              {step === 4 && "Check all the details And Submit"}
+              {step === 1 && t("step1")}
+              {step === 2 && t("step2")}
+              {step === 3 && t("step3")}
+              {step === 4 && t("step4")}
             </CustomHeading>
             <Loader loading={mutationAddService?.isPending} />
             <View>{renderFormComponents()}</View>

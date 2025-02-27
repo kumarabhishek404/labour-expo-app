@@ -50,7 +50,7 @@ const AdminSettings = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t("adminSettings")}
+              title="adminSettings"
               left="menu"
               right="notification"
             />

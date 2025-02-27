@@ -165,7 +165,7 @@ const AdminUsers = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={t("users")} left="menu" right="notification" />
+            <CustomHeader title="users" left="menu" right="notification" />
           ),
         }}
       />

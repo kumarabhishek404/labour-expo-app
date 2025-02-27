@@ -68,7 +68,7 @@ export default function LanguageSelectionScreen() {
           headerShown: true,
           header: () => (
             <CustomHeader
-              title="Change Language"
+              title="changeLanguage"
               left="menu"
               right="notification"
             />

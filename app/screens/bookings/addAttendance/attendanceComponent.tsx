@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
+import { t } from "@/utils/translationHelper";
 
 export default function AttendanceScreenComponent({
   handleSave,
@@ -100,16 +101,16 @@ export default function AttendanceScreenComponent({
               <View>
                 <Text style={styles.workerName}>{worker?.name}</Text>
                 <Text style={styles.workerAddress}>
-                  {worker?.address || "Address not found"}
+                  {worker?.address || t("addressNotFound")}
                 </Text>
               </View>
             </View>
 
             <View style={styles.attendanceOptions}>
               {[
-                { label: "Present", value: "PRESENT" },
-                { label: "Absent", value: "ABSENT" },
-                { label: "Half-day", value: "HALF-DAY" },
+                { label: "present", value: "PRESENT" },
+                { label: "absent", value: "ABSENT" },
+                { label: "halfDay", value: "HALF-DAY" },
               ].map((status) => (
                 <TouchableOpacity
                   key={status.value}
@@ -132,7 +133,7 @@ export default function AttendanceScreenComponent({
                         : Colors?.primary
                     }
                   >
-                    {status.label}
+                    {t(status.label)}
                   </CustomText>
                 </TouchableOpacity>
               ))}
@@ -145,7 +146,7 @@ export default function AttendanceScreenComponent({
         <ButtonComp
           isPrimary={true}
           onPress={handleBack}
-          title="Cancel"
+          title={t("cancel")}
           style={{ width: "35%" }}
           bgColor={Colors?.danger}
           borderColor={Colors?.danger}
@@ -153,7 +154,7 @@ export default function AttendanceScreenComponent({
         <ButtonComp
           isPrimary={true}
           onPress={handleSave}
-          title="Save Attendance"
+          title={t("saveAttendance")}
           style={{ flex: 1 }}
         />
       </View>

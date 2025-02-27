@@ -153,7 +153,7 @@ const ReusableCategoryComponent = ({
                       : Colors?.tertieryButton
                   }
                 >
-                  {item.format("ddd")}
+                  {t(item.format("dddd"))}
                 </CustomText>
               </View>
             )}

@@ -28,7 +28,7 @@ const ListingsServices = ({ item }: any) => {
           <TouchableOpacity>
             <View style={[styles?.tag, { backgroundColor: Colors?.primary }]}>
               <CustomText color={Colors?.white} fontWeight="bold">
-                Service Post
+                {t("servicePost")}
               </CustomText>
             </View>
             <View style={styles.item}>
@@ -144,7 +144,7 @@ const ListingsServices = ({ item }: any) => {
                     {t("duration")}{" "}
                     {item?.duration ||
                       dateDifference(item?.startDate, item?.endDate)}{" "}
-                    days
+                    {t("days")}
                   </CustomText>
 
                   {item?.location &&
@@ -167,9 +167,14 @@ const ListingsServices = ({ item }: any) => {
                 Object.values(item.facilities).some(Boolean) && (
                   <View style={styles?.facilitiesHeading}>
                     <ScrollingText
-                      text={`Facilities of ${["food", "living", "travelling"]
+                      text={`${t("facilitiesOf")} ${[
+                        "food",
+                        "living",
+                        "travelling",
+                      ]
                         .filter((facility) => item.facilities[facility])
-                        .join(", ")} available`}
+                        .map((facility) => t(facility))
+                        .join(", ")} ${t("available")}`}
                       icon={
                         <Ionicons
                           name="happy-outline"

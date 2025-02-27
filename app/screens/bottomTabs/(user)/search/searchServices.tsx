@@ -78,7 +78,6 @@ const SearchServices = ({ style }: any) => {
   };
 
   const onSubmit = (data: any) => {
-    
     const searchCategory = {
       type: data?.type,
       subType: data?.subType,
@@ -88,7 +87,7 @@ const SearchServices = ({ style }: any) => {
     router?.push({
       pathname: "/screens/service",
       params: {
-        title: "All Services",
+        title: t('allServices'),
         type: "all",
         searchCategory: JSON.stringify(searchCategory),
       },
@@ -98,13 +97,13 @@ const SearchServices = ({ style }: any) => {
   return (
     <View style={style}>
       <TopHeaderLinks
-        title={["SHOW ALL SERVICES"]}
+        title={[t('showAllServices')]}
         onPress={[
           () =>
             router?.push({
               pathname: "/screens/service",
               params: {
-                title: "All Services",
+                title: t('allServices'),
                 type: "all",
                 searchCategory: JSON.stringify({
                   type: "",
@@ -131,7 +130,7 @@ const SearchServices = ({ style }: any) => {
           style={{ marginBottom: 0 }}
           color={Colors?.heading}
         >
-          SEARCH SERVICES
+          {t("searchServices")}
         </CustomHeading>
 
         <View style={{ gap: 20, marginBottom: 0 }}>
@@ -205,7 +204,7 @@ const SearchServices = ({ style }: any) => {
           </View>
         </View>
         <ButtonComp
-          title="Search Services"
+          title={t("searchServicesTitle")}
           isPrimary
           onPress={handleSubmit(onSubmit)}
         />

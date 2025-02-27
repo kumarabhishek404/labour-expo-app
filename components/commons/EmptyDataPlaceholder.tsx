@@ -1,24 +1,29 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  useWindowDimensions,
-} from "react-native";
+import { View, Image, StyleSheet, useWindowDimensions } from "react-native";
 import EmptyPlaceholder from "../../assets/empty-placeholder.png";
 import CustomText from "./CustomText";
+import { t } from "@/utils/translationHelper";
 
 const HEADER_HEIGHT = 200; // Adjust based on your actual header height
 
-const EmptyDatePlaceholder = ({ title, parentHeight, leftHeight = HEADER_HEIGHT }: any) => {
+const EmptyDatePlaceholder = ({
+  title,
+  parentHeight,
+  leftHeight = HEADER_HEIGHT,
+}: any) => {
   const { height } = useWindowDimensions(); // Get dynamic height of the screen
 
   return (
-    <View style={[styles.container, { height: (parentHeight ?? height) - leftHeight }]}>
+    <View
+      style={[
+        styles.container,
+        { height: (parentHeight ?? height) - leftHeight },
+      ]}
+    >
       <Image source={EmptyPlaceholder} style={styles.image} />
       <CustomText baseFont={14} fontWeight="medium">
-        Not Found Any {title}
+        {t("notFoundAny")} {t(title)}
       </CustomText>
     </View>
   );

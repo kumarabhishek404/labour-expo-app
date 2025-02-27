@@ -98,7 +98,7 @@ const AddReview = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={type === "add" ? t("addReview") : t("editReview")}
+              title={type === "add" ? "addReview" : "editReview"}
               left="back"
             />
           ),

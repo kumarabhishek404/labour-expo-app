@@ -13,7 +13,7 @@ import Colors from "@/constants/Colors";
 const { width } = Dimensions.get("window");
 
 const ScrollingText = ({
-  text = "Facilities of food and living available",
+  text,
   icon,
   textColor = Colors.tertieryButton,
   baseFont = 16,

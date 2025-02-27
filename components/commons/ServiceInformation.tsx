@@ -31,7 +31,7 @@ const ServiceInformation = ({
         color={Colors?.tertieryButton}
         baseFont={18}
       >
-        (Services which are provided by you)
+        ({t("servicesWhichProvidedByYou")})
       </CustomText>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View

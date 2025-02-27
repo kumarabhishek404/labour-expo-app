@@ -200,7 +200,7 @@ const User = () => {
                 color={Colors.primary}
               />
               <CustomText textAlign="left">
-                {user?.address || "Address not found"}
+                {user?.address || t("addressNotFound")}
               </CustomText>
             </View>
 

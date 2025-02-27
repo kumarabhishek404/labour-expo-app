@@ -37,6 +37,7 @@ import { handleCall } from "@/constants/functions";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import ButtonComp from "@/components/inputs/Button";
 import ShowSkills from "@/components/commons/ShowSkills";
+import DateDisplay from "@/components/commons/ShowDate";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -239,8 +240,8 @@ const ServiceDetails = () => {
             <CustomHeader
               title={
                 service?.bookingType === "byService"
-                  ? t("serviceDetails")
-                  : t("bookingDetails")
+                  ? "serviceDetails"
+                  : "bookingDetails"
               }
               left="back"
               right="notification"
@@ -313,7 +314,7 @@ const ServiceDetails = () => {
                   />
                   <ButtonComp
                     isPrimary={true}
-                    title="Show Your Attendance"
+                    title={t("showYourAttendance")}
                     onPress={() =>
                       router?.push({
                         pathname: "/screens/bookings/showAttendance",
@@ -334,7 +335,8 @@ const ServiceDetails = () => {
               {t(service?.type)} - {t(service?.subType)}
             </CustomHeading>
             <CustomHeading baseFont={18} textAlign="left">
-              Service Type{" - "}
+              {t("serviceType")}
+              {" - "}
               <CustomText
                 color={Colors?.tertieryButton}
                 fontWeight="600"
@@ -359,9 +361,7 @@ const ServiceDetails = () => {
                 color={Colors.primary}
                 style={{ alignSelf: "center" }}
               />
-              <CustomText textAlign="left">
-                {t("startFrom")} {moment(service?.startDate).format("LL")}
-              </CustomText>
+              <DateDisplay date={service?.startDate} />
             </View>
 
             <Highlights service={service} />

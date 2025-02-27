@@ -29,7 +29,7 @@ export default function ShowAttendance() {
         options={{
           header: () => (
             <CustomHeader
-              title={"Showing Attendance"}
+              title="showingAttendance"
               left="back"
               right="notification"
             />

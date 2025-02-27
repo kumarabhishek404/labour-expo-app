@@ -17,6 +17,7 @@ import Colors from "@/constants/Colors";
 import GlobalBottomDrawer from "@/components/commons/DrawerFromGlobal";
 import { ToastProvider } from "./hooks/toast";
 import NotificationBanner from "@/components/commons/InAppNotificationBanner";
+import { cleanOldNotifications } from "@/utils/cleanUpNotifications";
 
 // ✅ Notification Handler for foreground handling
 Notifications.setNotificationHandler({
@@ -61,6 +62,10 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const queryClient = new QueryClient();
   const [notification, setNotification] = useState<any>(null);
+
+  useEffect(() => {
+    cleanOldNotifications();
+  }, []);
 
   return (
     <SafeAreaProvider>

@@ -9,12 +9,11 @@ const BookingsAndRequests = () => {
   const TABS = [
     {
       label: "allBookings",
-      description: "Services in which you are selected or booked directly",
+      description: "allBookingsDesc",
     },
     {
       label: "allRequests",
-      description:
-        "These are the requests which you have recieved from the employer and you send to the workers",
+      description: "allRequestsDesc",
     },
   ];
   return (

@@ -27,7 +27,7 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         color={Colors?.tertieryButton}
         baseFont={18}
       >
-        (Services in which you have worked)
+        ({t("servicesInWhichYouHaveWorked")})
       </CustomText>
       <View style={[styles.workInfoWrapper, { marginTop: 10 }]}>
         <View

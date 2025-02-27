@@ -91,7 +91,7 @@ const ShareAppScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Share App" left="menu" right="notification" />
+            <CustomHeader title="shareApp" left="menu" right="notification" />
           ),
         }}
       />

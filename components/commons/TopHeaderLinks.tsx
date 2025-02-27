@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 
 const TopHeaderLinks = ({ title, onPress, icon }: any) => {
   return (
@@ -34,7 +35,7 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
             textAlign: "left",
           }}
         >
-          {title?.length > 0 ? title[0] : title}
+          {title?.length > 0 ? t(title[0]) : t(title)}
         </CustomText>
       </TouchableOpacity>
 
@@ -57,7 +58,7 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
               textAlign: "right",
             }}
           >
-            {title[1]}
+            {t(title[1])}
           </CustomText>
         </TouchableOpacity>
       )}

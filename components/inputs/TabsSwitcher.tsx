@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
 
 const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
@@ -54,7 +55,7 @@ const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
               },
             ]}
           >
-            Profile Information
+            {t("profileInformation")}
           </Animated.Text>
         </TouchableOpacity>
 
@@ -72,7 +73,7 @@ const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
               },
             ]}
           >
-            Other Information
+            {t("otherInformation")}
           </Animated.Text>
         </TouchableOpacity>
       </View>

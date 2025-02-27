@@ -88,7 +88,7 @@ const Favourite = (props: any) => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title="Favourite" left="back" right="notification" />
+            <CustomHeader title="favourite" left="back" right="notification" />
           ),
         }}
       />

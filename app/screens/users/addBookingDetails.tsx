@@ -59,7 +59,7 @@ const AddBookingDetails = ({
       },
     },
   });
-  
+
   const [location, setLocation] = useState({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
@@ -293,7 +293,7 @@ const AddBookingDetails = ({
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Enter work description"
+                placeholder={t('enterWorkDescription')}
                 errors={errors}
                 icon={
                   <Ionicons

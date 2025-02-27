@@ -99,7 +99,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
               {item?.status === "HIRING" && (
                 <ButtonComp
                   isPrimary={true}
-                  title="Add Attendance"
+                  title={t("addAttendance")}
                   onPress={() =>
                     router?.push({
                       pathname: "/screens/bookings/addAttendance",

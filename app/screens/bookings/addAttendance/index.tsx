@@ -104,7 +104,7 @@ export default function AddAttendance() {
         options={{
           header: (): any => (
             <CustomHeader
-              title={t("addAttendance")}
+              title="addAttendance"
               left="back"
               onLeftAction={() => router.back()}
             />
@@ -116,23 +116,25 @@ export default function AddAttendance() {
       />
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={{ width: "60%" }}>
-            <CustomHeading baseFont={20} textAlign="left">
-              {t(booking?.type)}
-            </CustomHeading>
-            <CustomHeading baseFont={20} textAlign="left">
-              {t(booking?.subType)}
-            </CustomHeading>
+          <View style={{ flex: 1 }}>
+            <View style={styles?.typAndSubType}>
+              <CustomHeading baseFont={20} textAlign="left">
+                {t(booking?.type)}
+              </CustomHeading>
+              <CustomHeading baseFont={20} textAlign="left">
+                {"-"} {t(booking?.subType)}
+              </CustomHeading>
+            </View>
             <CustomText textAlign="left">{booking?.address}</CustomText>
           </View>
           <CustomHeading
             baseFont={20}
             fontWeight="bold"
             color={Colors?.inputLabel}
-            style={{ width: "40%" }}
+            style={{ width: "28%" }}
             textAlign="right"
           >
-            {selectedDate?.format("MMMM YYYY")}
+            {t(selectedDate.format("MMMM"))} {selectedDate.format("YYYY")}
           </CustomHeading>
         </View>
         <AttendanceScreenComponent
@@ -162,5 +164,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 10,
+  },
+  typAndSubType: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 5,
   },
 });

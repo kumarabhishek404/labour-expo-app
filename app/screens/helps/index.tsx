@@ -109,7 +109,7 @@ const HelpScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Helps" left="menu" right="notification" />
+            <CustomHeader title="helps" left="menu" right="notification" />
           ),
         }}
       />

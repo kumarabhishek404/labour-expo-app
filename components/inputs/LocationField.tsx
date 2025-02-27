@@ -79,9 +79,11 @@ const LocationField = ({
       <AddAddressModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
+        userId={userDetails?._id}
         setAddress={(address: any) => {
           setAddress(address?.address);
         }}
+        onAfterSuccess={() => {}}
       />
     </View>
   );

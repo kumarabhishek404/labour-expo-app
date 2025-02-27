@@ -155,7 +155,7 @@ const CustomDatePicker = ({
           </Text>
 
           <View style={styles.pickerColumn}>
-            <Text style={styles.label}>Years</Text>
+            <Text style={styles.label}>{t('years')}</Text>
             <ScrollView
               horizontal
               ref={scrollViewRefYearFirst}
@@ -219,7 +219,7 @@ const CustomDatePicker = ({
               </ScrollView>
             )}
 
-            <Text style={styles.label}>Months</Text>
+            <Text style={styles.label}>{t('month')}</Text>
             <ScrollView
               horizontal
               ref={scrollViewRefMonthFirst}
@@ -243,7 +243,7 @@ const CustomDatePicker = ({
                           styles.itemTextSelected,
                       ]}
                     >
-                      {month}
+                      {t(month)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -273,7 +273,7 @@ const CustomDatePicker = ({
                           styles.itemTextSelected,
                       ]}
                     >
-                      {month}
+                      {t(month)}
                     </Text>
                   </TouchableOpacity>
                 ))}

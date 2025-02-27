@@ -89,7 +89,7 @@ const FeedbackForm = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="Feedback" left="menu" right="notification" />
+            <CustomHeader title="allFeedback" left="menu" right="notification" />
           ),
         }}
       />

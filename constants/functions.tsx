@@ -47,17 +47,17 @@ export const getTimeAgo = (createdOn: Date) => {
   const months = Math.floor(days / 30);
 
   if (months > 0) {
-    return `${months} ${months > 1 ? "months" : "month"} ago`;
+    return `${months} ${months > 1 ? t("months") : t("month")} ${t("ago")}`;
   } else if (weeks > 0) {
-    return `${weeks} ${weeks > 1 ? "weeks" : "week"} ago`;
+    return `${weeks} ${weeks > 1 ? t("weeks") : t("week")} ${t("ago")}`;
   } else if (days > 0) {
-    return `${days} ${days > 1 ? "days" : "day"} ago`;
+    return `${days} ${days > 1 ? t("days") : t("day")} ${t("ago")}`;
   } else if (hours > 0) {
-    return `${hours} ${hours > 1 ? "hours" : "hour"} ago`;
+    return `${hours} ${hours > 1 ? t("hours") : t("hour")} ${t("ago")}`;
   } else if (minutes > 0) {
-    return `${minutes} ${minutes > 1 ? "minutes" : "minute"} ago`;
+    return `${minutes} ${minutes > 1 ? t("minutes") : t("minute")} ${t("ago")}`;
   } else {
-    return `${seconds} ${seconds > 1 ? "seconds" : "second"} ago`;
+    return `${seconds} ${seconds > 1 ? t("seconds") : t("second")} ${t("ago")}`;
   }
 };
 

@@ -71,7 +71,7 @@ const TabSwitcher = ({ tabs, actvieTab, setActiveTab, textStyle }: any) => {
             >
               NOTE :{" "}
             </CustomText>
-            {tabs[actvieTab]?.description}
+            {t(tabs[actvieTab]?.description)}
           </CustomText>
         </View>
       )}

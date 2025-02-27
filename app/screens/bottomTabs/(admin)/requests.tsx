@@ -92,7 +92,7 @@ const AdminRequests = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t("requests")}
+              title="requests"
               left="menu"
               right="notification"
             />

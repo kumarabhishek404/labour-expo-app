@@ -57,7 +57,7 @@ const ImageUpload = ({
           <Entypo name="images" size={30} color={Colors.secondary} />
           <Button
             isPrimary={true}
-            title="Choose images"
+            title={t('chooseImages')}
             onPress={pickImage}
             bgColor={Colors?.tertieryButton}
             borderColor={Colors?.tertieryButton}
@@ -87,7 +87,7 @@ const ImageUpload = ({
               style={{ width: "100%" }}
               color={Colors?.inputPlaceholder}
             >
-              Not added any image
+              {t('notAddedAnyImage')}
             </CustomText>
           )}
         </View>

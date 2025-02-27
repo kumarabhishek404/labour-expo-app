@@ -109,7 +109,7 @@ const BookingDetails = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t(title || "directBookingDetails")}
+              title={title || "directBookingDetails"}
               left="back"
               right="notification"
             />
@@ -185,7 +185,8 @@ const BookingDetails = () => {
               {t(booking?.type)} - {t(booking?.subType)}
             </CustomHeading>
             <CustomHeading baseFont={18} textAlign="left">
-              Service Type{" - "}
+              {t("serviceType")}
+              {" - "}
               <CustomText
                 color={Colors?.tertieryButton}
                 fontWeight="600"
@@ -248,7 +249,7 @@ const BookingDetails = () => {
                 {booking?.employer === userDetails?._id ? (
                   <ButtonComp
                     isPrimary={true}
-                    title="Add Attendance"
+                    title={t("addAttendance")}
                     onPress={() =>
                       router?.push({
                         pathname: "/screens/bookings/addAttendance",
@@ -263,7 +264,7 @@ const BookingDetails = () => {
                 ) : (
                   <ButtonComp
                     isPrimary={true}
-                    title="Show Your Attendance"
+                    title={t("showYourAttendance")}
                     onPress={() =>
                       router?.push({
                         pathname: "/screens/bookings/showAttendance",
@@ -287,7 +288,7 @@ const BookingDetails = () => {
                   baseFont={20}
                   style={{ width: "50%", marginBottom: 10 }}
                 >
-                  All Booked Workers
+                  {t("allBookedWorkers")}
                 </CustomHeading>
                 <SelectedUsers
                   selectedApplicants={[

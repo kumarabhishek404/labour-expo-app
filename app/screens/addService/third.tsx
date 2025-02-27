@@ -159,7 +159,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Enter work description"
+                placeholder={t('enterWorkDescription')}
                 errors={errors}
                 icon={
                   <Ionicons

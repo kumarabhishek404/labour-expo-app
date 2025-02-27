@@ -107,7 +107,7 @@ const AdminServices = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t("services")}
+              title="services"
               left="menu"
               right="notification"
             />

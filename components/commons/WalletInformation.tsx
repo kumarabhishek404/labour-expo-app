@@ -78,7 +78,7 @@ const WallletInformation = ({
             color={Colors?.tertieryButton}
             baseFont={18}
           >
-            (Money you spent on the workers for completing your services)
+            ({t("moneyYouSpentOnWorkers")})
           </CustomText>
           {renderSpentsSection()}
         </>
@@ -99,7 +99,7 @@ const WallletInformation = ({
             color={Colors?.tertieryButton}
             baseFont={18}
           >
-            (Money which you have earned by working in the services)
+            ({t("moneyWhichYouHaveEarned")})
           </CustomText>
           {renderEarningsSection()}
         </>

@@ -87,7 +87,7 @@ const Members = () => {
         options={{
           header: () => (
             <CustomHeader
-              title={t("members")}
+              title="members"
               left="back"
               right="notification"
             />

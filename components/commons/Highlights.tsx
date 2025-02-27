@@ -45,7 +45,7 @@ const Highlights = ({ service }: any) => {
           baseFont={18}
           color={Colors?.inputLabel}
         >
-          Facilities provided by employer
+          {t("facilitiesProvidedByEmployer")}
         </CustomHeading>
         <MaterialCommunityIcons
           name="hand-pointing-down"
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 10,
     padding: 10,
-    elevation: 1
+    elevation: 1,
   },
   facilitiesHeading: {
     flexDirection: "row",

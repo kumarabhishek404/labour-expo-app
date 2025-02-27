@@ -78,7 +78,7 @@ const SearchWorkers = ({ style }: any) => {
     router?.push({
       pathname: "/screens/users",
       params: {
-        title: "All Services",
+        title: t('allServices'),
         type: "all",
         searchCategory: JSON.stringify(searchCategory),
       },
@@ -95,7 +95,7 @@ const SearchWorkers = ({ style }: any) => {
             router?.push({
               pathname: "/screens/users",
               params: {
-                title: "All Workers",
+                title: t('allWorkers'),
                 type: "all",
                 searchCategory: JSON.stringify({ name: "", skill: "" }),
               },
@@ -113,7 +113,7 @@ const SearchWorkers = ({ style }: any) => {
           style={{ marginBottom: 0 }}
           color={Colors?.heading}
         >
-          SEARCH WORKERS
+          {t("searchWorkers")}
         </CustomHeading>
 
         <Controller
@@ -190,7 +190,7 @@ const SearchWorkers = ({ style }: any) => {
         />
 
         <ButtonComp
-          title="Search Workers"
+          title={t('searchWorkersTitle')}
           isPrimary
           onPress={handleSubmit(onSubmit)}
         />

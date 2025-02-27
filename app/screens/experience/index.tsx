@@ -114,7 +114,7 @@ const Experience = () => {
           headerShown: true,
           header: () => (
             <CustomHeader
-              title={t("workExperience")}
+              title="workExperience"
               left="back"
               right="notification"
             />

@@ -130,7 +130,7 @@ const ReviewScreen = () => {
           headerShown: true,
           header: () => (
             <CustomHeader
-              title={t("reviews")}
+              title="reviews"
               left="back"
               right="notification"
             />

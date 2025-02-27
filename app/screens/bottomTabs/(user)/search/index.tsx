@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, StatusBar } from "react-native";
-import Colors from "@/constants/Colors";
+import { View, StyleSheet, ScrollView } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
 import SearchWorkers from "./searchWorkers";
 import SearchServices from "./searchServices";
@@ -10,13 +9,11 @@ const Search = () => {
   const TABS = [
     {
       label: "workers",
-      description:
-        "Search all the active workers by search filter (name and skill) below",
+      description: "descriptionWorkers",
     },
     {
       label: "services",
-      description:
-        "Search all the active services by search filter (work type and sub type) below",
+      description: "descriptionServices",
     },
   ];
 

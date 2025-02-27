@@ -98,7 +98,7 @@ const DeleteAccountScreen = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => <CustomHeader title="Delete Profile" left="back" />,
+          header: () => <CustomHeader title="deleteProfile" left="back" />,
         }}
       />
       <Loader loading={mutationDeleteService?.isPending} />

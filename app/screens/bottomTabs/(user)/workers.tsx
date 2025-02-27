@@ -121,7 +121,7 @@ const UserWorkers = () => {
           headerShown: false,
           header: () => (
             <CustomHeader
-              title={t("services")}
+              title="services"
               left="menu"
               right="notification"
             />

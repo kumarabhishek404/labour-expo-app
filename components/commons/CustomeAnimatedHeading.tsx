@@ -10,9 +10,10 @@ import Animated, {
 } from "react-native-reanimated";
 import CustomHeading from "./CustomHeading"; // Adjust the path if needed
 import Colors from "@/constants/Colors"; // Adjust path if needed
+import { t } from "@/utils/translationHelper";
 
 const CustomeAnimatedHeading = ({
-  title = "Requirements of the service",
+  title = t('requirementsOfTheService'),
   baseFont = 20,
   fontWeight = "bold",
   textAlign = "center",

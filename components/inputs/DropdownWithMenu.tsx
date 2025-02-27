@@ -61,7 +61,7 @@ const DropdownWithMenu = ({
           setSelected={(val: any) => {
             setSelected(val);
             onSelect(val);
-            animateDropdown(1); // Show animation on selection
+            animateDropdown(1);
           }}
           data={transformedOptions}
           save="key"

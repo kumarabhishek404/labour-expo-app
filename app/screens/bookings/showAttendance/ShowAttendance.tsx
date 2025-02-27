@@ -13,6 +13,7 @@ import Drawer from "@/components/commons/Drawer";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import ProfilePicture from "@/components/commons/ProfilePicture";
+import DateDisplay from "@/components/commons/ShowDate";
 
 export default function ShowAttendanceComponent({
   booking,
@@ -84,21 +85,19 @@ export default function ShowAttendanceComponent({
         (rec: any) => new Date(rec.date).toDateString() === date.toDateString()
       ) || { date: date.toISOString(), status: "" };
 
-      const formattedDate = date.toLocaleDateString("en-US", {
-        day: "2-digit",
-        weekday: "long",
-        month: "long",
-      });
+      // const formattedDate = date.toLocaleDateString("en-US", {
+      //   day: "2-digit",
+      //   weekday: "long",
+      //   month: "long",
+      // });
 
-      const [weekday, month, day] = formattedDate.split(" ");
-      const customFormattedDate = `${day} ${weekday} ${month}`;
+      // const [weekday, month, day] = formattedDate.split(" ");
+      // const customFormattedDate = `${day} ${t(weekday)} ${t(month)}`;
 
       return (
         <View key={record._id || date.toString()} style={styles.dateRow}>
           <View style={styles.dateBadge}>
-            <CustomText style={styles.dateText}>
-              {customFormattedDate}
-            </CustomText>
+            <DateDisplay date={date} />
           </View>
           <View
             style={[
@@ -107,7 +106,7 @@ export default function ShowAttendanceComponent({
             ]}
           >
             <CustomText style={styles.statusText}>
-              {record.status || "--"}
+              {t(record.status) || "--"}
             </CustomText>
           </View>
         </View>
@@ -127,12 +126,12 @@ export default function ShowAttendanceComponent({
             {selectedWorker?.workerDetails?.name}
           </Text>
           <Text style={styles.drawerWorkerAddress}>
-            {selectedWorker?.workerDetails?.address || "Address not found"}
+            {selectedWorker?.workerDetails?.address || t("addressNotFound")}
           </Text>
         </View>
       </View>
       <CustomText textAlign="left" style={styles.drawerHeading}>
-        Datewise Records
+        {t("datewiseRecords")}
       </CustomText>
       {selectedWorker &&
         renderDateWiseAttendance(
@@ -167,24 +166,24 @@ export default function ShowAttendanceComponent({
                         {workerDetails.name}
                       </Text>
                       <Text style={styles.workerAddress}>
-                        {workerDetails.address || "Address not found"}
+                        {workerDetails.address || t("addressNotFound")}
                       </Text>
                     </View>
                   </View>
                   <View style={styles.attendanceSummary}>
                     <View style={[styles.attendanceBadge, styles.presentBadge]}>
                       <CustomText style={styles.attendanceText}>
-                        Present: {attendance.presentDays}
+                        {t("present")}: {attendance.presentDays}
                       </CustomText>
                     </View>
                     <View style={[styles.attendanceBadge, styles.absentBadge]}>
                       <CustomText style={styles.attendanceText}>
-                        Absent: {attendance.absentDays}
+                        {t("absent")}: {attendance.absentDays}
                       </CustomText>
                     </View>
                     <View style={[styles.attendanceBadge, styles.halfDayBadge]}>
                       <CustomText style={styles.attendanceText}>
-                        Half-Day: {attendance.halfDays}
+                        {t("halfDay")}: {attendance.halfDays}
                       </CustomText>
                     </View>
                   </View>
@@ -209,12 +208,12 @@ export default function ShowAttendanceComponent({
                     </Text>
                     <Text style={styles.drawerWorkerAddress}>
                       {selectedWorker?.workerDetails?.address ||
-                        "Address not found"}
+                        t("addressNotFound")}
                     </Text>
                   </View>
                 </View>
                 <CustomText textAlign="left" style={styles.drawerHeading}>
-                  Datewise Records
+                  {t("datewiseRecords")}
                 </CustomText>
                 {selectedWorker &&
                   renderDateWiseAttendance(
