@@ -4,8 +4,6 @@ import { getDefaultStore } from "jotai";
 
 const store = getDefaultStore();
 
-console.log("Atoms?.appearedNotificationsAtom --", Atoms?.unreadNotificationIdsAtom);
-
 export const cleanOldNotifications = () => {
   setInterval(() => {
     store.set(Atoms?.appearedNotificationsAtom, []);

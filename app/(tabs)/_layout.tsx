@@ -44,7 +44,7 @@ export default function Layout() {
     queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
     retry: false,
     refetchInterval: 10000,
-    enabled: !!userDetails?._id, // API will stop when userDetails is null
+    enabled: !!userDetails?._id && !!userDetails?.isAuth, // API will stop when userDetails is null
   });
   useUnreadNotificationsHandler(response, triggerLocalNotification);
 
