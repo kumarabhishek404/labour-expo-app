@@ -122,7 +122,7 @@ const UserWorkers = () => {
           header: () => (
             <CustomHeader
               title="services"
-              left="menu"
+              left="back"
               right="notification"
             />
           ),
@@ -180,7 +180,7 @@ const UserWorkers = () => {
             />
           ) : (
             // </>
-            <EmptyDatePlaceholder title={"Service"} />
+            <EmptyDatePlaceholder title="service" />
           )}
         </View>
 

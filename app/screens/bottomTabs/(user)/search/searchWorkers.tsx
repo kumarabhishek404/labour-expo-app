@@ -78,7 +78,7 @@ const SearchWorkers = ({ style }: any) => {
     router?.push({
       pathname: "/screens/users",
       params: {
-        title: t('allServices'),
+        title: "allWorkers",
         type: "all",
         searchCategory: JSON.stringify(searchCategory),
       },
@@ -89,13 +89,13 @@ const SearchWorkers = ({ style }: any) => {
     // <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <TopHeaderLinks
-        title={["SHOW ALL WORKERS"]}
+        title={["showAllWorkers"]}
         onPress={[
           () =>
             router?.push({
               pathname: "/screens/users",
               params: {
-                title: t('allWorkers'),
+                title: "allWorkers",
                 type: "all",
                 searchCategory: JSON.stringify({ name: "", skill: "" }),
               },
@@ -135,7 +135,7 @@ const SearchWorkers = ({ style }: any) => {
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder={t("enterYourResetPasswordCode")}
+              placeholder={t("searchWorkerName")}
               errors={errors}
               icon={
                 <Ionicons
@@ -173,7 +173,7 @@ const SearchWorkers = ({ style }: any) => {
               }}
               onPress={() => Keyboard.dismiss()}
               onFocus={() => Keyboard.dismiss()}
-              placeholder="selectWorkType"
+              placeholder="searchWorkerSkill"
               options={WORKERTYPES}
               errors={errors}
               search={true}
@@ -190,7 +190,7 @@ const SearchWorkers = ({ style }: any) => {
         />
 
         <ButtonComp
-          title={t('searchWorkersTitle')}
+          title={t("searchWorkersTitle")}
           isPrimary
           onPress={handleSubmit(onSubmit)}
         />

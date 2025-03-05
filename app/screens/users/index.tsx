@@ -101,7 +101,7 @@ const Users = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={`${title}`} left="back" right="notification" />
+            <CustomHeader title={title as string} left="back" right="notification" />
           ),
         }}
       />
@@ -130,7 +130,7 @@ const Users = () => {
             }
           />
         ) : (
-          <EmptyDatePlaceholder title={t("worker")} />
+          <EmptyDatePlaceholder title="worker" />
         )}
       </View>
     </>

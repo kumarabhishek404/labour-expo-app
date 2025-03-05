@@ -8,31 +8,28 @@ import {
   ScrollView,
   BackHandler,
 } from "react-native";
+import { useAtom } from "jotai";
 import { useFocusEffect } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
 import { Ionicons } from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
+import Atoms from "@/app/AtomStore";
+import { t } from "@/utils/translationHelper";
 
 const { width, height } = Dimensions.get("window");
 
-const Drawer = ({
-  title,
-  visible,
-  content,
-  onClose,
-  primaryButton,
-  secondaryButton,
-}: any) => {
+const GlobalSideDrawer = () => {
+  const [drawerState, setDrawerState]: any = useAtom(Atoms?.SideDrawerAtom);
   const slideAnim = useRef(new Animated.Value(width)).current;
 
-  // Handle Android back button when drawer is open
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (visible) {
-          onClose();
-          return true; // Prevent default back action
+        if (drawerState.visible) {
+          drawerState.secondaryButton?.action();
+          setDrawerState({ ...drawerState, visible: false });
+          return true;
         }
         return false;
       };
@@ -41,11 +38,11 @@ const Drawer = ({
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [visible, onClose])
+    }, [drawerState, setDrawerState])
   );
 
   useEffect(() => {
-    if (visible) {
+    if (drawerState.visible) {
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
@@ -58,15 +55,20 @@ const Drawer = ({
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [drawerState.visible]);
+
+  if (!drawerState.visible) return null;
 
   return (
     <>
-      {visible && (
-        <TouchableWithoutFeedback onPress={onClose}>
-          <View style={styles.backdrop} />
-        </TouchableWithoutFeedback>
-      )}
+      <TouchableWithoutFeedback
+        onPress={() => {
+          drawerState.secondaryButton?.action();
+          setDrawerState({ ...drawerState, visible: false });
+        }}
+      >
+        <View style={styles.backdrop} />
+      </TouchableWithoutFeedback>
 
       <Animated.View
         style={[
@@ -76,13 +78,16 @@ const Drawer = ({
       >
         <View style={styles.header}>
           <CustomHeading baseFont={20} fontWeight="bold">
-            {title}
+            {t(drawerState.title)}
           </CustomHeading>
           <Ionicons
             name="close"
             size={28}
             color={Colors.primary}
-            onPress={onClose}
+            onPress={() => {
+              drawerState.secondaryButton?.action();
+              setDrawerState({ ...drawerState, visible: false });
+            }}
           />
         </View>
 
@@ -92,42 +97,42 @@ const Drawer = ({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {content()}
+          {drawerState.content && drawerState.content()}
         </ScrollView>
 
-        {(primaryButton || secondaryButton) && (
-          <Animated.View style={styles.footer}>
-            {secondaryButton && (
+        {(drawerState.primaryButton || drawerState.secondaryButton) && (
+          <View style={styles.footer}>
+            {drawerState.secondaryButton && (
               <ButtonComp
                 isPrimary={false}
-                title={secondaryButton?.title}
-                onPress={secondaryButton?.action}
+                title={t(drawerState.secondaryButton?.title)}
+                onPress={drawerState.secondaryButton?.action}
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
                 textColor={Colors?.white}
                 style={{ width: "35%" }}
               />
             )}
-            {primaryButton && (
+            {drawerState.primaryButton && (
               <ButtonComp
                 isPrimary={true}
-                title={primaryButton?.title}
-                onPress={primaryButton?.action}
-                disabled={primaryButton?.disabled}
+                title={t(drawerState.primaryButton?.title)}
+                onPress={drawerState.primaryButton?.action}
+                disabled={drawerState.primaryButton?.disabled}
                 bgColor={Colors?.success}
                 borderColor={Colors?.success}
                 textColor={Colors?.white}
                 style={{ flex: 1 }}
               />
             )}
-          </Animated.View>
+          </View>
         )}
       </Animated.View>
     </>
   );
 };
 
-export default Drawer;
+export default GlobalSideDrawer;
 
 const styles = StyleSheet.create({
   backdrop: {
@@ -139,11 +144,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   drawerContainer: {
+    flex: 1,
     position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
     width: "100%",
+    height: height,
     backgroundColor: Colors.background,
     paddingHorizontal: 20,
     shadowColor: "#000",

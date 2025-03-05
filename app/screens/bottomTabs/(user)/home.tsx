@@ -134,7 +134,7 @@ const UserHome = () => {
         options={{
           headerShown: false,
           header: () => (
-            <CustomHeader title="" left="menu" right="notification" />
+            <CustomHeader title="" left="back" right="notification" />
           ),
         }}
       />
@@ -185,7 +185,7 @@ const UserHome = () => {
                   <ScrollHint />
                 </>
               ) : (
-                <EmptyDatePlaceholder title={"Service"} />
+                <EmptyDatePlaceholder title="service" />
               )}
             </View>
           </View>

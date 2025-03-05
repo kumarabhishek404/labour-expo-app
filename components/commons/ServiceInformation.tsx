@@ -45,7 +45,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.total || 0}
+              {information?.byService?.total || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               style={{ transform: "rotate(90deg)" }}
@@ -59,7 +59,7 @@ const ServiceInformation = ({
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.completed || 0}
+              {information?.byService?.completed || 0}
             </CustomHeading>
             <Ionicons
               name="checkmark-done-circle-outline"
@@ -84,7 +84,7 @@ const ServiceInformation = ({
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.pending || 0}
+              {information?.byService?.pending || 0}
             </CustomHeading>
             <MaterialCommunityIcons
               name="clock-outline"
@@ -97,7 +97,7 @@ const ServiceInformation = ({
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.cancelled || 0}
+              {information?.byService?.cancelled || 0}
             </CustomHeading>
             <Fontisto name="close" size={24} color={Colors.primary} />
           </View>

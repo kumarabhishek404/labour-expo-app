@@ -3,37 +3,38 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Linking,
   Clipboard,
 } from "react-native";
-import * as Sharing from "expo-sharing";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import * as SMS from "expo-sms";
-import * as MailComposer from "expo-mail-composer";
 import { Stack } from "expo-router";
 import Colors from "@/constants/Colors";
 import { APPLINK } from "@/constants";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
+import TOAST from "@/app/hooks/toast";
+import { t } from "@/utils/translationHelper";
+
+// Set preferred language (change to "hi" for Hindi)
+const LANGUAGE = "en"; // Change to "hi" for Hindi
 
 const ShareAppScreen = () => {
-  // Share using Social Media Platforms (e.g., WhatsApp, Facebook, Telegram)
+  // Share using Social Media Platforms
   const shareToSocialMedia = (platform: any) => {
     let url;
+    const message = encodeURIComponent(t("shareMessage", { appLink: APPLINK }));
+
     switch (platform) {
       case "whatsapp":
-        url = `whatsapp://send?text=Check out this amazing app: ${APPLINK}`;
+        url = `whatsapp://send?text=${message}`;
         break;
-      case "instagram":
-        url = `instagram://story-camera`; // Instagram doesn't support text sharing directly, so it opens the camera
-        break;
+      // case "instagram":
+      //   url = `https://www.instagram.com/direct/new/`; // Open Instagram direct messages
+      //   break;
       case "linkedin":
-        url = `linkedin://sharing/share-offsite/?url=https://example.com`;
-        break;
-      case "facebook":
-        url = `fb://faceweb/f?href=${APPLINK}`;
+        url = `https://www.linkedin.com/messaging/compose/?body=${message}`;
         break;
       default:
         url = "";
@@ -44,45 +45,65 @@ const ShareAppScreen = () => {
         if (supported) {
           return Linking.openURL(url);
         } else {
-          Alert.alert("App not installed");
+          TOAST.error(t("appNotInstalled"));
         }
       })
       .catch((err) => console.error("An error occurred", err));
+  };
+
+  // Share via Facebook
+  const shareOnFacebookAndInstagramMessenger = async (platform: any) => {
+    const message = encodeURIComponent(
+      `Check out this amazing app: ${APPLINK}`
+    );
+
+    Clipboard.setString(APPLINK);
+    TOAST.success(t("facebookCopiedText"));
+
+    const fbShareUrl =
+      platform === "instagram"
+        ? `https://www.instagram.com/direct/new/`
+        : `https://m.me/?message=${encodeURIComponent(message)}`;
+
+    setTimeout(() => {
+      Linking.canOpenURL(fbShareUrl)
+        .then((supported) => {
+          if (supported) {
+            return Linking.openURL(fbShareUrl);
+          } else {
+            TOAST.error("App not installed or not supported.");
+          }
+        })
+        .catch((err) => console.error("An error occurred", err));
+    }, 2000);
   };
 
   // Share via SMS
   const shareViaSMS = async () => {
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
-      await SMS.sendSMSAsync(
-        [], // Leave empty to allow users to choose recipients
-        `Check out this amazing app: ${APPLINK}`
-      );
+      await SMS.sendSMSAsync([], t("shareMessage"));
     } else {
-      Alert.alert("SMS service is not available");
+      TOAST.error(t("smsError"));
     }
   };
 
   // Share via Email
   const shareViaEmail = async () => {
-    const options = {
-      recipients: [],
-      subject: "Check out this amazing app!",
-      body: `I wanted to share this awesome app with you: ${APPLINK}`,
-    };
+    const subject = encodeURIComponent(t("emailSubject"));
+    const body = encodeURIComponent(t("shareMessage"));
+    const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
 
-    const isAvailable = await MailComposer.isAvailableAsync();
-    if (isAvailable) {
-      await MailComposer.composeAsync(options);
-    } else {
-      Alert.alert("Email service is not available");
-    }
+    Linking.openURL(mailtoUrl).catch((err) => {
+      console.error("Error opening mail app:", err);
+      TOAST.error(t("emailError"));
+    });
   };
 
   // Copy link to clipboard
   const copyLink = () => {
     Clipboard.setString(APPLINK);
-    Alert.alert("Link copied to clipboard");
+    TOAST.success(t("copySuccess"));
   };
 
   return (
@@ -91,24 +112,32 @@ const ShareAppScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="shareApp" left="menu" right="notification" />
+            <CustomHeader
+              title="headerTitle"
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
       <View style={styles.container}>
-        <CustomHeading baseFont={24}>Share Our App With Your Family</CustomHeading>
+        <CustomHeading baseFont={24}>{t("shareHeading")}</CustomHeading>
 
         <View style={styles.iconContainer}>
           <TouchableOpacity onPress={() => shareToSocialMedia("whatsapp")}>
             <FontAwesome name="whatsapp" size={50} color="#25D366" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => shareToSocialMedia("instagram")}>
+          <TouchableOpacity
+            onPress={() => shareOnFacebookAndInstagramMessenger("instagram")}
+          >
             <FontAwesome name="instagram" size={50} color="#E1306C" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => shareToSocialMedia("linkedin")}>
             <FontAwesome name="linkedin" size={50} color="#0088cc" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => shareToSocialMedia("facebook")}>
+          <TouchableOpacity
+            onPress={() => shareOnFacebookAndInstagramMessenger("facebook")}
+          >
             <FontAwesome name="facebook" size={50} color="#4267B2" />
           </TouchableOpacity>
         </View>
@@ -116,7 +145,7 @@ const ShareAppScreen = () => {
         <View style={styles.actionContainer}>
           <Button
             isPrimary={true}
-            title="Share via SMS"
+            title={t("buttonShareSMS")}
             onPress={shareViaSMS}
             icon={
               <MaterialIcons
@@ -129,7 +158,7 @@ const ShareAppScreen = () => {
           />
           <Button
             isPrimary={true}
-            title="Share via Email"
+            title={t("buttonShareEmail")}
             onPress={shareViaEmail}
             icon={
               <MaterialIcons
@@ -142,7 +171,7 @@ const ShareAppScreen = () => {
           />
           <Button
             isPrimary={true}
-            title="Copy Link"
+            title={t("buttonCopyLink")}
             onPress={copyLink}
             icon={
               <MaterialIcons
@@ -162,17 +191,11 @@ const ShareAppScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fa",
+    backgroundColor: Colors?.fourth,
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 30,
-    color: "#333",
   },
   iconContainer: {
     flexDirection: "row",
@@ -182,21 +205,7 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     width: "100%",
-    gap: 20
-  },
-  actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors?.primary,
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    justifyContent: "center",
-  },
-  buttonText: {
-    marginLeft: 10,
-    fontSize: 18,
-    color: "white",
+    gap: 20,
   },
 });
 

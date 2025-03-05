@@ -9,11 +9,17 @@ import ProfilePicture from "./ProfilePicture";
 import ButtonComp from "../inputs/Button";
 
 const ListingsBookedWorkers = ({ title, item, category }: any) => {
+  console.log("item", item?.selectedUsers[0]);
+
   let workersList =
     item?.bookingType === "byService"
       ? [
-          ...(item.selectedUsers || []),
-          ...item.selectedUsers.flatMap((user: any) => user?.workers || []),
+          ...(item.selectedUsers?.filter(
+            (user: any) => user?.status === "SELECTED"
+          ) || []),
+          ...item.selectedUsers
+            .filter((user: any) => user?.status === "SELECTED")
+            .flatMap((user: any) => user?.workers || []),
         ]
       : [item?.bookedWorker];
 
@@ -27,7 +33,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
             pathname: "/screens/bookings/[id]",
             params: {
               id: item?._id,
-              title: title || `Worker Details`,
+              title: title,
               data: JSON.stringify(item),
               category: category,
             },
@@ -49,7 +55,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 
             <View style={styles.workerInfo}>
               <CustomHeading baseFont={18} fontWeight="bold" textAlign="right">
-                {firstWorker?.name || "Worker"}
+                {firstWorker?.name}
               </CustomHeading>
               <CustomText
                 baseFont={15}
@@ -58,18 +64,28 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
               >
                 {firstWorker?.skills?.map(
                   (skill: any) => `${t(skill?.skill)}, `
-                ) || "No skills listed"}
+                )}
               </CustomText>
             </View>
           </View>
 
           {/* Worker Status & Contact */}
           <View style={styles.statusContainer}>
-            <CustomText baseFont={14} color={Colors?.subHeading}>
-              {firstWorker?.address || "Not found address"}
+            <CustomText
+              style={{ flex: 1 }}
+              textAlign="left"
+              baseFont={14}
+              color={Colors?.subHeading}
+            >
+              {firstWorker?.address}
             </CustomText>
-            <CustomText baseFont={14} color={Colors.primary}>
-              📞 {firstWorker?.mobile || "No Contact"}
+            <CustomText
+              style={{ width: "30%" }}
+              textAlign="right"
+              baseFont={14}
+              color={Colors.primary}
+            >
+              📞 {firstWorker?.mobile}
             </CustomText>
           </View>
 
@@ -78,9 +94,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
             <CustomHeading textAlign="left">
               {t(item?.type)} - {t(item?.subType)}
             </CustomHeading>
-            <CustomText textAlign="left">
-              🏠 {item?.address || "Location Unknown"}
-            </CustomText>
+            <CustomText textAlign="left">🏠 {item?.address}</CustomText>
             <View
               style={{
                 flexDirection: "row",
@@ -90,10 +104,10 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
             >
               <View>
                 <CustomText textAlign="left">
-                  📅 {item?.startDate?.split("T")[0] || "No Date"}
+                  📅 {t("startFrom", {date: item?.startDate?.split("T")[0]})}
                 </CustomText>
                 <CustomText textAlign="left">
-                  ⏳ {item?.duration || "N/A"} days
+                  ⏳ {item?.duration} {item?.duration > 1 ? t("days") : t("day")}
                 </CustomText>
               </View>
               {item?.status === "HIRING" && (

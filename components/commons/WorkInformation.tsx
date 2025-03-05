@@ -41,7 +41,8 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.total || 0}
+              {information?.byService?.appliedIndividually?.total +
+                information?.byService?.appliedByMediator?.total || 0}
             </CustomHeading>
           </View>
           <CustomText baseFont={14}>{t("totalTasks")}</CustomText>
@@ -49,7 +50,8 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.completed || 0}
+              {information?.byService?.appliedIndividually?.completed +
+                information?.byService?.appliedByMediator?.completed || 0}
             </CustomHeading>
           </View>
           <CustomText baseFont={14}>{t("completed")}</CustomText>
@@ -67,7 +69,10 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         >
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.pending || 0}
+              {information?.byService?.appliedIndividually?.applied +
+                information?.byService?.appliedByMediator?.applied +
+                information?.byService?.appliedIndividually?.selected +
+                information?.byService?.appliedByMediator?.selected || 0}
             </CustomHeading>
           </View>
           <CustomText baseFont={14}>{t("pending")}</CustomText>
@@ -75,7 +80,26 @@ const WorkInformation = ({ information, style }: WorkInformationProps) => {
         <View style={styles.workInfoBox}>
           <View style={styles?.iconWrapper}>
             <CustomHeading baseFont={26}>
-              {information?.cancelled || 0}
+              {information?.byService?.appliedIndividually?.cancelledApply
+                ?.byMySelf +
+                information?.byService?.appliedIndividually?.cancelledApply
+                  ?.byEmployer +
+                information?.byService?.appliedIndividually?.cancelledSelection
+                  ?.byMySelf +
+                information?.byService?.appliedIndividually?.cancelledSelection
+                  ?.byEmployer +
+                information?.byService?.appliedByMediator?.cancelledApply
+                  ?.byMySelf +
+                information?.byService?.appliedByMediator?.cancelledApply
+                  ?.byMediator +
+                information?.byService?.appliedByMediator?.cancelledApply
+                  ?.byEmployer +
+                information?.byService?.appliedByMediator?.cancelledSelection
+                  ?.byMySelf +
+                information?.byService?.appliedByMediator?.cancelledSelection
+                  ?.byMediator +
+                information?.byService?.appliedByMediator?.cancelledSelection
+                  ?.byEmployer || 0}
             </CustomHeading>
           </View>
           <CustomText baseFont={14}>{t("cancelled")}</CustomText>

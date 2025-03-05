@@ -9,6 +9,7 @@ import Loader from "@/components/commons/Loaders/Loader";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import { getTimeAgo } from "@/constants/functions";
 import FeedbackRatingBreakdown from "./ratingBreakdown";
+import Colors from "@/constants/Colors";
 
 const FeedbackScreen = () => {
   const [filteredFeedbacks, setFilteredFeedbacks]: any = useState([]);
@@ -84,7 +85,11 @@ const FeedbackScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="allFeedback" left="menu" right="notification" />
+            <CustomHeader
+              title="allFeedback"
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
@@ -100,19 +105,13 @@ const FeedbackScreen = () => {
           style={styles.feedbackList}
           showsVerticalScrollIndicator={false}
         />
-        {/* <Button
-          isPrimary={true}
-          title={t("writeAReview")}
-          style={styles.buttonText}
-          onPress={() => router?.back()}
-        /> */}
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: "#F5F5F5" },
+  container: { flex: 1, padding: 15, backgroundColor: Colors?.fourth },
   breakdownRow: {
     flexDirection: "row",
     alignItems: "center",

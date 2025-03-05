@@ -111,7 +111,7 @@ const Bookings = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title="Booked Worker" />
+            <EmptyDatePlaceholder title="bookedWorker" />
           )}
         </View>
       </View>

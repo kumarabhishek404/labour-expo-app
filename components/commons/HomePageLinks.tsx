@@ -36,7 +36,7 @@ const HomePageLinks = () => {
         pathname: "/screens/users",
         params: {
           role: "mediators",
-          title: t("mediators"),
+          title: "mediators",
           type: "all",
         },
       },

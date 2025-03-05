@@ -2,6 +2,7 @@ import Chat from "@/components/commons/Chat";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
+import YouTubePlayer from "@/components/commons/VideoPlayer";
 import Button from "@/components/inputs/Button";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { FAQS_QUESTIONS, FAQS_SUPPORT, FAQS_TOPICS } from "@/constants";
@@ -12,7 +13,6 @@ import {
   Foundation,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { Video } from "expo-av";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -109,7 +109,7 @@ const HelpScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="helps" left="menu" right="notification" />
+            <CustomHeader title="helps" left="back" right="notification" />
           ),
         }}
       />
@@ -153,7 +153,7 @@ const HelpScreen = () => {
             value={searchQuery}
             placeholder={t("search")}
             onChangeText={handleSearch}
-            label={t("haveAQuestion")}
+            label="haveAQuestion"
             name="search"
           />
         </View>
@@ -190,7 +190,12 @@ const HelpScreen = () => {
                 <CustomHeading baseFont={30} style={{ marginBottom: 10 }}>
                   {item.icon}
                 </CustomHeading>
-                <CustomText textAlign="left" baseFont={14}>
+                <CustomText
+                  textAlign="left"
+                  baseFont={14}
+                  color={Colors?.white}
+                  style={{ maxWidth: 200 }}
+                >
                   {item.question}
                 </CustomText>
               </TouchableOpacity>
@@ -225,46 +230,19 @@ const HelpScreen = () => {
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <TouchableOpacity
-                  onPress={closeModal}
-                  style={styles.closeIconContainer}
-                >
-                  <Feather name="x" size={24} color="#333" />
-                </TouchableOpacity>
-                <CustomHeading textAlign="left">
-                  {selectedQuestion.question}
-                </CustomHeading>
-                <CustomText baseFont={14} textAlign="left">
-                  {selectedQuestion.answer}
-                </CustomText>
-
-                {/* Video Player */}
-                <Video
-                  source={{ uri: "https://youtu.be/nFgsBxw-zWQ" }}
-                  rate={1.0}
-                  volume={1.0}
-                  isMuted={false}
-                  // resizeMode={"cover"}
-                  shouldPlay={true}
-                  useNativeControls
-                  style={styles.videoPlayer}
-                />
-
-                {/* Image Section */}
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{
-                      uri: "https://thumbs.dreamstime.com/b/help-wanted-vector-clip-art-31368648.jpg",
-                    }}
-                    style={styles.modalImage}
-                  />
-                  <Image
-                    source={{
-                      uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWLxLohqKFddXcpZgU57idshaJpixaiy4Qsg&s",
-                    }}
-                    style={styles.modalImage}
-                  />
+                <View style={styles.header}>
+                  <CustomHeading textAlign="left">
+                    {selectedQuestion.question}
+                  </CustomHeading>
+                  <TouchableOpacity
+                    onPress={closeModal}
+                    style={styles.closeIconContainer}
+                  >
+                    <Feather name="x" size={24} color="#333" />
+                  </TouchableOpacity>
                 </View>
+
+                <YouTubePlayer videoId="UrIaQbIK2E4" />
               </View>
             </View>
           </Modal>
@@ -289,7 +267,7 @@ const HelpScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
@@ -323,7 +301,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   faqCard: {
-    backgroundColor: "#F0F4FF",
+    backgroundColor: Colors?.tertieryButton,
     borderRadius: 8,
     padding: 10,
     minWidth: 180,
@@ -396,28 +374,21 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: 20,
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    paddingBottom: 8,
     borderRadius: 8,
     width: "90%",
     maxHeight: "80%",
   },
-  closeIconContainer: {
-    alignSelf: "flex-end",
-  },
-  videoPlayer: {
-    width: "100%",
-    height: 200,
-    backgroundColor: "#000",
-    marginBottom: 20,
-  },
-  imageContainer: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
   },
-  modalImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
+  closeIconContainer: {
+    alignSelf: "flex-end",
   },
 });
 

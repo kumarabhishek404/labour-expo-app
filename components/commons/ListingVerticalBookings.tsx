@@ -64,6 +64,12 @@ const ListingsVerticalBookings = ({
             />
           ) : null
         }
+        contentContainerStyle={{ paddingBottom: 200 }}
+        getItemLayout={(data, index) => ({
+          length: 100,
+          offset: 100 * index,
+          index,
+        })}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={3}

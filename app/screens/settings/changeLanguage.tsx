@@ -69,7 +69,7 @@ export default function LanguageSelectionScreen() {
           header: () => (
             <CustomHeader
               title="changeLanguage"
-              left="menu"
+              left="back"
               right="notification"
             />
           ),
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingBottom: 62,
+    backgroundColor: Colors?.fourth,
     justifyContent: "space-between",
   },
   languageItem: {

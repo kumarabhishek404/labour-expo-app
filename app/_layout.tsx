@@ -18,6 +18,7 @@ import GlobalBottomDrawer from "@/components/commons/DrawerFromGlobal";
 import { ToastProvider } from "./hooks/toast";
 import NotificationBanner from "@/components/commons/InAppNotificationBanner";
 import { cleanOldNotifications } from "@/utils/cleanUpNotifications";
+import GlobalSideDrawer from "@/components/commons/Drawer";
 
 // ✅ Notification Handler for foreground handling
 Notifications.setNotificationHandler({
@@ -89,6 +90,7 @@ function RootLayoutNav() {
                   />
                 </Stack>
                 <GlobalBottomDrawer />
+                <GlobalSideDrawer />
                 <AuthListener />
               </ToastProvider>
             </PaperProvider>

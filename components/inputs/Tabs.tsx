@@ -58,18 +58,18 @@ const TabSwitcher = ({ tabs, actvieTab, setActiveTab, textStyle }: any) => {
         ))}
       </View>
       {tabs[actvieTab]?.description && (
-        <View style={{ paddingHorizontal: 18, paddingBottom: 10 }}>
+        <View style={{ width: "100%", paddingHorizontal: 18, paddingTop: 5 }}>
           <CustomText
-            baseFont={14}
+            baseFont={16}
             textAlign={actvieTab === 0 ? "left" : "right"}
             color={Colors?.subHeading}
           >
             <CustomText
               color={Colors?.tertieryButton}
-              baseFont={15}
+              baseFont={18}
               fontWeight="600"
             >
-              NOTE :{" "}
+              {t('note')} :{" "}
             </CustomText>
             {t(tabs[actvieTab]?.description)}
           </CustomText>

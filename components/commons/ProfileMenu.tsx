@@ -123,12 +123,10 @@ const ProfileMenu = ({ disabled }: any) => {
       />
       <View style={styles.modalTextContainer}>
         <CustomHeading style={styles.modalTitle}>
-          {isEnabling ? "Enable Notifications" : "Disable Notifications"}
+          {isEnabling ? t("enableTitle") : t("disableTitle")}
         </CustomHeading>
         <CustomText style={styles.modalMessage}>
-          {isEnabling
-            ? "Do you want to turn on notifications for this app?"
-            : "Are you sure you want to turn off notifications?"}
+          {isEnabling ? t("enableMessage") : t("disableMessage")}
         </CustomText>
       </View>
     </View>
@@ -159,7 +157,7 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: () =>
         router?.push({
           pathname: "/screens/notifications",
-          params: { title: t("notifications"), type: "all" },
+          params: { title: "notifications", type: "all" },
         }),
       style: [styles?.menuItem],
       isSuspended: false,
@@ -174,7 +172,7 @@ const ProfileMenu = ({ disabled }: any) => {
           pathname: "/screens/team/[id]",
           params: {
             id: userDetails?._id,
-            title: t("yourTeam"),
+            title: "yourTeam",
           },
         }),
       roleCondition: userDetails?.team === null,
@@ -191,7 +189,7 @@ const ProfileMenu = ({ disabled }: any) => {
           pathname: "/screens/teamRequests",
           params: {
             id: userDetails?._id,
-            title: t("teamJoiningRequest"),
+            title: "teamJoiningRequest",
             type: "teamJoiningRequest",
           },
         }),
@@ -207,7 +205,7 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: () =>
         router?.push({
           pathname: "/screens/service",
-          params: { title: t("savedServices"), type: "saved" },
+          params: { title: "savedServices", type: "saved" },
         }),
       style: [styles?.menuItem],
       isSuspended: disabled,
@@ -220,7 +218,7 @@ const ProfileMenu = ({ disabled }: any) => {
           pathname: "/screens/users",
           params: {
             role: "users",
-            title: t("savedUsers"),
+            title: "savedUsers",
             type: "saved",
             searchCategory: JSON.stringify({
               skill: "",
@@ -238,7 +236,7 @@ const ProfileMenu = ({ disabled }: any) => {
           pathname: "/screens/reviews",
           params: {
             role: "mediators",
-            title: t("favouriteMediators"),
+            title: "favouriteMediators",
             type: "reviews",
           },
         }),
@@ -253,7 +251,7 @@ const ProfileMenu = ({ disabled }: any) => {
           pathname: "/screens/experience",
           params: {
             role: "mediators",
-            title: t("favouriteMediators"),
+            title: "favouriteMediators",
             type: "experience",
           },
         }),
@@ -282,8 +280,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/settings/changeLanguage",
           params: {
-            role: "mediators",
-            title: t("favouriteMediators"),
+            title: "changeLanguage",
           },
         }),
       style: [styles?.menuItem],
@@ -298,8 +295,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/support",
           params: {
-            role: "mediators",
-            title: t("favouriteMediators"),
+            title: "support",
             type: "support",
           },
         }),
@@ -313,8 +309,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/shareApp",
           params: {
-            role: "mediators",
-            title: t("favouriteMediators"),
+            title: "tellFriends",
           },
         }),
       style: [styles?.menuItem],
@@ -329,8 +324,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/appFeedback",
           params: {
-            role: "mediators",
-            title: t("favouriteMediators"),
+            title: "appFeedback",
           },
         }),
       style: [styles?.menuItem],
@@ -343,8 +337,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/privacyPolicy",
           params: {
-            role: "workers",
-            title: t("favouriteWorkers"),
+            title: "privacyPolicy",
           },
         }),
       style: [styles?.menuItem],
@@ -359,8 +352,7 @@ const ProfileMenu = ({ disabled }: any) => {
         router?.push({
           pathname: "/screens/termsAndConditions",
           params: {
-            role: "workers",
-            title: t("favouriteWorkers"),
+            title: "termsAndConditions",
           },
         }),
       style: [styles?.menuItem],
@@ -433,7 +425,7 @@ const ProfileMenu = ({ disabled }: any) => {
             !menu.roleCondition && (
               <View key={index}>
                 <TouchableOpacity
-                  onPress={menu?.onPress}
+                  onPress={menu?.switch ? menu?.onSwitchToggle : menu?.onPress}
                   style={[
                     menu?.style,
                     styles.settingsItem,
@@ -468,11 +460,11 @@ const ProfileMenu = ({ disabled }: any) => {
 
       <ModalComponent
         visible={isModalVisible}
-        title="Deactivate Account"
+        title={t("deactivateAccount")}
         onClose={() => setModalVisible(false)}
         content={modalContent}
         primaryButton={{
-          title: "Deactivate",
+          title: t("deactivate"),
           action: mutationDeactivateAccount.mutate,
           styles: {
             backgroundColor: "red",
@@ -489,11 +481,11 @@ const ProfileMenu = ({ disabled }: any) => {
 
       <ModalComponent
         visible={isNotificationModalVisible}
-        title={isEnabling ? "Enable Notifications" : "Disable Notifications"}
+        title={isEnabling ? t("enableTitle") : t("disableTitle")}
         onClose={() => setNotificationModalVisible(false)}
         content={notificationModalContent}
         primaryButton={{
-          title: isEnabling ? "Enable" : "Disable",
+          title: isEnabling ? t("enable") : t("disable"),
           action: confirmNotificationChange,
           styles: {
             backgroundColor: isEnabling ? Colors.primary : Colors.danger,

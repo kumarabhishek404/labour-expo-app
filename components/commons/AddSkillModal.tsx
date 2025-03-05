@@ -12,13 +12,20 @@ import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
 import Loader from "./Loaders/Loader";
 import PaperDropdown from "../inputs/Dropdown";
+import CustomSegmentedButton from "@/app/screens/bottomTabs/(user)/bookingsAndRequests/customTabs";
+import { set } from "lodash";
 
 const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
-  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const [role, setRole] = useState("worker");
+
+  const TABS: any = [
+    { value: "worker", label: "worker" },
+    { value: "mediator", label: "mediator" },
+  ];
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
@@ -47,18 +54,10 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
 
   const onAddSkills = async () => {
     try {
-      if (!skillWithPrice || !skillWithPrice.pricePerDay) {
-        console.log("Please enter both skill and price.");
-        return;
-      }
-
-      await mutationAddSkills.mutateAsync(skillWithPrice, {
+      console.log("Skiiiiii-", skillWithPrice);
+      const payload = role === "worker" ? skillWithPrice : {skill: selectedSkill};
+      await mutationAddSkills.mutateAsync(payload, {
         onSuccess: () => {
-          console.log(
-            "Skill added successfully:",
-            skillWithPrice,
-            selectedSkill
-          );
           setDrawerState({ visible: false });
           setIsDrawerVisible(false);
           setSelectedSkill(null);
@@ -98,13 +97,24 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
     );
   };
 
+  const onCatChanged = (category: string) => {
+    setRole(category);
+    setSelectedSkill(null);
+    setSkillWithPrice(null);
+  };
+
   useEffect(() => {
     if (isDrawerVisible) {
       setDrawerState({
         visible: true,
         title: "addAtLeastOneSkillApplyServices",
         content: () => (
-          <View style={{ paddingVertical: 20 }}>
+          <View style={{ paddingVertical: 10 }}>
+            <CustomSegmentedButton
+              buttons={TABS}
+              selectedTab={role}
+              onValueChange={onCatChanged}
+            />
             <PaperDropdown
               name="addSkill"
               label="selectSkill"
@@ -124,24 +134,29 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
                 />
               }
             />
-            {selectedSkill && renderPriceInput()}
+            {selectedSkill && role === "worker" && renderPriceInput()}
           </View>
         ),
         primaryButton: {
           title: "addSkill",
           action: onAddSkills,
-          disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
+          disabled:
+            role === "worker"
+              ? !skillWithPrice || !skillWithPrice?.pricePerDay
+              : !selectedSkill,
         },
         secondaryButton: {
           title: "cancel",
           action: () => {
             setIsDrawerVisible(false);
+            setSelectedSkill(null);
+            setSkillWithPrice(null);
             setDrawerState({ visible: false });
           },
         },
       });
     }
-  }, [isDrawerVisible, selectedSkill, skillWithPrice]); // Re-run when drawer visibility or inputs change
+  }, [isDrawerVisible, role, selectedSkill, skillWithPrice]); // Re-run when drawer visibility or inputs change
 
   return <Loader loading={mutationAddSkills?.isPending} />; // Component does not return UI directly
 };

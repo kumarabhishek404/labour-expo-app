@@ -8,7 +8,7 @@ import TOAST from "@/app/hooks/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loaders/Loader";
 import AttendanceScreenComponent from "./attendanceComponent";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Colors from "@/constants/Colors";
@@ -22,6 +22,10 @@ export default function AddAttendance() {
 
   const workersList: any = JSON?.parse(workers);
   const booking: any = JSON?.parse(bookingDetails);
+
+  const [attendanceState, setAttendanceState] = useState(attendance);
+  const [initialAttendanceState, setInitialAttendanceState] =
+    useState(initialAttendance);
 
   const {
     isLoading,
@@ -39,6 +43,11 @@ export default function AddAttendance() {
   const triggerRefetch = async (): Promise<void> => {
     await refetch();
   };
+
+  useEffect(() => {
+    setAttendanceState(attendance);
+    setInitialAttendanceState(initialAttendance);
+  }, [attendance, initialAttendance]);
 
   useEffect(() => {
     const initial: any = {};
@@ -98,6 +107,33 @@ export default function AddAttendance() {
     );
   };
 
+  const hasUnsavedChanges = () => {
+    return (
+      JSON.stringify(attendanceState) !== JSON.stringify(initialAttendanceState)
+    );
+  };
+
+  const confirmNavigation = (action: any) => {
+    if (hasUnsavedChanges()) {
+      Alert.alert(t("unsavedChanges"), t("youHaveUnsavedChanges"), [
+        {
+          text: t("don'tSave"),
+          style: "destructive",
+          onPress: action,
+        },
+        {
+          text: t("save"),
+          onPress: handleSave,
+        },
+        { text: t("cancel"), style: "cancel" },
+      ]);
+    } else {
+      action();
+    }
+  };
+
+  const handleBack = () => confirmNavigation(() => router.back());
+
   return (
     <>
       <Stack.Screen
@@ -106,7 +142,7 @@ export default function AddAttendance() {
             <CustomHeader
               title="addAttendance"
               left="back"
-              onLeftAction={() => router.back()}
+              onLeftAction={handleBack}
             />
           ),
         }}
@@ -116,13 +152,10 @@ export default function AddAttendance() {
       />
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={{ flex: 1 }}>
+          <View style={{ width: "70%" }}>
             <View style={styles?.typAndSubType}>
               <CustomHeading baseFont={20} textAlign="left">
-                {t(booking?.type)}
-              </CustomHeading>
-              <CustomHeading baseFont={20} textAlign="left">
-                {"-"} {t(booking?.subType)}
+                {t(booking?.type)} {"-"} {t(booking?.subType)}
               </CustomHeading>
             </View>
             <CustomText textAlign="left">{booking?.address}</CustomText>
@@ -146,6 +179,7 @@ export default function AddAttendance() {
           initialAttendance={initialAttendance}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          handleBack={handleBack}
         />
       </View>
     </>

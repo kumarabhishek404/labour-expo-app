@@ -58,7 +58,7 @@ const GroupEmployersListing = ({
             params: {
               id: item?._id,
               role: "employers",
-              title: "Employer Details",
+              title: "employerDetails",
               type: "top",
             },
           })

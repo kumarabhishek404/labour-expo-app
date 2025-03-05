@@ -118,8 +118,6 @@ const UserProfile = () => {
         response?.data?.data?.email
       );
       let user = response?.data?.data;
-      console.log("user--", user);
-
       setIsEditProfile(false);
       setProfilePicture(user?.profilePicture);
       setUserDetails({
@@ -393,7 +391,7 @@ const UserProfile = () => {
 
             <UserInfoComponent user={userDetails} />
 
-            <WallletInformation
+            {/* <WallletInformation
               type="earnings"
               wallet={{ earnings }}
               style={{ marginLeft: 20 }}
@@ -403,7 +401,7 @@ const UserProfile = () => {
               type="spents"
               wallet={userDetails?.spent}
               style={{ marginLeft: 20 }}
-            />
+            /> */}
 
             <WorkInformation
               information={userDetails?.workDetails}
@@ -418,14 +416,14 @@ const UserProfile = () => {
             </View>
 
             <CustomText style={styles.copyright}>
-              © 2024 KAAM DEKHO. All rights reserved.
+              © 2024 KAARYA. All rights reserved.
             </CustomText>
           </ScrollView>
         ) : (
           <ScrollView>
             <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
             <CustomText style={styles.copyright}>
-              © 2024 KAAM DEKHO. All rights reserved.
+              © 2024 KAARYA. All rights reserved.
             </CustomText>
           </ScrollView>
         )}

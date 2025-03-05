@@ -93,7 +93,7 @@ const AdminRequests = () => {
           header: () => (
             <CustomHeader
               title="requests"
-              left="menu"
+              left="back"
               right="notification"
             />
           ),

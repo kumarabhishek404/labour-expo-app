@@ -98,7 +98,7 @@ const EmployerCard = ({ employer }: any) => {
                 params: {
                   id: employer?._id,
                   role: "employers",
-                  title: t("employerDetails"),
+                  title: "employerDetails",
                   type: "details",
                 },
               })

@@ -173,7 +173,7 @@ const TeamAdminCard = ({ admin }: any) => {
                 params: {
                   id: admin?._id,
                   role: admin?.role,
-                  title: t("teamAdminDetails"),
+                  title: "teamAdminDetails",
                   type: "details",
                 },
               })

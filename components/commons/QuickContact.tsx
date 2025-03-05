@@ -12,12 +12,12 @@ const QuickContact = () => {
       <View style={styles.contactContainer}>
         <View style={styles.contactInfo}>
           <CustomHeading baseFont={18}>ABHISHEK KUMAR</CustomHeading>
-          <CustomText style={styles.contactJob}>CEO of KAAM DEKHO</CustomText>
+          <CustomText style={styles.contactJob}>CEO of KAARYA</CustomText>
           <CustomText baseFont={14} fontWeight="500">
             +91 6394743923
           </CustomText>
           <CustomText baseFont={14} fontWeight="500">
-            ceo@kaamdekho.com
+            ceo@kaarya.com
           </CustomText>
         </View>
 
@@ -50,7 +50,7 @@ const QuickContact = () => {
             </CustomText>
           </TouchableOpacity>
         </View>
-        <CustomText>© 2024 KAAM DEKHO. All rights reserved.</CustomText>
+        <CustomText>© 2024 KAARYA. All rights reserved.</CustomText>
       </View>
     </View>
   );

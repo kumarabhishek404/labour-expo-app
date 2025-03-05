@@ -1,5 +1,6 @@
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
+import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
@@ -41,7 +42,7 @@ export default PrivacyPolicyScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7f9",
+    backgroundColor: Colors?.fourth,
   },
   header: {
     flexDirection: "row",

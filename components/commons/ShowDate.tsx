@@ -12,11 +12,11 @@ interface DateDisplayProps {
 const DateDisplay: React.FC<DateDisplayProps> = ({ date }) => {
   const formattedDate = moment(date).format("dddd MMMM DD"); // Example: "Monday February 26"
   const [weekday, month, day] = formattedDate.split(" ");
-  const customFormattedDate = `${day} ${t(weekday)} ${t(month)}`;
+  const customFormattedDate = `${day} ${t(month)}`;
 
   return (
     <CustomText textAlign="left">
-      {t("startFrom", { date: customFormattedDate })}
+      {t("startFrom", { date: customFormattedDate, day: t(weekday) })}
     </CustomText>
   );
 };

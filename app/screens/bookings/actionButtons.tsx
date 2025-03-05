@@ -48,15 +48,12 @@ const BookingActionButtons = ({
 
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () => WORKER?.cancelBooking({ bookingId: id }),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("yourSelectionCancelledSuccessfully"));
-      console.log("Response while unapplying in the booking - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the booking ", err);
+      console.log("Response while cencelling in the booking - ", response);
     },
   });
 
@@ -77,7 +74,7 @@ const BookingActionButtons = ({
 
   const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => EMPLOYER?.cancelBooking(id),
+    mutationFn: () => WORKER?.cancelBooking(id),
     onSuccess: async (response) => {
       setModalVisible(false);
       await refetch();

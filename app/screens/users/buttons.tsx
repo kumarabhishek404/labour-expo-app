@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Colors from "@/constants/Colors";
@@ -8,6 +8,13 @@ import Button from "@/components/inputs/Button";
 import AddBookingDetails from "./addBookingDetails";
 import { t } from "@/utils/translationHelper";
 import useApiCalls from "@/app/hooks/useWorkerAction";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
+import moment from "moment";
+import { useMutation } from "@tanstack/react-query";
+import EMPLOYER from "@/app/api/employer";
+import TOAST from "@/app/hooks/toast";
+import { useForm } from "react-hook-form";
 
 const { width } = Dimensions.get("window");
 
@@ -22,8 +29,32 @@ const ButtonContainer = ({
   isWorkerBookingRequested,
   isWorkerBooked,
 }: any) => {
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      type: "",
+      subType: "",
+      address: "",
+      location: {},
+      startDate: new Date(),
+      duration: 0,
+      noOfWorkers: 0,
+      description: "",
+      facilities: {
+        food: false,
+        living: false,
+        esi_pf: false,
+        travelling: false,
+      },
+    },
+  });
+  const setDrawerState: any = useSetAtom(Atoms?.SideDrawerAtom);
   const { id } = useLocalSearchParams();
-  const [isAddBookingModal, setIsAddBookingModal] = useState(false);
 
   // Using the custom hook for all API calls
   const {
@@ -38,6 +69,99 @@ const ButtonContainer = ({
     mutationRemoveMemberFromTeam,
   } = useApiCalls(id, refetch);
 
+  const mutationAddBookingRequest = useMutation({
+    mutationKey: ["addBookingRequest"],
+    mutationFn: (payload: any) => EMPLOYER?.addBookingRequest(payload),
+    onSuccess: (response) => {
+      setDrawerState({
+        visible: false,
+      }); // Close the drawer after success
+      refetch();
+      TOAST?.success(t("bookRequestSentSuccessfully"));
+    },
+  });
+
+  const handleSubmitBooking = async (data: any) => {
+    console.log("handleSubmitBooking", data);
+
+    if (
+      !data?.type ||
+      !data?.subType ||
+      !data?.address ||
+      !data?.startDate ||
+      !data?.duration
+    ) {
+      throw new Error("Required fields are missing");
+    }
+
+    const formData: any = new FormData();
+
+    formData.append("requiredNumberOfWorkers", data?.noOfWorkers);
+    formData.append("userId", id);
+    formData.append("type", data?.type);
+    formData.append("subType", data?.subType);
+    formData.append("duration", data?.duration);
+    formData.append("description", data?.description);
+    formData.append("address", data?.address);
+    formData.append("location", JSON.stringify(data?.location || {}));
+    formData.append("startDate", moment(data?.startDate).format("YYYY-MM-DD"));
+    formData.append("facilities", JSON.stringify(data?.facilities));
+
+    console.log("Form data --", formData);
+
+    const response: any = mutationAddBookingRequest?.mutate(formData);
+    return response?.data;
+  };
+
+  useEffect(() => {
+    if (watch("type")) {
+      setDrawerState((prevState: any) => ({
+        ...prevState, // Preserve existing drawer state
+        visible: true,
+        title: "addBookingDetails",
+        content: () => (
+          <AddBookingDetails
+            control={control}
+            setValue={setValue}
+            errors={errors}
+            watch={watch}
+          />
+        ),
+        primaryButton: {
+          title: "addBookingDetails",
+          action: handleSubmit(handleSubmitBooking),
+        },
+        secondaryButton: {
+          title: "cancel",
+          action: () => setDrawerState({ visible: false }),
+        },
+      }));
+    }
+  }, [watch("type"), watch("facilities")]); // ✅ Re-renders drawer when 'type' and 'facilities changes
+
+  const handleAddBookingDetails = () => {
+    setDrawerState({
+      visible: true,
+      title: "addBookingDetails",
+      content: () => (
+        <AddBookingDetails
+          control={control}
+          setValue={setValue}
+          errors={errors}
+          watch={watch}
+        />
+      ),
+      primaryButton: {
+        title: "addBookingDetails",
+        action: handleSubmit(handleSubmitBooking),
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => setDrawerState({ visible: false }),
+      },
+    });
+  };
+
   return (
     <>
       <Loader
@@ -51,7 +175,8 @@ const ButtonContainer = ({
           mutationActivateUser.isPending ||
           mutationSuspendUser.isPending ||
           mutationCancelRequest.isPending ||
-          mutationRemoveMemberFromTeam.isPending
+          mutationRemoveMemberFromTeam.isPending ||
+          mutationAddBookingRequest?.isPending
         }
       />
 
@@ -137,7 +262,8 @@ const ButtonContainer = ({
             } else if (isWorkerBookingRequested) {
               mutationCancelBookingRequest.mutate();
             } else {
-              setIsAddBookingModal(true);
+              handleAddBookingDetails();
+              // setIsAddBookingModal(true);
             }
           }}
           style={styles.footerBtn}
@@ -145,13 +271,13 @@ const ButtonContainer = ({
       </Animated.View>
 
       {/* Add Booking Modal */}
-      <AddBookingDetails
+      {/* <AddBookingDetails
         refetch={refetch}
         id={id}
         role={user?.role}
         isAddBookingModal={isAddBookingModal}
         setIsAddBookingModal={setIsAddBookingModal}
-      />
+      /> */}
     </>
   );
 };

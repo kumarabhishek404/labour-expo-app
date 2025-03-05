@@ -88,7 +88,7 @@ const ListingsVerticalUsersAdmin = ({
               params: {
                 id: item?._id,
                 role: role,
-                title: t("userDetails"),
+                title: "userDetails",
                 type: "details",
               },
             })

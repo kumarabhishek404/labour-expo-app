@@ -123,6 +123,8 @@ const AddServiceScreen = () => {
 
   useEffect(() => {
     const handleBackPress = () => {
+      console.log("Back button pressed", step);
+      
       handleBackAction();
       return true; // Prevent default back navigation
     };
@@ -168,8 +170,9 @@ const AddServiceScreen = () => {
     const response: any = await EMPLOYER?.addNewService(formData);
     return response?.data;
   };
-
+  
   const handleBackAction = () => {
+    setAddServiceStep(step - 1)
     if (step > 1) {
       setStep(step - 1);
     } else if (router?.canGoBack()) {

@@ -10,10 +10,8 @@ import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SERVICE from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
-import { MYSERVICES, SERVICES, WORKERTYPES, WORKTYPES } from "@/constants";
-import { t } from "@/utils/translationHelper";
+import { MYSERVICES } from "@/constants";
 import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import Colors from "@/constants/Colors";
@@ -96,8 +94,6 @@ const Services = () => {
   );
 
   const onCatChanged = (category: any) => {
-    console.log("Caterrrrrr--", category);
-    
     setCategory(category?.value);
   };
 
@@ -112,7 +108,11 @@ const Services = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={`${title}`} left="back" right="notification" />
+            <CustomHeader
+              title={title as string}
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
@@ -146,7 +146,7 @@ const Services = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title={t("mediators")} />
+            <EmptyDatePlaceholder title="service" />
           )}
         </View>
       </View>

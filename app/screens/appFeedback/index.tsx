@@ -63,9 +63,7 @@ const FeedbackForm = () => {
       TOAST?.success("Feedback submitted successfully");
     },
     onError: (error: any) => {
-      TOAST?.error(
-        error?.response?.data?.message || "An error occurred"
-      );
+      TOAST?.error(error?.response?.data?.message || "An error occurred");
     },
   });
 
@@ -89,7 +87,11 @@ const FeedbackForm = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader title="allFeedback" left="menu" right="notification" />
+            <CustomHeader
+              title="allFeedback"
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />
@@ -182,7 +184,7 @@ const FeedbackForm = () => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextAreaInputComponent
-                label={t("whatWouldYouLikeToExploreNext")}
+                label="whatWouldYouLikeToExploreNext"
                 name="description"
                 value={value}
                 onBlur={onBlur}
@@ -218,7 +220,7 @@ export default FeedbackForm;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fa",
+    backgroundColor: Colors?.fourth,
   },
   feedbackContainer: {
     flexDirection: "row",

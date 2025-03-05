@@ -96,7 +96,7 @@ const WorkerCard = ({ worker }: any) => {
                 params: {
                   id: worker?._id,
                   role: "employers",
-                  title: t("employerDetails"),
+                  title: "employerDetails",
                   type: "details",
                 },
               })

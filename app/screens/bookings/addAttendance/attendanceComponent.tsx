@@ -24,47 +24,13 @@ export default function AttendanceScreenComponent({
   initialAttendance,
   selectedDate,
   setSelectedDate,
+  handleBack
 }: any) {
-  const router = useRouter();
-  const [attendanceState, setAttendanceState] = useState(attendance);
-  const [initialAttendanceState, setInitialAttendanceState] =
-    useState(initialAttendance);
 
   const workersList = JSON?.parse(workers);
 
-  useEffect(() => {
-    setAttendanceState(attendance);
-    setInitialAttendanceState(initialAttendance);
-  }, [attendance, initialAttendance]);
 
-  const hasUnsavedChanges = () => {
-    return (
-      JSON.stringify(attendanceState) !== JSON.stringify(initialAttendanceState)
-    );
-  };
 
-  const confirmNavigation = (action: any) => {
-    if (hasUnsavedChanges()) {
-      Alert.alert(
-        "Unsaved Changes",
-        "You have unsaved changes. Would you like to save before leaving?",
-        [
-          {
-            text: "Don't Save",
-            style: "destructive",
-            onPress: action,
-          },
-          {
-            text: "Save",
-            onPress: handleSave,
-          },
-          { text: "Cancel", style: "cancel" },
-        ]
-      );
-    } else {
-      action();
-    }
-  };
 
   const handleAttendanceChange = (workerId: any, status: any) => {
     setAttendance((prev: any) => ({
@@ -76,7 +42,7 @@ export default function AttendanceScreenComponent({
     }));
   };
 
-  const handleBack = () => confirmNavigation(() => router.back());
+  
 
   return (
     <>
@@ -190,6 +156,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   workerInfo: {
+    width: "60%",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",

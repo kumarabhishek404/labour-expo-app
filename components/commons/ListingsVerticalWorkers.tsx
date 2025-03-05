@@ -36,7 +36,7 @@ const ListingsVerticalWorkers = ({
               params: {
                 id: item?._id,
                 role: type,
-                title: `${t(type)} ${t("details")}`,
+                title: "workerDetails",
               },
             })
           }
@@ -91,7 +91,7 @@ const ListingsVerticalWorkers = ({
   const renderItem = ({ item }: any) => <RenderItem item={item} />;
 
   return (
-    <View style={{ marginBottom: 110 }}>
+    <View>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
@@ -116,7 +116,7 @@ const ListingsVerticalWorkers = ({
         maxToRenderPerBatch={10}
         windowSize={3}
         removeClippedSubviews={true}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        // contentContainerStyle={{ paddingBottom: 110 }}
         refreshControl={refreshControl}
         showsVerticalScrollIndicator={false}
       />

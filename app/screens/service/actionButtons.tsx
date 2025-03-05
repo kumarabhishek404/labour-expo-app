@@ -153,20 +153,6 @@ const ServiceActionButtons = ({
     },
   });
 
-  const mutationCancelBooking = useMutation({
-    mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
-    mutationFn: () => WORKER?.cancelBooking({ bookingId: id }),
-    onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
-      TOAST?.success(t("yourSelectionCancelledSuccessfully"));
-      console.log("Response while unapplying in the service - ", response);
-    },
-    onError: (err) => {
-      console.error("error while applying in the service ", err);
-    },
-  });
-
   const mutationCancelServiceByMediatorAfterSelection = useMutation({
     mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
     mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
@@ -177,7 +163,10 @@ const ServiceActionButtons = ({
       console.log("Response while unapplying in the service - ", response);
     },
     onError: (err) => {
-      console.error("error while applying in the service ", err);
+      console.error(
+        "error while cancelling the booking or remove selected from the service by mediator ",
+        err
+      );
     },
   });
 
@@ -197,7 +186,7 @@ const ServiceActionButtons = ({
 
   const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => EMPLOYER?.cancelBooking({ serviceId: id }),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       setModalVisible(false);
       await refetch();
@@ -270,7 +259,7 @@ const ServiceActionButtons = ({
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
                 style={{ flex: 1 }}
-                onPress={mutationCancelBooking.mutate}
+                onPress={mutationCancelServiceByMediatorAfterSelection.mutate}
               />
             ) : (
               <Button
@@ -458,7 +447,7 @@ const ServiceActionButtons = ({
                 animating={true}
               />
             ) : (
-              <EmptyDatePlaceholder title="Members" />
+              <EmptyDatePlaceholder title="members" />
             )}
           </View>
         )}
@@ -493,7 +482,6 @@ const ServiceActionButtons = ({
           mutationUnApplyService?.isPending ||
           mutationCompleteService?.isPending ||
           mutationCancelBookingByEmployer?.isPending ||
-          mutationCancelBooking?.isPending ||
           mutationCancelServiceByMediatorAfterSelection?.isPending
         }
       />

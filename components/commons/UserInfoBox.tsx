@@ -27,11 +27,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
     mutationKey: ["verifyEmail"],
     mutationFn: (payload: any) => AUTH?.sendEmailCode(payload),
     onSuccess: (data: any) => {
-      TOAST?.success(t("otpSentTo"), data);
+      TOAST?.success(t("otpSentTo"));
       setModalVisible(true);
     },
     onError: (error: any) => {
-      TOAST?.error(t("errorWhileSendingCode"), error?.message);
+      TOAST?.error(t("errorWhileSendingCode"));
     },
   });
 
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   row: {
     paddingTop: 0,
     flexDirection: "row",
-    marginBottom: 5,
+    marginBottom: 8,
     backgroundColor: Colors?.background,
   },
   userInfoTextWrapper: {

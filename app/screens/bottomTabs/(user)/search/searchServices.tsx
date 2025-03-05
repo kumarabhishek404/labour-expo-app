@@ -87,7 +87,7 @@ const SearchServices = ({ style }: any) => {
     router?.push({
       pathname: "/screens/service",
       params: {
-        title: t('allServices'),
+        title: 'allServices',
         type: "all",
         searchCategory: JSON.stringify(searchCategory),
       },
@@ -97,13 +97,13 @@ const SearchServices = ({ style }: any) => {
   return (
     <View style={style}>
       <TopHeaderLinks
-        title={[t('showAllServices')]}
+        title={['showAllServices']}
         onPress={[
           () =>
             router?.push({
               pathname: "/screens/service",
               params: {
-                title: t('allServices'),
+                title: 'allServices',
                 type: "all",
                 searchCategory: JSON.stringify({
                   type: "",

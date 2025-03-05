@@ -114,7 +114,7 @@ const Members = () => {
               type="member"
             />
           ) : (
-            <EmptyDatePlaceholder title={t("members")} />
+            <EmptyDatePlaceholder title="members" />
           )}
         </View>
       </View>

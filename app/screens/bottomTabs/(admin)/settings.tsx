@@ -51,7 +51,7 @@ const AdminSettings = () => {
           header: () => (
             <CustomHeader
               title="adminSettings"
-              left="menu"
+              left="back"
               right="notification"
             />
           ),

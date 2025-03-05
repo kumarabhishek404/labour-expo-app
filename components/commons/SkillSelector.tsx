@@ -10,6 +10,7 @@ import TextInputComponent from "../inputs/TextInputWithIcon";
 import { useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import PaperDropdown from "../inputs/Dropdown";
+import AddSkillDrawer from "./AddSkillModal";
 interface SkillSelectorProps {
   canAddSkills: boolean;
   isShowLabel?: boolean;
@@ -36,8 +37,7 @@ const SkillSelector = ({
   count,
 }: SkillSelectorProps) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
-  const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+  const [isAddSkill, setIsAddSkill] = useState(false);
   const [selectedSkillToRemove, setSelectedSkillToRemove] = useState<
     string | null
   >(null);
@@ -72,68 +72,9 @@ const SkillSelector = ({
     setSelectedUserSkills(filteredSkills);
   }, [availableSkills, userSkills]);
 
-  const handleSkillSelection = (skill: string) => {
-    setSelectedSkill(skill);
-    setSkillWithPrice({
-      skill: skill,
-      pricePerDay: 0,
-    });
-  };
-
   const handleSkillToRemoveSelection = (skill: string) => {
     setSelectedSkillToRemove(skill);
   };
-
-  const handlePriceChange = (price: string) => {
-    setSkillWithPrice({
-      skill: selectedSkill,
-      pricePerDay: parseInt(price, 10),
-    });
-  };
-
-  useEffect(() => {
-    if (!skillWithPrice?.skill && !skillWithPrice?.price) return;
-
-    setDrawerState({
-      visible: true,
-      title: "addNewSkills",
-      content: () => (
-        <View style={{ paddingVertical: 20 }}>
-          <PaperDropdown
-            name="addSkill"
-            label="selectSkill"
-            selectedValue={selectedSkill}
-            onSelect={(skill: string) => handleSkillSelection(skill)}
-            placeholder="searchAndSelectSkills"
-            options={filteredSkills}
-            search={false}
-            translationEnabled
-            icon={
-              <MaterialCommunityIcons
-                style={styles.icon}
-                color="black"
-                name="hammer-sickle"
-                size={30}
-              />
-            }
-          />
-          {selectedSkill && renderPriceInput()}
-        </View>
-      ),
-      primaryButton: {
-        title: "addSkill",
-        action: onAddSkills,
-        disabled:
-          !selectedSkill || !skillWithPrice || !skillWithPrice.pricePerDay,
-      },
-      secondaryButton: {
-        title: "cancel",
-        action: () => {
-          setDrawerState({ visible: false });
-        },
-      },
-    });
-  }, [JSON?.stringify(skillWithPrice)]);
 
   useEffect(() => {
     if (!selectedSkillToRemove) return;
@@ -177,31 +118,6 @@ const SkillSelector = ({
     });
   }, [selectedSkillToRemove]);
 
-  const renderPriceInput = () => {
-    return (
-      <View style={styles.priceInputContainer}>
-        <TextInputComponent
-          label="enterPricePerDay"
-          name="pricePerDay"
-          placeholder={t("enterPricePerDay")}
-          type="number"
-          style={styles.priceInput}
-          value={skillWithPrice?.pricePerDay}
-          maxLength={4}
-          onChangeText={(price: string) => handlePriceChange(price)}
-          icon={
-            <FontAwesome
-              name="rupee"
-              size={26}
-              color={Colors.secondary}
-              style={{ paddingVertical: 10, paddingRight: 10 }}
-            />
-          }
-        />
-      </View>
-    );
-  };
-
   const renderSkills = () => {
     const skillsToShow = count
       ? removeEmptyStrings(userSkills)?.slice(0, count)
@@ -242,47 +158,6 @@ const SkillSelector = ({
     );
   };
 
-  const handleOpenSkillDrawer = () => {
-    setDrawerState({
-      visible: true,
-      title: "addNewSkills",
-      content: () => (
-        <View style={{ paddingVertical: 20 }}>
-          <PaperDropdown
-            name="addSkill"
-            label="selectSkill"
-            selectedValue={selectedSkill}
-            onSelect={(skill: string) => handleSkillSelection(skill)}
-            placeholder="searchAndSelectSkills"
-            options={filteredSkills}
-            search={false}
-            translationEnabled
-            icon={
-              <MaterialCommunityIcons
-                style={styles.icon}
-                color="black"
-                name="hammer-sickle"
-                size={30}
-              />
-            }
-          />
-          {skillWithPrice && renderPriceInput()}
-        </View>
-      ),
-      primaryButton: {
-        title: "addSkill",
-        action: onAddSkills,
-        disabled: !selectedSkill || userSkills?.length <= 1,
-      },
-      secondaryButton: {
-        title: "cancel",
-        action: () => {
-          setDrawerState({ visible: false });
-        },
-      },
-    });
-  };
-
   const handleOpenRemoveSkillDrawer = () => {
     setDrawerState({
       visible: true,
@@ -311,8 +186,8 @@ const SkillSelector = ({
       ),
       primaryButton: {
         title: "removeSkill",
-        action: onAddSkills,
-        disabled: !skillWithPrice || !skillWithPrice.pricePerDay,
+        action: onRemoveSkill,
+        disabled: !selectedSkillToRemove,
       },
       secondaryButton: {
         title: "cancel",
@@ -321,30 +196,6 @@ const SkillSelector = ({
         },
       },
     });
-  };
-
-  const onAddSkills = async () => {
-    try {
-      if (!skillWithPrice || !skillWithPrice.pricePerDay) {
-        console.log("Please enter both skill and price.");
-        return;
-      }
-
-      await handleAddSkill(skillWithPrice, {
-        onSuccess: () => {
-          console.log(
-            "Skill added successfully:",
-            skillWithPrice,
-            selectedSkill
-          );
-          setDrawerState({ visible: false });
-          setSkillWithPrice(null);
-          setSelectedSkill(null);
-        },
-      });
-    } catch (err) {
-      console.error("Unexpected error:", err);
-    }
   };
 
   const onRemoveSkill = async () => {
@@ -400,7 +251,8 @@ const SkillSelector = ({
           {canAddSkills && (
             <TouchableOpacity
               style={style?.addNewSkill}
-              onPress={handleOpenSkillDrawer}
+              // onPress={handleOpenSkillDrawer}
+              onPress={() => setIsAddSkill(true)}
             >
               <CustomHeading color={Colors?.link} fontWeight="bold">
                 {t("addNewSkills")}
@@ -417,6 +269,11 @@ const SkillSelector = ({
           )}
         </View>
       </View>
+
+      <AddSkillDrawer
+        isDrawerVisible={isAddSkill}
+        setIsDrawerVisible={setIsAddSkill}
+      />
     </>
   );
 };

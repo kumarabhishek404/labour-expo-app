@@ -28,6 +28,8 @@ const SelectedUsers = ({
   bookingType,
   refetch,
 }: SelectedApplicantsProps) => {
+  console.log("selectedApplicants ---", selectedApplicants);
+
   const [expandedItems, setExpandedItems] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -73,198 +75,213 @@ const SelectedUsers = ({
     <>
       <Loader loading={mutationRemoveBookedWorker?.isPending} />
       <View style={styles.applicantContainer}>
-        {selectedApplicants?.map((mediator: any, index: number) => {
-          const appliedUser = mediator?.name ? mediator : mediator?.user;
-          const workers = mediator?.workers;
-          return (
-            <View key={index} style={styles.workerCard}>
-              <View style={styles.productCard}>
-                <ProfilePicture uri={appliedUser?.profilePicture} />
-                <View style={styles.productInfo}>
-                  <View style={styles?.titleContainer}>
-                    <CustomHeading baseFont={14}>
-                      {appliedUser?.name}
-                    </CustomHeading>
+        {selectedApplicants
+          ?.filter((mediator: any) => mediator?.status === "SELECTED")
+          ?.map((mediator: any, index: number) => {
+            const appliedUser = mediator?.name ? mediator : mediator?.user;
+            const workers = mediator?.workers;
+            return (
+              <View key={index} style={styles.workerCard}>
+                <View style={styles.productCard}>
+                  <ProfilePicture uri={appliedUser?.profilePicture} />
+                  <View style={styles.productInfo}>
+                    <View style={styles?.titleContainer}>
+                      <CustomHeading baseFont={14}>
+                        {appliedUser?.name}
+                      </CustomHeading>
+                    </View>
+                    <ShowSkills
+                      type="small"
+                      userSkills={appliedUser?.skills}
+                      tagStyle={{ backgroundColor: Colors?.darkGray }}
+                    />
                   </View>
-                  <ShowSkills
-                    userSkills={appliedUser?.skills}
-                    tagStyle={{ backgroundColor: Colors?.darkGray }}
-                  />
-                  <View style={styles.recommendationContainer}>
-                    <Ionicons name="location" size={14} color="gray" />
-                    <CustomText textAlign="left">
-                      {appliedUser?.address || "Not Available"}
-                    </CustomText>
+
+                  <View
+                    style={{
+                      alignContent: "flex-end",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    <ButtonComp
+                      style={{
+                        minHeight: 20,
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                        marginTop: 6,
+                      }}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      isPrimary={false}
+                      title="Details"
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/users/[id]",
+                          params: {
+                            id: appliedUser?._id,
+                            role: "workers",
+                            type: "applicant",
+                          },
+                        })
+                      }
+                    />
                   </View>
                 </View>
+
+                <View style={styles.recommendationContainer}>
+                  <Ionicons
+                    name="location"
+                    size={14}
+                    color="gray"
+                    style={{ marginTop: 2 }}
+                  />
+                  <CustomText textAlign="left">
+                    {appliedUser?.address || "Not Available"}
+                  </CustomText>
+                </View>
+
+                {workers?.length > 0 && (
+                  <View style={styles.workersContainer}>
+                    <TouchableOpacity
+                      style={styles.workersTitleContainer}
+                      onPress={() => toggleAccordion(mediator._id)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.workersTitleLeft}>
+                        <Ionicons
+                          name="people"
+                          size={14}
+                          color={Colors.primary}
+                        />
+                        <CustomText
+                          baseFont={18}
+                          color={Colors.primary}
+                          fontWeight="500"
+                        >
+                          {t("workers")} ({workers?.length})
+                        </CustomText>
+                      </View>
+                      <Animated.View
+                        style={{
+                          transform: [
+                            {
+                              rotate: (
+                                animatedHeights.current[mediator._id] ||
+                                new Animated.Value(0)
+                              ).interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "180deg"],
+                              }),
+                            },
+                          ],
+                        }}
+                      >
+                        <Ionicons
+                          name="chevron-down"
+                          size={16}
+                          color={Colors.primary}
+                        />
+                      </Animated.View>
+                    </TouchableOpacity>
+
+                    {expandedItems[mediator._id] && (
+                      <Animated.View
+                        style={[
+                          styles.workersGrid,
+                          {
+                            opacity:
+                              animatedHeights.current[mediator._id] ||
+                              new Animated.Value(0),
+                          },
+                        ]}
+                      >
+                        {workers?.map((worker: any, workerIndex: number) => (
+                          <View key={workerIndex} style={styles.workerItem}>
+                            <ProfilePicture uri={worker?.profilePicture} />
+                            <View style={styles.workerInfo}>
+                              <CustomText style={styles.workerName}>
+                                {worker?.name}
+                              </CustomText>
+                              <ShowSkills
+                                type="small"
+                                userSkills={worker?.skills}
+                              />
+                            </View>
+                          </View>
+                        ))}
+                      </Animated.View>
+                    )}
+                  </View>
+                )}
+
                 <View
                   style={{
-                    alignContent: "flex-end",
-                    justifyContent: "flex-start",
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: 10,
+                    marginTop: 10,
                   }}
                 >
+                  {bookingType === "byService" && (
+                    <ButtonComp
+                      style={{
+                        width: "60%",
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                      }}
+                      bgColor={Colors?.danger}
+                      borderColor={Colors?.danger}
+                      textStyle={{
+                        fontSize: 16,
+                      }}
+                      icon={
+                        <FontAwesome
+                          name="remove"
+                          size={14}
+                          color="white"
+                          style={{ marginRight: 4 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title={t("removeBookedWorker")}
+                      onPress={() =>
+                        mutationRemoveBookedWorker?.mutate({
+                          serviceId: bookingId,
+                          userId: appliedUser?._id,
+                        })
+                      }
+                    />
+                  )}
                   <ButtonComp
                     style={{
-                      minHeight: 20,
+                      width: "25%",
                       paddingVertical: 4,
                       paddingHorizontal: 6,
-                      marginTop: 6,
                     }}
+                    bgColor={Colors?.success}
+                    borderColor={Colors?.success}
                     textStyle={{
                       fontSize: 14,
                     }}
-                    isPrimary={false}
-                    title="Details"
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/users/[id]",
-                        params: {
-                          id: appliedUser?._id,
-                          role: "workers",
-                          type: "applicant",
-                        },
-                      })
-                    }
-                  />
-                </View>
-              </View>
-
-              {workers?.length > 0 && (
-                <View style={styles.workersContainer}>
-                  <TouchableOpacity
-                    style={styles.workersTitleContainer}
-                    onPress={() => toggleAccordion(mediator._id)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.workersTitleLeft}>
-                      <Ionicons
-                        name="people"
-                        size={14}
-                        color={Colors.primary}
-                      />
-                      <CustomText style={styles.workersTitle}>
-                        Associated Workers ({workers?.length})
-                      </CustomText>
-                    </View>
-                    <Animated.View
-                      style={{
-                        transform: [
-                          {
-                            rotate: (
-                              animatedHeights.current[mediator._id] ||
-                              new Animated.Value(0)
-                            ).interpolate({
-                              inputRange: [0, 1],
-                              outputRange: ["0deg", "180deg"],
-                            }),
-                          },
-                        ],
-                      }}
-                    >
-                      <Ionicons
-                        name="chevron-down"
-                        size={16}
-                        color={Colors.primary}
-                      />
-                    </Animated.View>
-                  </TouchableOpacity>
-
-                  {expandedItems[mediator._id] && (
-                    <Animated.View
-                      style={[
-                        styles.workersGrid,
-                        {
-                          opacity:
-                            animatedHeights.current[mediator._id] ||
-                            new Animated.Value(0),
-                        },
-                      ]}
-                    >
-                      {workers?.map((worker: any, workerIndex: number) => (
-                        <View key={workerIndex} style={styles.workerItem}>
-                          <ProfilePicture uri={worker?.profilePicture} />
-                          <View style={styles.workerInfo}>
-                            <CustomText style={styles.workerName}>
-                              {worker?.name}
-                            </CustomText>
-                            <ShowSkills userSkills={worker?.skills} />
-                          </View>
-                        </View>
-                      ))}
-                    </Animated.View>
-                  )}
-                </View>
-              )}
-
-              <View
-                style={{
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  gap: 10,
-                  marginTop: 10,
-                }}
-              >
-                {bookingType === "byService" && (
-                  <ButtonComp
-                    style={{
-                      minHeight: 35,
-                      width: "60%",
-                      paddingVertical: 4,
-                      paddingHorizontal: 6,
-                    }}
-                    bgColor={Colors?.danger}
-                    borderColor={Colors?.danger}
-                    textStyle={{
-                      fontSize: 16,
-                    }}
                     icon={
                       <FontAwesome
-                        name="remove"
-                        size={14}
+                        name="phone"
+                        size={16}
                         color="white"
-                        style={{ marginRight: 4 }}
+                        style={{ marginRight: 6 }}
                       />
                     }
                     isPrimary={true}
-                    title={t("removeBookedWorker")}
-                    onPress={() =>
-                      mutationRemoveBookedWorker?.mutate({
-                        serviceId: bookingId,
-                        userId: appliedUser?._id,
-                      })
-                    }
+                    title="Call"
+                    onPress={() => handleCall(appliedUser?.mobile)}
                   />
-                )}
-                <ButtonComp
-                  style={{
-                    minHeight: 35,
-                    width: "25%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 8,
-                  }}
-                  bgColor={Colors?.success}
-                  borderColor={Colors?.success}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <FontAwesome
-                      name="phone"
-                      size={16}
-                      color="white"
-                      style={{ marginRight: 6 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title="Call"
-                  onPress={() => handleCall(appliedUser?.mobile)}
-                />
+                </View>
               </View>
-            </View>
-          );
-        })}
+            );
+          })}
       </View>
     </>
   );
@@ -299,8 +316,10 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   recommendationContainer: {
+    marginTop: 10,
+    width: "70%",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 4,
   },
   workersContainer: {
@@ -314,23 +333,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 6,
   },
   workersTitleLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
   },
-  workersTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.primary,
-  },
   workersGrid: {
     gap: 8,
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#e9ecef",
     paddingTop: 10,
   },
   workerItem: {

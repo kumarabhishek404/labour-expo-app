@@ -252,7 +252,6 @@ const User = () => {
 
             <SkillSelector
               canAddSkills={false}
-              role={user?.role}
               isShowLabel={true}
               style={styles?.skillsContainer}
               tagTextStyle={styles?.skillTagText}
@@ -260,7 +259,7 @@ const User = () => {
               availableSkills={WORKERTYPES}
             />
 
-            <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
+            <UserInfoComponent user={user} style={{ marginHorizontal: 0, marginTop: 4 }} />
 
             <WallletInformation type={"earnings"} wallet={user?.wallet} />
 

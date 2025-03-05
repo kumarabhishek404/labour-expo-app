@@ -23,7 +23,7 @@ const EmptyDatePlaceholder = ({
     >
       <Image source={EmptyPlaceholder} style={styles.image} />
       <CustomText baseFont={14} fontWeight="medium">
-        {t("notFoundAny")} {t(title)}
+        {t("notFoundAny", { title: t(title) })}
       </CustomText>
     </View>
   );

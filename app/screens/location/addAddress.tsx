@@ -16,7 +16,12 @@ import { ALL_INDIAN_VILLAGES } from "@/constants/india";
 import { STATES, STETESOFINDIA } from "@/constants";
 import SERVICE from "@/app/api/services";
 
-const AddAddressDrawer = ({ userId, visible, onClose, onAfterSuccess }: any) => {
+const AddAddressDrawer = ({
+  userId,
+  visible,
+  onClose,
+  onAfterSuccess,
+}: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [districts, setDistricts]: any = useState([]);
   const [subDistricts, setSubDistricts]: any = useState([]);
@@ -230,24 +235,26 @@ const AddAddressDrawer = ({ userId, visible, onClose, onAfterSuccess }: any) => 
           }
           disabled={!selectedDistrict}
         />
-        <PaperDropdown
-          name="village"
-          label="village"
-          options={villages}
-          selectedValue={watch("village")}
-          onSelect={(value: any) => setValue("village", value)}
-          placeholder={t("selectVillage")}
-          searchEnabled
-          icon={
-            <FontAwesome6
-              style={styles.icon}
-              color="black"
-              name="map-location"
-              size={20}
-            />
-          }
-          disabled={!selectedSubDistrict}
-        />
+        {selectedSubDistrict && villages?.length === 0 ? null : (
+          <PaperDropdown
+            name="village"
+            label="village"
+            options={villages}
+            selectedValue={watch("village")}
+            onSelect={(value: any) => setValue("village", value)}
+            placeholder={t("selectVillage")}
+            searchEnabled
+            icon={
+              <FontAwesome6
+                style={styles.icon}
+                color="black"
+                name="map-location"
+                size={20}
+              />
+            }
+            disabled={!selectedSubDistrict}
+          />
+        )}
         <TextInputComponent
           name="pinCode"
           label="pinCode"
@@ -255,7 +262,12 @@ const AddAddressDrawer = ({ userId, visible, onClose, onAfterSuccess }: any) => 
           type="number"
           style={styles.textInput}
           value={watch("pinCode")}
-          onChangeText={(value: any) => setValue("pinCode", value)}
+          onChangeText={(value: any) => {
+            // Allow only numbers and enforce exactly 6 digits
+            if (/^\d{0,6}$/.test(value)) {
+              setValue("pinCode", value);
+            }
+          }}
           icon={
             <Feather
               name="map-pin"
@@ -278,7 +290,10 @@ const AddAddressDrawer = ({ userId, visible, onClose, onAfterSuccess }: any) => 
         primaryButton: {
           title: "addAddress",
           action: handleSubmit(onAddAddress),
-          disabled: !watch("village") || !watch("pinCode"),
+          disabled:
+            (selectedSubDistrict && villages?.length === 0
+              ? null
+              : !watch("village")) || watch("pinCode")?.length !== 6,
         },
         secondaryButton: {
           title: "cancel",

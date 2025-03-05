@@ -50,22 +50,24 @@ const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
               {mediator?.teamDetails?.memberCount || 0} {t("members")}
             </CustomText>
           </View>
-          <Button
-            isPrimary={false}
-            style={{ minHeight: 30 }}
-            title={t("viewAllMembers")}
-            onPress={() =>
-              router?.push({
-                pathname: "/screens/team/[id]",
-                params: {
-                  id: mediator?._id,
-                  role: "mediator",
-                  title: t("teamMembers"),
-                  type: "details",
-                },
-              })
-            }
-          />
+          {mediator?.teamDetails?.memberCount > 0 && (
+            <Button
+              isPrimary={false}
+              style={{ minHeight: 30 }}
+              title={t("viewAllMembers")}
+              onPress={() =>
+                router?.push({
+                  pathname: "/screens/team/[id]",
+                  params: {
+                    id: mediator?._id,
+                    role: "mediator",
+                    title: t("teamMembers"),
+                    type: "details",
+                  },
+                })
+              }
+            />
+          )}
         </View>
       )}
     </>

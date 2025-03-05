@@ -157,7 +157,7 @@ const Requests = () => {
               onRejectRequest={mutationRejectRequest.mutate}
             />
           ) : (
-            <EmptyDatePlaceholder title={t("requests")} leftHeight={300} />
+            <EmptyDatePlaceholder title="requests" leftHeight={300} />
           )}
         </View>
       </View>

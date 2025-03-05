@@ -108,7 +108,7 @@ const AdminServices = () => {
           header: () => (
             <CustomHeader
               title="services"
-              left="menu"
+              left="back"
               right="notification"
             />
           ),
@@ -155,7 +155,7 @@ const AdminServices = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title="Service" />
+            <EmptyDatePlaceholder title="service" />
           )}
         </View>
 

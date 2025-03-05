@@ -7,29 +7,49 @@ import { t } from "@/utils/translationHelper";
 
 interface SkillSelectorProps {
   style?: any;
+  type?: string;
   tagStyle?: any;
   userSkills: Array<{ skill: string; pricePerDay?: number }>;
 }
 
-const ShowSkills = ({ userSkills, style, tagStyle }: SkillSelectorProps) => {
+const ShowSkills = ({
+  type,
+  userSkills,
+  style,
+  tagStyle,
+}: SkillSelectorProps) => {
   return (
     <View style={[styles.container, style]}>
       <MaterialCommunityIcons
         name="hammer-wrench"
         size={16}
         color={Colors.primary}
-        style={{ paddingTop: 5 }}
+        style={{ paddingTop: 3 }}
       />
-      <View style={styles.skillWrapper}>
-        {userSkills?.map((skill, index) => (
-          <View key={index} style={[styles.skillTag, tagStyle]}>
-            <CustomText color={Colors.white} fontWeight="medium">
-              {t(skill.skill)}{" "}
-              {skill.pricePerDay ? `- ₹${skill.pricePerDay}` : ""}
-            </CustomText>
-          </View>
-        ))}
-      </View>
+      {type === "small" ? (
+        <View style={styles.skillWrapper}>
+          {userSkills?.map((skill, index) => (
+            <View key={index}>
+              <CustomText color={Colors.tertieryButton} fontWeight="bold">
+                {t(skill.skill)}{" "}
+                {skill.pricePerDay ? `- ₹${skill.pricePerDay}` : ""}
+                {userSkills?.length - 1 !== index ? ", " : ""}
+              </CustomText>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.skillWrapper}>
+          {userSkills?.map((skill, index) => (
+            <View key={index} style={[styles.skillTag, tagStyle]}>
+              <CustomText color={Colors.white} fontWeight="medium">
+                {t(skill.skill)}{" "}
+                {skill.pricePerDay ? `- ₹${skill.pricePerDay}` : ""}
+              </CustomText>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -48,12 +68,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
-    flex: 1, // Allows wrapping properly
+    flex: 1,
   },
   skillTag: {
-    backgroundColor: Colors.tertieryButton,
-    borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    backgroundColor: "transparent",
+    // borderRadius: 8,
+    // paddingHorizontal: 6,
+    // paddingVertical: 4,
   },
 });

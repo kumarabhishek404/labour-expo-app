@@ -65,6 +65,15 @@ const BottomDrawerAtom = atom({
   primaryButton: null,
   secondaryButton: null,
 });
+
+const SideDrawerAtom = atom({
+  visible: false,
+  title: "",
+  content: () => null,
+  primaryButton: null,
+  secondaryButton: null,
+});
+
 // Bundle all atoms into an object
 const Atoms = {
   UserAtom,
@@ -84,6 +93,7 @@ const Atoms = {
   notificationCount,
   LocaleAtom,
   BottomDrawerAtom,
+  SideDrawerAtom,
 };
 
 // Export the object as default

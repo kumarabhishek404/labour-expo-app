@@ -52,7 +52,7 @@ const fetchUnreadNotificationsCount = async () => {
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching unread notifications count : `,
-      error?.response?.data?.message
+      error?.response
     );
     TOAST?.error(
       error?.response?.data?.message ||

@@ -7,7 +7,7 @@ import ModalComponent from "./Modal";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Atoms from "@/app/AtomStore";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "../inputs/TextInputWithIcon";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +23,7 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 
 const ProfileNotification: React.FC = () => {
   const [isCompleteProfileModel, setIsCompleteProfileModel] = useState(false);
+  const setDrawerState: any = useSetAtom(Atoms?.SideDrawerAtom);
   const [location, setLocation] = useState<any>({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
@@ -37,11 +38,13 @@ const ProfileNotification: React.FC = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
-      address: "",
-      location: "",
-      dateOfBirth: moment().subtract(18, "years").startOf("year"),
-      gender: userDetails?.gender,
+      email: userDetails?.email?.value || "",
+      address: userDetails?.address || "",
+      location: userDetails?.location || {},
+      dateOfBirth:
+        userDetails?.dateOfBirth ||
+        moment().subtract(18, "years").startOf("year"),
+      gender: userDetails?.gender || "",
     },
   });
 
@@ -49,7 +52,10 @@ const ProfileNotification: React.FC = () => {
     setValue("email", userDetails?.email?.value);
     setValue("address", userDetails?.address);
     setValue("location", userDetails?.location);
-    setValue("dateOfBirth", moment().subtract(18, "years").startOf("year"));
+    setValue(
+      "dateOfBirth",
+      userDetails?.dateOfBirth || moment().subtract(18, "years").startOf("year")
+    );
     setValue("gender", userDetails?.gender);
   }, [isCompleteProfileModel, userDetails]);
 
@@ -61,13 +67,8 @@ const ProfileNotification: React.FC = () => {
         ...payload,
       }),
     onSuccess: (response) => {
-      console.log(
-        "Response while updating the profile - ",
-        response?.data?.data
-      );
       let user = response?.data?.data;
       refreshUser();
-      setIsCompleteProfileModel(false);
       setUserDetails({
         ...userDetails,
         email: user?.email?.value,
@@ -76,6 +77,7 @@ const ProfileNotification: React.FC = () => {
         dateOfBirth: user?.dateOfBirth,
         gender: user?.gender,
       });
+      setDrawerState({ visible: false }); // Close the drawer after success
     },
     onError: (err) => {
       console.error("error while updating the profile ", err);
@@ -84,16 +86,34 @@ const ProfileNotification: React.FC = () => {
   });
 
   const onSubmitCompleteProfile = (data: any) => {
-    // let payload = {
-    //   email: data?.email,
-    //   address: data?.address,
-    //   location: data?.location,
-    //   dateOfBirth: data?.dateOfBirth,
-    //   gender: data?.gender,
-    // };
-    // console.log("payload --", payload);
+    console.log("Data---", data);
 
-    mutationUpdateProfileInfo?.mutate(data);
+    let updatedFields: any = {};
+
+    if (data.email && data.email !== userDetails?.email?.value) {
+      updatedFields.email = data.email;
+    }
+    if (data.address && data.address !== userDetails?.address) {
+      updatedFields.address = data.address;
+    }
+    if (data.dateOfBirth && data.dateOfBirth !== userDetails?.dateOfBirth) {
+      updatedFields.dateOfBirth = moment(data.dateOfBirth).format("YYYY-MM-DD");
+    }
+    if (data.gender && data.gender !== userDetails?.gender) {
+      updatedFields.gender = data.gender;
+    }
+
+    if (Object.keys(updatedFields).length > 0) {
+      const payload = {
+        _id: userDetails?._id,
+        ...updatedFields,
+      };
+
+      console.log("Payload being sent:", payload);
+      mutationUpdateProfileInfo.mutate(payload);
+    } else {
+      console.log("No changes detected, no update required.");
+    }
   };
 
   const completeProfileModalContent = () => {
@@ -209,6 +229,22 @@ const ProfileNotification: React.FC = () => {
     );
   };
 
+  const handleCompleteProfile = () => {
+    setDrawerState({
+      visible: true,
+      title: "completeProfile",
+      content: completeProfileModalContent,
+      primaryButton: {
+        title: "save",
+        action: handleSubmit(onSubmitCompleteProfile),
+      },
+      secondaryButton: {
+        title: "cancel",
+        action: () => setDrawerState({ visible: false }),
+      },
+    });
+  };
+
   return (
     <View style={styles.notificationContainer}>
       <Loader loading={mutationUpdateProfileInfo?.isPending || isLoading} />
@@ -224,7 +260,7 @@ const ProfileNotification: React.FC = () => {
       <Button
         isPrimary={true}
         title={t("completeProfile")}
-        onPress={() => setIsCompleteProfileModel(true)}
+        onPress={handleCompleteProfile}
         style={styles.completeButton}
         textStyle={{ fontSize: 18 }}
       />

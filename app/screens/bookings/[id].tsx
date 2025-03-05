@@ -101,7 +101,7 @@ const BookingDetails = () => {
     }, [response])
   );
 
-  console.log("booking?.employer--", booking?.bookedWorker);
+  console.log("booking?.employer--", booking?.selectedUsers);
 
   return (
     <>
@@ -212,7 +212,9 @@ const BookingDetails = () => {
                 style={{ alignSelf: "center" }}
               />
               <CustomText textAlign="left">
-                {t("startFrom")} {moment(booking?.startDate).format("LL")}
+                {t("startFrom", {
+                  date: moment(booking?.startDate).format("LL"),
+                })}
               </CustomText>
             </View>
 
@@ -292,7 +294,8 @@ const BookingDetails = () => {
                 </CustomHeading>
                 <SelectedUsers
                   selectedApplicants={[
-                    ...(booking?.bookedWorker ? [booking?.bookedWorker] : []),
+                    ...(booking?.bookedWorker ? [booking?.bookedWorker] : []), // Add booked worker if available
+                    ...(booking?.selectedUsers || []),
                   ].filter(Boolean)}
                   bookingId={booking?._id}
                   bookingType={booking?.bookingType}

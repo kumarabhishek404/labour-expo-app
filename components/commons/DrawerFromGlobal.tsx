@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 10,
-    zIndex: 99,
+    zIndex: 999,
   },
   header: {
     flexDirection: "row",

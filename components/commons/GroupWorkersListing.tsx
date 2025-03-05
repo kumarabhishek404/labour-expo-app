@@ -53,7 +53,7 @@ const GroupWorkersListing = ({
             params: {
               id: item?._id,
               role: "workers",
-              title: t("workerDetails"),
+              title: "workerDetails",
               type: "all",
             },
           })

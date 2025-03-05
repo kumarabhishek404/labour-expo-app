@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import { Controller, useForm } from "react-hook-form";
@@ -19,77 +19,37 @@ import EMPLOYER from "@/app/api/employer";
 import PaperDropdown from "@/components/inputs/Dropdown";
 import Drawer from "@/components/commons/Drawer";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
-interface AddBookingDetailsProps {
-  refetch: any;
-  id: any;
-  role: any;
-  isAddBookingModal: any;
-  setIsAddBookingModal: any;
-}
-
-const AddBookingDetails = ({
-  refetch,
-  id,
-  role,
-  isAddBookingModal,
-  setIsAddBookingModal,
-}: AddBookingDetailsProps) => {
-  const {
-    control,
-    watch,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      type: "",
-      subType: "",
-      address: "",
-      location: {},
-      startDate: new Date(),
-      duration: 0,
-      noOfWorkers: 0,
-      description: "",
-      facilities: {
-        food: false,
-        living: false,
-        esi_pf: false,
-        travelling: false,
-      },
-    },
-  });
-
+const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
   const [location, setLocation] = useState({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
   );
-  const [facilities, setFacilities] = useState({
-    food: false,
-    living: false,
-    esi_pf: false,
-    travelling: false,
-  });
+  // const [facilities, setFacilities] = useState({
+  //   food: false,
+  //   living: false,
+  //   esi_pf: false,
+  //   travelling: false,
+  // });
 
-  const mutationAddBookingRequest = useMutation({
-    mutationKey: ["addBookingRequest"],
-    mutationFn: (payload: any) => EMPLOYER?.addBookingRequest(payload),
-    onSuccess: (response) => {
-      refetch();
-      TOAST?.success(t("bookRequestSentSuccessfully"));
-      setIsAddBookingModal(false);
-    },
-  });
+  // Watch facilities state
+  const facilities = watch("facilities");
+
+  console.log("facilities", facilities);
 
   const handleCheckboxChange = (key: string) => {
-    setFacilities((prevState: any) => ({
-      ...prevState,
-      [key]: !prevState[key],
-    }));
+    console.log("key", key, facilities);
+
+    setValue("facilities", {
+      ...facilities,
+      [key]: !facilities?.[key], // Ensure key exists before toggling
+    });
   };
 
-  const addBookingModalContent = () => {
-    return (
+  return (
+    <>
       <View style={styles.modalContent}>
         <View style={{ flexDirection: "column", gap: 20 }}>
           <Controller
@@ -236,22 +196,22 @@ const AddBookingDetails = ({
           <View style={styles.checkboxContainer}>
             <CustomCheckbox
               label={t("living")}
-              isChecked={facilities.living}
+              isChecked={watch("facilities").living}
               onToggle={() => handleCheckboxChange("living")}
             />
             <CustomCheckbox
               label={t("food")}
-              isChecked={facilities.food}
+              isChecked={watch("facilities").food}
               onToggle={() => handleCheckboxChange("food")}
             />
             <CustomCheckbox
               label={t("travelling")}
-              isChecked={facilities.travelling}
+              isChecked={watch("facilities").travelling}
               onToggle={() => handleCheckboxChange("travelling")}
             />
             <CustomCheckbox
               label={t("esi_pf")}
-              isChecked={facilities.esi_pf}
+              isChecked={watch("facilities").esi_pf}
               onToggle={() => handleCheckboxChange("esi_pf")}
             />
           </View>
@@ -293,7 +253,7 @@ const AddBookingDetails = ({
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder={t('enterWorkDescription')}
+                placeholder={t("enterWorkDescription")}
                 errors={errors}
                 icon={
                   <Ionicons
@@ -308,57 +268,6 @@ const AddBookingDetails = ({
           />
         </View>
       </View>
-    );
-  };
-
-  const handleSubmitBooking = async (data: any) => {
-    console.log("handleSubmitBooking", data);
-
-    if (
-      !data?.type ||
-      !data?.subType ||
-      !data?.address ||
-      !data?.startDate ||
-      !data?.duration
-    ) {
-      throw new Error("Required fields are missing");
-    }
-
-    const formData: any = new FormData();
-
-    formData.append("requiredNumberOfWorkers", data?.noOfWorkers);
-    formData.append("userId", id);
-    formData.append("type", data?.type);
-    formData.append("subType", data?.subType);
-    formData.append("duration", data?.duration);
-    formData.append("description", data?.description);
-    formData.append("address", data?.address);
-    formData.append("location", JSON.stringify(data?.location || {}));
-    formData.append("startDate", moment(data?.startDate).format("YYYY-MM-DD"));
-    formData.append("facilities", JSON.stringify(facilities));
-
-    const response: any = mutationAddBookingRequest?.mutate(formData);
-    return response?.data;
-  };
-
-  return (
-    <>
-      <Loader loading={mutationAddBookingRequest?.isPending} />
-      <Drawer
-        title={t("addBookingDetails")}
-        visible={isAddBookingModal}
-        content={addBookingModalContent}
-        onClose={() => setIsAddBookingModal(false)}
-        primaryButton={{
-          disabled: false,
-          title: t("addBookingDetails"),
-          action: handleSubmit(handleSubmitBooking),
-        }}
-        secondaryButton={{
-          title: t("cancel"),
-          action: () => setIsAddBookingModal(false),
-        }}
-      />
     </>
   );
 };

@@ -14,11 +14,14 @@ import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import DateDisplay from "@/components/commons/ShowDate";
+import { useSetAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 export default function ShowAttendanceComponent({
   booking,
   attendanceReport,
 }: any) {
+  const setDrawerState: any = useSetAtom(Atoms?.SideDrawerAtom);
   const [selectedWorker, setSelectedWorker] = useState<any>(null);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
@@ -36,7 +39,8 @@ export default function ShowAttendanceComponent({
 
   const handleWorkerClick = (worker: any) => {
     setSelectedWorker(worker);
-    setIsDrawerVisible(true);
+    // setIsDrawerVisible(true);
+    handleShowAttendance();
   };
 
   const getAllDatesInRange = (startDate: Date, endDate: Date) => {
@@ -141,6 +145,22 @@ export default function ShowAttendanceComponent({
     </View>
   );
 
+  const handleShowAttendance = () => {
+    setDrawerState({
+      visible: true,
+      title: "attendanceDetails",
+      content: addBookingModalContent,
+      // primaryButton: {
+      //   title: "save",
+      //   action: handleSubmit(onSubmitCompleteProfile),
+      // },
+      secondaryButton: {
+        title: "back",
+        action: () => setDrawerState({ visible: false }),
+      },
+    });
+  };
+
   return (
     <>
       <ScrollView style={styles.container}>
@@ -222,13 +242,13 @@ export default function ShowAttendanceComponent({
                   )}
               </View>
             ) : (
-              <EmptyDatePlaceholder title="Attendance Records" />
+              <EmptyDatePlaceholder title="attendanceRecords" />
             )}
           </>
         )}
       </ScrollView>
 
-      <Drawer
+      {/* <Drawer
         title={t("attendanceDetails")}
         visible={isDrawerVisible}
         content={addBookingModalContent}
@@ -237,7 +257,7 @@ export default function ShowAttendanceComponent({
           title: t("back"),
           action: () => setIsDrawerVisible(false),
         }}
-      />
+      /> */}
     </>
   );
 }

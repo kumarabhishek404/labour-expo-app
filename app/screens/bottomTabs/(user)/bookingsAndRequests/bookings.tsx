@@ -139,7 +139,7 @@ const Bookings = () => {
               />
             </>
           ) : (
-            <EmptyDatePlaceholder title={"Booking"} leftHeight={300} />
+            <EmptyDatePlaceholder title="booking" leftHeight={300} />
           )}
         </View>
       </View>

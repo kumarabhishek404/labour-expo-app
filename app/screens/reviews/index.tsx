@@ -166,7 +166,7 @@ const ReviewScreen = () => {
           }
           ListEmptyComponent={() => (
             <EmptyDatePlaceholder
-              title={t("workExperience")}
+              title="workExperience"
               leftHeight={160}
             />
           )}

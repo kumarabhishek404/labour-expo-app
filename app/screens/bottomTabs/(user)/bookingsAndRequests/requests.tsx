@@ -128,7 +128,7 @@ const Requests = () => {
               />
             </>
           ) : (
-            <EmptyDatePlaceholder title={"Requests"} leftHeight={300} />
+            <EmptyDatePlaceholder title="requests" leftHeight={300} />
           )}
         </View>
       </View>

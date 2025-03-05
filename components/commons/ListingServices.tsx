@@ -17,9 +17,21 @@ import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import ScrollingText from "./ScrollingText";
+import DateDisplay from "./ShowDate";
 
 const ListingsServices = ({ item }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
+
+  const proposals =
+    item?.appliedUsers?.filter((user: any) => user?.status === "PENDING")
+      ?.length || 0;
+
+  const isSelected = item?.selectedUsers?.some(
+    (selectedUser: any) =>
+      (selectedUser?.status === "SELECTED" &&
+        selectedUser?.user === userDetails?._id) || // Directly in selectedUsers
+      selectedUser?.workers?.some((worker: any) => worker === userDetails?._id) // Inside workers array
+  );
 
   return (
     <>
@@ -40,26 +52,25 @@ const ListingsServices = ({ item }: any) => {
                 }
                 style={styles.image}
               />
-              {item?.selectedUsers &&
-                item?.selectedUsers?.includes(userDetails?._id) && (
-                  <View
-                    style={[
-                      styles.applicants,
-                      { backgroundColor: Colors?.tertiery },
-                    ]}
-                  >
-                    <Ionicons name="happy" size={20} color={Colors.white} />
-                    <CustomHeading color={Colors?.white}>
-                      {t("selected")}
-                    </CustomHeading>
-                  </View>
-                )}
+              {isSelected && (
+                <View
+                  style={[
+                    styles.applicants,
+                    { backgroundColor: Colors?.tertiery },
+                  ]}
+                >
+                  <Ionicons name="happy" size={20} color={Colors.white} />
+                  <CustomHeading color={Colors?.white}>
+                    {t("selected")}
+                  </CustomHeading>
+                </View>
+              )}
 
-              {item?.appliedUsers && item?.appliedUsers?.length > 0 && (
+              {proposals > 0 && !isSelected && (
                 <View style={styles.applicants}>
                   <Fontisto name="persons" size={18} color={Colors.white} />
                   <CustomHeading color={Colors?.white}>
-                    {item?.appliedUsers?.length}
+                    {proposals}
                   </CustomHeading>
                   <CustomHeading color={Colors?.white}>
                     {t("proposals")}
@@ -132,9 +143,10 @@ const ListingsServices = ({ item }: any) => {
                       textAlign="left"
                       style={{ marginLeft: 5 }}
                     >
-                      {moment(item?.startDate, "YYYY-MM-DD")?.format(
+                      <DateDisplay date={item?.startDate} />
+                      {/* {moment(item?.startDate, "YYYY-MM-DD")?.format(
                         "Do MMMM YYYY"
-                      )}
+                      )} */}
                     </CustomText>
                   </View>
                 </View>
@@ -167,14 +179,25 @@ const ListingsServices = ({ item }: any) => {
                 Object.values(item.facilities).some(Boolean) && (
                   <View style={styles?.facilitiesHeading}>
                     <ScrollingText
-                      text={`${t("facilitiesOf")} ${[
-                        "food",
-                        "living",
-                        "travelling",
-                      ]
-                        .filter((facility) => item.facilities[facility])
-                        .map((facility) => t(facility))
-                        .join(", ")} ${t("available")}`}
+                      text={t("facilitiesOf", {
+                        facilities: (() => {
+                          const filteredFacilities = [
+                            "food",
+                            "living",
+                            "travelling",
+                          ]
+                            .filter((facility) => item.facilities[facility])
+                            .map((facility) => t(facility));
+
+                          return filteredFacilities.length > 1
+                            ? filteredFacilities.slice(0, -1).join(", ") +
+                                " " +
+                                t("and") +
+                                " " +
+                                filteredFacilities.slice(-1)
+                            : filteredFacilities.join("");
+                        })(),
+                      })}
                       icon={
                         <Ionicons
                           name="happy-outline"
@@ -225,8 +248,8 @@ const styles = StyleSheet.create({
   },
   applicants: {
     position: "absolute",
-    top: 173,
-    right: 0,
+    top: 158,
+    right: 5,
     backgroundColor: Colors.primary,
     paddingVertical: 6,
     paddingHorizontal: 8,

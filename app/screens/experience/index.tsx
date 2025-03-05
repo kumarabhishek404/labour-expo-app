@@ -46,7 +46,7 @@ const Experience = () => {
     <TouchableOpacity
       key={work._id}
       style={styles.workItem}
-      onPress={() => handleServicePress(work.serviceId)}
+      onPress={() => handleServicePress(work._id)}
     >
       <View style={styles.headerRow}>
         <CustomHeading
@@ -54,7 +54,7 @@ const Experience = () => {
           textAlign="left"
           style={styles.serviceName}
         >
-          {work.serviceName}
+          {t(work?.type)} {" - "} {t(work?.subType)}
         </CustomHeading>
         <CustomText style={styles.date}>
           {new Date(work.startDate).toLocaleDateString()}
@@ -64,9 +64,9 @@ const Experience = () => {
       <Requirements type="small" requirements={work?.requirements} />
 
       <View>
-        <View style={styles.detailRow}>
+        {/* <View style={styles.detailRow}>
           <CustomText style={styles.description}>{work.description}</CustomText>
-        </View>
+        </View> */}
 
         <View style={styles.footerRow}>
           <CustomText style={styles.address}>📍 {work.address}</CustomText>
@@ -160,10 +160,7 @@ const Experience = () => {
               />
             </>
           ) : (
-            <EmptyDatePlaceholder
-              title={t("workExperience")}
-              leftHeight={160}
-            />
+            <EmptyDatePlaceholder title="workExperience" leftHeight={160} />
           )}
         </View>
       </View>
@@ -176,12 +173,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     backgroundColor: Colors?.fourth,
+    paddingTop: 10,
   },
   workItem: {
     backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 8,
-    marginTop: 10,
+    marginBottom: 15,
   },
   headerRow: {
     flexDirection: "row",

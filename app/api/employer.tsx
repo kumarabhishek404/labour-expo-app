@@ -122,6 +122,8 @@ const cancelSelectedWorker = async (payload: any) => {
 
 // BOOKINGS
 const addBookingRequest = async (payload: any) => {
+  console.log("Payload --", payload);
+  
   try {
     const data = await API_CLIENT.makePostRequestFormData(
       "/employer/booking/invitations/send",
@@ -241,28 +243,6 @@ const completeBooking = async (payload: any) => {
   }
 };
 
-const cancelBooking = async (payload: any) => {
-  console.log("Payload --", payload);
-  
-  try {
-    const data = await API_CLIENT.makePostRequest(
-      "/employer/booking/cancel",
-      payload
-    );
-    return data.data;
-  } catch (error: any) {
-    console.error(
-      `[userService] An error occurred while cancelling booking : `,
-      error?.response?.data?.message
-    );
-    TOAST?.error(
-      error?.response?.data?.message ||
-        "An error occurred while cancelling booking"
-    );
-    throw error;
-  }
-};
-
 const restoreService = async (payload: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
@@ -287,7 +267,6 @@ const EMPLOYER = {
   fetchAllBookingSentRequests,
   fetchAllBookedWorkers,
   removeBookedWorker,
-  cancelBooking,
   completeBooking,
   restoreService,
 };

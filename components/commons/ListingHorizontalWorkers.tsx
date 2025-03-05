@@ -58,9 +58,7 @@ const ListingHorizontalWorkers = ({
             pathname: "/screens/users/[id]",
             params: {
               id: item?._id,
-              role: "worker",
-              title: t("workerDetails"),
-              type: "details",
+              title: "workerDetails",
             },
           })
         }

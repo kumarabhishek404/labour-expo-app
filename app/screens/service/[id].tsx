@@ -56,14 +56,14 @@ const ServiceDetails = () => {
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
       (user: any) =>
-        user?.user === userDetails?._id ||
+        (user?.status === "PENDING" && user?.user === userDetails?._id) ||
         user?.workers?.includes(userDetails?._id)
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
       (user: any) =>
-        user?.user === userDetails?._id ||
+        (user?.status === "SELECTED" && user?.user === userDetails?._id) ||
         user?.workers.includes(userDetails?._id)
     ) || false
   );
@@ -188,7 +188,7 @@ const ServiceDetails = () => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
         (user: any) =>
-          user?.user === userDetails?._id ||
+          (user?.status === "PENDING" && user?.user === userDetails?._id) ||
           user?.workers?.includes(userDetails?._id)
       ) || false
     );
@@ -198,7 +198,7 @@ const ServiceDetails = () => {
     setIsSelected(
       service?.selectedUsers?.find(
         (user: any) =>
-          user?.user === userDetails?._id ||
+          (user?.status === "SELECTED" && user?.user === userDetails?._id) ||
           user?.workers?.includes(userDetails?._id)
       ) || false
     );
@@ -445,7 +445,7 @@ const ServiceDetails = () => {
           {(service?.employer === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
               <CustomHeading textAlign="left">
-                {t("selectedApplicants")}
+                {t("whoHaveSelected")}
               </CustomHeading>
               {selectedApplicants.length > 0 ? (
                 <SelectedApplicants
@@ -467,7 +467,7 @@ const ServiceDetails = () => {
                   ) : (
                     <EmptyDatePlaceholder
                       parentHeight={450}
-                      title="Selected Applicants"
+                      title="selectedApplicants"
                     />
                   )}
                 </View>
@@ -478,7 +478,7 @@ const ServiceDetails = () => {
           {/* Applicants */}
           {(service?.employer === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
-              <CustomHeading textAlign="left">{t("applicants")}</CustomHeading>
+              <CustomHeading textAlign="left">{t("whoHaveApplied")}</CustomHeading>
               {applicants.length > 0 ? (
                 <Applicants
                   applicants={applicants}
@@ -502,7 +502,7 @@ const ServiceDetails = () => {
                   ) : (
                     <EmptyDatePlaceholder
                       parentHeight={450}
-                      title="Applicants"
+                      title="applicants"
                     />
                   )}
                 </View>

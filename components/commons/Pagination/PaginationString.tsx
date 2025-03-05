@@ -24,9 +24,11 @@ const PaginationString = ({
           <CustomText textAlign="left" color={Colors?.tertiery}>
             {isLoading
               ? t("loading")
-              : `${t("fetched")} ${totalFetchedData || 0} ${t("from")} ${
-                  totalData || 0
-                } ${type}`}
+              : t("paginationText", {
+                  totalFetchedData: totalFetchedData,
+                  totalData: totalData,
+                  type: t(type),
+                })}
           </CustomText>
         </View>
       ) : (
