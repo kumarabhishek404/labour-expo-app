@@ -32,16 +32,11 @@ const getServiceById = async (id: any) => {
   }
 };
 
-const fetchAllServices = async ({
-  pageParam,
-  status,
-  type,
-  subType,
-  skill,
-}: any) => {
+const fetchAllServices = async ({ pageParam, status, payload }: any) => {
   try {
-    const data = await API_CLIENT.makeGetRequest(
-      `/service/all?status=${status}&type=${type}&subType=${subType}&skill=${skill}&page=${pageParam}&limit=5`
+    const data = await API_CLIENT.makePostRequest(
+      `/service/all?status=${status}&page=${pageParam}&limit=5`,
+      payload
     );
     return data.data;
   } catch (error: any) {
@@ -89,7 +84,7 @@ const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
 
 const fetchAllVillages = async (payload: any) => {
   console.log("Paylaod ---", payload);
-  
+
   try {
     const data = await API_CLIENT.makePostRequest(`/service/villages`, payload);
     return data.data;
@@ -111,7 +106,7 @@ const SERVICE = {
   getServiceById,
   fetchMyAppliedWorkers,
   fetchSelectedWorkers,
-  fetchAllVillages
+  fetchAllVillages,
 };
 
 export default SERVICE;

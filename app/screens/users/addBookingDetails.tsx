@@ -49,241 +49,231 @@ const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
   };
 
   return (
-    <>
-      <View style={styles.modalContent}>
-        <View style={{ flexDirection: "column", gap: 20 }}>
-          <Controller
-            control={control}
+    <View style={styles?.container}>
+      <Controller
+        control={control}
+        name="type"
+        defaultValue=""
+        rules={{
+          required: t("workTypeIsRequired"),
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <PaperDropdown
+            label="workType"
             name="type"
-            defaultValue=""
-            rules={{
-              required: t("workTypeIsRequired"),
+            selectedValue={value}
+            onSelect={(selectedValue: any) => {
+              onChange(selectedValue);
+              setValue("subType", "");
             }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <PaperDropdown
-                label="workType"
-                name="type"
-                selectedValue={value}
-                onSelect={(selectedValue: any) => {
-                  onChange(selectedValue);
-                  setValue("subType", "");
-                }}
-                translationEnabled
-                placeholder="selectWorkType"
-                options={WORKTYPES}
-                errors={errors}
-                search={false}
-                icon={
-                  <Ionicons
-                    name={"mail-outline"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
+            translationEnabled
+            placeholder="selectWorkType"
+            options={WORKTYPES}
+            errors={errors}
+            search={false}
+            icon={
+              <Ionicons
+                name={"mail-outline"}
+                size={30}
+                color={Colors.secondary}
+                style={{ paddingVertical: 10, paddingRight: 10 }}
               />
-            )}
+            }
           />
+        )}
+      />
 
-          <Controller
-            control={control}
+      <Controller
+        control={control}
+        name="subType"
+        defaultValue=""
+        rules={{
+          required: t("workSubTypeIsRequired"),
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <PaperDropdown
+            label="workSubType"
             name="subType"
-            defaultValue=""
-            rules={{
-              required: t("workSubTypeIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <PaperDropdown
-                label="workSubType"
-                name="subType"
-                selectedValue={value}
-                onSelect={onChange}
-                placeholder={
-                  watch("type")
-                    ? "selectWorkSubType"
-                    : "pleaseSelectWorkTypeFirst"
-                }
-                translationEnabled
-                options={filterSubCategories(watch("type"))}
-                errors={errors}
-                search={false}
-                icon={
-                  <Ionicons
-                    name={"mail-outline"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
+            selectedValue={value}
+            onSelect={onChange}
+            placeholder={
+              watch("type") ? "selectWorkSubType" : "pleaseSelectWorkTypeFirst"
+            }
+            translationEnabled
+            options={filterSubCategories(watch("type"))}
+            errors={errors}
+            search={false}
+            icon={
+              <Ionicons
+                name={"mail-outline"}
+                size={30}
+                color={Colors.secondary}
+                style={{ paddingVertical: 10, paddingRight: 10 }}
               />
-            )}
+            }
           />
-          <Controller
-            control={control}
+        )}
+      />
+      <Controller
+        control={control}
+        name="startDate"
+        defaultValue={new Date()}
+        rules={{
+          required: t("startDateIsRequired"),
+          validate: (value) => {
+            if (moment(value) < moment(new Date())) {
+              return t("startDateNotEarlierThanToday");
+            } else {
+              return true;
+            }
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <DateField
+            title={t("startDate")}
             name="startDate"
-            defaultValue={new Date()}
-            rules={{
-              required: t("startDateIsRequired"),
-              validate: (value) => {
-                if (moment(value) < moment(new Date())) {
-                  return t("startDateNotEarlierThanToday");
-                } else {
-                  return true;
-                }
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DateField
-                title={t("startDate")}
-                name="startDate"
-                type="serviceDate"
-                date={moment(value)}
-                setDate={onChange}
-                onBlur={onBlur}
-                errors={errors}
-              />
-            )}
+            type="serviceDate"
+            date={moment(value)}
+            setDate={onChange}
+            onBlur={onBlur}
+            errors={errors}
           />
+        )}
+      />
 
-          <Controller
-            control={control}
+      <Controller
+        control={control}
+        name="duration"
+        defaultValue={0}
+        rules={{
+          required: t("durationIsRequired"),
+          validate: (value) => {
+            if (value <= 0) {
+              return t("durationMustBeGreaterThanZero");
+            } else {
+              return true;
+            }
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Duration
+            duration={value}
+            setDuration={onChange}
+            errors={errors}
             name="duration"
-            defaultValue={0}
-            rules={{
-              required: t("durationIsRequired"),
-              validate: (value) => {
-                if (value <= 0) {
-                  return t("durationMustBeGreaterThanZero");
-                } else {
-                  return true;
-                }
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Duration
-                duration={value}
-                setDuration={onChange}
-                errors={errors}
-                name="duration"
-              />
-            )}
           />
+        )}
+      />
 
-          <Controller
-            control={control}
+      <Controller
+        control={control}
+        name="noOfWorkers"
+        defaultValue={0}
+        rules={{
+          required: t("durationIsRequired"),
+          validate: (value) => {
+            if (value <= 0) {
+              return t("durationMustBeGreaterThanZero");
+            } else {
+              return true;
+            }
+          },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <NumberOfWorkers
+            noOfWorkers={value}
+            setNoOfWorkers={onChange}
+            errors={errors}
             name="noOfWorkers"
-            defaultValue={0}
-            rules={{
-              required: t("durationIsRequired"),
-              validate: (value) => {
-                if (value <= 0) {
-                  return t("durationMustBeGreaterThanZero");
-                } else {
-                  return true;
-                }
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <NumberOfWorkers
-                noOfWorkers={value}
-                setNoOfWorkers={onChange}
-                errors={errors}
-                name="noOfWorkers"
-              />
-            )}
           />
+        )}
+      />
 
-          <View style={styles.checkboxContainer}>
-            <CustomCheckbox
-              label={t("living")}
-              isChecked={watch("facilities").living}
-              onToggle={() => handleCheckboxChange("living")}
-            />
-            <CustomCheckbox
-              label={t("food")}
-              isChecked={watch("facilities").food}
-              onToggle={() => handleCheckboxChange("food")}
-            />
-            <CustomCheckbox
-              label={t("travelling")}
-              isChecked={watch("facilities").travelling}
-              onToggle={() => handleCheckboxChange("travelling")}
-            />
-            <CustomCheckbox
-              label={t("esi_pf")}
-              isChecked={watch("facilities").esi_pf}
-              onToggle={() => handleCheckboxChange("esi_pf")}
-            />
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <Controller
-              control={control}
-              name="address"
-              defaultValue=""
-              rules={{
-                required: t("addressIsRequired"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <AddLocationAndAddress
-                  label={t("address")}
-                  name="address"
-                  address={value}
-                  setAddress={onChange}
-                  onBlur={onBlur}
-                  location={location}
-                  setLocation={setLocation}
-                  selectedOption={selectedOption}
-                  setSelectedOption={setSelectedOption}
-                  errors={errors}
-                  style={{ marginTop: 10 }}
-                />
-              )}
-            />
-          </View>
-
-          <Controller
-            control={control}
-            name="description"
-            defaultValue=""
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextAreaInputComponent
-                label="workDescription"
-                name="description"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterWorkDescription")}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name={"mail-outline"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
-        </View>
+      <View style={styles.checkboxContainer}>
+        <CustomCheckbox
+          label={t("living")}
+          isChecked={watch("facilities").living}
+          onToggle={() => handleCheckboxChange("living")}
+        />
+        <CustomCheckbox
+          label={t("food")}
+          isChecked={watch("facilities").food}
+          onToggle={() => handleCheckboxChange("food")}
+        />
+        <CustomCheckbox
+          label={t("travelling")}
+          isChecked={watch("facilities").travelling}
+          onToggle={() => handleCheckboxChange("travelling")}
+        />
+        <CustomCheckbox
+          label={t("esi_pf")}
+          isChecked={watch("facilities").esi_pf}
+          onToggle={() => handleCheckboxChange("esi_pf")}
+        />
       </View>
-    </>
+
+      <View style={{ flexDirection: "row", gap: 10 }}>
+        <Controller
+          control={control}
+          name="address"
+          defaultValue=""
+          rules={{
+            required: t("addressIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <AddLocationAndAddress
+              label={t("address")}
+              name="address"
+              address={value}
+              setAddress={onChange}
+              onBlur={onBlur}
+              location={location}
+              setLocation={setLocation}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              errors={errors}
+              style={{ marginTop: 10 }}
+            />
+          )}
+        />
+      </View>
+
+      <Controller
+        control={control}
+        name="description"
+        defaultValue=""
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextAreaInputComponent
+            label="workDescription"
+            name="description"
+            value={value}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder={t("enterWorkDescription")}
+            errors={errors}
+            icon={
+              <Ionicons
+                name={"mail-outline"}
+                size={30}
+                color={Colors.secondary}
+                style={{ paddingVertical: 10, paddingRight: 10 }}
+              />
+            }
+          />
+        )}
+      />
+    </View>
   );
 };
 
 export default AddBookingDetails;
 
 const styles = StyleSheet.create({
-  modalContent: {
-    paddingVertical: 20,
-    paddingBottom: 100,
-  },
+  container: { flexDirection: "column", gap: 20 },
   checkboxContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginBottom: 10,
     gap: 20,
   },
 });

@@ -9,7 +9,6 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
     <View
       style={{
         flexDirection: "row",
-        width: "100%",
         alignItems: "flex-start",
         justifyContent: "space-between",
         paddingHorizontal: 20,
@@ -17,9 +16,9 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
     >
       <TouchableOpacity
         style={{
-          flex: 1,
           flexDirection: "row",
           alignItems: "center",
+          justifyContent: 'flex-end',
           gap: 8,
         }}
         onPress={title?.length > 0 ? onPress[0] : onPress}
@@ -30,7 +29,6 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
           color={Colors?.primary}
           fontWeight="bold"
           style={{
-            flex: 1,
             flexWrap: "wrap",
             textAlign: "left",
           }}

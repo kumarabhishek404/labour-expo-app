@@ -6,14 +6,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
 import { router, Stack } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import CustomText from "@/components/commons/CustomText";
 import Requirements from "@/components/commons/Requirements";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Atoms from "@/app/AtomStore";
-import FloatingButton from "@/components/inputs/FloatingButton";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const Experience = () => {

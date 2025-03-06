@@ -19,9 +19,7 @@ import { useAtomValue } from "jotai";
 import Loader from "@/components/commons/Loaders/Loader";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
-import EmptyPlaceholder from "@/assets/empty-placeholder.png";
 import ProfilePicture from "@/components/commons/ProfilePicture";
-import FloatingButton from "@/components/inputs/FloatingButton";
 import Colors from "@/constants/Colors";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 

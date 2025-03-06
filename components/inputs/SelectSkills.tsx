@@ -24,7 +24,7 @@ interface SkillsSelectorProps {
   selectedInterests: Array<any>;
   setSelectedInterests: any;
   availableOptions: Array<any>;
-  onBlur: any;
+  onBlur?: any;
   errors: any;
 }
 
@@ -186,12 +186,14 @@ const SkillsSelector = ({
               {t(item.label)}
             </CustomHeading>
             <View style={styles.interestsContainer}>
-              {item.skills
-                .filter(
+              {item?.skills
+                ?.filter(
                   (skill: any) =>
-                    !selectedInterests.find((sel) => sel.skill === skill.value)
+                    !selectedInterests?.find(
+                      (sel) => sel?.skill === skill?.value
+                    )
                 )
-                .map((skill: any, index: number) => (
+                ?.map((skill: any, index: number) => (
                   <TouchableOpacity
                     key={index}
                     style={styles.interestItem}

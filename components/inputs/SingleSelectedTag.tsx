@@ -2,53 +2,49 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
+import { t } from "@/utils/translationHelper";
+import Colors from "@/constants/Colors";
 
 interface SelectableTagsProps {
   label?: string;
-  name: string;
+  options: any;
   selectedTag: string;
   setSelectedTag: any;
 }
 
 const SelectableTags = ({
   label,
-  name,
+  options,
   selectedTag,
   setSelectedTag,
 }: SelectableTagsProps) => {
-  // Tag options
-  const tags = [
-    "Within 10 km",
-    "Within 50 km",
-    "Within 100 km",
-    "More Than 100 km",
-  ];
-
-  // Handle tag selection
+  
   const handleTagPress = (tag: any) => {
-    setSelectedTag(tag); // Set selected tag
+    setSelectedTag(tag);
   };
 
   return (
     <View style={styles.container}>
-      <CustomHeading textAlign="left">{label}</CustomHeading>
+      <CustomHeading textAlign="left" style={styles?.label}>
+        {label}
+      </CustomHeading>
       <View style={styles?.tagContainer}>
-        {tags.map((tag, index) => (
+        {options.map((option: any, index: number) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.tag,
-              selectedTag === tag && styles.selectedTag, // Apply selected style if the tag is selected
+              selectedTag === option?.value && styles.selectedTag, // Apply selected style if the tag is selected
             ]}
-            onPress={() => handleTagPress(tag)} // Select tag on press
+            onPress={() => handleTagPress(option?.value)} // Select tag on press
           >
             <CustomText
               style={[
                 styles.tagText,
-                selectedTag === tag && styles.selectedTagText,
+                selectedTag === option?.value && styles.selectedTagText,
               ]}
             >
-              {tag}
+              {t(option?.label)}
             </CustomText>
           </TouchableOpacity>
         ))}
@@ -66,28 +62,24 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 10,
+    marginBottom: 10,
   },
   tagContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    // justifyContent: "flex-start",
-    // alignItems: "flex-start",
+    gap: 10,
   },
   tag: {
-    backgroundColor: "#ddd", // Default unselected background color
+    backgroundColor: Colors?.white,
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
-    margin: 5,
   },
   selectedTag: {
-    backgroundColor: "#4A90E2", // Selected background color
+    backgroundColor: "#4A90E2",
   },
   tagText: {
-    color: "#333", // Default unselected text color
+    color: "#333",
     fontSize: 16,
   },
   selectedTagText: {

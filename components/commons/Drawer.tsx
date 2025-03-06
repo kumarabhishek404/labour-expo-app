@@ -27,8 +27,7 @@ const GlobalSideDrawer = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (drawerState.visible) {
-          drawerState.secondaryButton?.action();
-          setDrawerState({ ...drawerState, visible: false });
+          closeDrawer();
           return true;
         }
         return false;
@@ -48,25 +47,22 @@ const GlobalSideDrawer = () => {
         duration: 300,
         useNativeDriver: true,
       }).start();
-    } else {
-      Animated.timing(slideAnim, {
-        toValue: width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
     }
   }, [drawerState.visible]);
+
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, {
+      toValue: width,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setDrawerState({ ...drawerState, visible: false }));
+  };
 
   if (!drawerState.visible) return null;
 
   return (
     <>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          drawerState.secondaryButton?.action();
-          setDrawerState({ ...drawerState, visible: false });
-        }}
-      >
+      <TouchableWithoutFeedback onPress={closeDrawer}>
         <View style={styles.backdrop} />
       </TouchableWithoutFeedback>
 
@@ -76,37 +72,37 @@ const GlobalSideDrawer = () => {
           { transform: [{ translateX: slideAnim }] },
         ]}
       >
-        <View style={styles.header}>
-          <CustomHeading baseFont={20} fontWeight="bold">
-            {t(drawerState.title)}
-          </CustomHeading>
-          <Ionicons
-            name="close"
-            size={28}
-            color={Colors.primary}
-            onPress={() => {
-              drawerState.secondaryButton?.action();
-              setDrawerState({ ...drawerState, visible: false });
-            }}
-          />
+        <View style={styles?.wrapper}>
+          <View style={styles.header}>
+            <CustomHeading baseFont={20} fontWeight="bold">
+              {t(drawerState.title)}
+            </CustomHeading>
+            <Ionicons
+              name="close"
+              size={28}
+              color={Colors.primary}
+              onPress={closeDrawer}
+            />
+          </View>
+          {/* Scrollable Content */}
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.contentContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {drawerState.content && drawerState.content()}
+          </ScrollView>
         </View>
 
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.contentContainer}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {drawerState.content && drawerState.content()}
-        </ScrollView>
-
+        {/* Fixed Footer Buttons */}
         {(drawerState.primaryButton || drawerState.secondaryButton) && (
           <View style={styles.footer}>
             {drawerState.secondaryButton && (
               <ButtonComp
                 isPrimary={false}
                 title={t(drawerState.secondaryButton?.title)}
-                onPress={drawerState.secondaryButton?.action}
+                onPress={closeDrawer}
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
                 textColor={Colors?.white}
@@ -144,42 +140,37 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   drawerContainer: {
-    flex: 1,
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
     width: "100%",
-    height: height,
+    height: "100%",
     backgroundColor: Colors.background,
-    paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: -2, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    paddingHorizontal: 15,
     zIndex: 99,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  wrapper: {
+    flex: 1,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
-    paddingTop: 20,
+    paddingTop: 10,
   },
-  scrollContainer: {
-    flex: 1,
+  scrollContainer: {},
+  contentContainer: {
+    paddingBottom: 100, // Avoid content being cut off behind buttons
   },
-  contentContainer: {},
   footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 10,
     position: "absolute",
     bottom: 0,
-    padding: 20,
-    paddingBottom: 15,
-    width: width,
+    left: 10,
+    width: "100%",
+    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
   },
 });

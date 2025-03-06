@@ -39,9 +39,7 @@ const PaginationString = ({
 };
 
 const styles = StyleSheet.create({
-  totalData: {
-    paddingBottom: 6,
-  },
+  totalData: {},
 });
 
 export default PaginationString;

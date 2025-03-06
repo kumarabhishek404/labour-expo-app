@@ -29,9 +29,8 @@ const GlobalBottomDrawer = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (drawerState.visible) {
-          drawerState.secondaryButton?.action();
-          setDrawerState({ ...drawerState, visible: false });
-          return true; // Prevent default back action
+          closeDrawer();
+          return true;
         }
         return false;
       };
@@ -40,35 +39,38 @@ const GlobalBottomDrawer = () => {
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [drawerState, setDrawerState])
+    }, [drawerState.visible])
   );
 
+  // Open and Close Animation
   React.useEffect(() => {
     if (drawerState.visible) {
+      slideAnim.setValue(height); // Reset position before opening
       Animated.timing(slideAnim, {
-        toValue: height * 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(slideAnim, {
-        toValue: height,
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }).start();
     }
   }, [drawerState.visible]);
 
+  // Close drawer with animation
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, {
+      toValue: height,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setDrawerState((prev: any) => ({ ...prev, visible: false })); // Hide AFTER animation
+      drawerState?.secondaryButton?.action();
+    });
+  };
+
   if (!drawerState.visible) return null;
 
   return (
     <>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          drawerState.secondaryButton?.action();
-          setDrawerState({ ...drawerState, visible: false });
-        }}
-      >
+      <TouchableWithoutFeedback onPress={closeDrawer}>
         <View style={styles.backdrop} />
       </TouchableWithoutFeedback>
 
@@ -86,10 +88,7 @@ const GlobalBottomDrawer = () => {
             name="close"
             size={28}
             color={Colors.primary}
-            onPress={() => {
-              drawerState.secondaryButton?.action();
-              setDrawerState({ ...drawerState, visible: false });
-            }}
+            onPress={closeDrawer}
           />
         </View>
 
@@ -97,7 +96,7 @@ const GlobalBottomDrawer = () => {
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentContainer}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
         >
           <View style={styles.content}>
@@ -125,7 +124,10 @@ const GlobalBottomDrawer = () => {
               <ButtonComp
                 isPrimary={true}
                 title={t(drawerState.primaryButton.title)}
-                onPress={drawerState.primaryButton.action}
+                onPress={() => {
+                  closeDrawer();
+                  drawerState.primaryButton.action();
+                }}
                 disabled={drawerState.primaryButton.disabled}
                 bgColor={Colors.success}
                 borderColor={Colors.success}

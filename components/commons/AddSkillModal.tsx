@@ -55,7 +55,8 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
   const onAddSkills = async () => {
     try {
       console.log("Skiiiiii-", skillWithPrice);
-      const payload = role === "worker" ? skillWithPrice : {skill: selectedSkill};
+      const payload =
+        role === "worker" ? skillWithPrice : { skill: selectedSkill };
       await mutationAddSkills.mutateAsync(payload, {
         onSuccess: () => {
           setDrawerState({ visible: false });

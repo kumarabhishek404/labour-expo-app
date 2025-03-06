@@ -51,7 +51,13 @@ const Users = () => {
         : USER?.fetchAllUsers({
             pageParam,
             name: JSON.parse(searchCategory as string)?.name,
-            skill: JSON.parse(searchCategory as string)?.skill,
+            payload: {
+              completedServices: JSON.parse(searchCategory as string)
+                ?.completedServices,
+              rating: JSON.parse(searchCategory as string)?.rating,
+              distance: JSON.parse(searchCategory as string)?.distance,
+              skills: JSON.parse(searchCategory as string)?.skills,
+            },
           }),
     retry: false,
     initialPageParam: 1,
@@ -101,7 +107,11 @@ const Users = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader title={title as string} left="back" right="notification" />
+            <CustomHeader
+              title={title as string}
+              left="back"
+              right="notification"
+            />
           ),
         }}
       />

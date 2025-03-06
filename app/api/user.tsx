@@ -112,10 +112,11 @@ const enableAccount = async () => {
   }
 };
 
-const fetchAllUsers = async ({ pageParam, name, skill }: any) => {
+const fetchAllUsers = async ({ pageParam, payload }: any) => {
   try {
-    const data = await API_CLIENT.makeGetRequest(
-      `/user/all?role=WORKER&skill=${skill}&name=${name}&&page=${pageParam}&limit=5`
+    const data = await API_CLIENT.makePostRequest(
+      `/user/all?role=WORKER${pageParam}&limit=5`,
+      payload
     );
     return data.data;
   } catch (error: any) {

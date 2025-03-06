@@ -57,9 +57,13 @@ const Services = () => {
         : SERVICE?.fetchAllServices({
             pageParam,
             status: "ACTIVE",
-            type: JSON.parse(searchCategory as string)?.type,
-            subType: JSON.parse(searchCategory as string)?.subType,
-            skill: JSON.parse(searchCategory as string)?.skill,
+            payload: {
+              distance: JSON.parse(searchCategory as string)?.distance,
+              duration: JSON.parse(searchCategory as string)?.duration,
+              serviceStartIn: JSON.parse(searchCategory as string)
+                ?.serviceStartIn,
+              skill: JSON.parse(searchCategory as string)?.skills,
+            },
           }),
     initialPageParam: 1,
     retry: false,
@@ -117,7 +121,7 @@ const Services = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           {type === "myServices" && (
             <CategoryButtons

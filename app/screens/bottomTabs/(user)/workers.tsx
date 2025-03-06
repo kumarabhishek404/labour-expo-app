@@ -10,7 +10,7 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { WORKERS } from "@/constants";
-import Filters from "@/components/commons/Filters";
+import Filters from "@/app/screens/bottomTabs/(user)/search/filterServices";
 import SearchFilter from "@/components/commons/SearchFilter";
 import { Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";

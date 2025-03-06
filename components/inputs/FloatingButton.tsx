@@ -6,18 +6,19 @@ import Colors from "@/constants/Colors";
 import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
 
-const FloatingButton = memo(function FloatingButton({ style }: any) {
+const FloatingButton = memo(function FloatingButton({
+  title,
+  onPress,
+  style,
+}: any) {
   // Define screens where the FAB should not appear
 
   return (
-    <TouchableOpacity
-      style={[styles.fab, style]}
-      onPress={() => router?.push("/screens/addService")}
-    >
+    <TouchableOpacity style={[styles.fab, style]} onPress={onPress}>
       <View style={styles.iconContainer}>
         <Entypo name="plus" size={22} color="#fff" />
         <CustomText baseFont={14} fontWeight="bold" color={Colors?.white}>
-          {t("newService")}
+          {t(title)}
         </CustomText>
       </View>
     </TouchableOpacity>
@@ -27,7 +28,7 @@ const FloatingButton = memo(function FloatingButton({ style }: any) {
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 80,
+    bottom: 85,
     right: 8,
     backgroundColor: Colors?.tertiery,
     paddingHorizontal: 20,

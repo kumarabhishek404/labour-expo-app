@@ -1,20 +1,13 @@
 import React from "react";
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 
 interface FiltersProps {
   label: string;
-  name: string;
   options: Array<any>;
   selectedOption: Array<any>;
   setSelectedOption: any;
-  onBlur?: any;
-  errors?: any;
 }
 
 const MultiSelectCheckboxes = ({
