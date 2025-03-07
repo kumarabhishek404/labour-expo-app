@@ -18,7 +18,6 @@ const SelectableTags = ({
   selectedTag,
   setSelectedTag,
 }: SelectableTagsProps) => {
-  
   const handleTagPress = (tag: any) => {
     setSelectedTag(tag);
   };
@@ -74,14 +73,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   selectedTag: {
     backgroundColor: "#4A90E2",
   },
-  tagText: {
-    color: "#333",
-    fontSize: 16,
-  },
+  tagText: {},
   selectedTagText: {
     color: "#fff", // Selected text color
   },

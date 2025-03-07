@@ -10,9 +10,9 @@ interface DateDisplayProps {
 }
 
 const DateDisplay: React.FC<DateDisplayProps> = ({ date }) => {
-  const formattedDate = moment(date).format("dddd MMMM DD"); // Example: "Monday February 26"
-  const [weekday, month, day] = formattedDate.split(" ");
-  const customFormattedDate = `${day} ${t(month)}`;
+  const formattedDate = moment(date).format("dddd MMMM DD YYYY"); // Example: "Monday February 26"
+  const [weekday, month, day, year] = formattedDate.split(" ");
+  const customFormattedDate = `${day} ${t(month)} ${year}`;
 
   return (
     <CustomText textAlign="left">

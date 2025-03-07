@@ -18,6 +18,7 @@ import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
+import AppliedFilters from "@/components/commons/AppliedFilters";
 
 const Users = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -26,6 +27,13 @@ const Users = () => {
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { title, type, searchCategory } = useGlobalSearchParams();
+  const [appliedFilters, setAppliedFilters] = useState(() => {
+    try {
+      return searchCategory ? JSON.parse(searchCategory as string) : {};
+    } catch (error) {
+      return {};
+    }
+  });
 
   const {
     data: response,
@@ -36,27 +44,25 @@ const Users = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: [handleQueryKey(type), category],
+    queryKey: [handleQueryKey(type), category, appliedFilters],
     queryFn: async ({ pageParam }) =>
-      (await type) === "booked"
+      type === "booked"
         ? EMPLOYER?.fetchAllBookedWorkers({
             pageParam,
-            skill: JSON.parse(searchCategory as string)?.skill,
+            skill: appliedFilters?.skill,
           })
-        : (await type) === "saved"
+        : type === "saved"
         ? USER?.fetchAllLikedUsers({
             pageParam,
-            skill: JSON.parse(searchCategory as string)?.skill,
+            skill: appliedFilters?.skill,
           })
         : USER?.fetchAllUsers({
             pageParam,
-            name: JSON.parse(searchCategory as string)?.name,
             payload: {
-              completedServices: JSON.parse(searchCategory as string)
-                ?.completedServices,
-              rating: JSON.parse(searchCategory as string)?.rating,
-              distance: JSON.parse(searchCategory as string)?.distance,
-              skills: JSON.parse(searchCategory as string)?.skills,
+              completedServices: appliedFilters?.completedServices,
+              rating: appliedFilters?.rating,
+              distance: appliedFilters?.distance,
+              skills: appliedFilters?.skills,
             },
           }),
     retry: false,
@@ -117,6 +123,11 @@ const Users = () => {
       />
       <Loader loading={isLoading} />
       <View style={styles.container}>
+        <AppliedFilters
+          appliedFilters={appliedFilters}
+          setAppliedFilters={setAppliedFilters}
+          fetchUsers={() => {}}
+        />
         <PaginationString
           type="workers"
           isLoading={isLoading || isRefetching}

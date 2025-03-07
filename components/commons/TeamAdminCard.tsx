@@ -95,7 +95,7 @@ const TeamAdminCard = ({ admin }: any) => {
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
             <CustomHeading textAlign="left">
-              {t("teamAdmin")} in which you are a worker
+              {t("teamAdmin")}
             </CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>

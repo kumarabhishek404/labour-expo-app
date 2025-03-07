@@ -43,20 +43,18 @@ const AllWorkers = ({
     });
   };
 
-  if (isLoading) {
-    return <Loader loading={isLoading} />;
-  }
-
   return (
-    <View style={styles.container}>
-      <View style={styles?.paginationHeader}>
-        <PaginationString
-          type="workers"
-          isLoading={isLoading || isRefetching}
-          totalFetchedData={memoizedData?.length}
-          totalData={totalData}
-        />
-        {/* <TopHeaderLinks
+    <>
+      <Loader loading={isLoading} />
+      <View style={styles.container}>
+        <View style={styles?.paginationHeader}>
+          <PaginationString
+            type="workers"
+            isLoading={isLoading || isRefetching}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+          {/* <TopHeaderLinks
           title={["showAllWorkers"]}
           onPress={[
             () =>
@@ -73,38 +71,39 @@ const AllWorkers = ({
             <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
           ]}
         /> */}
-      </View>
+        </View>
 
-      {memoizedData && memoizedData?.length > 0 ? (
-        <ListingsVerticalWorkers
-          style={styles.listContainer}
-          availableInterest={WORKERTYPES}
-          listings={memoizedData || []}
-          loadMore={loadMore}
-          type={"worker"}
-          isFetchingNextPage={isFetchingNextPage}
-          refreshControl={
-            <RefreshControl
-              refreshing={!isRefetching && refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+        {memoizedData && memoizedData?.length > 0 ? (
+          <ListingsVerticalWorkers
+            style={styles.listContainer}
+            availableInterest={WORKERTYPES}
+            listings={memoizedData || []}
+            loadMore={loadMore}
+            type={"worker"}
+            isFetchingNextPage={isFetchingNextPage}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          />
+        ) : (
+          <EmptyDatePlaceholder title="worker" />
+        )}
+
+        <FiltersWorkers
+          filterVisible={isAddFilters}
+          setFilterVisible={setIsAddFilters}
+          onApply={onSearchWorkers}
         />
-      ) : (
-        <EmptyDatePlaceholder title="worker" />
-      )}
 
-      <FiltersWorkers
-        filterVisible={isAddFilters}
-        setFilterVisible={setIsAddFilters}
-        onApply={onSearchWorkers}
-      />
-
-      <FloatingButton
-        title="searchWorkers"
-        onPress={() => setIsAddFilters(true)}
-      />
-    </View>
+        <FloatingButton
+          title="applyFilters"
+          onPress={() => setIsAddFilters(true)}
+        />
+      </View>
+    </>
   );
 };
 

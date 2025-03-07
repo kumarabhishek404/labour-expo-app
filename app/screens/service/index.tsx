@@ -15,12 +15,20 @@ import { MYSERVICES } from "@/constants";
 import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import Colors from "@/constants/Colors";
+import AppliedFilters from "@/components/commons/AppliedFilters";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const [category, setCategory] = useState("HIRING");
   const { title, type, searchCategory } = useGlobalSearchParams();
+  const [appliedFilters, setAppliedFilters] = useState(() => {
+    try {
+      return searchCategory ? JSON.parse(searchCategory as string) : {};
+    } catch (error) {
+      return {};
+    }
+  });
 
   const {
     data: response,
@@ -40,6 +48,7 @@ const Services = () => {
         ? "booked"
         : "services",
       category,
+      appliedFilters,
     ],
     queryFn: ({ pageParam }) =>
       type === "saved"
@@ -52,17 +61,16 @@ const Services = () => {
         : type === "booked"
         ? EMPLOYER?.fetchAllBookedWorkers({
             pageParam,
-            skill: JSON?.parse(searchCategory as string)?.skill,
+            skill: appliedFilters?.skill,
           })
         : SERVICE?.fetchAllServices({
             pageParam,
             status: "ACTIVE",
             payload: {
-              distance: JSON.parse(searchCategory as string)?.distance,
-              duration: JSON.parse(searchCategory as string)?.duration,
-              serviceStartIn: JSON.parse(searchCategory as string)
-                ?.serviceStartIn,
-              skill: JSON.parse(searchCategory as string)?.skills,
+              distance: appliedFilters?.distance,
+              duration: appliedFilters?.duration,
+              serviceStartIn: appliedFilters?.serviceStartIn,
+              skill: appliedFilters?.skills,
             },
           }),
     initialPageParam: 1,
@@ -130,6 +138,11 @@ const Services = () => {
               onCategoryChanged={onCatChanged}
             />
           )}
+          <AppliedFilters
+            appliedFilters={appliedFilters}
+            setAppliedFilters={setAppliedFilters}
+            fetchUsers={() => {}}
+          />
           <PaginationString
             type="services"
             isLoading={isLoading || isRefetching}

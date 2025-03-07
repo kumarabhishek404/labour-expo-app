@@ -9,11 +9,13 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import { dateDifference } from "@/constants/functions";
+import { calculateDistance, dateDifference } from "@/constants/functions";
 // import { openGoogleMaps } from "@/app/hooks/map";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const destination = {
   latitude: 40.758896,
@@ -23,6 +25,8 @@ const destination = {
 };
 
 const Highlights = ({ service }: any) => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
   return (
     <View style={styles?.container}>
       <View style={styles.highlightWrapper}>
@@ -37,6 +41,63 @@ const Highlights = ({ service }: any) => {
             </CustomHeading>
           </View>
         </View>
+        {service?.location && service?.location?.latitude && (
+          <View
+            style={{
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <View style={styles.highlightIcon}>
+                <MaterialCommunityIcons
+                  name="map-marker-distance"
+                  size={18}
+                  color={Colors.tertieryButton}
+                />
+              </View>
+              <View style={{ width: "45%" }}>
+                <CustomText textAlign="left">{t("distance")}</CustomText>
+                {userDetails?.location &&
+                  !isNaN(
+                    calculateDistance(service?.location, userDetails?.location)
+                  ) && (
+                    <CustomHeading textAlign="left">
+                      {calculateDistance(
+                        service?.location,
+                        userDetails?.location
+                      )}{" "}
+                      {t("kms")}
+                    </CustomHeading>
+                  )}
+              </View>
+            </View>
+            <Button
+              isPrimary={false}
+              title={t("getDirection")}
+              onPress={() => {}}
+              icon={
+                <FontAwesome
+                  name="users"
+                  size={12}
+                  color={Colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+              }
+              style={{
+                width: "35%",
+                marginTop: 6,
+                borderWidth: 1.5,
+                paddingVertical: 3,
+                paddingHorizontal: 5,
+              }}
+              textStyle={{
+                fontWeight: "700",
+                fontSize: 12,
+              }}
+            />
+          </View>
+        )}
       </View>
 
       <View style={styles?.facilitiesHeading}>
@@ -117,54 +178,6 @@ const Highlights = ({ service }: any) => {
           </View>
         </View>
       </View>
-      <View style={[styles.highlightWrapper, {}]}>
-        {service?.location && service?.location?.latitude && (
-          <View
-            style={{
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            <View style={{ flexDirection: "row" }}>
-              <View style={styles.highlightIcon}>
-                <FontAwesome5
-                  name="rupee-sign"
-                  size={18}
-                  color={Colors.primary}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <CustomText textAlign="left">{t("distance")}</CustomText>
-                <CustomHeading textAlign="left">Just 2 Kms</CustomHeading>
-              </View>
-            </View>
-            <Button
-              isPrimary={false}
-              title="Get Direction"
-              onPress={() => {}}
-              icon={
-                <FontAwesome
-                  name="users"
-                  size={12}
-                  color={Colors.primary}
-                  style={{ marginRight: 6 }}
-                />
-              }
-              style={{
-                width: 150,
-                marginTop: 6,
-                borderWidth: 1.5,
-                paddingVertical: 3,
-                paddingHorizontal: 6,
-              }}
-              textStyle={{
-                fontWeight: "700",
-                fontSize: 12,
-              }}
-            />
-          </View>
-        )}
-      </View>
     </View>
   );
 };
@@ -176,7 +189,7 @@ const styles = StyleSheet.create({
   highlightWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   highlightBox: {
     flexDirection: "row",

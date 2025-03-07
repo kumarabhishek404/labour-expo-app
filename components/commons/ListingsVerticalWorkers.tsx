@@ -60,7 +60,6 @@ const ListingsVerticalWorkers = ({
               <View>
                 <SkillSelector
                   canAddSkills={false}
-                  role={item?.role}
                   isShowLabel={false}
                   style={styles?.skillsContainer}
                   tagStyle={styles?.skillTag}
@@ -116,7 +115,7 @@ const ListingsVerticalWorkers = ({
         maxToRenderPerBatch={10}
         windowSize={3}
         removeClippedSubviews={true}
-        // contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: 160 }}
         refreshControl={refreshControl}
         showsVerticalScrollIndicator={false}
       />

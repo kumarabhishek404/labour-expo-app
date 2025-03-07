@@ -46,55 +46,54 @@ const AllServices = ({
     });
   };
 
-  if (isLoading) {
-    return <Loader loading={isLoading} />;
-  }
-
   return (
-    <View style={styles.container}>
-      <View style={styles?.paginationHeader}>
-        <PaginationString
-          type="services"
-          isLoading={isLoading || isRefetching}
-          totalFetchedData={memoizedData?.length}
-          totalData={totalData}
-        />
-        {/* <TopHeaderLinks
+    <>
+      <Loader loading={isLoading} />
+      <View style={styles.container}>
+        <View style={styles?.paginationHeader}>
+          <PaginationString
+            type="services"
+            isLoading={isLoading || isRefetching}
+            totalFetchedData={memoizedData?.length}
+            totalData={totalData}
+          />
+          {/* <TopHeaderLinks
           title={["searchServices"]}
           onPress={[() => setIsAddFilters(true)]}
           icon={[
             <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
           ]}
         /> */}
-      </View>
+        </View>
 
-      {memoizedData && memoizedData?.length > 0 ? (
-        <ListingsVerticalServices
-          listings={memoizedData || []}
-          loadMore={loadMore}
-          isFetchingNextPage={isFetchingNextPage}
-          refreshControl={
-            <RefreshControl
-              refreshing={!isRefetching && refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+        {memoizedData && memoizedData?.length > 0 ? (
+          <ListingsVerticalServices
+            listings={memoizedData || []}
+            loadMore={loadMore}
+            isFetchingNextPage={isFetchingNextPage}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          />
+        ) : (
+          <EmptyDatePlaceholder title="service" />
+        )}
+
+        <FiltersServices
+          filterVisible={isAddFilters}
+          setFilterVisible={setIsAddFilters}
+          onApply={onSearchService}
         />
-      ) : (
-        <EmptyDatePlaceholder title="service" />
-      )}
 
-      <FiltersServices
-        filterVisible={isAddFilters}
-        setFilterVisible={setIsAddFilters}
-        onApply={onSearchService}
-      />
-
-      <FloatingButton
-        title="searchServices"
-        onPress={() => setIsAddFilters(true)}
-      />
-    </View>
+        <FloatingButton
+          title="applyFilters"
+          onPress={() => setIsAddFilters(true)}
+        />
+      </View>
+    </>
   );
 };
 

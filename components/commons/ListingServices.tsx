@@ -144,9 +144,6 @@ const ListingsServices = ({ item }: any) => {
                       style={{ marginLeft: 5 }}
                     >
                       <DateDisplay date={item?.startDate} />
-                      {/* {moment(item?.startDate, "YYYY-MM-DD")?.format(
-                        "Do MMMM YYYY"
-                      )} */}
                     </CustomText>
                   </View>
                 </View>
@@ -170,7 +167,7 @@ const ListingsServices = ({ item }: any) => {
                           item?.location,
                           userDetails?.location
                         )}{" "}
-                        Kms
+                        {t("kms")}
                       </CustomHeading>
                     )}
                 </View>

@@ -56,19 +56,23 @@ const EmployerCard = ({ employer }: any) => {
           <View style={{ gap: 10 }}>
             <Button
               isPrimary={false}
-              title={t("callEmployer")}
-              onPress={() => handleCall(employer?.mobile)}
-              icon={
-                <FontAwesome5
-                  name="phone-alt"
-                  size={16}
-                  color={Colors.primary}
-                />
+              title={t("employerDetails")}
+              onPress={() =>
+                router.push({
+                  pathname: "/screens/users/[id]",
+                  params: {
+                    id: employer?._id,
+                    role: "employers",
+                    title: "employerDetails",
+                    type: "details",
+                  },
+                })
               }
+              icon={<AntDesign name="eye" size={18} color={Colors.primary} />}
               style={{
                 minHeight: 30,
                 paddingVertical: 6,
-                paddingHorizontal: 6,
+                paddingHorizontal: 14,
               }}
               textStyle={{
                 marginLeft: 6,
@@ -87,32 +91,7 @@ const EmployerCard = ({ employer }: any) => {
         >
           <ProfilePicture
             uri={employer?.profilePicture}
-            style={{ width: 90, height: 90, marginLeft: 10 }}
-          />
-          <Button
-            isPrimary={true}
-            title={t("viewDetails")}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/users/[id]",
-                params: {
-                  id: employer?._id,
-                  role: "employers",
-                  title: "employerDetails",
-                  type: "details",
-                },
-              })
-            }
-            icon={<AntDesign name="eye" size={18} color={Colors.white} />}
-            style={{
-              minHeight: 30,
-              paddingVertical: 6,
-              paddingHorizontal: 14,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
+            style={{ width: 90, height: 90, marginLeft: 10}}
           />
         </View>
       </View>

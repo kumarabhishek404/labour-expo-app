@@ -18,13 +18,13 @@ const SERVICE_COMPLETED = [
   { label: "more_than_50", value: "more_than_50" },
   { label: "more_than_100", value: "more_than_100" },
   { label: "more_than_500", value: "more_than_500" },
-  { label: "zero", value: "" },
+  { label: "zero", value: "zero" },
 ];
 
 const DISTANCE = [
-  { label: "within_10_km", value: "within_10km" },
-  { label: "within_50_km", value: "within_50km" },
-  { label: "within_100_km", value: "within_100km" },
+  { label: "within_10km", value: "within_10km" },
+  { label: "within_50km", value: "within_50km" },
+  { label: "within_100km", value: "within_100km" },
   { label: "anywhere", value: "anywhere" },
 ];
 
@@ -34,11 +34,12 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
       completedServices: "",
-      rating: 1,
+      rating: 0,
       distance: "",
       skills: [],
     },
@@ -61,6 +62,8 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
     setFilterVisible(false);
     setSelectedWorkers([]);
   };
+
+  //   console.log("ratin000", watch('rating'));
 
   const filterContent = () => (
     <View style={styles.scrollbarContent}>

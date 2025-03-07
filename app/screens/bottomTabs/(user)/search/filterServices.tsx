@@ -15,26 +15,26 @@ import Atoms from "@/app/AtomStore";
 import MultiSelectDropdown from "../../../../../components/inputs/MultiSelectDropdown";
 
 const DISTANCE = [
-  { label: "within_10_km", value: "within_10km" },
-  { label: "within_50_km", value: "within_50km" },
-  { label: "within_100_km", value: "within_100km" },
-  { label: "more_than_100_km", value: "more_than_100km" },
+  { label: "within_10km", value: "within_10km" },
+  { label: "within_50km", value: "within_50km" },
+  { label: "within_100km", value: "within_100km" },
+  { label: "more_than_100km", value: "more_than_100km" },
   { label: "anywhere", value: "anywhere" },
 ];
 
 const DURATION = [
-  { label: "less_than_5_days", value: "less_5_days" },
-  { label: "less_than_15_days", value: "less_15_days" },
-  { label: "less_than_one_month", value: "less_one_month" },
-  { label: "more_than_one_month", value: "more_one_month" },
+  { label: "less_5_days", value: "less_5_days" },
+  { label: "less_15_days", value: "less_15_days" },
+  { label: "less_one_month", value: "less_one_month" },
+  { label: "more_one_month", value: "more_one_month" },
   { label: "any_duration", value: "any_duration" },
 ];
 
 const SERVICE_STARTS_IN = [
-  { label: "one_month", value: "within_one_month" },
-  { label: "six_months", value: "within_six_months" },
-  { label: "one_year", value: "within_one_year" },
-  { label: "after_one_year", value: "more_than_one_year" },
+  { label: "within_one_month", value: "within_one_month" },
+  { label: "within_six_months", value: "within_six_months" },
+  { label: "within_one_year", value: "within_one_year" },
+  { label: "more_than_one_year", value: "more_than_one_year" },
   { label: "anytime", value: "anytime" },
 ];
 
