@@ -77,8 +77,8 @@ const BookingActionButtons = ({
     mutationFn: () => WORKER?.cancelBooking(id),
     onSuccess: async (response) => {
       setModalVisible(false);
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       console.log("Response while deleting a booking - ", response);
     },
     onError: (err) => {

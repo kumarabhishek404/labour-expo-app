@@ -8,7 +8,7 @@ import Button from "@/components/inputs/Button";
 import AddBookingDetails from "./addBookingDetails";
 import { t } from "@/utils/translationHelper";
 import useApiCalls from "@/app/hooks/useWorkerAction";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import moment from "moment";
 import { useMutation } from "@tanstack/react-query";
@@ -29,6 +29,8 @@ const ButtonContainer = ({
   isWorkerBookingRequested,
   isWorkerBooked,
 }: any) => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
   const {
     control,
     watch,
@@ -39,7 +41,7 @@ const ButtonContainer = ({
     defaultValues: {
       type: "",
       subType: "",
-      address: "",
+      address: userDetails?.address || "",
       location: {},
       startDate: new Date(),
       duration: 0,

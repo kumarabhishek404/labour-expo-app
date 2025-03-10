@@ -14,7 +14,7 @@ const StatsCard = () => {
     <View style={styles.container}>
       <View>
         <CustomHeading baseFont={24}>
-          {userDetails?.appliedServices?.length || 0}
+          {userDetails?.myBookings?.length || 0}
         </CustomHeading>
         <CustomText
           color={Colors?.heading}
@@ -25,9 +25,9 @@ const StatsCard = () => {
       </View>
       <View>
         <CustomHeading baseFont={24}>
-          {userDetails?.likedBy?.length || 0}
+          {userDetails?.likedServices?.length || 0}
         </CustomHeading>
-        <CustomText color={Colors?.heading}>{t("myLikes")}</CustomText>
+        <CustomText color={Colors?.heading}>{t("savedServices")}</CustomText>
       </View>
     </View>
   );

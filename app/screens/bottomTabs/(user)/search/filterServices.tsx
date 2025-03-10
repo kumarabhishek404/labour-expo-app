@@ -57,7 +57,6 @@ const FiltersServices = ({ filterVisible, setFilterVisible, onApply }: any) => {
   const [selectedWorkers, setSelectedWorkers] = useState([]);
 
   const handleApply = (data: any) => {
-    console.log("Data---", data);
     reset();
     setFilterVisible(false);
     onApply(data);

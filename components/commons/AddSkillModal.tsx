@@ -15,7 +15,7 @@ import PaperDropdown from "../inputs/Dropdown";
 import CustomSegmentedButton from "@/app/screens/bottomTabs/(user)/bookingsAndRequests/customTabs";
 import { set } from "lodash";
 
-const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
+const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible, filteredSkills }: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
@@ -122,8 +122,9 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible }: any) => {
               selectedValue={selectedSkill}
               onSelect={(skill: string) => handleSkillSelection(skill)}
               translationEnabled
+              searchEnabled
               placeholder="searchAndSelectSkills"
-              options={WORKERTYPES}
+              options={filteredSkills ?? WORKERTYPES}
               // errors={errors}
               search={false}
               icon={

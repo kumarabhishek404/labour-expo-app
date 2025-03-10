@@ -54,7 +54,9 @@ const AddLocationAndAddress = ({
         return;
       }
 
-      let currentLocation = await Location.getCurrentPositionAsync({});
+      let currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
       let tempLocation = {
         latitude: currentLocation?.coords?.latitude,
         longitude: currentLocation?.coords?.longitude,
@@ -82,7 +84,7 @@ const AddLocationAndAddress = ({
         ],
       };
       setUserDetails(tempUserDetails);
-      console.log("222", response[0]?.formattedAddress);
+      console.log("222", response);
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");
@@ -158,10 +160,8 @@ const AddLocationAndAddress = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
     backgroundColor: Colors?.background,
     gap: 5,
-    // height: 90,
   },
   title: {
     fontSize: 22,

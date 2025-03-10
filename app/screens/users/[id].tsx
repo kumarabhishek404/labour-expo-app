@@ -21,9 +21,8 @@ import Atoms from "@/app/AtomStore";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import SkillSelector from "@/components/commons/SkillSelector";
-import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import { WORKERTYPES } from "@/constants";
 import WorkInformation from "@/components/commons/WorkInformation";
-import WallletInformation from "@/components/commons/WalletInformation";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
@@ -260,8 +259,6 @@ const User = () => {
             />
 
             <UserInfoComponent user={user} style={{ marginHorizontal: 0, marginTop: 4 }} />
-
-            <WallletInformation type={"earnings"} wallet={user?.wallet} />
 
             <ServiceInformation information={user?.serviceDetails} />
             <WorkInformation information={user?.workDetails} />

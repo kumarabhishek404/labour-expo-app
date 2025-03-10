@@ -8,6 +8,7 @@ import AddAddressModal from "@/app/screens/location/addAddress";
 import { convertToLabelValueArray } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
 import PaperDropdown from "./Dropdown";
+import AddAddressDrawer from "@/app/screens/location/addAddress";
 
 interface LocationFieldProps {
   address: string;
@@ -26,6 +27,8 @@ const LocationField = ({
 }: LocationFieldProps) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
+  console.log("userDetails?.savedAddresses--", userDetails?.savedAddresses);
+  
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     ...(userDetails?.savedAddresses?.length > 0
       ? convertToLabelValueArray(userDetails?.savedAddresses)
@@ -76,14 +79,14 @@ const LocationField = ({
           />
         }
       />
-      <AddAddressModal
+      <AddAddressDrawer
         visible={isModalVisible}
+        isMainAddress={false}
         onClose={() => setIsModalVisible(false)}
         userId={userDetails?._id}
         setAddress={(address: any) => {
           setAddress(address?.address);
         }}
-        onAfterSuccess={() => {}}
       />
     </View>
   );

@@ -30,7 +30,6 @@ import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
-import WallletInformation from "@/components/commons/WalletInformation";
 import StatsCard from "@/components/commons/LikesStats";
 import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
@@ -46,12 +45,13 @@ import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import { Portal, Provider } from "react-native-paper";
+import LocationField from "@/components/inputs/LocationField";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const [earnings, setEarnings] = useAtom(Atoms?.EarningAtom);
   const [selectedTab, setSelectedTab] = useState("Profile Information");
 
   const [isEditProfile, setIsEditProfile] = useState(false);
@@ -70,9 +70,12 @@ const UserProfile = () => {
     defaultValues: {
       name: userDetails?.name,
       email: userDetails?.email?.value,
+      address: userDetails?.address,
     },
   });
 
+  const [location, setLocation] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
@@ -277,17 +280,51 @@ const UserProfile = () => {
             />
           )}
         />
+
+        <Controller
+          control={control}
+          name="address"
+          defaultValue=""
+          rules={{
+            required: t("addressIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <AddLocationAndAddress
+              label={t("address")}
+              name="address"
+              address={value}
+              setAddress={onChange}
+              onBlur={onBlur}
+              location={location}
+              setLocation={setLocation}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              errors={errors}
+            />
+          )}
+        />
       </View>
     );
   };
 
   const onSubmit = (data: any) => {
-    let payload = {
-      _id: userDetails?._id,
-      name: data?.name,
-      email: data?.email,
+    let updatedFields: any = {
+      _id: userDetails._id,
     };
-    mutationUpdateProfileInfo?.mutate(payload);
+
+    if (data?.name !== userDetails?.name) {
+      updatedFields.name = data?.name;
+    }
+
+    if (data?.email !== userDetails?.email?.value) {
+      updatedFields.email = data?.email;
+    }
+
+    if (Object.keys(updatedFields).length > 1) {
+      mutationUpdateProfileInfo?.mutate(updatedFields);
+    } else {
+      TOAST?.error(t("makeChangesToSave"));
+    }
   };
 
   const handleRefreshUser = async () => {
@@ -390,18 +427,6 @@ const UserProfile = () => {
             />
 
             <UserInfoComponent user={userDetails} />
-
-            {/* <WallletInformation
-              type="earnings"
-              wallet={{ earnings }}
-              style={{ marginLeft: 20 }}
-            />
-
-            <WallletInformation
-              type="spents"
-              wallet={userDetails?.spent}
-              style={{ marginLeft: 20 }}
-            /> */}
 
             <WorkInformation
               information={userDetails?.workDetails}

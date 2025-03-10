@@ -1,5 +1,6 @@
 import CustomText from "@/components/commons/CustomText";
 import { APP_FEEDBACK_REASONS } from "@/constants";
+import { t } from "@/utils/translationHelper";
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
@@ -29,7 +30,7 @@ const ReasoneSelection = ({
             ]}
             onPress={() => handleSelectReason(reason)}
           >
-            <CustomText baseFont={14}>{reason.label}</CustomText>
+            <CustomText baseFont={14}>{t(reason.label)}</CustomText>
             <View
               style={[
                 styles.radioCircle,

@@ -61,14 +61,14 @@ const ModalComponent = ({
               borderColor={Colors?.danger}
               bgColor={Colors?.danger}
               textColor={Colors?.white}
-              style={{ width: "30%", paddingVertical: 8, minHeight: 30 }}
+              style={{ width: "30%", paddingVertical: 8, minHeight: 30, ...secondaryButton?.style }}
             />
             <Button
               isPrimary={true}
               disabled={primaryButton?.disabled}
               title={primaryButton?.title || t("save")}
               onPress={primaryButton?.action}
-              style={{ flex: 1, paddingVertical: 8, minHeight: 30 }}
+              style={{ flex: 1, paddingVertical: 8, minHeight: 30, ...primaryButton?.style }}
             />
           </View>
         </View>
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
+    zIndex: 999
   },
   scrollContainer: {
     maxHeight: "100%",

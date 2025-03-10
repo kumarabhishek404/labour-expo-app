@@ -93,10 +93,10 @@ const fetchAllVillages = async (payload: any) => {
       `[userService] An error occurred while fetching villages of selected state : `,
       error?.response?.data?.message
     );
-    TOAST?.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching villages of selected state"
-    );
+    // TOAST?.error(
+    //   error?.response?.data?.message ||
+    //     "An error occurred while fetching villages of selected state"
+    // );
     throw error;
   }
 };

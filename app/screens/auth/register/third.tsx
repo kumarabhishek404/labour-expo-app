@@ -14,10 +14,12 @@ import { MEDIATORTYPES, WORKERTYPES, WORKTYPES } from "@/constants";
 import ButtonComp from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
+import { fetchCurrentLocation } from "@/constants/functions";
 const { width } = Dimensions.get("window");
 
 const UpdateUserSkillsScreen = () => {
   const [previousRole, setPreviousRole] = useState("WORKER");
+  const [loading, setLoading] = useState(false);
   const { userId } = useLocalSearchParams();
   const {
     control,
@@ -62,15 +64,27 @@ const UpdateUserSkillsScreen = () => {
     setPreviousRole(watch("role"));
   }, [watch("role")]);
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
       TOAST?.error(t("pleaseSelectSkills"));
       return;
     }
 
-    const payload = {
+    let payload: any = {
       skills: watch("skills"),
     };
+
+    // Fetch the user's current location
+    try {
+      setLoading(true);
+      const locationData = await fetchCurrentLocation();
+      payload.location = locationData?.location;
+      payload.address = locationData?.address;
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      TOAST?.error(t("unableToFetchLocation"));
+    }
 
     mutationUpdateProfile.mutate(payload);
   };
@@ -78,7 +92,7 @@ const UpdateUserSkillsScreen = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationUpdateProfile?.isPending} />
+      <Loader loading={mutationUpdateProfile?.isPending || loading} />
       <View
         style={styles.container}
         // keyboardShouldPersistTaps="handled"

@@ -127,7 +127,9 @@ export const fetchCurrentLocation = async () => {
     }
 
     // Fetch the current location
-    let currentLocation = await Location.getCurrentPositionAsync({});
+    let currentLocation = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.BestForNavigation,
+    });
     let tempLocation = {
       latitude: currentLocation?.coords?.latitude,
       longitude: currentLocation?.coords?.longitude,
@@ -141,9 +143,12 @@ export const fetchCurrentLocation = async () => {
       longitude: tempLocation?.longitude,
     });
 
+    console.log("response--", response);
+
     return {
       location: tempLocation,
       address: response[0]?.formattedAddress || "",
+      addressObject: response[0],
     };
   } catch (err) {
     // Handle any errors during location fetching
@@ -245,12 +250,12 @@ export const handleCall = (mobile: string) => {
   Linking.openURL(`tel:${mobile}`);
 };
 
-export const handleMessage = () => {
-  Linking.openURL("sms:+1234567890");
+export const handleMessage = (mobile: string) => {
+  Linking.openURL(`sms:${mobile}`);
 };
 
-export const handleEmail = () => {
-  Linking.openURL("mailto:example@example.com");
+export const handleEmail = (email: string) => {
+  Linking.openURL(`mailto:${email}`);
 };
 
 const FONT_SIZE_MULTIPLIER: any = {

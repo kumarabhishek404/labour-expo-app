@@ -1,14 +1,12 @@
 import Colors from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { router } from "expo-router";
-import AvatarComponent from "./Avatar";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { handleCall } from "@/constants/functions";
 import ProfilePicture from "./ProfilePicture";
 
 const EmployerCard = ({ employer }: any) => {

@@ -302,7 +302,7 @@ const ServiceDetails = () => {
                   <ButtonComp
                     isPrimary={true}
                     title={t("callEmployer")}
-                    onPress={handleCall}
+                    onPress={() => handleCall(service?.employer?.mobile)}
                     icon={
                       <FontAwesome5
                         name="phone-alt"
@@ -454,6 +454,7 @@ const ServiceDetails = () => {
                   refetchSelectedApplicants={() => {
                     refetchSelectedWorkers();
                   }}
+                  refetch={refetch}
                 />
               ) : (
                 <View style={styles.emptyContainer}>
@@ -478,7 +479,9 @@ const ServiceDetails = () => {
           {/* Applicants */}
           {(service?.employer === userDetails?._id || isAdmin) && (
             <View style={styles.applicantContainer}>
-              <CustomHeading textAlign="left">{t("whoHaveApplied")}</CustomHeading>
+              <CustomHeading textAlign="left">
+                {t("whoHaveApplied")}
+              </CustomHeading>
               {applicants.length > 0 ? (
                 <Applicants
                   applicants={applicants}
@@ -489,6 +492,7 @@ const ServiceDetails = () => {
                   refetchSelectedApplicants={() => {
                     refetchSelectedWorkers();
                   }}
+                  refetch={refetch}
                 />
               ) : (
                 <View style={styles.emptyContainer}>

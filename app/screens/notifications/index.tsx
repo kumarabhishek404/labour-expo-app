@@ -66,7 +66,9 @@ const NotificationScreen = () => {
     mutationFn: (payload: any) => NOTIFICATION?.markAsReadNotification(payload),
     onSuccess: (response) => {
       console.log("response while marking as read notification - ", response);
-      queryClient.invalidateQueries({ queryKey: ["allNotificationsCount"] });
+      queryClient.invalidateQueries({
+        queryKey: ["allUnreadNotificationsCount"],
+      });
     },
     onError: (err) => {
       console.error("error while marking as read notification - ", err);

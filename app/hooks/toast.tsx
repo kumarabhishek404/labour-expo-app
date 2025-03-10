@@ -4,31 +4,49 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import React, { useState, useEffect, useRef, ReactNode } from "react";
 
-let toastRef: { show: (message: string, type: ToastType) => void } | null =
-  null;
-
 type ToastType = "success" | "error" | "info" | "default";
 
-type ToastContainerProps = {
+type ToastMessage = {
+  id: number;
   message: string;
   type: ToastType;
-  onClose: () => void;
 };
 
-const ToastContainer: React.FC<ToastContainerProps> = ({
+let toastRef: { show: (message: string, type?: ToastType) => void } | null =
+  null;
+
+const ToastContainer: React.FC<{
+  toasts: ToastMessage[];
+  onRemove: (id: number) => void;
+}> = ({ toasts, onRemove }) => {
+  return (
+    <View style={styles.toastWrapper} pointerEvents="box-none">
+      {toasts.map((toast) => (
+        <ToastItem
+          key={toast.id}
+          {...toast}
+          onClose={() => onRemove(toast.id)}
+        />
+      ))}
+    </View>
+  );
+};
+
+const ToastItem: React.FC<ToastMessage & { onClose: () => void }> = ({
+  id,
   message,
   type,
   onClose,
 }) => {
-  const [translateY] = useState(new Animated.Value(-100));
-  const [opacity] = useState(new Animated.Value(0));
+  const translateY = useRef(new Animated.Value(-100)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
-    // ✅ Drop-down animation with bounce effect
     Animated.parallel([
       Animated.spring(translateY, {
         toValue: 0,
@@ -77,6 +95,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
           backgroundColor: getColor(type),
         },
       ]}
+      pointerEvents="auto" // Allow clicks to pass through
     >
       <Text style={styles.toastText}>{message}</Text>
       <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
@@ -122,48 +141,48 @@ type ToastProviderProps = {
 };
 
 const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
-  const [toastData, setToastData] = useState<{
-    message: string;
-    type: ToastType;
-  }>({
-    message: "",
-    type: "default",
-  });
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   toastRef = {
-    show: (message: string, type: ToastType) => setToastData({ message, type }),
+    show: (message: string, type: ToastType = "info") => {
+      const id = new Date().getTime(); // Unique ID for each toast
+      setToasts((prev) => [{ id, message, type }, ...prev]); // Add new toast at the top
+    },
   };
 
-  const handleClose = () => {
-    setToastData({ message: "", type: "default" });
+  const removeToast = (id: number) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
   return (
     <View style={{ flex: 1 }}>
       {children}
-      {toastData.message ? (
-        <ToastContainer {...toastData} onClose={handleClose} />
-      ) : null}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  toastContainer: {
+  toastWrapper: {
     position: "absolute",
     top: 50,
     left: 20,
     right: 20,
-    padding: 16,
+    zIndex: 10000,
+    pointerEvents: "box-none", // Ensures it doesn't block user interaction
+  },
+  toastContainer: {
+    padding: 14,
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 10,
+    marginBottom: 10, // Adds spacing between multiple toasts
   },
   toastText: {
     color: "#fff",

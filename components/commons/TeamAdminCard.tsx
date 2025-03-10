@@ -18,6 +18,7 @@ import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ModalComponent from "./Modal";
 import WORKER from "@/app/api/workers";
+import { handleCall } from "@/constants/functions";
 
 const TeamAdminCard = ({ admin }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -33,9 +34,7 @@ const TeamAdminCard = ({ admin }: any) => {
     },
     onError: (error) => {
       setModalVisible(false);
-      TOAST?.error(
-        error?.message || "An error occurred while leaving team"
-      );
+      TOAST?.error(error?.message || "An error occurred while leaving team");
     },
   });
 
@@ -94,9 +93,7 @@ const TeamAdminCard = ({ admin }: any) => {
       >
         <View style={{ width: "60%", gap: 10 }}>
           <View style={{ gap: 2 }}>
-            <CustomHeading textAlign="left">
-              {t("teamAdmin")}
-            </CustomHeading>
+            <CustomHeading textAlign="left">{t("teamAdmin")}</CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}
@@ -114,7 +111,7 @@ const TeamAdminCard = ({ admin }: any) => {
           <Button
             isPrimary={false}
             title={t("callTeamAdmin")}
-            onPress={() => {}}
+            onPress={() => handleCall(admin?.mobile)}
             icon={
               <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
             }
@@ -218,7 +215,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   modalView: {
-    backgroundColor: "white",
     borderRadius: 8,
     paddingVertical: 20,
     alignItems: "center",

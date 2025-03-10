@@ -24,7 +24,7 @@ const QuickContact = () => {
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.actionButton, styles.callButton]}
-            onPress={handleCall}
+            onPress={() => handleCall("6394743923")}
           >
             <Ionicons name="call" size={24} color="#FFF" />
             <CustomText color={Colors?.white} fontWeight="bold">
@@ -33,7 +33,7 @@ const QuickContact = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionButton, styles.messageButton]}
-            onPress={handleMessage}
+            onPress={() => handleMessage("6394743923")}
           >
             <Ionicons name="chatbubble" size={24} color="#FFF" />
             <CustomText color={Colors?.white} fontWeight="bold">
@@ -42,7 +42,7 @@ const QuickContact = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionButton, styles.emailButton]}
-            onPress={handleEmail}
+            onPress={() => handleEmail("ceo@kaarya.com")}
           >
             <Ionicons name="mail" size={24} color="#FFF" />
             <CustomText color={Colors?.white} fontWeight="bold">

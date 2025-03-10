@@ -88,6 +88,10 @@ const ServiceActionButtons = ({
   const [selectedWorkers, setSelectedWorkers] = useState(selectedWorkersIds);
   const [isAddSkill, setIsAddSkill] = useState(false);
 
+  const hasUsersAppliedOrSelected =
+    service?.appliedUsers?.some((user: any) => user.status === "PENDING") ||
+    service?.selectedUsers?.some((user: any) => user.status === "SELECTED");
+
   useEffect(() => {
     setSelectedWorkers(selectedWorkersIds);
   }, [selectedWorkersIds]);
@@ -124,8 +128,8 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       setIsWorkerSelectModal(false);
       setSelectedWorkersIds([]);
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("serviceAppliedSuccessfully"));
       console.log("Response while applying in the service - ", response);
     },
@@ -140,8 +144,8 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       setIsWorkerSelectModal(false);
       setSelectedWorkersIds([]);
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("yourApplicationCancelledSuccessfully"));
       console.log("Response while unapplying the service - ", response);
     },
@@ -157,8 +161,8 @@ const ServiceActionButtons = ({
     mutationKey: ["cancelServiceByMediatorAfterSelection", { id }],
     mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("yourSelectionCancelledSuccessfully"));
       console.log("Response while unapplying in the service - ", response);
     },
@@ -174,8 +178,8 @@ const ServiceActionButtons = ({
     mutationKey: ["completeService", { id }],
     mutationFn: () => EMPLOYER?.completeBooking({ serviceId: id }),
     onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a service - ", response);
     },
@@ -189,8 +193,8 @@ const ServiceActionButtons = ({
     mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       setModalVisible(false);
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       console.log("Response while deleting a service - ", response);
     },
     onError: (err) => {
@@ -202,8 +206,8 @@ const ServiceActionButtons = ({
     mutationKey: ["restoreService", { id }],
     mutationFn: () => EMPLOYER?.restoreService({ serviceId: id }),
     onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       TOAST?.success(t("serviceRestoredSuccessfully"));
       console.log("Response while restoring a service - ", response);
     },
@@ -300,8 +304,7 @@ const ServiceActionButtons = ({
               onPress={mutationCancelBookingByEmployer.mutate}
               style={styles.deleteBtn}
             />
-            {service?.appliedUsers?.length > 0 ||
-            service?.selectedUsers?.length > 0 ? (
+            {hasUsersAppliedOrSelected ? (
               <Button
                 isPrimary={true}
                 title={t("completeService")}

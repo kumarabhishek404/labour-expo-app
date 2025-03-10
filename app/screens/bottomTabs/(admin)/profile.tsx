@@ -22,7 +22,6 @@ import { Controller, useForm } from "react-hook-form";
 import TOAST from "@/app/hooks/toast";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
-import WallletInformation from "@/components/commons/WalletInformation";
 import StatsCard from "@/components/commons/LikesStats";
 import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
@@ -65,11 +64,12 @@ const AdminProfile = () => {
     const backAction = () => {
       if (isAccountInactive) {
         TOAST?.error(
-          userDetails?.status === "SUSPENDED" ||
+          `${
+            userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
-            ? "Profile Suspended"
-            : "Approval Is Pending",
-          `You can't go back until your profile is ${
+              ? "Profile Suspended"
+              : "Approval Is Pending"
+          }: You can't go back until your profile is ${
             userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
               ? "suspended"
@@ -229,15 +229,11 @@ const AdminProfile = () => {
     mutationUpdateProfileInfo?.mutate(payload);
   };
 
-  const handleChangeRole = async () => {
-    router?.push("/screens/profile/changeRole");
-  };
-
   const handleRefreshUser = async () => {
     try {
       await refreshUser();
     } catch (error) {
-      console.error("Error while refreshing user - ", error);
+      TOAST?.error("Error while refreshing user.");
       TOAST?.error("Error while refreshing user");
     }
   };
@@ -328,7 +324,7 @@ const AdminProfile = () => {
             }}
             textStyle={styles?.mediatorButtonText}
             isPrimary={true}
-            title="Edit Profile"
+            title={t('editProfile')}
             onPress={() => {
               return !isEditProfile && handleEditProfile();
             }}
@@ -351,21 +347,11 @@ const AdminProfile = () => {
 
         <UserInfoComponent user={userDetails} />
 
-        <WallletInformation
-          type="spents"
-          wallet={userDetails?.spent}
-          style={{ marginLeft: 20 }}
-        />
         <ServiceInformation
           information={userDetails?.serviceDetails}
           style={{ marginLeft: 20 }}
         />
 
-        <WallletInformation
-          type="earnings"
-          wallet={{ earnings }}
-          style={{ marginLeft: 20 }}
-        />
         <WorkInformation
           information={userDetails?.workDetails}
           style={{ marginLeft: 20 }}
@@ -440,7 +426,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     // fontFamily: fonts.Light,
   },
-  
+
   skillsContainer: {
     padding: 12,
     marginHorizontal: 20,

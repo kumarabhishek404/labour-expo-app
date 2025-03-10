@@ -1,11 +1,7 @@
 import Colors from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet, Animated, TouchableOpacity } from "react-native";
-import {
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
@@ -17,19 +13,20 @@ import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
 import { handleCall } from "@/constants/functions";
 import EMPLOYER from "@/app/api/employer";
-import SkillSelector from "./SkillSelector";
 import ShowSkills from "./ShowSkills";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
   serviceId: string;
   refetchSelectedApplicants: any;
+  refetch: any;
 }
 
 const SelectedApplicants = ({
   selectedApplicants,
   serviceId,
   refetchSelectedApplicants,
+  refetch,
 }: SelectedApplicantsProps) => {
   const mutationCancelSelectedWorker = useMutation({
     mutationKey: ["cancelSelectedWorker", { serviceId }],
@@ -37,6 +34,7 @@ const SelectedApplicants = ({
       EMPLOYER?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
     onSuccess: (response) => {
       refetchSelectedApplicants();
+      refetch();
       TOAST?.success(t("cancelSelectedWorkerSuccess"));
       console.log("Response while cancelling an selected worker - ", response);
     },
@@ -94,6 +92,7 @@ const SelectedApplicants = ({
                     </CustomHeading>
                   </View>
                   <ShowSkills
+                    type="small"
                     userSkills={appliedUser?.skills}
                     tagStyle={{ backgroundColor: Colors?.darkGray }}
                   />
@@ -194,7 +193,10 @@ const SelectedApplicants = ({
                             <CustomText style={styles.workerName}>
                               {worker?.name}
                             </CustomText>
-                            <ShowSkills userSkills={worker?.skills} />
+                            <ShowSkills
+                              type="small"
+                              userSkills={worker?.skills}
+                            />
                           </View>
                         </View>
                       ))}
@@ -259,8 +261,8 @@ const SelectedApplicants = ({
                     />
                   }
                   isPrimary={true}
-                  title="Call Worker"
-                  onPress={handleCall}
+                  title={t("callWorker")}
+                  onPress={() => handleCall(appliedUser?.mobile)}
                 />
               </View>
             </View>

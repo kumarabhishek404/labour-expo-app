@@ -782,21 +782,21 @@ export const REASONS = [
 
 export const APP_FEEDBACK_REASONS = [
   {
-    label: "Bug",
+    label: "bug",
     value: "BUG",
   },
   {
-    label: "Feature request",
+    label: "featureRequest",
     value: "FEATURE_REQUEST",
   },
   {
-    label: "Improvement",
+    label: "improvement",
     value: "IMPROVEMENT",
   },
   {
-    label: "General feedback",
+    label: "generalFeedback",
     value: "GENERAL",
-  }, // enum: ["BUG", "FEATURE_REQUEST", "IMPROVEMENT", "GENERAL"],
+  },
 ];
 
 export const FAQS_SUPPORT = [

@@ -54,7 +54,11 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                   <CustomHeading style={{ textTransform: "capitalize" }}>
                     {t(`${requirement?.name}`)}
                   </CustomHeading>
-                  <CustomText baseFont={17} color={Colors?.primary} fontWeight="bold">
+                  <CustomText
+                    baseFont={17}
+                    color={Colors?.primary}
+                    fontWeight="bold"
+                  >
                     ₹ {requirement?.payPerDay} {t("perDay")}
                   </CustomText>
                 </View>
@@ -73,7 +77,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                       {t("living")}
                     </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
-                      {requirement?.shelterProvider ? "Yes" : "No"}
+                      {requirement?.shelterProvider ? t("yes") : t("no")}
                     </CustomText>
                   </View>
                   <View style={styles?.detailBox}>
@@ -81,7 +85,7 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                       {t("esi_pf")}
                     </CustomText>
                     <CustomText fontWeight="800" textAlign="left">
-                      No
+                      {requirement?.esi_pf ? t("yes") : t("no")}
                     </CustomText>
                   </View>
                 </View>
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
   },
   requirmentContainer: {
     borderRadius: 8,
-    paddingTop: 20
+    paddingTop: 20,
   },
   card: {
     backgroundColor: Colors?.white,

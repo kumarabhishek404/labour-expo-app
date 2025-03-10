@@ -49,7 +49,7 @@ const SkillSelector = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Text style={styles.heading}>{t('selectAnySkills')}</Text>
+      <Text style={styles.heading}>{t("selectAnySkills")}</Text>
 
       {/* Selected Skills */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>

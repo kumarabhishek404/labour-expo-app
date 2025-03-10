@@ -25,6 +25,7 @@ interface ApplicantsProps {
   serviceId: string;
   refetchApplicants: any;
   refetchSelectedApplicants: any;
+  refetch: any;
 }
 
 const Applicants = ({
@@ -32,7 +33,10 @@ const Applicants = ({
   serviceId,
   refetchApplicants,
   refetchSelectedApplicants,
+  refetch,
 }: ApplicantsProps) => {
+  console.log("applicants --", applicants[0]?.user?.skills);
+
   const mutationSelectWorker = useMutation({
     mutationKey: ["selectWorker", { serviceId }],
     mutationFn: (userId) =>
@@ -40,6 +44,7 @@ const Applicants = ({
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
+      refetch();
       TOAST?.success(t("workerSelectedSuccessfully"));
       console.log("Response while seleting an worker for service - ", response);
     },
@@ -55,6 +60,7 @@ const Applicants = ({
     onSuccess: (response) => {
       refetchApplicants();
       refetchSelectedApplicants();
+      refetch();
       TOAST?.success(t("workerRejectedSuccessfully"));
       console.log("Response while rejecting an selected worker - ", response);
     },
@@ -108,9 +114,7 @@ const Applicants = ({
                     </CustomHeading>
                   </View>
 
-                  <ShowSkills
-                    userSkills={appliedUser?.skills}
-                  />
+                  <ShowSkills type="small" userSkills={appliedUser?.skills} />
                   <View style={styles.recommendationContainer}>
                     <Ionicons name="location" size={14} color="gray" />
                     <CustomText textAlign="left">
@@ -208,7 +212,10 @@ const Applicants = ({
                             <CustomText style={styles.workerName}>
                               {worker?.name}
                             </CustomText>
-                            <ShowSkills userSkills={worker?.skills} />
+                            <ShowSkills
+                              type="small"
+                              userSkills={worker?.skills}
+                            />
                           </View>
                         </View>
                       ))}

@@ -95,7 +95,7 @@ const Bookings = () => {
         <Loader loading={isLoading} />
         <View style={styles.container}>
           <PaginationString
-            type="booked worker"
+            type="bookedWorker"
             isLoading={isLoading || isRefetching}
             totalFetchedData={memoizedBookedWorkers?.length}
             totalData={totalData}
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors?.background,
     paddingHorizontal: 10,
+    gap: 10,
   },
 });
 

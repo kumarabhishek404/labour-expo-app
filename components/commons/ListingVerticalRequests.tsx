@@ -276,8 +276,7 @@ const RequestCardTeamJoinng = React.memo(
             pathname: "/screens/users/[id]",
             params: {
               id: user?._id,
-              role: "workers",
-              title: "Workers",
+              title: "workers",
               type: "all",
             },
           })
@@ -285,31 +284,31 @@ const RequestCardTeamJoinng = React.memo(
         style={styles.card}
       >
         <View style={styles.requestContainer}>
-          <ProfilePicture
-            uri={user?.profilePicture}
-            style={styles.profileImage}
-          />
-          <View style={styles.infoContainer}>
-            <CustomHeading textAlign="left">{user?.name}</CustomHeading>
-            <RatingAndReviews
-              rating={user?.rating || 4.5}
-              reviews={user?.reviews || 400}
+          <View style={styles?.requestBox}>
+            <ProfilePicture
+              uri={user?.profilePicture}
+              style={styles.profileImage}
             />
-            <SkillSelector
-              canAddSkills={false}
-              isShowLabel={false}
-              style={styles?.skillsContainer}
-              tagStyle={styles?.skillTag}
-              tagTextStyle={styles?.skillTagText}
-              userSkills={user?.skills}
-              availableSkills={MEDIATORTYPES}
-              count={2}
-            />
-            <CustomText textAlign="left">{user?.address}</CustomText>
-          </View>
-          <View style={styles.etaContainer}>
+            <View style={styles.infoContainer}>
+              <CustomHeading textAlign="left">{user?.name}</CustomHeading>
+              <RatingAndReviews
+                rating={user?.rating || 4.5}
+                reviews={user?.reviews || 400}
+              />
+            </View>
             <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
           </View>
+          <SkillSelector
+            canAddSkills={false}
+            isShowLabel={false}
+            style={styles?.skillsContainer}
+            tagStyle={styles?.skillTag}
+            tagTextStyle={styles?.skillTagText}
+            userSkills={user?.skills}
+            availableSkills={MEDIATORTYPES}
+            count={2}
+          />
+          <CustomText textAlign="left">{user?.address}</CustomText>
         </View>
 
         <View
@@ -467,13 +466,14 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 16,
+    padding: 10,
     marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 1,
+    gap: 10,
   },
   profileImage: {
     width: 50,
@@ -614,8 +614,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   requestContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "flex-start",
+  },
+  requestBox: {
+    flexDirection: "row",
   },
   infoContainer: {
     flex: 1,

@@ -69,10 +69,6 @@ const AdminUsers = () => {
         // setErrorMsg('Permission to access location was denied');
         return;
       }
-
-      // Get the current position
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      // setLocation(currentLocation);
     })();
   }, []);
 
@@ -101,9 +97,7 @@ const AdminUsers = () => {
       refetch();
     },
     onError: (error: any) => {
-      TOAST?.error(
-        error?.message || "An error occurred while suspending user"
-      );
+      TOAST?.error(error?.message || "An error occurred while suspending user");
     },
   });
 
@@ -115,9 +109,7 @@ const AdminUsers = () => {
       refetch();
     },
     onError: (error: any) => {
-      TOAST?.error(
-        error?.message || "An error occurred while activating user"
-      );
+      TOAST?.error(error?.message || "An error occurred while activating user");
     },
   });
 

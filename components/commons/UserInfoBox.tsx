@@ -11,8 +11,9 @@ import ModalComponent from "./Modal";
 import Loader from "./Loaders/Loader";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import Atoms from "@/app/AtomStore";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import AUTH from "@/app/api/auth";
+import AddAddressDrawer from "@/app/screens/location/addAddress";
 
 interface UserInfoComponentProps {
   user: any;
@@ -20,6 +21,8 @@ interface UserInfoComponentProps {
 }
 
 const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
+  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
+  const [isAddAddress, setIsAddress] = useState(false);
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
@@ -136,12 +139,28 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         }
       />
       <View>
-        <View style={[styles.row, !user?.skills && styles.firstBox]}>
-          <CustomHeading textAlign="left" baseFont={14} padding={12}>
+        <View
+          style={[
+            styles.row,
+            !user?.skills && styles.firstBox,
+            styles?.addressRow,
+          ]}
+        >
+          <CustomHeading style={{ flex: 1 }} baseFont={14} textAlign="left">
             <CustomText>{t("address")}</CustomText>
             {"  "}
-            {user?.address || t("addressNotFound")}
+            {user?.address || t("addressNotFound")}{" "}
           </CustomHeading>
+          {user?._id === userDetails?._id && (
+            <TouchableOpacity
+              onPress={() => setIsAddress(true)}
+              style={styles?.changeAddress}
+            >
+              <CustomText color={Colors?.link} fontWeight="600">
+                {t("changeAddress")}
+              </CustomText>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.row}>
           <CustomHeading baseFont={14} padding={12}>
@@ -154,27 +173,26 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         </View>
         <View style={[styles.row, styles.lastBox]}>
           <CustomHeading
+            style={{ width: "70%" }}
             baseFont={14}
-            padding={12}
-            style={styles?.verifyEmailBtnWrapper}
+            textAlign="left"
           >
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
-            {user?.email?.value || user?.alternateEmail || t("emailNotFound")}
-            {user?._id === userDetails?._id &&
-              userDetails?.status === "ACTIVE" &&
-              user?.email &&
-              !user?.email?.isVerified && (
-                <TouchableOpacity onPress={handleSendOtp}>
-                  <CustomText
-                    color={Colors?.link}
-                    style={styles.verifyEmailBtn}
-                  >
-                    , {t("verify")}
-                  </CustomText>
-                </TouchableOpacity>
-              )}
+            {user?.email?.value ||
+              user?.alternateEmail ||
+              t("emailNotFound")}{" "}
           </CustomHeading>
+          {user?._id === userDetails?._id &&
+            userDetails?.status === "ACTIVE" &&
+            user?.email &&
+            !user?.email?.isVerified && (
+              <TouchableOpacity onPress={handleSendOtp}>
+                <CustomText color={Colors?.link} fontWeight="600">
+                  {t("verify")}
+                </CustomText>
+              </TouchableOpacity>
+            )}
         </View>
       </View>
 
@@ -194,6 +212,22 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           action: () => setModalVisible(false),
         }}
       />
+
+      <AddAddressDrawer
+        userId={userDetails?._id}
+        visible={isAddAddress}
+        isMainAddress={true}
+        onClose={() => {
+          setDrawerState({
+            visible: false,
+            title: "",
+            content: () => null,
+            primaryButton: null,
+            secondaryButton: null,
+          });
+          setIsAddress(false);
+        }}
+      />
     </View>
   );
 };
@@ -202,7 +236,7 @@ export default UserInfoComponent;
 
 const styles = StyleSheet.create({
   row: {
-    paddingTop: 0,
+    marginTop: 5,
     flexDirection: "row",
     marginBottom: 8,
     backgroundColor: Colors?.background,
@@ -215,21 +249,49 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
   },
+  addressRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    padding: 12,
+  },
+  addressHeading: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 10,
+    gap: 10,
+  },
+  addressText: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  changeAddress: {
+    width: "30%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   lastBox: {
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: 0,
-  },
-  verifyEmailBtn: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginTop: 5,
+    padding: 12,
   },
   verifyEmailBtnWrapper: {
-    alignItems: "baseline",
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 10,
+    gap: 10,
   },
   focusStyle: {
     borderColor: Colors?.primary,
@@ -239,15 +301,6 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     textAlign: "right",
     marginRight: 10,
-  },
-  verifyBtn: {
-    position: "absolute",
-    right: 7,
-    bottom: 10,
-    backgroundColor: Colors?.primary,
-    padding: 6,
-    borderRadius: 8,
-    alignItems: "center",
   },
   icon: {
     fontSize: 60,

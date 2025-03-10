@@ -108,7 +108,7 @@ const Requests = () => {
             <>
               <View style={styles?.paginationTabs}>
                 <PaginationString
-                  type="requests"
+                  type={category}
                   isLoading={isLoading || isRefetching}
                   totalFetchedData={memoizedData?.length}
                   totalData={totalData}

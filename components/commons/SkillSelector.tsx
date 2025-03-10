@@ -93,6 +93,7 @@ const SkillSelector = ({
             options={selectedUserSkills}
             search={false}
             translationEnabled
+            searchEnabled
             icon={
               <MaterialCommunityIcons
                 style={styles.icon}
@@ -172,6 +173,7 @@ const SkillSelector = ({
             placeholder="selectSkillToRemove"
             options={selectedUserSkills}
             search={false}
+            searchEnabled
             translationEnabled
             icon={
               <MaterialCommunityIcons
@@ -245,13 +247,11 @@ const SkillSelector = ({
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingHorizontal: 5,
           }}
         >
           {canAddSkills && (
             <TouchableOpacity
               style={style?.addNewSkill}
-              // onPress={handleOpenSkillDrawer}
               onPress={() => setIsAddSkill(true)}
             >
               <CustomHeading color={Colors?.link} fontWeight="bold">
@@ -273,6 +273,7 @@ const SkillSelector = ({
       <AddSkillDrawer
         isDrawerVisible={isAddSkill}
         setIsDrawerVisible={setIsAddSkill}
+        filteredSkills={filteredSkills}
       />
     </>
   );
@@ -286,8 +287,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-end",
-    paddingHorizontal: 5,
-    paddingVertical: 10,
   },
   skillBox: {
     backgroundColor: Colors?.white,

@@ -131,7 +131,7 @@ const MultiSelectDropdown = ({
                 ))
               ) : (
                 <CustomText style={styles.noOptionsText}>
-                  No options available
+                  {t("noOptionsAvailable")}
                 </CustomText>
               )}
             </ScrollView>

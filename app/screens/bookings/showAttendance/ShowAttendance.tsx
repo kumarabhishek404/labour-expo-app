@@ -222,7 +222,7 @@ export default function ShowAttendanceComponent({
                     }}
                     style={styles.drawerProfileImage}
                   />
-                  <View>
+                  <View style={{ flex: 1 }}>
                     <Text style={styles.drawerWorkerName}>
                       {selectedWorker?.workerDetails?.name}
                     </Text>

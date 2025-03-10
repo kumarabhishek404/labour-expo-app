@@ -210,6 +210,7 @@ const RegisterScreen = () => {
             secondaryButton={{
               title: t("noEdit"),
               action: () => setModalVisible(false),
+              style: { width: "40%" },
             }}
           />
         </View>

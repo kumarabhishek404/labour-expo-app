@@ -97,7 +97,7 @@ const AddServiceScreen = () => {
       router?.push({
         pathname: "/screens/service",
         params: {
-          title: t('titleMyAllServicesAndBookings'),
+          title: "titleMyAllServicesAndBookings",
           type: "myServices",
         },
       });

@@ -44,14 +44,10 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
       skills: [],
     },
   });
-  //   skills, name, distance, completedServices, rating
-
-  console.log("drawerAtom --", drawerAtom);
 
   const [selectedWorkers, setSelectedWorkers] = useState([]);
 
   const handleApply = (data: any) => {
-    console.log("Data---", data);
     reset();
     setFilterVisible(false);
     onApply(data);

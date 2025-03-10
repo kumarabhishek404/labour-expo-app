@@ -165,7 +165,7 @@ const ProfileMenu = ({ disabled }: any) => {
     {
       title: t("yourTeam"),
       icon: (
-        <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
+        <AntDesign name="team" size={28} color={Colors.primary} />
       ),
       onPress: () =>
         router?.push({
@@ -200,7 +200,7 @@ const ProfileMenu = ({ disabled }: any) => {
     {
       title: t("savedServices"),
       icon: (
-        <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
+        <MaterialIcons name="work-outline" size={28} color={Colors.primary} />
       ),
       onPress: () =>
         router?.push({
@@ -211,14 +211,14 @@ const ProfileMenu = ({ disabled }: any) => {
       isSuspended: disabled,
     },
     {
-      title: t("savedUsers"),
-      icon: <FontAwesome6 name="heart" size={28} color={Colors.primary} />,
+      title: t("savedWorkers"),
+      icon: <MaterialIcons name="people-outline" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/users",
           params: {
             role: "users",
-            title: "savedUsers",
+            title: "savedWorkers",
             type: "saved",
             searchCategory: JSON.stringify({
               skill: "",

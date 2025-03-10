@@ -40,12 +40,13 @@ export default function Layout() {
   const { locale } = LOCAL_CONTEXT.useLocale();
 
   const { data: response } = useQuery({
-    queryKey: ["allNotificationsCount", userDetails?._id],
+    queryKey: ["allUnreadNotificationsCount", userDetails?._id],
     queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
     retry: false,
     refetchInterval: 10000,
     enabled: !!userDetails?._id && !!userDetails?.isAuth, // API will stop when userDetails is null
   });
+
   useUnreadNotificationsHandler(response, triggerLocalNotification);
 
   useEffect(() => {
@@ -301,7 +302,7 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/"
-                title="Post Service"
+                title={t("postService")}
                 iconName="add"
               />
             ),
@@ -318,7 +319,7 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/fourth"
-                title={userDetails?.isAdmin ? t("users") : "Search"}
+                title={userDetails?.isAdmin ? t("users") : t("search")}
                 iconName={userDetails?.isAdmin ? "person" : "search"}
               />
             ),

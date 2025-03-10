@@ -138,7 +138,7 @@ const SkillsSelector = ({
         color={Colors?.inputLabel}
         style={{ marginBottom: 10 }}
       >
-        {t("selectAnySkills")} from below categories
+        {t("selectAnySkills")}
       </CustomHeading>
 
       {/* Selected Skills - Fixed Section with dynamic height tracking */}
@@ -214,7 +214,7 @@ const SkillsSelector = ({
           content={modalContent}
           transparent={true}
           animationType="slide"
-          title={`$${
+          title={`${
             isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")
           } (${t(selectedSkill?.label)})`}
           onClose={() => {

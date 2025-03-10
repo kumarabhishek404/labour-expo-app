@@ -80,7 +80,7 @@ export default function AddAttendance() {
       ATTENDANCE?.addAttendance(booking?._id, formattedAttendance),
     onSuccess: async (response: any) => {
       await triggerRefetch().then(() => {
-        TOAST?.success("Attendance updated successfully.");
+        TOAST?.success(t("attendanceUpdatedSuccessfully"));
         router.back();
       });
     },

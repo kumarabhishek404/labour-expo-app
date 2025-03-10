@@ -86,8 +86,6 @@ const ProfileNotification: React.FC = () => {
   });
 
   const onSubmitCompleteProfile = (data: any) => {
-    console.log("Data---", data);
-
     let updatedFields: any = {};
 
     if (data.email && data.email !== userDetails?.email?.value) {
@@ -111,8 +109,6 @@ const ProfileNotification: React.FC = () => {
 
       console.log("Payload being sent:", payload);
       mutationUpdateProfileInfo.mutate(payload);
-    } else {
-      console.log("No changes detected, no update required.");
     }
   };
 

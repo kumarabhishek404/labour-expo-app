@@ -99,7 +99,7 @@ const FeedbackForm = () => {
       <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
           <View style={styles.feedbackContainer}>
-            <CustomHeading textAlign="left" style={styles.sectionHeading}>
+            <CustomHeading textAlign="left" color={Colors?.inputLabel}>
               {t("howIsYourFirstImpressionOfTheProduct")}
             </CustomHeading>
             {userDetails?.isAdmin && (
@@ -151,7 +151,7 @@ const FeedbackForm = () => {
             )}
           />
 
-          <CustomHeading textAlign="left" style={styles.sectionHeading}>
+          <CustomHeading textAlign="left" color={Colors?.inputLabel}>
             {t("whatDidYouLikeTheMost")}
           </CustomHeading>
 
@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
   },
-  sectionHeading: {},
   starContainer: {
     flexDirection: "column",
     justifyContent: "flex-start",

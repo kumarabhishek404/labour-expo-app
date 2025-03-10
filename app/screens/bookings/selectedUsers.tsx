@@ -76,7 +76,9 @@ const SelectedUsers = ({
       <Loader loading={mutationRemoveBookedWorker?.isPending} />
       <View style={styles.applicantContainer}>
         {selectedApplicants
-          ?.filter((mediator: any) => mediator?.status === "SELECTED")
+          ?.filter((mediator: any) =>
+            bookingType === "byService" ? mediator?.status === "SELECTED" : true
+          )
           ?.map((mediator: any, index: number) => {
             const appliedUser = mediator?.name ? mediator : mediator?.user;
             const workers = mediator?.workers;

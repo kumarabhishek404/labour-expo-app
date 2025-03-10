@@ -11,14 +11,9 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
-import { isEmptyObject } from "@/constants/functions";
-import AddAddressModal from "@/app/screens/location/addAddress";
-import { useSetAtom } from "jotai";
-import Atoms from "@/app/AtomStore";
+import { fetchCurrentLocation } from "@/constants/functions";
 
 const FifthScreen = () => {
-  const [isAddAddress, setIsAddress] = useState(false);
-  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const { userId } = useLocalSearchParams();
   const {
     control,
@@ -28,7 +23,6 @@ const FifthScreen = () => {
   } = useForm({
     defaultValues: {
       profilePicture: "",
-      address: "",
     },
   });
 
@@ -44,43 +38,51 @@ const FifthScreen = () => {
     },
   });
 
-  const handleAddAddress = (data: any) => {
-    setIsAddress(true);
-  };
-
   const handleProfilePictureSubmit = async (data: any) => {
-    if (
-      !data?.profilePicture ||
-      typeof data.profilePicture !== "string" ||
-      data.profilePicture.trim() === ""
-    ) {
-      TOAST?.error(t("pleaseSelectAProfilePicture"));
-      return;
+    try {
+      if (
+        !data?.profilePicture ||
+        typeof data.profilePicture !== "string" ||
+        data.profilePicture.trim() === ""
+      ) {
+        TOAST?.error(t("pleaseSelectAProfilePicture"));
+        return;
+      }
+
+      const formData: any = new FormData();
+      const imageName = data?.profilePicture.split("/").pop();
+
+      formData.append("profileImage", {
+        uri:
+          Platform.OS === "android"
+            ? data?.profilePicture
+            : data?.profilePicture.replace("file://", ""),
+        type: "image/jpeg",
+        name: imageName || "photo.jpg",
+      });
+
+      formData.append("_id", userId);
+
+      mutationUpdateProfile.mutate(formData, {
+        onSuccess: () => {
+          TOAST?.success(t("profileUpdatedSuccessfully"));
+        },
+        onError: () => {
+          TOAST?.error(t("errorUpdatingProfile"));
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting profile picture:", error);
+      TOAST?.error(t("somethingWentWrong"));
     }
-
-    const formData: any = new FormData();
-    const imageName = data?.profilePicture.split("/").pop();
-    formData.append("profileImage", {
-      uri:
-        Platform.OS === "android"
-          ? data?.profilePicture
-          : data?.profilePicture.replace("file://", ""),
-      type: "image/jpeg",
-      name: imageName || "photo.jpg",
-    });
-    formData?.append("_id", userId);
-
-    mutationUpdateProfile.mutate(formData);
   };
-
-  console.log("Wathch image --", watch("profilePicture"));
 
   return (
     <View style={styles?.container}>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending} />
       <CustomHeading baseFont={25} style={styles.heading}>
-        {t("updateYourSkillsAndRole")}
+        {t("takeSelfieForRegistration")}
       </CustomHeading>
       <Controller
         control={control}
@@ -101,34 +103,22 @@ const FifthScreen = () => {
       />
       <View style={styles?.buttonContainer}>
         <Button
-          isPrimary={false}
+          isPrimary={true}
           title={t("back")}
           onPress={() => router?.back()}
+          bgColor={Colors?.danger}
+          borderColor={Colors?.danger}
           style={{ width: "35%", paddingHorizontal: 6 }}
         />
-        <Button
-          isPrimary={true}
-          title={t("saveProfilePicture")}
-          onPress={handleSubmit(handleAddAddress)}
-          style={{ width: "60%", paddingHorizontal: 8 }}
-        />
+        {watch("profilePicture") && (
+          <Button
+            isPrimary={true}
+            title={t("saveProfilePicture")}
+            onPress={handleSubmit(handleProfilePictureSubmit)}
+            style={{ width: "60%", paddingHorizontal: 8 }}
+          />
+        )}
       </View>
-
-      <AddAddressModal
-        userId={userId}
-        visible={isAddAddress}
-        onClose={() => {
-          setDrawerState({
-            visible: false,
-            title: "",
-            content: () => null,
-            primaryButton: null,
-            secondaryButton: null,
-          });
-          setIsAddress(false);
-        }}
-        onAfterSuccess={handleSubmit(handleProfilePictureSubmit)}
-      />
     </View>
   );
 };
@@ -172,6 +162,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 20,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,

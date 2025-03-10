@@ -7,10 +7,10 @@ import { t } from "@/utils/translationHelper";
 import { router } from "expo-router";
 import ProfilePicture from "./ProfilePicture";
 import ButtonComp from "../inputs/Button";
+import DateDisplay from "./ShowDate";
+import ShowDuration from "./ShowDuration";
 
 const ListingsBookedWorkers = ({ title, item, category }: any) => {
-  console.log("item", item?.selectedUsers[0]);
-
   let workersList =
     item?.bookingType === "byService"
       ? [
@@ -91,25 +91,26 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 
           {/* Booking Info (Secondary) */}
           <View style={styles.bookingDetails}>
-            <CustomHeading textAlign="left">
-              {t(item?.type)} - {t(item?.subType)}
-            </CustomHeading>
-            <CustomText textAlign="left">🏠 {item?.address}</CustomText>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <CustomHeading textAlign="left">
+                {t(item?.type)} - {t(item?.subType)}
+              </CustomHeading>
+              <ShowDuration duration={item?.duration} />
+            </View>
+            <DateDisplay date={item?.startDate} />
             <View
               style={{
                 flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
                 alignItems: "center",
               }}
             >
-              <View>
-                <CustomText textAlign="left">
-                  📅 {t("startFrom", {date: item?.startDate?.split("T")[0]})}
-                </CustomText>
-                <CustomText textAlign="left">
-                  ⏳ {item?.duration} {item?.duration > 1 ? t("days") : t("day")}
-                </CustomText>
-              </View>
               {item?.status === "HIRING" && (
                 <ButtonComp
                   isPrimary={true}

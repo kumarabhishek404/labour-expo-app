@@ -19,6 +19,7 @@ import TextAreaInputComponent from "@/components/inputs/TextArea";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
+import { t } from "@/utils/translationHelper";
 
 const DeleteAccountScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,14 +36,14 @@ const DeleteAccountScreen = () => {
   const selectedReasons: any = watch("selectedReasons"); // Watch for changes in selected reasons
 
   const reasons = [
-    "No longer using the service/platform",
-    "Found a better alternative",
-    "Privacy concerns",
-    "Too many emails/notifications",
-    "Difficulty navigating the platform",
-    "Account security concerns",
-    "Personal reasons",
-    "Others",
+    "noLongerUsing",
+    "betterAlternative",
+    "privacyConcerns",
+    "tooManyNotifications",
+    "difficultyUsing",
+    "securityConcerns",
+    "personalReasons",
+    "other",
   ];
 
   const mutationDeleteService = useMutation({
@@ -85,11 +86,8 @@ const DeleteAccountScreen = () => {
             <CustomHeading baseFont={30}>?</CustomHeading>
           </View>
         </View>
-        <CustomHeading baseFont={20}>Are you sure?</CustomHeading>
-        <CustomText baseFont={14}>
-          You want to delete your account permanently. This action is
-          irreversible and will lead to a loss of all your data.
-        </CustomText>
+        <CustomHeading baseFont={20}>{t("areYouSure")}</CustomHeading>
+        <CustomText baseFont={14}>{t("confirmationMessage")}</CustomText>
       </View>
     );
   };
@@ -103,16 +101,15 @@ const DeleteAccountScreen = () => {
       />
       <Loader loading={mutationDeleteService?.isPending} />
       <ScrollView style={styles.container}>
-        <CustomHeading textAlign="left">
-          Please select the reason(s) for deleting your account.
+        <CustomHeading textAlign="left" style={{ marginBottom: 20 }}>
+          {t("selectReason")}
         </CustomHeading>
 
         <Controller
           name="selectedReasons"
           control={control}
           rules={{
-            validate: (value) =>
-              value?.length > 0 || "At least one reason must be selected",
+            validate: (value) => value?.length > 0 || t("atLeastOneReason"),
           }}
           render={({ field }) => (
             <>
@@ -127,14 +124,15 @@ const DeleteAccountScreen = () => {
                       <View style={styles.selectedRb} />
                     )}
                   </View>
-                  <CustomText baseFont={14}>{reason}</CustomText>
+                  <CustomText baseFont={14}>{t(reason)}</CustomText>
                 </TouchableOpacity>
               ))}
               {errors?.selectedReasons && (
                 <CustomText
                   textAlign="left"
-                  baseFont={10}
+                  baseFont={16}
                   color={Colors?.danger}
+                  style={{ marginTop: 20 }}
                 >
                   {errors.selectedReasons.message}
                 </CustomText>
@@ -143,19 +141,19 @@ const DeleteAccountScreen = () => {
           )}
         />
 
-        {selectedReasons?.includes("Others") && (
+        {selectedReasons?.includes("other") && (
           <Controller
             name="otherReason"
             control={control}
             rules={{ required: "Please write your reason." }}
             render={({ field: { onChange, value, onBlur } }) => (
               <TextAreaInputComponent
-                label="Write the reason for deleting this account"
+                label="writeReason"
                 name="otherReason"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="We'd love to give you the full experience :)"
+                placeholder={t("fullExperience")}
                 errors={errors}
                 icon={
                   <MaterialIcons
@@ -171,12 +169,12 @@ const DeleteAccountScreen = () => {
         )}
 
         <ModalComponent
-          title="Delete Account"
+          title={t("deleteAccount")}
           visible={modalVisible}
           content={modalContent}
           onClose={() => setModalVisible(false)}
           primaryButton={{
-            title: "Delete",
+            title: t("delete"),
             styles: {
               backgroundColor: "red",
               borderColor: "red",
@@ -184,15 +182,16 @@ const DeleteAccountScreen = () => {
             action: handleDelete,
           }}
           secondaryButton={{
-            title: "Keep Account",
+            title: t("keepAccount"),
             styles: "",
             action: () => setModalVisible(false),
+            style: { width: "40%" },
           }}
         />
         <View style={styles.footer}>
           <Button
             isPrimary={true}
-            title="Delete Account"
+            title={t("deleteAccount")}
             onPress={handleSubmit(onSubmit)}
             style={{
               width: "100%",
@@ -210,7 +209,7 @@ const DeleteAccountScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: Colors?.fourth,
     padding: 20,
   },
   optionContainer: {
@@ -239,7 +238,6 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   modalView: {
-    backgroundColor: "white",
     borderRadius: 8,
     paddingVertical: 20,
     alignItems: "center",

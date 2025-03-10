@@ -28,6 +28,7 @@ import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import ButtonComp from "@/components/inputs/Button";
 import WORKER from "@/app/api/workers";
+import DateDisplay from "@/components/commons/ShowDate";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -59,8 +60,6 @@ const BookingDetails = () => {
           ...booking.selectedUsers.flatMap((user: any) => user?.workers || []),
         ]
       : [booking?.bookedWorker];
-
-  console.log("category--", category, id);
 
   const {
     isLoading,
@@ -101,7 +100,10 @@ const BookingDetails = () => {
     }, [response])
   );
 
-  console.log("booking?.employer--", booking?.selectedUsers);
+  console.log("booking?.employer--", booking?.employer);
+
+  console.log("booking?.booked--", booking?.bookedWorker);
+
 
   return (
     <>
@@ -168,7 +170,7 @@ const BookingDetails = () => {
                 <Button
                   isPrimary={true}
                   title={t("callEmployer")}
-                  onPress={handleCall}
+                  onPress={() => handleCall(booking?.employer?.mobile)}
                   icon={
                     <FontAwesome5
                       name="phone-alt"
@@ -212,9 +214,7 @@ const BookingDetails = () => {
                 style={{ alignSelf: "center" }}
               />
               <CustomText textAlign="left">
-                {t("startFrom", {
-                  date: moment(booking?.startDate).format("LL"),
-                })}
+                <DateDisplay date={booking?.startDate} />
               </CustomText>
             </View>
 

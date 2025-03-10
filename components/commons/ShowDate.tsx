@@ -16,6 +16,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date }) => {
 
   return (
     <CustomText textAlign="left">
+      📅 {"  "}
       {t("startFrom", { date: customFormattedDate, day: t(weekday) })}
     </CustomText>
   );

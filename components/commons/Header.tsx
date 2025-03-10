@@ -1,18 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
-// import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import Atoms from "@/app/AtomStore";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
 import { DrawerActions } from "@react-navigation/native";
 import RippleDot from "./RippleDot";
-import { useQuery } from "@tanstack/react-query";
-import NOTIFICATION from "@/app/api/notification";
-import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 
 interface CustomHeaderProps {

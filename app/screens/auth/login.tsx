@@ -107,8 +107,6 @@ const LoginScreen = () => {
         }
       }
 
-      console.log("notificationConsent--", notificationConsent);
-
       try {
         await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
           user?.notificationConsent
