@@ -359,7 +359,10 @@ const UserProfile = () => {
           <ScrollView>
             <View style={styles.userInfoSection}>
               <AvatarComponent
-                isLoading={mutationUpdateProfilePicture?.isPending}
+                isLoading={
+                  userDetails?.profilePictureUploading?.status ===
+                    "UPLOADING" || mutationUpdateProfilePicture?.isPending
+                }
                 isEditable={false}
                 profileImage={profilePicture}
               />

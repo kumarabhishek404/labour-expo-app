@@ -39,12 +39,14 @@ export default function Layout() {
   const isFirstLaunch = useFirstTimeLaunch();
   const { locale } = LOCAL_CONTEXT.useLocale();
 
+  console.log("userDetails -", userDetails);
+
   const { data: response } = useQuery({
     queryKey: ["allUnreadNotificationsCount", userDetails?._id],
     queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
     retry: false,
     refetchInterval: 10000,
-    enabled: !!userDetails?._id && !!userDetails?.isAuth, // API will stop when userDetails is null
+    enabled: Boolean(userDetails && userDetails._id && userDetails.isAuth),
   });
 
   useUnreadNotificationsHandler(response, triggerLocalNotification);
