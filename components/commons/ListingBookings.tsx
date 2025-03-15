@@ -16,6 +16,7 @@ import Requirements from "./Requirements";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
+import DateDisplay from "./ShowDate";
 
 const ListingsBookings = ({ title, item, category }: any) => {
   return (
@@ -37,7 +38,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
           style={[styles?.tag, { backgroundColor: Colors?.tertieryButton }]}
         >
           <CustomText color={Colors?.white} fontWeight="bold">
-            Direct Booking
+            {t('direct')}
           </CustomText>
         </View>
         <View style={styles.card}>
@@ -61,14 +62,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
             <CustomText textAlign="left" baseFont={17} fontWeight="bold">
               📍 {item?.address}
             </CustomText>
-            {item?.startDate && (
-              <CustomText textAlign="left">
-                📅 Start Date:{" "}
-                <CustomText baseFont={17} fontWeight="bold">
-                  {item?.startDate?.split("T")[0]}
-                </CustomText>
-              </CustomText>
-            )}
+            <DateDisplay date={item?.startDate} />
             <CustomText textAlign="left">
               ⏳ Duration:{" "}
               <CustomText baseFont={17} fontWeight="bold">

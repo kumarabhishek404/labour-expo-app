@@ -26,8 +26,8 @@ const LanguageSelectionScreen = () => {
       setLocaleValue({
         language: selectedLanguage,
       });
-      // router.push("/");
-      router?.push("/screens/userTipForAppUse");
+      router.push("/");
+      // router?.push("/screens/userTipForAppUse");
     }
   };
 

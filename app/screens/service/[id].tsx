@@ -443,87 +443,40 @@ const ServiceDetails = () => {
 
           {/* Selected Applicants */}
           {(service?.employer === userDetails?._id || isAdmin) && (
-            <View style={styles.applicantContainer}>
-              <CustomHeading textAlign="left">
-                {t("whoHaveSelected")}
-              </CustomHeading>
-              {selectedApplicants.length > 0 ? (
-                <SelectedApplicants
-                  selectedApplicants={selectedApplicants}
-                  serviceId={service?._id}
-                  refetchSelectedApplicants={() => {
-                    refetchSelectedWorkers();
-                  }}
-                  refetch={refetch}
-                />
-              ) : (
-                <View style={styles.emptyContainer}>
-                  {isSelectedWorkerLoading ||
-                  isSelectedWorkerFetchingNextPage ? (
-                    <ActivityIndicator
-                      style={{ marginLeft: 10, paddingVertical: 60 }}
-                      color={Colors?.primary}
-                      animating={true}
-                    />
-                  ) : (
-                    <EmptyDatePlaceholder
-                      parentHeight={450}
-                      title="selectedApplicants"
-                    />
-                  )}
-                </View>
-              )}
-            </View>
+            <SelectedApplicants
+              title="whoHaveSelected"
+              selectedApplicants={selectedApplicants}
+              serviceId={service?._id}
+              isSelectedWorkerLoading={isSelectedWorkerLoading}
+              isSelectedWorkerFetchingNextPage={
+                isSelectedWorkerFetchingNextPage
+              }
+              refetchSelectedApplicants={() => {
+                refetchSelectedWorkers();
+              }}
+              refetch={refetch}
+            />
           )}
 
           {/* Applicants */}
           {(service?.employer === userDetails?._id || isAdmin) && (
-            <View style={styles.applicantContainer}>
-              <CustomHeading textAlign="left">
-                {t("whoHaveApplied")}
-              </CustomHeading>
-              {applicants.length > 0 ? (
-                <Applicants
-                  applicants={applicants}
-                  serviceId={service?._id}
-                  refetchApplicants={() => {
-                    refetchAppliedWorkers();
-                  }}
-                  refetchSelectedApplicants={() => {
-                    refetchSelectedWorkers();
-                  }}
-                  refetch={refetch}
-                />
-              ) : (
-                <View style={styles.emptyContainer}>
-                  {isAppliedWorkersLoading ||
-                  isAppliedWorkersFetchingNextPage ? (
-                    <ActivityIndicator
-                      style={{ marginLeft: 10, paddingVertical: 60 }}
-                      color={Colors?.primary}
-                      animating={true}
-                    />
-                  ) : (
-                    <EmptyDatePlaceholder
-                      parentHeight={450}
-                      title="applicants"
-                    />
-                  )}
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* First Make Google Maps API Key Then Uncomment It */}
-          {/* {service?.location && service?.location?.latitude && (
-            <Map
-              data={{
-                ...service?.location,
-                latitudeDelta: 2,
-                longitudeDelta: 2,
+            <Applicants
+              title="whoHaveApplied"
+              applicants={applicants}
+              serviceId={service?._id}
+              isAppliedWorkersLoading={isAppliedWorkersLoading}
+              isAppliedWorkersFetchingNextPage={
+                isAppliedWorkersFetchingNextPage
+              }
+              refetchApplicants={() => {
+                refetchAppliedWorkers();
               }}
+              refetchSelectedApplicants={() => {
+                refetchSelectedWorkers();
+              }}
+              refetch={refetch}
             />
-          )} */}
+          )}
 
           {service?.employer?._id &&
             service?.employer?._id !== userDetails?._id && (
@@ -588,6 +541,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors?.danger,
+  },
+  editContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   listingLocationWrapper: {
     flexDirection: "row",
@@ -710,20 +667,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingLeft: 20,
     paddingBottom: 10,
-  },
-  applicantContainer: {
-    paddingHorizontal: 10,
-    backgroundColor: Colors.background,
-    gap: 5,
-  },
-  emptyContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.gray,
-    backgroundColor: Colors.white,
   },
   workerCard: {
     borderRadius: 8,

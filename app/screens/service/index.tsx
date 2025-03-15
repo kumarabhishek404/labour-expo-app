@@ -16,6 +16,7 @@ import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import Colors from "@/constants/Colors";
 import AppliedFilters from "@/components/commons/AppliedFilters";
+import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -70,7 +71,7 @@ const Services = () => {
               distance: appliedFilters?.distance,
               duration: appliedFilters?.duration,
               serviceStartIn: appliedFilters?.serviceStartIn,
-              skill: appliedFilters?.skills,
+              skills: appliedFilters?.skills,
             },
           }),
     initialPageParam: 1,
@@ -128,8 +129,8 @@ const Services = () => {
           ),
         }}
       />
+      <Loader loading={isLoading || isRefetching} />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading || isRefetching} />
         <View style={styles.container}>
           {type === "myServices" && (
             <CategoryButtons
@@ -138,17 +139,22 @@ const Services = () => {
               onCategoryChanged={onCatChanged}
             />
           )}
+          {/* {appliedFilters && appliedFilters?.length > 0 && ( */}
           <AppliedFilters
             appliedFilters={appliedFilters}
             setAppliedFilters={setAppliedFilters}
             fetchUsers={() => {}}
           />
-          <PaginationString
-            type="services"
-            isLoading={isLoading || isRefetching}
-            totalFetchedData={memoizedData?.length}
-            totalData={totalData}
-          />
+          {/* )} */}
+
+          <View style={{ marginBottom: 5 }}>
+            <PaginationString
+              type="services"
+              isLoading={isLoading || isRefetching}
+              totalFetchedData={memoizedData?.length}
+              totalData={totalData}
+            />
+          </View>
 
           {memoizedData && memoizedData?.length > 0 ? (
             <ListingsVerticalServices

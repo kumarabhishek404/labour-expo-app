@@ -63,43 +63,49 @@ const LoginScreen = () => {
   const mutationSignIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data) => AUTH?.signIn(data),
+
     onSuccess: async (response) => {
       const user = response?.user;
+      const token = response?.token;
+
+      // Update user details
       setUserDetails({
         isAuth: true,
-        token: response?.token,
+        token,
         ...user,
       });
 
       TOAST?.success(t("loggedInSuccessfully"));
-      if (isFirstLaunch) {
-        return router?.push("/screens/tutorials/bootomNavigation");
-      } else if (user?.status === "ACTIVE" && user?.profilePicture) {
-        setIsAccountInactive(false);
-        if (user?.skills?.length > 0) router.replace("/(tabs)/fourth");
-        else router.replace("/(tabs)");
-      } else if (!user?.profilePicture) {
-        router.push({
+
+      // // Redirect based on user status
+      // if (isFirstLaunch) {
+      //   return router?.push("/screens/tutorials/bootomNavigation");
+      // }
+
+      if (!user?.profilePicture) {
+        return router.push({
           pathname: "/screens/auth/register/fourth",
           params: { userId: user?._id },
         });
-      } else {
-        setIsAccountInactive(true);
-        router.replace("/(tabs)/fifth");
       }
 
-      // Fetch location if required
-      if (
-        !user?.location ||
-        !user?.location?.latitude ||
-        !user?.location?.longitude
-      ) {
+      if (user?.status !== "ACTIVE") {
+        setIsAccountInactive(true);
+        return router.replace("/(tabs)/fourth");
+      }
+
+      setIsAccountInactive(false);
+      router.replace(user?.skills?.length > 0 ? "/(tabs)/fourth" : "/(tabs)");
+
+      // Fetch and update location if missing
+      if (!user?.location?.latitude || !user?.location?.longitude) {
         const locationData = await fetchCurrentLocation();
         if (locationData) {
           setUserDetails((prev: any) => ({
             ...prev,
             location: locationData.location,
           }));
+
           mutationUpdateProfileInfo?.mutate({
             _id: user?._id,
             location: locationData.location,
@@ -107,6 +113,7 @@ const LoginScreen = () => {
         }
       }
 
+      // Register for push notifications
       try {
         await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
           user?.notificationConsent
@@ -116,18 +123,24 @@ const LoginScreen = () => {
         console.error("Failed to enable notifications", err);
       }
     },
-    onError: (err: any) => {
-      console.error("Login error: ", err?.response?.data);
 
-      // // Handle "SET_PASSWORD_FIRST" error code
-      if (err?.response?.data?.errorCode === "SET_PASSWORD_FIRST") {
-        setUserDetails({
-          token: err?.response?.data?.token,
-        });
-        router.push({
-          pathname: "/screens/auth/register/second",
-          params: { userId: err?.response?.data?.userId },
-        });
+    onError: (err: any) => {
+      const errorCode = err?.response?.data?.errorCode;
+      const userId = err?.response?.data?.userId;
+      const token = err?.response?.data?.token;
+
+      if (
+        errorCode === "SET_PASSWORD_FIRST" ||
+        errorCode === "SET_PROFILE_PICTURE_FIRST"
+      ) {
+        setUserDetails({ token });
+
+        const route =
+          errorCode === "SET_PASSWORD_FIRST"
+            ? "/screens/auth/register/second"
+            : "/screens/auth/register/fourth";
+
+        return router.push({ pathname: route, params: { userId } });
       }
     },
   });

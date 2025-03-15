@@ -97,7 +97,7 @@
   "serviceCompletedSuccessfully": "Service completed successfully",
   "workerSelectedSuccessfully": "Worker selected successfully",
 
-  "selected": "Selected In Services",
+  "selected": "Selected",
   "proposals": "Proposals",
   "select": "Select",
   "alreadyBooked": "Already Booked",
@@ -1011,5 +1011,13 @@
   "saveAddress": "Save Address",
   "changeAddress": "Change Address",
   "unableToFetchLocation": "Unable to fetch location",
-  "addAddressManually": "Add Address Manually"
+  "addAddressManually": "Add Address Manually",
+
+  "createPassword": "Create a 4-Digit Password",
+  "createPasswordNote": "please do not forget this password",
+  "confirmPasswordNote": "please write the password again",
+  "confirm": "Confirm Your Password",
+  "passwordMismatch": "Passwords do not match. Please try again.",
+  "enterFullPassword": "Please enter full password",
+  "associatedWorkers": "{{count}} associated workers"
 }

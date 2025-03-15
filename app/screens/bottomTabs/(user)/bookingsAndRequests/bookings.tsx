@@ -104,7 +104,7 @@ const Bookings = () => {
   );
 
   if (isLoading) {
-    return <OnPageLoader />;
+    return <OnPageLoader parentStyle={{ flex: 1 }} />;
   }
 
   return (

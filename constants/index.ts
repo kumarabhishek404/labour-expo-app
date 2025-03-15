@@ -106,17 +106,17 @@ export const ADDSERVICESTEPS = [
 ];
 
 export const WORKERTYPES = [
-  { label: "construction", value: "construction", iconName: "building" },
-  { label: "labour", value: "labour", iconName: "construction" },
+  { label: "construction", value: "construction", iconName: "hospital-building" },
+  { label: "labour", value: "labour", iconName: "office-building-cog" },
   { label: "brickLayer", value: "brickLayer", iconName: "terrain" },
   { label: "stoneMason", value: "stoneMason", iconName: "city" },
   { label: "mistri", value: "mistri", iconName: "tools" },
   { label: "mason", value: "mason", iconName: "hammer" },
-  { label: "carpenter", value: "carpenter", iconName: "wood" },
+  { label: "carpenter", value: "carpenter", iconName: "forest" },
   { label: "electrician", value: "electrician", iconName: "bolt" },
-  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "grass" },
-  { label: "dhaanPitai", value: "dhaanPitai", iconName: "agriculture" },
-  { label: "alooBuwai", value: "alooBuwai", iconName: "potato" },
+  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "soccer-field" },
+  { label: "dhaanPitai", value: "dhaanPitai", iconName: "grass" },
+  { label: "alooBuwai", value: "alooBuwai", iconName: "tree" },
   { label: "bazraaKatai", value: "bazraaKatai", iconName: "grass" },
   { label: "tractorDriver", value: "tractorDriver", iconName: "tractor" },
   { label: "equipmentSupplier", value: "equipmentSupplier", iconName: "tools" },
@@ -127,15 +127,15 @@ export const WORKERTYPES = [
     value: "borewellTechnician",
     iconName: "water",
   },
-  { label: "soilTester", value: "soilTester", iconName: "science" },
-  { label: "agricultureExpert", value: "agricultureExpert", iconName: "eco" },
-  { label: "pesticideSupplier", value: "pesticideSupplier", iconName: "eco" },
+  { label: "soilTester", value: "soilTester", iconName: "test-tube" },
+  { label: "agricultureExpert", value: "agricultureExpert", iconName: "tractor-variant" },
+  { label: "pesticideSupplier", value: "pesticideSupplier", iconName: "tractor" },
   {
     label: "fertilizerSupplier",
     value: "fertilizerSupplier",
     iconName: "nature",
   },
-  { label: "farmConsultant", value: "farmConsultant", iconName: "person" },
+  { label: "farmConsultant", value: "farmConsultant", iconName: "bag-personal" },
   { label: "steelFixer", value: "steelFixer", iconName: "construction" },
   { label: "painter", value: "painter", iconName: "brush" },
   {
@@ -199,7 +199,7 @@ export const MEDIATORTYPES = [
 export const MYSERVICES = [
   {
     label: "active",
-    value: "HIRING",
+    value: "ACTIVE",
     iconName: "hiking",
   },
   {

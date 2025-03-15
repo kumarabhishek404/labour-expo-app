@@ -1,6 +1,12 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, StyleSheet, Animated, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Button from "../inputs/Button";
 import { router } from "expo-router";
@@ -14,17 +20,24 @@ import { t } from "@/utils/translationHelper";
 import { handleCall } from "@/constants/functions";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
+import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
 
 interface SelectedApplicantsProps {
+  title: string;
   selectedApplicants: any;
   serviceId: string;
+  isSelectedWorkerLoading: boolean;
+  isSelectedWorkerFetchingNextPage: boolean;
   refetchSelectedApplicants: any;
   refetch: any;
 }
 
 const SelectedApplicants = ({
+  title,
   selectedApplicants,
   serviceId,
+  isSelectedWorkerLoading,
+  isSelectedWorkerFetchingNextPage,
   refetchSelectedApplicants,
   refetch,
 }: SelectedApplicantsProps) => {
@@ -77,209 +90,229 @@ const SelectedApplicants = ({
   return (
     <>
       <Loader loading={mutationCancelSelectedWorker?.isPending} />
-      <View style={styles.applicantContainer}>
-        {selectedApplicants?.map((item: any, index: number) => {
-          const appliedUser = item?.user;
-          const workers = item?.workers;
-          return (
-            <View key={index} style={styles.workerCard}>
-              <View style={styles.productCard}>
-                <ProfilePicture uri={appliedUser?.profilePicture} />
-                <View style={styles.productInfo}>
-                  <View style={styles?.titleContainer}>
-                    <CustomHeading baseFont={14}>
-                      {appliedUser?.name}
-                    </CustomHeading>
-                  </View>
-                  <ShowSkills
-                    type="small"
-                    userSkills={appliedUser?.skills}
-                    tagStyle={{ backgroundColor: Colors?.darkGray }}
-                  />
-                  <View style={styles.recommendationContainer}>
-                    <Ionicons name="location" size={14} color="gray" />
-                    <CustomText textAlign="left">
-                      {appliedUser?.address || "Not Available"}
-                    </CustomText>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    alignContent: "flex-end",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <Button
-                    style={{
-                      minHeight: 20,
-                      paddingVertical: 4,
-                      paddingHorizontal: 6,
-                      marginTop: 6,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    isPrimary={false}
-                    title="Details"
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/users/[id]",
-                        params: {
-                          id: appliedUser?._id,
-                          role: "workers",
-                          type: "applicant",
-                        },
-                      })
-                    }
-                  />
-                </View>
-              </View>
-              {/* Add workers section */}
-              {workers?.length > 0 && (
-                <View style={styles.workersContainer}>
-                  <TouchableOpacity
-                    style={styles.workersTitleContainer}
-                    onPress={() => toggleAccordion(item._id)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.workersTitleLeft}>
-                      <Ionicons
-                        name="people"
-                        size={14}
-                        color={Colors.primary}
+      <View style={styles.applicantWrapper}>
+        <CustomHeading textAlign="left">{t(title)}</CustomHeading>
+        {selectedApplicants && selectedApplicants?.length > 0 ? (
+          <View style={styles.applicantContainer}>
+            {selectedApplicants?.map((item: any, index: number) => {
+              const appliedUser = item?.user;
+              const workers = item?.workers;
+              return (
+                <View key={index} style={styles.workerCard}>
+                  <View style={styles.productCard}>
+                    <ProfilePicture uri={appliedUser?.profilePicture} />
+                    <View style={styles.productInfo}>
+                      <View style={styles?.titleContainer}>
+                        <CustomHeading baseFont={14}>
+                          {appliedUser?.name}
+                        </CustomHeading>
+                      </View>
+                      <ShowSkills
+                        type="small"
+                        userSkills={appliedUser?.skills}
+                        tagStyle={{ backgroundColor: Colors?.darkGray }}
                       />
-                      <CustomText style={styles.workersTitle}>
-                        Associated Workers ({workers?.length})
-                      </CustomText>
+                      <View style={styles.recommendationContainer}>
+                        <Ionicons name="location" size={14} color="gray" />
+                        <CustomText textAlign="left">
+                          {appliedUser?.address || "Not Available"}
+                        </CustomText>
+                      </View>
                     </View>
-                    <Animated.View
+                    <View
                       style={{
-                        transform: [
-                          {
-                            rotate: (
-                              animatedHeights.current[item._id] ||
-                              new Animated.Value(0)
-                            ).interpolate({
-                              inputRange: [0, 1],
-                              outputRange: ["0deg", "180deg"],
-                            }),
-                          },
-                        ],
+                        alignContent: "flex-end",
+                        justifyContent: "flex-start",
                       }}
                     >
-                      <Ionicons
-                        name="chevron-down"
-                        size={16}
-                        color={Colors.primary}
+                      <Button
+                        style={{
+                          minHeight: 20,
+                          paddingVertical: 4,
+                          paddingHorizontal: 10,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        isPrimary={false}
+                        title={t("details")}
+                        onPress={() =>
+                          router?.push({
+                            pathname: "/screens/users/[id]",
+                            params: {
+                              id: appliedUser?._id,
+                              title: "workerDetails",
+                            },
+                          })
+                        }
                       />
-                    </Animated.View>
-                  </TouchableOpacity>
-
-                  {expandedItems[item._id] && (
-                    <Animated.View
-                      style={[
-                        styles.workersGrid,
-                        {
-                          opacity:
-                            animatedHeights.current[item._id] ||
-                            new Animated.Value(0),
-                        },
-                      ]}
-                    >
-                      {workers?.map((worker: any, workerIndex: number) => (
-                        <View key={workerIndex} style={styles.workerItem}>
-                          <ProfilePicture uri={worker?.profilePicture} />
-                          <View style={styles.workerInfo}>
-                            <CustomText style={styles.workerName}>
-                              {worker?.name}
-                            </CustomText>
-                            <ShowSkills
-                              type="small"
-                              userSkills={worker?.skills}
-                            />
-                          </View>
+                    </View>
+                  </View>
+                  {/* Add workers section */}
+                  {workers?.length > 0 && (
+                    <View style={styles.workersContainer}>
+                      <TouchableOpacity
+                        style={styles.workersTitleContainer}
+                        onPress={() => toggleAccordion(item._id)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.workersTitleLeft}>
+                          <Ionicons
+                            name="people"
+                            size={14}
+                            color={Colors.primary}
+                          />
+                          <CustomText style={styles.workersTitle}>
+                            {t("associatedWorkers", { count: workers?.length })}
+                          </CustomText>
                         </View>
-                      ))}
-                    </Animated.View>
+                        <Animated.View
+                          style={{
+                            transform: [
+                              {
+                                rotate: (
+                                  animatedHeights.current[item._id] ||
+                                  new Animated.Value(0)
+                                ).interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: ["0deg", "180deg"],
+                                }),
+                              },
+                            ],
+                          }}
+                        >
+                          <Ionicons
+                            name="chevron-down"
+                            size={16}
+                            color={Colors.primary}
+                          />
+                        </Animated.View>
+                      </TouchableOpacity>
+
+                      {expandedItems[item._id] && (
+                        <Animated.View
+                          style={[
+                            styles.workersGrid,
+                            {
+                              opacity:
+                                animatedHeights.current[item._id] ||
+                                new Animated.Value(0),
+                            },
+                          ]}
+                        >
+                          {workers?.map((worker: any, workerIndex: number) => (
+                            <View key={workerIndex} style={styles.workerItem}>
+                              <ProfilePicture uri={worker?.profilePicture} />
+                              <View style={styles.workerInfo}>
+                                <CustomText style={styles.workerName}>
+                                  {worker?.name}
+                                </CustomText>
+                                <ShowSkills
+                                  type="small"
+                                  userSkills={worker?.skills}
+                                />
+                              </View>
+                            </View>
+                          ))}
+                        </Animated.View>
+                      )}
+                    </View>
                   )}
+                  <View
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      gap: 10,
+                      marginTop: 10,
+                    }}
+                  >
+                    <Button
+                      style={{
+                        width: "30%",
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                      }}
+                      bgColor={Colors?.danger}
+                      borderColor={Colors?.danger}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      icon={
+                        <FontAwesome
+                          name="remove"
+                          size={14}
+                          color="white"
+                          style={{ marginRight: 4 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title="Remove"
+                      onPress={() =>
+                        mutationCancelSelectedWorker?.mutate(appliedUser?._id)
+                      }
+                    />
+                    <Button
+                      style={{
+                        width: "40%",
+                        paddingVertical: 4,
+                        paddingHorizontal: 8,
+                      }}
+                      bgColor={Colors?.success}
+                      borderColor={Colors?.success}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      icon={
+                        <FontAwesome
+                          name="phone"
+                          size={16}
+                          color="white"
+                          style={{ marginRight: 6 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title={t("callWorker")}
+                      onPress={() => handleCall(appliedUser?.mobile)}
+                    />
+                  </View>
                 </View>
-              )}
-              <View
-                style={{
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  gap: 10,
-                  marginTop: 10,
-                }}
-              >
-                <Button
-                  style={{
-                    minHeight: 35,
-                    width: "30%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 6,
-                  }}
-                  bgColor={Colors?.danger}
-                  borderColor={Colors?.danger}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <FontAwesome
-                      name="remove"
-                      size={14}
-                      color="white"
-                      style={{ marginRight: 4 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title="Remove"
-                  onPress={() =>
-                    mutationCancelSelectedWorker?.mutate(appliedUser?._id)
-                  }
-                />
-                <Button
-                  style={{
-                    minHeight: 35,
-                    width: "40%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 8,
-                  }}
-                  bgColor={Colors?.success}
-                  borderColor={Colors?.success}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <FontAwesome
-                      name="phone"
-                      size={16}
-                      color="white"
-                      style={{ marginRight: 6 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title={t("callWorker")}
-                  onPress={() => handleCall(appliedUser?.mobile)}
-                />
-              </View>
-            </View>
-          );
-        })}
+              );
+            })}
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            {isSelectedWorkerLoading || isSelectedWorkerFetchingNextPage ? (
+              <ActivityIndicator
+                style={{ marginLeft: 10, paddingVertical: 60 }}
+                color={Colors?.primary}
+                animating={true}
+              />
+            ) : (
+              <EmptyDatePlaceholder
+                parentHeight={450}
+                title="selectedApplicants"
+              />
+            )}
+          </View>
+        )}
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  applicantWrapper: {
+    paddingHorizontal: 10,
+    backgroundColor: Colors.background,
+    gap: 5,
+    marginBottom: 20,
+  },
   applicantList: {
     display: "flex",
-    backgroundColor: Colors.fourth,
   },
   applicantContainer: {
-    backgroundColor: Colors.fourth,
     gap: 5,
   },
   workerCard: {
@@ -360,6 +393,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
     color: "#2c3e50",
+  },
+  emptyContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.gray,
+    backgroundColor: Colors.white,
   },
 });
 

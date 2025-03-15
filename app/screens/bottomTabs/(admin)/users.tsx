@@ -10,15 +10,16 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { ROLES, USERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
-import Filters from "@/app/screens/bottomTabs/(user)/search/filterServices";
 import SearchFilter from "@/components/commons/SearchFilter";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
-import { t } from "@/utils/translationHelper";
 import ADMIN from "@/app/api/admin";
 import ListingsVerticalUsersAdmin from "@/components/commons/ListingsVerticalUsersAdmin";
 import TOAST from "@/app/hooks/toast";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import FloatingButton from "@/components/inputs/FloatingButton";
+import Colors from "@/constants/Colors";
+import FiltersWorkers from "../(user)/search/filterWorkers";
 
 const AdminUsers = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -27,7 +28,7 @@ const AdminUsers = () => {
   const [status, setStatus] = useState("ACTIVE");
   const [role, setRole] = useState("WORKER");
   const [isFilterVisible, setFilterVisible] = useState(false);
-  const [filters, setFilters] = useState({}); // Store applied filters here
+  const [filters, setFilters] = useState({});
 
   const {
     data: response,
@@ -113,10 +114,23 @@ const AdminUsers = () => {
     },
   });
 
-  const handleApply = (appliedFilters: React.SetStateAction<any>) => {
-    // Apply filters to API call and close modal
-    setFilters(appliedFilters);
-    setFilterVisible(false); // Close the modal
+  const onSearchWorkers = (data: any) => {
+    setFilterVisible(false);
+    const searchCategory = {
+      distance: data?.distance,
+      completedServices: data?.completedServices,
+      rating: data?.rating,
+      skills: data?.skills,
+    };
+
+    router?.push({
+      pathname: "/screens/users",
+      params: {
+        title: "allWorkers",
+        type: "all",
+        searchCategory: JSON.stringify(searchCategory),
+      },
+    });
   };
 
   const handleClear = () => {
@@ -217,10 +231,15 @@ const AdminUsers = () => {
           )}
         </View>
 
-        <Filters
+        <FiltersWorkers
           filterVisible={isFilterVisible}
           setFilterVisible={setFilterVisible}
-          onApply={handleApply}
+          onApply={onSearchWorkers}
+        />
+
+        <FloatingButton
+          title="applyFilters"
+          onPress={() => setFilterVisible(true)}
         />
       </View>
     </>
@@ -229,8 +248,10 @@ const AdminUsers = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
+    position: "relative",
+    bottom: 0,
+    // flex: 1,
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 10,
   },
 });

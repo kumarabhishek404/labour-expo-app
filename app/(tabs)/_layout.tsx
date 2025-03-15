@@ -39,14 +39,16 @@ export default function Layout() {
   const isFirstLaunch = useFirstTimeLaunch();
   const { locale } = LOCAL_CONTEXT.useLocale();
 
-  console.log("userDetails -", userDetails);
-
   const { data: response } = useQuery({
     queryKey: ["allUnreadNotificationsCount", userDetails?._id],
     queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
     retry: false,
     refetchInterval: 10000,
-    enabled: Boolean(userDetails && userDetails._id && userDetails.isAuth),
+    enabled:
+      !!userDetails &&
+      !!userDetails._id &&
+      !!userDetails.isAuth &&
+      !!userDetails.token,
   });
 
   useUnreadNotificationsHandler(response, triggerLocalNotification);
@@ -219,7 +221,7 @@ export default function Layout() {
             styles.customButton,
             // addServiceStep > 1 && styles?.disableClick,
           ]}
-          onPress={() => router?.push("/(tabs)/fifth")}
+          onPress={() => router?.push("/(tabs)/fourth")}
         >
           <Animated.View
             style={{
@@ -304,25 +306,8 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/"
-                title={t("postService")}
-                iconName="add"
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="fourth"
-          // listeners={{
-          //   tabPress: () => setAddService({}),
-          // }}
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/fourth"
-                title={userDetails?.isAdmin ? t("users") : t("search")}
-                iconName={userDetails?.isAdmin ? "person" : "search"}
+                title={userDetails?.isAdmin ? t("services") : t("postService")}
+                iconName={userDetails?.isAdmin ? "work" : "add"}
               />
             ),
           }}
@@ -338,15 +323,36 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/second"
-                title={userDetails?.isAdmin ? t("users") : t("myBookings")}
-                iconName={userDetails?.isAdmin ? "person" : "calendar-month"}
+                title={userDetails?.isAdmin ? t("users") : t("search")}
+                iconName={userDetails?.isAdmin ? "people" : "search"}
               />
             ),
           }}
         />
 
         <Tabs.Screen
-          name="fifth"
+          name="third"
+          // listeners={{
+          //   tabPress: () => setAddService({}),
+          // }}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/third"
+                title={
+                  userDetails?.isAdmin ? t("allRequests") : t("myBookings")
+                }
+                iconName={
+                  userDetails?.isAdmin ? "waving-hand" : "calendar-month"
+                }
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="fourth"
           // listeners={{
           //   tabPress: () => setAddService({}),
           // }}

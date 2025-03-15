@@ -1,13 +1,12 @@
 import React from "react";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import AdminRequests from "../screens/bottomTabs/(admin)/requests";
-import UserWorkers from "../screens/bottomTabs/(user)/workers";
-import Search from "../screens/bottomTabs/(user)/search";
+import AdminProfile from "../screens/bottomTabs/(admin)/profile";
+import UserProfile from "../screens/bottomTabs/(user)/profile";
 
-export default function ProfileScreen() {
+export default function WorkersScreen() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
-  if (userDetails?.isAdmin) return <AdminRequests />;
-  else return <Search />;
+  if (userDetails?.isAdmin) return <AdminProfile />;
+  else return <UserProfile />;
 }

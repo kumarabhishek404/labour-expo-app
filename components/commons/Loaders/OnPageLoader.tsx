@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#00000040", // Semi-transparent background to focus on the loader
-    height: "100%",
   },
   activityIndicatorWrapper: {
     backgroundColor: "#FFFFFF",

@@ -7,24 +7,22 @@ import ListingsVerticalServices from "@/components/commons/ListingsVerticalServi
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { MYSERVICES, WORKERS } from "@/constants";
-import Filters from "@/app/screens/bottomTabs/(user)/search/filterServices";
 import SearchFilter from "@/components/commons/SearchFilter";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import SERVICE from "@/app/api/services";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import FetchLocationNote from "@/components/commons/FetchLocationNote";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import FloatingButton from "@/components/inputs/FloatingButton";
+// import FiltersServices from "../(user)/search/filterServices";
 
 const AdminServices = () => {
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [category, setCategory] = useState("HIRING");
-  const [secondaryCategory, setSecondaryCategory] = useState("");
-
+  const [category, setCategory] = useState("ACTIVE");
   const [isFilterVisible, setFilterVisible] = useState(false);
-  const [filters, setFilters] = useState({});
 
   const {
     data: response,
@@ -35,16 +33,17 @@ const AdminServices = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["services", category, secondaryCategory, filters],
+    queryKey: ["allServices", category],
     queryFn: ({ pageParam }) => {
-      const payload = {
-        pageParam,
-        ...filters,
-      };
       return SERVICE?.fetchAllServices({
-        ...payload,
+        pageParam,
         status: category,
-        skill: secondaryCategory,
+        payload: {
+          distance: "",
+          duration: "",
+          serviceStartIn: "",
+          skills: [],
+        },
       });
     },
     retry: false,
@@ -68,10 +67,24 @@ const AdminServices = () => {
     }, [response])
   );
 
-  const handleApply = (appliedFilters: React.SetStateAction<any>) => {
-    // Apply filters to API call and close modal
-    setFilters(appliedFilters);
-    setFilterVisible(false); // Close the modal
+
+  const onSearchService = (data: any) => {
+    setFilterVisible(false);
+    const searchCategory = {
+      distance: data?.distance,
+      duration: data?.duration,
+      serviceStartIn: data?.serviceStartIn,
+      skills: data?.skills,
+    };
+
+    router?.push({
+      pathname: "/screens/service",
+      params: {
+        title: "allServices",
+        type: "all",
+        searchCategory: JSON.stringify(searchCategory),
+      },
+    });
   };
 
   const loadMore = () => {
@@ -87,12 +100,8 @@ const AdminServices = () => {
     [filteredData]
   );
 
-  const onCatChanged = (category: React.SetStateAction<string>) => {
-    setCategory(category);
-  };
-
-  const onSecondaryCatChanged = (category: React.SetStateAction<string>) => {
-    setSecondaryCategory(category);
+  const onCatChanged = (category: any) => {
+    setCategory(category?.value);
   };
 
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
@@ -106,11 +115,7 @@ const AdminServices = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader
-              title="services"
-              left="back"
-              right="notification"
-            />
+            <CustomHeader title="services" left="back" right="notification" />
           ),
         }}
       />
@@ -130,11 +135,6 @@ const AdminServices = () => {
             onCategoryChanged={onCatChanged}
           />
 
-          <CategoryButtons
-            type="workerType"
-            options={WORKERS}
-            onCategoryChanged={onSecondaryCatChanged}
-          />
           <PaginationString
             type="services"
             isLoading={isLoading || isRefetching}
@@ -159,10 +159,15 @@ const AdminServices = () => {
           )}
         </View>
 
-        <Filters
+        {/* <FiltersServices
           filterVisible={isFilterVisible}
           setFilterVisible={setFilterVisible}
-          onApply={handleApply}
+          onApply={onSearchService}
+        /> */}
+
+        <FloatingButton
+          title="applyFilters"
+          onPress={() => setFilterVisible(true)}
         />
       </View>
     </>

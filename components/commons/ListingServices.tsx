@@ -38,11 +38,11 @@ const ListingsServices = ({ item }: any) => {
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
           <TouchableOpacity>
-            <View style={[styles?.tag, { backgroundColor: Colors?.primary }]}>
+            {/* <View style={[styles?.tag, { backgroundColor: Colors?.primary }]}>
               <CustomText color={Colors?.white} fontWeight="bold">
                 {t("servicePost")}
               </CustomText>
-            </View>
+            </View> */}
             <View style={styles.item}>
               <Image
                 source={
@@ -136,16 +136,7 @@ const ListingsServices = ({ item }: any) => {
                     </CustomText>
                   </View>
 
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Entypo name="calendar" size={16} color={Colors.primary} />
-                    <CustomText
-                      baseFont={16}
-                      textAlign="left"
-                      style={{ marginLeft: 5 }}
-                    >
-                      <DateDisplay date={item?.startDate} />
-                    </CustomText>
-                  </View>
+                  <DateDisplay date={item?.startDate} />
                 </View>
 
                 <View style={styles?.actionContainer}>

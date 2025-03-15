@@ -37,10 +37,14 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response) {
       const errorMessage = error.response.data.message;
-      const statusText = error.response.statusText;
+      const statusText = error.response.data.statusText;
+      console.log(
+        "error.response=========================",
+        error.response?.data
+      );
 
       if (
-        (error.response.status === 400 && errorMessage === "jwt expired") ||
+        errorMessage === "jwt expired" ||
         errorMessage === "jwt malformed" ||
         statusText === "TokenExpiredError" ||
         statusText === "Unauthorized Request"

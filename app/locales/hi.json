@@ -1019,7 +1019,7 @@
   "atLeastOneReason": "कम से कम एक कारण चयनित होना चाहिए।",
   "userAddedToFavourites": "श्रमिक को पसंदीदा में जोड़ा गया है।",
   "userRemovedFromFavourites": "श्रमिक को पसंदीदा से हटा दिया गया है।",
-  "receivedRequests": "प्राप्त अनुरोध",
+  "recievedRequests": "प्राप्त अनुरोध",
   "sentRequests": "भेजे गए अनुरोध",
   "postService": "सेवा पोस्ट करें",
   "makeChangesToSave": "कृपया सहेजने के लिए परिवर्तन करें!",
@@ -1027,5 +1027,13 @@
   "saveAddress": "पता सुरक्षित करें",
   "changeAddress": "पता बदलें",
   "unableToFetchLocation": "स्थान प्राप्त करने में असमर्थ",
-  "addAddressManually": "पता स्वयं जोड़ें!"
+  "addAddressManually": "पता स्वयं जोड़ें!",
+
+  "createPassword": "4-अंकीय पासवर्ड बनाएं",
+  "createPasswordNote": "कृपया इस पासवर्ड को न भूलें",
+  "confirmPasswordNote": "कृपया पासवर्ड फिर से लिखें",
+  "confirm": "अपने पासवर्ड की पुष्टि करें",
+  "passwordMismatch": "पासवर्ड मेल नहीं खा रहे हैं। कृपया पुनः प्रयास करें।",
+  "enterFullPassword": "कृपया पूरा पासवर्ड दर्ज करें",
+  "associatedWorkers": "{{count}} संबंधित श्रमिक"
 }

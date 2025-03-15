@@ -52,7 +52,7 @@ const FourthScreen = () => {
         password,
       });
     } else {
-      TOAST?.error("Passwords do not match. Please try again.");
+      TOAST?.error(t("passwordMismatch"));
       setConfirmPassword("");
     }
   };
@@ -61,7 +61,7 @@ const FourthScreen = () => {
     if (password?.length === 4) {
       setPasswordStep("confirm");
     } else {
-      TOAST?.error("Please enter full password");
+      TOAST?.error(t("enterFullPassword"));
     }
   };
 
@@ -106,16 +106,16 @@ const FourthScreen = () => {
         }}
       >
         <View style={styles.title}>
-          <CustomHeading baseFont={30} color={Colors?.heading}>
+          <CustomHeading baseFont={30} color={Colors.heading}>
             {passwordStep === "create"
-              ? "Create a 4-Digit Password"
-              : "Confirm Your Password"}
+              ? t("createPassword")
+              : t("confirmPassword")}
           </CustomHeading>
-          <CustomText color={Colors?.tertiery} fontWeight="bold">
+          <CustomText color={Colors.tertiery} fontWeight="bold">
             (
             {passwordStep === "create"
-              ? "please do not forget this password"
-              : "please write the password again"}
+              ? t("createPasswordNote")
+              : t("confirmPasswordNote")}
             )
           </CustomText>
         </View>
@@ -168,13 +168,13 @@ const FourthScreen = () => {
         )}
         <Button
           isPrimary={true}
-          title={passwordStep === "create" ? "Next" : "Confirm Your Password"}
+          title={passwordStep === "create" ? t("next") : t("confirm")}
           onPress={() =>
             passwordStep === "create" ? handleSetPassword() : onSubmit()
           }
           style={{ flex: 1, paddingHorizontal: 5 }}
-          bgColor={Colors?.success}
-            borderColor={Colors?.success}
+          bgColor={Colors.success}
+          borderColor={Colors.success}
         />
       </View>
     </ScrollView>
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     gap: 10,
-    marginTop: 40
+    marginTop: 40,
   },
   heading: {
     marginBottom: 20,

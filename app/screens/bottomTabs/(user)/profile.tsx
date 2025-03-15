@@ -216,12 +216,6 @@ const UserProfile = () => {
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        <AvatarComponent
-          isEditable={true}
-          isLoading={mutationUpdateProfilePicture?.isPending}
-          profileImage={profilePicture}
-          onUpload={handleProfilePictureSubmit}
-        />
         <Controller
           control={control}
           name="name"
@@ -363,7 +357,8 @@ const UserProfile = () => {
                   userDetails?.profilePictureUploading?.status ===
                     "UPLOADING" || mutationUpdateProfilePicture?.isPending
                 }
-                isEditable={false}
+                isEditable={true}
+                onUpload={handleProfilePictureSubmit}
                 profileImage={profilePicture}
               />
               <CustomHeading baseFont={22} style={{ marginTop: 10 }}>

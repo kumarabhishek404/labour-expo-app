@@ -1,6 +1,12 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  ActivityIndicator,
+} from "react-native";
 import {
   AntDesign,
   Entypo,
@@ -19,24 +25,29 @@ import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
+import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
 
 interface ApplicantsProps {
+  title: string;
   applicants: any;
   serviceId: string;
+  isAppliedWorkersLoading: boolean;
+  isAppliedWorkersFetchingNextPage: boolean;
   refetchApplicants: any;
   refetchSelectedApplicants: any;
   refetch: any;
 }
 
 const Applicants = ({
+  title,
   applicants,
   serviceId,
+  isAppliedWorkersLoading,
+  isAppliedWorkersFetchingNextPage,
   refetchApplicants,
   refetchSelectedApplicants,
   refetch,
 }: ApplicantsProps) => {
-  console.log("applicants --", applicants[0]?.user?.skills);
-
   const mutationSelectWorker = useMutation({
     mutationKey: ["selectWorker", { serviceId }],
     mutationFn: (userId) =>
@@ -99,198 +110,227 @@ const Applicants = ({
           mutationSelectWorker?.isPending || mutationRejectWorker?.isPending
         }
       />
-      <View style={styles.applicantContainer}>
-        {applicants?.map((item: any, index: number) => {
-          const appliedUser = item?.user;
-          const workers = item?.workers;
-          return (
-            <View key={index} style={styles.mediatorCard}>
-              <View style={styles.productCard}>
-                <ProfilePicture uri={appliedUser?.profilePicture} />
-                <View style={styles.productInfo}>
-                  <View style={styles?.titleContainer}>
-                    <CustomHeading baseFont={14}>
-                      {appliedUser?.name}
-                    </CustomHeading>
-                  </View>
+      <View style={styles.applicantWrapper}>
+        <CustomHeading textAlign="left">{t(title)}</CustomHeading>
+        {applicants && applicants?.length > 0 ? (
+          <View style={styles.applicantContainer}>
+            {applicants?.map((item: any, index: number) => {
+              const appliedUser = item?.user;
+              const workers = item?.workers;
+              return (
+                <View key={index} style={styles.mediatorCard}>
+                  <View style={styles.productCard}>
+                    <ProfilePicture uri={appliedUser?.profilePicture} />
+                    <View style={styles.productInfo}>
+                      <View style={styles?.titleContainer}>
+                        <CustomHeading baseFont={14}>
+                          {appliedUser?.name}
+                        </CustomHeading>
+                      </View>
 
-                  <ShowSkills type="small" userSkills={appliedUser?.skills} />
-                  <View style={styles.recommendationContainer}>
-                    <Ionicons name="location" size={14} color="gray" />
-                    <CustomText textAlign="left">
-                      {appliedUser?.address || "Not provided"}
-                    </CustomText>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    alignContent: "flex-end",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <Button
-                    style={{
-                      paddingVertical: 4,
-                      paddingHorizontal: 8,
-                      marginTop: 6,
-                      minHeight: 30,
-                    }}
-                    textStyle={{
-                      fontSize: 14,
-                    }}
-                    isPrimary={false}
-                    title="Details"
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/users/[id]",
-                        params: {
-                          id: appliedUser?._id,
-                          role: "workers",
-                          type: "applicant",
-                        },
-                      })
-                    }
-                  />
-                </View>
-              </View>
-              {/* Add workers section */}
-              {workers?.length > 0 && (
-                <View style={styles.workersContainer}>
-                  <TouchableOpacity
-                    style={styles.workersTitleContainer}
-                    onPress={() => toggleAccordion(item._id)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.workersTitleLeft}>
-                      <Ionicons
-                        name="people"
-                        size={14}
-                        color={Colors.primary}
+                      <ShowSkills
+                        type="small"
+                        userSkills={appliedUser?.skills}
                       />
-                      <CustomText style={styles.workersTitle}>
-                        Associated Workers ({workers?.length})
-                      </CustomText>
+                      <View style={styles.recommendationContainer}>
+                        <Ionicons name="location" size={14} color="gray" />
+                        <CustomText textAlign="left">
+                          {appliedUser?.address || "Not provided"}
+                        </CustomText>
+                      </View>
                     </View>
-                    <Animated.View
+                    <View
                       style={{
-                        transform: [
-                          {
-                            rotate: (
-                              animatedHeights.current[item._id] ||
-                              new Animated.Value(0)
-                            ).interpolate({
-                              inputRange: [0, 1],
-                              outputRange: ["0deg", "180deg"],
-                            }),
-                          },
-                        ],
+                        alignContent: "flex-end",
+                        justifyContent: "flex-start",
                       }}
                     >
-                      <Ionicons
-                        name="chevron-down"
-                        size={16}
-                        color={Colors.primary}
+                      <Button
+                        style={{
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          marginTop: 6,
+                          minHeight: 30,
+                        }}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        isPrimary={false}
+                        title="Details"
+                        onPress={() =>
+                          router?.push({
+                            pathname: "/screens/users/[id]",
+                            params: {
+                              id: appliedUser?._id,
+                              role: "workers",
+                              type: "applicant",
+                            },
+                          })
+                        }
                       />
-                    </Animated.View>
-                  </TouchableOpacity>
-
-                  {expandedItem === item._id && (
-                    <Animated.View
-                      style={[
-                        styles.workersGrid,
-                        {
-                          opacity:
-                            animatedHeights.current[item._id] ||
-                            new Animated.Value(0),
-                        },
-                      ]}
-                    >
-                      {workers?.map((worker: any, workerIndex: number) => (
-                        <View key={workerIndex} style={styles.workerItem}>
-                          <ProfilePicture uri={worker?.profilePicture} />
-                          <View style={styles.workerInfo}>
-                            <CustomText style={styles.workerName}>
-                              {worker?.name}
-                            </CustomText>
-                            <ShowSkills
-                              type="small"
-                              userSkills={worker?.skills}
-                            />
-                          </View>
+                    </View>
+                  </View>
+                  {/* Add workers section */}
+                  {workers?.length > 0 && (
+                    <View style={styles.workersContainer}>
+                      <TouchableOpacity
+                        style={styles.workersTitleContainer}
+                        onPress={() => toggleAccordion(item._id)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.workersTitleLeft}>
+                          <Ionicons
+                            name="people"
+                            size={14}
+                            color={Colors.primary}
+                          />
+                          <CustomText style={styles.workersTitle}>
+                            Associated Workers ({workers?.length})
+                          </CustomText>
                         </View>
-                      ))}
-                    </Animated.View>
+                        <Animated.View
+                          style={{
+                            transform: [
+                              {
+                                rotate: (
+                                  animatedHeights.current[item._id] ||
+                                  new Animated.Value(0)
+                                ).interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: ["0deg", "180deg"],
+                                }),
+                              },
+                            ],
+                          }}
+                        >
+                          <Ionicons
+                            name="chevron-down"
+                            size={16}
+                            color={Colors.primary}
+                          />
+                        </Animated.View>
+                      </TouchableOpacity>
+
+                      {expandedItem === item._id && (
+                        <Animated.View
+                          style={[
+                            styles.workersGrid,
+                            {
+                              opacity:
+                                animatedHeights.current[item._id] ||
+                                new Animated.Value(0),
+                            },
+                          ]}
+                        >
+                          {workers?.map((worker: any, workerIndex: number) => (
+                            <View key={workerIndex} style={styles.workerItem}>
+                              <ProfilePicture uri={worker?.profilePicture} />
+                              <View style={styles.workerInfo}>
+                                <CustomText style={styles.workerName}>
+                                  {worker?.name}
+                                </CustomText>
+                                <ShowSkills
+                                  type="small"
+                                  userSkills={worker?.skills}
+                                />
+                              </View>
+                            </View>
+                          ))}
+                        </Animated.View>
+                      )}
+                    </View>
                   )}
+                  <View
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-start",
+                      gap: 10,
+                      marginTop: 10,
+                    }}
+                  >
+                    <Button
+                      style={{
+                        minHeight: 30,
+                        width: "30%",
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                      }}
+                      bgColor={Colors?.danger}
+                      borderColor={Colors?.danger}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      icon={
+                        <FontAwesome
+                          name="remove"
+                          size={14}
+                          color="white"
+                          style={{ marginRight: 4 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title={t("reject")}
+                      onPress={() =>
+                        mutationRejectWorker?.mutate(appliedUser?._id)
+                      }
+                    />
+                    <Button
+                      style={{
+                        minHeight: 30,
+                        width: "40%",
+                        paddingVertical: 4,
+                        paddingHorizontal: 8,
+                      }}
+                      bgColor={Colors?.success}
+                      borderColor={Colors?.success}
+                      textStyle={{
+                        fontSize: 14,
+                      }}
+                      icon={
+                        <Entypo
+                          name="check"
+                          size={14}
+                          color="white"
+                          style={{ marginRight: 4 }}
+                        />
+                      }
+                      isPrimary={true}
+                      title="Select"
+                      onPress={() =>
+                        mutationSelectWorker?.mutate(appliedUser?._id)
+                      }
+                    />
+                  </View>
                 </View>
-              )}
-              <View
-                style={{
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "flex-start",
-                  gap: 10,
-                  marginTop: 10,
-                }}
-              >
-                <Button
-                  style={{
-                    minHeight: 30,
-                    width: "30%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 6,
-                  }}
-                  bgColor={Colors?.danger}
-                  borderColor={Colors?.danger}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <FontAwesome
-                      name="remove"
-                      size={14}
-                      color="white"
-                      style={{ marginRight: 4 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title={t("reject")}
-                  onPress={() => mutationRejectWorker?.mutate(appliedUser?._id)}
-                />
-                <Button
-                  style={{
-                    minHeight: 30,
-                    width: "40%",
-                    paddingVertical: 4,
-                    paddingHorizontal: 8,
-                  }}
-                  bgColor={Colors?.success}
-                  borderColor={Colors?.success}
-                  textStyle={{
-                    fontSize: 14,
-                  }}
-                  icon={
-                    <Entypo
-                      name="check"
-                      size={14}
-                      color="white"
-                      style={{ marginRight: 4 }}
-                    />
-                  }
-                  isPrimary={true}
-                  title="Select"
-                  onPress={() => mutationSelectWorker?.mutate(appliedUser?._id)}
-                />
-              </View>
-            </View>
-          );
-        })}
+              );
+            })}
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            {isAppliedWorkersLoading || isAppliedWorkersFetchingNextPage ? (
+              <ActivityIndicator
+                style={{ marginLeft: 10, paddingVertical: 60 }}
+                color={Colors?.primary}
+                animating={true}
+              />
+            ) : (
+              <EmptyDatePlaceholder parentHeight={450} title="applicants" />
+            )}
+          </View>
+        )}
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  applicantWrapper: {
+    paddingHorizontal: 10,
+    backgroundColor: Colors.background,
+    gap: 5,
+  },
   applicantList: {
     flex: 1,
   },
@@ -389,6 +429,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
     color: "#2c3e50",
+  },
+  emptyContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.gray,
+    backgroundColor: Colors.white,
   },
 });
 

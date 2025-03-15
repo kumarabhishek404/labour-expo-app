@@ -5,12 +5,10 @@ import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/commons/Loaders/Loader";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
-import FiltersWorkers from "./filterWorkers";
 import FloatingButton from "@/components/inputs/FloatingButton";
+import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
+import FiltersWorkers from "./filterWorkers";
 
 const AllWorkers = ({
   isLoading,
@@ -36,7 +34,7 @@ const AllWorkers = ({
     router?.push({
       pathname: "/screens/users",
       params: {
-        title: "allServices",
+        title: "allWorkers",
         type: "all",
         searchCategory: JSON.stringify(searchCategory),
       },
@@ -45,64 +43,50 @@ const AllWorkers = ({
 
   return (
     <>
-      <Loader loading={isLoading} />
-      <View style={styles.container}>
-        <View style={styles?.paginationHeader}>
-          <PaginationString
-            type="workers"
-            isLoading={isLoading || isRefetching}
-            totalFetchedData={memoizedData?.length}
-            totalData={totalData}
+      {isLoading ? (
+        <OnPageLoader />
+      ) : (
+        <View style={styles.container}>
+          <View style={styles?.paginationHeader}>
+            <PaginationString
+              type="workers"
+              isLoading={isLoading || isRefetching}
+              totalFetchedData={memoizedData?.length}
+              totalData={totalData}
+            />
+          </View>
+
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalWorkers
+              style={styles.listContainer}
+              availableInterest={WORKERTYPES}
+              listings={memoizedData || []}
+              loadMore={loadMore}
+              type={"worker"}
+              isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl
+                  refreshing={!isRefetching && refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+            />
+          ) : (
+            <EmptyDatePlaceholder title="worker" />
+          )}
+
+          <FiltersWorkers
+            filterVisible={isAddFilters}
+            setFilterVisible={setIsAddFilters}
+            onApply={onSearchWorkers}
           />
-          {/* <TopHeaderLinks
-          title={["showAllWorkers"]}
-          onPress={[
-            () =>
-              router?.push({
-                pathname: "/screens/users",
-                params: {
-                  title: "allWorkers",
-                  type: "all",
-                  searchCategory: JSON.stringify({ name: "", skill: "" }),
-                },
-              }),
-          ]}
-          icon={[
-            <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
-          ]}
-        /> */}
+
+          <FloatingButton
+            title="applyFilters"
+            onPress={() => setIsAddFilters(true)}
+          />
         </View>
-
-        {memoizedData && memoizedData?.length > 0 ? (
-          <ListingsVerticalWorkers
-            style={styles.listContainer}
-            availableInterest={WORKERTYPES}
-            listings={memoizedData || []}
-            loadMore={loadMore}
-            type={"worker"}
-            isFetchingNextPage={isFetchingNextPage}
-            refreshControl={
-              <RefreshControl
-                refreshing={!isRefetching && refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        ) : (
-          <EmptyDatePlaceholder title="worker" />
-        )}
-
-        <FiltersWorkers
-          filterVisible={isAddFilters}
-          setFilterVisible={setIsAddFilters}
-          onApply={onSearchWorkers}
-        />
-
-        <FloatingButton
-          title="applyFilters"
-          onPress={() => setIsAddFilters(true)}
-        />
-      </View>
+      )}
     </>
   );
 };

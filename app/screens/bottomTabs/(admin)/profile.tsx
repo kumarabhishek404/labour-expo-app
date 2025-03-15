@@ -4,14 +4,16 @@ import {
   StyleSheet,
   ScrollView,
   BackHandler,
-  // StatusBar,
+  Platform,
 } from "react-native";
+// import { StatusBar } from "expo-status-bar";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import Atoms from "@/app/AtomStore";
 import { useAtom, useAtomValue } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
+import USER from "../../../api/user";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loaders/Loader";
 import AvatarComponent from "@/components/commons/Avatar";
@@ -19,7 +21,10 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
+import WORKER from "../../../api/workers";
 import TOAST from "@/app/hooks/toast";
+import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
 import StatsCard from "@/components/commons/LikesStats";
@@ -29,18 +34,25 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
+import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
-import USER from "@/app/api/user";
+import { isEmptyObject } from "@/constants/functions";
+import EmailAddressField from "@/components/inputs/EmailAddress";
+import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
+import { Portal, Provider } from "react-native-paper";
+import LocationField from "@/components/inputs/LocationField";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 
-const AdminProfile = () => {
+const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const [earnings, setEarnings] = useAtom(Atoms?.EarningAtom);
-  const [spents, setSpents] = useAtom(Atoms?.SpentAtom);
+  const [selectedTab, setSelectedTab] = useState("Profile Information");
 
   const [isEditProfile, setIsEditProfile] = useState(false);
+
   const [profilePicture, setProfilePicture] = useState(
     userDetails?.profilePicture
   );
@@ -54,10 +66,13 @@ const AdminProfile = () => {
   } = useForm({
     defaultValues: {
       name: userDetails?.name,
+      email: userDetails?.email?.value,
       address: userDetails?.address,
     },
   });
 
+  const [location, setLocation] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
@@ -67,13 +82,13 @@ const AdminProfile = () => {
           `${
             userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
-              ? "Profile Suspended"
-              : "Approval Is Pending"
-          }: You can't go back until your profile is ${
+              ? t("profileSuspended")
+              : t("approvalIsPending")
+          }: ${t("youCantUntilYourProfileIs")} ${
             userDetails?.status === "SUSPENDED" ||
             userDetails?.status === "DISABLED"
-              ? "suspended"
-              : "not approved"
+              ? t("suspended")
+              : t("notApproved")
           }.`
         );
         return true;
@@ -91,8 +106,8 @@ const AdminProfile = () => {
 
   useEffect(() => {
     setValue("name", userDetails?.name);
-    setValue("address", userDetails?.address);
-  }, [isEditProfile]);
+    setValue("email", userDetails?.email?.value);
+  }, [isEditProfile, userDetails]);
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
@@ -100,14 +115,19 @@ const AdminProfile = () => {
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
-        response?.data?.data
+        response?.data?.data?.email
       );
       let user = response?.data?.data;
       setIsEditProfile(false);
+      setProfilePicture(user?.profilePicture);
       setUserDetails({
         ...userDetails,
         name: user?.name,
-        address: user?.address,
+        profilePicture: user?.profilePicture,
+        email: {
+          value: user?.email?.value,
+          isVerified: false,
+        },
       });
     },
     onError: (err) => {
@@ -116,33 +136,49 @@ const AdminProfile = () => {
     },
   });
 
-  // const mutationUploadProfileImage = useMutation({
-  //   mutationKey: ["uploadProfileImage"],
-  //   mutationFn: (payload) => handleUploadAvatar(payload),
-  //   onSuccess: (response) => {
-  //     console.log("Response from profilePicture image uploading - ", response);
-  //     setUserDetails({
-  //       ...userDetails,
-  //       profilePicture: response?.data,
-  //     });
-  //     setProfilePicture(response?.data);
-  //   },
-  //   onError: (err) => {
-  //     console.log("Error while uploading profilePicture image - ", err);
-  //   },
-  // });
-
-  const mutationRemoveProfileImage = useMutation({
-    mutationKey: ["removeProfileImage"],
-    mutationFn: () => handleRemoveProfileImage(),
-    onSuccess: (response) => {},
-    onError: (err) => {},
+  const mutationUpdateProfilePicture = useMutation({
+    mutationKey: ["updateProfilePicture"],
+    mutationFn: (payload: any) => USER?.updateUserById(payload),
+    onSuccess: (response) => {
+      let user = response?.data?.data;
+      setProfilePicture(user?.profilePicture);
+      setUserDetails({
+        ...userDetails,
+        profilePicture: user?.profilePicture,
+      });
+    },
   });
+
+  const handleProfilePictureSubmit = async (profileImage: any) => {
+    if (
+      !profileImage ||
+      typeof profileImage !== "string" ||
+      profileImage.trim() === ""
+    ) {
+      TOAST?.error(t("pleaseSelectAProfilePicture"));
+      return;
+    }
+
+    const formData: any = new FormData();
+    const imageName = profileImage.split("/").pop();
+    formData.append("profileImage", {
+      uri:
+        Platform.OS === "android"
+          ? profileImage
+          : profileImage.replace("file://", ""),
+      type: "image/jpeg",
+      name: imageName || "photo.jpg",
+    });
+    formData?.append("_id", userDetails?._id);
+
+    console.log("Forrr---", formData);
+
+    await mutationUpdateProfilePicture.mutate(formData);
+  };
 
   const mutationAddSkills = useMutation({
     mutationKey: ["addSkills"],
-    mutationFn: (skills: Array<string>) =>
-      USER?.updateSkills({ skills: skills }),
+    mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
       setUserDetails({ ...userDetails, skills: user?.skills });
@@ -155,223 +191,280 @@ const AdminProfile = () => {
     },
   });
 
+  const mutationRemoveSkill = useMutation({
+    mutationKey: ["removeSkills"],
+    mutationFn: (skill: string) => USER?.removeSkill({ skillName: skill }),
+    onSuccess: (response) => {
+      let user = response?.data;
+      setUserDetails({ ...userDetails, skills: user?.skills });
+      setSelectedSkills([]);
+      TOAST?.success(t("skillRemovedSuccessfully"));
+      console.log("Response while removing skill from the worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while removing skill from the worker ", err);
+    },
+  });
+
   const handleEditProfile = () => {
     setIsEditProfile(true);
-  };
-
-  // const handleUploadAvatar = async (profileImage: any) => {
-  //   const formData: any = new FormData();
-  //   const avatarFile = profileImage.split("/").pop();
-  //   formData.append("profilePicture", {
-  //     uri: profileImage,
-  //     type: "image/jpeg",
-  //     name: avatarFile,
-  //   });
-  //   return await USER?.uploadFile(formData);
-  // };
-
-  const handleRemoveProfileImage = () => {
-    let tempUserDetails = { ...userDetails };
-    tempUserDetails.profilePicture = "";
-    return setUserDetails(tempUserDetails);
   };
 
   const modalContent = () => {
     return (
       <View style={styles.formContainer}>
-        {/* <View style={{ marginBottom: 10 }}>
-          <AvatarComponent
-            isEditable={true}
-            isLoading={mutationUploadProfileImage?.isPending}
-            profileImage={profilePicture}
-            onUpload={mutationUploadProfileImage?.mutate}
-          />
-        </View> */}
-        <View style={{ flexDirection: "column", gap: 10 }}>
-          <Controller
-            control={control}
-            name="name"
-            defaultValue=""
-            rules={{
-              required: t("firstNameIsRequired"),
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputComponent
-                label={t("name")}
-                name="name"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                placeholder={t("enterYourFirstName")}
-                errors={errors}
-                icon={
-                  <Ionicons
-                    name="person"
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
-                  />
-                }
-              />
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="name"
+          defaultValue=""
+          rules={{
+            required: t("firstNameIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputComponent
+              label="name"
+              name="name"
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder={t("enterYourFirstName")}
+              errors={errors}
+              icon={
+                <Ionicons
+                  name="person"
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, paddingRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="email"
+          defaultValue=""
+          // rules={{
+          //   required: t("emailAddressIsRequired"),
+          //   pattern: {
+          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+          //     message: t("enterAValidEmailAddress"),
+          //   },
+          // }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <EmailAddressField
+              name="email"
+              email={value}
+              setEmail={onChange}
+              onBlur={onBlur}
+              errors={errors}
+              placeholder={t("enterYourEmailAddress")}
+              icon={
+                <Ionicons
+                  name={"mail-outline"}
+                  size={30}
+                  color={Colors.secondary}
+                  style={{ paddingVertical: 10, marginRight: 10 }}
+                />
+              }
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="address"
+          defaultValue=""
+          rules={{
+            required: t("addressIsRequired"),
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <AddLocationAndAddress
+              label={t("address")}
+              name="address"
+              address={value}
+              setAddress={onChange}
+              onBlur={onBlur}
+              location={location}
+              setLocation={setLocation}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              errors={errors}
+            />
+          )}
+        />
       </View>
     );
   };
 
   const onSubmit = (data: any) => {
-    let payload = {
-      _id: userDetails?._id,
-      name: data?.name,
-      address: data?.address,
+    let updatedFields: any = {
+      _id: userDetails._id,
     };
-    mutationUpdateProfileInfo?.mutate(payload);
+
+    if (data?.name !== userDetails?.name) {
+      updatedFields.name = data?.name;
+    }
+
+    if (data?.email !== userDetails?.email?.value) {
+      updatedFields.email = data?.email;
+    }
+
+    if (Object.keys(updatedFields).length > 1) {
+      mutationUpdateProfileInfo?.mutate(updatedFields);
+    } else {
+      TOAST?.error(t("makeChangesToSave"));
+    }
   };
 
   const handleRefreshUser = async () => {
     try {
       await refreshUser();
     } catch (error) {
-      TOAST?.error("Error while refreshing user.");
+      console.error("Error while refreshing user - ", error);
       TOAST?.error("Error while refreshing user");
     }
   };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          headerTitle: "",
-        }}
-      />
-
       <Loader
         loading={
           mutationUpdateProfileInfo?.isPending ||
           mutationAddSkills?.isPending ||
+          mutationRemoveSkill?.isPending ||
           isLoading
         }
       />
-      <ScrollView style={styles.container}>
-        <View style={styles.userInfoSection}>
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "space-between",
-              marginTop: 50,
-            }}
-          >
-            <AvatarComponent
-              isEditable={false}
-              // isLoading={mutationUploadProfileImage?.isPending}
-              profileImage={profilePicture}
-              // onUpload={mutationUploadProfileImage?.mutate}
-            />
-            <View
-              style={{
-                flex: 1,
-                marginHorizontal: 10,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <CustomHeading>{userDetails?.name || "Name"}</CustomHeading>
-              <CustomText style={styles.caption}>
-                {userDetails?.role}
-              </CustomText>
+      <View style={styles.container}>
+        <ProfileTabs
+          tabPositions={{
+            "Profile Information": 0,
+            "Other Information": 1,
+          }}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
+        {selectedTab === "Profile Information" ? (
+          <ScrollView>
+            <View style={styles.userInfoSection}>
+              <AvatarComponent
+                isLoading={
+                  userDetails?.profilePictureUploading?.status ===
+                    "UPLOADING" || mutationUpdateProfilePicture?.isPending
+                }
+                isEditable={true}
+                onUpload={handleProfilePictureSubmit}
+                profileImage={profilePicture}
+              />
+              <CustomHeading baseFont={22} style={{ marginTop: 10 }}>
+                {userDetails?.name || "Name"}
+              </CustomHeading>
             </View>
-          </View>
-        </View>
 
-        {(userDetails?.status === "SUSPENDED" ||
-          userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
-        {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
-        <View
-          style={[
-            styles?.changeRoleWrapper,
-            userDetails?.status !== "ACTIVE" && {
-              pointerEvents: "none",
-              opacity: 0.5,
-            },
-          ]}
-        >
-          {/* <Button
-            disabled={false}
-            style={styles?.mediatorButton}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title="Change Role"
-            onPress={handleChangeRole}
-          /> */}
+            {(!userDetails?.email?.value ||
+              !userDetails?.address ||
+              !userDetails?.dateOfBirth ||
+              !userDetails?.gender) && <ProfileNotification />}
 
-          <Button
-            disabled={false}
-            style={{ ...styles?.mediatorButton, width: "54%" }}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title={t("refreshUser")}
-            onPress={handleRefreshUser}
-          />
-          <Button
-            style={{
-              ...styles?.mediatorButton,
-              width: "40%",
-              backgroundColor: Colors?.black,
-              borderColor: Colors?.black,
-            }}
-            textStyle={styles?.mediatorButtonText}
-            isPrimary={true}
-            title={t('editProfile')}
-            onPress={() => {
-              return !isEditProfile && handleEditProfile();
-            }}
-          />
-          <ModalComponent
-            visible={isEditProfile}
-            title={t("editProfile")}
-            onClose={() => setIsEditProfile(false)}
-            content={modalContent}
-            primaryButton={{
-              action: handleSubmit(onSubmit),
-            }}
-            secondaryButton={{
-              action: () => setIsEditProfile(false),
-            }}
-          />
-        </View>
+            {(userDetails?.status === "SUSPENDED" ||
+              userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
 
-        <StatsCard />
+            {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
 
-        <UserInfoComponent user={userDetails} />
+            <View style={styles?.changeRoleWrapper}>
+              <Button
+                disabled={false}
+                style={{ ...styles?.mediatorButton }}
+                textStyle={styles?.mediatorButtonText}
+                isPrimary={true}
+                title={t("refreshUser")}
+                onPress={handleRefreshUser}
+              />
+              <View style={[{ justifyContent: "flex-end" }, { width: "45%" }]}>
+                <Button
+                  textStyle={styles?.mediatorButtonText}
+                  isPrimary={true}
+                  title={t("editProfile")}
+                  onPress={() => !isEditProfile && handleEditProfile()}
+                  style={{ flex: 1 }}
+                />
+              </View>
+              <ModalComponent
+                visible={isEditProfile}
+                title={t("editProfile")}
+                onClose={() => setIsEditProfile(false)}
+                content={modalContent}
+                primaryButton={{
+                  action: handleSubmit(onSubmit),
+                }}
+                secondaryButton={{
+                  action: () => setIsEditProfile(false),
+                }}
+              />
+            </View>
 
-        <ServiceInformation
-          information={userDetails?.serviceDetails}
-          style={{ marginLeft: 20 }}
-        />
+            {userDetails?.employedBy && (
+              <TeamAdminCard admin={userDetails?.employedBy} />
+            )}
 
-        <WorkInformation
-          information={userDetails?.workDetails}
-          style={{ marginLeft: 20 }}
-        />
+            <StatsCard />
 
-        <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
-      </ScrollView>
+            <SkillSelector
+              canAddSkills={true}
+              isShowLabel={true}
+              style={styles?.skillsContainer}
+              userSkills={userDetails?.skills}
+              handleAddSkill={mutationAddSkills?.mutate}
+              handleRemoveSkill={mutationRemoveSkill?.mutate}
+              availableSkills={WORKERTYPES}
+            />
+
+            <UserInfoComponent user={userDetails} />
+
+            <WorkInformation
+              information={userDetails?.workDetails}
+              style={{ marginLeft: 20 }}
+            />
+
+            <View style={{ paddingTop: 20 }}>
+              <ServiceInformation
+                information={userDetails?.serviceDetails}
+                style={{ marginLeft: 20 }}
+              />
+            </View>
+
+            <CustomText style={styles.copyright}>
+              © 2024 KAARYA. All rights reserved.
+            </CustomText>
+          </ScrollView>
+        ) : (
+          <ScrollView>
+            <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
+            <CustomText style={styles.copyright}>
+              © 2024 KAARYA. All rights reserved.
+            </CustomText>
+          </ScrollView>
+        )}
+      </View>
     </>
   );
 };
 
-export default AdminProfile;
+export default UserProfile;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    backgroundColor: Colors?.fourth,
+    position: "relative",
+    top: 0,
   },
   changeRoleWrapper: {
     paddingHorizontal: 20,
+    marginTop: 10,
     marginBottom: 20,
     display: "flex",
     flexDirection: "row",
@@ -381,35 +474,22 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  caption: {
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 0,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    width: 130,
-    padding: 6,
-    borderRadius: 30,
-    textAlign: "center",
-    textTransform: "uppercase",
-    backgroundColor: "#d6ecdd",
+    paddingTop: 30,
+    paddingBottom: 15,
   },
   mediatorButton: {
+    flex: 1,
     borderWidth: 2,
     backgroundColor: "#fa6400",
     borderColor: "#fa6400",
-    paddingVertical: 6,
-    paddingHorizontal: 25,
-    marginTop: 16,
   },
   mediatorButtonText: {
     fontWeight: "500",
     fontSize: 16,
   },
   formContainer: {
-    marginVertical: 20,
+    paddingVertical: 20,
+    gap: 20,
   },
   inputContainer: {
     height: 53,
@@ -424,7 +504,6 @@ const styles = StyleSheet.create({
   textInput2: {
     flex: 1,
     paddingHorizontal: 10,
-    // fontFamily: fonts.Light,
   },
 
   skillsContainer: {
@@ -432,8 +511,57 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flexDirection: "column",
     marginBottom: 5,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors?.background,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
+  },
+  disableButton: {
+    pointerEvents: "none",
+    opacity: 0.5,
+    width: "45%",
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    // backgroundColor: Colors.primary,
+    // paddingVertical: 10,
+    position: "fixed",
+    top: 0,
+    left: 0,
+  },
+  tab: {
+    paddingVertical: 20,
+    flex: 1,
+    alignItems: "center",
+  },
+  activeTab: {
+    borderBottomWidth: 3,
+    borderBottomColor: Colors.tertiery,
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.primary,
+  },
+  activeTabText: {
+    color: Colors.tertiery,
+  },
+  profileContent: {
+    padding: 20,
+    alignItems: "center",
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  otherContent: {
+    padding: 20,
+  },
+  copyright: {
+    marginVertical: 20,
   },
 });

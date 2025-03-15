@@ -92,7 +92,7 @@ const Requests = () => {
   );
 
   if (isLoading) {
-    return <OnPageLoader />;
+    return <OnPageLoader parentStyle={{ flex: 1 }} />;
   }
 
   return (

@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
   row: {
     marginTop: 5,
     flexDirection: "row",
-    marginBottom: 8,
     backgroundColor: Colors?.background,
   },
   userInfoTextWrapper: {
