@@ -17,6 +17,9 @@ import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
+import ShowDistance from "./ShowDistance";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const ListingsVerticalWorkers = ({
   availableInterest,
@@ -26,6 +29,8 @@ const ListingsVerticalWorkers = ({
   refreshControl,
   type,
 }: any) => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
   const RenderItem = React.memo(({ item }: any) => {
     return (
       <View style={styles.container}>
@@ -66,7 +71,7 @@ const ListingsVerticalWorkers = ({
                   tagTextStyle={styles?.skillTagText}
                   userSkills={item?.skills}
                   availableSkills={availableInterest}
-                  count={5}
+                  count={2}
                 />
 
                 <CustomHeading textAlign="left">{item?.name}</CustomHeading>
@@ -77,6 +82,10 @@ const ListingsVerticalWorkers = ({
                 <RatingAndReviews
                   rating={item?.rating?.average}
                   reviews={item?.rating?.count}
+                />
+                <ShowDistance
+                  loggedInUserLocation={userDetails?.location}
+                  targetLocation={item?.location}
                 />
               </View>
             </View>
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
   ratingPriceContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignSelf: "flex-end",
+    alignItems: "flex-end",
     marginTop: 8,
   },
   priceContainer: {

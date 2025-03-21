@@ -47,7 +47,6 @@ const AddReview = () => {
         },
       }),
     onSuccess: (response) => {
-      TOAST?.success(t("reviewAddedSuccessfully"));
       queryClient.invalidateQueries({ queryKey: ["reviews", id] });
       queryClient.invalidateQueries({
         queryKey: ["userDetails", id],
@@ -76,7 +75,6 @@ const AddReview = () => {
         },
       }),
     onSuccess: (response) => {
-      TOAST?.success(t("reviewEditedSuccessfully"));
       queryClient.invalidateQueries({ queryKey: ["reviews", id] });
       queryClient.invalidateQueries({
         queryKey: ["userDetails", JSON.parse(data)?.reviewee],

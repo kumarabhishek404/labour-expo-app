@@ -5,19 +5,30 @@ import {
   TouchableOpacity,
   Animated,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 
-const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
+const ProfileTabs = ({
+  tabs,
+  selectedTab,
+  setSelectedTab,
+  containerStyle,
+}: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
+  const { width } = Dimensions.get("window");
+
+  const tabWidth = width / tabs.length; // Calculate tab width percentage
+
   useEffect(() => {
+    const index = tabs.indexOf(selectedTab);
     Animated.parallel([
       Animated.spring(translateX, {
-        toValue: tabPositions[selectedTab] * 180, // Adjust based on tab width
+        toValue: index * (tabWidth), // Adjust based on tab width
         useNativeDriver: true,
         friction: 6,
       }),
@@ -35,47 +46,31 @@ const ProfileTabs = ({ tabPositions, selectedTab, setSelectedTab }: any) => {
   }, [selectedTab]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <View style={styles.tabContainer}>
         <Animated.View
-          style={[styles.activeIndicator, { transform: [{ translateX }] }]}
+          style={[
+            styles.activeIndicator,
+            { transform: [{ translateX }], width: `${tabWidth/ 4}%` },
+          ]}
         />
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => setSelectedTab("Profile Information")}
-        >
-          <Animated.Text
-            style={[
-              styles.tabText,
-              selectedTab === "Profile Information" && styles.activeTabText,
-              {
-                opacity:
-                  selectedTab === "Profile Information" ? opacityAnim : 0.6,
-              },
-            ]}
+        {tabs.map((tab: string) => (
+          <TouchableOpacity
+            key={tab}
+            style={styles.tab}
+            onPress={() => setSelectedTab(tab)}
           >
-            {t("profileInformation")}
-          </Animated.Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => setSelectedTab("Other Information")}
-        >
-          <Animated.Text
-            style={[
-              styles.tabText,
-              selectedTab === "Other Information" && styles.activeTabText,
-              {
-                opacity:
-                  selectedTab === "Other Information" ? opacityAnim : 0.6,
-              },
-            ]}
-          >
-            {t("otherInformation")}
-          </Animated.Text>
-        </TouchableOpacity>
+            <Animated.Text
+              style={[
+                styles.tabText,
+                selectedTab === tab && styles.activeTabText,
+                { opacity: selectedTab === tab ? opacityAnim : 0.6 },
+              ]}
+            >
+              {t(tab)}
+            </Animated.Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
@@ -109,7 +104,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    width: "50%", // Adjust based on the width of your tabs
     height: 3,
     backgroundColor: Colors.heading,
     borderRadius: 8,

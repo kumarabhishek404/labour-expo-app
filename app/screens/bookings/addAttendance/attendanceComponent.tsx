@@ -14,6 +14,7 @@ import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { t } from "@/utils/translationHelper";
+import ShowAddress from "@/components/commons/ShowAddress";
 
 export default function AttendanceScreenComponent({
   handleSave,
@@ -66,6 +67,7 @@ export default function AttendanceScreenComponent({
               </View>
               <View>
                 <Text style={styles.workerName}>{worker?.name}</Text>
+                <ShowAddress address={worker?.address} />
                 <Text style={styles.workerAddress}>
                   {worker?.address || t("addressNotFound")}
                 </Text>

@@ -26,8 +26,11 @@ import { t } from "@/utils/translationHelper";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
 import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
+import ShowAddress from "./ShowAddress";
+import { handleCall } from "@/constants/functions";
 
 interface ApplicantsProps {
+  type?: string;
   title: string;
   applicants: any;
   serviceId: string;
@@ -39,6 +42,7 @@ interface ApplicantsProps {
 }
 
 const Applicants = ({
+  type,
   title,
   applicants,
   serviceId,
@@ -77,6 +81,21 @@ const Applicants = ({
     },
     onError: (err) => {
       console.error("error while rejecting an selected worker ", err);
+    },
+  });
+
+  const mutationCancelSelectedWorker = useMutation({
+    mutationKey: ["cancelSelectedWorker", { serviceId }],
+    mutationFn: (userId) =>
+      EMPLOYER?.cancelSelectedWorker({ serviceId: serviceId, userId: userId }),
+    onSuccess: (response) => {
+      refetchSelectedApplicants();
+      refetch();
+      TOAST?.success(t("cancelSelectedWorkerSuccess"));
+      console.log("Response while cancelling an selected worker - ", response);
+    },
+    onError: (err) => {
+      console.error("error while cancelling an selected worker ", err);
     },
   });
 
@@ -123,21 +142,18 @@ const Applicants = ({
                     <ProfilePicture uri={appliedUser?.profilePicture} />
                     <View style={styles.productInfo}>
                       <View style={styles?.titleContainer}>
-                        <CustomHeading baseFont={14}>
+                        <CustomHeading baseFont={18}>
                           {appliedUser?.name}
                         </CustomHeading>
                       </View>
 
-                      <ShowSkills
-                        type="small"
-                        userSkills={appliedUser?.skills}
-                      />
-                      <View style={styles.recommendationContainer}>
-                        <Ionicons name="location" size={14} color="gray" />
-                        <CustomText textAlign="left">
-                          {appliedUser?.address || "Not provided"}
-                        </CustomText>
-                      </View>
+                      {workers?.length === 0 && (
+                        <ShowSkills
+                          type="small"
+                          userSkills={appliedUser?.skills}
+                        />
+                      )}
+                      <ShowAddress address={appliedUser?.address} />
                     </View>
                     <View
                       style={{
@@ -145,32 +161,24 @@ const Applicants = ({
                         justifyContent: "flex-start",
                       }}
                     >
-                      <Button
-                        style={{
-                          paddingVertical: 4,
-                          paddingHorizontal: 8,
-                          marginTop: 6,
-                          minHeight: 30,
-                        }}
-                        textStyle={{
-                          fontSize: 14,
-                        }}
-                        isPrimary={false}
-                        title="Details"
+                      <TouchableOpacity
                         onPress={() =>
                           router?.push({
                             pathname: "/screens/users/[id]",
                             params: {
                               id: appliedUser?._id,
-                              role: "workers",
-                              type: "applicant",
+                              title: workers?.length > 0 ? "mediatorDetails" : "workerDetails"
                             },
                           })
                         }
-                      />
+                      >
+                        <CustomText fontWeight="600" color={Colors?.link}>
+                          {t("showDetails")}
+                        </CustomText>
+                      </TouchableOpacity>
                     </View>
                   </View>
-                  {/* Add workers section */}
+
                   {workers?.length > 0 && (
                     <View style={styles.workersContainer}>
                       <TouchableOpacity
@@ -185,7 +193,7 @@ const Applicants = ({
                             color={Colors.primary}
                           />
                           <CustomText style={styles.workersTitle}>
-                            Associated Workers ({workers?.length})
+                            {t("associatedWorkers", { count: workers?.length })}
                           </CustomText>
                         </View>
                         <Animated.View
@@ -224,85 +232,184 @@ const Applicants = ({
                         >
                           {workers?.map((worker: any, workerIndex: number) => (
                             <View key={workerIndex} style={styles.workerItem}>
-                              <ProfilePicture uri={worker?.profilePicture} />
                               <View style={styles.workerInfo}>
-                                <CustomText style={styles.workerName}>
-                                  {worker?.name}
-                                </CustomText>
-                                <ShowSkills
-                                  type="small"
-                                  userSkills={worker?.skills}
-                                />
+                                <ProfilePicture uri={worker?.profilePicture} />
+                                <View style={{ flex: 1 }}>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <CustomText
+                                      style={styles.workerName}
+                                      fontWeight="600"
+                                      textAlign="left"
+                                    >
+                                      {worker?.name}
+                                    </CustomText>
+                                    <TouchableOpacity
+                                      onPress={() =>
+                                        router?.push({
+                                          pathname: "/screens/users/[id]",
+                                          params: {
+                                            id: worker?._id,
+                                            title: "workerDetails"
+                                          },
+                                        })
+                                      }
+                                    >
+                                      <CustomText
+                                        fontWeight="600"
+                                        color={Colors?.link}
+                                      >
+                                        {t("showDetails")}
+                                      </CustomText>
+                                    </TouchableOpacity>
+                                  </View>
+                                  <ShowAddress address={worker?.address} />
+                                </View>
                               </View>
+                              <ShowSkills
+                                type="small"
+                                userSkills={worker?.skills}
+                              />
                             </View>
                           ))}
                         </Animated.View>
                       )}
                     </View>
                   )}
-                  <View
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      alignItems: "flex-start",
-                      gap: 10,
-                      marginTop: 10,
-                    }}
-                  >
-                    <Button
+                  
+                  {type === "selectedApplicants" ? (
+                    <View
                       style={{
-                        minHeight: 30,
-                        width: "30%",
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: 10,
+                        marginTop: 10,
                       }}
-                      bgColor={Colors?.danger}
-                      borderColor={Colors?.danger}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      icon={
-                        <FontAwesome
-                          name="remove"
-                          size={14}
-                          color="white"
-                          style={{ marginRight: 4 }}
-                        />
-                      }
-                      isPrimary={true}
-                      title={t("reject")}
-                      onPress={() =>
-                        mutationRejectWorker?.mutate(appliedUser?._id)
-                      }
-                    />
-                    <Button
+                    >
+                      <Button
+                        style={{
+                          width: "30%",
+                          paddingVertical: 4,
+                          paddingHorizontal: 6,
+                        }}
+                        bgColor={Colors?.danger}
+                        borderColor={Colors?.danger}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        icon={
+                          <FontAwesome
+                            name="remove"
+                            size={14}
+                            color="white"
+                            style={{ marginRight: 4 }}
+                          />
+                        }
+                        isPrimary={true}
+                        title="Remove"
+                        onPress={() =>
+                          mutationCancelSelectedWorker?.mutate(appliedUser?._id)
+                        }
+                      />
+                      <Button
+                        style={{
+                          width: "40%",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                        }}
+                        bgColor={Colors?.success}
+                        borderColor={Colors?.success}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        icon={
+                          <FontAwesome
+                            name="phone"
+                            size={16}
+                            color="white"
+                            style={{ marginRight: 6 }}
+                          />
+                        }
+                        isPrimary={true}
+                        title={
+                          workers && workers?.length > 0
+                            ? t("callMediator")
+                            : t("callWorker")
+                        }
+                        onPress={() => handleCall(appliedUser?.mobile)}
+                      />
+                    </View>
+                  ) : (
+                    <View
                       style={{
-                        minHeight: 30,
-                        width: "40%",
-                        paddingVertical: 4,
-                        paddingHorizontal: 8,
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "flex-start",
+                        gap: 10,
+                        marginTop: 10,
                       }}
-                      bgColor={Colors?.success}
-                      borderColor={Colors?.success}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      icon={
-                        <Entypo
-                          name="check"
-                          size={14}
-                          color="white"
-                          style={{ marginRight: 4 }}
-                        />
-                      }
-                      isPrimary={true}
-                      title="Select"
-                      onPress={() =>
-                        mutationSelectWorker?.mutate(appliedUser?._id)
-                      }
-                    />
-                  </View>
+                    >
+                      <Button
+                        style={{
+                          minHeight: 30,
+                          width: "30%",
+                          paddingVertical: 4,
+                          paddingHorizontal: 6,
+                        }}
+                        bgColor={Colors?.danger}
+                        borderColor={Colors?.danger}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        icon={
+                          <FontAwesome
+                            name="remove"
+                            size={14}
+                            color="white"
+                            style={{ marginRight: 4 }}
+                          />
+                        }
+                        isPrimary={true}
+                        title={t("reject")}
+                        onPress={() =>
+                          mutationRejectWorker?.mutate(appliedUser?._id)
+                        }
+                      />
+                      <Button
+                        style={{
+                          minHeight: 30,
+                          width: "40%",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                        }}
+                        bgColor={Colors?.success}
+                        borderColor={Colors?.success}
+                        textStyle={{
+                          fontSize: 14,
+                        }}
+                        icon={
+                          <Entypo
+                            name="check"
+                            size={14}
+                            color="white"
+                            style={{ marginRight: 4 }}
+                          />
+                        }
+                        isPrimary={true}
+                        title="Select"
+                        onPress={() =>
+                          mutationSelectWorker?.mutate(appliedUser?._id)
+                        }
+                      />
+                    </View>
+                  )}
                 </View>
               );
             })}
@@ -330,6 +437,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: Colors.background,
     gap: 5,
+    marginBottom: 20,
   },
   applicantList: {
     flex: 1,
@@ -384,14 +492,14 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: Colors?.fourth,
     borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   workersTitleContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 6,
+    paddingVertical: 10,
   },
   workersTitleLeft: {
     flexDirection: "row",
@@ -405,14 +513,13 @@ const styles = StyleSheet.create({
   },
   workersGrid: {
     gap: 8,
-    marginTop: 10,
+    marginTop: 5,
     borderTopWidth: 1,
     borderTopColor: "#e9ecef",
-    paddingTop: 10,
   },
   workerItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-start",
     backgroundColor: Colors.white,
     padding: 8,
     borderRadius: 6,
@@ -423,12 +530,11 @@ const styles = StyleSheet.create({
   workerInfo: {
     flex: 1,
     gap: 4,
+    flexDirection: "row",
     alignItems: "flex-start",
   },
   workerName: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#2c3e50",
+    marginLeft: 10,
   },
   emptyContainer: {
     marginBottom: 20,

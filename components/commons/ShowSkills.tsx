@@ -23,7 +23,7 @@ const ShowSkills = ({
       <MaterialCommunityIcons
         name="hammer-wrench"
         size={16}
-        color={Colors.primary}
+        color={Colors.tertieryButton}
         style={{ paddingTop: 3 }}
       />
       {type === "small" ? (

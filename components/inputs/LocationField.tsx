@@ -27,14 +27,14 @@ const LocationField = ({
 }: LocationFieldProps) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
-  console.log("userDetails?.savedAddresses--", userDetails?.savedAddresses);
-  
   const [allSavedAddresses, setAllSavedAddresses] = useState([
     ...(userDetails?.savedAddresses?.length > 0
       ? convertToLabelValueArray(userDetails?.savedAddresses)
       : []),
   ]);
 
+  console.log("userDetails?.savedAddresses --", userDetails?.address);
+  
   useEffect(() => {
     if (userDetails?.savedAddresses) {
       const uniqueAddresses = Array.from(
@@ -80,6 +80,7 @@ const LocationField = ({
         }
       />
       <AddAddressDrawer
+        type="secondary"
         visible={isModalVisible}
         isMainAddress={false}
         onClose={() => setIsModalVisible(false)}

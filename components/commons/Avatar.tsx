@@ -28,7 +28,7 @@ const AvatarComponent = ({
   profileImage,
   onUpload,
   style,
-  avatarWrapperStyle
+  avatarWrapperStyle,
 }: AvatarProps) => {
   const pickImage = async () => {
     let result: any = await ImagePicker.launchImageLibraryAsync({
@@ -37,11 +37,10 @@ const AvatarComponent = ({
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.cancelled) {
+  
+    if (!result.canceled) {
       try {
-        let response = await onUpload(result?.assets[0]?.uri);
-        console.log(" Resppsne ---", response);
+        await onUpload(result?.assets[0]?.uri);
       } catch (err) {
         console.log("Error --", err);
       }

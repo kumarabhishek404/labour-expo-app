@@ -214,6 +214,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
       />
 
       <AddAddressDrawer
+        type="primary"
         userId={userDetails?._id}
         visible={isAddAddress}
         isMainAddress={true}

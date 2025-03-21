@@ -117,8 +117,8 @@ const OnboardingScreen = () => {
           <TouchableOpacity style={styles.button} onPress={handleNext}>
             <Text style={styles.buttonText}>
               {currentSlideIndex === ONBOARDING_SLIDE.length - 1
-                ? "Get Started"
-                : "Next"}
+                ? t('getStarted')
+                : t('next')}
             </Text>
           </TouchableOpacity>
         </View>

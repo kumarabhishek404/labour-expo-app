@@ -23,6 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import Loader from "./Loaders/Loader";
 import ProfilePicture from "./ProfilePicture";
 import Colors from "@/constants/Colors";
+import ShowAddress from "./ShowAddress";
 
 type Review = {
   _id: string;
@@ -148,7 +149,6 @@ const UserReviews = forwardRef(
           reviewId,
         }),
       onSuccess: (response) => {
-        TOAST?.success(t("reviewDeletedSuccessfully"));
         refetch();
         queryClient.invalidateQueries({
           queryKey: ["userDetails", workerId],
@@ -168,9 +168,12 @@ const UserReviews = forwardRef(
         <View style={styles.reviewCard}>
           <ProfilePicture uri={item?.reviewer?.profilePicture} />
           <View style={styles.textContainer}>
-            <Text style={styles.name} numberOfLines={2}>
-              {item?.reviewer?.name}
-            </Text>
+            <View style={styles?.textBox}>
+              <Text style={styles.name} numberOfLines={2}>
+                {item?.reviewer?.name}
+              </Text>
+              <ShowAddress address={item?.reviewer?.address} />
+            </View>
             <Text style={styles.date}>{getTimeAgo(item?.createdAt)}</Text>
           </View>
         </View>
@@ -367,6 +370,12 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  textBox: {
+    flex: 1,
   },
   name: {
     fontSize: 16,
@@ -376,7 +385,6 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 12,
     color: "#666",
-    marginVertical: 4,
   },
   ratingContainer: {
     flexDirection: "row",

@@ -18,12 +18,20 @@ import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import ScrollingText from "./ScrollingText";
 import DateDisplay from "./ShowDate";
+import ShowAddress from "./ShowAddress";
+import ShowDistance from "./ShowDistance";
+import ShowDuration from "./ShowDuration";
+import ShowFacilities from "./ShowFacilities";
 
 const ListingsServices = ({ item }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const proposals =
     item?.appliedUsers?.filter((user: any) => user?.status === "PENDING")
+      ?.length || 0;
+
+  const selectedWorkers =
+    item?.selectedUsers?.filter((user: any) => user?.status === "SELECTED")
       ?.length || 0;
 
   const isSelected = item?.selectedUsers?.some(
@@ -38,11 +46,6 @@ const ListingsServices = ({ item }: any) => {
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
           <TouchableOpacity>
-            {/* <View style={[styles?.tag, { backgroundColor: Colors?.primary }]}>
-              <CustomText color={Colors?.white} fontWeight="bold">
-                {t("servicePost")}
-              </CustomText>
-            </View> */}
             <View style={styles.item}>
               <Image
                 source={
@@ -52,7 +55,45 @@ const ListingsServices = ({ item }: any) => {
                 }
                 style={styles.image}
               />
-              {isSelected && (
+
+              {userDetails?._id === item?.employer && (
+                <View
+                  style={[
+                    styles.applicants,
+                    { backgroundColor: Colors?.white, gap: 20 },
+                  ]}
+                >
+                  <View style={styles?.proposalsItem}>
+                    <Ionicons
+                      name="happy"
+                      size={20}
+                      color={Colors.tertieryButton}
+                    />
+                    <View style={styles?.proposalsItemText}>
+                      <CustomHeading color={Colors?.tertieryButton}>
+                        {selectedWorkers}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.tertieryButton}>
+                        {t("selected")}
+                      </CustomHeading>
+                    </View>
+                  </View>
+
+                  <View style={styles?.proposalsItem}>
+                    <Fontisto name="persons" size={18} color={Colors.primary} />
+                    <View style={styles?.proposalsItemText}>
+                      <CustomHeading color={Colors?.primary}>
+                        {proposals}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.primary}>
+                        {t("proposals")}
+                      </CustomHeading>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {userDetails?._id !== item?.employer && isSelected && (
                 <View
                   style={[
                     styles.applicants,
@@ -66,7 +107,7 @@ const ListingsServices = ({ item }: any) => {
                 </View>
               )}
 
-              {proposals > 0 && !isSelected && (
+              {userDetails?._id !== item?.employer && proposals > 0 && (
                 <View style={styles.applicants}>
                   <Fontisto name="persons" size={18} color={Colors.white} />
                   <CustomHeading color={Colors?.white}>
@@ -122,80 +163,22 @@ const ListingsServices = ({ item }: any) => {
                       alignItems: "flex-start",
                     }}
                   >
-                    <FontAwesome5
-                      name="map-marker-alt"
-                      size={16}
-                      color={Colors.primary}
-                    />
-                    <CustomText
-                      baseFont={16}
-                      textAlign="left"
-                      style={{ marginLeft: 5, marginRight: 10 }}
-                    >
-                      {item?.address}
-                    </CustomText>
+                    <ShowAddress address={item?.address} />
                   </View>
 
                   <DateDisplay date={item?.startDate} />
                 </View>
 
                 <View style={styles?.actionContainer}>
-                  <CustomText textAlign="right">
-                    {t("duration")}{" "}
-                    {item?.duration ||
-                      dateDifference(item?.startDate, item?.endDate)}{" "}
-                    {t("days")}
-                  </CustomText>
+                  <ShowDuration duration={item?.duration} alignment="right" />
 
-                  {item?.location &&
-                    item?.location?.latitude &&
-                    userDetails?.location &&
-                    !isNaN(
-                      calculateDistance(item?.location, userDetails?.location)
-                    ) && (
-                      <CustomHeading>
-                        {calculateDistance(
-                          item?.location,
-                          userDetails?.location
-                        )}{" "}
-                        {t("kms")}
-                      </CustomHeading>
-                    )}
+                  <ShowDistance
+                    loggedInUserLocation={userDetails?.location}
+                    targetLocation={item?.location}
+                  />
                 </View>
               </View>
-              {item?.facilities &&
-                Object.values(item.facilities).some(Boolean) && (
-                  <View style={styles?.facilitiesHeading}>
-                    <ScrollingText
-                      text={t("facilitiesOf", {
-                        facilities: (() => {
-                          const filteredFacilities = [
-                            "food",
-                            "living",
-                            "travelling",
-                          ]
-                            .filter((facility) => item.facilities[facility])
-                            .map((facility) => t(facility));
-
-                          return filteredFacilities.length > 1
-                            ? filteredFacilities.slice(0, -1).join(", ") +
-                                " " +
-                                t("and") +
-                                " " +
-                                filteredFacilities.slice(-1)
-                            : filteredFacilities.join("");
-                        })(),
-                      })}
-                      icon={
-                        <Ionicons
-                          name="happy-outline"
-                          size={16}
-                          color={Colors.tertieryButton}
-                        />
-                      }
-                    />
-                  </View>
-                )}
+              <ShowFacilities facilities={item?.facilities} />
             </View>
           </TouchableOpacity>
         </Link>
@@ -247,6 +230,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  proposalsItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  proposalsItemText: {
+    flexDirection: "row",
+    gap: 5,
   },
   applicantsValue: {
     color: Colors?.white,
@@ -309,10 +301,5 @@ const styles = StyleSheet.create({
     color: Colors?.white,
     textAlign: "center",
     fontWeight: "600",
-  },
-  facilitiesHeading: {
-    width: "100%",
-    marginBottom: 10,
-    marginTop: 10,
   },
 });

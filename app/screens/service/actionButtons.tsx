@@ -28,6 +28,7 @@ import EMPLOYER from "@/app/api/employer";
 import { useAtom, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import AddSkillDrawer from "@/components/commons/AddSkillModal";
+import ApplyAsMediatorDrawer from "@/components/commons/ApplyAsMediatorDrawer";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -86,6 +87,10 @@ const ServiceActionButtons = ({
 }: ServiceActionButtonsProps) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedWorkers, setSelectedWorkers] = useState(selectedWorkersIds);
+  const [isSelectSkillModal, setIsSelectSkillModal] = useState(false);
+  const [matchedSkills, setMatchedSkills] = useState([]);
+  const [selectedSkill, setSelectedSkill] = useState("");
+
   const [isAddSkill, setIsAddSkill] = useState(false);
 
   const hasUsersAppliedOrSelected =
@@ -128,6 +133,9 @@ const ServiceActionButtons = ({
     onSuccess: async (response) => {
       setIsWorkerSelectModal(false);
       setSelectedWorkersIds([]);
+      setIsSelectSkillModal(false);
+      setMatchedSkills([]);
+      setSelectedSkill("");
       refetch();
       refreshUser();
       TOAST?.success(t("serviceAppliedSuccessfully"));
@@ -218,19 +226,45 @@ const ServiceActionButtons = ({
   };
 
   const handleApply = () => {
-    if (userDetails?.skills && userDetails?.skills?.length === 0) {
+    if (!userDetails?.skills || userDetails?.skills?.length === 0) {
       return setIsAddSkill(true);
     }
-    if (members && members?.length > 0) setIsWorkerSelectModal(true);
-    // for worker
-    else mutationApplyService.mutate({ workers: [], serviceId: id });
+
+    const serviceRequirements =
+      service?.requirements?.map((req: any) => req?.name?.toLowerCase()) || [];
+
+    // Check the matched skills of the individual worker
+    const matchedSkills = userDetails.skills
+      .map((skill: any) => skill.skill.toLowerCase())
+      .filter((skill: any) => serviceRequirements.includes(skill));
+
+    if (members && members.length > 0) {
+      // Mediator applying with workers
+      setIsWorkerSelectModal(true);
+    } else {
+      // Individual worker applying
+      if (matchedSkills.length === 0) {
+        return setIsAddSkill(true); // No valid skill found, prompt user to add skill
+      } else if (matchedSkills.length === 1) {
+        // Apply with the only matched skill
+        mutationApplyService.mutate({
+          workers: [],
+          serviceId: id,
+          skill: matchedSkills[0],
+        });
+      } else {
+        // Open skill selection popup
+        setMatchedSkills(matchedSkills);
+        setIsSelectSkillModal(true);
+      }
+    }
   };
 
   const handleCancelApply = () => {
-    if (members && members?.length > 0 && selectedWorkersIds?.length > 0)
-      setIsWorkerSelectModal(true);
-    // for worker
-    else mutationUnApplyService.mutate();
+    // if (members && members?.length > 0 && selectedWorkersIds?.length > 0)
+    //   setIsWorkerSelectModal(true);
+    // // for worker
+    mutationUnApplyService.mutate();
   };
 
   const renderButtons = () => {
@@ -458,6 +492,42 @@ const ServiceActionButtons = ({
     );
   };
 
+  const selectSkillModelContent = () => {
+    return (
+      <View style={styles.modalContent}>
+        {matchedSkills && matchedSkills.length > 0 && (
+          <View style={{ paddingBottom: 110 }}>
+            {matchedSkills.map((skill: any) => (
+              <TouchableOpacity
+                key={skill}
+                style={[
+                  styles.skillItem,
+                  selectedSkill === skill && styles.selectedSkillItem,
+                ]}
+                onPress={() => setSelectedSkill(skill)}
+              >
+                <CustomCheckbox
+                  checkboxStyle={{ marginRight: 6 }}
+                  disabled={!!isServiceApplied}
+                  isChecked={selectedSkill === skill}
+                  onToggle={() => setSelectedSkill(skill)}
+                />
+
+                <CustomText
+                  baseFont={20}
+                  fontWeight="600"
+                  style={styles?.skillText}
+                >
+                  {skill}
+                </CustomText>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+    );
+  };
+
   const completeServiceModalContent = () => {
     return (
       <View style={styles.modalView}>
@@ -528,7 +598,7 @@ const ServiceActionButtons = ({
         }}
       />
 
-      <ModalComponent
+      {/* <ModalComponent
         title={isServiceApplied ? t("selectedWorkers") : t("selectWorkers")}
         visible={isWorkerSelectModal}
         content={mediatorModelContent}
@@ -555,11 +625,45 @@ const ServiceActionButtons = ({
           title: t("cancel"),
           action: () => setIsWorkerSelectModal(false),
         }}
+      /> */}
+
+      <ModalComponent
+        title={t("selectSkill")}
+        visible={isSelectSkillModal}
+        content={selectSkillModelContent}
+        onClose={() => setIsSelectSkillModal(false)}
+        primaryButton={{
+          title: t("apply"),
+          styles: {
+            backgroundColor: Colors?.danger,
+            borderColor: Colors?.danger,
+          },
+          action: isServiceApplied
+            ? mutationUnApplyService?.mutate
+            : () =>
+                mutationApplyService?.mutate({
+                  workers: selectedWorkers,
+                  serviceId: id,
+                }),
+        }}
+        secondaryButton={{
+          title: t("cancel"),
+          action: () => setIsSelectSkillModal(false),
+        }}
       />
 
       <AddSkillDrawer
         isDrawerVisible={isAddSkill}
         setIsDrawerVisible={setIsAddSkill}
+      />
+
+      <ApplyAsMediatorDrawer
+        isDrawerVisible={isWorkerSelectModal}
+        setIsDrawerVisible={setIsWorkerSelectModal}
+        requirements={service?.requirements}
+        teamMembers={memoizedData}
+        serviceId={service?._id}
+        applyAsMediator={mutationApplyService?.mutate}
       />
     </>
   );
@@ -732,5 +836,18 @@ const styles = StyleSheet.create({
   priceInputContainer: {
     marginTop: 20,
     marginBottom: 10,
+  },
+  skillItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 5,
+  },
+  selectedSkillItem: {
+    backgroundColor: Colors.tertiery,
+  },
+  skillText: {
+    textTransform: "capitalize",
   },
 });

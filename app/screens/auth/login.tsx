@@ -75,7 +75,7 @@ const LoginScreen = () => {
         ...user,
       });
 
-      TOAST?.success(t("loggedInSuccessfully"));
+      // TOAST?.success(t("loggedInSuccessfully"));
 
       // // Redirect based on user status
       // if (isFirstLaunch) {
@@ -95,7 +95,7 @@ const LoginScreen = () => {
       }
 
       setIsAccountInactive(false);
-      router.replace(user?.skills?.length > 0 ? "/(tabs)/fourth" : "/(tabs)");
+      router.replace(user?.skills?.length > 0 ? "/(tabs)/second" : "/(tabs)");
 
       // Fetch and update location if missing
       if (!user?.location?.latitude || !user?.location?.longitude) {

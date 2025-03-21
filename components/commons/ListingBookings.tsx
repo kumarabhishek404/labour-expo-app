@@ -17,6 +17,7 @@ import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import DateDisplay from "./ShowDate";
+import ShowAddress from "./ShowAddress";
 
 const ListingsBookings = ({ title, item, category }: any) => {
   return (
@@ -38,7 +39,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
           style={[styles?.tag, { backgroundColor: Colors?.tertieryButton }]}
         >
           <CustomText color={Colors?.white} fontWeight="bold">
-            {t('direct')}
+            {t("direct")}
           </CustomText>
         </View>
         <View style={styles.card}>
@@ -59,9 +60,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
                 {t(item?.type)} - {t(item?.subType)}
               </CustomHeading>
             </View>
-            <CustomText textAlign="left" baseFont={17} fontWeight="bold">
-              📍 {item?.address}
-            </CustomText>
+            <ShowAddress address={item?.address} />
             <DateDisplay date={item?.startDate} />
             <CustomText textAlign="left">
               ⏳ Duration:{" "}

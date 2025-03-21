@@ -83,8 +83,6 @@ const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
 };
 
 const fetchAllVillages = async (payload: any) => {
-  console.log("Paylaod ---", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest(`/service/villages`, payload);
     return data.data;

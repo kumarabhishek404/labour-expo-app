@@ -258,9 +258,14 @@ const User = () => {
               availableSkills={WORKERTYPES}
             />
 
-            <UserInfoComponent user={user} style={{ marginHorizontal: 0, marginTop: 4 }} />
+            <UserInfoComponent
+              user={user}
+              style={{ marginHorizontal: 0, marginTop: 4 }}
+            />
+            <View style={{ marginBottom: 20 }}>
+              <ServiceInformation information={user?.serviceDetails} />
+            </View>
 
-            <ServiceInformation information={user?.serviceDetails} />
             <WorkInformation information={user?.workDetails} />
 
             <WorkHistory workHistory={user?.workHistory} />

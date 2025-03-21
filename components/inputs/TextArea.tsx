@@ -30,9 +30,11 @@ const TextAreaInputComponent = ({
 }: TextInputProps) => {
   return (
     <View style={styles?.inputField}>
-      {label && <CustomHeading textAlign="left" color={Colors?.inputLabel}>
-        {t(label)}
-      </CustomHeading>}
+      {label && (
+        <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+          {t(label)}
+        </CustomHeading>
+      )}
       <View
         style={[
           styles.inputContainer,
@@ -76,8 +78,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   textInput: {
-    paddingVertical: 12,
     verticalAlign: "top",
+    paddingTop: 14,
     flex: 1,
   },
   icon: {

@@ -295,7 +295,7 @@ const ForgetPasswordScreen = () => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInputComponent
-                  label={t("mobile")}
+                  label="mobile"
                   name="mobile"
                   value={value}
                   onBlur={onBlur}

@@ -49,7 +49,7 @@ const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const [selectedTab, setSelectedTab] = useState("Profile Information");
+  const [selectedTab, setSelectedTab] = useState("profileInformation");
 
   const [isEditProfile, setIsEditProfile] = useState(false);
 
@@ -171,9 +171,7 @@ const UserProfile = () => {
     });
     formData?.append("_id", userDetails?._id);
 
-    console.log("Forrr---", formData);
-
-    await mutationUpdateProfilePicture.mutate(formData);
+    mutationUpdateProfilePicture.mutate(formData);
   };
 
   const mutationAddSkills = useMutation({
@@ -325,7 +323,7 @@ const UserProfile = () => {
       console.error("Error while refreshing user - ", error);
       TOAST?.error("Error while refreshing user");
     }
-  };
+  };  
 
   return (
     <>
@@ -339,10 +337,7 @@ const UserProfile = () => {
       />
       <View style={styles.container}>
         <ProfileTabs
-          tabPositions={{
-            "Profile Information": 0,
-            "Other Information": 1,
-          }}
+          tabs={["profileInformation", "otherInformation"]}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
@@ -350,10 +345,7 @@ const UserProfile = () => {
           <ScrollView>
             <View style={styles.userInfoSection}>
               <AvatarComponent
-                isLoading={
-                  userDetails?.profilePictureUploading?.status ===
-                    "UPLOADING" || mutationUpdateProfilePicture?.isPending
-                }
+                isLoading={mutationUpdateProfilePicture?.isPending}
                 isEditable={true}
                 onUpload={handleProfilePictureSubmit}
                 profileImage={profilePicture}

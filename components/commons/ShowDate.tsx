@@ -1,9 +1,7 @@
 import { t } from "@/utils/translationHelper";
 import React from "react";
-import { StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 import moment from "moment";
-import Colors from "@/constants/Colors";
 
 interface DateDisplayProps {
   date: Date;

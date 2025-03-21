@@ -14,6 +14,7 @@ import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation } from "@tanstack/react-query";
 import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
+import ShowAddress from "@/components/commons/ShowAddress";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -132,15 +133,7 @@ const SelectedUsers = ({
                 </View>
 
                 <View style={styles.recommendationContainer}>
-                  <Ionicons
-                    name="location"
-                    size={14}
-                    color="gray"
-                    style={{ marginTop: 2 }}
-                  />
-                  <CustomText textAlign="left">
-                    {appliedUser?.address || "Not Available"}
-                  </CustomText>
+                  <ShowAddress address={appliedUser?.address} />
                 </View>
 
                 {workers?.length > 0 && (

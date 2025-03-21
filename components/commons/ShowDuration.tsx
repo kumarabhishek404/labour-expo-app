@@ -4,15 +4,13 @@ import CustomText from "./CustomText";
 
 interface ShowDurationProps {
   duration: number;
+  alignment?: string;
 }
 
-const ShowDuration: React.FC<ShowDurationProps> = ({ duration }) => {
-  console.log("duration ---", duration);
-
+const ShowDuration: React.FC<ShowDurationProps> = ({ duration, alignment }) => {
   return (
-    <CustomText textAlign="left">
-      ⏳ {duration}{" "}
-      {duration > 1 ? t("days") : t("day")}
+    <CustomText textAlign={alignment ? alignment : "left"}>
+      ⏳ {t("duration")} {duration} {duration > 1 ? t("days") : t("day")}
     </CustomText>
   );
 };

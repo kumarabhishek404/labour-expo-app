@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Text,
+  FlatList,
 } from "react-native";
-import { Feather, FontAwesome6 } from "@expo/vector-icons";
+import { Feather, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PaperDropdown from "@/components/inputs/Dropdown";
@@ -23,12 +24,24 @@ import { STATES } from "@/constants";
 import SERVICE from "@/app/api/services";
 import { fetchCurrentLocation } from "@/constants/functions";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import CustomText from "@/components/commons/CustomText";
 import ButtonComp from "@/components/inputs/Button";
+import { Checkbox } from "react-native-paper";
+import ProfileTabs from "@/components/inputs/TabsSwitcher";
+import CustomText from "@/components/commons/CustomText";
 
-const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
+const AddAddressDrawer = ({
+  userId,
+  visible,
+  isMainAddress,
+  onClose,
+  type,
+  setAddress,
+}: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const [selectedTab, setSelectedTab] = useState(
+    type === "primary" ? "savedAddresses" : "addNewAddress"
+  );
   const [districts, setDistricts]: any = useState([]);
   const [subDistricts, setSubDistricts]: any = useState([]);
   const [villages, setVillages]: any = useState([]);
@@ -37,6 +50,10 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [locationAddress, setLocationAddress] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(
+    userDetails?.address || ""
+  );
+
   const { watch, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
       country: "India",
@@ -45,9 +62,15 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
       subDistrict: "",
       village: "",
       pinCode: "",
+      additionalDetails: "",
       location: {},
     },
   });
+
+  const states = STATES.map((item) => ({
+    label: item,
+    value: item,
+  }));
 
   const selectedState = watch("state");
   const selectedDistrict = watch("district");
@@ -81,14 +104,6 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
     },
   });
 
-  const fetchStateDetailsMutation = useMutation({
-    mutationKey: ["fetchStateDetails"],
-    mutationFn: (payload: any) => SERVICE?.fetchAllVillages(payload),
-    onSuccess: (response: any) => {
-      setAllStateVillages(response);
-    },
-  });
-
   // API Trigger on State Selection
   useEffect(() => {
     if (selectedState) {
@@ -115,6 +130,7 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
       setValue("subDistrict", "");
       setValue("village", "");
       setValue("pinCode", "");
+      setValue("additionalDetails", "");
     }
   }, [selectedState, allStateVillages]);
 
@@ -134,6 +150,7 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
       setValue("subDistrict", "");
       setValue("village", "");
       setValue("pinCode", "");
+      setValue("additionalDetails", "");
     }
   }, [selectedDistrict, allStateVillages]);
 
@@ -153,66 +170,119 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
       setVillages(foundVillages);
       setValue("village", "");
       setValue("pinCode", "");
+      setValue("additionalDetails", "");
     }
   }, [selectedSubDistrict, allStateVillages]);
 
-  const states = STATES.map((item) => ({
-    label: item,
-    value: item,
-  }));
+  const onAddAddress = async (data: any) => {
+    const address =
+      selectedTab === "savedAddresses"
+        ? selectedAddress
+        : isEditing
+        ? `${data?.additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`
+        : locationAddress;
+
+    console.log("Addres---", address, selectedTab);
+
+    const isAddressAlreadySaved = userDetails?.savedAddresses?.some(
+      (savedAddress: string) =>
+        JSON.stringify(savedAddress) === JSON.stringify(address)
+    );
+
+    const finalSavedAddress = isAddressAlreadySaved
+      ? userDetails?.savedAddresses
+      : [...(userDetails?.savedAddresses ?? []), address];
+
+    setSelectedAddress(address);
+
+    if (type === "secondary") setAddress({ address: address });
+
+    setUserDetails({
+      ...userDetails,
+      ...(isMainAddress
+        ? {
+            address, // If main address, update the address field
+            savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
+          }
+        : {
+            savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
+          }),
+    });
+
+    if (isMainAddress)
+      mutationUpdateProfileInfo.mutate(
+        isAddressAlreadySaved
+          ? { address }
+          : { address, savedAddresses: address }
+      );
+    else if (!isAddressAlreadySaved)
+      mutationUpdateProfileInfo.mutate({ savedAddresses: address });
+    else return;
+  };
+
+  const handleSelectAddress = (address: string) => {
+    setSelectedAddress(address);
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const onAddAddress = async (data: any) => {
-    const address = isEditing
-      ? `${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`
-      : locationAddress;
-    if (
-      userDetails?.savedAddresses?.some(
-        (savedAddress: string) =>
-          JSON.stringify(savedAddress) === JSON.stringify(address)
-      )
-    ) {
-      TOAST?.error(t("addressAlreadyExists"));
-      return;
-    }
-
-    setUserDetails({
-      ...userDetails,
-      ...(isMainAddress
-        ? { address } // If main address, update the address field
-        : {
-            savedAddresses: [...(userDetails?.savedAddresses ?? []), address],
-          }),
-    });
-
-    mutationUpdateProfileInfo.mutate(
-      isMainAddress
-        ? { address } // If main address, send in the "address" field
-        : { savedAddresses: address } // Else, send in "savedAddresses"
-    );
-  };
+  const fetchStateDetailsMutation = useMutation({
+    mutationKey: ["fetchStateDetails"],
+    mutationFn: (payload: any) => SERVICE?.fetchAllVillages(payload),
+    onSuccess: (response: any) => {
+      setAllStateVillages(response);
+    },
+    onError: (err) => {
+      setDistricts([]);
+      setValue("state", "");
+    },
+  });
 
   const fetchLocation = async () => {
     setIsFetchingLocation(true);
     let { location, address, addressObject }: any =
       await fetchCurrentLocation();
-
     if (address) {
       setLocationAddress(address);
       setValue("location", location);
       setValue("state", addressObject?.region);
       setValue("pinCode", addressObject?.postalCode);
-      setIsFetchingLocation(false);
     } else {
       TOAST?.error("Something went wrong while fetching location.");
-      setIsFetchingLocation(false);
     }
+    setIsFetchingLocation(false);
   };
 
-  const modalContent = () => (
+  const renderSavedAddresses = () => (
+    <View style={{ marginTop: 20 }}>
+      {userDetails?.savedAddresses &&
+      userDetails?.savedAddresses?.length > 0 ? (
+        <>
+          {userDetails?.savedAddresses?.map((address: any, index: number) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.addressItem}
+              onPress={() => handleSelectAddress(address)}
+            >
+              <Checkbox
+                status={selectedAddress === address ? "checked" : "unchecked"}
+                onPress={() => handleSelectAddress(address)}
+              />
+              <Text style={styles.addressText}>{address}</Text>
+            </TouchableOpacity>
+          ))}
+        </>
+      ) : (
+        <View>
+          <CustomText>{t("notFoundAnySavedAddress")}</CustomText>
+        </View>
+      )}
+    </View>
+  );
+
+  const renderAddNewAddress = () => (
     <View style={{ marginTop: 20 }}>
       {!isEditing && (
         <>
@@ -241,6 +311,16 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
         </View>
       ) : isEditing ? (
         <View style={styles.formContainer}>
+          <TouchableOpacity onPress={() => setIsEditing(false)}>
+            <CustomText
+              textAlign="right"
+              fontWeight="600"
+              baseFont={18}
+              color={Colors?.link}
+            >
+              Fetch Current Location
+            </CustomText>
+          </TouchableOpacity>
           <PaperDropdown
             name="state"
             label="state"
@@ -316,6 +396,24 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
             />
           )}
           <TextInputComponent
+            name="additionalDetails"
+            label="additionalDetails"
+            placeholder={t("enterAdditionalDetails")}
+            style={styles.textInput}
+            value={watch("additionalDetails")}
+            onChangeText={(value: any) => {
+              setValue("additionalDetails", value);
+            }}
+            icon={
+              <FontAwesome6
+                name="house-chimney-crack"
+                style={styles.icon}
+                size={22}
+                color={Colors.secondary}
+              />
+            }
+          />
+          <TextInputComponent
             name="pinCode"
             label="pinCode"
             placeholder={t("pinCode")}
@@ -329,16 +427,31 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
               }
             }}
             icon={
-              <Feather
-                name="map-pin"
+              <FontAwesome
+                name="map-marker"
                 style={styles.icon}
-                size={22}
+                size={28}
                 color={Colors.secondary}
               />
             }
           />
         </View>
       ) : null}
+    </View>
+  );
+
+  const modalContent = () => (
+    <View>
+      {type === "primary" && (
+        <ProfileTabs
+          tabs={["savedAddresses", "addNewAddress"]}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
+      )}
+      {type === "secondary" || selectedTab === "addNewAddress"
+        ? renderAddNewAddress()
+        : renderSavedAddresses()}
     </View>
   );
 
@@ -349,14 +462,9 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
         title: "addAddress",
         content: modalContent,
         primaryButton: {
-          title: "addAddress",
+          title: "saveAddress",
           action: handleSubmit(onAddAddress),
-          disabled:
-            (!locationAddress && !isEditing) ||
-            (selectedSubDistrict && villages?.length === 0
-              ? null
-              : isEditing && !watch("village")) ||
-            (isEditing && watch("pinCode")?.length !== 6),
+          disabled: !selectedAddress && !locationAddress && !isEditing,
         },
         secondaryButton: {
           title: "cancel",
@@ -370,6 +478,10 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
     }
   }, [
     visible,
+    selectedTab,
+    selectedAddress,
+    locationAddress,
+    isEditing,
     selectedState,
     districts,
     selectedDistrict,
@@ -378,17 +490,54 @@ const AddAddressDrawer = ({ userId, visible, isMainAddress, onClose }: any) => {
     villages,
     watch("village"),
     watch("pinCode"),
-    locationAddress,
-    isEditing,
+    watch("additionalDetails"),
     isFetchingLocation,
+    fetchStateDetailsMutation?.isPending,
   ]);
 
   return <Loader loading={mutationUpdateProfileInfo?.isPending} />;
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 20,
+  tabsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingBottom: 10,
+  },
+  activeTab: {
+    fontWeight: "bold",
+    borderBottomWidth: 2,
+    borderBottomColor: Colors.primary,
+    paddingBottom: 5,
+  },
+  inactiveTab: {
+    color: "gray",
+  },
+  addManuallyText: {
+    marginTop: 10,
+    alignSelf: "flex-end",
+  },
+  editButton: {
+    color: Colors.primary,
+    fontWeight: "bold",
+  },
+  addressItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  addressText: {
+    flex: 1,
+  },
+  addressContainer: {
+    padding: 10,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   formContainer: {
     gap: 10,
@@ -399,50 +548,6 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
     color: Colors.secondary,
-  },
-  fetchButton: {
-    flexDirection: "row",
-    gap: 10,
-    backgroundColor: Colors.primary,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fetchButtonText: {
-    flex: 1,
-    color: "white",
-    fontWeight: "bold",
-  },
-  addManuallyText: {
-    marginTop: 10,
-    alignSelf: "flex-end",
-  },
-  addressContainer: {
-    padding: 10,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  addressText: {
-    flex: 1,
-  },
-  editButton: {
-    color: Colors.primary,
-    fontWeight: "bold",
-  },
-  saveButton: {
-    backgroundColor: Colors.primary,
-    padding: 8,
-    borderRadius: 6,
-    alignItems: "center",
-    alignSelf: "flex-end",
-  },
-  saveButtonText: {
-    color: "white",
-    fontWeight: "bold",
   },
 });
 

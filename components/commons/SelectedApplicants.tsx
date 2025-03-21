@@ -21,6 +21,7 @@ import { handleCall } from "@/constants/functions";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
 import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
+import ShowAddress from "./ShowAddress";
 
 interface SelectedApplicantsProps {
   title: string;
@@ -103,7 +104,7 @@ const SelectedApplicants = ({
                     <ProfilePicture uri={appliedUser?.profilePicture} />
                     <View style={styles.productInfo}>
                       <View style={styles?.titleContainer}>
-                        <CustomHeading baseFont={14}>
+                        <CustomHeading baseFont={18}>
                           {appliedUser?.name}
                         </CustomHeading>
                       </View>
@@ -202,16 +203,24 @@ const SelectedApplicants = ({
                         >
                           {workers?.map((worker: any, workerIndex: number) => (
                             <View key={workerIndex} style={styles.workerItem}>
-                              <ProfilePicture uri={worker?.profilePicture} />
                               <View style={styles.workerInfo}>
-                                <CustomText style={styles.workerName}>
-                                  {worker?.name}
-                                </CustomText>
-                                <ShowSkills
-                                  type="small"
-                                  userSkills={worker?.skills}
-                                />
+                                <ProfilePicture uri={worker?.profilePicture} />
+                                <View style={{ flex: 1 }}>
+                                  <CustomText
+                                    style={styles.workerName}
+                                    fontWeight="bold"
+                                    textAlign="left"
+                                    baseFont={18}
+                                  >
+                                    {worker?.name}
+                                  </CustomText>
+                                  <ShowAddress address={worker?.address} />
+                                </View>
                               </View>
+                              <ShowSkills
+                                type="small"
+                                userSkills={worker?.skills}
+                              />
                             </View>
                           ))}
                         </Animated.View>
@@ -273,7 +282,11 @@ const SelectedApplicants = ({
                         />
                       }
                       isPrimary={true}
-                      title={t("callWorker")}
+                      title={
+                        workers && workers?.length > 0
+                          ? t("callMediator")
+                          : t("callWorker")
+                      }
                       onPress={() => handleCall(appliedUser?.mobile)}
                     />
                   </View>
@@ -375,7 +388,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   workerItem: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     backgroundColor: Colors.white,
     padding: 8,
@@ -387,11 +400,10 @@ const styles = StyleSheet.create({
   workerInfo: {
     flex: 1,
     gap: 4,
+    flexDirection: "row",
     alignItems: "flex-start",
   },
   workerName: {
-    fontSize: 13,
-    fontWeight: "500",
     color: "#2c3e50",
   },
   emptyContainer: {

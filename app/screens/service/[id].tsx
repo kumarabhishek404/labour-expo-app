@@ -38,6 +38,7 @@ import ProfilePicture from "@/components/commons/ProfilePicture";
 import ButtonComp from "@/components/inputs/Button";
 import ShowSkills from "@/components/commons/ShowSkills";
 import DateDisplay from "@/components/commons/ShowDate";
+import ShowAddress from "@/components/commons/ShowAddress";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -64,7 +65,7 @@ const ServiceDetails = () => {
     service?.selectedUsers?.find(
       (user: any) =>
         (user?.status === "SELECTED" && user?.user === userDetails?._id) ||
-        user?.workers.includes(userDetails?._id)
+        user?.workers?.includes?.(userDetails?._id)
     ) || false
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
@@ -93,6 +94,9 @@ const ServiceDetails = () => {
     retry: false,
     enabled: !!id,
   });
+
+  console.log("response---", response?.data?.requirements);
+  
 
   useFocusEffect(
     React.useCallback(() => {
@@ -346,21 +350,10 @@ const ServiceDetails = () => {
               </CustomText>
             </CustomHeading>
             <View style={styles.listingLocationWrapper}>
-              <FontAwesome5
-                name="map-marker-alt"
-                size={14}
-                color={Colors.primary}
-              />
-              <CustomText textAlign="left">{service?.address}</CustomText>
+              <ShowAddress address={service?.address} />
             </View>
 
             <View style={styles.listingLocationWrapper}>
-              <Entypo
-                name="calendar"
-                size={14}
-                color={Colors.primary}
-                style={{ alignSelf: "center" }}
-              />
               <DateDisplay date={service?.startDate} />
             </View>
 
@@ -443,14 +436,18 @@ const ServiceDetails = () => {
 
           {/* Selected Applicants */}
           {(service?.employer === userDetails?._id || isAdmin) && (
-            <SelectedApplicants
+            <Applicants
+              type="selectedApplicants"
               title="whoHaveSelected"
-              selectedApplicants={selectedApplicants}
+              applicants={selectedApplicants}
               serviceId={service?._id}
-              isSelectedWorkerLoading={isSelectedWorkerLoading}
-              isSelectedWorkerFetchingNextPage={
+              isAppliedWorkersLoading={isSelectedWorkerLoading}
+              isAppliedWorkersFetchingNextPage={
                 isSelectedWorkerFetchingNextPage
               }
+              refetchApplicants={() => {
+                refetchAppliedWorkers();
+              }}
               refetchSelectedApplicants={() => {
                 refetchSelectedWorkers();
               }}

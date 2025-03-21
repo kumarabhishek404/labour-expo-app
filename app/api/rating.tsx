@@ -1,3 +1,4 @@
+import { t } from "@/utils/translationHelper";
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
@@ -8,7 +9,7 @@ const addReview = async (payload: any) => {
       `/review/add/${payload?.id}`,
       payload?.data
     );
-    TOAST?.success("Review added successfully");
+    TOAST?.success(t('reviewAddedSuccessfully'));
     return data.data;
   } catch (error: any) {
     console.error(
@@ -29,7 +30,7 @@ const editReview = async (payload: any) => {
       `/review/update/${payload?.id}`,
       payload?.data
     );
-    TOAST?.success("Review edited successfully");
+    TOAST?.success(t('reviewEditedSuccessfully'));
     return data.data;
   } catch (error: any) {
     console.error(
@@ -49,7 +50,7 @@ const deleteReview = async (payload: any) => {
     const data = await API_CLIENT.makeDeleteRequest(
       `/review/delete/${payload?.id}`
     );
-    TOAST?.success("Review deleted successfully");
+    TOAST?.success(t('reviewDeletedSuccessfully'));
     return data.data;
   } catch (error: any) {
     console.error(

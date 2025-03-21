@@ -86,11 +86,7 @@ const Members = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <CustomHeader
-              title="members"
-              left="back"
-              right="notification"
-            />
+            <CustomHeader title="members" left="back" right="notification" />
           ),
         }}
       />
@@ -127,6 +123,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors?.fourth,
     paddingHorizontal: 10,
+    paddingTop: 8,
+    gap: 8,
   },
 });
 

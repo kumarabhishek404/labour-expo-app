@@ -29,6 +29,7 @@ import TOAST from "@/app/hooks/toast";
 import ButtonComp from "@/components/inputs/Button";
 import WORKER from "@/app/api/workers";
 import DateDisplay from "@/components/commons/ShowDate";
+import ShowAddress from "@/components/commons/ShowAddress";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -99,11 +100,6 @@ const BookingDetails = () => {
       return () => unsubscribe;
     }, [response])
   );
-
-  console.log("booking?.employer--", booking?.employer);
-
-  console.log("booking?.booked--", booking?.bookedWorker);
-
 
   return (
     <>
@@ -198,24 +194,11 @@ const BookingDetails = () => {
               </CustomText>
             </CustomHeading>
             <View style={styles.listingLocationWrapper}>
-              <FontAwesome5
-                name="map-marker-alt"
-                size={14}
-                color={Colors.primary}
-              />
-              <CustomText textAlign="left">{booking?.address}</CustomText>
+              <ShowAddress address={booking?.address} />
             </View>
 
             <View style={styles.listingLocationWrapper}>
-              <Entypo
-                name="calendar"
-                size={14}
-                color={Colors.primary}
-                style={{ alignSelf: "center" }}
-              />
-              <CustomText textAlign="left">
-                <DateDisplay date={booking?.startDate} />
-              </CustomText>
+              <DateDisplay date={booking?.startDate} />
             </View>
 
             <Highlights service={booking} />

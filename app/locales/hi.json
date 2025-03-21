@@ -915,7 +915,7 @@
   "second": "सेकंड",
   "seconds": "सेकंड",
 
-  "removeFromService": "काम से हटाएं",
+  "removeFromService": "काम छोड़ें",
   "showAllWorkers": "सभी श्रमिकों को दिखाएँ",
   "profileUpdated": "प्रोफ़ाइल अपडेट की गई",
   "searchWorkerName": "श्रमिक के नाम से खोजें",
@@ -1035,5 +1035,15 @@
   "confirm": "अपने पासवर्ड की पुष्टि करें",
   "passwordMismatch": "पासवर्ड मेल नहीं खा रहे हैं। कृपया पुनः प्रयास करें।",
   "enterFullPassword": "कृपया पूरा पासवर्ड दर्ज करें",
-  "associatedWorkers": "{{count}} संबंधित श्रमिक"
+  "associatedWorkers": "{{count}} संबंधित श्रमिक",
+  "getStarted": "शुरू करें",
+
+  "title1": "शीर्षक 1",
+  "title2": "शीर्षक 2",
+  "title3": "शीर्षक 3",
+  "text1": "पाठ 1",
+  "text2": "पाठ 2",
+  "text3": "पाठ 3",
+
+  "callMediator": "ठेकेदार को कॉल करें"
 }

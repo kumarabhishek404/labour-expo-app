@@ -142,7 +142,7 @@
   "complete": "Complete",
   "cancel": "Cancel",
   "edit": "Edit",
-  "removeFromService": "Remove From Service",
+  "removeFromService": "Leave The Service",
   "workRequirments": "Work Requirements",
 
   "construction": "Construction",
@@ -216,15 +216,15 @@
   "uttarpradesh": "Uttar Pradesh",
   "uttarakhand": "Uttarakhand",
   "westbengal": "West Bengal",
-  "andamanandnicobarislands": "Andaman and Nicobar Islands",
+  "andamanandnicobarislands": "Andaman & Nicobar Islands",
   "chandigarh": "Chandigarh",
-  "dadarandnagarhavelianddamananddiu": "Dadra and Nagar Haveli and Daman and Diu",
+  "dadarandnagarhavelianddamananddiu": "Dadra & Nagar Haveli",
   "delhi": "Delhi",
   "lakshadweep": "Lakshadweep",
   "laddakh": "Ladakh",
   "puducherry": "Puducherry",
   "ladakh": "Ladakh",
-  "jammuandkashmir": "Jammu and Kashmir",
+  "jammuandkashmir": "Jammu & Kashmir",
   "nctdelhi": "NCT Delhi",
 
   "india": "India",
@@ -1019,5 +1019,24 @@
   "confirm": "Confirm Your Password",
   "passwordMismatch": "Passwords do not match. Please try again.",
   "enterFullPassword": "Please enter full password",
-  "associatedWorkers": "{{count}} associated workers"
+  "associatedWorkers": "{{count}} associated workers",
+  "getStarted": "Get Started",
+
+  "title1": "Title 1",
+  "title2": "Title 2",
+  "title3": "Title 3",
+  "text1": "Text 1",
+  "text2": "Text 2",
+  "text3": "Text 3",
+
+  "callMediator": "Call Mediator",
+
+  "allSavedAddress": "All Saved Address",
+  "savedAddresses": "Saved Addresses",
+  "additionalDetails": "Additional Details",
+  "enterAdditionalDetails": "Enter Additional Details",
+  "notFoundAnySavedAddress": "Not found any saved address",
+  "showDetails": "Show Details",
+  "applyAsMediator": "Apply as Mediator",
+  "noMembersAvailableForThisSkill": "No members available for this skill"
 }

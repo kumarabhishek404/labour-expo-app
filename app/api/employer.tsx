@@ -67,6 +67,8 @@ const fetchMyServices = async ({ pageParam, status }: any) => {
 };
 
 const selectWorker = async (payload: any) => {
+  console.log("Paylo---", payload);
+  
   try {
     const data = await API_CLIENT.makePostRequest(
       "/employer/application/select",

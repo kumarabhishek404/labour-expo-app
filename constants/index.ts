@@ -79,21 +79,20 @@ export const STATES = [
   "Uttar Pradesh",
   "Uttarakhand",
   "West Bengal",
-  "Andaman and Nicobar Islands",
+  "Andaman & Nicobar Islands",
   "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu",
+  "Dadra & Nagar Haveli",
   "Lakshadweep",
   "Delhi",
   "Puducherry",
   "Ladakh",
-  "Jammu and Kashmir",
+  "Jammu & Kashmir",
 ];
 
 export const COUNTRYPHONECODE = [{ label: "india", value: "+91" }];
 
 export const REGISTERSTEPS = [
   { label: "name" },
-  // { label: "contacts" },
   { label: "skills" },
   { label: "password" },
 ];
@@ -106,7 +105,11 @@ export const ADDSERVICESTEPS = [
 ];
 
 export const WORKERTYPES = [
-  { label: "construction", value: "construction", iconName: "hospital-building" },
+  {
+    label: "construction",
+    value: "construction",
+    iconName: "hospital-building",
+  },
   { label: "labour", value: "labour", iconName: "office-building-cog" },
   { label: "brickLayer", value: "brickLayer", iconName: "terrain" },
   { label: "stoneMason", value: "stoneMason", iconName: "city" },
@@ -128,14 +131,26 @@ export const WORKERTYPES = [
     iconName: "water",
   },
   { label: "soilTester", value: "soilTester", iconName: "test-tube" },
-  { label: "agricultureExpert", value: "agricultureExpert", iconName: "tractor-variant" },
-  { label: "pesticideSupplier", value: "pesticideSupplier", iconName: "tractor" },
+  {
+    label: "agricultureExpert",
+    value: "agricultureExpert",
+    iconName: "tractor-variant",
+  },
+  {
+    label: "pesticideSupplier",
+    value: "pesticideSupplier",
+    iconName: "tractor",
+  },
   {
     label: "fertilizerSupplier",
     value: "fertilizerSupplier",
     iconName: "nature",
   },
-  { label: "farmConsultant", value: "farmConsultant", iconName: "bag-personal" },
+  {
+    label: "farmConsultant",
+    value: "farmConsultant",
+    iconName: "bag-personal",
+  },
   { label: "steelFixer", value: "steelFixer", iconName: "construction" },
   { label: "painter", value: "painter", iconName: "brush" },
   {
@@ -958,20 +973,20 @@ export const FAQS_QUESTIONS = [
 export const ONBOARDING_SLIDE = [
   {
     id: "1",
-    title: "takeControlOfYourFinances",
-    description: "Track your income and spending to stay on top.",
+    title: "title1",
+    description: "text1",
     image: Image1,
   },
   {
     id: "2",
-    title: "cancelUnwantedSubscriptions",
-    description: "Easily unsubscribe from unused services.",
+    title: "title2",
+    description: "text2",
     image: Image2,
   },
   {
     id: "3",
-    title: "seeExactlyWhereYourMoneyIsGoing",
-    description: "Visualize and understand your spending habits.",
+    title: "title3",
+    description: "text3",
     image: Image3,
   },
 ];

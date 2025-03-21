@@ -26,8 +26,8 @@ const LanguageSelectionScreen = () => {
       setLocaleValue({
         language: selectedLanguage,
       });
-      router.push("/");
-      // router?.push("/screens/userTipForAppUse");
+      // router.push("/");
+      router?.push("/screens/userTipForAppUse");
     }
   };
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedOption: {
-    backgroundColor: Colors?.secondaryText,
+    backgroundColor: Colors?.tertieryButton,
   },
   languageText: {
     fontSize: 16,

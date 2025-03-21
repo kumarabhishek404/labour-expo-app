@@ -113,7 +113,8 @@ const GlobalBottomDrawer = () => {
               <ButtonComp
                 isPrimary={false}
                 title={t(drawerState.secondaryButton.title || "cancel")}
-                onPress={drawerState.secondaryButton.action}
+                // onPress={drawerState.secondaryButton.action}
+                onPress={closeDrawer}
                 bgColor={Colors.danger}
                 borderColor={Colors.danger}
                 textColor={Colors.white}
