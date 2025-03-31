@@ -85,9 +85,9 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors?.background, // Background color from image
+    backgroundColor: Colors?.primary, // Background color from image
     paddingVertical: 5,
-    paddingBottom: 10,
+    // paddingBottom: 10,
   },
   tabContainer: {
     width: "100%",
@@ -108,22 +108,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     zIndex: 1,
     borderWidth: 1,
-    borderColor: Colors?.primary,
+    borderColor: Colors?.white,
     borderRadius: 100,
   },
   tabText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: Colors?.primary, // Inactive text color
+    color: Colors?.white, // Inactive text color
   },
   activeText: {
     fontWeight: "bold",
-    color: Colors?.white, // Active text color
+    color: Colors?.primary, // Active text color
   },
   activeTab: {
     position: "absolute",
     height: "100%",
-    backgroundColor: Colors?.primary,
+    backgroundColor: Colors?.white,
     borderRadius: 30,
     elevation: 3, // Shadow effect
     top: 8,

@@ -25,9 +25,12 @@ import ProfilePicture from "./ProfilePicture";
 import { t } from "@/utils/translationHelper";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
-import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "./EmptyDataPlaceholder";
 import ShowAddress from "./ShowAddress";
 import { handleCall } from "@/constants/functions";
+import ShowDistance from "./ShowDistance";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 interface ApplicantsProps {
   type?: string;
@@ -52,6 +55,8 @@ const Applicants = ({
   refetchSelectedApplicants,
   refetch,
 }: ApplicantsProps) => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
   const mutationSelectWorker = useMutation({
     mutationKey: ["selectWorker", { serviceId }],
     mutationFn: (userId) =>
@@ -130,7 +135,6 @@ const Applicants = ({
         }
       />
       <View style={styles.applicantWrapper}>
-        <CustomHeading textAlign="left">{t(title)}</CustomHeading>
         {applicants && applicants?.length > 0 ? (
           <View style={styles.applicantContainer}>
             {applicants?.map((item: any, index: number) => {
@@ -141,48 +145,60 @@ const Applicants = ({
                   <View style={styles.productCard}>
                     <ProfilePicture uri={appliedUser?.profilePicture} />
                     <View style={styles.productInfo}>
-                      <View style={styles?.titleContainer}>
-                        <CustomHeading baseFont={18}>
+                      <View style={styles.titleContainer}>
+                        <CustomHeading baseFont={18} textAlign="left">
                           {appliedUser?.name}
                         </CustomHeading>
-                      </View>
-
-                      {workers?.length === 0 && (
-                        <ShowSkills
-                          type="small"
-                          userSkills={appliedUser?.skills}
+                        <CustomHeading
+                          textAlign="left"
+                          color={Colors?.tertieryButton}
+                          style={{ textTransform: "uppercase" }}
+                        >
+                          {t(appliedUser?.appliedSkill.toLowerCase())}
+                        </CustomHeading>
+                        <ShowDistance
+                          loggedInUserLocation={userDetails?.location}
+                          targetLocation={userDetails?.location}
+                          align="left"
                         />
-                      )}
-                      <ShowAddress address={appliedUser?.address} />
+                      </View>
                     </View>
-                    <View
-                      style={{
-                        alignContent: "flex-end",
-                        justifyContent: "flex-start",
-                      }}
+                    <TouchableOpacity
+                      style={styles.detailsButton}
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/users/[id]",
+                          params: {
+                            id: appliedUser?._id,
+                            title:
+                              workers?.length > 0
+                                ? "mediatorDetails"
+                                : "workerDetails",
+                          },
+                        })
+                      }
                     >
-                      <TouchableOpacity
-                        onPress={() =>
-                          router?.push({
-                            pathname: "/screens/users/[id]",
-                            params: {
-                              id: appliedUser?._id,
-                              title: workers?.length > 0 ? "mediatorDetails" : "workerDetails"
-                            },
-                          })
-                        }
-                      >
-                        <CustomText fontWeight="600" color={Colors?.link}>
-                          {t("showDetails")}
-                        </CustomText>
-                      </TouchableOpacity>
-                    </View>
+                      <CustomText fontWeight="600" color={Colors?.link}>
+                        {t("show")}{" "}
+                        {t(
+                          workers?.length > 0
+                            ? "mediatorDetails"
+                            : "workerDetails"
+                        )}
+                      </CustomText>
+                    </TouchableOpacity>
                   </View>
 
                   {workers?.length > 0 && (
                     <View style={styles.workersContainer}>
                       <TouchableOpacity
-                        style={styles.workersTitleContainer}
+                        style={[
+                          styles.workersTitleContainer,
+                          expandedItem !== item._id && {
+                            borderBottomWidth: 1,
+                            borderBottomColor: "#ddd",
+                          },
+                        ]}
                         onPress={() => toggleAccordion(item._id)}
                         activeOpacity={0.7}
                       >
@@ -232,55 +248,62 @@ const Applicants = ({
                         >
                           {workers?.map((worker: any, workerIndex: number) => (
                             <View key={workerIndex} style={styles.workerItem}>
-                              <View style={styles.workerInfo}>
+                              <View style={styles.productCard}>
                                 <ProfilePicture uri={worker?.profilePicture} />
-                                <View style={{ flex: 1 }}>
-                                  <View
-                                    style={{
-                                      flexDirection: "row",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <CustomText
-                                      style={styles.workerName}
-                                      fontWeight="600"
+                                <View style={styles.productInfo}>
+                                  <View style={styles.titleContainer}>
+                                    <CustomHeading
+                                      baseFont={18}
                                       textAlign="left"
                                     >
                                       {worker?.name}
-                                    </CustomText>
-                                    <TouchableOpacity
-                                      onPress={() =>
-                                        router?.push({
-                                          pathname: "/screens/users/[id]",
-                                          params: {
-                                            id: worker?._id,
-                                            title: "workerDetails"
-                                          },
-                                        })
-                                      }
+                                    </CustomHeading>
+                                    <CustomHeading
+                                      textAlign="left"
+                                      color={Colors?.tertieryButton}
+                                      style={{ textTransform: "uppercase" }}
                                     >
-                                      <CustomText
-                                        fontWeight="600"
-                                        color={Colors?.link}
-                                      >
-                                        {t("showDetails")}
-                                      </CustomText>
-                                    </TouchableOpacity>
+                                      {t(worker?.appliedSkill)}
+                                    </CustomHeading>
+                                    <ShowDistance
+                                      loggedInUserLocation={
+                                        userDetails?.location
+                                      }
+                                      targetLocation={userDetails?.location}
+                                      align="left"
+                                    />
                                   </View>
-                                  <ShowAddress address={worker?.address} />
                                 </View>
+                                <TouchableOpacity
+                                  style={styles.detailsButton}
+                                  onPress={() =>
+                                    router?.push({
+                                      pathname: "/screens/users/[id]",
+                                      params: {
+                                        id: worker?._id,
+                                        title:
+                                          workers?.length > 0
+                                            ? "mediatorDetails"
+                                            : "workerDetails",
+                                      },
+                                    })
+                                  }
+                                >
+                                  <CustomText
+                                    fontWeight="600"
+                                    color={Colors?.link}
+                                  >
+                                    {t("show")} {t("workerDetails")}
+                                  </CustomText>
+                                </TouchableOpacity>
                               </View>
-                              <ShowSkills
-                                type="small"
-                                userSkills={worker?.skills}
-                              />
                             </View>
                           ))}
                         </Animated.View>
                       )}
                     </View>
                   )}
-                  
+
                   {type === "selectedApplicants" ? (
                     <View
                       style={{
@@ -423,7 +446,14 @@ const Applicants = ({
                 animating={true}
               />
             ) : (
-              <EmptyDatePlaceholder parentHeight={450} title="applicants" />
+              <EmptyDataPlaceholder
+                parentHeight={450}
+                title={
+                  type === "selectedApplicants"
+                    ? "selectedApplicants"
+                    : "applicants"
+                }
+              />
             )}
           </View>
         )}
@@ -433,46 +463,106 @@ const Applicants = ({
 };
 
 const styles = StyleSheet.create({
-  applicantWrapper: {
-    paddingHorizontal: 10,
-    backgroundColor: Colors.background,
-    gap: 5,
-    marginBottom: 20,
-  },
-  applicantList: {
-    flex: 1,
-  },
+  applicantWrapper: {},
   applicantContainer: {
     gap: 5,
   },
+
   mediatorCard: {
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 8,
-    marginBottom: 5,
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    borderColor: "gray",
-    borderWidth: 1,
+    marginBottom: 8,
+    shadowColor: Colors?.fourth,
+    shadowOpacity: 1,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 8,
+    elevation: 1,
   },
   productCard: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
   },
   productInfo: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingBottom: 10,
-    display: "flex",
-    flexDirection: "column",
+    marginLeft: 10,
   },
   titleContainer: {
+    marginBottom: 4,
+  },
+  detailsButton: {
+    alignSelf: "flex-start",
+    marginRight: 10,
+  },
+  workersContainer: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+  },
+  workersTitleContainer: {
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  workersTitleLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  workersTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 6,
+  },
+  workersGrid: {
+    marginTop: 8,
+  },
+  workerItem: {
+    backgroundColor: Colors?.white,
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 4,
+  },
+  workerInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  workerDetails: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  workerHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 2,
+    alignItems: "center",
   },
+  workerName: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  actionContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 10,
+    gap: 10,
+  },
+  rejectButton: {
+    minHeight: 30,
+    width: "30%",
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+  },
+  acceptButton: {
+    minHeight: 30,
+    width: "40%",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  buttonText: {
+    fontSize: 14,
+  },
+
   recommendationContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -488,62 +578,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: "#d6ecdd",
   },
-  workersContainer: {
-    width: "100%",
-    backgroundColor: Colors?.fourth,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingBottom: 10,
-  },
-  workersTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-  },
-  workersTitleLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  workersTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.primary,
-  },
-  workersGrid: {
-    gap: 8,
-    marginTop: 5,
-    borderTopWidth: 1,
-    borderTopColor: "#e9ecef",
-  },
-  workerItem: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    backgroundColor: Colors.white,
-    padding: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#e9ecef",
-    gap: 10,
-  },
-  workerInfo: {
-    flex: 1,
-    gap: 4,
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  workerName: {
-    marginLeft: 10,
-  },
   emptyContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.gray,
-    backgroundColor: Colors.white,
+    // marginBottom: 20,
+    // paddingHorizontal: 10,
+    // paddingVertical: 20,
+    // borderRadius: 8,
+    // borderWidth: 1,
+    // borderColor: Colors.gray,
+    // backgroundColor: Colors.white,
   },
 });
 

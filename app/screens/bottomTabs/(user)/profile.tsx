@@ -44,9 +44,6 @@ import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
-import { Portal, Provider } from "react-native-paper";
-import LocationField from "@/components/inputs/LocationField";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();

@@ -48,11 +48,13 @@ const editService = async (payload: any) => {
 
 // My Services
 const fetchMyServices = async ({ pageParam, status }: any) => {
+  console.log("status00", status);
+  
   try {
     const data = await API_CLIENT.makeGetRequest(
       `/employer/my-services?status=${status}&page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching my services : `,
@@ -150,7 +152,7 @@ const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/employer/booking/invitations/sent?page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching sent bookings : `,
@@ -191,7 +193,7 @@ const fetchAllBookedWorkers = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/employer/booked-worker/all?page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching booked workers : `,

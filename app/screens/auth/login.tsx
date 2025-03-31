@@ -153,6 +153,9 @@ const LoginScreen = () => {
     mutationSignIn.mutate(data);
   };
 
+  console.log("In the login screen--");
+  
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />

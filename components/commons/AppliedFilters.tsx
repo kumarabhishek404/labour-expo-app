@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
   },
   scrollContainer: {
     flexDirection: "row",

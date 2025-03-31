@@ -30,6 +30,7 @@ const DISTANCE = [
 
 const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
   const [drawerAtom, setDrawerState]: any = useAtom(Atoms?.BottomDrawerAtom);
+
   const {
     control,
     handleSubmit,
@@ -158,10 +159,16 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
           title: "clear",
           action: handleClear,
         },
-        onClose: () => setFilterVisible(false), // Close drawer when clicking the close button
+        onClose: () => {
+          setDrawerState((prev: any) => ({ ...prev, visible: false }));
+          setFilterVisible(false);
+        },
       });
     }
-  }, [filterVisible, selectedWorkers]);
+    return () => {
+      setDrawerState((prev: any) => ({ ...prev, visible: false }));
+    };
+  }, [filterVisible]);
 
   return null;
 };

@@ -25,13 +25,9 @@ export default function AttendanceScreenComponent({
   initialAttendance,
   selectedDate,
   setSelectedDate,
-  handleBack
+  handleBack,
 }: any) {
-
   const workersList = JSON?.parse(workers);
-
-
-
 
   const handleAttendanceChange = (workerId: any, status: any) => {
     setAttendance((prev: any) => ({
@@ -42,8 +38,6 @@ export default function AttendanceScreenComponent({
       },
     }));
   };
-
-  
 
   return (
     <>
@@ -68,9 +62,6 @@ export default function AttendanceScreenComponent({
               <View>
                 <Text style={styles.workerName}>{worker?.name}</Text>
                 <ShowAddress address={worker?.address} />
-                <Text style={styles.workerAddress}>
-                  {worker?.address || t("addressNotFound")}
-                </Text>
               </View>
             </View>
 

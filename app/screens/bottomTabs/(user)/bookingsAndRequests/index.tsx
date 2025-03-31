@@ -9,11 +9,11 @@ const BookingsAndRequests = () => {
   const TABS = [
     {
       label: "allBookings",
-      description: "allBookingsDesc",
+      // description: "allBookingsDesc",
     },
     {
       label: "allRequests",
-      description: "allRequestsDesc",
+      // description: "allRequestsDesc",
     },
   ];
   return (

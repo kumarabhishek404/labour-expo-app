@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { Stack, useGlobalSearchParams } from "expo-router";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SERVICE from "@/app/api/services";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
@@ -17,6 +17,7 @@ import EMPLOYER from "@/app/api/employer";
 import Colors from "@/constants/Colors";
 import AppliedFilters from "@/components/commons/AppliedFilters";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
+import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -129,50 +130,60 @@ const Services = () => {
           ),
         }}
       />
-      <Loader loading={isLoading || isRefetching} />
-      <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {type === "myServices" && (
-            <CategoryButtons
-              type="workerType"
-              options={MYSERVICES}
-              onCategoryChanged={onCatChanged}
-            />
-          )}
-          {/* {appliedFilters && appliedFilters?.length > 0 && ( */}
-          <AppliedFilters
-            appliedFilters={appliedFilters}
-            setAppliedFilters={setAppliedFilters}
-            fetchUsers={() => {}}
-          />
-          {/* )} */}
+      {isLoading ? (
+        <ListingsServicesPlaceholder />
+      ) : (
+        <View style={{ flex: 1 }}>
+          <View style={styles.container}>
+            {type === "myServices" && (
+              <CategoryButtons
+                type="workerType"
+                options={MYSERVICES}
+                onCategoryChanged={onCatChanged}
+                stylesProp={{paddingTop: 5}}
+              />
+            )}
+            {appliedFilters &&
+              (appliedFilters?.distance ||
+                appliedFilters?.duration ||
+                appliedFilters?.serviceStartIn ||
+                appliedFilters?.skills?.length > 0) && (
+                <View style={{ marginTop: 10 }}>
+                  <AppliedFilters
+                    appliedFilters={appliedFilters}
+                    setAppliedFilters={setAppliedFilters}
+                    fetchUsers={() => {}}
+                  />
+                </View>
+              )}
 
-          <View style={{ marginBottom: 5 }}>
-            <PaginationString
-              type="services"
-              isLoading={isLoading || isRefetching}
-              totalFetchedData={memoizedData?.length}
-              totalData={totalData}
-            />
+            <View style={{ marginVertical: 10 }}>
+              <PaginationString
+                type="services"
+                isLoading={isLoading || isRefetching}
+                totalFetchedData={memoizedData?.length}
+                totalData={totalData}
+              />
+            </View>
+
+            {memoizedData && memoizedData?.length > 0 ? (
+              <ListingsVerticalServices
+                listings={memoizedData || []}
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={!isRefetching && refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            ) : (
+              <EmptyDataPlaceholder title="service" />
+            )}
           </View>
-
-          {memoizedData && memoizedData?.length > 0 ? (
-            <ListingsVerticalServices
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetching && refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            />
-          ) : (
-            <EmptyDatePlaceholder title="service" />
-          )}
         </View>
-      </View>
+      )}
     </>
   );
 };

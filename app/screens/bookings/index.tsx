@@ -10,7 +10,8 @@ import CustomHeader from "@/components/commons/Header";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings"; // ✅ Fixed component
 import EMPLOYER from "@/app/api/employer";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholders/ListingBookingPlaceholder";
 
 const Bookings = () => {
   const [totalData, setTotalData] = useState(0);
@@ -92,28 +93,35 @@ const Bookings = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
-        <View style={styles.container}>
-          <PaginationString
-            type="bookedWorker"
-            isLoading={isLoading || isRefetching}
-            totalFetchedData={memoizedBookedWorkers?.length}
-            totalData={totalData}
-          />
-
-          {memoizedBookedWorkers?.length > 0 ? (
-            <ListingsVerticalBookings // ✅ Fixed component
-              listings={memoizedBookedWorkers}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+        {/* <Loader loading={isLoading} /> */}
+        {isLoading ? (
+          <ListingsBookingsPlaceholder />
+        ) : (
+          <View style={styles.container}>
+            <PaginationString
+              type="bookedWorker"
+              isLoading={isLoading || isRefetching}
+              totalFetchedData={memoizedBookedWorkers?.length}
+              totalData={totalData}
             />
-          ) : (
-            <EmptyDatePlaceholder title="bookedWorker" />
-          )}
-        </View>
+
+            {memoizedBookedWorkers?.length > 0 ? (
+              <ListingsVerticalBookings // ✅ Fixed component
+                listings={memoizedBookedWorkers}
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            ) : (
+              <EmptyDataPlaceholder title="bookedWorker" />
+            )}
+          </View>
+        )}
       </View>
     </>
   );

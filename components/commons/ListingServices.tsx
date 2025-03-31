@@ -1,7 +1,14 @@
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
-import { Entypo, FontAwesome5, Fontisto, Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Entypo,
+  FontAwesome5,
+  Fontisto,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import {
@@ -46,6 +53,19 @@ const ListingsServices = ({ item }: any) => {
       <View style={styles.container}>
         <Link href={`/screens/service/${item._id}`} asChild>
           <TouchableOpacity>
+            {item?.bookingType === "direct" && (
+              <View
+                style={[
+                  styles?.tag,
+                  { backgroundColor: Colors?.tertieryButton },
+                ]}
+              >
+                <CustomText color={Colors?.white} fontWeight="bold">
+                  {t("direct")}
+                </CustomText>
+              </View>
+            )}
+
             <View style={styles.item}>
               <Image
                 source={
@@ -56,42 +76,67 @@ const ListingsServices = ({ item }: any) => {
                 style={styles.image}
               />
 
-              {userDetails?._id === item?.employer && (
-                <View
-                  style={[
-                    styles.applicants,
-                    { backgroundColor: Colors?.white, gap: 20 },
-                  ]}
-                >
-                  <View style={styles?.proposalsItem}>
-                    <Ionicons
-                      name="happy"
-                      size={20}
-                      color={Colors.tertieryButton}
-                    />
-                    <View style={styles?.proposalsItemText}>
-                      <CustomHeading color={Colors?.tertieryButton}>
-                        {selectedWorkers}
-                      </CustomHeading>
-                      <CustomHeading color={Colors?.tertieryButton}>
-                        {t("selected")}
-                      </CustomHeading>
+              {userDetails?._id === item?.employer &&
+                item?.bookingType === "byService" && (
+                  <View
+                    style={[
+                      styles.applicants,
+                      { backgroundColor: Colors?.white, gap: 20 },
+                    ]}
+                  >
+                    <View style={styles?.proposalsItem}>
+                      <Ionicons
+                        name="happy"
+                        size={20}
+                        color={Colors.tertieryButton}
+                      />
+                      <View style={styles?.proposalsItemText}>
+                        <CustomHeading color={Colors?.tertieryButton}>
+                          {selectedWorkers}
+                        </CustomHeading>
+                        <CustomHeading color={Colors?.tertieryButton}>
+                          {t("selected")}
+                        </CustomHeading>
+                      </View>
                     </View>
-                  </View>
 
-                  <View style={styles?.proposalsItem}>
-                    <Fontisto name="persons" size={18} color={Colors.primary} />
-                    <View style={styles?.proposalsItemText}>
-                      <CustomHeading color={Colors?.primary}>
-                        {proposals}
-                      </CustomHeading>
-                      <CustomHeading color={Colors?.primary}>
-                        {t("proposals")}
-                      </CustomHeading>
+                    <View style={styles?.proposalsItem}>
+                      <Fontisto
+                        name="persons"
+                        size={18}
+                        color={Colors.primary}
+                      />
+                      <View style={styles?.proposalsItemText}>
+                        <CustomHeading color={Colors?.primary}>
+                          {proposals}
+                        </CustomHeading>
+                        <CustomHeading color={Colors?.primary}>
+                          {t("proposals")}
+                        </CustomHeading>
+                      </View>
                     </View>
+
+                    <TouchableOpacity
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/service/[id]",
+                          params: {
+                            id: item._id,
+                            title: "titleMyAllServicesAndBookings",
+                            type: "myServices",
+                            showApplicationDetails: JSON.stringify(true),
+                          },
+                        })
+                      }
+                    >
+                      <AntDesign
+                        name="select1"
+                        size={20}
+                        color={Colors.primary}
+                      />
+                    </TouchableOpacity>
                   </View>
-                </View>
-              )}
+                )}
 
               {userDetails?._id !== item?.employer && isSelected && (
                 <View
@@ -107,17 +152,19 @@ const ListingsServices = ({ item }: any) => {
                 </View>
               )}
 
-              {userDetails?._id !== item?.employer && proposals > 0 && (
-                <View style={styles.applicants}>
-                  <Fontisto name="persons" size={18} color={Colors.white} />
-                  <CustomHeading color={Colors?.white}>
-                    {proposals}
-                  </CustomHeading>
-                  <CustomHeading color={Colors?.white}>
-                    {t("proposals")}
-                  </CustomHeading>
-                </View>
-              )}
+              {userDetails?._id !== item?.employer &&
+                !isSelected &&
+                proposals > 0 && (
+                  <View style={styles.applicants}>
+                    <Fontisto name="persons" size={18} color={Colors.white} />
+                    <CustomHeading color={Colors?.white}>
+                      {proposals}
+                    </CustomHeading>
+                    <CustomHeading color={Colors?.white}>
+                      {t("proposals")}
+                    </CustomHeading>
+                  </View>
+                )}
 
               <Requirements
                 type="highlights"
@@ -146,13 +193,14 @@ const ListingsServices = ({ item }: any) => {
               </View>
               <View
                 style={{
-                  flexDirection: "row",
+                  flexDirection: "column",
                   justifyContent: "space-between",
+                  gap: 5,
                 }}
               >
                 <View
                   style={{
-                    width: "75%",
+                    width: "100%",
                     flexDirection: "column",
                     gap: 5,
                   }}
@@ -163,15 +211,14 @@ const ListingsServices = ({ item }: any) => {
                       alignItems: "flex-start",
                     }}
                   >
-                    <ShowAddress address={item?.address} />
+                    <ShowAddress address={item?.address} numberOfLines={1} />
                   </View>
 
-                  <DateDisplay date={item?.startDate} />
+                  <DateDisplay date={item?.startDate} type="startDate" />
                 </View>
 
                 <View style={styles?.actionContainer}>
-                  <ShowDuration duration={item?.duration} alignment="right" />
-
+                  <ShowDuration duration={item?.duration} alignment="left" />
                   <ShowDistance
                     loggedInUserLocation={userDetails?.location}
                     targetLocation={item?.location}
@@ -285,10 +332,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   actionContainer: {
-    width: "25%",
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 5,
   },
   deleteButton: {
     backgroundColor: Colors?.primary,

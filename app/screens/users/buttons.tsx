@@ -19,7 +19,6 @@ import { useForm } from "react-hook-form";
 const { width } = Dimensions.get("window");
 
 const ButtonContainer = ({
-  isLoading,
   user,
   refetch,
   isUserBooked,
@@ -168,7 +167,6 @@ const ButtonContainer = ({
     <>
       <Loader
         loading={
-          isLoading ||
           mutationLikeUser.isPending ||
           mutationUnLikeUser.isPending ||
           mutationCancelBookingRequest.isPending ||

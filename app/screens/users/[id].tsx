@@ -9,12 +9,7 @@ import {
 } from "expo-router";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, {
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useScrollViewOffset,
-} from "react-native-reanimated";
+import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
@@ -35,6 +30,7 @@ import ServiceInformation from "@/components/commons/ServiceInformation";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
 import TeamDetails from "../team/teamDetails";
+import UserProfilePlaceholder from "@/components/commons/LoadingPlaceholders/UserDetailsPlaceholder";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -46,7 +42,6 @@ const User = () => {
   const router = useRouter();
   const firstTimeRef = React.useRef(true);
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
   const [isUserBooked, setIsUserBooked] = useState(user?.bookedBy || false);
   const [isUserLiked, setIsUserLiked] = useState(
     user?.likedBy?.includes(userDetails?._id)
@@ -72,10 +67,8 @@ const User = () => {
 
   const {
     isLoading,
-    isError,
     data: response,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["userDetails", id],
     queryFn: async () => await USER?.getUserDetails(id),
@@ -116,27 +109,6 @@ const User = () => {
     }, [response])
   );
 
-  const imageAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollOffset.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-          ),
-        },
-        {
-          scale: interpolate(
-            scrollOffset.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [2, 1, 1]
-          ),
-        },
-      ],
-    };
-  });
-
   const scrollToReviews = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ y: reviewsPosition, animated: true });
@@ -171,120 +143,123 @@ const User = () => {
           ),
         }}
       />
-      <View style={styles.container}>
-        <Animated.ScrollView
-          ref={scrollRef}
-          contentContainerStyle={{
-            paddingBottom: 150,
-            backgroundColor: Colors?.fourth,
-          }}
-        >
-          <Animated.Image
-            source={user?.coverImage ? { uri: user?.coverImage } : CoverImage}
-            style={[styles.image, imageAnimatedStyle]}
-          />
-          <View style={styles.contentWrapper}>
-            <ProfilePicture
-              uri={user?.profilePicture}
-              style={styles.workerImage}
+      {isLoading ? (
+        <UserProfilePlaceholder />
+      ) : (
+        <View style={styles.container}>
+          <Animated.ScrollView
+            ref={scrollRef}
+            contentContainerStyle={{
+              paddingBottom: 150,
+              backgroundColor: Colors?.fourth,
+            }}
+          >
+            <Animated.Image
+              source={user?.coverImage ? { uri: user?.coverImage } : CoverImage}
+              style={[styles.image]}
             />
-            <CustomHeading textAlign="left" baseFont={20}>
-              {user?.name}
-            </CustomHeading>
-
-            <View style={styles.listingLocationWrapper}>
-              <FontAwesome5
-                name="map-marker-alt"
-                size={14}
-                color={Colors.primary}
+            <View style={styles.contentWrapper}>
+              <ProfilePicture
+                uri={user?.profilePicture}
+                style={styles.workerImage}
               />
-              <CustomText textAlign="left">
-                {user?.address || t("addressNotFound")}
-              </CustomText>
-            </View>
+              <CustomHeading textAlign="left" baseFont={20}>
+                {user?.name}
+              </CustomHeading>
 
-            <View style={styles.highlightWrapper}>
-              <View style={[styles?.highlightBox]}>
-                <View style={styles.highlightIcon}>
-                  <Ionicons name="star" size={18} color={Colors.primary} />
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    gap: 10,
-                  }}
-                >
-                  <View style={{ flexDirection: "column" }}>
-                    <CustomText textAlign="left">{t("rating")}</CustomText>
-                    <CustomHeading baseFont={14} textAlign="left">
-                      {user?.rating?.average || 0}
-                    </CustomHeading>
+              <View style={styles.listingLocationWrapper}>
+                <FontAwesome5
+                  name="map-marker-alt"
+                  size={14}
+                  color={Colors.primary}
+                />
+                <CustomText textAlign="left">
+                  {user?.address || t("addressNotFound")}
+                </CustomText>
+              </View>
+
+              <View style={styles.highlightWrapper}>
+                <View style={[styles?.highlightBox]}>
+                  <View style={styles.highlightIcon}>
+                    <Ionicons name="star" size={18} color={Colors.primary} />
                   </View>
-                  <Button
-                    isPrimary={true}
-                    title={hasUserReviewed ? t("viewReview") : t("addReview")}
-                    onPress={handleReviewAction}
+                  <View
                     style={{
-                      minHeight: 30,
-                      paddingVertical: 3,
-                      paddingHorizontal: 6,
-                      backgroundColor: "#fa6400",
-                      borderColor: "#fa6400",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      gap: 10,
                     }}
-                    textStyle={{ fontSize: 12 }}
-                  />
+                  >
+                    <View style={{ flexDirection: "column" }}>
+                      <CustomText textAlign="left">{t("rating")}</CustomText>
+                      <CustomHeading baseFont={14} textAlign="left">
+                        {user?.rating?.average || 0}
+                      </CustomHeading>
+                    </View>
+                    <Button
+                      isPrimary={true}
+                      title={hasUserReviewed ? t("viewReview") : t("addReview")}
+                      onPress={handleReviewAction}
+                      style={{
+                        minHeight: 30,
+                        paddingVertical: 3,
+                        paddingHorizontal: 6,
+                        backgroundColor: "#fa6400",
+                        borderColor: "#fa6400",
+                      }}
+                      textStyle={{ fontSize: 12 }}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
 
-            {user?.employedBy && (
-              <TeamDetails
-                type={user?.role}
-                mediator={user}
-                isInYourTeam={isInYourTeam}
+              {user?.employedBy && (
+                <TeamDetails
+                  type={user?.role}
+                  mediator={user}
+                  isInYourTeam={isInYourTeam}
+                />
+              )}
+
+              <CustomText>{user?.description}</CustomText>
+
+              <SkillSelector
+                canAddSkills={false}
+                isShowLabel={true}
+                style={styles?.skillsContainer}
+                tagTextStyle={styles?.skillTagText}
+                userSkills={user?.skills}
+                availableSkills={WORKERTYPES}
               />
-            )}
 
-            <CustomText>{user?.description}</CustomText>
+              <UserInfoComponent
+                user={user}
+                style={{ marginHorizontal: 0, marginTop: 4 }}
+              />
+              <View style={{ marginBottom: 20 }}>
+                <ServiceInformation information={user?.serviceDetails} />
+              </View>
 
-            <SkillSelector
-              canAddSkills={false}
-              isShowLabel={true}
-              style={styles?.skillsContainer}
-              tagTextStyle={styles?.skillTagText}
-              userSkills={user?.skills}
-              availableSkills={WORKERTYPES}
-            />
+              <WorkInformation information={user?.workDetails} />
 
-            <UserInfoComponent
-              user={user}
-              style={{ marginHorizontal: 0, marginTop: 4 }}
-            />
-            <View style={{ marginBottom: 20 }}>
-              <ServiceInformation information={user?.serviceDetails} />
+              <WorkHistory workHistory={user?.workHistory} />
+
+              <UserReviews
+                ref={reviewsSectionRef}
+                onLayout={(event) => {
+                  const { y } = event.nativeEvent.layout;
+                  setReviewsPosition(y);
+                }}
+                setHasUserReviewed={setHasUserReviewed}
+                workerId={id as string}
+              />
             </View>
-
-            <WorkInformation information={user?.workDetails} />
-
-            <WorkHistory workHistory={user?.workHistory} />
-
-            <UserReviews
-              ref={reviewsSectionRef}
-              onLayout={(event) => {
-                const { y } = event.nativeEvent.layout;
-                setReviewsPosition(y);
-              }}
-              setHasUserReviewed={setHasUserReviewed}
-              workerId={id as string}
-            />
-          </View>
-        </Animated.ScrollView>
-      </View>
+          </Animated.ScrollView>
+        </View>
+      )}
 
       <ButtonContainer
-        isLoading={isLoading}
         user={user}
         refetch={refetch}
         isUserBooked={isUserBooked}

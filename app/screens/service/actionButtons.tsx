@@ -10,7 +10,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import Animated, { SlideInDown } from "react-native-reanimated";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
@@ -231,11 +231,11 @@ const ServiceActionButtons = ({
     }
 
     const serviceRequirements =
-      service?.requirements?.map((req: any) => req?.name?.toLowerCase()) || [];
+      service?.requirements?.map((req: any) => req?.name) || [];
 
     // Check the matched skills of the individual worker
     const matchedSkills = userDetails.skills
-      .map((skill: any) => skill.skill.toLowerCase())
+      .map((skill: any) => skill.skill)
       .filter((skill: any) => serviceRequirements.includes(skill));
 
     if (members && members.length > 0) {
@@ -250,7 +250,7 @@ const ServiceActionButtons = ({
         mutationApplyService.mutate({
           workers: [],
           serviceId: id,
-          skill: matchedSkills[0],
+          skills: matchedSkills[0],
         });
       } else {
         // Open skill selection popup
@@ -484,7 +484,7 @@ const ServiceActionButtons = ({
                 animating={true}
               />
             ) : (
-              <EmptyDatePlaceholder title="members" />
+              <EmptyDataPlaceholder title="members" />
             )}
           </View>
         )}

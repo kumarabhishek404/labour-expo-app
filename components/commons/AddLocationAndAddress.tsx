@@ -159,8 +159,6 @@ const AddLocationAndAddress = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors?.background,
     gap: 5,
   },
   title: {

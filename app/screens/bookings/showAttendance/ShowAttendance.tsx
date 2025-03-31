@@ -9,13 +9,13 @@ import {
 } from "react-native";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
-import Drawer from "@/components/commons/Drawer";
 import { t } from "@/utils/translationHelper";
 import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import DateDisplay from "@/components/commons/ShowDate";
 import { useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
+import ShowAddress from "@/components/commons/ShowAddress";
 
 export default function ShowAttendanceComponent({
   booking,
@@ -39,8 +39,16 @@ export default function ShowAttendanceComponent({
 
   const handleWorkerClick = (worker: any) => {
     setSelectedWorker(worker);
-    // setIsDrawerVisible(true);
-    handleShowAttendance();
+
+    setDrawerState({
+      visible: true,
+      title: "attendanceDetails",
+      content: () => addBookingModalContent(worker), // Pass worker data
+      secondaryButton: {
+        title: "back",
+        action: () => setDrawerState({ visible: false }),
+      },
+    });
   };
 
   const getAllDatesInRange = (startDate: Date, endDate: Date) => {
@@ -89,19 +97,10 @@ export default function ShowAttendanceComponent({
         (rec: any) => new Date(rec.date).toDateString() === date.toDateString()
       ) || { date: date.toISOString(), status: "" };
 
-      // const formattedDate = date.toLocaleDateString("en-US", {
-      //   day: "2-digit",
-      //   weekday: "long",
-      //   month: "long",
-      // });
-
-      // const [weekday, month, day] = formattedDate.split(" ");
-      // const customFormattedDate = `${day} ${t(weekday)} ${t(month)}`;
-
       return (
         <View key={record._id || date.toString()} style={styles.dateRow}>
           <View style={styles.dateBadge}>
-            <DateDisplay date={date} />
+            <DateDisplay date={date} type="date" />
           </View>
           <View
             style={[
@@ -110,7 +109,7 @@ export default function ShowAttendanceComponent({
             ]}
           >
             <CustomText style={styles.statusText}>
-              {t(record.status) || "--"}
+              {record.status ? t(record.status) : "-"}
             </CustomText>
           </View>
         </View>
@@ -118,48 +117,30 @@ export default function ShowAttendanceComponent({
     });
   };
 
-  const addBookingModalContent = () => (
+  const addBookingModalContent = (worker: any) => (
     <View>
       <View style={styles.drawerProfileSection}>
         <ProfilePicture
-          uri={selectedWorker?.workerDetails?.profilePicture}
+          uri={worker?.workerDetails?.profilePicture}
           style={styles.drawerProfileImage}
         />
         <View>
           <Text style={styles.drawerWorkerName}>
-            {selectedWorker?.workerDetails?.name}
+            {worker?.workerDetails?.name}
           </Text>
-          <Text style={styles.drawerWorkerAddress}>
-            {selectedWorker?.workerDetails?.address || t("addressNotFound")}
-          </Text>
+          <ShowAddress address={worker?.workerDetails?.address} />
         </View>
       </View>
       <CustomText textAlign="left" style={styles.drawerHeading}>
         {t("datewiseRecords")}
       </CustomText>
-      {selectedWorker &&
+      {worker &&
         renderDateWiseAttendance(
-          selectedWorker?.attendance?.attendanceRecords,
+          worker?.attendance?.attendanceRecords,
           booking?.startDate
         )}
     </View>
   );
-
-  const handleShowAttendance = () => {
-    setDrawerState({
-      visible: true,
-      title: "attendanceDetails",
-      content: addBookingModalContent,
-      // primaryButton: {
-      //   title: "save",
-      //   action: handleSubmit(onSubmitCompleteProfile),
-      // },
-      secondaryButton: {
-        title: "back",
-        action: () => setDrawerState({ visible: false }),
-      },
-    });
-  };
 
   return (
     <>
@@ -177,17 +158,15 @@ export default function ShowAttendanceComponent({
                   onPress={() => handleWorkerClick(worker)}
                 >
                   <View style={styles.workerInfo}>
-                    <Image
-                      source={{ uri: workerDetails.profilePicture }}
-                      style={styles.profileImage}
+                    <ProfilePicture
+                      uri={workerDetails.profilePicture}
+                      style={styles.drawerProfileImage}
                     />
                     <View style={styles.workerDetailsContainer}>
                       <Text style={styles.workerName}>
                         {workerDetails.name}
                       </Text>
-                      <Text style={styles.workerAddress}>
-                        {workerDetails.address || t("addressNotFound")}
-                      </Text>
+                      <ShowAddress address={workerDetails.address} />
                     </View>
                   </View>
                   <View style={styles.attendanceSummary}>
@@ -298,19 +277,8 @@ const styles: StatusStyles & any = StyleSheet.create({
     alignItems: "flex-start",
     // flex: 1,
   },
-  profileImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    marginRight: 16,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
   workerDetailsContainer: {
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
   },
@@ -319,18 +287,12 @@ const styles: StatusStyles & any = StyleSheet.create({
     fontSize: 18,
     color: "#333",
   },
-  workerAddress: {
-    fontSize: 13,
-    color: "#757575",
-    marginTop: 4,
-  },
   attendanceSummary: {
     flexDirection: "row",
     alignSelf: "flex-end",
     alignItems: "flex-end",
     justifyContent: "space-between",
     gap: 10,
-    // height: "100%",
   },
   attendanceBadge: {
     borderRadius: 12,

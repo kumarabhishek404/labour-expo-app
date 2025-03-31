@@ -3,28 +3,25 @@ import { View, StyleSheet, RefreshControl } from "react-native";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
-import Loader from "@/components/commons/Loaders/Loader";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import Atoms from "@/app/AtomStore";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import { StatusBar } from "react-native";
 import CustomHeader from "@/components/commons/Header";
 import { handleQueryKey } from "@/constants/functions";
-import { t } from "@/utils/translationHelper";
 import USER from "@/app/api/user";
 import EMPLOYER from "@/app/api/employer";
 import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import AppliedFilters from "@/components/commons/AppliedFilters";
+import ListingsWorkersPlaceholder from "@/components/commons/LoadingPlaceholders/ListingVerticalWorkerPlaceholder";
 
 const Users = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("");
   const { title, type, searchCategory } = useGlobalSearchParams();
   const [appliedFilters, setAppliedFilters] = useState(() => {
@@ -98,10 +95,6 @@ const Users = () => {
     [filteredData]
   );
 
-  const onCatChanged = (category: string) => {
-    setCategory(category);
-  };
-
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
     async () => {
       await refetch();
@@ -121,39 +114,52 @@ const Users = () => {
           ),
         }}
       />
-      <Loader loading={isLoading} />
-      <View style={styles.container}>
-        <AppliedFilters
-          appliedFilters={appliedFilters}
-          setAppliedFilters={setAppliedFilters}
-          fetchUsers={() => {}}
-        />
-        <PaginationString
-          type="workers"
-          isLoading={isLoading || isRefetching}
-          totalFetchedData={memoizedData?.length}
-          totalData={totalData}
-        />
+      {isLoading ? (
+        <ListingsWorkersPlaceholder />
+      ) : (
+        <View style={styles.container}>
+          {appliedFilters &&
+            (appliedFilters?.completedServices ||
+              appliedFilters?.distance ||
+              appliedFilters?.rating > 0 ||
+              appliedFilters?.skills?.length > 0) && (
+              <View style={{ marginTop: 10 }}>
+                <AppliedFilters
+                  appliedFilters={appliedFilters}
+                  setAppliedFilters={setAppliedFilters}
+                  fetchUsers={() => {}}
+                />
+              </View>
+            )}
+          <View style={{ marginVertical: 10 }}>
+            <PaginationString
+              type="workers"
+              isLoading={isLoading || isRefetching}
+              totalFetchedData={memoizedData?.length}
+              totalData={totalData}
+            />
+          </View>
 
-        {memoizedData && memoizedData?.length > 0 ? (
-          <ListingsVerticalWorkers
-            style={styles.listContainer}
-            availableInterest={WORKERTYPES}
-            listings={memoizedData || []}
-            loadMore={loadMore}
-            type={"worker"}
-            isFetchingNextPage={isFetchingNextPage}
-            refreshControl={
-              <RefreshControl
-                refreshing={!isRefetching && refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        ) : (
-          <EmptyDatePlaceholder title="worker" />
-        )}
-      </View>
+          {memoizedData && memoizedData?.length > 0 ? (
+            <ListingsVerticalWorkers
+              style={styles.listContainer}
+              availableInterest={WORKERTYPES}
+              listings={memoizedData || []}
+              loadMore={loadMore}
+              type={"worker"}
+              isFetchingNextPage={isFetchingNextPage}
+              refreshControl={
+                <RefreshControl
+                  refreshing={!isRefetching && refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+            />
+          ) : (
+            <EmptyDataPlaceholder title="worker" />
+          )}
+        </View>
+      )}
     </>
   );
 };

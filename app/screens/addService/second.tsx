@@ -135,7 +135,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           isPrimary={true}
           title={t("back")}
           onPress={() => {
-            setAddServiceStep(1)
+            setAddServiceStep(1);
             setStep(1);
           }}
           bgColor={Colors?.danger}
@@ -155,8 +155,8 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: "100%",
+    // flex: 1,
+    // height: "100%",
     backgroundColor: "transparent",
   },
   image: {

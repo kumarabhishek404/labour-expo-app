@@ -15,7 +15,7 @@ import { t } from "@/utils/translationHelper";
 import { useAtom, useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Colors from "@/constants/Colors";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 
 const Members = () => {
   const [totalData, setTotalData] = useState(0);
@@ -110,7 +110,7 @@ const Members = () => {
               type="member"
             />
           ) : (
-            <EmptyDatePlaceholder title="members" />
+            <EmptyDataPlaceholder title="members" />
           )}
         </View>
       </View>

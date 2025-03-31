@@ -212,8 +212,8 @@ const AddAddressDrawer = ({
     if (isMainAddress)
       mutationUpdateProfileInfo.mutate(
         isAddressAlreadySaved
-          ? { address }
-          : { address, savedAddresses: address }
+          ? { address, location: watch("location") }
+          : { address, savedAddresses: address, location: watch("location") }
       );
     else if (!isAddressAlreadySaved)
       mutationUpdateProfileInfo.mutate({ savedAddresses: address });
@@ -238,6 +238,7 @@ const AddAddressDrawer = ({
       setDistricts([]);
       setValue("state", "");
     },
+    
   });
 
   const fetchLocation = async () => {
@@ -318,7 +319,7 @@ const AddAddressDrawer = ({
               baseFont={18}
               color={Colors?.link}
             >
-              Fetch Current Location
+              {t("fetchCurrentLocation")}
             </CustomText>
           </TouchableOpacity>
           <PaperDropdown
@@ -493,6 +494,7 @@ const AddAddressDrawer = ({
     watch("additionalDetails"),
     isFetchingLocation,
     fetchStateDetailsMutation?.isPending,
+    mutationUpdateProfileInfo?.isPending
   ]);
 
   return <Loader loading={mutationUpdateProfileInfo?.isPending} />;

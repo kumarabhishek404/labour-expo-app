@@ -16,11 +16,12 @@ import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import CustomSegmentedButton from "../bottomTabs/(user)/bookingsAndRequests/customTabs";
 import WORKER from "@/app/api/workers";
 import EMPLOYER from "@/app/api/employer";
 import MEDIATOR from "@/app/api/mediator";
+import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholders/ListingBookingPlaceholder";
 
 const Requests = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -120,46 +121,49 @@ const Requests = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
-        <View style={styles.container}>
-          <View style={styles?.paginationTabs}>
-            <CustomSegmentedButton
-              buttons={ALLREQUEST}
-              selectedTab={category}
-              onValueChange={onCategoryChanged}
+        {isLoading ? (
+          <ListingsBookingsPlaceholder />
+        ) : (
+          <View style={styles.container}>
+            <View style={styles?.paginationTabs}>
+              <CustomSegmentedButton
+                buttons={ALLREQUEST}
+                selectedTab={category}
+                onValueChange={onCategoryChanged}
+              />
+            </View>
+            <PaginationString
+              type="requests"
+              isLoading={isLoading || isRefetching}
+              totalFetchedData={filteredData?.length}
+              totalData={totalData}
             />
+            {filteredData && filteredData?.length > 0 ? (
+              <ListingVerticalRequests
+                listings={filteredData || []}
+                requestType="teamJoiningRequest"
+                isLoading={
+                  mutationCancelRequest?.isPending ||
+                  mutationAcceptRequest?.isPending ||
+                  mutationRejectRequest?.isPending
+                }
+                loadMore={loadMore}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={!isRefetching && refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                isFetchingNextPage={isFetchingNextPage}
+                onCancelRequest={mutationCancelRequest.mutate}
+                onAcceptRequest={mutationAcceptRequest.mutate}
+                onRejectRequest={mutationRejectRequest.mutate}
+              />
+            ) : (
+              <EmptyDataPlaceholder title="requests" leftHeight={300} />
+            )}
           </View>
-          <PaginationString
-            type="requests"
-            isLoading={isLoading || isRefetching}
-            totalFetchedData={filteredData?.length}
-            totalData={totalData}
-          />
-          {filteredData && filteredData?.length > 0 ? (
-            <ListingVerticalRequests
-              listings={filteredData || []}
-              requestType="teamJoiningRequest"
-              isLoading={
-                mutationCancelRequest?.isPending ||
-                mutationAcceptRequest?.isPending ||
-                mutationRejectRequest?.isPending
-              }
-              loadMore={loadMore}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetching && refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-              isFetchingNextPage={isFetchingNextPage}
-              onCancelRequest={mutationCancelRequest.mutate}
-              onAcceptRequest={mutationAcceptRequest.mutate}
-              onRejectRequest={mutationRejectRequest.mutate}
-            />
-          ) : (
-            <EmptyDatePlaceholder title="requests" leftHeight={300} />
-          )}
-        </View>
+        )}
       </View>
     </>
   );

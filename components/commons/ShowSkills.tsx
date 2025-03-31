@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   skillTag: {
-    backgroundColor: "transparent",
-    // borderRadius: 8,
-    // paddingHorizontal: 6,
-    // paddingVertical: 4,
+    backgroundColor: Colors?.tertieryButton,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
   },
 });

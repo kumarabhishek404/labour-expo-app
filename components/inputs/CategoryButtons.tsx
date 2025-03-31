@@ -1,9 +1,9 @@
 import {
-  Dimensions,
   ScrollView,
-  StyleSheet,
-  TouchableOpacity,
   View,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import Colors from "@/constants/Colors";
@@ -31,18 +31,13 @@ const ReusableCategoryComponent = ({
 }: Props) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [items, setItems] = useState<any[]>([]);
-  const scrollRef: any = useRef<ScrollView>(null);
-  const itemRef = useRef<any[] | null[]>([]);
+  const scrollRef = useRef<ScrollView | null>(null);
+  const itemRef = useRef<Array<any | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const { width } = Dimensions.get("window");
 
   useEffect(() => {
-    let updatedItems = [];
-    if (type === "workerType") {
-      updatedItems = options;
-    } else if (type === "date") {
-      updatedItems = options;
-    }
+    let updatedItems = type === "workerType" ? options : options;
     setItems(updatedItems);
   }, [userDetails, type, options]);
 
@@ -55,57 +50,76 @@ const ReusableCategoryComponent = ({
         setActiveIndex(defaultIndex);
         onCategoryChanged(items[defaultIndex]);
 
-        // ✅ Scroll to the default selected date
         setTimeout(() => {
           const selected = itemRef.current[defaultIndex];
           if (selected && scrollRef.current) {
-            selected.measureLayout(
-              scrollRef.current.getInnerViewRef(),
-              (x: any) => {
-                scrollRef.current.scrollTo({
-                  x: x - width / 2,
-                  animated: true,
-                });
+            selected.measure(
+              (
+                x: number,
+                y: number,
+                width: number,
+                height: number,
+                pageX: number
+              ) => {
+                if (scrollRef.current) {
+                  scrollRef.current.scrollTo({
+                    x: pageX - width / 2,
+                    animated: true,
+                  });
+                }
               }
             );
           }
-        }, 100); // Delay ensures UI elements are rendered
+        }, 100);
       }
     }
   }, [selectedDate, items, type]);
 
   const handleSelectItem = (index: number) => {
-    const selected = itemRef.current[index];
     setActiveIndex(index);
-
-    selected?.measureLayout(scrollRef?.current?.getInnerViewRef(), (x: any) => {
-      scrollRef.current.scrollTo({
-        x: x - width / 2,
-        animated: true,
-      });
-    });
-
     onCategoryChanged(items[index]);
+
+    setTimeout(() => {
+      const selected = itemRef.current[index];
+      if (selected && scrollRef.current) {
+        selected.measure(
+          (
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            pageX: number
+          ) => {
+            if (scrollRef.current) {
+              scrollRef.current.scrollTo({
+                x: pageX - width / 2,
+                animated: true,
+              });
+            }
+          }
+        );
+      }
+    }, 100);
   };
 
   return (
     <View style={stylesProp}>
       <ScrollView
-        ref={scrollRef}
+        ref={(ref) => (scrollRef.current = ref)}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.containerStyle}
       >
-        {items?.map((item: any, index: number) => (
+        {items.map((item: any, index: number) => (
           <TouchableOpacity
             key={index}
             ref={(el) => (itemRef.current[index] = el)}
-            disabled={type === "date" ? item?.isAfter(moment()) : false} // ✅ Disable future dates
+            disabled={type === "date" ? item?.isAfter(moment()) : false}
             onPress={() => handleSelectItem(index)}
             style={[
               styles.categoryBtn,
               activeIndex === index && styles.categoryBtnActive,
-              type === "date" && item?.isAfter(moment()) && { opacity: 0.5 }, // Visual feedback for disabled dates
+              type === "date" && item?.isAfter(moment()) && { opacity: 0.5 },
             ]}
           >
             {type === "workerType" ? (
@@ -123,9 +137,7 @@ const ReusableCategoryComponent = ({
                   baseFont={15}
                   fontWeight="medium"
                   color={
-                    activeIndex === index
-                      ? Colors?.white
-                      : Colors?.tertieryButton
+                    activeIndex === index ? Colors.white : Colors.tertieryButton
                   }
                 >
                   {t(item.label)}
@@ -137,9 +149,7 @@ const ReusableCategoryComponent = ({
                   baseFont={16}
                   fontWeight="600"
                   color={
-                    activeIndex === index
-                      ? Colors?.white
-                      : Colors?.tertieryButton
+                    activeIndex === index ? Colors.white : Colors.tertieryButton
                   }
                 >
                   {item.format("DD")}
@@ -148,9 +158,7 @@ const ReusableCategoryComponent = ({
                   baseFont={16}
                   fontWeight="600"
                   color={
-                    activeIndex === index
-                      ? Colors?.white
-                      : Colors?.tertieryButton
+                    activeIndex === index ? Colors.white : Colors.tertieryButton
                   }
                 >
                   {t(item.format("dddd"))}

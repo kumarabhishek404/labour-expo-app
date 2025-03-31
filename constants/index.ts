@@ -214,7 +214,7 @@ export const MEDIATORTYPES = [
 export const MYSERVICES = [
   {
     label: "active",
-    value: "ACTIVE",
+    value: "HIRING",
     iconName: "hiking",
   },
   {

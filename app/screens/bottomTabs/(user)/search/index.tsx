@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
@@ -8,6 +8,7 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 import USER from "@/app/api/user";
+import GradientWrapper from "@/components/commons/GradientWrapper";
 
 const Search = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -95,34 +96,36 @@ const Search = () => {
         setActiveTab={setSelectedTab}
       />
 
-      <View style={styles.container}>
-        <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
-          {selectedTab === 0 && (
-            <AllWorkers
-              isLoading={isLoading}
-              isRefetching={isRefetching}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshing={refreshing}
-              memoizedData={memoizedData}
-              onRefresh={onRefresh}
-              totalData={totalData}
-              loadMore={loadMore}
-            />
-          )}
-          {selectedTab === 1 && (
-            <AllServices
-              isLoading={isLoading}
-              isRefetching={isRefetching}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshing={refreshing}
-              memoizedData={memoizedData}
-              onRefresh={onRefresh}
-              totalData={totalData}
-              loadMore={loadMore}
-            />
-          )}
+      <GradientWrapper height={Dimensions.get("window").height - 180}>
+        <View style={styles.container}>
+          <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
+            {selectedTab === 0 && (
+              <AllWorkers
+                isLoading={isLoading}
+                isRefetching={isRefetching}
+                isFetchingNextPage={isFetchingNextPage}
+                refreshing={refreshing}
+                memoizedData={memoizedData}
+                onRefresh={onRefresh}
+                totalData={totalData}
+                loadMore={loadMore}
+              />
+            )}
+            {selectedTab === 1 && (
+              <AllServices
+                isLoading={isLoading}
+                isRefetching={isRefetching}
+                isFetchingNextPage={isFetchingNextPage}
+                refreshing={refreshing}
+                memoizedData={memoizedData}
+                onRefresh={onRefresh}
+                totalData={totalData}
+                loadMore={loadMore}
+              />
+            )}
+          </View>
         </View>
-      </View>
+      </GradientWrapper>
     </>
   );
 };
@@ -135,6 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF0FF",
     justifyContent: "space-between",
     minHeight: "100%",
+    paddingBottom: 75,
   },
   shadowBox: {
     shadowColor: "#000", // Subtle black shadow

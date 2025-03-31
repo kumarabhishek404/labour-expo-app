@@ -6,15 +6,19 @@ const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
 // AsyncStorage?.removeItem("user")
 // AsyncStorage?.removeItem("appearedNotifications")
+let isLoggedOut = false;
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
-    const user: any = await AsyncStorage.getItem("user");
-    const parsedUser = user ? JSON.parse(user) : null;
+    const user = await AsyncStorage.getItem("user");
+    if (!user || user === "null" || user === "undefined") {
+      console.warn("No valid user session found.");
+      return { Authorization: "" }; // Stop retries
+    }
+
+    const parsedUser = JSON.parse(user);
     if (parsedUser?.token) {
-      return {
-        Authorization: `Bearer ${parsedUser.token}`,
-      };
+      return { Authorization: `Bearer ${parsedUser.token}` };
     } else if (retries > 0) {
       await new Promise((resolve) => setTimeout(resolve, delay));
       return getHeaders(retries - 1, delay);
@@ -22,13 +26,17 @@ const getHeaders = async (retries = 3, delay = 500) => {
       return { Authorization: "" };
     }
   } catch (error) {
-    console.error("Error retrieving token from AsyncStorage:", error);
+    console.error("Error retrieving token:", error);
     return { Authorization: "" };
   }
 };
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
+});
+
+eventEmitter.on("logout", () => {
+  isLoggedOut = true;
 });
 
 // ✅ Interceptor: Handle Token Expiry and Emit Logout Event
@@ -38,10 +46,8 @@ api.interceptors.response.use(
     if (error.response) {
       const errorMessage = error.response.data.message;
       const statusText = error.response.data.statusText;
-      console.log(
-        "error.response=========================",
-        error.response?.data
-      );
+
+      console.log("API Error:", error.response?.data);
 
       if (
         errorMessage === "jwt expired" ||
@@ -50,7 +56,8 @@ api.interceptors.response.use(
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
-        eventEmitter.emit("logout"); // ✅ Emit logout event
+        await AsyncStorage.removeItem("user"); // Clear local storage
+        eventEmitter.emit("logout"); // Emit logout event
       }
     } else if (error.request) {
       console.error("No response received:", error.request);
@@ -62,15 +69,12 @@ api.interceptors.response.use(
 );
 
 // ✅ API Request Functions
-const makeGetRequest = async (
-  url: string,
-  headers?: object,
-  responseType: any = "json"
-): Promise<any> => {
-  return api.get(url, {
-    headers: { ...(await getHeaders()), ...headers },
-    responseType,
-  });
+const makeGetRequest = async (url: string, headers?: object) => {
+  if (isLoggedOut) {
+    console.warn("Skipping API call - User logged out");
+    return;
+  }
+  return api.get(url, { headers: { ...(await getHeaders()), ...headers } });
 };
 
 const makePostRequest = async (

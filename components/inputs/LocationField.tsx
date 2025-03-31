@@ -32,8 +32,6 @@ const LocationField = ({
       ? convertToLabelValueArray(userDetails?.savedAddresses)
       : []),
   ]);
-
-  console.log("userDetails?.savedAddresses --", userDetails?.address);
   
   useEffect(() => {
     if (userDetails?.savedAddresses) {

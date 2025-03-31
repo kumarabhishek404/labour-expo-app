@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,7 +18,6 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import Loader from "@/components/commons/Loaders/Loader";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import { getTimeAgo } from "@/constants/functions";
@@ -28,6 +28,8 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
 import RippleDot from "@/components/commons/RippleDot";
+import NotificationPlaceholder from "@/components/commons/LoadingPlaceholders/NotificationPlaceholder";
+import GradientWrapper from "@/components/commons/GradientWrapper";
 
 const NotificationScreen = () => {
   const queryClient = useQueryClient();
@@ -157,18 +159,15 @@ const NotificationScreen = () => {
       <View
         style={{
           width: "100%",
-          flexDirection: "row",
+          flexDirection: "column",
           position: "relative",
-          // gap: 10,
-          // borderWidth: 1,
-          // borderColor: "red",
         }}
       >
-        <View style={{ width: "17%", marginRight: 10 }}>
-          <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
-        </View>
-        <View style={styles?.notificationContent}>
-          <View style={{ position: "absolute", top: 0, left: -20 }}>
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ width: "17%", marginRight: 10 }}>
+            <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
+          </View>
+          <View style={{ position: "absolute", top: 10, left: 55 }}>
             {!item?.read && <RippleDot />}
           </View>
           <View style={styles?.nameDate}>
@@ -179,6 +178,8 @@ const NotificationScreen = () => {
               {getTimeAgo(item?.createdAt)}
             </CustomText>
           </View>
+        </View>
+        <View style={styles?.notificationContent}>
           <CustomText textAlign="left">{item?.body}</CustomText>
         </View>
       </View>
@@ -257,50 +258,61 @@ const NotificationScreen = () => {
           header: () => <CustomHeader title="notifications" left="back" />,
         }}
       />
-      <Loader loading={isLoading || isFetchingNextPage} />
-      <View style={styles?.container}>
-        {!hasPermission && RequestPermission()}
+      {/* <Loader loading={isLoading || isFetchingNextPage} /> */}
+      {isLoading ? (
+        <NotificationPlaceholder />
+      ) : (
+        <GradientWrapper height={Dimensions.get("window").height - 180}>
+          <View style={styles?.container}>
+            {!hasPermission && RequestPermission()}
 
-        {hasPermission &&
-          notifications?.length === 0 &&
-          HasPermissionZeroNotification()}
+            {hasPermission &&
+              notifications?.length === 0 &&
+              HasPermissionZeroNotification()}
 
-        {hasPermission && notifications?.length > 0 && (
-          <FlatList
-            data={memoizedData || []}
-            keyExtractor={(item) => item?._id}
-            renderItem={renderNotification}
-            showsVerticalScrollIndicator={false}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            ListFooterComponent={() => (
-              <>
-                {hasNextPage ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (hasNextPage && !isFetchingNextPage) {
-                        fetchNextPage();
-                      }
-                    }}
-                  >
-                    <CustomText color={Colors?.link} margin={10}>
-                      {t("goToHistoricalNotifications")}
-                    </CustomText>
-                  </TouchableOpacity>
-                ) : (
-                  <CustomText margin={10}>{t("noNotificationsYet")}</CustomText>
+            {hasPermission && notifications?.length > 0 && (
+              <FlatList
+                data={memoizedData || []}
+                keyExtractor={(item) => item?._id}
+                renderItem={renderNotification}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  gap: 10,
+                }}
+                onViewableItemsChanged={onViewableItemsChanged}
+                viewabilityConfig={viewabilityConfig}
+                ListFooterComponent={() => (
+                  <>
+                    {hasNextPage ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (hasNextPage && !isFetchingNextPage) {
+                            fetchNextPage();
+                          }
+                        }}
+                      >
+                        <CustomText color={Colors?.link} margin={10}>
+                          {t("goToHistoricalNotifications")}
+                        </CustomText>
+                      </TouchableOpacity>
+                    ) : (
+                      <CustomText margin={10}>
+                        {t("noNotificationsYet")}
+                      </CustomText>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing && !isRefetching}
-                onRefresh={onRefresh}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing && !isRefetching}
+                    onRefresh={onRefresh}
+                  />
+                }
               />
-            }
-          />
-        )}
-      </View>
+            )}
+          </View>
+        </GradientWrapper>
+      )}
     </>
   );
 };
@@ -309,8 +321,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    marginTop: 10,
-    backgroundColor: Colors?.background,
   },
   permissionItems: {
     padding: 15,
@@ -339,20 +349,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
+    backgroundColor: Colors?.white,
+    padding: 10,
+    borderRadius: 8,
   },
   notificationContent: {
-    width: "80%",
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginTop: 0,
+    marginTop: 10,
   },
   nameDate: {
-    width: "100%",
+    width: "77%",
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 10,
   },
   name: {

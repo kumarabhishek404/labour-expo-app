@@ -77,9 +77,7 @@ const forgotPassword = async (payload: any) => {
       `/auth/forgot-password-code`,
       payload
     );
-    TOAST?.success(
-      "Password reset code is sent to your email successfully"
-    );
+    TOAST?.success("Password reset code is sent to your email successfully");
     return response;
   } catch (error: any) {
     console.log(
@@ -165,6 +163,16 @@ const verifyEmailCode = async (code: string) => {
   }
 };
 
+const validateToken = async () => {
+  try {
+    const response = await API_CLIENT.makeGetRequest("/auth/validate-token");
+    return response;
+  } catch (error) {
+    console.error("Error validating token:", error);
+    throw error;
+  }
+};
+
 const AUTH = {
   checkMobileExistance,
   register,
@@ -175,6 +183,7 @@ const AUTH = {
   verifyOTP,
   sendEmailCode,
   verifyEmailCode,
+  validateToken,
 };
 
 export default AUTH;

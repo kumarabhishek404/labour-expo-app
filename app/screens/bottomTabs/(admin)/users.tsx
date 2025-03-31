@@ -6,7 +6,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { ROLES, USERS, WORKERTYPES } from "@/constants";
 import * as Location from "expo-location";
@@ -227,7 +227,7 @@ const AdminUsers = () => {
               }
             />
           ) : (
-            <EmptyDatePlaceholder title="worker" />
+            <EmptyDataPlaceholder title="worker" />
           )}
         </View>
 

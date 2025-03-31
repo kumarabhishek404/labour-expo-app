@@ -7,11 +7,13 @@ import CustomHeading from "./CustomHeading";
 interface ShowDistanceProps {
   loggedInUserLocation: object;
   targetLocation: object;
+  align?: string
 }
 
 const ShowDistance: React.FC<ShowDistanceProps> = ({
   loggedInUserLocation,
   targetLocation,
+  align
 }: any) => {
   return (
     <>
@@ -19,7 +21,7 @@ const ShowDistance: React.FC<ShowDistanceProps> = ({
         loggedInUserLocation?.latitude &&
         targetLocation &&
         !isNaN(calculateDistance(loggedInUserLocation, targetLocation)) && (
-          <CustomHeading>
+          <CustomHeading textAlign={align ?? "center"}>
             {calculateDistance(loggedInUserLocation, targetLocation)} {t("kms")} {t('distance')}
           </CustomHeading>
         )}

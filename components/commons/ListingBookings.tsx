@@ -61,11 +61,11 @@ const ListingsBookings = ({ title, item, category }: any) => {
               </CustomHeading>
             </View>
             <ShowAddress address={item?.address} />
-            <DateDisplay date={item?.startDate} />
+            <DateDisplay date={item?.startDate} type="startDate" />
             <CustomText textAlign="left">
-              ⏳ Duration:{" "}
+              ⏳ {t("duration")}:{" "}
               <CustomText baseFont={17} fontWeight="bold">
-                {item?.duration} days
+                {item?.duration} {t("days")}
               </CustomText>
             </CustomText>
           </View>

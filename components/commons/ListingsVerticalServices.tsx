@@ -67,7 +67,7 @@ const ListingsVerticalServices = ({
 }: Props) => {
   const RenderItem = React?.memo(({ item }: any) => {
     if (item?.bookingType === "direct") {
-      return <ListingsBookings item={item} />;
+      return <ListingsServices item={item} />;
     }
     return <ListingsServices item={item} />;
   });

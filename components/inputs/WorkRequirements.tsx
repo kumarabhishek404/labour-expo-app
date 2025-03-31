@@ -5,7 +5,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
@@ -41,6 +41,8 @@ const WorkRequirment = ({
   errors,
   errorField,
 }: WorkRequirmentProps) => {
+  const [key, setKey] = useState(0);
+
   useEffect(() => {
     const updatedRequirements = requirements.map((req: any) => ({
       ...req,
@@ -48,6 +50,39 @@ const WorkRequirment = ({
     }));
     setRequirements(updatedRequirements);
   }, [facilities]);
+
+  // const [prevValues, setPrevValues] = useState({ type, subType });
+
+  // useEffect(() => {
+  //   if (prevValues.type !== type || prevValues.subType !== subType) {
+  //     // Reset facilities
+  //     setFacilities({
+  //       living: false,
+  //       food: false,
+  //       travelling: false,
+  //       esi_pf: false,
+  //     });
+
+  //     // Reset requirements
+  //     setRequirements([
+  //       {
+  //         name: "",
+  //         count: 0,
+  //         payPerDay: 0,
+  //         living: false,
+  //         food: false,
+  //         travelling: false,
+  //         esi_pf: false,
+  //       },
+  //     ]);
+
+  //     // Change key to force re-render
+  //     setKey((prevKey) => prevKey + 1);
+
+  //     // Update previous values
+  //     setPrevValues({ type, subType });
+  //   }
+  // }, [type, subType]);
 
   const getFilteredWorkerTypes = (index: number) => {
     const selectedNames = requirements
@@ -106,7 +141,7 @@ const WorkRequirment = ({
   };
 
   return (
-    <View style={styles.addRequirmentWrapper}>
+    <View key={key} style={styles.addRequirmentWrapper}>
       {/* Common Checkboxes */}
       <View style={styles.checkboxContainer}>
         <CustomCheckbox
@@ -216,7 +251,7 @@ const WorkRequirment = ({
         {errors?.[name] && (
           <CustomText
             textAlign="left"
-            baseFont={10}
+            baseFont={14}
             color={Colors?.danger}
             style={{ width: "60%" }}
           >
@@ -257,10 +292,10 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     justifyContent: "space-between",
     marginBottom: 10,
-    gap: 20
+    gap: 20,
   },
   requirementCard: {
     width: "100%",

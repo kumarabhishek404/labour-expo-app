@@ -7,7 +7,7 @@ import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import { WORKERS } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
@@ -179,7 +179,7 @@ const UserWorkers = () => {
             />
           ) : (
             // </>
-            <EmptyDatePlaceholder title="service" />
+            <EmptyDataPlaceholder title="service" />
           )}
         </View>
       </View>

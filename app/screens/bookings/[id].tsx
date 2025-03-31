@@ -30,6 +30,7 @@ import ButtonComp from "@/components/inputs/Button";
 import WORKER from "@/app/api/workers";
 import DateDisplay from "@/components/commons/ShowDate";
 import ShowAddress from "@/components/commons/ShowAddress";
+import BookingDetailsPlaceholder from "@/components/commons/LoadingPlaceholders/BookingDetails";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -115,185 +116,187 @@ const BookingDetails = () => {
         }}
       />
 
-      <Loader loading={isLoading} />
-
-      <ScrollView style={styles.container}>
-        <Animated.ScrollView
-          ref={scrollRef}
-          contentContainerStyle={{ paddingBottom: 150 }}
-        >
-          <ImageSlider images={booking?.images} />
-
-          <View style={styles.contentWrapper}>
-            {booking?.status === "CANCELLED" && (
-              <View style={styles?.selectedWrapper}>
-                <View style={{ width: "100%" }}>
-                  <CustomHeading color={Colors?.white} textAlign="left">
-                    {t("thisServiceIsCancelled")}
+      {/* <Loader loading={isLoading} /> */}
+      {isLoading ? (
+        <BookingDetailsPlaceholder />
+      ) : (
+        <ScrollView style={styles.container}>
+          <Animated.ScrollView
+            ref={scrollRef}
+            contentContainerStyle={{ paddingBottom: 150 }}
+          >
+            <View style={styles.contentWrapper}>
+              {booking?.employer && booking?.employer === userDetails?._id && (
+                <View>
+                  <CustomHeading
+                    textAlign="left"
+                    baseFont={20}
+                    color={Colors?.tertieryButton}
+                    style={{ marginVertical: 10 }}
+                  >
+                    {t("bookedWorker")}
                   </CustomHeading>
-                  <CustomText textAlign="left" color={Colors?.white}>
-                    {t("apologyForInconvenience")}
-                  </CustomText>
+                  <SelectedUsers
+                    selectedApplicants={[
+                      ...(booking?.bookedWorker ? [booking?.bookedWorker] : []), // Add booked worker if available
+                      ...(booking?.selectedUsers || []),
+                    ].filter(Boolean)}
+                    bookingId={booking?._id}
+                    bookingType={booking?.bookingType}
+                    refetch={refetch}
+                  />
                 </View>
-              </View>
-            )}
+              )}
 
-            {booking?.status === "COMPLETED" && (
-              <View style={styles?.selectedWrapper}>
-                <View style={{ width: "100%" }}>
-                  <CustomHeading color={Colors?.white} textAlign="left">
-                    {t("thisServiceIsCompleted")}
-                  </CustomHeading>
-                  <CustomText textAlign="left" color={Colors?.white}>
-                    {t("thankYouForUsingOurService")}
-                  </CustomText>
-                </View>
-              </View>
-            )}
-
-            {isSelected && booking?.status !== "CANCELLED" && (
-              <View style={styles?.selectedWrapper}>
-                <CustomHeading color={Colors?.white} textAlign="left">
-                  {t("youAreSelected")}
-                </CustomHeading>
-                <CustomText
-                  textAlign="left"
-                  color={Colors?.white}
-                  style={{ marginBottom: 10 }}
+              {booking?.status === "HIRING" && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
                 >
-                  {t("doYourBest")}
-                </CustomText>
-                <Button
-                  isPrimary={true}
-                  title={t("callEmployer")}
-                  onPress={() => handleCall(booking?.employer?.mobile)}
-                  icon={
-                    <FontAwesome5
-                      name="phone-alt"
-                      size={16}
-                      color={Colors.white}
-                      style={{ marginRight: 10 }}
+                  {booking?.employer === userDetails?._id ? (
+                    <ButtonComp
+                      isPrimary={true}
+                      title={t("addAttendance")}
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/bookings/addAttendance",
+                          params: {
+                            bookingDetails: JSON.stringify(booking),
+                            workers: JSON.stringify(workersList),
+                          },
+                        })
+                      }
+                      style={{ flex: 1, paddingVertical: 6 }}
                     />
-                  }
-                />
-              </View>
-            )}
+                  ) : (
+                    <ButtonComp
+                      isPrimary={true}
+                      title={t("showYourAttendance")}
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/bookings/showAttendance",
+                          params: {
+                            bookingDetails: JSON.stringify(booking),
+                          },
+                        })
+                      }
+                      bgColor={Colors?.tertieryButton}
+                      borderColor={Colors?.tertieryButton}
+                      style={{ flex: 1, paddingVertical: 6 }}
+                    />
+                  )}
+                </View>
+              )}
 
-            <CustomHeading baseFont={18} textAlign="left">
-              {t(booking?.type)} - {t(booking?.subType)}
-            </CustomHeading>
-            <CustomHeading baseFont={18} textAlign="left">
-              {t("serviceType")}
-              {" - "}
-              <CustomText
-                color={Colors?.tertieryButton}
-                fontWeight="600"
+              {booking?.status === "CANCELLED" && (
+                <View style={styles?.selectedWrapper}>
+                  <View style={{ width: "100%" }}>
+                    <CustomHeading color={Colors?.white} textAlign="left">
+                      {t("thisServiceIsCancelled")}
+                    </CustomHeading>
+                    <CustomText textAlign="left" color={Colors?.white}>
+                      {t("apologyForInconvenience")}
+                    </CustomText>
+                  </View>
+                </View>
+              )}
+
+              {booking?.status === "COMPLETED" && (
+                <View style={styles?.selectedWrapper}>
+                  <View style={{ width: "100%" }}>
+                    <CustomHeading color={Colors?.white} textAlign="left">
+                      {t("thisServiceIsCompleted")}
+                    </CustomHeading>
+                    <CustomText textAlign="left" color={Colors?.white}>
+                      {t("thankYouForUsingOurService")}
+                    </CustomText>
+                  </View>
+                </View>
+              )}
+
+              {isSelected && booking?.status !== "CANCELLED" && (
+                <View style={styles?.selectedWrapper}>
+                  <CustomHeading color={Colors?.white} textAlign="left">
+                    {t("youAreSelected")}
+                  </CustomHeading>
+                  <CustomText
+                    textAlign="left"
+                    color={Colors?.white}
+                    style={{ marginBottom: 10 }}
+                  >
+                    {t("doYourBest")}
+                  </CustomText>
+                  <Button
+                    isPrimary={true}
+                    title={t("callEmployer")}
+                    onPress={() => handleCall(booking?.employer?.mobile)}
+                    icon={
+                      <FontAwesome5
+                        name="phone-alt"
+                        size={16}
+                        color={Colors.white}
+                        style={{ marginRight: 10 }}
+                      />
+                    }
+                  />
+                </View>
+              )}
+
+              <CustomHeading
+                textAlign="left"
                 baseFont={20}
+                color={Colors?.tertieryButton}
+                style={{ marginBottom: 10, marginTop: 10 }}
               >
-                {t(booking?.bookingType || "direct")}
-              </CustomText>
-            </CustomHeading>
-            <View style={styles.listingLocationWrapper}>
-              <ShowAddress address={booking?.address} />
-            </View>
-
-            <View style={styles.listingLocationWrapper}>
-              <DateDisplay date={booking?.startDate} />
-            </View>
-
-            <Highlights service={booking} />
-
-            {booking?.description && (
-              <View style={{ marginVertical: 20 }}>
-                <CustomHeading
-                  textAlign="left"
-                  baseFont={18}
-                  color={Colors?.inputLabel}
-                >
-                  {t("description")}
-                </CustomHeading>
-                <CustomText textAlign="left" baseFont={16}>
-                  {booking?.description}
-                </CustomText>
+                {t("bookingDetails")}
+              </CustomHeading>
+              <CustomHeading baseFont={18} textAlign="left">
+                {t(booking?.type)} - {t(booking?.subType)}
+              </CustomHeading>
+              <View style={styles.listingLocationWrapper}>
+                <ShowAddress address={booking?.address} />
               </View>
-            )}
 
-            {booking && booking?.requirements?.length > 0 && (
-              <Requirements type="full" requirements={booking?.requirements} />
-            )}
-
-            {booking?.status === "HIRING" && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginVertical: 20,
-                }}
-              >
-                {booking?.employer === userDetails?._id ? (
-                  <ButtonComp
-                    isPrimary={true}
-                    title={t("addAttendance")}
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/bookings/addAttendance",
-                        params: {
-                          bookingDetails: JSON.stringify(booking),
-                          workers: JSON.stringify(workersList),
-                        },
-                      })
-                    }
-                    style={{ flex: 1, paddingVertical: 6 }}
-                  />
-                ) : (
-                  <ButtonComp
-                    isPrimary={true}
-                    title={t("showYourAttendance")}
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/bookings/showAttendance",
-                        params: {
-                          bookingDetails: JSON.stringify(booking),
-                        },
-                      })
-                    }
-                    bgColor={Colors?.tertieryButton}
-                    borderColor={Colors?.tertieryButton}
-                    style={{ flex: 1, paddingVertical: 6 }}
-                  />
-                )}
+              <View style={styles.listingLocationWrapper}>
+                <DateDisplay date={booking?.startDate} type="startDate" />
               </View>
-            )}
-            {booking?.employer && booking?.employer === userDetails?._id && (
-              <View style={{ marginVertical: 20 }}>
-                <CustomHeading
-                  textAlign="left"
-                  color={Colors?.heading}
-                  baseFont={20}
-                  style={{ width: "50%", marginBottom: 10 }}
-                >
-                  {t("allBookedWorkers")}
-                </CustomHeading>
-                <SelectedUsers
-                  selectedApplicants={[
-                    ...(booking?.bookedWorker ? [booking?.bookedWorker] : []), // Add booked worker if available
-                    ...(booking?.selectedUsers || []),
-                  ].filter(Boolean)}
-                  bookingId={booking?._id}
-                  bookingType={booking?.bookingType}
-                  refetch={refetch}
+
+              <Highlights service={booking} />
+
+              {booking?.description && (
+                <View style={{ marginVertical: 20 }}>
+                  <CustomHeading
+                    textAlign="left"
+                    baseFont={18}
+                    color={Colors?.inputLabel}
+                  >
+                    {t("description")}
+                  </CustomHeading>
+                  <CustomText textAlign="left" baseFont={16}>
+                    {booking?.description}
+                  </CustomText>
+                </View>
+              )}
+
+              {booking && booking?.requirements?.length > 0 && (
+                <Requirements
+                  type="full"
+                  requirements={booking?.requirements}
                 />
-              </View>
-            )}
-          </View>
+              )}
+            </View>
 
-          {booking?.employer?._id &&
-            booking?.employer?._id !== userDetails?._id && (
-              <EmployerCard employer={booking?.employer} />
-            )}
-        </Animated.ScrollView>
-      </ScrollView>
+            {booking?.employer?._id &&
+              booking?.employer?._id !== userDetails?._id && (
+                <EmployerCard employer={booking?.employer} />
+              )}
+          </Animated.ScrollView>
+        </ScrollView>
+      )}
 
       <BookingActionButtons
         category={category}
@@ -319,13 +322,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  image: {
-    width: width,
-    height: IMG_HEIGHT,
-  },
   contentWrapper: {
     paddingHorizontal: 15,
-    paddingVertical: 20,
+    // paddingVertical: 20,
     backgroundColor: Colors.background,
   },
   selectedWrapper: {

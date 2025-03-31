@@ -20,7 +20,7 @@ import ScrollHint from "@/components/commons/ScrollToRight";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import HowAppWorks from "@/components/commons/HowAppWorks";
 import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
@@ -185,7 +185,7 @@ const UserHome = () => {
                   <ScrollHint />
                 </>
               ) : (
-                <EmptyDatePlaceholder title="service" />
+                <EmptyDataPlaceholder title="service" />
               )}
             </View>
           </View>

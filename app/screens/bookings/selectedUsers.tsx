@@ -15,6 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import ShowAddress from "@/components/commons/ShowAddress";
+import SkillSelector from "@/components/commons/SkillSelector";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -29,7 +30,7 @@ const SelectedUsers = ({
   bookingType,
   refetch,
 }: SelectedApplicantsProps) => {
-  console.log("selectedApplicants ---", selectedApplicants);
+  console.log("selectedApplicants ---", selectedApplicants[0]?.workers);
 
   const [expandedItems, setExpandedItems] = React.useState<{
     [key: string]: boolean;
@@ -83,6 +84,9 @@ const SelectedUsers = ({
           ?.map((mediator: any, index: number) => {
             const appliedUser = mediator?.name ? mediator : mediator?.user;
             const workers = mediator?.workers;
+
+            console.log("appliedUser--", appliedUser);
+
             return (
               <View key={index} style={styles.workerCard}>
                 <View style={styles.productCard}>
@@ -93,11 +97,15 @@ const SelectedUsers = ({
                         {appliedUser?.name}
                       </CustomHeading>
                     </View>
-                    <ShowSkills
-                      type="small"
-                      userSkills={appliedUser?.skills}
-                      tagStyle={{ backgroundColor: Colors?.darkGray }}
-                    />
+                    <CustomText
+                      textAlign="left"
+                      color={Colors?.tertieryButton}
+                      fontWeight="600"
+                      style={{ textTransform: "uppercase" }}
+                    >
+                      {t(appliedUser?.skill?.toLowerCase())}
+                    </CustomText>
+                    {/* <ShowSkills type="small" userSkills={appliedUser?.skills} /> */}
                   </View>
 
                   <View
@@ -133,7 +141,10 @@ const SelectedUsers = ({
                 </View>
 
                 <View style={styles.recommendationContainer}>
-                  <ShowAddress address={appliedUser?.address} />
+                  <ShowAddress
+                    address={appliedUser?.address}
+                    numberOfLines={2}
+                  />
                 </View>
 
                 {workers?.length > 0 && (
@@ -198,10 +209,14 @@ const SelectedUsers = ({
                               <CustomText style={styles.workerName}>
                                 {worker?.name}
                               </CustomText>
-                              <ShowSkills
-                                type="small"
-                                userSkills={worker?.skills}
-                              />
+                              <CustomText
+                                textAlign="left"
+                                color={Colors?.tertieryButton}
+                                fontWeight="600"
+                                style={{ textTransform: "uppercase" }}
+                              >
+                                {t(worker?.skill)}
+                              </CustomText>
                             </View>
                           </View>
                         ))}

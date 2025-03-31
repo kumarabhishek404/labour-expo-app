@@ -108,6 +108,7 @@ const PaperDropdown = ({
           visible={visible}
           onDismiss={() => setVisible(false)}
           contentContainerStyle={styles.modalContainer}
+          dismissable={false}
         >
           {/* Search Bar */}
           {!isLoading && options.length > 0 && searchEnabled && (
@@ -176,7 +177,7 @@ const PaperDropdown = ({
             onPress={() => setVisible(false)}
             style={styles.closeButton}
           >
-            Close
+            {t("close")}
           </Button>
         </Modal>
       </Portal>
@@ -189,7 +190,7 @@ export default PaperDropdown;
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: Colors?.background,
+    // backgroundColor: Colors?.background,
     flexGrow: 1,
     gap: 5,
   },

@@ -4,23 +4,20 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import SERVICE from "../../api/services";
-import Loader from "@/components/commons/Loaders/Loader";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
-import Button from "@/components/inputs/Button";
-import moment from "moment";
-import Applicants from "@/components/commons/Applicants";
-import SelectedApplicants from "@/components/commons/SelectedApplicants";
 import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
@@ -29,16 +26,18 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import { t } from "@/utils/translationHelper";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ServiceActionButtons from "./actionButtons";
 import MEDIATOR from "@/app/api/mediator";
 import { handleCall } from "@/constants/functions";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import ButtonComp from "@/components/inputs/Button";
-import ShowSkills from "@/components/commons/ShowSkills";
 import DateDisplay from "@/components/commons/ShowDate";
 import ShowAddress from "@/components/commons/ShowAddress";
+import ApplicantsTabScreen from "./showApplicationsAndSelections";
+import ApplicantSummary from "./applicantsSummary";
+import BookingActionButtons from "../bookings/actionButtons";
+import ServicePlaceholder from "@/components/commons/LoadingPlaceholders/ServiceDetailsPlaceholder";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -47,7 +46,7 @@ const ServiceDetails = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const setAddService = useSetAtom(Atoms?.AddServiceAtom);
   const firstTimeRef = React.useRef(true);
-  const { id } = useLocalSearchParams();
+  const { id, showApplicationDetails } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
@@ -58,14 +57,22 @@ const ServiceDetails = () => {
     service?.appliedUsers?.find(
       (user: any) =>
         (user?.status === "PENDING" && user?.user === userDetails?._id) ||
-        user?.workers?.includes(userDetails?._id)
+        user?.workers?.some(
+          (worker: any) =>
+            worker?.worker?.toString() === userDetails?._id &&
+            worker?.status === "PENDING"
+        )
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
       (user: any) =>
         (user?.status === "SELECTED" && user?.user === userDetails?._id) ||
-        user?.workers?.includes?.(userDetails?._id)
+        user?.workers?.some(
+          (worker: any) =>
+            worker?.worker?.toString() === userDetails?._id &&
+            worker?.status === "SELECTED"
+        )
     ) || false
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
@@ -83,6 +90,8 @@ const ServiceDetails = () => {
   const { refreshUser, isLoading: isRefreshLoading } =
     REFRESH_USER.useRefreshUser();
 
+  const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
+
   const [isAdmin] = useState(userDetails?.isAdmin);
   const {
     isLoading,
@@ -94,9 +103,6 @@ const ServiceDetails = () => {
     retry: false,
     enabled: !!id,
   });
-
-  console.log("response---", response?.data?.requirements);
-  
 
   useFocusEffect(
     React.useCallback(() => {
@@ -111,6 +117,7 @@ const ServiceDetails = () => {
   const {
     data: appliedUsers,
     isLoading: isAppliedWorkersLoading,
+    isRefetching: isAppliedWorkersRefetching,
     isFetchingNextPage: isAppliedWorkersFetchingNextPage,
     fetchNextPage: appliedWorkersFetchPage,
     hasNextPage: hasAppliedWorkersNextPage,
@@ -159,6 +166,7 @@ const ServiceDetails = () => {
   const {
     data: selectedUsers,
     isLoading: isSelectedWorkerLoading,
+    isRefetching: isSelectedWorkerRefetching,
     isFetchingNextPage: isSelectedWorkerFetchingNextPage,
     fetchNextPage: selectedWorkersFetchPage,
     hasNextPage: hasSelectedWorkersNextPage,
@@ -193,7 +201,11 @@ const ServiceDetails = () => {
       service?.appliedUsers?.find(
         (user: any) =>
           (user?.status === "PENDING" && user?.user === userDetails?._id) ||
-          user?.workers?.includes(userDetails?._id)
+          user?.workers?.some(
+            (worker: any) =>
+              worker?.worker?.toString() === userDetails?._id &&
+              worker?.status === "PENDING"
+          )
       ) || false
     );
     setIsServiceLiked(
@@ -203,7 +215,11 @@ const ServiceDetails = () => {
       service?.selectedUsers?.find(
         (user: any) =>
           (user?.status === "SELECTED" && user?.user === userDetails?._id) ||
-          user?.workers?.includes(userDetails?._id)
+          user?.workers?.some(
+            (worker: any) =>
+              worker?.worker?.toString() === userDetails?._id &&
+              worker?.status === "SELECTED"
+          )
       ) || false
     );
     setIsWorkerBooked(service?.bookedWorker === userDetails?._id);
@@ -227,6 +243,23 @@ const ServiceDetails = () => {
   );
 
   useEffect(() => {
+    if (
+      showApplicationDetails &&
+      JSON?.parse(showApplicationDetails as string) &&
+      (applicants?.length > 0 || selectedApplicants?.length > 0)
+    ) {
+      handleShowApplications();
+    }
+  }, [
+    applicants ||
+      isAppliedWorkersLoading ||
+      isAppliedWorkersRefetching ||
+      selectedApplicants ||
+      isSelectedWorkerLoading ||
+      isSelectedWorkerRefetching,
+  ]);
+
+  useEffect(() => {
     const workers = selectedUsers?.pages[0]?.data || [];
     setSelectedApplicants([...workers]);
   }, [selectedUsers?.pages]);
@@ -235,6 +268,36 @@ const ServiceDetails = () => {
     const workers = appliedUsers?.pages[0]?.data || [];
     setApplicants([...workers]);
   }, [appliedUsers?.pages]);
+
+  const handleShowApplications = () => {
+    setDrawerState({
+      visible: true,
+      title: "showApplicationsDetails",
+      content: () => (
+        <ApplicantsTabScreen
+          applicants={applicants}
+          selectedApplicants={selectedApplicants}
+          serviceId={service?._id}
+          isSelectedWorkerLoading={
+            isSelectedWorkerLoading || isSelectedWorkerRefetching
+          }
+          isSelectedWorkerFetchingNextPage={isSelectedWorkerFetchingNextPage}
+          isAppliedWorkersLoading={
+            isAppliedWorkersLoading || isAppliedWorkersRefetching
+          }
+          isAppliedWorkersFetchingNextPage={isAppliedWorkersFetchingNextPage}
+          refetchAppliedWorkers={refetchAppliedWorkers}
+          refetchSelectedWorkers={refetchSelectedWorkers}
+        />
+      ),
+    });
+  };
+
+  console.log(
+    "service --",
+    service?.employer === userDetails?._id,
+    service?.bookingType === "byService"
+  );
 
   return (
     <>
@@ -254,260 +317,269 @@ const ServiceDetails = () => {
         }}
       />
 
-      <Loader loading={isLoading} />
-
-      <ScrollView style={styles.container}>
-        <Animated.ScrollView
-          ref={scrollRef}
-          contentContainerStyle={{ paddingBottom: 150 }}
-        >
-          <ImageSlider images={service?.images} />
-
-          <View style={styles.contentWrapper}>
-            {service?.status === "CANCELLED" && (
-              <View style={styles?.cancelledService}>
-                <View style={{ width: "100%" }}>
-                  <CustomHeading color={Colors?.white} textAlign="left">
-                    {t("thisServiceIsCancelled")}
-                  </CustomHeading>
-                  <CustomText textAlign="left" color={Colors?.white}>
-                    {t("apologyForInconvenience")}
-                  </CustomText>
-                </View>
-              </View>
-            )}
-
-            {service?.status === "COMPLETED" && (
-              <View style={styles?.selectedWrapper}>
-                <View style={{ width: "100%" }}>
-                  <CustomHeading color={Colors?.white} textAlign="left">
-                    {t("thisServiceIsCompleted")}
-                  </CustomHeading>
-                  <CustomText textAlign="left" color={Colors?.white}>
-                    {t("thankYouForUsingOurService")}
-                  </CustomText>
-                </View>
-              </View>
-            )}
-
-            {isSelected && service?.status !== "CANCELLED" && (
-              <View style={styles?.selectedWrapper}>
-                <CustomHeading color={Colors?.white} textAlign="left">
-                  {t("youAreSelected")}
-                </CustomHeading>
-                <CustomText
-                  textAlign="left"
-                  color={Colors?.white}
-                  style={{ marginBottom: 10 }}
-                >
-                  {t("doYourBest")}
-                </CustomText>
-                <View style={{ gap: 20 }}>
-                  <ButtonComp
-                    isPrimary={true}
-                    title={t("callEmployer")}
-                    onPress={() => handleCall(service?.employer?.mobile)}
-                    icon={
-                      <FontAwesome5
-                        name="phone-alt"
-                        size={16}
-                        color={Colors.white}
-                        style={{ marginRight: 10 }}
-                      />
+      {/* <Loader loading={isLoading} /> */}
+      {isLoading ? (
+        <ServicePlaceholder />
+      ) : (
+        <>
+          <ScrollView style={styles.container}>
+            <Animated.ScrollView
+              ref={scrollRef}
+              contentContainerStyle={{ paddingBottom: 150 }}
+            >
+              <ImageSlider images={service?.images} />
+              {(service?.employer === userDetails?._id || isAdmin) &&
+                service?.bookingType === "byService" && (
+                  <ApplicantSummary
+                    appliedCount={applicants?.length}
+                    selectedCount={selectedApplicants?.length}
+                    onShowDetails={handleShowApplications}
+                    isLoading={
+                      isAppliedWorkersLoading ||
+                      isAppliedWorkersRefetching ||
+                      isSelectedWorkerLoading ||
+                      isSelectedWorkerRefetching
                     }
                   />
-                  <ButtonComp
-                    isPrimary={true}
-                    title={t("showYourAttendance")}
-                    onPress={() =>
-                      router?.push({
-                        pathname: "/screens/bookings/showAttendance",
-                        params: {
-                          bookingDetails: JSON.stringify(service),
-                        },
-                      })
-                    }
-                    bgColor={Colors?.tertieryButton}
-                    borderColor={Colors?.tertieryButton}
-                    style={{ flex: 1, paddingVertical: 6 }}
-                  />
-                </View>
-              </View>
-            )}
-
-            <CustomHeading baseFont={18} textAlign="left">
-              {t(service?.type)} - {t(service?.subType)}
-            </CustomHeading>
-            <CustomHeading baseFont={18} textAlign="left">
-              {t("serviceType")}
-              {" - "}
-              <CustomText
-                color={Colors?.tertieryButton}
-                fontWeight="600"
-                baseFont={20}
-              >
-                {t(service?.bookingType)}
-              </CustomText>
-            </CustomHeading>
-            <View style={styles.listingLocationWrapper}>
-              <ShowAddress address={service?.address} />
-            </View>
-
-            <View style={styles.listingLocationWrapper}>
-              <DateDisplay date={service?.startDate} />
-            </View>
-
-            <Highlights service={service} />
-
-            {service?.description && (
-              <View style={{ marginVertical: 10 }}>
-                <CustomHeading
-                  textAlign="left"
-                  baseFont={18}
-                  color={Colors?.inputLabel}
-                >
-                  {t("description")}
-                </CustomHeading>
-                <CustomText textAlign="left" baseFont={16}>
-                  {service?.description}
-                </CustomText>
-              </View>
-            )}
-
-            {service && service?.requirements?.length > 0 && (
-              <Requirements type="full" requirements={service?.requirements} />
-            )}
-
-            {service?.bookedWorker && (
-              <View style={styles.workerCard}>
-                <View style={styles.productCard}>
-                  <ProfilePicture uri={service?.bookedWorker?.profilePicture} />
-                  <View style={styles.productInfo}>
-                    <View style={styles?.titleContainer}>
-                      <CustomHeading baseFont={14}>
-                        {service?.bookedWorker?.name}
+                )}
+              <View style={styles.contentWrapper}>
+                {service?.bookedWorker &&
+                  userDetails?._id === service?.employer && (
+                    <>
+                      <CustomHeading
+                        textAlign="left"
+                        baseFont={20}
+                        color={Colors?.tertieryButton}
+                        style={{ marginBottom: 10 }}
+                      >
+                        {t("bookedWorker")}
                       </CustomHeading>
-                    </View>
-                    <ShowSkills
-                      userSkills={service?.bookedWorker?.skills}
-                      tagStyle={{ backgroundColor: Colors?.darkGray }}
-                    />
-                    <View style={styles.recommendationContainer}>
-                      <Ionicons name="location" size={14} color="gray" />
-                      <CustomText textAlign="left">
-                        {service?.bookedWorker?.address || "Not Available"}
+                      <View style={styles.workerCard}>
+                        <View style={styles.productCard}>
+                          <ProfilePicture
+                            uri={service?.bookedWorker?.profilePicture}
+                            style={{ marginRight: 10 }}
+                          />
+                          <View style={styles.productInfo}>
+                            <View style={styles?.titleContainer}>
+                              <CustomHeading baseFont={22}>
+                                {service?.bookedWorker?.name}
+                              </CustomHeading>
+                            </View>
+                            <ShowAddress
+                              address={service?.bookedWorker?.address}
+                            />
+                          </View>
+                          <View
+                            style={{
+                              alignContent: "flex-end",
+                              justifyContent: "flex-start",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() =>
+                                router?.push({
+                                  pathname: "/screens/users/[id]",
+                                  params: {
+                                    id: service?.bookedWorker?._id,
+                                    role: "workers",
+                                    type: "applicant",
+                                  },
+                                })
+                              }
+                            >
+                              <CustomText
+                                fontWeight="bold"
+                                color={Colors?.link}
+                              >
+                                {t("workerDetails")}
+                              </CustomText>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      </View>
+                    </>
+                  )}
+
+                {service?.status === "CANCELLED" && (
+                  <View style={styles?.cancelledService}>
+                    <View style={{ width: "100%" }}>
+                      <CustomHeading color={Colors?.white} textAlign="left">
+                        {t("thisServiceIsCancelled")}
+                      </CustomHeading>
+                      <CustomText textAlign="left" color={Colors?.white}>
+                        {t("apologyForInconvenience")}
                       </CustomText>
                     </View>
                   </View>
-                  <View
-                    style={{
-                      alignContent: "flex-end",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <ButtonComp
-                      style={{
-                        minHeight: 20,
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
-                        marginTop: 6,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      isPrimary={false}
-                      title="Details"
-                      onPress={() =>
-                        router?.push({
-                          pathname: "/screens/users/[id]",
-                          params: {
-                            id: service?.bookedWorker?._id,
-                            role: "workers",
-                            type: "applicant",
-                          },
-                        })
-                      }
-                    />
+                )}
+
+                {service?.status === "COMPLETED" && (
+                  <View style={styles?.selectedWrapper}>
+                    <View style={{ width: "100%" }}>
+                      <CustomHeading color={Colors?.white} textAlign="left">
+                        {t("thisServiceIsCompleted")}
+                      </CustomHeading>
+                      <CustomText textAlign="left" color={Colors?.white}>
+                        {t("thankYouForUsingOurService")}
+                      </CustomText>
+                    </View>
                   </View>
+                )}
+
+                {isSelected && service?.status !== "CANCELLED" && (
+                  <View style={styles?.selectedWrapper}>
+                    <CustomHeading color={Colors?.white} textAlign="left">
+                      {t("youAreSelected")}
+                    </CustomHeading>
+                    <CustomText
+                      textAlign="left"
+                      color={Colors?.white}
+                      style={{ marginBottom: 10 }}
+                    >
+                      {t("doYourBest")}
+                    </CustomText>
+                    <View style={{ gap: 20 }}>
+                      <ButtonComp
+                        isPrimary={true}
+                        title={t("callEmployer")}
+                        onPress={() => handleCall(service?.employer?.mobile)}
+                        icon={
+                          <FontAwesome5
+                            name="phone-alt"
+                            size={16}
+                            color={Colors.white}
+                            style={{ marginRight: 10 }}
+                          />
+                        }
+                      />
+                      <ButtonComp
+                        isPrimary={true}
+                        title={t("showYourAttendance")}
+                        onPress={() =>
+                          router?.push({
+                            pathname: "/screens/bookings/showAttendance",
+                            params: {
+                              bookingDetails: JSON.stringify(service),
+                            },
+                          })
+                        }
+                        bgColor={Colors?.tertieryButton}
+                        borderColor={Colors?.tertieryButton}
+                        style={{ flex: 1, paddingVertical: 6 }}
+                      />
+                    </View>
+                  </View>
+                )}
+
+                <CustomHeading
+                  textAlign="left"
+                  baseFont={20}
+                  color={Colors?.tertieryButton}
+                  style={{ marginBottom: 10, marginTop: 10 }}
+                >
+                  {t("serviceDetails")}
+                </CustomHeading>
+                <CustomHeading baseFont={18} textAlign="left">
+                  {t(service?.type)} - {t(service?.subType)}
+                </CustomHeading>
+                <CustomHeading baseFont={18} textAlign="left">
+                  {t("serviceType")}
+                  {" - "}
+                  <CustomText
+                    color={Colors?.tertieryButton}
+                    fontWeight="600"
+                    baseFont={20}
+                  >
+                    {t(service?.bookingType)}
+                  </CustomText>
+                </CustomHeading>
+                <View style={styles.listingLocationWrapper}>
+                  <ShowAddress address={service?.address} />
                 </View>
+
+                <View style={styles.listingLocationWrapper}>
+                  <DateDisplay date={service?.startDate} type="startDate" />
+                </View>
+
+                <Highlights service={service} />
+
+                {service?.description && (
+                  <View style={{ marginVertical: 10 }}>
+                    <CustomHeading
+                      textAlign="left"
+                      baseFont={18}
+                      color={Colors?.inputLabel}
+                    >
+                      {t("description")}
+                    </CustomHeading>
+                    <CustomText textAlign="left" baseFont={16}>
+                      {service?.description}
+                    </CustomText>
+                  </View>
+                )}
+
+                {service && service?.requirements?.length > 0 && (
+                  <Requirements
+                    type="full"
+                    requirements={service?.requirements}
+                  />
+                )}
               </View>
-            )}
-          </View>
 
-          {/* Selected Applicants */}
-          {(service?.employer === userDetails?._id || isAdmin) && (
-            <Applicants
-              type="selectedApplicants"
-              title="whoHaveSelected"
-              applicants={selectedApplicants}
-              serviceId={service?._id}
-              isAppliedWorkersLoading={isSelectedWorkerLoading}
-              isAppliedWorkersFetchingNextPage={
-                isSelectedWorkerFetchingNextPage
-              }
-              refetchApplicants={() => {
-                refetchAppliedWorkers();
-              }}
-              refetchSelectedApplicants={() => {
-                refetchSelectedWorkers();
-              }}
+              {service?.employer?._id &&
+                service?.employer?._id !== userDetails?._id && (
+                  <EmployerCard employer={service?.employer} />
+                )}
+            </Animated.ScrollView>
+          </ScrollView>
+
+          {service?.bookingType === "byService" && (
+            <ServiceActionButtons
+              service={service}
+              members={workers}
+              isMemberLoading={isMemberLoading}
+              isMemberFetchingNextPage={isMemberFetchingNextPage}
+              userDetails={userDetails}
+              isAdmin={isAdmin}
+              isSelected={isSelected}
+              isWorkerBooked={isWorkerBooked}
+              isServiceApplied={isServiceApplied}
+              isServiceLiked={isServiceLiked}
+              id={id as string}
               refetch={refetch}
+              refreshUser={refreshUser}
+              selectedWorkersIds={selectedWorkersIds}
+              setSelectedWorkersIds={setSelectedWorkersIds}
+              setIsWorkerSelectModal={setIsWorkerSelectModal}
+              setModalVisible={setModalVisible}
+              setIsCompleteModalVisible={setIsCompleteModalVisible}
+              hasMemberNextPage={hasMemberNextPage}
+              memberFetchPage={memberFetchPage}
+              setAddService={setAddService}
+              isCompleteModalVisible={isCompleteModalVisible}
+              modalVisible={modalVisible}
+              isWorkerSelectModal={isWorkerSelectModal}
             />
           )}
 
-          {/* Applicants */}
-          {(service?.employer === userDetails?._id || isAdmin) && (
-            <Applicants
-              title="whoHaveApplied"
-              applicants={applicants}
-              serviceId={service?._id}
-              isAppliedWorkersLoading={isAppliedWorkersLoading}
-              isAppliedWorkersFetchingNextPage={
-                isAppliedWorkersFetchingNextPage
-              }
-              refetchApplicants={() => {
-                refetchAppliedWorkers();
-              }}
-              refetchSelectedApplicants={() => {
-                refetchSelectedWorkers();
-              }}
+          {service?.bookingType === "direct" && (
+            <BookingActionButtons
+              category={"booking"}
+              booking={service}
+              userDetails={userDetails}
+              isAdmin={isAdmin}
+              id={id as string}
               refetch={refetch}
+              refreshUser={refreshUser}
+              setModalVisible={setModalVisible}
+              setIsCompleteModalVisible={setIsCompleteModalVisible}
+              isCompleteModalVisible={isCompleteModalVisible}
+              modalVisible={modalVisible}
             />
           )}
-
-          {service?.employer?._id &&
-            service?.employer?._id !== userDetails?._id && (
-              <EmployerCard employer={service?.employer} />
-            )}
-        </Animated.ScrollView>
-      </ScrollView>
-
-      <ServiceActionButtons
-        service={service}
-        members={workers}
-        isMemberLoading={isMemberLoading}
-        isMemberFetchingNextPage={isMemberFetchingNextPage}
-        userDetails={userDetails}
-        isAdmin={isAdmin}
-        isSelected={isSelected}
-        isWorkerBooked={isWorkerBooked}
-        isServiceApplied={isServiceApplied}
-        isServiceLiked={isServiceLiked}
-        id={id as string}
-        refetch={refetch}
-        refreshUser={refreshUser}
-        selectedWorkersIds={selectedWorkersIds}
-        setSelectedWorkersIds={setSelectedWorkersIds}
-        setIsWorkerSelectModal={setIsWorkerSelectModal}
-        setModalVisible={setModalVisible}
-        setIsCompleteModalVisible={setIsCompleteModalVisible}
-        hasMemberNextPage={hasMemberNextPage}
-        memberFetchPage={memberFetchPage}
-        setAddService={setAddService}
-        isCompleteModalVisible={isCompleteModalVisible}
-        modalVisible={modalVisible}
-        isWorkerSelectModal={isWorkerSelectModal}
-      />
+        </>
+      )}
     </>
   );
 };
@@ -667,17 +739,16 @@ const styles = StyleSheet.create({
   },
   workerCard: {
     borderRadius: 8,
-    marginBottom: 5,
+    marginBottom: 10,
     flex: 1,
     flexDirection: "column",
     alignItems: "flex-start",
-    // borderColor: Colors?.secondary,
-    // borderWidth: 1,
   },
   productCard: {
     flexDirection: "row",
     backgroundColor: Colors?.white,
-    padding: 8,
+    paddingVertical: 15,
+    paddingHorizontal: 8,
     borderRadius: 8,
   },
   productInfo: {

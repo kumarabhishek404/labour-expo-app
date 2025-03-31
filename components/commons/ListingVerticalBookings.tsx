@@ -64,7 +64,7 @@ const ListingsVerticalBookings = ({
             />
           ) : null
         }
-        contentContainerStyle={{ paddingBottom: 200 }}
+        contentContainerStyle={{ paddingBottom: 200, paddingTop: 20 }}
         getItemLayout={(data, index) => ({
           length: 100,
           offset: 100 * index,

@@ -21,7 +21,8 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import { getTimeAgo } from "@/constants/functions";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import Colors from "@/constants/Colors";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import ReviewsPlaceholder from "@/components/commons/LoadingPlaceholders/ReviewsPlaceholder";
 
 const StarRating = ({ rating }: any) => {
   const fullStars = Math.floor(rating);
@@ -127,49 +128,46 @@ const ReviewScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <CustomHeader
-              title="reviews"
-              left="back"
-              right="notification"
-            />
+            <CustomHeader title="reviews" left="back" right="notification" />
           ),
         }}
       />
-      <Loader loading={isLoading || isRefetching} />
-      <View style={styles.container}>
-        {memoizedData?.length > 0 && (
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <CustomHeading baseFont={24}>{stats.average}</CustomHeading>
-              <StarRating rating={stats.average} />
+      {/* <Loader loading={isLoading || isRefetching} /> */}
+      {isLoading ? (
+        <ReviewsPlaceholder />
+      ) : (
+        <View style={styles.container}>
+          {memoizedData?.length > 0 && (
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <CustomHeading baseFont={24}>{stats.average}</CustomHeading>
+                <StarRating rating={stats.average} />
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <CustomHeading baseFont={24}>{stats.total}</CustomHeading>
+                <CustomText>{t("totalReviews")}</CustomText>
+              </View>
             </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <CustomHeading baseFont={24}>{stats.total}</CustomHeading>
-              <CustomText>{t("totalReviews")}</CustomText>
-            </View>
-          </View>
-        )}
-        <FlatList
-          data={memoizedData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={!isRefetching && refreshing}
-              onRefresh={onRefresh}
-            />
-          }
-          ListEmptyComponent={() => (
-            <EmptyDatePlaceholder
-              title="workExperience"
-              leftHeight={160}
-            />
           )}
-        />
-      </View>
+          <FlatList
+            data={memoizedData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={!isRefetching && refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+            ListEmptyComponent={() => (
+              <EmptyDataPlaceholder title="reviews" leftHeight={160} />
+            )}
+          />
+        </View>
+      )}
     </>
   );
 };
@@ -179,7 +177,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors?.fourth,
     paddingHorizontal: 10,
-    paddingTop: 10,
+    paddingTop: 20,
   },
   header: {
     flexDirection: "row",

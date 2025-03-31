@@ -16,7 +16,7 @@ const EmployerCard = ({ employer }: any) => {
         styles.employerContainer,
         {
           marginVertical: 10,
-          marginHorizontal: 10,
+          marginHorizontal: 15,
         },
       ]}
     >
@@ -70,11 +70,9 @@ const EmployerCard = ({ employer }: any) => {
               style={{
                 minHeight: 30,
                 paddingVertical: 6,
-                paddingHorizontal: 14,
               }}
               textStyle={{
                 marginLeft: 6,
-                fontSize: 12,
               }}
             />
           </View>
@@ -89,7 +87,7 @@ const EmployerCard = ({ employer }: any) => {
         >
           <ProfilePicture
             uri={employer?.profilePicture}
-            style={{ width: 90, height: 90, marginLeft: 10}}
+            style={{ width: 90, height: 90, marginLeft: 10 }}
           />
         </View>
       </View>

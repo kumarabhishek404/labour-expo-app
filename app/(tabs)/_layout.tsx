@@ -4,348 +4,134 @@ import {
   Animated,
   View,
   BackHandler,
+  Alert,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
-import { router, Tabs, useFocusEffect, useNavigation } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import Atoms from "@/app/AtomStore";
+import { Tabs, router, usePathname } from "expo-router";
+import {
+  MaterialIcons,
+  MaterialCommunityIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Login from "../screens/auth/login";
-import useFirstTimeLaunch from "../hooks/useFirstTimeLaunch";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
-import LanguageSelectionScreen from "../languageSelection";
-import ProfileScreen from "../screens/bottomTabs/(user)/profile";
-import { getFontSize, isEmptyObject } from "@/constants/functions";
-import BadgeComponent from "@/components/commons/Badge";
-import { useQuery } from "@tanstack/react-query";
-import NOTIFICATION from "../api/notification";
-import triggerLocalNotification from "../hooks/triggerNotificationAdmin";
-import useUnreadNotificationsHandler from "../hooks/useInAppNotifications";
+import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
+import { useAtomValue } from "jotai";
+import Atoms from "../AtomStore";
 
 export default function Layout() {
-  const navigation = useNavigation();
-  const setNotificationCount = useSetAtom(Atoms?.notificationCount);
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const notificationCount = useAtomValue(Atoms?.notificationCount);
-  const [isAccountInactiveLocal, setIsAccountInactiveLocal] =
-    useState(isAccountInactive);
-  const [addServiceStep, setAddServiceStep] = useAtom(
-    Atoms?.AddServiceStepAtom
-  );
-  LOCAL_CONTEXT?.useLocale();
-  const isFirstLaunch = useFirstTimeLaunch();
-  const { locale } = LOCAL_CONTEXT.useLocale();
-
-  const { data: response } = useQuery({
-    queryKey: ["allUnreadNotificationsCount", userDetails?._id],
-    queryFn: () => NOTIFICATION?.fetchUnreadNotificationsCount(),
-    retry: false,
-    refetchInterval: 10000,
-    enabled:
-      !!userDetails &&
-      !!userDetails._id &&
-      !!userDetails.isAuth &&
-      !!userDetails.token,
-  });
-
-  useUnreadNotificationsHandler(response, triggerLocalNotification);
+  const [history, setHistory] = useState<string[]>([]); // Store visited tab history
+  const currentPath = usePathname();
+  const pathname = usePathname(); // ✅ Get current route
 
   useEffect(() => {
-    if (response) {
-      // console.log("(response?.unreadCount --", response);
-      setNotificationCount(response?.unreadCount);
-    }
-  }, [response]);
+    // Update history when path changes, but prevent duplicates
+    setHistory((prevHistory) => {
+      if (
+        prevHistory.length > 0 &&
+        prevHistory[prevHistory.length - 1] === currentPath
+      ) {
+        return prevHistory;
+      }
+      return [...prevHistory, currentPath];
+    });
+  }, [currentPath]);
 
   useEffect(() => {
-    setIsAccountInactiveLocal(isAccountInactive);
-  }, [isAccountInactive]);
+    const exitPaths = ["/", "/first", "/second", "/third", "/fourth"];
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-          return true; // prevent default behavior
-        }
-        BackHandler.exitApp(); // close the app when no more routes
-        return false;
-      };
+    const backAction = () => {
+      if (exitPaths.includes(pathname)) {
+        // ✅ If at home or predefined exit paths, ask for confirmation
+        Alert.alert("Exit", "Do you want to exit the app?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Exit", onPress: () => BackHandler.exitApp() },
+        ]);
+      } else {
+        // ✅ Use router.back() for proper navigation
+        router?.back();
+      }
+      return true;
+    };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [navigation])
-  );
+    return () => backHandler.remove();
+  }, [pathname, history]);
 
-  if (isFirstLaunch === null) {
-    return null;
-  } else if (isFirstLaunch) {
-    return <LanguageSelectionScreen />;
-  }
-
-  if (!userDetails?.isAuth) {
-    return <Login />;
-  }
-
-  if (isAccountInactiveLocal) {
-    return <ProfileScreen />;
-  }
-
-  const TabButton = ({ props, path, title, iconName }: any) => {
-    const { onPress, accessibilityState } = props;
-    const isSelected = accessibilityState?.selected;
-
-    const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
-    const translateYAnim = useRef(
-      new Animated.Value(isSelected ? -5 : 0)
-    ).current;
+  const TabButton = ({
+    props,
+    path,
+    title,
+    iconName,
+    iconLibrary = "MaterialIcons",
+    iconSize = 28,
+  }: any) => {
+    const isSelected = props.accessibilityState?.selected;
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const translateYAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
       Animated.parallel([
         Animated.spring(scaleAnim, {
-          toValue: isSelected ? 1.2 : 0.9,
+          toValue: isSelected ? 1.2 : 1,
           useNativeDriver: true,
-          friction: 4,
         }),
         Animated.spring(translateYAnim, {
           toValue: isSelected ? -5 : 0,
           useNativeDriver: true,
-          friction: 5,
         }),
       ]).start();
     }, [isSelected]);
 
+    const IconComponent = { MaterialIcons, MaterialCommunityIcons, AntDesign }[
+      iconLibrary
+    ];
+
     return (
       <TouchableOpacity
-        style={[
-          styles.customButton,
-          // addServiceStep > 1 &&
-          //   title !== "Post Service" &&
-          //   styles?.disableClick,
-        ]}
-        onPress={path ? () => router?.push(path) : onPress()}
+        style={styles.tabButton}
+        onPress={() => router.push(path)}
       >
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
           }}
         >
-          <View
-            style={[
-              styles?.icon,
-              isSelected && {
-                backgroundColor: Colors?.tertieryButton,
-                borderColor: Colors?.white,
-              },
-            ]}
-          >
-            <MaterialIcons
-              name={iconName}
-              size={32}
-              color={isSelected ? Colors?.tertieryButtonText : Colors.primary}
-            />
-          </View>
+          <IconComponent
+            name={iconName}
+            size={iconSize}
+            color={isSelected ? Colors.primary : "#888"}
+          />
         </Animated.View>
-        <Animated.Text
-          style={[
-            styles.customButtonText,
-            {
-              fontSize: getFontSize(locale, 13),
-              color: isSelected ? Colors?.tertiery : Colors.primary,
-              marginBottom: isSelected ? 10 : 0,
-            },
-          ]}
+        <CustomText
+          color={isSelected ? Colors.primary : "#888"}
+          fontWeight="600"
         >
-          {title}
-        </Animated.Text>
+          {t(title)}
+        </CustomText>
       </TouchableOpacity>
     );
   };
 
-  const TabButtonProfile = ({ props }: any) => {
-    const { onPress, accessibilityState, iconName } = props;
-    const isSelected = accessibilityState?.selected;
-
-    const [showProfile, setShowProfile] = useState(true);
-
-    const scaleAnim = useRef(new Animated.Value(isSelected ? 1.2 : 1)).current;
-    const fadeAnim = useRef(new Animated.Value(1)).current;
-    const translateYAnim = useRef(
-      new Animated.Value(isSelected ? -5 : 0)
-    ).current;
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        Animated.sequence([
-          Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start(() => {
-          setShowProfile((prev) => !prev);
-          Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }).start();
-        });
-      }, 4000);
-
-      return () => clearInterval(interval);
-    }, []);
-    useEffect(() => {
-      Animated.parallel([
-        Animated.spring(scaleAnim, {
-          toValue: isSelected ? 1.2 : 0.9,
-          useNativeDriver: true,
-          friction: 4,
-        }),
-        Animated.spring(translateYAnim, {
-          toValue: isSelected ? -5 : 0,
-          useNativeDriver: true,
-          friction: 5,
-        }),
-      ]).start();
-    }, [isSelected]);
-
-    return (
-      <>
-        <TouchableOpacity
-          style={[
-            styles.customButton,
-            // addServiceStep > 1 && styles?.disableClick,
-          ]}
-          onPress={() => router?.push("/(tabs)/fourth")}
-        >
-          <Animated.View
-            style={{
-              transform: [{ scale: fadeAnim }, { translateY: translateYAnim }],
-            }}
-          >
-            <View style={styles?.notificationWrapper}>
-              <View
-                style={[
-                  styles?.icon,
-                  styles?.doubleIcon,
-                  isSelected && {
-                    backgroundColor: Colors?.tertieryButton,
-                    borderColor: Colors?.white,
-                  },
-                ]}
-              >
-                <MaterialIcons
-                  name={showProfile ? "person" : "notifications"}
-                  size={32}
-                  color={
-                    isSelected ? Colors?.tertieryButtonText : Colors.primary
-                  }
-                />
-              </View>
-              {
-                <BadgeComponent
-                  style={{
-                    backgroundColor: isSelected
-                      ? Colors?.tertieryButton
-                      : Colors?.primary,
-                    marginLeft: -10,
-                  }}
-                  count={notificationCount ?? 0}
-                />
-              }
-            </View>
-          </Animated.View>
-          <Animated.Text
-            style={[
-              styles.customButtonText,
-              {
-                fontSize: getFontSize(locale, 13),
-                color: isSelected ? Colors?.tertiery : Colors.primary,
-                marginBottom: isSelected ? 10 : 0,
-              },
-            ]}
-          >
-            {showProfile ? t("myProfile") : t("notifications")}
-          </Animated.Text>
-        </TouchableOpacity>
-      </>
-    );
-  };
-
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            height: 70,
-            display: addServiceStep > 1 ? "none" : "flex",
-            alignContent: "center",
-            justifyContent: "center",
-            backgroundColor: Colors.white,
-            elevation: 10, // Shadow for Android
-            shadowColor: "#000",
-            shadowOpacity: 0.15,
-            shadowRadius: 10,
-            shadowOffset: { width: 0, height: 5 },
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          // listeners={{
-          //   tabPress: () => setAddServiceStep({}),
-          // }}
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/"
-                title={userDetails?.isAdmin ? t("services") : t("postService")}
-                iconName={userDetails?.isAdmin ? "work" : "add"}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="second"
-          // listeners={{
-          //   tabPress: () => setAddService({}),
-          // }}
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/second"
-                title={userDetails?.isAdmin ? t("users") : t("search")}
-                iconName={userDetails?.isAdmin ? "people" : "search"}
-              />
-            ),
-          }}
-        />
-
+    <View style={styles.container}>
+      <Tabs screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar }}>
         <Tabs.Screen
           name="third"
-          // listeners={{
-          //   tabPress: () => setAddService({}),
-          // }}
           options={{
             tabBarButton: (props) => (
               <TabButton
                 props={props}
                 path="/(tabs)/third"
-                title={
-                  userDetails?.isAdmin ? t("allRequests") : t("myBookings")
-                }
-                iconName={
-                  userDetails?.isAdmin ? "waving-hand" : "calendar-month"
-                }
+                title="myBookings"
+                iconName="calendar"
+                iconLibrary="AntDesign"
               />
             ),
           }}
@@ -353,58 +139,105 @@ export default function Layout() {
 
         <Tabs.Screen
           name="fourth"
-          // listeners={{
-          //   tabPress: () => setAddService({}),
-          // }}
           options={{
             tabBarButton: (props) => (
-              <TabButtonProfile
+              <TabButton
                 props={props}
-                iconName={userDetails?.isAdmin ? "profile" : "calendar-month"}
+                path="/(tabs)/fourth"
+                title="allRequests"
+                iconName="hand-front-right-outline"
+                iconLibrary="MaterialCommunityIcons"
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarButton: (props) => (
+              <TouchableOpacity
+                style={styles.postButton}
+                onPress={() => router.push("/(tabs)")}
+              >
+                <MaterialCommunityIcons
+                  name="plus"
+                  size={36}
+                  color={Colors.white}
+                />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="second"
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/second"
+                title="search"
+                iconName="search"
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="fifth"
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/fifth"
+                title="myProfile"
+                iconName="person-outline"
               />
             ),
           }}
         />
       </Tabs>
-    </>
+
+      <StickButtonWithWall
+        onPress={() =>
+          router.push({
+            pathname: "/screens/notifications",
+            params: { title: "notifications", type: "all" },
+          })
+        }
+        notificationCount={notificationCount}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  customButton: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-  },
-  disableClick: {
-    opacity: 0,
-    pointerEvents: "none",
-  },
-  customButtonText: {
-    color: Colors?.primary,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  notificationWrapper: {
+  container: { flex: 1 },
+  tabBar: {
+    height: 80,
     flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: Colors.white,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 5 },
   },
-  icon: {
-    borderWidth: 3,
-    borderColor: Colors?.white,
-    backgroundColor: Colors?.white,
-    borderRadius: 8,
-    width: 44,
-    height: 44,
+  tabButton: { alignItems: "center", justifyContent: "center" },
+  postButton: {
+    position: "absolute",
+    bottom: 20,
+    left: "50%",
+    transform: [{ translateX: -30 }],
+    backgroundColor: Colors.primary,
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "center",
-  },
-  doubleIcon: {
-    borderRadius: 8,
-    width: 48,
-    height: 48,
+    elevation: 5,
   },
 });

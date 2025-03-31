@@ -58,24 +58,24 @@ const CustomHeader = ({
           <TouchableOpacity
             onPress={onLeftAction ? onLeftAction : router.back}
             style={{
-              // backgroundColor: "rgba(255, 255, 255, 0.5)",
+              // backgroundColor: Colors?.white,
               borderRadius: 8,
               padding: 4,
             }}
           >
             <View
               style={{
-                // backgroundColor: Colors.black,
+                // backgroundColor: Colors.white,
                 padding: 6,
                 borderRadius: 8,
               }}
             >
-              <Feather name="arrow-left" size={26} color={Colors?.primary} />
+              <Feather name="arrow-left" size={26} color={Colors?.white} />
             </View>
           </TouchableOpacity>
         )}
 
-        <CustomHeading baseFont={20} color={Colors?.primary}>
+        <CustomHeading baseFont={20} color={Colors?.white}>
           {t(title as string)}
         </CustomHeading>
 
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
-    backgroundColor: Colors?.background,
+    backgroundColor: Colors?.primary,
     zIndex: -1,
   },
   headerTitleWrapper: {},

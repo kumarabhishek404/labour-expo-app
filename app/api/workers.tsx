@@ -2,6 +2,8 @@ import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
 const applyService = async (payload: any) => {
+  console.log("Payload---", payload);
+  
   try {
     const data = await API_CLIENT.makePostRequest("/worker/apply", payload);
     return data.data;

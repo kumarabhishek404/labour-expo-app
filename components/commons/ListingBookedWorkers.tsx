@@ -96,14 +96,15 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
                 width: "100%",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                gap: 10,
               }}
             >
-              <CustomHeading textAlign="left">
+              <CustomHeading textAlign="left" style={{ flex: 1 }}>
                 {t(item?.type)} - {t(item?.subType)}
               </CustomHeading>
               <ShowDuration duration={item?.duration} />
             </View>
-            <DateDisplay date={item?.startDate} />
+            <DateDisplay date={item?.startDate} type="startDate" />
             <View
               style={{
                 flexDirection: "row",
@@ -139,7 +140,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 export default ListingsBookedWorkers;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, marginBottom: 20 },
+  container: { flex: 1, marginBottom: 15 },
   card: {
     backgroundColor: Colors.white,
     padding: 15,

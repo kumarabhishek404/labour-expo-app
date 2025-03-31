@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import CustomHeading from "./CustomHeading";
@@ -12,7 +11,6 @@ import PaginationControls from "./Pagination/PaginationControls";
 import PAGINATION from "@/app/hooks/usePagination";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import TOAST from "@/app/hooks/toast";
 import RATING from "@/app/api/rating";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -20,10 +18,9 @@ import { t } from "@/utils/translationHelper";
 import { getTimeAgo } from "@/constants/functions";
 import CustomText from "./CustomText";
 import { FontAwesome } from "@expo/vector-icons";
-import Loader from "./Loaders/Loader";
 import ProfilePicture from "./ProfilePicture";
 import Colors from "@/constants/Colors";
-import ShowAddress from "./ShowAddress";
+import { ActivityIndicator } from "react-native-paper";
 
 type Review = {
   _id: string;
@@ -170,9 +167,28 @@ const UserReviews = forwardRef(
           <View style={styles.textContainer}>
             <View style={styles?.textBox}>
               <Text style={styles.name} numberOfLines={2}>
-                {item?.reviewer?.name}
+                **********
               </Text>
-              <ShowAddress address={item?.reviewer?.address} />
+              {item?.reviewer?._id === userDetails?._id && (
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => handleReviewAction(item)}
+                  >
+                    <Text style={styles.actionButtonText}>{t("edit")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.deleteButton]}
+                    onPress={() => mutationDeleteReview.mutate(item?.id)}
+                  >
+                    <Text
+                      style={[styles.actionButtonText, styles.deleteButtonText]}
+                    >
+                      {t("delete")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
             <Text style={styles.date}>{getTimeAgo(item?.createdAt)}</Text>
           </View>
@@ -193,35 +209,6 @@ const UserReviews = forwardRef(
               {t(item?.ratingType)}
             </CustomText>
           </View>
-          {item?.reviewer?._id === userDetails?._id && (
-            <View
-              style={{
-                flexDirection: "column",
-                alignItems: "flex-end",
-                gap: 5,
-                width: "40%",
-              }}
-            >
-              <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => handleReviewAction(item)}
-                >
-                  <Text style={styles.actionButtonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.deleteButton]}
-                  onPress={() => mutationDeleteReview.mutate(item?.id)}
-                >
-                  <Text
-                    style={[styles.actionButtonText, styles.deleteButtonText]}
-                  >
-                    Delete
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
         </View>
         <CustomText textAlign="left" style={{ flex: 1 }}>
           {item?.comment}
@@ -237,9 +224,9 @@ const UserReviews = forwardRef(
 
     return (
       <View style={styles.container} ref={ref} onLayout={onLayout}>
-        <Loader
+        {/* <Loader
           loading={isLoading || isRefetching || mutationDeleteReview.isPending}
-        />
+        /> */}
         <CustomHeading
           textAlign="left"
           baseFont={18}
@@ -247,52 +234,24 @@ const UserReviews = forwardRef(
         >
           {t("reviews")}
         </CustomHeading>
-
-        {reviews?.length > 0 && (
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === "Positive" && styles.activeTab]}
-              onPress={() => {
-                setActiveTab("Positive");
-                setCurrentPage(1);
-              }}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "Positive" && styles.activeTabText,
-                ]}
-              >
-                Positive
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === "Negative" && styles.activeTab]}
-              onPress={() => {
-                setActiveTab("Negative");
-                setCurrentPage(1);
-              }}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "Negative" && styles.activeTabText,
-                ]}
-              >
-                Negative
-              </Text>
-            </TouchableOpacity>
+        {isLoading || isRefetching || mutationDeleteReview.isPending ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator color={Colors.primary} />
+          </View>
+        ) : paginatedReviews?.length > 0 ? (
+          <FlatList
+            scrollEnabled={false}
+            data={paginatedReviews}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={renderReview}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={EmptyListComponent}
+          />
+        ) : (
+          <View style={styles.loaderContainer}>
+            <Text style={styles.emptyText}>{t("noReviews")}</Text>
           </View>
         )}
-
-        <FlatList
-          scrollEnabled={false}
-          data={paginatedReviews}
-          keyExtractor={(item) => item._id.toString()}
-          renderItem={renderReview}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={EmptyListComponent}
-        />
 
         {filteredReviews?.length > 0 && (
           <PaginationControls
@@ -419,6 +378,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     flexShrink: 0,
+    // marginTop: 7,
   },
   actionButton: {
     paddingHorizontal: 12,
@@ -449,5 +409,23 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: Colors.gray,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    paddingVertical: 40,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    minHeight: 150,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: Colors.primary,
   },
 });

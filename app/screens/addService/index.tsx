@@ -1,7 +1,14 @@
-import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  BackHandler,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
-import { router } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
@@ -20,7 +27,12 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
 import ThirdScreen from "./third";
 import SecondScreen from "./second";
-import ButtonComp from "@/components/inputs/Button";
+import IconButtonGroup from "@/components/commons/IconGroupButtons";
+import myServices from "../../../assets/myServices.png";
+import bookedWorkers from "../../../assets/bookedWorkers.png";
+import bookingIcon from "../../../assets/bookings.gif";
+import { useRoute } from "@react-navigation/native";
+import GradientWrapper from "../../../components/commons/GradientWrapper";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -38,7 +50,7 @@ const AddServiceScreen = () => {
     moment(addService?.startDate).toDate() ?? new Date()
   );
   const [duration, setDuration] = useState(addService?.duration ?? 0);
-
+  const [isFormDirty, setIsFormDirty] = useState(false);
   const [requirements, setRequirements]: any = useState(
     addService?.requirements || [
       {
@@ -117,27 +129,113 @@ const AddServiceScreen = () => {
     },
   });
 
+  const [prevType, setPrevType] = useState(type);
+  const navigation = useNavigation();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [prevSubType, setPrevSubType] = useState(subType);
+
+  useEffect(() => {
+    if (prevType !== type || prevSubType !== subType) {
+      setRequirements([
+        {
+          name: "",
+          count: 0,
+          payPerDay: 0,
+          food: false,
+          living: false,
+          esi_pf: false,
+        },
+      ]);
+
+      setFacilities({
+        food: false,
+        living: false,
+        esi_pf: false,
+        travelling: false,
+      });
+
+      setPrevType(type);
+      setPrevSubType(subType);
+    }
+  }, [type, subType]);
+
   useEffect(() => {
     setStep(1);
   }, []);
 
+  console.log("isFormDirty--", isFormDirty, isNavigating);
+
   useEffect(() => {
-    const handleBackPress = () => {
-      console.log("Back button pressed", step);
-      
-      handleBackAction();
-      return true; // Prevent default back navigation
+    console.log("isFormDirty--222", isFormDirty, isNavigating);
+
+    const beforeRemoveListener = (e: any) => {
+      console.log("isNavigating---", isNavigating);
+
+      if (isFormDirty && !isNavigating) {
+        e.preventDefault(); // Prevent default navigation
+
+        Alert.alert(
+          "Leave Without Saving?",
+          "Are you sure you want to leave? Any unsaved changes will be lost.",
+          [
+            { text: "Stay", style: "cancel" },
+            {
+              text: "Leave",
+              style: "destructive",
+              onPress: () => {
+                setIsNavigating(true);
+                navigation.dispatch(e.data.action); // Allow navigation
+              },
+            },
+          ]
+        );
+      }
     };
 
-    // Add event listener for back button
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackPress
+    // Attach event listener
+    const unsubscribe = navigation.addListener(
+      "beforeRemove",
+      beforeRemoveListener
     );
 
-    // Cleanup the event listener on unmount
-    return () => backHandler.remove();
-  }, [step, setStep]);
+    // Cleanup function to remove listener
+    return () => {
+      unsubscribe(); // Correct way to remove listener
+    };
+  }, [isFormDirty, isNavigating, navigation, router]);
+
+  // Reset step count only when coming back to this screen
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => setStep(1); // Reset when leaving the screen
+    }, [])
+  );
+
+  // Handle back button (Allow normal back navigation)
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        if (step > 1) {
+          setStep((prevStep) => prevStep - 1);
+          return true; // Prevent default back behavior
+        }
+        return false; // Allow back navigation
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, [step])
+  );
+
+  useEffect(() => {
+    if (type || subType || description) {
+      setIsFormDirty(true);
+    }
+  }, [type, subType, description]);
 
   const handleSubmit = async () => {
     if (!type || !address || !startDate || !requirements) {
@@ -169,17 +267,6 @@ const AddServiceScreen = () => {
 
     const response: any = await EMPLOYER?.addNewService(formData);
     return response?.data;
-  };
-  
-  const handleBackAction = () => {
-    setAddServiceStep(step - 1)
-    if (step > 1) {
-      setStep(step - 1);
-    } else if (router?.canGoBack()) {
-      router?.back();
-    } else {
-      BackHandler?.exitApp();
-    }
   };
 
   const handleEditSubmit = async (id: any) => {
@@ -240,6 +327,11 @@ const AddServiceScreen = () => {
       throw error; // Re-throw to be handled by mutation
     }
   };
+
+  // // Call this function in your input fields' `onChangeText`
+  // const handleInputChange = (value: string) => {
+  //   setIsFormDirty(value.trim().length > 0);
+  // };
 
   const renderFormComponents = () => {
     switch (step) {
@@ -329,57 +421,59 @@ const AddServiceScreen = () => {
       params: { title: "titleMyAllServicesAndBookings", type: "myServices" },
     });
 
+  const buttons = [
+    {
+      icon: bookedWorkers,
+      label: t("bookedWorkers"),
+      onPress: ClickBookedWorker,
+    },
+    {
+      icon: myServices,
+      label: t("myServices"),
+      onPress: ClickMyAllServices,
+    },
+    // {
+    //   icon: bookingIcon,
+    //   label: "Check balance",
+    //   onPress: () => console.log("Check Balance"),
+    // },
+  ];
+
   return (
     <>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           flexGrow: 1,
-          backgroundColor: Colors?.secondaryBackground,
+          backgroundColor: Colors?.fourth,
           minHeight: "100%",
+          // paddingBottom: 90,
         }}
       >
-        <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
+        <View style={{ flex: 1, justifyContent: "flex-start" }}>
           <View style={styles.header}>
-            <Stepper currentStep={step} steps={ADDSERVICESTEPS} />
+            <IconButtonGroup buttons={buttons} />
           </View>
-          {step === 1 && (
-            <TopHeaderLinks
-              title={["bookedWorkers", "myAllServices"]}
-              onPress={[ClickBookedWorker, ClickMyAllServices]}
-              icon={[
-                <Ionicons
-                  key={0}
-                  name="people"
-                  size={22}
-                  color={Colors.primary}
-                />,
-                <MaterialIcons
-                  key={1}
-                  name="work"
-                  size={22}
-                  color={Colors.primary}
-                  style={{ marginLeft: 8 }}
-                />,
-              ]}
-            />
-          )}
 
-          <View style={[styles.searchContainer, styles.shadowBox]}>
-            <CustomHeading
-              textAlign="left"
-              baseFont={22}
-              style={{ marginBottom: 20, paddingBottom: 10 }}
-              color={Colors?.heading}
-            >
-              {step === 1 && t("step1")}
-              {step === 2 && t("step2")}
-              {step === 3 && t("step3")}
-              {step === 4 && t("step4")}
-            </CustomHeading>
-            <Loader loading={mutationAddService?.isPending} />
-            <View>{renderFormComponents()}</View>
-          </View>
+          <GradientWrapper
+            height={Dimensions.get("window").height - (step === 4 ? 0 : 230)}
+          >
+            <View style={[styles.searchContainer, styles.shadowBox]}>
+              <CustomHeading
+                textAlign="left"
+                baseFont={22}
+                style={styles?.boxHeader}
+                color={Colors?.primary}
+              >
+                {step === 1 && t("step1")}
+                {step === 2 && t("step2")}
+                {step === 3 && t("step3")}
+                {step === 4 && t("step4")}
+              </CustomHeading>
+              <Loader loading={mutationAddService?.isPending} />
+              <View>{renderFormComponents()}</View>
+            </View>
+          </GradientWrapper>
           <View></View>
         </View>
       </ScrollView>
@@ -395,8 +489,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   header: {
-    backgroundColor: Colors?.background,
-    padding: 20,
+    backgroundColor: Colors?.primary,
+    paddingBottom: 20,
     position: "relative",
   },
   tab: {
@@ -420,9 +514,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   searchContainer: {
-    backgroundColor: Colors?.background,
+    backgroundColor: Colors?.white,
     padding: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
@@ -435,6 +529,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, // Light shadow for elegance
     shadowRadius: 6, // Smooth blur effect
     elevation: 4, // Works for Android
+  },
+  boxHeader: {
+    marginBottom: 10,
+    paddingBottom: 10,
+    // padding: 15,
+    // backgroundColor: Colors?.primary,
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
   },
   input: {
     height: 53,

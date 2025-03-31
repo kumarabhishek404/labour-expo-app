@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "@/constants/Colors";
 import { Entypo } from "@expo/vector-icons";
@@ -55,14 +55,23 @@ const ImageUpload = ({
       <View style={[styles.container]}>
         <View style={styles.imageUploadContainer}>
           <Entypo name="images" size={30} color={Colors.secondary} />
-          <Button
+          <TouchableOpacity onPress={pickImage}>
+            <CustomText
+              baseFont={18}
+              color={Colors?.tertieryButton}
+              fontWeight="600"
+            >
+              {t("chooseImages")}
+            </CustomText>
+          </TouchableOpacity>
+          {/* <Button
             isPrimary={true}
             title={t('chooseImages')}
             onPress={pickImage}
             bgColor={Colors?.tertieryButton}
             borderColor={Colors?.tertieryButton}
             style={styles.imageUploadButton}
-          />
+          /> */}
         </View>
         <View style={styles.imageContainer}>
           {images && images?.length > 0 ? (
@@ -87,7 +96,7 @@ const ImageUpload = ({
               style={{ width: "100%" }}
               color={Colors?.inputPlaceholder}
             >
-              {t('notAddedAnyImage')}
+              {t("notAddedAnyImage")}
             </CustomText>
           )}
         </View>

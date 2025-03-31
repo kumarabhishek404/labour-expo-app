@@ -68,7 +68,7 @@ const deleteReview = async (payload: any) => {
 const getAllReviews = async (payload: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(`/review/all/${payload?.id}`);
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching reviews : `,

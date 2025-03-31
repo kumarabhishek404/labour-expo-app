@@ -12,6 +12,7 @@ import { t } from "@/utils/translationHelper";
 
 const ProfileTabs = ({
   tabs,
+  tabCounts,
   selectedTab,
   setSelectedTab,
   containerStyle,
@@ -28,7 +29,7 @@ const ProfileTabs = ({
     const index = tabs.indexOf(selectedTab);
     Animated.parallel([
       Animated.spring(translateX, {
-        toValue: index * (tabWidth), // Adjust based on tab width
+        toValue: index * tabWidth, // Adjust based on tab width
         useNativeDriver: true,
         friction: 6,
       }),
@@ -51,10 +52,10 @@ const ProfileTabs = ({
         <Animated.View
           style={[
             styles.activeIndicator,
-            { transform: [{ translateX }], width: `${tabWidth/ 4}%` },
+            { transform: [{ translateX }], width: `${tabWidth / 4}%` },
           ]}
         />
-        {tabs.map((tab: string) => (
+        {tabs.map((tab: string, index: number) => (
           <TouchableOpacity
             key={tab}
             style={styles.tab}
@@ -67,7 +68,7 @@ const ProfileTabs = ({
                 { opacity: selectedTab === tab ? opacityAnim : 0.6 },
               ]}
             >
-              {t(tab)}
+              {tabCounts && tabCounts[index] ? tabCounts[index] : ""} {t(tab)}
             </Animated.Text>
           </TouchableOpacity>
         ))}
@@ -79,7 +80,7 @@ const ProfileTabs = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: "center",
-    backgroundColor: Colors?.background,
+    backgroundColor: Colors?.primary,
   },
   tabContainer: {
     flexDirection: "row",
@@ -95,18 +96,18 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontWeight: "bold",
-    color: Colors?.heading,
+    color: Colors?.white,
   },
   activeTabText: {
-    color: Colors.heading,
+    color: Colors.white,
   },
   activeIndicator: {
     position: "absolute",
     bottom: 0,
     left: 0,
-    height: 3,
-    backgroundColor: Colors.heading,
-    borderRadius: 8,
+    height: 6,
+    backgroundColor: Colors.white,
+    // borderRadius: 8,
   },
 });
 

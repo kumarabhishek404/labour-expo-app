@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Animated,
@@ -10,21 +10,57 @@ import {
   BackHandler,
 } from "react-native";
 import { useAtom } from "jotai";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigationState } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import ButtonComp from "@/components/inputs/Button";
 import Atoms from "@/app/AtomStore";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
+import { useNavigation } from "expo-router";
 
 const { height, width } = Dimensions.get("window");
 
 const GlobalBottomDrawer = () => {
+  const currentScreen = useNavigationState(
+    (state) => state?.routes.at(-1)?.name
+  );
   const [drawerState, setDrawerState]: any = useAtom(Atoms?.BottomDrawerAtom);
-  const slideAnim = React.useRef(new Animated.Value(height)).current;
+  const slideAnim = useRef(new Animated.Value(height)).current;
+  const prevDrawerState = useRef<any>(null);
+  const lastScreenRef: any = useRef<string | null>(null);
 
-  // Handle Android back button behavior
+  const triggeredRouteRef: any = useRef<string | null>(null); // Store route where drawer was triggered
+
+  useEffect(() => {
+    console.log("📌 Current Screen:", currentScreen);
+
+    if (drawerState.visible) {
+      prevDrawerState.current = { ...drawerState };
+      triggeredRouteRef.current = currentScreen; // Store where the drawer was triggered
+      console.log("🔹 Saving Drawer State on:", triggeredRouteRef.current);
+      closeDrawer();
+    }
+  }, [currentScreen]);
+
+  useEffect(() => {
+    console.log("🔄 Checking Screen Focus:", currentScreen);
+    console.log("📌 Last Triggered Route:", triggeredRouteRef.current);
+    console.log("🗂 Previous Drawer State:", prevDrawerState.current);
+
+    if (
+      prevDrawerState.current?.visible &&
+      triggeredRouteRef.current === currentScreen // Restore only if back to the same route
+    ) {
+      console.log("✅ Restoring drawer on", currentScreen);
+      setTimeout(() => {
+        setDrawerState({ ...prevDrawerState.current, visible: true });
+      }, 300);
+    } else {
+      console.log("❌ Drawer not restored - different screen.");
+    }
+  }, [currentScreen]);
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -36,16 +72,14 @@ const GlobalBottomDrawer = () => {
       };
 
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [drawerState.visible])
   );
 
-  // Open and Close Animation
-  React.useEffect(() => {
+  useEffect(() => {
     if (drawerState.visible) {
-      slideAnim.setValue(height); // Reset position before opening
+      slideAnim.setValue(height);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
@@ -54,14 +88,13 @@ const GlobalBottomDrawer = () => {
     }
   }, [drawerState.visible]);
 
-  // Close drawer with animation
   const closeDrawer = () => {
     Animated.timing(slideAnim, {
       toValue: height,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      setDrawerState((prev: any) => ({ ...prev, visible: false })); // Hide AFTER animation
+      setDrawerState((prev: any) => ({ ...prev, visible: false }));
       drawerState?.secondaryButton?.action();
     });
   };
@@ -113,7 +146,6 @@ const GlobalBottomDrawer = () => {
               <ButtonComp
                 isPrimary={false}
                 title={t(drawerState.secondaryButton.title || "cancel")}
-                // onPress={drawerState.secondaryButton.action}
                 onPress={closeDrawer}
                 bgColor={Colors.danger}
                 borderColor={Colors.danger}

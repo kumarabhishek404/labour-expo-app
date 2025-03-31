@@ -11,21 +11,20 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
         flexDirection: "row",
         alignItems: "flex-start",
         justifyContent: "space-between",
-        paddingHorizontal: 20,
       }}
     >
       <TouchableOpacity
         style={{
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: 'flex-end',
-          gap: 8,
+          justifyContent: "flex-end",
+          gap: 5,
         }}
         onPress={title?.length > 0 ? onPress[0] : onPress}
       >
         {icon?.length > 0 ? icon[0] : icon}
         <CustomText
-          baseFont={16}
+          baseFont={18}
           color={Colors?.primary}
           fontWeight="bold"
           style={{
@@ -48,7 +47,7 @@ const TopHeaderLinks = ({ title, onPress, icon }: any) => {
         >
           {icon[1]}
           <CustomText
-            baseFont={16}
+            baseFont={18}
             color={Colors?.primary}
             fontWeight="bold"
             style={{

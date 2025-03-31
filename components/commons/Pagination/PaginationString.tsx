@@ -32,7 +32,7 @@ const PaginationString = ({
           </CustomText>
         </View>
       ) : (
-        <></>
+        <View></View>
       )}
     </>
   );

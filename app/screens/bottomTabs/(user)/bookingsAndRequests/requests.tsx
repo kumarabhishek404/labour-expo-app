@@ -1,15 +1,29 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import CustomSegmentedButton from "./customTabs";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import WORKER from "@/app/api/workers";
 import EMPLOYER from "@/app/api/employer";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
+import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
+import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
+import CustomSegmentedButton from "./customTabs";
+import CustomHeading from "@/components/commons/CustomHeading";
+import CustomText from "@/components/commons/CustomText";
+import { t } from "@/utils/translationHelper";
+import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholders/ListingBookingPlaceholder";
+import GradientWrapper from "@/components/commons/GradientWrapper";
 
 const Requests = () => {
   const [totalData, setTotalData] = useState(0);
@@ -91,46 +105,105 @@ const Requests = () => {
     }
   );
 
-  if (isLoading) {
-    return <OnPageLoader parentStyle={{ flex: 1 }} />;
-  }
+  const ShowAllSentRequests = () => {
+    if (category === "sentRequests") {
+      setCategory("recievedRequests");
+    } else {
+      setCategory("sentRequests");
+    }
+  };
 
   return (
     <>
       <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <CustomSegmentedButton
-            buttons={TABS}
-            selectedTab={category}
-            onValueChange={onCatChanged}
-          />
-          {memoizedData && memoizedData?.length > 0 ? (
-            <>
-              <View style={styles?.paginationTabs}>
-                <PaginationString
-                  type={category}
-                  isLoading={isLoading || isRefetching}
-                  totalFetchedData={memoizedData?.length}
-                  totalData={totalData}
-                />
-              </View>
-              <ListingsVerticalBookings
-                listings={memoizedData || []}
-                category={category}
-                loadMore={loadMore}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={!isRefetching && refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-                isFetchingNextPage={isFetchingNextPage}
-              />
-            </>
-          ) : (
-            <EmptyDatePlaceholder title="requests" leftHeight={300} />
-          )}
+        <View
+          style={{
+            backgroundColor: Colors?.primary,
+            padding: 10,
+            // paddingBottom: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {/* <CustomHeading baseFont={22} textAlign="left" color={Colors?.white}>
+            {category === "sentRequests"
+              ? t("sentRequestsUpper")
+              : t("receivedRequestsUpper")}
+          </CustomHeading>
+          <TouchableOpacity onPress={ShowAllSentRequests}>
+            <CustomText baseFont={15} color={Colors?.tertieryButton} fontWeight="600">
+              {category === "sentRequests"
+                ? t("receivedRequests")
+                : t("sentRequests")}
+            </CustomText>
+          </TouchableOpacity> */}
+
+          <CustomHeading
+            baseFont={22}
+            textAlign="left"
+            color={Colors?.white}
+            style={{ width: "65%" }}
+          >
+            {category === "sentRequests"
+              ? t("sentRequestsUpper")
+              : t("receivedRequestsUpper")}
+          </CustomHeading>
+          <TouchableOpacity
+            onPress={ShowAllSentRequests}
+            style={styles?.applicationText}
+          >
+            <AntDesign name="rocket1" size={20} color={Colors?.fourthButton} />
+            <CustomText
+              baseFont={16}
+              color={Colors?.fourthButton}
+              fontWeight="600"
+            >
+              {category === "sentRequests"
+                ? t("receivedRequests")
+                : t("sentRequests")}
+            </CustomText>
+          </TouchableOpacity>
         </View>
+        <GradientWrapper height={Dimensions.get("window").height - 180}>
+          {isLoading ? (
+            <ListingsBookingsPlaceholder />
+          ) : (
+            <View style={styles.container}>
+              {memoizedData && memoizedData?.length > 0 ? (
+                <>
+                  <ListingsVerticalBookings
+                    listings={memoizedData || []}
+                    category={category}
+                    loadMore={loadMore}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={!isRefetching && refreshing}
+                        onRefresh={onRefresh}
+                      />
+                    }
+                    isFetchingNextPage={isFetchingNextPage}
+                  />
+                </>
+              ) : (
+                <EmptyDataPlaceholder
+                  title={
+                    category === "sentRequests"
+                      ? "sentBookingRequests"
+                      : "receivedBookingRequests"
+                  }
+                  leftHeight={200}
+                  buttonTitle={
+                    category === "sentRequests"
+                      ? "backToRecievedRequests"
+                      : "showSentRequests"
+                  }
+                  onPress={ShowAllSentRequests}
+                />
+              )}
+            </View>
+          )}
+        </GradientWrapper>
       </View>
     </>
   );
@@ -139,11 +212,16 @@ const Requests = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
+    // backgroundColor: Colors?.fourth,
   },
-  paginationTabs: {
-    width: "100%",
-    paddingBottom: 6,
+  applicationText: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 5,
   },
 });
 

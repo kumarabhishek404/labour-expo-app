@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import {
+  View,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import { router } from "expo-router";
@@ -8,6 +14,11 @@ import Colors from "@/constants/Colors";
 import FloatingButton from "@/components/inputs/FloatingButton";
 import FiltersServices from "./filterServices";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
+import { Entypo } from "@expo/vector-icons";
+import CustomText from "@/components/commons/CustomText";
+import { t } from "@/utils/translationHelper";
+import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
+import GradientWrapper from "@/components/commons/GradientWrapper";
 
 const AllServices = ({
   isLoading,
@@ -41,70 +52,66 @@ const AllServices = ({
   };
 
   return (
-    <>
+    <GradientWrapper height={Dimensions.get("window").height - 180}>
       {isLoading ? (
-        <OnPageLoader />
+        <ListingsServicesPlaceholder />
       ) : (
-        <View style={styles.container}>
-          <View style={styles?.paginationHeader}>
-            <PaginationString
-              type="services"
-              isLoading={isLoading || isRefetching}
-              totalFetchedData={memoizedData?.length}
-              totalData={totalData}
-            />
-            {/* <TopHeaderLinks
-          title={["searchServices"]}
-          onPress={[() => setIsAddFilters(true)]}
-          icon={[
-            <Ionicons key={0} name="people" size={22} color={Colors.primary} />,
-          ]}
-        /> */}
+        <>
+          <View style={styles.container}>
+            <View style={styles?.paginationHeader}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+                onPress={() => setIsAddFilters(true)}
+              >
+                <Entypo name="plus" size={20} color={Colors?.fourthButton} />
+                <CustomText
+                  baseFont={17}
+                  color={Colors?.fourthButton}
+                  fontWeight="600"
+                >
+                  {t("applyFilters")}
+                </CustomText>
+              </TouchableOpacity>
+            </View>
+            {memoizedData && memoizedData?.length > 0 ? (
+              <ListingsVerticalServices
+                listings={memoizedData || []}
+                loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={!isRefetching && refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            ) : (
+              <EmptyDataPlaceholder title="service" />
+            )}
           </View>
-
-          {memoizedData && memoizedData?.length > 0 ? (
-            <ListingsVerticalServices
-              listings={memoizedData || []}
-              loadMore={loadMore}
-              isFetchingNextPage={isFetchingNextPage}
-              refreshControl={
-                <RefreshControl
-                  refreshing={!isRefetching && refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            />
-          ) : (
-            <EmptyDatePlaceholder title="service" />
-          )}
-
-          <FiltersServices
-            filterVisible={isAddFilters}
-            setFilterVisible={setIsAddFilters}
-            onApply={onSearchService}
-          />
-
-          <FloatingButton
-            title="applyFilters"
-            onPress={() => setIsAddFilters(true)}
-          />
-        </View>
+        </>
       )}
-    </>
+
+      <FiltersServices
+        filterVisible={isAddFilters}
+        setFilterVisible={setIsAddFilters}
+        onApply={onSearchService}
+      />
+    </GradientWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors?.fourth,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    // backgroundColor: Colors?.fourth,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
   },
   paginationHeader: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 10,
   },

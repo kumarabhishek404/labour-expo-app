@@ -12,7 +12,8 @@ import CustomText from "@/components/commons/CustomText";
 import Requirements from "@/components/commons/Requirements";
 import CustomHeading from "@/components/commons/CustomHeading";
 import Atoms from "@/app/AtomStore";
-import EmptyDatePlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
+import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 
 const Experience = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -120,47 +121,51 @@ const Experience = () => {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Loader loading={isLoading} />
-        <View style={styles.container}>
-          {/* <SearchFilter
+        {/* <Loader loading={isLoading} /> */}
+        {isLoading ? (
+          <ListingsServicesPlaceholder />
+        ) : (
+          <View style={styles.container}>
+            {/* <SearchFilter
             type="services"
             data={filteredData}
             setFilteredData={setFilteredData}
           /> */}
 
-          <PaginationString
-            type="requests"
-            isLoading={isLoading}
-            totalFetchedData={filteredData?.length}
-            totalData={filteredData?.length}
-          />
-          {filteredData?.length > 0 ? (
-            <>
-              <FlatList
-                data={filteredData.slice(
-                  currentPage * itemsPerPage,
-                  (currentPage + 1) * itemsPerPage
-                )}
-                renderItem={renderWorkItem}
-                keyExtractor={(item) => item._id}
-                showsVerticalScrollIndicator={false}
-                getItemLayout={(data, index) => ({
-                  length: 100,
-                  offset: 100 * index,
-                  index,
-                })}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                windowSize={3}
-                removeClippedSubviews={true}
-                contentContainerStyle={{ paddingBottom: 110 }}
-                ListFooterComponent={renderPagination}
-              />
-            </>
-          ) : (
-            <EmptyDatePlaceholder title="workExperience" leftHeight={160} />
-          )}
-        </View>
+            <PaginationString
+              type="requests"
+              isLoading={isLoading}
+              totalFetchedData={filteredData?.length}
+              totalData={filteredData?.length}
+            />
+            {filteredData?.length > 0 ? (
+              <>
+                <FlatList
+                  data={filteredData.slice(
+                    currentPage * itemsPerPage,
+                    (currentPage + 1) * itemsPerPage
+                  )}
+                  renderItem={renderWorkItem}
+                  keyExtractor={(item) => item._id}
+                  showsVerticalScrollIndicator={false}
+                  getItemLayout={(data, index) => ({
+                    length: 100,
+                    offset: 100 * index,
+                    index,
+                  })}
+                  initialNumToRender={10}
+                  maxToRenderPerBatch={10}
+                  windowSize={3}
+                  removeClippedSubviews={true}
+                  contentContainerStyle={{ paddingBottom: 110 }}
+                  ListFooterComponent={renderPagination}
+                />
+              </>
+            ) : (
+              <EmptyDataPlaceholder title="workExperience" leftHeight={160} />
+            )}
+          </View>
+        )}
       </View>
     </>
   );

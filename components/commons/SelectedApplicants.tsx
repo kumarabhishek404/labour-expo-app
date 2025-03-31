@@ -20,7 +20,7 @@ import { t } from "@/utils/translationHelper";
 import { handleCall } from "@/constants/functions";
 import EMPLOYER from "@/app/api/employer";
 import ShowSkills from "./ShowSkills";
-import EmptyDatePlaceholder from "./EmptyDataPlaceholder";
+import EmptyDataPlaceholder from "./EmptyDataPlaceholder";
 import ShowAddress from "./ShowAddress";
 
 interface SelectedApplicantsProps {
@@ -303,7 +303,7 @@ const SelectedApplicants = ({
                 animating={true}
               />
             ) : (
-              <EmptyDatePlaceholder
+              <EmptyDataPlaceholder
                 parentHeight={450}
                 title="selectedApplicants"
               />

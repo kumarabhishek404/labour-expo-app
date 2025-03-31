@@ -26,12 +26,14 @@ type ButtonOption = {
 
 type Props = {
   buttons: ButtonOption[];
+  tabCounts?: any;
   selectedTab?: string;
   onValueChange?: (value: string) => void;
 };
 
 const CustomSegmentedButton = ({
   buttons,
+  tabCounts,
   selectedTab = "",
   onValueChange,
 }: Props) => {
@@ -41,7 +43,9 @@ const CustomSegmentedButton = ({
   const handlePress = (value: string) => {
     animationValue.value = withTiming(1, { duration: 300 });
     setSelected(value);
-    onValueChange && onValueChange(value);
+    if (onValueChange) {
+      onValueChange(value);
+    }
   };
 
   return (
@@ -96,32 +100,9 @@ const CustomSegmentedButton = ({
                       : Colors?.tertieryButton
                   }
                 >
+                  {tabCounts && tabCounts[index] ? tabCounts[index] : ""} {" "}
                   {t(button.label)}
                 </CustomText>
-                {button?.count && (
-                  <View
-                    style={[
-                      styles?.countCircle,
-                      {
-                        backgroundColor: isSelected
-                          ? Colors?.tertieryButtonText
-                          : Colors?.tertieryButton,
-                      },
-                    ]}
-                  >
-                    <CustomText
-                      baseFont={16}
-                      fontWeight="500"
-                      color={
-                        isSelected
-                          ? Colors?.tertieryButton
-                          : Colors?.tertieryButtonText
-                      }
-                    >
-                      {button?.count}
-                    </CustomText>
-                  </View>
-                )}
               </Animated.View>
             </TouchableOpacity>
           );
@@ -138,15 +119,15 @@ const styles = StyleSheet.create({
   },
   segmentedContainer: {
     flexDirection: "row",
+    gap: 4,
   },
   button: {
     flex: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 4, // Add space between buttons
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.tertieryButton,
   },
   firstButton: {
@@ -158,7 +139,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
   },
   middleButton: {
-    borderRadius: 0, // No rounded edges for middle buttons
+    borderRadius: 0,
   },
   selectedButton: {
     backgroundColor: Colors?.tertiery,
@@ -167,16 +148,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-  },
-  label: {},
-  countCircle: {
-    minWidth: 28,
-    minHeight: 28,
-    padding: 3,
-    borderRadius: 100,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 

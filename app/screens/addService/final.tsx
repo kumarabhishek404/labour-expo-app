@@ -289,7 +289,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: "transparent",
   },
   box: {

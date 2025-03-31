@@ -70,7 +70,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
   };
 
   return (
-    <View style={styles?.container}>
+    <>
       <View style={{ flexDirection: "column", gap: 25 }}>
         <View style={{ zIndex: 9 }}>
           <Controller
@@ -97,6 +97,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           />
         </View>
 
+        <View style={{ zIndex: 8 }}>
         <Controller
           control={control}
           name="startDate"
@@ -123,6 +124,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             />
           )}
         />
+        </View>
 
         <Controller
           control={control}
@@ -174,6 +176,7 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           />
         </View>
       </View>
+
       <View style={styles?.buttonContainer}>
         <Button
           isPrimary={true}
@@ -192,16 +195,12 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
           style={{ flex: 1, paddingVertical: 8 }}
         />
       </View>
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "transparent",
-  },
+  container: {},
   image: {
     width: "80%",
     height: 210,
