@@ -66,9 +66,6 @@ const ListingsVerticalServices = ({
   refreshControl,
 }: Props) => {
   const RenderItem = React?.memo(({ item }: any) => {
-    if (item?.bookingType === "direct") {
-      return <ListingsServices item={item} />;
-    }
     return <ListingsServices item={item} />;
   });
 

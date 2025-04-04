@@ -42,8 +42,7 @@ const ListingsServicesPlaceholder = () => {
           key={index}
           style={{
             backgroundColor: Colors.white,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
+            borderRadius: 8,
           }}
         >
           <SkeletonPlaceholder

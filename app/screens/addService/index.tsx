@@ -163,32 +163,22 @@ const AddServiceScreen = () => {
     setStep(1);
   }, []);
 
-  console.log("isFormDirty--", isFormDirty, isNavigating);
-
   useEffect(() => {
-    console.log("isFormDirty--222", isFormDirty, isNavigating);
-
     const beforeRemoveListener = (e: any) => {
-      console.log("isNavigating---", isNavigating);
-
       if (isFormDirty && !isNavigating) {
         e.preventDefault(); // Prevent default navigation
 
-        Alert.alert(
-          "Leave Without Saving?",
-          "Are you sure you want to leave? Any unsaved changes will be lost.",
-          [
-            { text: "Stay", style: "cancel" },
-            {
-              text: "Leave",
-              style: "destructive",
-              onPress: () => {
-                setIsNavigating(true);
-                navigation.dispatch(e.data.action); // Allow navigation
-              },
+        Alert.alert(t("leaveWithoutSaving"), t("areYouWantLeave"), [
+          { text: t("stay"), style: "cancel" },
+          {
+            text: t("leave"),
+            style: "destructive",
+            onPress: () => {
+              setIsNavigating(true);
+              navigation.dispatch(e.data.action); // Allow navigation
             },
-          ]
-        );
+          },
+        ]);
       }
     };
 
@@ -264,6 +254,8 @@ const AddServiceScreen = () => {
     formData.append("duration", duration);
     formData.append("requirements", JSON.stringify(requirements));
     formData.append("facilities", JSON.stringify(facilities));
+
+    console.log("Formdare---", formData);
 
     const response: any = await EMPLOYER?.addNewService(formData);
     return response?.data;

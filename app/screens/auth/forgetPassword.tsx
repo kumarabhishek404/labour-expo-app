@@ -1,12 +1,21 @@
-import React, { useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import {
-  Entypo,
-  FontAwesome,
   Ionicons,
   MaterialIcons,
+  Entypo,
+  FontAwesome,
+  Feather,
+  AntDesign,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loaders/Loader";
@@ -18,321 +27,311 @@ import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
 import TOAST from "@/app/hooks/toast";
-import USER_PROBLEM from "@/app/api/userProblem";
-import Step2 from "../../../assets/step2.jpg";
+import Step2 from "../../../assets/step4.jpg";
+import AUTH from "@/app/api/auth";
+import MobileNumberField from "@/components/inputs/MobileNumber";
 
-const ForgetPasswordScreen = () => {
+interface FormData {
+  mobile: string;
+  otp?: string;
+  password?: string;
+  confirmPassword?: string;
+}
+
+const ForgetPasswordScreen: React.FC = () => {
   const {
     control,
     handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      mobile: "",
-      resetToken: "",
-      password: "",
-      confirmPassword: "",
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<FormData>();
+
+  const [step, setStep] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [countryCode, setCountryCode] = useState<string>("+91");
+  const [mobileNumberExist, setMobileNumberExist] = useState<string>("notSet");
+  const [otp, setOtp] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+  const [timer, setTimer] = useState<number>(30);
+  const [resendDisabled, setResendDisabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (step === 2) {
+      setResendDisabled(true);
+      setTimer(30);
+      const interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [step]);
+
+  const checkMobileNumber = useMutation({
+    mutationFn: async (payload: { mobile: string }) =>
+      AUTH.checkMobileExistance(payload),
+    onSuccess: ({ data }) => {
+      if (data?.data?.exists) {
+        setMobileNumberExist("exist");
+        setUserId(data?.data?.userId);
+      } else {
+        setMobileNumberExist("notExist");
+        TOAST.error(t("mobileNumberNotExist"));
+      }
     },
+    onError: () => TOAST.error(t("errorCheckingMobile")),
   });
 
-  const [isResetCodeSent, setIsResetCodeSent] = useState(false);
-
-  const [passwordConditions, setPasswordConditions] = useState({
-    hasNumber: false,
-    hasAlphabet: false,
-    hasLowerCase: false,
-    hasSymbol: false,
-    isLongEnough: false,
-  });
-
-  const checkPasswordConditions = (password: any) => {
-    const conditions = {
-      hasNumber: /\d/.test(password),
-      hasAlphabet: /[A-Za-z]/.test(password),
-      hasLowerCase: /[a-z]/.test(password),
-      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      isLongEnough: password.length >= 8,
-    };
-
-    setPasswordConditions(conditions);
-  };
-
-  // const mutationForgetPassword = useMutation({
-  //   mutationKey: ["forgetPassword"],
-  //   mutationFn: (payload: any) => forgotPassword(payload),
-  //   onSuccess: (response) => {
-  //     if (response?.status === 200) {
-  //       setIsResetCodeSent(true);
-  //     }
-  //   },
-  // });
-
-  // const mutationSetPassword = useMutation({
-  //   mutationKey: ["setPassword"],
-  //   mutationFn: (payload: any) => resetPassword(payload),
-  //   onSuccess: (response) => {
-  //     if (response?.status === 200) {
-  //       setIsResetCodeSent(false);
-  //       router.push("/screens/auth/login");
-  //     }
-  //   },
-  // });
-
-  const mutationSubmitProblem = useMutation({
-    mutationKey: ["submitProblem"],
-    mutationFn: (payload: any) => USER_PROBLEM?.submitUserProblem(payload),
-    onSuccess: (response) => {
-      // if (response?.status === 201) {
-      // setIsResetCodeSent(false);
-      // router.push("/screens/auth/login");
-      TOAST?.success(t("problemSubmittedSuccessfully"));
-      // }
+  const sendOTP = useMutation({
+    mutationKey: ["sendOTP"],
+    mutationFn: async (mobile: string) => AUTH.sendOTP(mobile),
+    onSuccess: ({ Status }) => {
+      if (Status === "Success") {
+        setStep(2);
+        TOAST.success(t("otpSentSuccessfully"));
+      } else {
+        TOAST.error(t("otpSentFail"));
+      }
     },
+    onError: () => TOAST.error(t("failedToSendOTP")),
   });
 
-  const onSubmit = (data: any) => {
-    // if (isResetCodeSent)
-    //   mutationSetPassword.mutate({
-    //     mobile: data?.mobile,
-    //     resetToken: data?.resetToken,
-    //     password: data?.password,
-    //   });
-    // else mutationForgetPassword.mutate({ mobile: data?.mobile });
+  const verifyOTP = useMutation({
+    mutationKey: ["verifyOTP"],
+    mutationFn: async (payload: { mobile: string; otp: string }) =>
+      AUTH.verifyOTP(payload),
+    onSuccess: ({ Status }) => {
+      if (Status === "Success") {
+        TOAST.success(t("otpVerified"));
+        setStep(3);
+      } else {
+        TOAST.error(t("otpInvalidMessage"));
+      }
+    },
+    onError: () => TOAST.error(t("invalidOTP")),
+  });
 
-    mutationSubmitProblem.mutate({
-      mobile: data?.mobile,
-      problemType: "forgotPassword",
-    });
+  const resetPassword = useMutation({
+    mutationKey: ["resetPassword"],
+    mutationFn: async (payload: {
+      userId: string;
+      mobile: string;
+      password: string;
+    }) => AUTH.resetPassword(payload),
+    onSuccess: ({ status }) => {
+      if (status === 200) {
+        TOAST.success(t("passwordResetSuccess"));
+        router.push("/screens/auth/login");
+      } else {
+        TOAST.error(t("failedToResetPassword"));
+      }
+    },
+    onError: () => TOAST.error(t("failedToResetPassword")),
+  });
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+
+    if (step === 1) {
+      if (mobileNumberExist !== "exist") {
+        setLoading(false);
+        return TOAST.error(t("mobileNumberNotExist"));
+      }
+      sendOTP.mutate(`${countryCode}${data.mobile}`);
+    } else if (step === 2) {
+      verifyOTP.mutate({
+        mobile: `${countryCode}${watch("mobile")}`,
+        otp: otp || "",
+      });
+    } else if (step === 3 && userId) {
+      resetPassword.mutate({
+        userId: userId, // Replace with actual user ID
+        mobile: watch("mobile"),
+        password: data.password || "",
+      });
+    }
+
+    setLoading(false);
   };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Loader loading={mutationSubmitProblem?.isPending} />
+      <Stack.Screen options={{ headerShown: false }} />
+      <Loader loading={loading} />
       <View style={styles.container}>
-        <Image source={Step2} style={styles.image} />
-        <View style={styles.textContainer}>
-          <CustomHeading textAlign="left" baseFont={24}>
-            {t("hey")}
-          </CustomHeading>
-          <CustomHeading textAlign="left" baseFont={24}>
-            {t("resetYour")}
-          </CustomHeading>
+        <View style={styles.centeredView}>
+          <AntDesign
+            name="mobile1"
+            size={150}
+            color={Colors.tertieryButton}
+            style={styles.image}
+          />
+          <CustomHeading baseFont={26}>{t("resetYourPassword")}</CustomHeading>
+          <CustomText
+            baseFont={16}
+            color={Colors.disabledText}
+            style={{ textAlign: "center" }}
+          >
+            {t("resetPasswordDescription")}
+          </CustomText>
         </View>
-        <View>
-          {isResetCodeSent ? (
-            <>
-              <Controller
-                control={control}
-                name="resetToken"
-                defaultValue=""
-                rules={{ required: t("resetCodeIsRequired") }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInputComponent
-                    label={t("resetPasswordCode")}
-                    name="resetToken"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    style={{ marginBottom: 15 }}
-                    placeholder={t("enterYourResetPasswordCode")}
-                    errors={errors}
-                    icon={
-                      <Ionicons
-                        name={"mail-outline"}
-                        size={30}
-                        color={Colors.secondary}
-                        style={{ paddingVertical: 10, paddingRight: 10 }}
-                      />
-                    }
-                  />
-                )}
-              />
 
-              <Controller
-                control={control}
-                name="password"
-                defaultValue=""
-                rules={{
-                  required: t("passwordIsRequired"),
-                  pattern: {
-                    value:
-                      /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    message: t("youHaveToFullFillAllTheFollowingConditions"),
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <PasswordComponent
-                      label={t("password")}
-                      name="password"
-                      value={value}
-                      onBlur={onBlur}
-                      onChangeText={(text: any) => {
-                        onChange(text);
-                        checkPasswordConditions(text);
-                      }}
-                      placeholder={t("enterYourPassword")}
-                      errors={errors}
-                      icon={
-                        <MaterialIcons
-                          name={"password"}
-                          size={30}
-                          color={Colors.secondary}
-                          style={{ paddingVertical: 10, paddingRight: 10 }}
-                        />
-                      }
-                    />
-                    <View style={{ marginBottom: 15 }}>
-                      <CustomText
-                        textAlign="left"
-                        color={
-                          (passwordConditions.hasNumber && Colors?.success) ||
-                          ""
-                        }
-                      >
-                        {passwordConditions.hasNumber ? (
-                          <Entypo name={"check"} size={16} />
-                        ) : (
-                          <Entypo name="cross" size={16} />
-                        )}{" "}
-                        {t("useAtLeastOneNumber")}
-                      </CustomText>
-                      <CustomText
-                        textAlign="left"
-                        color={
-                          (passwordConditions.hasLowerCase &&
-                            Colors?.success) ||
-                          ""
-                        }
-                      >
-                        {passwordConditions.hasLowerCase ? (
-                          <Entypo name={"check"} size={16} />
-                        ) : (
-                          <Entypo name="cross" size={16} />
-                        )}{" "}
-                        {t("useAtLeastOneLowerCaseLetter")}
-                      </CustomText>
-                      <CustomText
-                        textAlign="left"
-                        color={
-                          (passwordConditions.hasSymbol && Colors?.success) ||
-                          ""
-                        }
-                      >
-                        {passwordConditions.hasSymbol ? (
-                          <Entypo name={"check"} size={16} />
-                        ) : (
-                          <Entypo name="cross" size={16} />
-                        )}{" "}
-                        {t("useAtLeastOneSymbol")}
-                      </CustomText>
-                      <CustomText
-                        textAlign="left"
-                        color={
-                          (passwordConditions.isLongEnough &&
-                            Colors?.success) ||
-                          ""
-                        }
-                      >
-                        {passwordConditions.isLongEnough ? (
-                          <Entypo name={"check"} size={16} />
-                        ) : (
-                          <Entypo name="cross" size={16} />
-                        )}{" "}
-                        {t("beAtLeast8CharactersLong")}
-                      </CustomText>
-                    </View>
-                  </>
-                )}
-              />
-              <Controller
-                control={control}
-                name="confirmPassword"
-                defaultValue=""
-                rules={{
-                  required: t("pleaseConfirmYourPassword"),
-                  validate: (value) =>
-                    value == watch("password") || t("passwordsDoNotMatch"),
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <PasswordComponent
-                    label={t("confirmPassword")}
-                    name="confirmPassword"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    placeholder={t("reEnterYourPassword")}
-                    errors={errors}
-                    icon={
-                      <FontAwesome
-                        name={"user-secret"}
-                        size={30}
-                        color={Colors.secondary}
-                        style={{ paddingVertical: 10, paddingRight: 10 }}
-                      />
-                    }
-                  />
-                )}
-              />
-            </>
-          ) : (
+        <View style={styles.formContainer}>
+          {step === 1 && (
             <Controller
               control={control}
               name="mobile"
-              defaultValue=""
               rules={{
                 required: t("mobileIsRequired"),
                 pattern: {
                   value: /^[0-9]{10}$/,
-                  message: t("enterAValidMobileNumber"),
+                  message: t("enterValidMobileNumber"),
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  label="mobile"
-                  name="mobile"
-                  value={value}
-                  onBlur={onBlur}
-                  type="number"
-                  onChangeText={onChange}
-                  placeholder={t("enterYourMobile")}
+              render={({ field: { onChange, value } }) => (
+                <MobileNumberField
+                  name="phoneNumber"
+                  countryCode={countryCode}
+                  setCountryCode={setCountryCode}
+                  phoneNumber={value}
+                  setPhoneNumber={(val: string) => {
+                    setMobileNumberExist("notSet");
+                    if (val.length === 10)
+                      checkMobileNumber.mutate({ mobile: val });
+                    onChange(val);
+                  }}
                   errors={errors}
+                  isMobileNumberNotExist={mobileNumberExist === "notExist"}
+                  placeholder={t("enterMobileTitle")}
                   icon={
-                    <Ionicons
-                      name={"call-outline"}
-                      size={30}
-                      color={Colors.secondary}
-                      style={{ paddingVertical: 10, paddingRight: 10 }}
-                    />
+                    <Feather name="phone" size={26} color={Colors.disabled} />
                   }
                 />
               )}
             />
           )}
 
+          {step === 2 && (
+            <View style={styles.otpContainer}>
+              <View style={styles.mobileNumberView}>
+                <CustomText baseFont={18} color={Colors.tertieryButton}>
+                  {countryCode} {watch("mobile")}
+                </CustomText>
+                <TouchableOpacity onPress={() => setStep(1)}>
+                  <Feather name="edit" size={20} color={Colors.primary} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.otpLableContainer}>
+                <CustomHeading
+                  textAlign="left"
+                  baseFont={16}
+                  color={Colors.inputLabel}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  {t("otpTitle")}
+                </CustomHeading>
+                <TouchableOpacity
+                  onPress={() =>
+                    sendOTP.mutate(`${countryCode}${watch("mobile")}`)
+                  }
+                  disabled={resendDisabled}
+                >
+                  <CustomText
+                    color={resendDisabled ? Colors.text : Colors.primary}
+                    baseFont={16}
+                  >
+                    {resendDisabled
+                      ? `${t("resendOtpIn", { seconds: timer })}`
+                      : t("resendOtp")}
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.otpInput}
+                keyboardType="numeric"
+                maxLength={6}
+                value={otp}
+                onChangeText={setOtp}
+              />
+            </View>
+          )}
+
+          {step === 3 && (
+            <View style={styles.otpContainer}>
+              <Controller
+                control={control}
+                name="password"
+                rules={{ required: t("passwordIsRequired") }}
+                render={({ field: { onChange, value } }) => (
+                  <PasswordComponent
+                    name="password"
+                    label="password"
+                    value={value || ""}
+                    onChangeText={onChange}
+                    placeholder={t("enterYourPassword")}
+                    errors={errors}
+                  />
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="confirmPassword"
+                rules={{
+                  required: t("confirmPasswordRequired"),
+                  validate: (value) =>
+                    value === watch("password") || t("passwordsDoNotMatch"),
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <PasswordComponent
+                    name="confirmPassword"
+                    label="confirmPassword"
+                    value={value || ""}
+                    onChangeText={onChange}
+                    placeholder={t("reEnterYourPassword")}
+                    errors={errors}
+                  />
+                )}
+              />
+            </View>
+          )}
+
           <Button
-            isPrimary={true}
+            isPrimary
             title={
-              isResetCodeSent ? t("setNewPasswords") : t("submitYourProblem")
+              step === 1
+                ? t("sendOtp")
+                : step === 2
+                ? t("verifyOtp")
+                : t("resetPassword")
             }
-            style={styles.forgetButtonWrapper}
             onPress={handleSubmit(onSubmit)}
+            style={styles.button}
+            disabled={!isValid || (step === 1 && mobileNumberExist !== "exist")}
           />
 
           <View style={styles.footerContainer}>
             <CustomText>{t("ifYouKnewYourPassword")}</CustomText>
-            <TouchableOpacity
-              onPress={() => router.push("/screens/auth/login")}
-            >
-              <CustomHeading color={Colors?.link}>{t("signIn")}</CustomHeading>
+            <TouchableOpacity onPress={() => router.back()}>
+              <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                {t("signIn")}
+              </CustomHeading>
             </TouchableOpacity>
           </View>
+
+          {(checkMobileNumber?.isPending ||
+            sendOTP?.isPending ||
+            verifyOTP?.isPending ||
+            resetPassword?.isPending) && (
+            <ActivityIndicator size="large" color={Colors.primary} />
+          )}
         </View>
       </View>
     </>
@@ -343,57 +342,61 @@ export default ForgetPasswordScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-    // justifyContent: "center",
-    paddingHorizontal: 10,
-  },
-  textContainer: {
-    marginVertical: 20,
-  },
-  forgetButtonWrapper: {
-    borderRadius: 40,
-    marginTop: 20,
-  },
-  signContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexGrow: 1,
+    backgroundColor: Colors.fourth,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    justifyContent: "space-evenly",
     alignItems: "center",
-    marginVertical: 20,
-    gap: 5,
   },
-  image: {
-    width: "80%",
-    height: 250,
-    resizeMode: "cover",
-    alignSelf: "center",
-    marginTop: 30,
+  centeredView: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  formContainer: {
+    gap: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  image: { width: 150, height: 150, marginBottom: 20 },
+  button: {
+    height: 53,
+    borderRadius: 8,
+    width: "100%",
   },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 10,
     gap: 5,
   },
-  redirectButtonWrapper: {
-    flexDirection: "row",
-    justifyContent: "center",
+  otpContainer: {
+    width: "100%",
     alignItems: "center",
-    gap: 18,
-    marginVertical: 20,
-  },
-  loginButton: {
-    flexDirection: "row",
-    borderWidth: 2,
-    height: 50,
-    borderColor: Colors.primary,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 3,
-    paddingHorizontal: 20,
     gap: 10,
   },
-  
+  otpInput: {
+    width: "100%",
+    textAlign: "center",
+    height: 50,
+    borderWidth: 1,
+    borderColor: Colors.inputBorder,
+    borderRadius: 5,
+    fontSize: 20,
+    letterSpacing: 8,
+    backgroundColor: Colors.white,
+  },
+  mobileNumberView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 10,
+  },
+  otpLableContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  },
 });

@@ -181,7 +181,7 @@ export default SignupScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.fourth,
     paddingHorizontal: 10,
     paddingTop: 20,
   },

@@ -8,8 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Speech from "expo-speech";
 import React, { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
@@ -29,7 +35,11 @@ import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ServiceActionButtons from "./actionButtons";
 import MEDIATOR from "@/app/api/mediator";
-import { handleCall } from "@/constants/functions";
+import {
+  generateServiceSummary,
+  handleCall,
+  speakText,
+} from "@/constants/functions";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import ButtonComp from "@/components/inputs/Button";
 import DateDisplay from "@/components/commons/ShowDate";
@@ -44,6 +54,9 @@ const IMG_HEIGHT = 300;
 
 const ServiceDetails = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
+  const navigation = useNavigation();
+  const locale = useAtomValue(Atoms?.LocaleAtom);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const setAddService = useSetAtom(Atoms?.AddServiceAtom);
   const firstTimeRef = React.useRef(true);
   const { id, showApplicationDetails } = useLocalSearchParams();
@@ -103,6 +116,21 @@ const ServiceDetails = () => {
     retry: false,
     enabled: !!id,
   });
+
+  useEffect(() => {
+    const unsubscribeBlur = navigation.addListener("blur", () => {
+      Speech.stop();
+    });
+
+    const unsubscribeBack = navigation.addListener("beforeRemove", () => {
+      Speech.stop();
+    });
+
+    return () => {
+      unsubscribeBlur();
+      unsubscribeBack();
+    };
+  }, [navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -243,36 +271,9 @@ const ServiceDetails = () => {
   );
 
   useEffect(() => {
-    if (
-      showApplicationDetails &&
-      JSON?.parse(showApplicationDetails as string) &&
-      (applicants?.length > 0 || selectedApplicants?.length > 0)
-    ) {
-      handleShowApplications();
-    }
-  }, [
-    applicants ||
-      isAppliedWorkersLoading ||
-      isAppliedWorkersRefetching ||
-      selectedApplicants ||
-      isSelectedWorkerLoading ||
-      isSelectedWorkerRefetching,
-  ]);
-
-  useEffect(() => {
-    const workers = selectedUsers?.pages[0]?.data || [];
-    setSelectedApplicants([...workers]);
-  }, [selectedUsers?.pages]);
-
-  useEffect(() => {
-    const workers = appliedUsers?.pages[0]?.data || [];
-    setApplicants([...workers]);
-  }, [appliedUsers?.pages]);
-
-  const handleShowApplications = () => {
-    setDrawerState({
-      visible: true,
-      title: "showApplicationsDetails",
+    // Ensure drawer updates dynamically
+    setDrawerState((prevState: any) => ({
+      ...prevState,
       content: () => (
         <ApplicantsTabScreen
           applicants={applicants}
@@ -288,9 +289,68 @@ const ServiceDetails = () => {
           isAppliedWorkersFetchingNextPage={isAppliedWorkersFetchingNextPage}
           refetchAppliedWorkers={refetchAppliedWorkers}
           refetchSelectedWorkers={refetchSelectedWorkers}
+          refetch={refetch}
         />
       ),
-    });
+    }));
+  }, [
+    applicants,
+    selectedApplicants,
+    isSelectedWorkerLoading,
+    isSelectedWorkerRefetching,
+    isAppliedWorkersLoading,
+    isAppliedWorkersRefetching,
+  ]);
+
+  useEffect(() => {
+    const workers = selectedUsers?.pages[0]?.data || [];
+    setSelectedApplicants([...workers]);
+  }, [selectedUsers?.pages]);
+
+  useEffect(() => {
+    const workers = appliedUsers?.pages[0]?.data || [];
+    setApplicants([...workers]);
+  }, [appliedUsers?.pages]);
+
+  const handleSpeakAboutSerivceDetails = () => {
+    const textToSpeak = generateServiceSummary(
+      service,
+      locale?.language,
+      userDetails?.location
+    );
+
+    speakText(textToSpeak, locale?.language, setIsSpeaking);
+  };
+
+  const handleCloseSpeakers = () => {
+    Speech.stop();
+    setIsSpeaking(false);
+  };
+
+  const handleShowApplications = () => {
+    setDrawerState((prevState: any) => ({
+      ...prevState,
+      visible: true,
+      title: "showApplicationsDetails",
+      content: () => (
+        <ApplicantsTabScreen
+          applicants={applicants} // Update dynamically
+          selectedApplicants={selectedApplicants} // Update dynamically
+          serviceId={service?._id}
+          isSelectedWorkerLoading={
+            isSelectedWorkerLoading || isSelectedWorkerRefetching
+          }
+          isSelectedWorkerFetchingNextPage={isSelectedWorkerFetchingNextPage}
+          isAppliedWorkersLoading={
+            isAppliedWorkersLoading || isAppliedWorkersRefetching
+          }
+          isAppliedWorkersFetchingNextPage={isAppliedWorkersFetchingNextPage}
+          refetchAppliedWorkers={refetchAppliedWorkers}
+          refetchSelectedWorkers={refetchSelectedWorkers}
+          refetch={refetch}
+        />
+      ),
+    }));
   };
 
   console.log(
@@ -317,7 +377,6 @@ const ServiceDetails = () => {
         }}
       />
 
-      {/* <Loader loading={isLoading} /> */}
       {isLoading ? (
         <ServicePlaceholder />
       ) : (
@@ -472,14 +531,38 @@ const ServiceDetails = () => {
                   </View>
                 )}
 
-                <CustomHeading
-                  textAlign="left"
-                  baseFont={20}
-                  color={Colors?.tertieryButton}
-                  style={{ marginBottom: 10, marginTop: 10 }}
-                >
-                  {t("serviceDetails")}
-                </CustomHeading>
+                <View style={styles.headingWrapper}>
+                  <CustomHeading
+                    textAlign="left"
+                    baseFont={20}
+                    color={Colors?.tertieryButton}
+                  >
+                    {t("serviceDetails")}
+                  </CustomHeading>
+                  <TouchableOpacity
+                    onPress={
+                      isSpeaking
+                        ? handleCloseSpeakers
+                        : handleSpeakAboutSerivceDetails
+                    }
+                    style={[
+                      styles?.leftTag,
+                      {
+                        backgroundColor: isSpeaking
+                          ? Colors?.danger
+                          : Colors?.success,
+                      },
+                    ]}
+                  >
+                    <CustomText color={Colors?.white} fontWeight="bold">
+                      📢{" "}
+                      {isSpeaking
+                        ? t("speakingAndClose")
+                        : t("listenAboutService")}
+                    </CustomText>
+                  </TouchableOpacity>
+                </View>
+
                 <CustomHeading baseFont={18} textAlign="left">
                   {t(service?.type)} - {t(service?.subType)}
                 </CustomHeading>
@@ -614,6 +697,13 @@ const styles = StyleSheet.create({
   editContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  headingWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 10,
   },
   listingLocationWrapper: {
     flexDirection: "row",
@@ -764,5 +854,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+  },
+  leftTag: {
+    backgroundColor: Colors?.tertiery,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 8,
   },
 });

@@ -70,6 +70,7 @@ const ListingsVerticalUsersAdmin = ({
           isPrimary={true}
           title={buttonText}
           bgColor={backgroundColor}
+          borderColor={borderColor}
           textColor={buttonColor}
           style={styles.statusButton}
           onPress={action}

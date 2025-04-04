@@ -1,211 +1,204 @@
+import { ScrollView, StyleSheet, View, Text, Dimensions } from "react-native";
 import React, { useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/inputs/Button";
-import { Controller, useForm } from "react-hook-form";
-import SelfieScreen from "@/components/inputs/Selfie";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import Loader from "@/components/commons/Loaders/Loader";
+import USER from "@/app/api/user";
+import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Controller, useForm } from "react-hook-form";
+import RoleSelection from "@/components/inputs/SelectRole";
+import SkillsSelector from "@/components/inputs/SelectSkills";
+import { MEDIATORTYPES, WORKERTYPES, WORKTYPES } from "@/constants";
+import ButtonComp from "@/components/inputs/Button";
+import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { useMutation } from "@tanstack/react-query";
-import USER from "@/app/api/user";
-import Loader from "@/components/commons/Loaders/Loader";
 import { fetchCurrentLocation } from "@/constants/functions";
+const { width } = Dimensions.get("window");
 
-const FifthScreen = () => {
+const UpdateUserSkillsScreen = () => {
+  const [previousRole, setPreviousRole] = useState("WORKER");
+  const [loading, setLoading] = useState(false);
   const { userId } = useLocalSearchParams();
   const {
     control,
-    watch,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      profilePicture: "",
+      role: "WORKER",
+      skills: [],
     },
   });
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
-    mutationFn: (payload: any) => USER.updateUserById(payload),
+    mutationFn: (payload: any) =>
+      USER.updateUserById({
+        _id: userId,
+        ...payload,
+      }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      router?.push("/screens/auth/login");
+      TOAST?.success(t("profileUpdated"));
+      router.push({
+        pathname: "/screens/auth/register/fifth",
+        params: { userId: userId },
+      });
     },
     onError: (error) => {
       console.error("Profile update error:", error);
+      TOAST?.error(error?.message || t("updateFailed"));
     },
   });
 
-  const handleProfilePictureSubmit = async (data: any) => {
-    try {
-      if (
-        !data?.profilePicture ||
-        typeof data.profilePicture !== "string" ||
-        data.profilePicture.trim() === ""
-      ) {
-        TOAST?.error(t("pleaseSelectAProfilePicture"));
-        return;
-      }
-
-      const formData: any = new FormData();
-      const imageName = data?.profilePicture.split("/").pop();
-
-      formData.append("profileImage", {
-        uri:
-          Platform.OS === "android"
-            ? data?.profilePicture
-            : data?.profilePicture.replace("file://", ""),
-        type: "image/jpeg",
-        name: imageName || "photo.jpg",
-      });
-
-      formData.append("_id", userId);
-
-      mutationUpdateProfile.mutate(formData, {
-        onSuccess: () => {
-          TOAST?.success(t("profileUpdatedSuccessfully"));
-        },
-        onError: () => {
-          TOAST?.error(t("errorUpdatingProfile"));
-        },
-      });
-    } catch (error) {
-      console.error("Error submitting profile picture:", error);
-      TOAST?.error(t("somethingWentWrong"));
+  React.useEffect(() => {
+    if (previousRole !== watch("role")) {
+      setValue("skills", []);
+    } else {
+      setValue("skills", [...watch("skills")]);
     }
+    setPreviousRole(watch("role"));
+  }, [watch("role")]);
+
+  const handleUpdate = async () => {
+    if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
+      TOAST?.error(t("pleaseSelectSkills"));
+      return;
+    }
+
+    let payload: any = {
+      skills: watch("skills"),
+    };
+
+    // Fetch the user's current location
+    try {
+      setLoading(true);
+      const locationData = await fetchCurrentLocation();
+      payload.location = locationData?.location;
+      payload.address = locationData?.address;
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      TOAST?.error(t("unableToFetchLocation"));
+    }
+
+    mutationUpdateProfile.mutate(payload);
   };
 
   return (
-    <View style={styles?.container}>
+    <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationUpdateProfile?.isPending} />
-      <CustomHeading baseFont={25} style={styles.heading}>
-        {t("takeSelfieForRegistration")}
-      </CustomHeading>
-      <Controller
-        control={control}
-        name="profilePicture"
-        defaultValue=""
-        rules={{
-          required: t("profilePictureIsRequired"),
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <SelfieScreen
-            name="profilePicture"
-            profilePicture={value}
-            setProfilePicture={onChange}
-            onBlur={onBlur}
-            errors={errors}
+      <Loader loading={mutationUpdateProfile?.isPending || loading} />
+      <View
+        style={styles.container}
+        // keyboardShouldPersistTaps="handled"
+      >
+        <CustomHeading baseFont={26}>
+          {t("updateYourSkillsAndRole")}
+        </CustomHeading>
+
+        <View style={{ flexDirection: "column", gap: 20 }}>
+          <Controller
+            control={control}
+            name="role"
+            rules={{
+              required: t("selectAtLeastOneSkill"),
+            }}
+            render={({ field: { onChange, value } }) => (
+              <RoleSelection role={value} setRole={onChange} />
+            )}
           />
-        )}
-      />
-      <View style={styles?.buttonContainer}>
-        <Button
-          isPrimary={true}
-          title={t("back")}
-          onPress={() => router?.back()}
-          bgColor={Colors?.danger}
-          borderColor={Colors?.danger}
-          style={{ width: "35%", paddingHorizontal: 6 }}
-        />
-        {watch("profilePicture") && (
-          <Button
+
+          {watch("role") === "WORKER" && (
+            <Controller
+              control={control}
+              name="skills"
+              rules={{
+                required: t("selectAtLeastOneSkill"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <SkillsSelector
+                  name="skills"
+                  isPricePerDayNeeded={true}
+                  selectedInterests={value}
+                  setSelectedInterests={onChange}
+                  availableOptions={WORKTYPES}
+                  onBlur={onBlur}
+                  errors={errors}
+                />
+              )}
+            />
+          )}
+
+          {watch("role") === "MEDIATOR" && (
+            <Controller
+              control={control}
+              name="skills"
+              rules={{
+                required: t("selectAtLeastOneSkill"),
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <SkillsSelector
+                  name="skills"
+                  isPricePerDayNeeded={false}
+                  selectedInterests={value}
+                  setSelectedInterests={onChange}
+                  availableOptions={WORKTYPES}
+                  onBlur={onBlur}
+                  errors={errors}
+                />
+              )}
+            />
+          )}
+        </View>
+        <View style={styles?.buttonContainer}>
+          <ButtonComp
             isPrimary={true}
-            title={t("saveProfilePicture")}
-            onPress={handleSubmit(handleProfilePictureSubmit)}
-            style={{ width: "60%", paddingHorizontal: 8 }}
+            title={t("back")}
+            onPress={() => router?.back()}
+            style={{ width: "30%" }}
+            bgColor={Colors?.danger}
+            borderColor={Colors?.danger}
           />
-        )}
+          <ButtonComp
+            isPrimary={true}
+            title={t("saveAndNext")}
+            onPress={handleSubmit(handleUpdate)}
+            style={{ flex: 1 }}
+            bgColor={Colors?.success}
+            borderColor={Colors?.success}
+          />
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 
+export default UpdateUserSkillsScreen;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "white",
-    paddingVertical: 0,
-    justifyContent: "center",
+    flexGrow: 1,
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 20,
-  },
-  customHeader: {
-    width: "100%",
-    marginTop: 40,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerText: {
-    fontWeight: "700",
-    fontSize: 20,
-  },
-  formContainer: {
-    paddingHorizontal: 20,
+    gap: 20,
     paddingTop: 20,
-    marginBottom: 40,
-  },
-  heading: {
-    marginBottom: 20,
-  },
-  label: {
-    marginVertical: 10,
-  },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 8,
   },
   buttonContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap", // ✅ Allows buttons to wrap if needed
+    justifyContent: "space-evenly", // ✅ Ensures even spacing
+    alignItems: "center",
+    gap: 10,
     position: "absolute",
     bottom: 0,
-    left: 20,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 20,
-  },
-  buttonText: {
-    color: Colors?.white,
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 18,
-  },
-
-  forgotPasswordText: {
-    textAlign: "right",
-    color: Colors.primary,
-    // fontFamily: fonts.SemiBold,
-    marginVertical: 10,
-  },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    marginTop: 20,
-  },
-  loginText: {
-    color: Colors.white,
-    fontSize: 20,
-    // fontFamily: fonts.SemiBold,
-    textAlign: "center",
-    padding: 10,
-  },
-
-  conditionsContainer: {},
-  conditionText: {
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  successText: {
-    color: "green",
+    padding: 20,
+    paddingBottom: 20,
+    width: width,
+    backgroundColor: "transparent",
   },
 });
-
-export default FifthScreen;

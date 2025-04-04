@@ -20,6 +20,7 @@ import { t } from "@/utils/translationHelper";
 import ShowDistance from "./ShowDistance";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import ShowAddress from "./ShowAddress";
 
 const ListingsVerticalWorkers = ({
   availableInterest,
@@ -62,22 +63,19 @@ const ListingsVerticalWorkers = ({
             )}
 
             <View style={styles.itemInfo}>
-              <View>
-                <SkillSelector
-                  canAddSkills={false}
-                  isShowLabel={false}
-                  style={styles?.skillsContainer}
-                  tagStyle={styles?.skillTag}
-                  tagTextStyle={styles?.skillTagText}
-                  userSkills={item?.skills}
-                  availableSkills={availableInterest}
-                  count={2}
-                />
+              <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+              <SkillSelector
+                canAddSkills={false}
+                isShowLabel={false}
+                style={styles?.skillsContainer}
+                tagStyle={styles?.skillTag}
+                tagTextStyle={styles?.skillTagText}
+                userSkills={item?.skills}
+                availableSkills={availableInterest}
+                count={2}
+              />
 
-                <CustomHeading textAlign="left">{item?.name}</CustomHeading>
-
-                <CustomText textAlign="left">{item?.address}</CustomText>
-              </View>
+              <ShowAddress address={item?.address} numberOfLines={1} />
               <View style={styles.ratingPriceContainer}>
                 <RatingAndReviews
                   rating={item?.rating?.average}
@@ -140,19 +138,19 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: Colors.white,
-    padding: 10,
+    // padding: 10,
     borderRadius: 8,
     flexDirection: "row",
     justifyContent: "flex-start",
     position: "relative",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   image: {
-    width: 80,
+    width: 100,
     minHeight: 100,
-    maxHeight: 150,
-    borderRadius: 8,
-    marginRight: 15,
+    // maxHeight: 150,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
   },
   liked: {
     position: "absolute",
@@ -164,11 +162,13 @@ const styles = StyleSheet.create({
   },
   itemInfo: {
     flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     flexDirection: "column",
     justifyContent: "space-between",
   },
   skillsContainer: {
-    paddingVertical: 0,
+    marginVertical: 5,
   },
   skillTag: {
     backgroundColor: "#e0e0e0",

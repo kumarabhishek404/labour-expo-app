@@ -1,16 +1,19 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import * as Speech from "expo-speech";
 import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 import USER from "@/app/api/user";
 import GradientWrapper from "@/components/commons/GradientWrapper";
+import Colors from "@/constants/Colors";
 
 const Search = () => {
+  const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
@@ -54,6 +57,16 @@ const Search = () => {
     },
   });
 
+  useEffect(() => {
+    // Stop any ongoing speech
+    Speech.stop();
+
+    return () => {
+      // Cleanup function to ensure speech stops when component unmounts or before effect re-runs
+      Speech.stop();
+    };
+  }, [selectedTab]);
+
   useFocusEffect(
     React.useCallback(() => {
       refetch(); // <-- Trigger API call when tab is selected
@@ -96,36 +109,34 @@ const Search = () => {
         setActiveTab={setSelectedTab}
       />
 
-      <GradientWrapper height={Dimensions.get("window").height - 180}>
-        <View style={styles.container}>
-          <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
-            {selectedTab === 0 && (
-              <AllWorkers
-                isLoading={isLoading}
-                isRefetching={isRefetching}
-                isFetchingNextPage={isFetchingNextPage}
-                refreshing={refreshing}
-                memoizedData={memoizedData}
-                onRefresh={onRefresh}
-                totalData={totalData}
-                loadMore={loadMore}
-              />
-            )}
-            {selectedTab === 1 && (
-              <AllServices
-                isLoading={isLoading}
-                isRefetching={isRefetching}
-                isFetchingNextPage={isFetchingNextPage}
-                refreshing={refreshing}
-                memoizedData={memoizedData}
-                onRefresh={onRefresh}
-                totalData={totalData}
-                loadMore={loadMore}
-              />
-            )}
-          </View>
+      <View style={styles.container}>
+        <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
+          {selectedTab === 0 && (
+            <AllWorkers
+              isLoading={isLoading}
+              isRefetching={isRefetching}
+              isFetchingNextPage={isFetchingNextPage}
+              refreshing={refreshing}
+              memoizedData={memoizedData}
+              onRefresh={onRefresh}
+              totalData={totalData}
+              loadMore={loadMore}
+            />
+          )}
+          {selectedTab === 1 && (
+            <AllServices
+              isLoading={isLoading}
+              isRefetching={isRefetching}
+              isFetchingNextPage={isFetchingNextPage}
+              refreshing={refreshing}
+              memoizedData={memoizedData}
+              onRefresh={onRefresh}
+              totalData={totalData}
+              loadMore={loadMore}
+            />
+          )}
         </View>
-      </GradientWrapper>
+      </View>
     </>
   );
 };
@@ -135,10 +146,9 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#EAF0FF",
     justifyContent: "space-between",
     minHeight: "100%",
-    paddingBottom: 75,
+    // paddingBottom: 75,
   },
   shadowBox: {
     shadowColor: "#000", // Subtle black shadow

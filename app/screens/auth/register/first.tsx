@@ -1,46 +1,70 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { Controller, useForm } from "react-hook-form";
-import Colors from "@/constants/Colors";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import Button from "@/components/inputs/Button";
-import CustomText from "@/components/commons/CustomText";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { COUNTRYPHONECODE } from "@/constants";
-import { t } from "@/utils/translationHelper";
 import MobileNumberField from "@/components/inputs/MobileNumber";
-import { Feather } from "@expo/vector-icons";
-import ModalComponent from "@/components/commons/Modal";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
+import TOAST from "@/app/hooks/toast";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import AUTH from "@/app/api/auth";
+import Colors from "@/constants/Colors";
+import CustomText from "@/components/commons/CustomText";
+import { t } from "@/utils/translationHelper";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
-import TOAST from "@/app/hooks/toast";
-import { Link, router, Stack } from "expo-router";
-import Loader from "@/components/commons/Loaders/Loader";
-import AUTH from "@/app/api/auth";
-import REGISTRATION from "../../../../assets/registration.png";
-import { Image } from "react-native";
 
-const RegisterScreen = () => {
+interface FormData {
+  phoneNumber: string;
+}
+
+const RegisterScreen: React.FC = () => {
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
   const locale = useAtomValue(Atoms?.LocaleAtom);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91");
-  const [mobileNumberExist, setMobileNumberExist] = useState("notExist");
+  const { userId } = useLocalSearchParams();
+  const [step, setStep] = useState<number>(1);
+  const [countryCode, setCountryCode] = useState<string>("+91");
+  const [otp, setOtp] = useState<string>("");
+  const [mobileNumberExist, setMobileNumberExist] = useState<string>("notSet");
+  const [timer, setTimer] = useState<number>(30);
+  const [resendDisabled, setResendDisabled] = useState<boolean>(true);
 
   const {
     control,
     watch,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      countryCode: countryCode,
-      phoneNumber: "",
-      name: "",
-    },
+    formState: { errors, isValid },
+  } = useForm<FormData>({
+    defaultValues: { phoneNumber: "" },
+    mode: "onChange",
   });
+
+  useEffect(() => {
+    if (step === 2) {
+      setResendDisabled(true);
+      setTimer(30);
+      const interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [step]);
+
+  console.log("userId--", userId);
 
   const mutationRegister = useMutation({
     mutationKey: ["register"],
@@ -52,7 +76,7 @@ const RegisterScreen = () => {
       });
       router.push({
         pathname: "/screens/auth/register/second",
-        params: { userId: data?.data?.userId },
+        params: { userId: userId || data?.data?.userId },
       });
     },
     onError: (error) => {
@@ -60,159 +84,193 @@ const RegisterScreen = () => {
     },
   });
 
-  const mutationCheckMobileNumber = useMutation({
-    mutationKey: ["checkMobileNumber"],
-    mutationFn: (payload: { mobile: string }) =>
-      AUTH?.checkMobileExistance(payload),
-    onSuccess: (response) => {
-      if (response?.data?.data?.exists) {
-        setMobileNumberExist("exist");
-      } else {
-        setMobileNumberExist("notExist");
-      }
+  const checkMobileNumber = useMutation({
+    mutationFn: async (payload: { mobile: string }) =>
+      AUTH.checkMobileExistance(payload),
+    onSuccess: ({ data }) => {
+      setMobileNumberExist(data?.data?.exists ? "exist" : "notExist");
+      // if (!data?.data?.exists)
+      //   sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`);
     },
-    onError: (err) => {
-      console.error("Error checking mobile number", err);
+    onError: () => TOAST.error(t("errorCheckingMobile")),
+  });
+
+  const sendOtp = useMutation({
+    mutationFn: async (mobile: string) => AUTH.sendOTP(mobile),
+    onSuccess: ({ Status }) => {
+      if (Status === "Success") {
+        setStep(2);
+        TOAST.success(t("otpSentSuccess"));
+      } else {
+        TOAST.error(t("otpSentFail"));
+      }
     },
   });
 
-  const onSubmit = (data: any) => {
-    setModalVisible(true);
-  };
+  const verifyOtp = useMutation({
+    mutationFn: async (payload: { mobile: string; otp: string }) =>
+      AUTH.verifyOTP(payload),
+    onSuccess: ({ Status }) => {
+      if (Status === "Success") {
+        TOAST.success(t("otpVerified"));
+        const payload: any = {
+          countryCode: countryCode,
+          mobile: watch("phoneNumber"),
+          locale: locale,
+        };
+        mutationRegister.mutate(payload);
+      } else {
+        TOAST.error(t("otpInvalidMessage"));
+      }
+    },
+  });
 
-  const onConfirmMobileNumber = () => {
-    setModalVisible(false);
-    if (!watch("name") || !watch("phoneNumber")) {
-      TOAST?.error(t("pleaseFillAllFields"));
-      return;
-    }
-    const payload: any = {
-      name: watch("name"),
-      countryCode: watch("countryCode"),
-      mobile: watch("phoneNumber"),
-      locale: locale,
-    };
-    mutationRegister.mutate(payload);
-  };
-
-  const modalContent = () => (
-    <View style={{ paddingVertical: 20, gap: 5 }}>
-      <CustomText baseFont={25} color={Colors?.subHeading}>
-        {t("isYourCorrectNumber")}
-      </CustomText>
-      <CustomText baseFont={30} fontWeight="bold" color={Colors?.tertiery}>
-        {watch("phoneNumber")}
-      </CustomText>
-    </View>
-  );
+  console.log("mobileNumberExist---", mobileNumberExist);
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationRegister?.isPending} />
       <ScrollView
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        <Image source={REGISTRATION} style={styles.image} />
-        <View style={styles.textContainer}>
-          <CustomHeading baseFont={24}>{t("registerNow")}</CustomHeading>
+        <View style={styles.centeredView}>
+          <AntDesign
+            name="mobile1"
+            size={150}
+            color={Colors.tertieryButton}
+            style={styles.image}
+          />
+          <CustomHeading baseFont={26}>{t("verificationTitle")}</CustomHeading>
+          <CustomText
+            baseFont={16}
+            color={Colors.disabledText}
+            style={{ textAlign: "center" }}
+          >
+            {step === 1
+              ? t("verificationDescription1")
+              : t("verificationDescription2")}
+          </CustomText>
         </View>
 
         <View style={styles.formContainer}>
-          <Controller
-            control={control}
-            name="phoneNumber"
-            rules={{
-              required: t("mobileNumberIsRequired"),
-              pattern: {
-                value: /^\d{10}$/,
-                message: t("enterAValidMobileNumber"),
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <MobileNumberField
+          {step === 1 && (
+            <>
+              <Controller
+                control={control}
                 name="phoneNumber"
-                countriesPhoneCode={COUNTRYPHONECODE}
-                countryCode={countryCode}
-                setCountryCode={setCountryCode}
-                phoneNumber={value}
-                setPhoneNumber={async (val: any) => {
-                  setMobileNumberExist("notSet");
-                  if (val.length === 10) {
-                    await mutationCheckMobileNumber.mutate({ mobile: val });
-                  }
-                  onChange(val);
+                rules={{
+                  required: t("mobileRequired"),
+                  pattern: {
+                    value: /^\d{10}$/,
+                    message: t("mobileInvalid"),
+                  },
                 }}
-                loading={mutationCheckMobileNumber?.isPending}
-                errors={errors}
-                isMobileNumberExist={mobileNumberExist === "exist"}
-                placeholder={t("enterYourMobileNumber")}
-                icon={
-                  <Feather
-                    name={"phone"}
-                    size={30}
-                    color={Colors.secondary}
-                    style={{ paddingVertical: 10, paddingRight: 10 }}
+                render={({ field: { onChange, value } }) => (
+                  <MobileNumberField
+                    name="phoneNumber"
+                    countryCode={countryCode}
+                    setCountryCode={setCountryCode}
+                    phoneNumber={value}
+                    setPhoneNumber={(val: string) => {
+                      setMobileNumberExist("notSet");
+                      if (val.length === 10)
+                        checkMobileNumber.mutate({ mobile: val });
+                      onChange(val);
+                    }}
+                    errors={errors}
+                    isMobileNumberExist={mobileNumberExist === "exist"}
+                    placeholder={t("enterMobileTitle")}
+                    icon={
+                      <Feather name="phone" size={26} color={Colors.disabled} />
+                    }
                   />
+                )}
+              />
+              <Button
+                isPrimary
+                title={t("sendOtp")}
+                onPress={() =>
+                  sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`)
                 }
+                style={styles.button}
+                disabled={!isValid || mobileNumberExist !== "notExist"}
+                textStyle={{ fontSize: 24, fontWeight: "600" }}
               />
-            )}
-          />
+            </>
+          )}
 
-          <Controller
-            control={control}
-            name="name"
-            rules={{ required: t("firstNameIsRequired") }}
-            render={({ field: { onChange, value } }) => (
-              <TextInputComponent
-                name="name"
-                label="name"
-                value={value}
-                onChangeText={onChange}
-                placeholder={t("enterYourFirstName")}
-                textStyles={{ fontSize: 16 }}
-                errors={mobileNumberExist === "notExist" ? errors : []}
-                disabled={mobileNumberExist !== "notExist"}
+          {step === 2 && (
+            <View style={styles.otpContainer}>
+              <View style={styles.mobileNumberView}>
+                <CustomText baseFont={18} color={Colors.tertieryButton}>
+                  {countryCode} {watch("phoneNumber")}
+                </CustomText>
+                <TouchableOpacity onPress={() => setStep(1)}>
+                  <Feather name="edit" size={20} color={Colors.primary} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.otpLableContainer}>
+                <CustomHeading
+                  textAlign="left"
+                  baseFont={16}
+                  color={Colors.inputLabel}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  {t("otpTitle")}
+                </CustomHeading>
+                <TouchableOpacity
+                  onPress={() =>
+                    sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`)
+                  }
+                  disabled={resendDisabled}
+                >
+                  <CustomText
+                    color={resendDisabled ? Colors.text : Colors.primary}
+                    baseFont={16}
+                  >
+                    {resendDisabled
+                      ? `${t("resendOtpIn", { seconds: timer })}`
+                      : t("resendOtp")}
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.otpInput}
+                keyboardType="numeric"
+                maxLength={6}
+                value={otp}
+                onChangeText={setOtp}
               />
-            )}
-          />
-
-          <Button
-            isPrimary
-            title={t("saveAndNext")}
-            onPress={handleSubmit(onSubmit)}
-            style={styles.loginButtonWrapper}
-          />
+              <Button
+                isPrimary
+                title={t("verifyOtp")}
+                onPress={() =>
+                  verifyOtp.mutate({
+                    mobile: `${countryCode}${watch("phoneNumber")}`,
+                    otp,
+                  })
+                }
+                style={styles.button}
+                disabled={otp.length !== 6}
+                textStyle={{ fontSize: 24, fontWeight: "600" }}
+              />
+            </View>
+          )}
 
           <View style={styles.footerContainer}>
             <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
-            <Link href="/screens/auth/login" asChild>
-              <TouchableOpacity>
-                <CustomHeading baseFont={24} color={Colors.tertieryButton}>
-                  {t("signIn")}
-                </CustomHeading>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity onPress={() => router.back()}>
+              <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                {t("signIn")}
+              </CustomHeading>
+            </TouchableOpacity>
           </View>
-
-          <ModalComponent
-            visible={isModalVisible}
-            content={modalContent}
-            transparent={true}
-            animationType="slide"
-            title={t("checkYourMobileNumber")}
-            onClose={() => setModalVisible(false)}
-            primaryButton={{
-              title: t("yesProceed"),
-              action: onConfirmMobileNumber,
-            }}
-            secondaryButton={{
-              title: t("noEdit"),
-              action: () => setModalVisible(false),
-              style: { width: "40%" },
-            }}
-          />
+          {(checkMobileNumber?.isPending ||
+            sendOtp?.isPending ||
+            verifyOtp?.isPending) && (
+            <ActivityIndicator size="large" color={Colors.primary} />
+          )}
         </View>
       </ScrollView>
     </>
@@ -222,36 +280,61 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.fourth,
     paddingHorizontal: 20,
-    justifyContent: "center",
+    paddingVertical: 20,
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
-  textContainer: {
-    // marginVertical: 10,
+  centeredView: {
+    alignItems: "center",
+    marginBottom: 20,
   },
   formContainer: {
-    marginTop: 15,
-    gap: 15,
-  },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
-    flexDirection: "row",
+    gap: 20,
+    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
+  },
+  button: {
+    height: 53,
+    borderRadius: 8,
+    width: "100%",
+  },
+  otpContainer: {
+    width: "100%",
+    alignItems: "center",
+    gap: 10,
+  },
+  otpInput: {
+    width: "100%",
+    textAlign: "center",
+    height: 50,
+    borderWidth: 1,
+    borderColor: Colors.inputBorder,
+    borderRadius: 5,
+    fontSize: 20,
+    letterSpacing: 8,
+    backgroundColor: Colors.white,
+  },
+  image: { width: 150, height: 150, marginBottom: 20 },
+  mobileNumberView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 10,
+  },
+  otpLableContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-  },
-  image: {
-    // width: "70%",
-    height: 250,
-    resizeMode: "contain",
-    alignSelf: "center",
   },
 });
 

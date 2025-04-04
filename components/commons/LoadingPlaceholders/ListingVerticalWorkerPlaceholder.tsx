@@ -37,8 +37,7 @@ const ListingsWorkersPlaceholder = () => {
             flexDirection: "row",
             gap: 10,
             backgroundColor: Colors.white,
-            borderTopLeftRadius: 8,
-            borderBottomLeftRadius: 8,
+            borderRadius: 8,
           }}
         >
           <SkeletonPlaceholder

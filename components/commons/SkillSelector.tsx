@@ -149,12 +149,6 @@ const SkillSelector = ({
         ) : (
           <CustomText baseFont={14}>{t("noSkillsFound")}</CustomText>
         )}
-
-        {count && count < userSkills?.length && (
-          <CustomText color={Colors?.link} baseFont={18}>
-            ...
-          </CustomText>
-        )}
       </>
     );
   };

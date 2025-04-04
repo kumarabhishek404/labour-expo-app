@@ -1,10 +1,12 @@
 import moment from "moment";
+import * as Speech from "expo-speech";
 import * as Location from "expo-location";
 import TOAST from "@/app/hooks/toast";
 import EMPLOYER from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
 import { WORKTYPES } from ".";
 import { Linking } from "react-native";
+import { AppState } from "react-native";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
   // Convert both dates to moments and calculate inclusive difference in days
@@ -62,7 +64,7 @@ export const getTimeAgo = (createdOn: Date) => {
 };
 
 export const isEmptyObject = (obj: object) => {
-  return Object.entries(obj).length === 0 && obj.constructor === Object;
+  return Object?.entries(obj).length === 0 && obj.constructor === Object;
 };
 
 export const removeEmptyStrings = (arr: any) => {
@@ -289,3 +291,181 @@ export const logoutUser = async (setUserDetails: any, router: any) => {
   setUserDetails(null); // Update the global user atom
   router.push("/screens/auth/login"); // Redirect to login
 };
+
+export const generateServiceSummary = (
+  service: any,
+  lang: string = "hi",
+  userLocation: { latitude: number; longitude: number }
+) => {
+  const {
+    type,
+    subType,
+    startDate,
+    duration,
+    facilities,
+    requirements = [],
+    appliedUsers,
+    address,
+    location, // Assuming service location has latitude & longitude
+  } = service;
+
+  // Convert the start date to a readable format
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+
+  const dateValue = startDate?.$date || startDate;
+  const formattedDate = dateValue
+    ? new Date(dateValue).toLocaleDateString(
+        lang === "hi" ? "hi-IN" : "en-IN",
+        options
+      )
+    : lang === "hi"
+    ? "अमान्य तिथि"
+    : "Invalid Date";
+
+  // Facilities translations
+  const facilityMap: any = {
+    food: lang === "hi" ? "खाने" : "Food",
+    living: lang === "hi" ? "रहने" : "Living",
+    travelling: lang === "hi" ? "यात्रा" : "Traveling",
+    esi_pf: lang === "hi" ? "बीमा और पीएफ" : "ESI & PF",
+  };
+
+  const enabledFacilities =
+    Object.keys(facilities || {})
+      .filter((key) => facilities[key])
+      .map((key) => facilityMap[key])
+      .join(", ") || (lang === "hi" ? "कोई सुविधा नहीं" : "No facilities");
+
+  // Count only applied users with status "PENDING"
+  const appliedUsersCount = (appliedUsers || []).filter(
+    (user: any) => user.status === "PENDING"
+  ).length;
+
+  // Calculate distance from user location to service location
+  const distance =
+    location && userLocation ? calculateDistance(location, userLocation) : null;
+
+  // Generate requirement details
+  let requirementDetails = "";
+  if (requirements.length > 0) {
+    requirementDetails = requirements
+      .map((req: any) =>
+        lang === "hi"
+          ? `${req.count} ${t(req.name)} चाहिए, रोज़ की मजदूरी ₹${
+              req.payPerDay
+            } होगी`
+          : `Need ${req.count} ${t(req.name)}, daily wage ₹${req.payPerDay}`
+      )
+      .join(". ");
+
+    // Add "जरूरत है" at the end in Hindi
+    if (lang === "hi") requirementDetails += "।";
+  } else {
+    requirementDetails =
+      lang === "hi"
+        ? "कोई खास जरूरत नहीं बताई गई है।"
+        : "No specific requirements mentioned.";
+  }
+
+  // Generate summary based on language
+  if (lang === "en") {
+    return `Work for ${t(subType)} is available ${
+      distance ? `at ${distance} km` : `at ${address}`
+    }. It is under ${t(
+      type
+    )} category. Work starts on ${formattedDate} and will last for ${duration} days. Employer will provide ${enabledFacilities} facilities. ${requirementDetails}. ${appliedUsersCount} ${
+      appliedUsersCount > 1 ? "people have" : "person has"
+    } applied.`;
+  } else {
+    return `${t(subType)} की नौकरी उपलब्ध है ${
+      distance ? `, दूरी ${distance} किमी` : ` ${address} में`
+    }। यह ${t(
+      type
+    )} श्रेणी के अंतर्गत आता है। काम ${formattedDate} से शुरू होगा और ${duration} दिन तक चलेगा। मालिक ${enabledFacilities} की सुविधा देगा। ${requirementDetails} अभी तक ${appliedUsersCount} ${
+      appliedUsersCount > 1 ? "लोगों" : "लोग"
+    } ने आवेदन किया है।`;
+  }
+};
+
+let currentUtteranceId: number | null = null;
+let currentSetSpeakingState: ((state: boolean) => void) | null = null;
+
+export const speakText = (
+  text: string,
+  language: string = "hi",
+  setSpeakingState: (state: boolean) => void
+) => {
+  if (text.trim()) {
+    Speech.stop(); // Stop any ongoing speech before starting new speech
+
+    // Reset previous speaking state if a different service was speaking
+    if (
+      currentSetSpeakingState &&
+      currentSetSpeakingState !== setSpeakingState
+    ) {
+      currentSetSpeakingState(false);
+    }
+
+    // Generate a unique ID for this speech request
+    const utteranceId = Date.now();
+    currentUtteranceId = utteranceId;
+    currentSetSpeakingState = setSpeakingState; // Track current speaking state setter
+
+    // Set speaking state to true for the new service
+    setSpeakingState(true);
+
+    Speech.speak(text, {
+      language,
+      pitch: 1,
+      rate: 1,
+      onDone: () => {
+        if (currentUtteranceId === utteranceId) {
+          setSpeakingState(false);
+        }
+      },
+      onStopped: () => {
+        if (currentUtteranceId === utteranceId) {
+          setSpeakingState(false);
+        }
+      },
+    });
+
+    // Listen for app state changes and stop speech if app is backgrounded or closed
+    const appStateListener = AppState.addEventListener(
+      "change",
+      (nextAppState) => {
+        if (nextAppState !== "active") {
+          Speech.stop();
+          setSpeakingState(false);
+        }
+      }
+    );
+
+    // Cleanup listener when function completes
+    return () => {
+      appStateListener.remove();
+    };
+  }
+};
+
+// if (lang === "en") {
+//   return `A job for ${t(subType)} is available ${
+//     distance ? `at a distance of ${distance} km` : ""
+//   }. It falls under the ${t(
+//     type
+//   )} category. The work will start from ${formattedDate} and will last for ${duration} day(s). The employer will provide ${enabledFacilities} facilities. ${requirementDetails}. So far, ${appliedUsersCount} ${
+//     appliedUsersCount > 1 ? "people" : "person"
+//   } have applied.`;
+// } else {
+//   return `${t(subType)} की नौकरी उपलब्ध है ${
+//     distance ? `दूरी ${distance} किमी पर` : ""
+//   }। यह ${t(
+//     type
+//   )} श्रेणी के अंतर्गत आता है। काम ${formattedDate} से शुरू होगा और ${duration} दिन तक चलेगा। नियोक्ता ${enabledFacilities} सुविधा देगा। ${requirementDetails}। अभी तक ${appliedUsersCount} ${
+//     appliedUsersCount > 1 ? "लोगों" : "लोग"
+//   } ने आवेदन किया है।`;
+// }

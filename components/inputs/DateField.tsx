@@ -13,7 +13,6 @@ interface DateFieldProps {
   type: string;
   date: any;
   setDate: any;
-  onBlur: any;
   errors: any;
 }
 

@@ -45,6 +45,8 @@ const AddAddressDrawer = ({
   const [districts, setDistricts]: any = useState([]);
   const [subDistricts, setSubDistricts]: any = useState([]);
   const [villages, setVillages]: any = useState([]);
+  const [additionalDetails, setAdditionalDetails]: any = useState("");
+  const [pinCode, setPinCode]: any = useState("");
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [allStateVillages, setAllStateVillages]: any = useState([]);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -129,8 +131,10 @@ const AddAddressDrawer = ({
       setValue("district", "");
       setValue("subDistrict", "");
       setValue("village", "");
-      setValue("pinCode", "");
-      setValue("additionalDetails", "");
+      // setValue("pinCode", "");
+      // setValue("additionalDetails", "");
+      setPinCode("");
+      setAdditionalDetails("");
     }
   }, [selectedState, allStateVillages]);
 
@@ -149,8 +153,10 @@ const AddAddressDrawer = ({
 
       setValue("subDistrict", "");
       setValue("village", "");
-      setValue("pinCode", "");
-      setValue("additionalDetails", "");
+      // setValue("pinCode", "");
+      // setValue("additionalDetails", "");
+      setPinCode("");
+      setAdditionalDetails("");
     }
   }, [selectedDistrict, allStateVillages]);
 
@@ -169,8 +175,10 @@ const AddAddressDrawer = ({
 
       setVillages(foundVillages);
       setValue("village", "");
-      setValue("pinCode", "");
-      setValue("additionalDetails", "");
+      // setValue("pinCode", "");
+      // setValue("additionalDetails", "");
+      setPinCode("");
+      setAdditionalDetails("");
     }
   }, [selectedSubDistrict, allStateVillages]);
 
@@ -179,7 +187,7 @@ const AddAddressDrawer = ({
       selectedTab === "savedAddresses"
         ? selectedAddress
         : isEditing
-        ? `${data?.additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${data?.pinCode}`
+        ? `${additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${pinCode}`
         : locationAddress;
 
     console.log("Addres---", address, selectedTab);
@@ -238,7 +246,6 @@ const AddAddressDrawer = ({
       setDistricts([]);
       setValue("state", "");
     },
-    
   });
 
   const fetchLocation = async () => {
@@ -401,9 +408,12 @@ const AddAddressDrawer = ({
             label="additionalDetails"
             placeholder={t("enterAdditionalDetails")}
             style={styles.textInput}
-            value={watch("additionalDetails")}
+            value={additionalDetails}
             onChangeText={(value: any) => {
-              setValue("additionalDetails", value);
+              console.log("Additional Details", value);
+
+              setAdditionalDetails(value);
+              // setValue("additionalDetails", value);
             }}
             icon={
               <FontAwesome6
@@ -420,11 +430,12 @@ const AddAddressDrawer = ({
             placeholder={t("pinCode")}
             type="number"
             style={styles.textInput}
-            value={watch("pinCode")}
+            value={pinCode}
             onChangeText={(value: any) => {
               // Allow only numbers and enforce exactly 6 digits
               if (/^\d{0,6}$/.test(value)) {
-                setValue("pinCode", value);
+                // setValue("pinCode", value);
+                setPinCode(value);
               }
             }}
             icon={
@@ -490,11 +501,11 @@ const AddAddressDrawer = ({
     selectedSubDistrict,
     villages,
     watch("village"),
-    watch("pinCode"),
-    watch("additionalDetails"),
+    pinCode,
+    additionalDetails,
     isFetchingLocation,
     fetchStateDetailsMutation?.isPending,
-    mutationUpdateProfileInfo?.isPending
+    mutationUpdateProfileInfo?.isPending,
   ]);
 
   return <Loader loading={mutationUpdateProfileInfo?.isPending} />;

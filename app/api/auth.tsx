@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import auth from "@react-native-firebase/auth";
 import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
+import axios from "axios";
 
 const checkMobileExistance = async (payload: any) => {
   console.log("Pay---", payload);
@@ -93,12 +94,13 @@ const forgotPassword = async (payload: any) => {
 };
 
 const resetPassword = async (payload: any) => {
+  console.log("Payload --", payload);
+
   try {
     const data = await API_CLIENT.makePatchRequest(
       `/auth/set-forgot-password`,
       payload
     );
-    TOAST?.success("Password Reset successfully");
     return data;
   } catch (error: any) {
     console.log(
@@ -113,23 +115,30 @@ const resetPassword = async (payload: any) => {
   }
 };
 
-const sendOTP = async (phoneNumber: string) => {
-  console.log("phoneNumber", phoneNumber);
+const sendOTP = async (mobile: string) => {
   try {
-    const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-    return confirmation;
+    const response = await axios?.get(
+      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/OTP1`
+    );
+    console.log("response", response?.data);
+
+    return response?.data;
   } catch (error) {
-    console.error("Error during phone number authentication:", error);
+    console.error("Error during mobile number authentication:", error);
+    TOAST.error(`Error during mobile number authentication: ${error}`);
     throw error;
   }
 };
 
-const verifyOTP = async (confirmation: any, code: string) => {
-  console.log("confirmation", confirmation);
-  console.log("code", code);
+const verifyOTP = async (payload: any) => {
+  console.log("payload", payload);
   try {
-    await confirmation.confirm(code);
-    return true;
+    const response = await axios?.get(
+      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/VERIFY3/${
+        payload?.mobile
+      }/${payload?.otp}`
+    );
+    return response?.data;
   } catch (error) {
     console.error("Error verifying OTP code:", error);
     throw error;

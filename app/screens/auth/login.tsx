@@ -153,9 +153,6 @@ const LoginScreen = () => {
     mutationSignIn.mutate(data);
   };
 
-  console.log("In the login screen--");
-  
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -247,6 +244,7 @@ const LoginScreen = () => {
             title={t("login")}
             onPress={handleSubmit(handleFormSubmit)}
             style={styles.loginButtonWrapper}
+            textStyle={{ fontSize: 24, fontWeight: "600" }}
           />
 
           <View style={styles.footerContainer}>
@@ -268,7 +266,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.fourth,
     paddingHorizontal: 20,
     justifyContent: "center",
   },
@@ -286,7 +284,8 @@ const styles = StyleSheet.create({
   },
   loginButtonWrapper: {
     backgroundColor: Colors.primary,
-    borderRadius: 100,
+    borderRadius: 8,
+    height: 53,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

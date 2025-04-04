@@ -1,38 +1,30 @@
-import { ScrollView, StyleSheet, View, Text, Dimensions } from "react-native";
 import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+} from "react-native";
 import Colors from "@/constants/Colors";
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import Loader from "@/components/commons/Loaders/Loader";
-import USER from "@/app/api/user";
-import { useMutation } from "@tanstack/react-query";
+import Button from "@/components/inputs/Button";
 import TOAST from "@/app/hooks/toast";
+import { Ionicons } from "@expo/vector-icons";
 import { t } from "@/utils/translationHelper";
-import { Controller, useForm } from "react-hook-form";
-import RoleSelection from "@/components/inputs/SelectRole";
-import SkillsSelector from "@/components/inputs/SelectSkills";
-import { MEDIATORTYPES, WORKERTYPES, WORKTYPES } from "@/constants";
-import ButtonComp from "@/components/inputs/Button";
-import CustomText from "@/components/commons/CustomText";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { fetchCurrentLocation } from "@/constants/functions";
-const { width } = Dimensions.get("window");
+import { useMutation } from "@tanstack/react-query";
+import USER from "@/app/api/user";
+import Loader from "@/components/commons/Loaders/Loader";
+import CustomText from "@/components/commons/CustomText";
 
-const UpdateUserSkillsScreen = () => {
-  const [previousRole, setPreviousRole] = useState("WORKER");
-  const [loading, setLoading] = useState(false);
+const FourthScreen = () => {
   const { userId } = useLocalSearchParams();
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      role: "WORKER",
-      skills: [],
-    },
-  });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
+    "create"
+  );
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
@@ -51,154 +43,213 @@ const UpdateUserSkillsScreen = () => {
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      TOAST?.error(error?.message || t("updateFailed"));
     },
   });
 
-  React.useEffect(() => {
-    if (previousRole !== watch("role")) {
-      setValue("skills", []);
+  const onSubmit = () => {
+    if (password === confirmPassword) {
+      mutationUpdateProfile.mutate({
+        password,
+      });
     } else {
-      setValue("skills", [...watch("skills")]);
+      TOAST?.error(t("passwordMismatch"));
+      setConfirmPassword("");
     }
-    setPreviousRole(watch("role"));
-  }, [watch("role")]);
+  };
 
-  const handleUpdate = async () => {
-    if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
-      TOAST?.error(t("pleaseSelectSkills"));
-      return;
+  const handleSetPassword = () => {
+    if (password?.length === 4) {
+      setPasswordStep("confirm");
+    } else {
+      TOAST?.error(t("enterFullPassword"));
     }
+  };
 
-    let payload: any = {
-      skills: watch("skills"),
-    };
-
-    // Fetch the user's current location
-    try {
-      setLoading(true);
-      const locationData = await fetchCurrentLocation();
-      payload.location = locationData?.location;
-      payload.address = locationData?.address;
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      TOAST?.error(t("unableToFetchLocation"));
+  const handleNumberPress = (num: string) => {
+    if (passwordStep === "create") {
+      if (num === "remove") {
+        setPassword(password.slice(0, -1));
+      } else if (password.length < 4) {
+        setPassword(password + num);
+      }
+    } else if (passwordStep === "confirm") {
+      if (num === "remove") {
+        setConfirmPassword(confirmPassword.slice(0, -1));
+      } else if (confirmPassword.length < 4) {
+        setConfirmPassword(confirmPassword + num);
+      }
     }
+  };
 
-    mutationUpdateProfile.mutate(payload);
+  const handlePasswordBack = async () => {
+    if (passwordStep === "create") {
+      router?.back();
+    } else {
+      setPasswordStep("create");
+      setConfirmPassword("");
+    }
   };
 
   return (
-    <>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Loader loading={mutationUpdateProfile?.isPending} />
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationUpdateProfile?.isPending || loading} />
       <View
-        style={styles.container}
-        // keyboardShouldPersistTaps="handled"
+        style={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          gap: 10,
+        }}
       >
-        <CustomHeading baseFont={26}>
-          {t("updateYourSkillsAndRole")}
-        </CustomHeading>
-
-        <View style={{ flexDirection: "column", gap: 20 }}>
-          <Controller
-            control={control}
-            name="role"
-            rules={{
-              required: t("selectAtLeastOneSkill"),
-            }}
-            render={({ field: { onChange, value } }) => (
-              <RoleSelection role={value} setRole={onChange} />
-            )}
-          />
-
-          {watch("role") === "WORKER" && (
-            <Controller
-              control={control}
-              name="skills"
-              rules={{
-                required: t("selectAtLeastOneSkill"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SkillsSelector
-                  name="skills"
-                  isPricePerDayNeeded={true}
-                  selectedInterests={value}
-                  setSelectedInterests={onChange}
-                  availableOptions={WORKTYPES}
-                  onBlur={onBlur}
-                  errors={errors}
-                />
-              )}
-            />
-          )}
-
-          {watch("role") === "MEDIATOR" && (
-            <Controller
-              control={control}
-              name="skills"
-              rules={{
-                required: t("selectAtLeastOneSkill"),
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SkillsSelector
-                  name="skills"
-                  isPricePerDayNeeded={false}
-                  selectedInterests={value}
-                  setSelectedInterests={onChange}
-                  availableOptions={WORKTYPES}
-                  onBlur={onBlur}
-                  errors={errors}
-                />
-              )}
-            />
-          )}
+        <View style={styles.title}>
+          <CustomHeading baseFont={30} color={Colors.heading}>
+            {passwordStep === "create"
+              ? t("createPassword")
+              : t("confirmPassword")}
+          </CustomHeading>
+          <CustomText color={Colors.tertiery} fontWeight="bold">
+            (
+            {passwordStep === "create"
+              ? t("createPasswordNote")
+              : t("confirmPasswordNote")}
+            )
+          </CustomText>
         </View>
-        <View style={styles?.buttonContainer}>
-          <ButtonComp
-            isPrimary={true}
-            title={t("back")}
-            onPress={() => router?.back()}
-            style={{ width: "30%" }}
-            bgColor={Colors?.danger}
-            borderColor={Colors?.danger}
-          />
-          <ButtonComp
-            isPrimary={true}
-            title={t("saveAndNext")}
-            onPress={handleSubmit(handleUpdate)}
-            style={{ flex: 1 }}
-            bgColor={Colors?.success}
-            borderColor={Colors?.success}
-          />
+        <View style={styles.passwordContainer}>
+          {Array(4)
+            .fill(null)
+            .map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  (passwordStep === "create"
+                    ? password.length
+                    : confirmPassword.length) > index && styles.filledDot,
+                ]}
+              />
+            ))}
+        </View>
+
+        <View style={styles.keypad}>
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "remove"].map(
+            (num, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.key}
+                onPress={() => handleNumberPress(num)}
+              >
+                {num === "remove" ? (
+                  <Ionicons name="backspace" size={37} color={Colors.white} />
+                ) : (
+                  <Text style={styles.keyText}>{num}</Text>
+                )}
+              </TouchableOpacity>
+            )
+          )}
         </View>
       </View>
-    </>
+
+      <View style={styles?.buttonContainer}>
+        {router?.canGoBack() && (
+          <Button
+            isPrimary={false}
+            title={t("back")}
+            onPress={handlePasswordBack}
+            style={{ width: "25%" }}
+            bgColor={Colors?.danger}
+            borderColor={Colors?.danger}
+            textColor={Colors?.white}
+          />
+        )}
+        <Button
+          isPrimary={true}
+          title={passwordStep === "create" ? t("next") : t("confirm")}
+          onPress={() =>
+            passwordStep === "create" ? handleSetPassword() : onSubmit()
+          }
+          style={{ flex: 1, paddingHorizontal: 5 }}
+          bgColor={Colors.success}
+          borderColor={Colors.success}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
-export default UpdateUserSkillsScreen;
-
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: Colors?.background,
+    flex: 1,
+    height: "100%",
+    backgroundColor: Colors?.fourth,
     paddingHorizontal: 20,
-    gap: 20,
-    paddingTop: 20,
+    gap: 10,
+    width: "100%",
+    justifyContent: "center",
+  },
+  label: {
+    marginVertical: 10,
   },
   buttonContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // ✅ Allows buttons to wrap if needed
-    justifyContent: "space-evenly", // ✅ Ensures even spacing
+    justifyContent: "space-between",
     alignItems: "center",
+    marginVertical: 10,
     gap: 10,
-    position: "absolute",
-    bottom: 0,
-    padding: 20,
-    paddingBottom: 20,
-    width: width,
-    backgroundColor: "transparent",
+    marginTop: 40,
+  },
+  heading: {
+    marginBottom: 20,
+  },
+
+  successText: {
+    color: "green",
+  },
+  title: {
+    marginBottom: 40,
+    display: "flex",
+    flexDirection: "column",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  dot: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    backgroundColor: "#3a3a4f",
+    marginHorizontal: 10,
+  },
+  filledDot: {
+    backgroundColor: Colors?.tertieryButton,
+  },
+  keypad: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "95%",
+    height: "auto",
+    marginBottom: 20,
+    padding: 0,
+  },
+  key: {
+    width: "30%",
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    backgroundColor: Colors?.black,
+    borderRadius: 8,
+  },
+  keyText: {
+    fontSize: 37,
+    color: "white",
   },
 });
+
+export default FourthScreen;

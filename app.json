@@ -9,12 +9,12 @@
     "icon": "./assets/app/adaptive-icon.png",
     "splash": {
       "image": "./assets/app/adaptive-icon.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "plugins": [
+      "expo-av",
       "expo-router",
       "expo-font",
       "expo-localization",
@@ -25,15 +25,17 @@
         {
           "icon": "./assets/app/adaptive-icon.png"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "ios": {
-      "jsEngine": "jsc",
+      "jsEngine": "hermes",
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
+      "jsEngine": "hermes",
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {

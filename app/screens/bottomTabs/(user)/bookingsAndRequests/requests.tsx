@@ -24,9 +24,12 @@ import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholders/ListingBookingPlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const Requests = () => {
   const [totalData, setTotalData] = useState(0);
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("recievedRequests");
@@ -59,6 +62,8 @@ const Requests = () => {
       }
       return undefined;
     },
+    enabled:
+      !!userDetails?._id && !!userDetails?.token && !!userDetails?.isAuth,
     retry: false,
   });
 
@@ -140,7 +145,7 @@ const Requests = () => {
           </TouchableOpacity> */}
 
           <CustomHeading
-            baseFont={22}
+            baseFont={24}
             textAlign="left"
             color={Colors?.white}
             style={{ width: "65%" }}
@@ -153,7 +158,20 @@ const Requests = () => {
             onPress={ShowAllSentRequests}
             style={styles?.applicationText}
           >
-            <AntDesign name="rocket1" size={20} color={Colors?.fourthButton} />
+            {category === "sentRequests" ? (
+              <AntDesign
+                name="rocket1"
+                size={20}
+                color={Colors?.fourthButton}
+                style={{ transform: [{ rotate: "180deg" }] }}
+              />
+            ) : (
+              <AntDesign
+                name="rocket1"
+                size={20}
+                color={Colors?.fourthButton}
+              />
+            )}
             <CustomText
               baseFont={16}
               color={Colors?.fourthButton}

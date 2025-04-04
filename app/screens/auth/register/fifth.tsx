@@ -1,204 +1,125 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import { Ionicons } from "@expo/vector-icons";
-import EmailAddressField from "@/components/inputs/EmailAddress";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 import { Controller, useForm } from "react-hook-form";
-import { isEmptyObject } from "@/constants/functions";
-import Stepper from "@/components/commons/Stepper";
-import { REGISTERSTEPS } from "@/constants";
+import SelfieScreen from "@/components/inputs/Selfie";
+import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import DateField from "@/components/inputs/DateField";
-import Gender from "@/components/inputs/Gender";
-import CustomDatePicker from "@/components/inputs/CustomDatePicker";
-import moment, { Moment } from "moment";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import CustomHeading from "@/components/commons/CustomHeading";
+import { useMutation } from "@tanstack/react-query";
+import USER from "@/app/api/user";
+import Loader from "@/components/commons/Loaders/Loader";
+import { fetchCurrentLocation } from "@/constants/functions";
 
-interface SecondScreenProps {
-  setStep: any;
-  address: string;
-  setAddress: any;
-  location: object;
-  setLocation: any;
-  email: string;
-  setEmail: any;
-  dateOfBirth: Moment;
-  setDateOfBirth: any;
-  gender: string;
-  setGender: any;
-}
-
-const SecondScreen: React.FC<SecondScreenProps> = ({
-  setStep,
-  address,
-  setAddress,
-  location,
-  setLocation,
-  email,
-  setEmail,
-  dateOfBirth,
-  setDateOfBirth,
-  gender,
-  setGender,
-}: SecondScreenProps) => {
+const FifthScreen = () => {
+  const { userId } = useLocalSearchParams();
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      address: address,
-      location: location,
-      email: email,
-      dateOfBirth: dateOfBirth,
-      gender: gender,
+      profilePicture: "",
     },
   });
-  const [selectedOption, setSelectedOption] = useState(
-    !isEmptyObject(location) ? "currentLocation" : "address"
-  );
 
-  const onSubmit = (data: any) => {
-    setAddress(data?.address);
-    setEmail(data?.email);
-    setDateOfBirth(data?.dateOfBirth);
-    setGender(data?.gender);
-    setStep(3);
+  const mutationUpdateProfile = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: (payload: any) => USER.updateUserById(payload),
+    onSuccess: () => {
+      console.log("Profile updated successfully");
+      router?.push("/screens/auth/login");
+    },
+    onError: (error) => {
+      console.error("Profile update error:", error);
+    },
+  });
+
+  const handleProfilePictureSubmit = async (data: any) => {
+    try {
+      if (
+        !data?.profilePicture ||
+        typeof data.profilePicture !== "string" ||
+        data.profilePicture.trim() === ""
+      ) {
+        TOAST?.error(t("pleaseSelectAProfilePicture"));
+        return;
+      }
+
+      const formData: any = new FormData();
+      const imageName = data?.profilePicture.split("/").pop();
+
+      formData.append("profileImage", {
+        uri:
+          Platform.OS === "android"
+            ? data?.profilePicture
+            : data?.profilePicture.replace("file://", ""),
+        type: "image/jpeg",
+        name: imageName || "photo.jpg",
+      });
+
+      formData.append("_id", userId);
+
+      mutationUpdateProfile.mutate(formData, {
+        onSuccess: () => {
+          TOAST?.success(t("profileUpdatedSuccessfully"));
+        },
+        onError: () => {
+          TOAST?.error(t("errorUpdatingProfile"));
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting profile picture:", error);
+      TOAST?.error(t("somethingWentWrong"));
+    }
   };
 
   return (
-    <>
-      <View style={{ marginBottom: 20 }}>
-        <Stepper currentStep={2} steps={REGISTERSTEPS} />
-      </View>
-
-      <View style={{ flexDirection: "column", gap: 20 }}>
-        <Controller
-          control={control}
-          name="address"
-          defaultValue=""
-          rules={{
-            required: t("addressIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <AddLocationAndAddress
-              label={t("address")}
-              name="address"
-              address={value}
-              setAddress={onChange}
-              location={location}
-              setLocation={setLocation}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              onBlur={onBlur}
-              errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="email"
-          defaultValue=""
-          // rules={{
-          //   required: t("emailAddressIsRequired"),
-          //   pattern: {
-          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-          //     message: t("enterAValidEmailAddress"),
-          //   },
-          // }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <EmailAddressField
-              name="email"
-              email={value}
-              setEmail={onChange}
-              onBlur={onBlur}
-              errors={errors}
-              placeholder={t("enterYourEmailAddress")}
-              icon={
-                <Ionicons
-                  name={"mail-outline"}
-                  size={30}
-                  color={Colors.secondary}
-                  style={{ paddingVertical: 10, marginRight: 10 }}
-                />
-              }
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="dateOfBirth"
-          defaultValue={moment().subtract(18, "years").startOf("year")}
-          rules={{
-            required: t("dateOfBirthIsRequired"),
-            validate: (value) => {
-              const selectedDate = moment(value);
-              const today = moment(new Date());
-              const eighteenYearsAgo = moment(new Date());
-              eighteenYearsAgo.set("year", today.year() - 18);
-
-              if (selectedDate > eighteenYearsAgo) {
-                return t("youMustBeAtLeast18YearsOld");
-              } else {
-                return true;
-              }
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("dateOfBirth")}
-              name="dateOfBirth"
-              type="dateOfBirth"
-              date={moment(value)}
-              setDate={onChange}
-              onBlur={onBlur}
-              errors={errors}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="gender"
-          rules={{
-            required: t("genderIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Gender
-              name="gender"
-              label={t("whatIsYourGender")}
-              options={[
-                { title: t("male"), value: "male", icon: "👩‍🦰" },
-                { title: t("female"), value: "female", icon: "👨" },
-                { title: t("other"), value: "other", icon: "✨" },
-              ]}
-              gender={value}
-              setGender={onChange}
-              containerStyle={errors?.gender && styles.errorInput}
-              errors={errors}
-            />
-          )}
-        />
-      </View>
-
+    <View style={styles?.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <Loader loading={mutationUpdateProfile?.isPending} />
+      <CustomHeading baseFont={25} style={styles.heading}>
+        {t("takeSelfieForRegistration")}
+      </CustomHeading>
+      <Controller
+        control={control}
+        name="profilePicture"
+        defaultValue=""
+        rules={{
+          required: t("profilePictureIsRequired"),
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <SelfieScreen
+            name="profilePicture"
+            profilePicture={value}
+            setProfilePicture={onChange}
+            onBlur={onBlur}
+            errors={errors}
+          />
+        )}
+      />
       <View style={styles?.buttonContainer}>
         <Button
-          isPrimary={false}
-          title={t("back")}
-          onPress={() => setStep(1)}
-          style={{ width: "30%" }}
-        />
-        <Button
           isPrimary={true}
-          title={t("saveAndNext")}
-          onPress={handleSubmit(onSubmit)}
-          style={{ width: "40%" }}
+          title={t("back")}
+          onPress={() => router?.back()}
+          bgColor={Colors?.danger}
+          borderColor={Colors?.danger}
+          style={{ width: "35%", paddingHorizontal: 6 }}
         />
+        {watch("profilePicture") && (
+          <Button
+            isPrimary={true}
+            title={t("saveProfilePicture")}
+            onPress={handleSubmit(handleProfilePictureSubmit)}
+            style={{ width: "60%", paddingHorizontal: 8 }}
+          />
+        )}
       </View>
-    </>
+    </View>
   );
 };
 
@@ -206,7 +127,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: Colors?.fourth,
+    paddingVertical: 0,
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
   customHeader: {
     width: "100%",
@@ -224,7 +148,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     marginBottom: 40,
   },
-
+  heading: {
+    marginBottom: 20,
+  },
   label: {
     marginVertical: 10,
   },
@@ -236,6 +162,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 20,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,
@@ -246,9 +176,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
   },
+
   forgotPasswordText: {
     textAlign: "right",
     color: Colors.primary,
+    // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
@@ -261,14 +193,19 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
     fontSize: 20,
+    // fontFamily: fonts.SemiBold,
     textAlign: "center",
     padding: 10,
   },
-  errorInput: {
-    borderWidth: 1,
-    borderColor: "red",
-    color: "red",
+
+  conditionsContainer: {},
+  conditionText: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  successText: {
+    color: "green",
   },
 });
 
-export default SecondScreen;
+export default FifthScreen;

@@ -1,5 +1,6 @@
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import React from "react";
+import * as Speech from "expo-speech";
+import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import {
   AntDesign,
@@ -7,18 +8,17 @@ import {
   FontAwesome5,
   Fontisto,
   Ionicons,
-  MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { Link, router, useNavigation } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import {
-  calculateDistance,
-  dateDifference,
+  generateServiceSummary,
   getTimeAgo,
+  speakText,
 } from "@/constants/functions";
 import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
-import moment from "moment";
+import moment, { locale } from "moment";
 import Requirements from "./Requirements";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
@@ -31,7 +31,18 @@ import ShowDuration from "./ShowDuration";
 import ShowFacilities from "./ShowFacilities";
 
 const ListingsServices = ({ item }: any) => {
+  const navigation = useNavigation();
+  const locale = useAtomValue(Atoms?.LocaleAtom);
   const userDetails = useAtomValue(Atoms?.UserAtom);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      Speech.stop();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const proposals =
     item?.appliedUsers?.filter((user: any) => user?.status === "PENDING")
@@ -44,13 +55,36 @@ const ListingsServices = ({ item }: any) => {
   const isSelected = item?.selectedUsers?.some(
     (selectedUser: any) =>
       (selectedUser?.status === "SELECTED" &&
-        selectedUser?.user === userDetails?._id) || // Directly in selectedUsers
-      selectedUser?.workers?.some((worker: any) => worker === userDetails?._id) // Inside workers array
+        selectedUser?.user === userDetails?._id) ||
+      selectedUser?.workers?.some((worker: any) => worker === userDetails?._id)
   );
+
+  const handleSpeakAboutSerivceDetails = () => {
+    const textToSpeak = generateServiceSummary(item, locale?.language, userDetails?.location);
+    speakText(textToSpeak, locale?.language, setIsSpeaking);
+  };
+
+  const handleCloseSpeakers = () => {
+    Speech.stop();
+    setIsSpeaking(false);
+  };
 
   return (
     <>
       <View style={styles.container}>
+        <TouchableOpacity
+          onPress={
+            isSpeaking ? handleCloseSpeakers : handleSpeakAboutSerivceDetails
+          }
+          style={[
+            styles?.leftTag,
+            { backgroundColor: isSpeaking ? Colors?.danger : Colors?.success },
+          ]}
+        >
+          <CustomText color={Colors?.white} fontWeight="bold">
+            📢 {isSpeaking ? t("speakingAndClose") : t("listenAboutService")}
+          </CustomText>
+        </TouchableOpacity>
         <Link href={`/screens/service/${item._id}`} asChild>
           <TouchableOpacity>
             {item?.bookingType === "direct" && (
@@ -251,6 +285,16 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderTopRightRadius: 8,
+  },
+  leftTag: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: 1,
+    backgroundColor: Colors?.tertiery,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderTopLeftRadius: 8,
   },
   item: {
     backgroundColor: Colors.white,

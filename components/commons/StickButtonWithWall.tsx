@@ -3,8 +3,6 @@ import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Using Material Icons
 import RippleDot from "./RippleDot";
 
-const { width } = Dimensions.get("window"); // Get device width
-
 const StickButtonWithWall = ({ onPress, notificationCount }: any) => {
   return (
     <TouchableOpacity

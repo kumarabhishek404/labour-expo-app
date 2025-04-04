@@ -64,7 +64,7 @@ const fetchAllBookingReceivedInvitations = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/worker/booking/invitation/received?page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching recieved booking requests : `,
@@ -144,7 +144,7 @@ const fetchAllMyBookings = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/worker/booking/all?page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching my bookings : `,

@@ -14,7 +14,7 @@ const GradientWrapper: React.FC<GradientWrapperProps> = ({ children, height }) =
   return (
     <LinearGradient
       colors={[Colors?.primary, Colors?.secondaryButton]} // Light to dark gradient
-      style={[styles.container, { height: defaultHeight }]}
+      style={[styles.container, { height: defaultHeight as number | undefined }]}
     >
       {children}
     </LinearGradient>

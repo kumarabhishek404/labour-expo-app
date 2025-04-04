@@ -20,7 +20,7 @@ import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import WORKER from "@/app/api/workers";
 import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
@@ -140,7 +140,7 @@ const Bookings = () => {
           }}
         >
           <CustomHeading
-            baseFont={22}
+            baseFont={24}
             textAlign="left"
             color={Colors?.white}
             style={{ width: "65%" }}
@@ -151,11 +151,19 @@ const Bookings = () => {
             onPress={ClickAppliedInService}
             style={styles?.applicationText}
           >
-            <MaterialIcons
-              name="pending-actions"
-              size={20}
-              color={Colors?.fourthButton}
-            />
+            {category === "applied" ? (
+              <FontAwesome6
+                name="calendar-check"
+                size={20}
+                color={Colors?.fourthButton}
+              />
+            ) : (
+              <MaterialIcons
+                name="pending-actions"
+                size={20}
+                color={Colors?.fourthButton}
+              />
+            )}
             <CustomText
               baseFont={16}
               color={Colors?.fourthButton}
@@ -189,7 +197,11 @@ const Bookings = () => {
                   <EmptyDataPlaceholder
                     title={category === "applied" ? "applications" : "booking"}
                     leftHeight={200}
-                    buttonTitle={category === "applied" ? "backToBookings" : "showApplications"}
+                    buttonTitle={
+                      category === "applied"
+                        ? "backToBookings"
+                        : "showApplications"
+                    }
                     onPress={ClickAppliedInService}
                   />
                 )}

@@ -31,7 +31,7 @@ const fetchAllNotifications = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/notification/all?page=${pageParam}&limit=10`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching all notifications : `,
@@ -48,7 +48,7 @@ const fetchAllNotifications = async ({ pageParam }: any) => {
 const fetchUnreadNotificationsCount = async () => {
   try {
     const data = await API_CLIENT.makeGetRequest(`/notification/unread-count`);
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching unread notifications count : `,

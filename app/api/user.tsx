@@ -21,7 +21,7 @@ const getUserInfo = async () => {
 
 const updateUserById = async (payload: any) => {
   console.log("Paylaod---", payload);
-  
+
   try {
     const response = await API_CLIENT.makePatchRequestFormData(
       `/user/info`,

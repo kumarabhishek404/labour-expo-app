@@ -131,7 +131,9 @@ const Applicants = ({
     <>
       <Loader
         loading={
-          mutationSelectWorker?.isPending || mutationRejectWorker?.isPending
+          mutationSelectWorker?.isPending ||
+          mutationRejectWorker?.isPending ||
+          mutationCancelSelectedWorker?.isPending
         }
       />
       <View style={styles.applicantWrapper}>
@@ -154,7 +156,7 @@ const Applicants = ({
                           color={Colors?.tertieryButton}
                           style={{ textTransform: "uppercase" }}
                         >
-                          {t(appliedUser?.appliedSkill.toLowerCase())}
+                          {t(appliedUser?.appliedSkill)}
                         </CustomHeading>
                         <ShowDistance
                           loggedInUserLocation={userDetails?.location}
@@ -335,7 +337,7 @@ const Applicants = ({
                           />
                         }
                         isPrimary={true}
-                        title="Remove"
+                        title={t("remove")}
                         onPress={() =>
                           mutationCancelSelectedWorker?.mutate(appliedUser?._id)
                         }
@@ -426,7 +428,7 @@ const Applicants = ({
                           />
                         }
                         isPrimary={true}
-                        title="Select"
+                        title={t("select")}
                         onPress={() =>
                           mutationSelectWorker?.mutate(appliedUser?._id)
                         }

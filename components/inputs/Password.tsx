@@ -62,6 +62,5 @@ const PasswordComponent = ({
 export default PasswordComponent;
 
 const styles = StyleSheet.create({
-  inputField: { gap: 5 },
-  
+  inputField: { width: "100%", gap: 5 },
 });

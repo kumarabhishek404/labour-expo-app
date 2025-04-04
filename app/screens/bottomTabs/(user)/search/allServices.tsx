@@ -103,10 +103,8 @@ const AllServices = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // backgroundColor: Colors?.fourth,
+    flexGrow: 1,
     paddingHorizontal: 15,
-    // paddingVertical: 10,
   },
   paginationHeader: {
     width: "100%",

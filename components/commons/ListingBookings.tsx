@@ -1,23 +1,14 @@
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
-import { Entypo, FontAwesome5, Fontisto, Ionicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
-import coverImage from "../../assets/images/placeholder-cover.jpg";
-import {
-  calculateDistance,
-  dateDifference,
-  getTimeAgo,
-} from "@/constants/functions";
-import Atoms from "@/app/AtomStore";
-import { useAtomValue } from "jotai";
-import moment from "moment";
-import Requirements from "./Requirements";
+import { router } from "expo-router";
+import { getTimeAgo } from "@/constants/functions";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
 import DateDisplay from "./ShowDate";
 import ShowAddress from "./ShowAddress";
+import ShowDuration from "./ShowDuration";
 
 const ListingsBookings = ({ title, item, category }: any) => {
   return (
@@ -60,14 +51,9 @@ const ListingsBookings = ({ title, item, category }: any) => {
                 {t(item?.type)} - {t(item?.subType)}
               </CustomHeading>
             </View>
-            <ShowAddress address={item?.address} />
+            <ShowAddress address={item?.address} numberOfLines={1} />
             <DateDisplay date={item?.startDate} type="startDate" />
-            <CustomText textAlign="left">
-              ⏳ {t("duration")}:{" "}
-              <CustomText baseFont={17} fontWeight="bold">
-                {item?.duration} {t("days")}
-              </CustomText>
-            </CustomText>
+            <ShowDuration duration={item?.duration} />
           </View>
         </View>
       </TouchableOpacity>
@@ -95,5 +81,5 @@ const styles = StyleSheet.create({
   },
   card: { backgroundColor: Colors.white, padding: 10, borderRadius: 8 },
   statusText: { color: Colors.white, fontWeight: "bold" },
-  infoContainer: { marginBottom: 10 },
+  infoContainer: { gap: 5 },
 });

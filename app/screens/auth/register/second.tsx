@@ -1,30 +1,43 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import TOAST from "@/app/hooks/toast";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import EmailAddressField from "@/components/inputs/EmailAddress";
+import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
+import { Controller, useForm } from "react-hook-form";
+import { isEmptyObject } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
+import DateField from "@/components/inputs/DateField";
+import Gender from "@/components/inputs/Gender";
+import moment, { Moment } from "moment";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { useMutation } from "@tanstack/react-query";
-import USER from "@/app/api/user";
-import Loader from "@/components/commons/Loaders/Loader";
 import CustomText from "@/components/commons/CustomText";
+import USER from "@/app/api/user";
+import TOAST from "@/app/hooks/toast";
+import { useMutation } from "@tanstack/react-query";
+import Loader from "@/components/commons/Loaders/Loader";
 
-const FourthScreen = () => {
+const SecondScreen = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      address: "",
+      email: "",
+      dateOfBirth: moment().subtract(18, "years").startOf("year"),
+      gender: "",
+    },
+  });
+  const [location, setLocation] = useState<any>({});
   const { userId } = useLocalSearchParams();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
-    "create"
-  );
+
+  console.log("userId--", userId);
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
@@ -35,7 +48,6 @@ const FourthScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.success(t("profileUpdated"));
       router.push({
         pathname: "/screens/auth/register/third",
         params: { userId: userId },
@@ -46,210 +58,210 @@ const FourthScreen = () => {
     },
   });
 
-  const onSubmit = () => {
-    if (password === confirmPassword) {
-      mutationUpdateProfile.mutate({
-        password,
-      });
-    } else {
-      TOAST?.error(t("passwordMismatch"));
-      setConfirmPassword("");
-    }
-  };
+  const onSubmit = (data: any) => {
+    console.log("data--", data);
 
-  const handleSetPassword = () => {
-    if (password?.length === 4) {
-      setPasswordStep("confirm");
-    } else {
-      TOAST?.error(t("enterFullPassword"));
-    }
-  };
-
-  const handleNumberPress = (num: string) => {
-    if (passwordStep === "create") {
-      if (num === "remove") {
-        setPassword(password.slice(0, -1));
-      } else if (password.length < 4) {
-        setPassword(password + num);
-      }
-    } else if (passwordStep === "confirm") {
-      if (num === "remove") {
-        setConfirmPassword(confirmPassword.slice(0, -1));
-      } else if (confirmPassword.length < 4) {
-        setConfirmPassword(confirmPassword + num);
-      }
-    }
-  };
-
-  const handlePasswordBack = async () => {
-    if (passwordStep === "create") {
-      router?.back();
-    } else {
-      setPasswordStep("create");
-      setConfirmPassword("");
-    }
+    mutationUpdateProfile.mutate({
+      name: data?.name,
+      location: {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+      },
+      address: data?.address,
+      email: data?.email,
+      dateOfBirth: data?.dateOfBirth,
+      gender: data?.gender,
+    });
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Loader loading={mutationUpdateProfile?.isPending} />
+    <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View
-        style={{
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          gap: 10,
-        }}
+      <Loader loading={mutationUpdateProfile?.isPending} />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.title}>
-          <CustomHeading baseFont={30} color={Colors.heading}>
-            {passwordStep === "create"
-              ? t("createPassword")
-              : t("confirmPassword")}
-          </CustomHeading>
-          <CustomText color={Colors.tertiery} fontWeight="bold">
-            (
-            {passwordStep === "create"
-              ? t("createPasswordNote")
-              : t("confirmPasswordNote")}
-            )
+        <View style={styles.centeredView}>
+          <CustomHeading baseFont={26}>{t("personalDetails")}</CustomHeading>
+          <CustomText
+            baseFont={16}
+            color={Colors.disabledText}
+            style={{ textAlign: "center" }}
+          >
+            {t("pleaseEnterYourPersonalDetailsToContinue")}
           </CustomText>
         </View>
-        <View style={styles.passwordContainer}>
-          {Array(4)
-            .fill(null)
-            .map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  (passwordStep === "create"
-                    ? password.length
-                    : confirmPassword.length) > index && styles.filledDot,
-                ]}
-              />
-            ))}
-        </View>
 
-        <View style={styles.keypad}>
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "remove"].map(
-            (num, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.key}
-                onPress={() => handleNumberPress(num)}
-              >
-                {num === "remove" ? (
-                  <Ionicons name="backspace" size={37} color={Colors.white} />
-                ) : (
-                  <Text style={styles.keyText}>{num}</Text>
+        <View style={styles.centeredView}>
+          <View style={{ flexDirection: "column", gap: 20 }}>
+            {/* Name Field - Required */}
+            <Controller
+              control={control}
+              name="name"
+              rules={{ required: t("firstNameIsRequired") }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputComponent
+                  name="name"
+                  label="name"
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={t("enterYourFirstName")}
+                  textStyles={{ fontSize: 16 }}
+                  errors={errors}
+                />
+              )}
+            />
+
+            {/* Address Field - Required */}
+            <Controller
+              control={control}
+              name="address"
+              rules={{ required: t("addressIsRequired") }}
+              render={({ field: { onChange, value } }) => (
+                <AddLocationAndAddress
+                  label={t("address")}
+                  name="address"
+                  address={value}
+                  setAddress={onChange}
+                  location={location}
+                  setLocation={setLocation}
+                  errors={errors}
+                />
+              )}
+            />
+
+            {/* Email Field */}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <EmailAddressField
+                  name="email"
+                  email={value}
+                  setEmail={onChange}
+                  placeholder={t("enterYourEmailAddress")}
+                  icon={
+                    <Ionicons
+                      name={"mail-outline"}
+                      size={30}
+                      color={Colors.secondary}
+                      style={{ paddingVertical: 10, marginRight: 10 }}
+                    />
+                  }
+                  errors={errors}
+                />
+              )}
+            />
+
+            {/* Date of Birth Field */}
+            <View style={{ marginTop: 10 }}>
+              <Controller
+                control={control}
+                name="dateOfBirth"
+                defaultValue={moment().subtract(18, "years").startOf("year")}
+                rules={{
+                  required: t("dateOfBirthIsRequired"),
+                  validate: (value) => {
+                    const selectedDate = moment(value);
+                    const eighteenYearsAgo = moment().subtract(18, "years");
+
+                    return selectedDate.isBefore(eighteenYearsAgo)
+                      ? true
+                      : t("youMustBeAtLeast18YearsOld");
+                  },
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <DateField
+                    title={t("dateOfBirth")}
+                    name="dateOfBirth"
+                    type="dateOfBirth"
+                    date={moment(value)}
+                    setDate={onChange}
+                    errors={errors}
+                  />
                 )}
-              </TouchableOpacity>
-            )
-          )}
-        </View>
-      </View>
+              />
+            </View>
 
-      <View style={styles?.buttonContainer}>
-        {router?.canGoBack() && (
+            {/* Gender Selection */}
+            <Controller
+              control={control}
+              name="gender"
+              rules={{ required: t("genderIsRequired") }}
+              render={({ field: { onChange, value } }) => (
+                <Gender
+                  name="gender"
+                  label={t("whatIsYourGender")}
+                  options={[
+                    { title: t("male"), value: "male", icon: "👨" },
+                    { title: t("female"), value: "female", icon: "👩‍🦰" },
+                    { title: t("other"), value: "other", icon: "✨" },
+                  ]}
+                  gender={value}
+                  setGender={onChange}
+                  containerStyle={errors?.gender && styles.errorInput}
+                  errors={errors}
+                />
+              )}
+            />
+          </View>
+        </View>
+
+        <View style={styles.buttonContainer}>
           <Button
-            isPrimary={false}
+            isPrimary={true}
             title={t("back")}
-            onPress={handlePasswordBack}
-            style={{ width: "25%" }}
-            bgColor={Colors?.danger}
-            borderColor={Colors?.danger}
-            textColor={Colors?.white}
+            onPress={() => router.back()}
+            bgColor={Colors.danger}
+            borderColor={Colors.danger}
+            style={{ width: "30%" }}
           />
-        )}
-        <Button
-          isPrimary={true}
-          title={passwordStep === "create" ? t("next") : t("confirm")}
-          onPress={() =>
-            passwordStep === "create" ? handleSetPassword() : onSubmit()
-          }
-          style={{ flex: 1, paddingHorizontal: 5 }}
-          bgColor={Colors.success}
-          borderColor={Colors.success}
-        />
-      </View>
-    </ScrollView>
+          <Button
+            isPrimary={true}
+            title={t("saveAndNext")}
+            onPress={handleSubmit(onSubmit)}
+            bgColor={Colors.success}
+            borderColor={Colors.success}
+            style={{ flex: 1 }}
+          />
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: Colors?.white,
+    flexGrow: 1,
+    backgroundColor: Colors.fourth,
     paddingHorizontal: 20,
-    gap: 10,
-    width: "100%",
-    justifyContent: "center",
-  },
-  label: {
-    marginVertical: 10,
-  },
-  buttonContainer: {
-    flexDirection: "row",
+    paddingVertical: 20,
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 10,
-    gap: 10,
-    marginTop: 40,
   },
   heading: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: Colors.primary,
     marginBottom: 20,
+    textAlign: "center",
   },
-
-  successText: {
-    color: "green",
-  },
-  title: {
-    marginBottom: 40,
-    display: "flex",
-    flexDirection: "column",
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
-  },
-  dot: {
-    width: 40,
-    height: 40,
-    borderRadius: 30,
-    backgroundColor: "#3a3a4f",
-    marginHorizontal: 10,
-  },
-  filledDot: {
-    backgroundColor: Colors?.tertieryButton,
-  },
-  keypad: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    width: "95%",
-    height: "auto",
-    marginBottom: 20,
-    padding: 0,
-  },
-  key: {
-    width: "30%",
-    height: 70,
-    justifyContent: "center",
+  centeredView: {
     alignItems: "center",
-    margin: 5,
-    backgroundColor: Colors?.black,
-    borderRadius: 8,
+    marginBottom: 20,
   },
-  keyText: {
-    fontSize: 37,
-    color: "white",
+  buttonContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20,
+    gap: 20,
+  },
+  errorInput: {
+    borderWidth: 1,
+    borderColor: "red",
   },
 });
 
-export default FourthScreen;
+export default SecondScreen;

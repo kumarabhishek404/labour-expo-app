@@ -17,14 +17,38 @@ import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import Atoms from "../AtomStore";
+import NOTIFICATION from "../api/notification";
 
 export default function Layout() {
-  const notificationCount = useAtomValue(Atoms?.notificationCount);
+  const [notificationCount, setNotificationCount] = useAtom(
+    Atoms?.notificationCount
+  );
   const [history, setHistory] = useState<string[]>([]); // Store visited tab history
   const currentPath = usePathname();
   const pathname = usePathname(); // ✅ Get current route
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
+  useEffect(() => {
+    const fetchUnreadNotificationsCount = async () => {
+      try {
+        const data = await NOTIFICATION?.fetchUnreadNotificationsCount();
+        setNotificationCount(data?.unreadCount || 0);
+      } catch (error: any) {
+        console.error("Error fetching unread notifications:", error?.response);
+      }
+    };
+
+    if (userDetails?.token && userDetails?.token !== "" && userDetails?._id) {
+      fetchUnreadNotificationsCount();
+
+      // Start polling only if the user is logged in
+      const interval = setInterval(fetchUnreadNotificationsCount, 30000);
+
+      return () => clearInterval(interval); // Cleanup when the user logs out
+    }
+  }, [userDetails?.token, userDetails?._id]); // Depend on userDetails
 
   useEffect(() => {
     // Update history when path changes, but prevent duplicates

@@ -19,9 +19,7 @@ interface AddLocationAndAddressProps {
   setAddress: any;
   location: any;
   setLocation: any;
-  selectedOption: string;
-  setSelectedOption: any;
-  onBlur: any;
+  selectedOption?: string;
   errors: any;
   icon?: any;
   style?: any;
@@ -34,9 +32,7 @@ const AddLocationAndAddress = ({
   setAddress,
   location,
   setLocation,
-  selectedOption,
-  setSelectedOption,
-  onBlur,
+  selectedOption = "address",
   errors,
   style,
 }: AddLocationAndAddressProps) => {
@@ -111,15 +107,15 @@ const AddLocationAndAddress = ({
         </TouchableOpacity>
       </View>
 
-      {selectedOption === "address" ? (
-        <LocationField
-          address={address}
-          setAddress={setAddress}
-          isModalVisible={isModalVisible}
-          setIsModalVisible={setIsModalVisible}
-          isError={errors?.[name]}
-        />
-      ) : (
+      {/* {selectedOption === "address" ? ( */}
+      <LocationField
+        address={address}
+        setAddress={setAddress}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        isError={errors?.[name]}
+      />
+      {/* ) : (
         <>
           <View style={styles.locationContainer}>
             <Button
@@ -149,7 +145,7 @@ const AddLocationAndAddress = ({
             )}
           </View>
         </>
-      )}
+      )} */}
       {errors?.[name] && (
         <ErrorText> {errors?.[name]?.message || ""}</ErrorText>
       )}

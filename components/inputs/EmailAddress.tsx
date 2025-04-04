@@ -21,7 +21,6 @@ interface EmailAddressFieldProps {
   name: string;
   email: string;
   setEmail: any;
-  onBlur: any;
   errors: any;
   placeholder: string;
   icon?: any;
@@ -31,7 +30,6 @@ const EmailAddressField = ({
   name,
   email,
   setEmail,
-  onBlur,
   errors,
   placeholder,
   icon,
@@ -52,7 +50,7 @@ const EmailAddressField = ({
   const handleSendOtp = () => {
     if (isEmailValid) {
       setModalVisible(true);
-      TOAST?.success(t("otpSentTo"), `${email}`);
+      TOAST?.success(t("otpSentTo"));
     } else {
       TOAST?.error(t("pleaseEnterAValidEmailAddress"));
     }
@@ -109,7 +107,6 @@ const EmailAddressField = ({
       <View>
         <TextInputComponent
           value={email}
-          onBlur={onBlur}
           onChangeText={setEmail}
           placeholder={placeholder}
           label="emailAddress"
