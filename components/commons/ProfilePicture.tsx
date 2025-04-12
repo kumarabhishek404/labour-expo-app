@@ -4,13 +4,14 @@ import profileImage from "../../assets/person-placeholder.jpg";
 
 interface ProfilePictureProps {
   uri: string;
+  source?: any;
   style?: StyleProp<ImageStyle>;
 }
 
-const ProfilePicture = ({ uri, style }: ProfilePictureProps) => {
+const ProfilePicture = ({ uri, source, style }: ProfilePictureProps) => {
   return (
     <Image
-      source={uri ? { uri: uri } : profileImage}
+      source={uri ? { uri: uri } : source || profileImage}
       style={[styles.productImage, style]}
     />
   );

@@ -32,6 +32,10 @@ const AllServices = ({
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
 
+  // if (!router?.canGoBack || !memoizedData) {
+  //   return null; // or a safe loader fallback
+  // }
+
   const onSearchService = (data: any) => {
     setIsAddFilters(false);
     const searchCategory = {
@@ -73,7 +77,7 @@ const AllServices = ({
                 </CustomText>
               </TouchableOpacity>
             </View>
-            {memoizedData && memoizedData?.length > 0 ? (
+            {Array.isArray(memoizedData) && memoizedData.length > 0 ? (
               <ListingsVerticalServices
                 listings={memoizedData || []}
                 loadMore={loadMore}
@@ -86,7 +90,7 @@ const AllServices = ({
                 }
               />
             ) : (
-              <EmptyDataPlaceholder title="service" />
+              <EmptyDataPlaceholder title="service" type="gradient" />
             )}
           </View>
         </>
@@ -103,7 +107,7 @@ const AllServices = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     paddingHorizontal: 15,
   },
   paginationHeader: {

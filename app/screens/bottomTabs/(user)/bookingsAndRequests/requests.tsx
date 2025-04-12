@@ -217,6 +217,7 @@ const Requests = () => {
                       : "showSentRequests"
                   }
                   onPress={ShowAllSentRequests}
+                  type="gradient"
                 />
               )}
             </View>

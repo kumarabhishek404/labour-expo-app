@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   withRepeat,
   Easing,
+  cancelAnimation,
 } from "react-native-reanimated";
 import CustomText from "./CustomText";
 import Colors from "@/constants/Colors";
@@ -17,19 +18,24 @@ const ScrollingText = ({
   icon,
   textColor = Colors.tertieryButton,
   baseFont = 16,
-  duration = 10000, // Total duration for one full cycle
+  duration = 10000,
 }: any) => {
   const translateX = useSharedValue(0);
 
   useEffect(() => {
     translateX.value = withRepeat(
       withTiming(-width, {
-        duration: duration,
+        duration,
         easing: Easing.linear,
       }),
-      -1, // Infinite loop
+      -1,
       false
     );
+
+    return () => {
+      cancelAnimation(translateX);
+      translateX.value = 0;
+    };
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -39,15 +45,12 @@ const ScrollingText = ({
   return (
     <View style={styles.container}>
       <Animated.View style={[animatedStyle, styles.textWrapper]}>
-        {/* First instance of the text */}
         <View style={styles.textContainer}>
           {icon}
           <CustomText baseFont={baseFont} color={textColor}>
             {text}
           </CustomText>
         </View>
-
-        {/* Second instance of the text for seamless looping */}
         <View style={styles.textContainer}>
           {icon}
           <CustomText baseFont={baseFont} color={textColor}>

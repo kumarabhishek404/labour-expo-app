@@ -12,7 +12,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import ButtonComp from "../inputs/Button";
 
-const HEADER_HEIGHT = 200; 
+const HEADER_HEIGHT = 200;
 
 const EmptyDataPlaceholder = ({
   title,
@@ -20,6 +20,7 @@ const EmptyDataPlaceholder = ({
   leftHeight = HEADER_HEIGHT,
   buttonTitle,
   onPress,
+  type,
 }: any) => {
   const { height } = useWindowDimensions();
 
@@ -31,7 +32,11 @@ const EmptyDataPlaceholder = ({
       ]}
     >
       <Image source={EmptyPlaceholder} style={styles.image} />
-      <CustomText baseFont={16} fontWeight="medium" color={Colors?.white}>
+      <CustomText
+        baseFont={16}
+        fontWeight="medium"
+        color={type === "gradient" ? Colors?.white : Colors?.disabledButton}
+      >
         {t("notFoundAny", { title: t(title) })}
       </CustomText>
 

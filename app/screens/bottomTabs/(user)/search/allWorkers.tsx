@@ -9,7 +9,7 @@ import {
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { WORKERTYPES } from "@/constants";
+import { extractWorkerSkills, WORKERTYPES, WORKTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import FloatingButton from "@/components/inputs/FloatingButton";
@@ -52,6 +52,8 @@ const AllWorkers = ({
     });
   };
 
+  console.log("extractWorkerSkills(WORKTYPES)---", extractWorkerSkills(WORKTYPES));
+  
   return (
     <GradientWrapper height={Dimensions.get("window").height - 180}>
       {isLoading ? (
@@ -78,7 +80,7 @@ const AllWorkers = ({
                 </CustomText>
               </TouchableOpacity>
             </View>
-            {memoizedData && memoizedData?.length > 0 ? (
+            {Array.isArray(memoizedData) && memoizedData.length > 0 ? (
               <ListingsVerticalWorkers
                 style={styles.listContainer}
                 availableInterest={WORKERTYPES}
@@ -94,7 +96,7 @@ const AllWorkers = ({
                 }
               />
             ) : (
-              <EmptyDataPlaceholder title="worker" />
+              <EmptyDataPlaceholder title="worker" type="gradient" />
             )}
           </View>
         </>

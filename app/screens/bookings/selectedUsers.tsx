@@ -16,11 +16,14 @@ import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import ShowAddress from "@/components/commons/ShowAddress";
 import SkillSelector from "@/components/commons/SkillSelector";
+import ReviewScreen from "../reviews";
+import RatingAndReviews from "@/components/commons/RatingAndReviews";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
   bookingId?: string;
   bookingType: string;
+  appliedSkill: any;
   refetch: any;
 }
 
@@ -28,6 +31,7 @@ const SelectedUsers = ({
   selectedApplicants,
   bookingId,
   bookingType,
+  appliedSkill,
   refetch,
 }: SelectedApplicantsProps) => {
   console.log("selectedApplicants ---", selectedApplicants[0]?.workers);
@@ -103,7 +107,9 @@ const SelectedUsers = ({
                       fontWeight="600"
                       style={{ textTransform: "uppercase" }}
                     >
-                      {t(appliedUser?.skill?.toLowerCase())}
+                      {workers && workers?.length > 0
+                        ? t("mediator")
+                        : t(appliedUser?.skill || appliedSkill?.skill)}
                     </CustomText>
                     {/* <ShowSkills type="small" userSkills={appliedUser?.skills} /> */}
                   </View>
@@ -114,29 +120,30 @@ const SelectedUsers = ({
                       justifyContent: "flex-start",
                     }}
                   >
-                    <ButtonComp
-                      style={{
-                        minHeight: 20,
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
-                        marginTop: 6,
-                      }}
-                      textStyle={{
-                        fontSize: 14,
-                      }}
-                      isPrimary={false}
-                      title="Details"
+                    <TouchableOpacity
+                      style={styles.detailsButton}
                       onPress={() =>
                         router?.push({
                           pathname: "/screens/users/[id]",
                           params: {
                             id: appliedUser?._id,
-                            role: "workers",
+                            title:
+                              workers?.length > 0
+                                ? "mediatorDetails"
+                                : "workerDetails",
                             type: "applicant",
                           },
                         })
                       }
-                    />
+                    >
+                      <CustomText fontWeight="600" color={Colors?.link}>
+                        {t(
+                          workers?.length > 0
+                            ? "mediatorDetails"
+                            : "workerDetails"
+                        )}
+                      </CustomText>
+                    </TouchableOpacity>
                   </View>
                 </View>
 
@@ -218,6 +225,10 @@ const SelectedUsers = ({
                                 {t(worker?.skill)}
                               </CustomText>
                             </View>
+                            <RatingAndReviews
+                              rating={worker?.rating?.average}
+                              reviews={worker?.rating?.count}
+                            />
                           </View>
                         ))}
                       </Animated.View>
@@ -326,8 +337,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   recommendationContainer: {
-    marginTop: 10,
-    width: "70%",
+    marginTop: 8,
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 4,
@@ -355,7 +365,7 @@ const styles = StyleSheet.create({
   },
   workerItem: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     backgroundColor: Colors.white,
     padding: 8,
     borderRadius: 6,
@@ -365,13 +375,15 @@ const styles = StyleSheet.create({
   },
   workerInfo: {
     flex: 1,
-    gap: 4,
     alignItems: "flex-start",
   },
   workerName: {
     fontSize: 13,
     fontWeight: "500",
     color: "#2c3e50",
+  },
+  detailsButton: {
+    alignSelf: "flex-start",
   },
 });
 

@@ -97,12 +97,33 @@ export default function AddAttendance() {
     mutationAddAttendance.mutate(formattedAttendance);
   };
 
-  const generateDates = (): any => {
-    const start: any = moment(booking?.startDate);
-    const endOfMonth: any = moment(start).endOf("month");
-    const totalDays: any = endOfMonth.diff(start, "days") + 1;
+  // const generateDates = (): any => {
+  //   const start: any = moment(booking?.startDate);
+  //   const endOfMonth: any = moment(start).endOf("month");
+  //   const totalDays: any = endOfMonth.diff(start, "days") + 1;
 
-    return Array.from({ length: totalDays }, (_, i: any) =>
+  //   return Array.from({ length: totalDays }, (_, i: any) =>
+  //     moment(start).add(i, "days")
+  //   );
+  // };
+
+  const generateDates = (startDate: string): any => {
+    const start: any = moment(booking?.startDate);
+    const today: any = moment();
+
+    if (!start.isValid()) {
+      console.error("Invalid start date provided.");
+      return [];
+    }
+
+    if (start.isAfter(today, "day")) {
+      console.log("Start date is in the future, no dates to generate.");
+      return [];
+    }
+
+    const totalDays: number = today.diff(start, "days") + 1;
+
+    return Array.from({ length: totalDays }, (_, i: number) =>
       moment(start).add(i, "days")
     );
   };

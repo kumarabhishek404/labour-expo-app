@@ -48,8 +48,6 @@ const editService = async (payload: any) => {
 
 // My Services
 const fetchMyServices = async ({ pageParam, status }: any) => {
-  console.log("status00", status);
-  
   try {
     const data = await API_CLIENT.makeGetRequest(
       `/employer/my-services?status=${status}&page=${pageParam}&limit=5`

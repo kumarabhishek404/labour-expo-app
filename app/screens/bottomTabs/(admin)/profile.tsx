@@ -4,6 +4,9 @@ import {
   StyleSheet,
   ScrollView,
   BackHandler,
+  TouchableOpacity,
+  Text,
+  StatusBar,
   Platform,
 } from "react-native";
 // import { StatusBar } from "expo-status-bar";
@@ -41,11 +44,8 @@ import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
-import { Portal, Provider } from "react-native-paper";
-import LocationField from "@/components/inputs/LocationField";
-import AddLocationAndAddress from "@/components/commons/AddLocationAndAddress";
 
-const UserProfile = () => {
+const AdminProfile = () => {
   LOCAL_CONTEXT?.useLocale();
   const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
@@ -255,7 +255,6 @@ const UserProfile = () => {
               name="email"
               email={value}
               setEmail={onChange}
-              onBlur={onBlur}
               errors={errors}
               placeholder={t("enterYourEmailAddress")}
               icon={
@@ -270,7 +269,7 @@ const UserProfile = () => {
           )}
         />
 
-        <Controller
+        {/* <Controller
           control={control}
           name="address"
           defaultValue=""
@@ -291,7 +290,7 @@ const UserProfile = () => {
               errors={errors}
             />
           )}
-        />
+        /> */}
       </View>
     );
   };
@@ -323,7 +322,7 @@ const UserProfile = () => {
       console.error("Error while refreshing user - ", error);
       TOAST?.error("Error while refreshing user");
     }
-  };  
+  };
 
   return (
     <>
@@ -341,7 +340,7 @@ const UserProfile = () => {
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
-        {selectedTab === "Profile Information" ? (
+        {selectedTab === "profileInformation" ? (
           <ScrollView>
             <View style={styles.userInfoSection}>
               <AvatarComponent
@@ -444,7 +443,7 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default AdminProfile;
 
 const styles = StyleSheet.create({
   container: {

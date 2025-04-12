@@ -40,6 +40,7 @@ const ButtonContainer = ({
     defaultValues: {
       type: "",
       subType: "",
+      appliedSkill: {},
       address: userDetails?.address || "",
       location: {},
       startDate: new Date(),
@@ -88,6 +89,7 @@ const ButtonContainer = ({
     if (
       !data?.type ||
       !data?.subType ||
+      !data?.appliedSkill ||
       !data?.address ||
       !data?.startDate ||
       !data?.duration
@@ -107,11 +109,12 @@ const ButtonContainer = ({
     formData.append("location", JSON.stringify(data?.location || {}));
     formData.append("startDate", moment(data?.startDate).format("YYYY-MM-DD"));
     formData.append("facilities", JSON.stringify(data?.facilities));
+    formData.append("appliedSkill", JSON.stringify(data?.appliedSkill));
 
     console.log("Form data --", formData);
 
-    const response: any = mutationAddBookingRequest?.mutate(formData);
-    return response?.data;
+    // const response: any = mutationAddBookingRequest?.mutate(formData);
+    // return response?.data;
   };
 
   useEffect(() => {
@@ -126,6 +129,7 @@ const ButtonContainer = ({
             setValue={setValue}
             errors={errors}
             watch={watch}
+            workerSkills={user?.skills}
           />
         ),
         primaryButton: {
@@ -150,6 +154,7 @@ const ButtonContainer = ({
           setValue={setValue}
           errors={errors}
           watch={watch}
+          workerSkills={user?.skills}
         />
       ),
       primaryButton: {
@@ -191,43 +196,47 @@ const ButtonContainer = ({
         )}
 
         {/* Button for team related actions */}
-        <Button
-          isPrimary={true}
-          bgColor={
-            isInYourTeam || isUserRequestedToJoinTeam
-              ? Colors.danger
-              : Colors.primary
-          }
-          borderColor={
-            isInYourTeam || isUserRequestedToJoinTeam
-              ? Colors.danger
-              : Colors.primary
-          }
-          style={styles.footerFirstBtn}
-          title={
-            isInYourTeam
-              ? t("leaveFromTeam")
-              : isUserRequestedToJoinTeam
-              ? t("removeTeamJoingRequest")
-              : t("addInYourTeam")
-          }
-          onPress={() => {
-            if (isInYourTeam) {
-              mutationRemoveMemberFromTeam.mutate();
-            } else if (isUserRequestedToJoinTeam) {
-              mutationCancelRequest.mutate();
-            } else {
-              mutationSendRequest.mutate();
-            }
-          }}
-        />
+        {!userDetails?.employedBy &&
+          !user?.employedBy &&
+          (!user?.teamDetails || user?.teamDetails?.status !== "ACTIVE") && (
+            <Button
+              isPrimary={true}
+              bgColor={
+                isInYourTeam || isUserRequestedToJoinTeam
+                  ? Colors.danger
+                  : Colors.primary
+              }
+              borderColor={
+                isInYourTeam || isUserRequestedToJoinTeam
+                  ? Colors.danger
+                  : Colors.primary
+              }
+              style={styles.footerFirstBtn}
+              title={
+                isInYourTeam
+                  ? t("leaveFromTeam")
+                  : isUserRequestedToJoinTeam
+                  ? t("removeTeamJoingRequest")
+                  : t("addInYourTeam")
+              }
+              onPress={() => {
+                if (isInYourTeam) {
+                  mutationRemoveMemberFromTeam.mutate();
+                } else if (isUserRequestedToJoinTeam) {
+                  mutationCancelRequest.mutate();
+                } else {
+                  mutationSendRequest.mutate();
+                }
+              }}
+            />
+          )}
 
         {/* Button for liking/unliking */}
         <Button
           isPrimary={true}
           bgColor={isUserLiked ? Colors.danger : Colors.primary}
           borderColor={isUserLiked ? Colors.danger : Colors.primary}
-          title={isUserLiked ? t("removeFromSaved") : t("save")}
+          title={isUserLiked ? t("unlike") : t("like")}
           style={styles.saveServiceBtn}
           onPress={() =>
             isUserLiked

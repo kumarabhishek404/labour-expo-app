@@ -1,10 +1,16 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  StyleSheet,
+  RefreshControl,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import { Stack, useGlobalSearchParams } from "expo-router";
+import { router, Stack, useGlobalSearchParams } from "expo-router";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import SERVICE from "@/app/api/services";
@@ -18,6 +24,8 @@ import Colors from "@/constants/Colors";
 import AppliedFilters from "@/components/commons/AppliedFilters";
 import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
+import ListingsServices from "@/components/commons/ListingServices";
+import { debounce } from "lodash";
 
 const Services = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -89,10 +97,8 @@ const Services = () => {
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
       setTotalData(totalData);
-      const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page.data || [])
-      );
-      return () => unsubscribe;
+      setFilteredData(response?.pages.flatMap((page: any) => page.data || []));
+      return () => {}; // nothing to clean up
     }, [response])
   );
 
@@ -107,7 +113,11 @@ const Services = () => {
     [filteredData]
   );
 
+  console.log("category---", category);
+
   const onCatChanged = (category: any) => {
+    console.log("Category changed", category);
+
     setCategory(category?.value);
   };
 
@@ -116,6 +126,13 @@ const Services = () => {
       await refetch();
     }
   );
+
+  const RenderItem = React?.memo(({ item }: any) => {
+    return <ListingsServices item={item} />;
+  });
+
+  RenderItem.displayName = "RenderItem";
+  const renderItem = ({ item }: any) => <RenderItem item={item} />;
 
   return (
     <>
@@ -130,25 +147,29 @@ const Services = () => {
           ),
         }}
       />
-      {isLoading ? (
-        <ListingsServicesPlaceholder />
-      ) : (
-        <View style={{ flex: 1 }}>
+
+      <View style={{ flex: 1 }}>
+        {type === "myServices" && (
+          <View
+            style={{ paddingHorizontal: 10, paddingTop: 15, marginBottom: 15 }}
+          >
+            <CategoryButtons
+              type="workerType"
+              options={MYSERVICES}
+              onCategoryChanged={onCatChanged}
+            />
+          </View>
+        )}
+        {isLoading ? (
+          <ListingsServicesPlaceholder />
+        ) : (
           <View style={styles.container}>
-            {type === "myServices" && (
-              <CategoryButtons
-                type="workerType"
-                options={MYSERVICES}
-                onCategoryChanged={onCatChanged}
-                stylesProp={{paddingTop: 5}}
-              />
-            )}
             {appliedFilters &&
               (appliedFilters?.distance ||
                 appliedFilters?.duration ||
                 appliedFilters?.serviceStartIn ||
                 appliedFilters?.skills?.length > 0) && (
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginVertical: 10 }}>
                   <AppliedFilters
                     appliedFilters={appliedFilters}
                     setAppliedFilters={setAppliedFilters}
@@ -157,33 +178,41 @@ const Services = () => {
                 </View>
               )}
 
-            <View style={{ marginVertical: 10 }}>
-              <PaginationString
-                type="services"
-                isLoading={isLoading || isRefetching}
-                totalFetchedData={memoizedData?.length}
-                totalData={totalData}
-              />
-            </View>
-
             {memoizedData && memoizedData?.length > 0 ? (
-              <ListingsVerticalServices
-                listings={memoizedData || []}
-                loadMore={loadMore}
-                isFetchingNextPage={isFetchingNextPage}
+              <FlatList
+                data={memoizedData}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index?.toString()}
+                onEndReached={debounce(loadMore, 200)}
+                onEndReachedThreshold={0.9}
+                ListFooterComponent={() =>
+                  isFetchingNextPage ? (
+                    <ActivityIndicator
+                      size="large"
+                      color={Colors?.primary}
+                      style={styles.loaderStyle}
+                    />
+                  ) : null
+                }
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={3}
+                removeClippedSubviews={true}
+                contentContainerStyle={{ paddingBottom: 230 }}
                 refreshControl={
                   <RefreshControl
                     refreshing={!isRefetching && refreshing}
                     onRefresh={onRefresh}
                   />
                 }
+                showsVerticalScrollIndicator={false}
               />
             ) : (
               <EmptyDataPlaceholder title="service" />
             )}
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </>
   );
 };
@@ -193,6 +222,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors?.background,
     paddingHorizontal: 10,
+  },
+  loaderStyle: {
+    alignItems: "center",
+    paddingLeft: 20,
+    paddingBottom: 10,
   },
 });
 

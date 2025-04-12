@@ -46,7 +46,6 @@ const cancelTeamRequest = async (payload: any) => {
       "/mediator/team/request/cancel",
       payload
     );
-    TOAST?.success("Request cancelled successfully");
     return data.data;
   } catch (error: any) {
     console.error(

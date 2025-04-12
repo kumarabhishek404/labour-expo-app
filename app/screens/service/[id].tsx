@@ -69,12 +69,16 @@ const ServiceDetails = () => {
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
       (user: any) =>
-        (user?.status === "PENDING" && user?.user === userDetails?._id) ||
-        user?.workers?.some(
-          (worker: any) =>
-            worker?.worker?.toString() === userDetails?._id &&
-            worker?.status === "PENDING"
-        )
+        user?.status === "PENDING" && user?.user === userDetails?._id
+    ) || false
+  );
+  const [isServiceAppliedByMediator, setIsServiceAppliedByMediator] = useState(
+    service?.appliedUsers?.find((user: any) =>
+      user?.workers?.some(
+        (worker: any) =>
+          worker?.worker?.toString() === userDetails?._id &&
+          worker?.status === "PENDING"
+      )
     ) || false
   );
   const [isSelected, setIsSelected] = useState(
@@ -88,13 +92,30 @@ const ServiceDetails = () => {
         )
     ) || false
   );
+
+  const [isMediatorOrSingleWorker, setIsMediatorOrSingleWorker] = useState(
+    service?.selectedUsers?.find(
+      (user: any) =>
+        user?.status === "SELECTED" && user?.user === userDetails?._id
+    ) || false
+  );
+
   const [isWorkerBooked, setIsWorkerBooked] = useState(
     service?.bookedWorker === userDetails?._id
   );
 
+  const [mediatorMobile, setMediatorMobile] = useState(() => {
+    const matchedMediator = selectedApplicants?.find((selectedUser: any) =>
+      selectedUser?.workers?.some(
+        (workerObj: any) => workerObj?._id === userDetails?._id
+      )
+    );
+
+    return matchedMediator?.user?.mobile;
+  });
+
   const [modalVisible, setModalVisible] = useState(false);
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
-
   const [isWorkerSelectModal, setIsWorkerSelectModal] = useState(false);
   const [workers, setWorkers]: any = useState([]);
   const [selectedWorkersIds, setSelectedWorkersIds]: any = useState([]);
@@ -206,7 +227,7 @@ const ServiceDetails = () => {
     },
     retry: false,
     initialPageParam: 1,
-    enabled: userDetails?._id === service?.employer,
+    // enabled: userDetails?._id === service?.employer,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -228,12 +249,16 @@ const ServiceDetails = () => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
         (user: any) =>
-          (user?.status === "PENDING" && user?.user === userDetails?._id) ||
-          user?.workers?.some(
-            (worker: any) =>
-              worker?.worker?.toString() === userDetails?._id &&
-              worker?.status === "PENDING"
-          )
+          user?.status === "PENDING" && user?.user === userDetails?._id
+      ) || false
+    );
+    setIsServiceAppliedByMediator(
+      service?.appliedUsers?.find((user: any) =>
+        user?.workers?.some(
+          (worker: any) =>
+            worker?.worker?.toString() === userDetails?._id &&
+            worker?.status === "PENDING"
+        )
       ) || false
     );
     setIsServiceLiked(
@@ -250,12 +275,26 @@ const ServiceDetails = () => {
           )
       ) || false
     );
+
+    setIsMediatorOrSingleWorker(
+      service?.selectedUsers?.find(
+        (user: any) =>
+          user?.status === "SELECTED" && user?.user === userDetails?._id
+      ) || false
+    );
     setIsWorkerBooked(service?.bookedWorker === userDetails?._id);
-  }, [service]);
+
+    const matchedMediator = selectedApplicants?.find((selectedUser: any) =>
+      selectedUser?.workers?.some(
+        (workerObj: any) => workerObj?._id === userDetails?._id
+      )
+    );
+
+    setMediatorMobile(matchedMediator?.user?.mobile);
+  }, [service, selectedApplicants]);
 
   useFocusEffect(
     React.useCallback(() => {
-      // Filter appliedUsers to find the logged-in user's entry
       let appliedUsers = response?.data?.appliedUsers?.find(
         (mediator: any) => mediator?.user === userDetails?._id
       );
@@ -334,8 +373,8 @@ const ServiceDetails = () => {
       title: "showApplicationsDetails",
       content: () => (
         <ApplicantsTabScreen
-          applicants={applicants} // Update dynamically
-          selectedApplicants={selectedApplicants} // Update dynamically
+          applicants={applicants}
+          selectedApplicants={selectedApplicants}
           serviceId={service?._id}
           isSelectedWorkerLoading={
             isSelectedWorkerLoading || isSelectedWorkerRefetching
@@ -352,12 +391,6 @@ const ServiceDetails = () => {
       ),
     }));
   };
-
-  console.log(
-    "service --",
-    service?.employer === userDetails?._id,
-    service?.bookingType === "byService"
-  );
 
   return (
     <>
@@ -442,6 +475,7 @@ const ServiceDetails = () => {
                                   params: {
                                     id: service?.bookedWorker?._id,
                                     role: "workers",
+                                    title: "workerDetails",
                                     type: "applicant",
                                   },
                                 })
@@ -499,19 +533,21 @@ const ServiceDetails = () => {
                       {t("doYourBest")}
                     </CustomText>
                     <View style={{ gap: 20 }}>
-                      <ButtonComp
-                        isPrimary={true}
-                        title={t("callEmployer")}
-                        onPress={() => handleCall(service?.employer?.mobile)}
-                        icon={
-                          <FontAwesome5
-                            name="phone-alt"
-                            size={16}
-                            color={Colors.white}
-                            style={{ marginRight: 10 }}
-                          />
-                        }
-                      />
+                      {isMediatorOrSingleWorker && (
+                        <ButtonComp
+                          isPrimary={true}
+                          title={t("callEmployer")}
+                          onPress={() => handleCall(service?.employer?.mobile)}
+                          icon={
+                            <FontAwesome5
+                              name="phone-alt"
+                              size={16}
+                              color={Colors.white}
+                              style={{ marginRight: 10 }}
+                            />
+                          }
+                        />
+                      )}
                       <ButtonComp
                         isPrimary={true}
                         title={t("showYourAttendance")}
@@ -535,7 +571,7 @@ const ServiceDetails = () => {
                   <CustomHeading
                     textAlign="left"
                     baseFont={20}
-                    color={Colors?.tertieryButton}
+                    color={Colors?.black}
                   >
                     {t("serviceDetails")}
                   </CustomHeading>
@@ -565,17 +601,6 @@ const ServiceDetails = () => {
 
                 <CustomHeading baseFont={18} textAlign="left">
                   {t(service?.type)} - {t(service?.subType)}
-                </CustomHeading>
-                <CustomHeading baseFont={18} textAlign="left">
-                  {t("serviceType")}
-                  {" - "}
-                  <CustomText
-                    color={Colors?.tertieryButton}
-                    fontWeight="600"
-                    baseFont={20}
-                  >
-                    {t(service?.bookingType)}
-                  </CustomText>
                 </CustomHeading>
                 <View style={styles.listingLocationWrapper}>
                   <ShowAddress address={service?.address} />
@@ -621,13 +646,17 @@ const ServiceDetails = () => {
             <ServiceActionButtons
               service={service}
               members={workers}
+              mediatorMobile={mediatorMobile}
+              isSelectedWorkerLoading={isSelectedWorkerLoading}
               isMemberLoading={isMemberLoading}
               isMemberFetchingNextPage={isMemberFetchingNextPage}
               userDetails={userDetails}
               isAdmin={isAdmin}
               isSelected={isSelected}
+              isMediatorOrSingleWorker={isMediatorOrSingleWorker}
               isWorkerBooked={isWorkerBooked}
               isServiceApplied={isServiceApplied}
+              isServiceAppliedByMediator={isServiceAppliedByMediator}
               isServiceLiked={isServiceLiked}
               id={id as string}
               refetch={refetch}

@@ -1,6 +1,6 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import {
   FontAwesome,
   FontAwesome5,
@@ -41,7 +41,7 @@ const Highlights = ({ service }: any) => {
             </CustomHeading>
           </View>
         </View>
-        {service?.location && service?.location?.latitude && (
+        {service?.location && service?.location?.latitude ? (
           <View
             style={{
               flexDirection: "column",
@@ -58,18 +58,12 @@ const Highlights = ({ service }: any) => {
               </View>
               <View style={{ width: "45%" }}>
                 <CustomText textAlign="left">{t("distance")}</CustomText>
-                {userDetails?.location &&
-                  !isNaN(
-                    calculateDistance(service?.location, userDetails?.location)
-                  ) && (
-                    <CustomHeading textAlign="left">
-                      {calculateDistance(
-                        service?.location,
-                        userDetails?.location
-                      )}{" "}
-                      {t("kms")}
-                    </CustomHeading>
-                  )}
+                <CustomHeading textAlign="left">
+                  {`${calculateDistance(
+                    service?.location,
+                    userDetails?.location
+                  )} ${t("kms")}`}
+                </CustomHeading>
               </View>
             </View>
             <Button
@@ -97,23 +91,30 @@ const Highlights = ({ service }: any) => {
               }}
             />
           </View>
+        ) : (
+          <View>
+            <CustomText baseFont={14} color={Colors?.secondary}>
+              {t("noLocationFound")}
+            </CustomText>
+          </View>
         )}
       </View>
 
       <View style={styles?.facilitiesHeading}>
         <CustomHeading
           textAlign="left"
-          baseFont={18}
-          color={Colors?.inputLabel}
+          baseFont={20}
+          color={Colors?.black}
         >
           {t("facilitiesProvidedByEmployer")}
         </CustomHeading>
         <MaterialCommunityIcons
           name="hand-pointing-down"
           size={18}
-          color={Colors.inputLabel}
+          color={Colors.black}
         />
       </View>
+
       <View style={styles?.facilitiesContainer}>
         <View style={styles.highlightWrapper}>
           <View style={styles?.highlightBox}>

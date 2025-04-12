@@ -821,7 +821,7 @@
   "searchWorkersTitle": "Search Workers",
   "allServices": "All Services",
   "allWorkers": "All Workers",
-  "titleMyAllServicesAndBookings": "My All Services and Bookings",
+  "titleMyAllServicesAndBookings": "My Services and Bookings",
   "titleMyBookedWorkers": "My Booked Workers",
   "descriptionWorkers": "Easily search for workers by their name or skill using the filters below.",
   "descriptionServices": "Quickly find available services by selecting the work type and sub-type below.",
@@ -881,9 +881,7 @@
   "Thursday": "Thursday",
   "Friday": "Friday",
   "Saturday": "Saturday",
-
   "requirementsOfTheService": "Requirements of the service",
-
   "days": "Days",
   "day": "Day",
   "months": "Months",
@@ -1114,5 +1112,12 @@
 
   "leaveWithoutSaving": "Leave Without Saving?",
   "areYouWantLeave": "Are you sure you want to leave? Any unsaved changes will be lost.",
-  "stay": "Stay"
+  "stay": "Stay",
+  "teams": "Teams",
+  "errors": "Errors",
+  "noLocationFound": "No location found",
+  "selectRequestedSkillToBook": "Select Requested Skill To Book Worker",
+  "notAdded": "Not Added",
+  "applyByMediator": "Applied By Mediator",
+  "askToMediator": "Call To Mediator"
 }

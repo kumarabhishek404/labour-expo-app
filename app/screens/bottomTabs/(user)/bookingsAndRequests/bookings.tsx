@@ -61,6 +61,8 @@ const Bookings = () => {
     },
     retry: false,
     initialPageParam: 1,
+    enabled:
+      !!userDetails?._id && !!userDetails?.token && !!userDetails?.isAuth,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -203,6 +205,7 @@ const Bookings = () => {
                         : "showApplications"
                     }
                     onPress={ClickAppliedInService}
+                    type="gradient"
                   />
                 )}
               </View>

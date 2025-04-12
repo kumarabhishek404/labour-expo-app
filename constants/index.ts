@@ -104,96 +104,6 @@ export const ADDSERVICESTEPS = [
   { label: "checkDetails" },
 ];
 
-export const WORKERTYPES = [
-  {
-    label: "construction",
-    value: "construction",
-    iconName: "hospital-building",
-  },
-  { label: "labour", value: "labour", iconName: "office-building-cog" },
-  { label: "brickLayer", value: "brickLayer", iconName: "terrain" },
-  { label: "stoneMason", value: "stoneMason", iconName: "city" },
-  { label: "mistri", value: "mistri", iconName: "tools" },
-  { label: "mason", value: "mason", iconName: "hammer" },
-  { label: "carpenter", value: "carpenter", iconName: "forest" },
-  { label: "electrician", value: "electrician", iconName: "bolt" },
-  { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "soccer-field" },
-  { label: "dhaanPitai", value: "dhaanPitai", iconName: "grass" },
-  { label: "alooBuwai", value: "alooBuwai", iconName: "tree" },
-  { label: "bazraaKatai", value: "bazraaKatai", iconName: "grass" },
-  { label: "tractorDriver", value: "tractorDriver", iconName: "tractor" },
-  { label: "equipmentSupplier", value: "equipmentSupplier", iconName: "tools" },
-  { label: "wellDigger", value: "wellDigger", iconName: "water" },
-  { label: "pumpMechanic", value: "pumpMechanic", iconName: "wrench" },
-  {
-    label: "borewellTechnician",
-    value: "borewellTechnician",
-    iconName: "water",
-  },
-  { label: "soilTester", value: "soilTester", iconName: "test-tube" },
-  {
-    label: "agricultureExpert",
-    value: "agricultureExpert",
-    iconName: "tractor-variant",
-  },
-  {
-    label: "pesticideSupplier",
-    value: "pesticideSupplier",
-    iconName: "tractor",
-  },
-  {
-    label: "fertilizerSupplier",
-    value: "fertilizerSupplier",
-    iconName: "nature",
-  },
-  {
-    label: "farmConsultant",
-    value: "farmConsultant",
-    iconName: "bag-personal",
-  },
-  { label: "steelFixer", value: "steelFixer", iconName: "construction" },
-  { label: "painter", value: "painter", iconName: "brush" },
-  {
-    label: "wallPlasteringWorker",
-    value: "wallPlasteringWorker",
-    iconName: "paint",
-  },
-  {
-    label: "scaffoldingLaborer",
-    value: "scaffoldingLaborer",
-    iconName: "construction",
-  },
-  { label: "roofMason", value: "roofMason", iconName: "home" },
-  {
-    label: "waterproofingExpert",
-    value: "waterproofingExpert",
-    iconName: "water",
-  },
-  { label: "thatcher", value: "thatcher", iconName: "roofing" },
-  { label: "plumber", value: "plumber", iconName: "plumbing" },
-  { label: "waterTankRepairer", value: "waterTankRepairer", iconName: "water" },
-  { label: "welders", value: "welders", iconName: "fire" },
-  { label: "movers", value: "movers", iconName: "truck" },
-  {
-    label: "warehouseWorkers",
-    value: "warehouseWorkers",
-    iconName: "inventory",
-  },
-  { label: "securityGuards", value: "securityGuards", iconName: "security" },
-  { label: "truckDrivers", value: "truckDrivers", iconName: "truck" },
-  {
-    label: "transportOperators",
-    value: "transportOperators",
-    iconName: "local_shipping",
-  },
-  { label: "cartPullers", value: "cartPullers", iconName: "agriculture" },
-  { label: "packers", value: "packers", iconName: "package" },
-  { label: "doctor", value: "doctor", iconName: "medical" },
-  { label: "nurse", value: "nurse", iconName: "healing" },
-  { label: "ambulanceDriver", value: "ambulanceDriver", iconName: "ambulance" },
-  { label: "paramedic", value: "paramedic", iconName: "medical_services" },
-];
-
 export const MEDIATORTYPES = [
   { label: "construction", value: "construction", iconName: "beach" },
   { label: "dhaanBuwai", value: "dhaanBuwai", iconName: "terrain" },
@@ -281,15 +191,6 @@ export const ROLES = [
     value: "MEDIATOR",
     iconName: "hiking",
   },
-];
-
-export const WORKERS = [
-  {
-    label: "all",
-    value: "",
-    iconName: "hiking",
-  },
-  ...WORKERTYPES,
 ];
 
 export const MEDIATOR = [
@@ -726,6 +627,51 @@ export const WORKTYPES = [
       },
     ],
   },
+];
+
+type WorkerType = {
+  label: string;
+  value: string;
+  iconName?: string;
+};
+
+type SubType = {
+  label: string;
+  value: string;
+  workerTypes: WorkerType[];
+};
+
+type WorkType = {
+  label: string;
+  value: string;
+  subTypes: SubType[];
+};
+
+export const extractWorkerSkills = (workTypes: any[]): any[] => {
+  const workerMap = new Map<string, any>();
+
+  for (const workType of workTypes) {
+    for (const subType of workType.subTypes) {
+      for (const worker of subType.workerTypes) {
+        if (!workerMap.has(worker.value)) {
+          workerMap.set(worker.value, worker);
+        }
+      }
+    }
+  }
+
+  return Array.from(workerMap.values());
+};
+
+export const WORKERTYPES = extractWorkerSkills(WORKTYPES);
+
+export const WORKERS = [
+  {
+    label: "all",
+    value: "",
+    iconName: "hiking",
+  },
+  ...WORKERTYPES,
 ];
 
 export const FAQS = [

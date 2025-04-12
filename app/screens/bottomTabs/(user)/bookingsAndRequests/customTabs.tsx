@@ -10,7 +10,6 @@ import {
 import Animated, {
   useSharedValue,
   withTiming,
-  useAnimatedStyle,
 } from "react-native-reanimated";
 import { MaterialIcons } from "@expo/vector-icons";
 import { t } from "@/utils/translationHelper";

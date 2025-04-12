@@ -30,6 +30,7 @@ import { t } from "@/utils/translationHelper";
 import RippleDot from "@/components/commons/RippleDot";
 import NotificationPlaceholder from "@/components/commons/LoadingPlaceholders/NotificationPlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
+import APP_LOGO from "@/assets/app/notification.png";
 
 const NotificationScreen = () => {
   const queryClient = useQueryClient();
@@ -165,7 +166,7 @@ const NotificationScreen = () => {
       >
         <View style={{ flexDirection: "row" }}>
           <View style={{ width: "17%", marginRight: 10 }}>
-            <ProfilePicture uri={item?.data?.actionBy?.profilePicture} />
+            <ProfilePicture uri={item?.data?.actionBy?.profilePicture} source={APP_LOGO} />
           </View>
           <View style={{ position: "absolute", top: 10, left: 55 }}>
             {!item?.read && <RippleDot />}

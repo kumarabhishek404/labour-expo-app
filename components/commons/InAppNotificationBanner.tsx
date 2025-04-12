@@ -11,9 +11,10 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   Easing,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from "@/constants/Colors"; // Adjust the path if needed
+import Colors from "@/constants/Colors";
 
 const { width } = Dimensions.get("window");
 
@@ -26,18 +27,20 @@ const NotificationBanner = ({ title, body, onClose }: any) => {
   }));
 
   useEffect(() => {
-    // Slide-in animation
     translateY.value = withTiming(0, {
       duration: 500,
       easing: Easing.out(Easing.ease),
     });
 
-    // Auto-hide after 10 seconds
     const timer = setTimeout(() => {
       hideBanner();
     }, 10000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      cancelAnimation(translateY);
+      translateY.value = -100;
+    };
   }, []);
 
   const hideBanner = () => {
@@ -46,6 +49,7 @@ const NotificationBanner = ({ title, body, onClose }: any) => {
       easing: Easing.in(Easing.ease),
     });
     setTimeout(() => setVisible(false), 500);
+    onClose?.();
   };
 
   if (!visible) return null;

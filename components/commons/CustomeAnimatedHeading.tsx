@@ -7,18 +7,19 @@ import Animated, {
   withRepeat,
   withTiming,
   Easing,
+  cancelAnimation,
 } from "react-native-reanimated";
-import CustomHeading from "./CustomHeading"; // Adjust the path if needed
-import Colors from "@/constants/Colors"; // Adjust path if needed
+import CustomHeading from "./CustomHeading";
+import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 
 const CustomeAnimatedHeading = ({
-  title = t('requirementsOfTheService'),
+  title = t("requirementsOfTheService"),
   baseFont = 20,
   fontWeight = "bold",
   textAlign = "center",
-  color = Colors?.primary,
-  icon, // Entire icon component
+  color = Colors?.black,
+  icon,
 }: any) => {
   const bounce = useSharedValue(0);
 
@@ -31,6 +32,11 @@ const CustomeAnimatedHeading = ({
       -1,
       true
     );
+
+    return () => {
+      cancelAnimation(bounce);
+      bounce.value = 0;
+    };
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -54,7 +60,7 @@ const CustomeAnimatedHeading = ({
           <MaterialCommunityIcons
             name="hand-pointing-down"
             size={26}
-            color={Colors.primary}
+            color={Colors.black}
           />
         )}
       </Animated.View>

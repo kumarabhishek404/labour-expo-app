@@ -24,7 +24,7 @@ const ShowSkills = ({
         name="hammer-wrench"
         size={16}
         color={Colors.tertieryButton}
-        style={{ paddingTop: 3 }}
+        style={{ paddingTop: 2 }}
       />
       {type === "small" ? (
         <View style={styles.skillWrapper}>

@@ -29,17 +29,23 @@ import { useAtom, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import AddSkillDrawer from "@/components/commons/AddSkillModal";
 import ApplyAsMediatorDrawer from "@/components/commons/ApplyAsMediatorDrawer";
+import { handleCall } from "@/constants/functions";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 interface ServiceActionButtonsProps {
   service: any;
   members: any;
+  mediatorMobile: string;
+  isSelectedWorkerLoading: boolean;
   isMemberLoading: boolean;
   isMemberFetchingNextPage: boolean;
   userDetails: any;
   isAdmin: boolean;
   isSelected: boolean;
+  isMediatorOrSingleWorker: boolean;
   isWorkerBooked: boolean;
   isServiceApplied: boolean;
+  isServiceAppliedByMediator: boolean;
   isServiceLiked: boolean;
   id: string;
   refetch: () => void;
@@ -63,12 +69,16 @@ const IMG_HEIGHT = 300;
 const ServiceActionButtons = ({
   service,
   members,
+  mediatorMobile,
+  isSelectedWorkerLoading,
   isMemberLoading,
   isMemberFetchingNextPage,
   isAdmin,
   isSelected,
+  isMediatorOrSingleWorker,
   isWorkerBooked,
   isServiceApplied,
+  isServiceAppliedByMediator,
   isServiceLiked,
   id,
   refetch,
@@ -242,6 +252,7 @@ const ServiceActionButtons = ({
       // Mediator applying with workers
       setIsWorkerSelectModal(true);
     } else {
+      console.log("matchedSkills - ", matchedSkills);
       // Individual worker applying
       if (matchedSkills.length === 0) {
         return setIsAddSkill(true); // No valid skill found, prompt user to add skill
@@ -290,24 +301,96 @@ const ServiceActionButtons = ({
         service.status === "HIRING":
         return (
           <>
-            {isSelected ? (
+            {isSelected && (
+              <>
+                {isMediatorOrSingleWorker ? (
+                  <Button
+                    isPrimary={true}
+                    title={t("removeFromService")}
+                    bgColor={Colors?.danger}
+                    borderColor={Colors?.danger}
+                    style={{ flex: 1 }}
+                    onPress={
+                      mutationCancelServiceByMediatorAfterSelection.mutate
+                    }
+                  />
+                ) : (
+                  <Button
+                    isPrimary={true}
+                    loading={isSelectedWorkerLoading}
+                    title={
+                      !isSelectedWorkerLoading && (
+                        <>
+                          {t("removeFromService")}
+                          <CustomText
+                            baseFont={14}
+                            color={Colors?.white}
+                            fontWeight="500"
+                          >
+                            {" "}
+                            ({" "}
+                            <FontAwesome5
+                              name="phone-alt"
+                              size={11}
+                              color={Colors.white}
+                              style={{ marginRight: 10 }}
+                            />
+                            {"  "}
+                            {t("askToMediator")} )
+                          </CustomText>
+                        </>
+                      )
+                    }
+                    bgColor={Colors?.danger}
+                    borderColor={Colors?.danger}
+                    style={{ flex: 1 }}
+                    onPress={() =>
+                      !isSelectedWorkerLoading
+                        ? handleCall(mediatorMobile)
+                        : null
+                    }
+                  />
+                )}
+              </>
+            )}
+
+            {!isSelected && (
               <Button
                 isPrimary={true}
-                title={t("removeFromService")}
-                bgColor={Colors?.danger}
-                borderColor={Colors?.danger}
+                title={
+                  isServiceAppliedByMediator ? (
+                    <>
+                      {t("cancelApply")}
+                      <CustomText
+                        baseFont={14}
+                        color={Colors?.white}
+                        fontWeight="500"
+                      >
+                        {" "}
+                        ({t("applyByMediator")})
+                      </CustomText>
+                    </>
+                  ) : isServiceApplied ? (
+                    t("cancelApply")
+                  ) : (
+                    t("applyNow")
+                  )
+                }
+                onPress={
+                  isServiceApplied || isServiceAppliedByMediator
+                    ? handleCancelApply
+                    : handleApply
+                }
                 style={{ flex: 1 }}
-                onPress={mutationCancelServiceByMediatorAfterSelection.mutate}
-              />
-            ) : (
-              <Button
-                isPrimary={true}
-                title={isServiceApplied ? t("cancelApply") : t("applyNow")}
-                onPress={isServiceApplied ? handleCancelApply : handleApply}
-                style={{ flex: 1 }}
-                bgColor={isServiceApplied ? Colors?.danger : Colors?.primary}
+                bgColor={
+                  isServiceApplied || isServiceAppliedByMediator
+                    ? Colors?.danger
+                    : Colors?.primary
+                }
                 borderColor={
-                  isServiceApplied ? Colors?.danger : Colors?.primary
+                  isServiceApplied || isServiceAppliedByMediator
+                    ? Colors?.danger
+                    : Colors?.primary
                 }
               />
             )}
@@ -644,6 +727,7 @@ const ServiceActionButtons = ({
                 mutationApplyService?.mutate({
                   workers: selectedWorkers,
                   serviceId: id,
+                  skills: selectedSkill,
                 }),
         }}
         secondaryButton={{

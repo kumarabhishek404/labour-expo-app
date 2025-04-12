@@ -14,8 +14,15 @@ import moment from "moment";
 import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
 import PaperDropdown from "@/components/inputs/Dropdown";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";
+import RadioSkillSelector from "@/components/inputs/RadioButton";
 
-const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
+const AddBookingDetails = ({
+  control,
+  setValue,
+  errors,
+  watch,
+  workerSkills,
+}: any) => {
   const [location, setLocation] = useState({});
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
@@ -96,6 +103,26 @@ const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
           />
         )}
       />
+
+      <Controller
+        control={control}
+        name="appliedSkill"
+        defaultValue=""
+        rules={{
+          required: t("skillIsRequired"),
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <RadioSkillSelector
+            name="appliedSkill"
+            label="selectRequestedSkillToBook"
+            onChange={onChange}
+            value={value}
+            errors={errors}
+            options={workerSkills || []}
+          />
+        )}
+      />
+
       <Controller
         control={control}
         name="startDate"
@@ -117,7 +144,6 @@ const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
             type="serviceDate"
             date={moment(value)}
             setDate={onChange}
-            onBlur={onBlur}
             errors={errors}
           />
         )}
@@ -208,11 +234,9 @@ const AddBookingDetails = ({ control, setValue, errors, watch }: any) => {
               name="address"
               address={value}
               setAddress={onChange}
-              onBlur={onBlur}
               location={location}
               setLocation={setLocation}
               selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
               errors={errors}
               style={{ marginTop: 10 }}
             />

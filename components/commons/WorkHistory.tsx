@@ -81,7 +81,7 @@ const WorkHistory = ({ workHistory }: any) => {
                   <View>
                     <View style={styles.detailRow}>
                       <CustomText style={styles.description}>
-                        Service Type - {t(work?.bookingType)}
+                        {t("serviceType")} - {t(work?.bookingType)}
                       </CustomText>
                     </View>
 

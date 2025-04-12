@@ -19,25 +19,29 @@ import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loaders/Loader";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const SecondScreen = () => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      address: "",
-      email: "",
-      dateOfBirth: moment().subtract(18, "years").startOf("year"),
-      gender: "",
+      name: userDetails?.name || "", // Fixed syntax error by adding '||'
+      address: userDetails?.address || "", // Fixed syntax error by adding '||'
+      email: userDetails?.email?.value || "", // Fixed syntax error by adding '||'
+      dateOfBirth:
+        userDetails?.dateOfBirth ||
+        moment().subtract(18, "years").startOf("year"),
+      gender: userDetails?.gender || "", // Fixed syntax error by changing to 'userDetails?.gender || ""'
     },
   });
   const [location, setLocation] = useState<any>({});
   const { userId } = useLocalSearchParams();
-
-  console.log("userId--", userId);
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],

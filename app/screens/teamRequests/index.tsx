@@ -132,12 +132,6 @@ const Requests = () => {
                 onValueChange={onCategoryChanged}
               />
             </View>
-            <PaginationString
-              type="requests"
-              isLoading={isLoading || isRefetching}
-              totalFetchedData={filteredData?.length}
-              totalData={totalData}
-            />
             {filteredData && filteredData?.length > 0 ? (
               <ListingVerticalRequests
                 listings={filteredData || []}
@@ -178,7 +172,7 @@ const styles = StyleSheet.create({
   paginationTabs: {
     width: "100%",
     flexDirection: "column",
-    paddingBottom: 10,
+    paddingVertical: 10,
   },
 });
 

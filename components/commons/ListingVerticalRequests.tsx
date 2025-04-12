@@ -80,7 +80,7 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
                 {sender?.name}
               </CustomHeading>
               <CustomText style={[styles.label, styles.leftAlignText]}>
-                Sender
+                {t("sender")}
               </CustomText>
               <RatingAndReviews
                 rating={sender?.rating || 0}
@@ -101,7 +101,7 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
                 {sender?.address}
               </CustomText>
               <CustomText style={styles.leftAlignText}>
-                Gender: {sender?.gender || "N/A"}
+                {t("gender")}: {sender?.gender || "N/A"}
               </CustomText>
             </View>
           </View>
@@ -129,7 +129,7 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
                 {receiver?.name}
               </CustomHeading>
               <CustomText style={[styles.label, styles.rightAlignText]}>
-                Receiver
+                {t("reciever")}
               </CustomText>
               <RatingAndReviews
                 rating={receiver?.rating || 0}
@@ -150,7 +150,7 @@ const RequestCardAdmin = React.memo(({ item }: any) => {
                 {receiver?.address}
               </CustomText>
               <CustomText style={styles.rightAlignText}>
-                Gender: {receiver?.gender || "N/A"}
+                {t("gender")}: {receiver?.gender || "N/A"}
               </CustomText>
             </View>
           </View>
@@ -292,8 +292,8 @@ const RequestCardTeamJoinng = React.memo(
             <View style={styles.infoContainer}>
               <CustomHeading textAlign="left">{user?.name}</CustomHeading>
               <RatingAndReviews
-                rating={user?.rating || 4.5}
-                reviews={user?.reviews || 400}
+                rating={user?.rating || 0}
+                reviews={user?.reviews || 0}
               />
             </View>
             <CustomText>{getTimeAgo(item?.createdAt)}</CustomText>
@@ -623,6 +623,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     paddingLeft: 15,
+    gap: 4,
   },
   etaContainer: {
     alignItems: "center",

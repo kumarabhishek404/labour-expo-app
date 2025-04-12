@@ -214,13 +214,17 @@ const User = () => {
                 </View>
               </View>
 
-              {user?.employedBy && (
+              {(user?.teamDetails &&
+                user?.teamDetails?.status === "ACTIVE" &&
+                user?.teamDetails?.memberCount > 0) ||
+              user?.employedBy ? (
                 <TeamDetails
-                  type={user?.role}
-                  mediator={user}
-                  isInYourTeam={isInYourTeam}
+                  type={user?.employedBy ? "WORKER" : "MEDIATOR"}
+                  mediatorId={user?._id}
+                  teamDetails={user?.teamDetails}
+                  isInYourTeam={user?.employedBy?._id === userDetails?._id}
                 />
-              )}
+              ) : null}
 
               <CustomText>{user?.description}</CustomText>
 
@@ -233,10 +237,7 @@ const User = () => {
                 availableSkills={WORKERTYPES}
               />
 
-              <UserInfoComponent
-                user={user}
-                style={{ marginHorizontal: 0, marginTop: 4 }}
-              />
+              <UserInfoComponent user={user} style={{ marginHorizontal: 0 }} />
               <View style={{ marginBottom: 20 }}>
                 <ServiceInformation information={user?.serviceDetails} />
               </View>
@@ -353,7 +354,7 @@ const styles = StyleSheet.create({
   skillsContainer: {
     padding: 12,
     flexDirection: "column",
-    marginBottom: 5,
+    // marginBottom: 5,
     backgroundColor: Colors?.background,
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,

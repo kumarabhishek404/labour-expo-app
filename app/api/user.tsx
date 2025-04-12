@@ -4,8 +4,8 @@ import { t } from "@/utils/translationHelper";
 
 const getUserInfo = async () => {
   try {
-    const { data } = await API_CLIENT.makeGetRequest(`/user/info`);
-    return data;
+    const response = await API_CLIENT.makeGetRequest(`/user/info`);
+    return response?.data;
   } catch (error: any) {
     console.error(
       `[Users] [userService] An error occurred while refreshing user details  : `,
@@ -20,8 +20,6 @@ const getUserInfo = async () => {
 };
 
 const updateUserById = async (payload: any) => {
-  console.log("Paylaod---", payload);
-
   try {
     const response = await API_CLIENT.makePatchRequestFormData(
       `/user/info`,
@@ -117,7 +115,7 @@ const enableAccount = async () => {
 const fetchAllUsers = async ({ pageParam, payload }: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
-      `/user/all?role=WORKER${pageParam}&limit=5`,
+      `/user/all?role=WORKER&page=1&${pageParam}&limit=5`,
       payload
     );
     return data.data;
@@ -135,8 +133,8 @@ const fetchAllUsers = async ({ pageParam, payload }: any) => {
 
 const getUserDetails = async (id: any) => {
   try {
-    const { data } = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
-    return data;
+    const response = await API_CLIENT.makeGetRequest(`/user/detail/${id}`);
+    return response?.data;
   } catch (error: any) {
     console.error(
       `[Users] [userService] An error occurred while fetching user details : `,
@@ -151,8 +149,6 @@ const getUserDetails = async (id: any) => {
 };
 
 const likeUser = async (payload: any) => {
-  console.log("Pay---", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest(
       `/user/like/${payload?.userId}`
@@ -171,7 +167,6 @@ const likeUser = async (payload: any) => {
 };
 
 const unlikeUser = async ({ userId }: any) => {
-  console.log("Worker ID---", userId);
   try {
     const data = await API_CLIENT.makeDeleteRequest(`/user/unlike/${userId}`);
     return data.data;
@@ -194,7 +189,7 @@ const fetchAllLikedUsers = async ({ pageParam, skill }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/user/all-liked?skill=${skill}&page=${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching liked users : `,
@@ -253,7 +248,7 @@ const fetchAllLikedServices = async ({ pageParam }: any) => {
     const data = await API_CLIENT.makeGetRequest(
       `/user/all-liked-services?page${pageParam}&limit=5`
     );
-    return data.data;
+    return data?.data;
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while fetching services : `,

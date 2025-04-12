@@ -146,6 +146,7 @@ const Applicants = ({
                 <View key={index} style={styles.mediatorCard}>
                   <View style={styles.productCard}>
                     <ProfilePicture uri={appliedUser?.profilePicture} />
+
                     <View style={styles.productInfo}>
                       <View style={styles.titleContainer}>
                         <CustomHeading baseFont={18} textAlign="left">
@@ -156,7 +157,9 @@ const Applicants = ({
                           color={Colors?.tertieryButton}
                           style={{ textTransform: "uppercase" }}
                         >
-                          {t(appliedUser?.appliedSkill)}
+                          {workers && workers?.length > 0
+                            ? t("mediator")
+                            : t(appliedUser?.appliedSkill)}
                         </CustomHeading>
                         <ShowDistance
                           loggedInUserLocation={userDetails?.location}
@@ -165,6 +168,7 @@ const Applicants = ({
                         />
                       </View>
                     </View>
+
                     <TouchableOpacity
                       style={styles.detailsButton}
                       onPress={() =>
@@ -181,7 +185,6 @@ const Applicants = ({
                       }
                     >
                       <CustomText fontWeight="600" color={Colors?.link}>
-                        {t("show")}{" "}
                         {t(
                           workers?.length > 0
                             ? "mediatorDetails"
@@ -295,7 +298,7 @@ const Applicants = ({
                                     fontWeight="600"
                                     color={Colors?.link}
                                   >
-                                    {t("show")} {t("workerDetails")}
+                                    {t("workerDetails")}
                                   </CustomText>
                                 </TouchableOpacity>
                               </View>
@@ -482,6 +485,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   productCard: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
@@ -491,16 +495,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   titleContainer: {
+    flex: 1,
     marginBottom: 4,
   },
   detailsButton: {
     alignSelf: "flex-start",
-    marginRight: 10,
   },
   workersContainer: {
+    flex: 1,
     marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#ddd",
+    paddingHorizontal: 10,
+    borderWidth: 0.5,
+    borderColor: Colors?.inputBorder,
+    borderRadius: 8,
   },
   workersTitleContainer: {
     paddingVertical: 8,
@@ -518,12 +525,12 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   workersGrid: {
-    marginTop: 8,
+    // marginTop: 8,
   },
   workerItem: {
     backgroundColor: Colors?.white,
     borderRadius: 8,
-    padding: 8,
+    paddingVertical: 8,
     marginBottom: 4,
   },
   workerInfo: {

@@ -21,76 +21,157 @@ import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
+import Loader from "@/components/commons/Loaders/Loader";
 
 interface FormData {
-  phoneNumber: string;
+  mobile: string;
 }
 
+// Same import section...
+
 const RegisterScreen: React.FC = () => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
   const locale = useAtomValue(Atoms?.LocaleAtom);
   const { userId } = useLocalSearchParams();
+
   const [step, setStep] = useState<number>(1);
   const [countryCode, setCountryCode] = useState<string>("+91");
   const [otp, setOtp] = useState<string>("");
   const [mobileNumberExist, setMobileNumberExist] = useState<string>("notSet");
   const [timer, setTimer] = useState<number>(30);
   const [resendDisabled, setResendDisabled] = useState<boolean>(true);
+  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  const [nextStepAfterOtp, setNextStepAfterOtp] = useState<{
+    route: string;
+    params: any;
+  } | null>(null);
+  const [userCanResumeRegistration, setUserCanResumeRegistration] =
+    useState(false);
 
   const {
     control,
     watch,
+    setValue,
     formState: { errors, isValid },
   } = useForm<FormData>({
-    defaultValues: { phoneNumber: "" },
+    defaultValues: { mobile: "" },
     mode: "onChange",
   });
 
   useEffect(() => {
     if (step === 2) {
-      setResendDisabled(true);
-      setTimer(30);
-      const interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setResendDisabled(false);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
+      startResendTimer();
     }
+
+    // Optional cleanup if user leaves the screen
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [step]);
 
-  console.log("userId--", userId);
+  const startResendTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    setResendDisabled(true);
+    setTimer(30);
+
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          setResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   const mutationRegister = useMutation({
     mutationKey: ["register"],
     mutationFn: (payload) => AUTH.register(payload),
     onSuccess: (data) => {
-      console.log("User registered:", data);
-      setUserDetails({
-        token: data?.data?.token,
-      });
+      setUserDetails({ token: data?.data?.token });
       router.push({
         pathname: "/screens/auth/register/second",
         params: { userId: userId || data?.data?.userId },
       });
     },
-    onError: (error) => {
-      console.error("Registration error:", error);
-    },
+    onError: () => TOAST.error(t("registrationFailed")),
   });
 
   const checkMobileNumber = useMutation({
     mutationFn: async (payload: { mobile: string }) =>
       AUTH.checkMobileExistance(payload),
     onSuccess: ({ data }) => {
-      setMobileNumberExist(data?.data?.exists ? "exist" : "notExist");
-      // if (!data?.data?.exists)
-      //   sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`);
+      const exists = data?.data?.exists;
+      const token = data?.data?.token;
+      const user = data?.data?.user;
+      setUserDetails({ ...user, token: token });
+      setMobileNumberExist(exists ? "exist" : "notExist");
+
+      if (exists && user) {
+        const {
+          name,
+          gender,
+          address,
+          dateOfBirth,
+          password,
+          profilePicture,
+          _id,
+        } = user;
+
+        const isEmpty = (val: any) =>
+          val === undefined || val === null || String(val).trim() === "";
+
+        const missingBasics =
+          isEmpty(name) ||
+          isEmpty(gender) ||
+          isEmpty(address) ||
+          isEmpty(dateOfBirth);
+
+        let route = "";
+        if (missingBasics) route = "/screens/auth/register/second";
+        else if (isEmpty(password)) route = "/screens/auth/register/third";
+        else if (isEmpty(profilePicture))
+          route = "/screens/auth/register/fourth";
+        else route = "/screens/auth/login";
+
+        const userTokenExists = userDetails?.token;
+
+        if (userTokenExists) {
+          router.push({
+            pathname: route,
+            params:
+              route === "/screens/auth/login"
+                ? { mobile: user.mobile }
+                : { userId: _id },
+          });
+          setValue("mobile", "");
+        } else {
+          // ✅ Mark that user can resume registration
+          setUserCanResumeRegistration(true);
+
+          setNextStepAfterOtp({
+            route,
+            params:
+              route === "/screens/auth/login"
+                ? { mobile: user.mobile }
+                : { userId: _id },
+          });
+          setStep(1);
+          setValue("mobile", "");
+        }
+      } else {
+        setUserCanResumeRegistration(false); // user doesn't exist, no resume possible
+      }
     },
     onError: () => TOAST.error(t("errorCheckingMobile")),
   });
@@ -100,6 +181,7 @@ const RegisterScreen: React.FC = () => {
     onSuccess: ({ Status }) => {
       if (Status === "Success") {
         setStep(2);
+        startResendTimer();
         TOAST.success(t("otpSentSuccess"));
       } else {
         TOAST.error(t("otpSentFail"));
@@ -113,9 +195,26 @@ const RegisterScreen: React.FC = () => {
     onSuccess: ({ Status }) => {
       if (Status === "Success") {
         TOAST.success(t("otpVerified"));
+
+        // Reset OTP input
+        setOtp("");
+
+        // Reset step to initial state
+        setStep(1);
+
+        // If user already exists and we had a next step planned, resume registration
+        if (nextStepAfterOtp) {
+          router.push({
+            pathname: nextStepAfterOtp.route,
+            params: nextStepAfterOtp.params,
+          });
+          return;
+        }
+
+        // Otherwise, treat this as a fresh registration
         const payload: any = {
           countryCode: countryCode,
-          mobile: watch("phoneNumber"),
+          mobile: watch("mobile"),
           locale: locale,
         };
         mutationRegister.mutate(payload);
@@ -125,8 +224,6 @@ const RegisterScreen: React.FC = () => {
     },
   });
 
-  console.log("mobileNumberExist---", mobileNumberExist);
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -134,6 +231,7 @@ const RegisterScreen: React.FC = () => {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
+        <Loader loading={mutationRegister?.isPending} />
         <View style={styles.centeredView}>
           <AntDesign
             name="mobile1"
@@ -158,7 +256,7 @@ const RegisterScreen: React.FC = () => {
             <>
               <Controller
                 control={control}
-                name="phoneNumber"
+                name="mobile"
                 rules={{
                   required: t("mobileRequired"),
                   pattern: {
@@ -168,17 +266,18 @@ const RegisterScreen: React.FC = () => {
                 }}
                 render={({ field: { onChange, value } }) => (
                   <MobileNumberField
-                    name="phoneNumber"
+                    name="mobile"
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
-                    phoneNumber={value}
+                    mobile={value}
                     setPhoneNumber={(val: string) => {
                       setMobileNumberExist("notSet");
+                      onChange(val);
                       if (val.length === 10)
                         checkMobileNumber.mutate({ mobile: val });
-                      onChange(val);
                     }}
                     errors={errors}
+                    loading={checkMobileNumber?.isPending}
                     isMobileNumberExist={mobileNumberExist === "exist"}
                     placeholder={t("enterMobileTitle")}
                     icon={
@@ -191,10 +290,13 @@ const RegisterScreen: React.FC = () => {
                 isPrimary
                 title={t("sendOtp")}
                 onPress={() =>
-                  sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`)
+                  sendOtp.mutate(`${countryCode}${watch("mobile")}`)
                 }
                 style={styles.button}
-                disabled={!isValid || mobileNumberExist !== "notExist"}
+                disabled={
+                  !isValid ||
+                  (mobileNumberExist === "exist" && !userCanResumeRegistration)
+                }
                 textStyle={{ fontSize: 24, fontWeight: "600" }}
               />
             </>
@@ -204,7 +306,7 @@ const RegisterScreen: React.FC = () => {
             <View style={styles.otpContainer}>
               <View style={styles.mobileNumberView}>
                 <CustomText baseFont={18} color={Colors.tertieryButton}>
-                  {countryCode} {watch("phoneNumber")}
+                  {countryCode} {watch("mobile")}
                 </CustomText>
                 <TouchableOpacity onPress={() => setStep(1)}>
                   <Feather name="edit" size={20} color={Colors.primary} />
@@ -221,7 +323,7 @@ const RegisterScreen: React.FC = () => {
                 </CustomHeading>
                 <TouchableOpacity
                   onPress={() =>
-                    sendOtp.mutate(`${countryCode}${watch("phoneNumber")}`)
+                    sendOtp.mutate(`${countryCode}${watch("mobile")}`)
                   }
                   disabled={resendDisabled}
                 >
@@ -247,7 +349,7 @@ const RegisterScreen: React.FC = () => {
                 title={t("verifyOtp")}
                 onPress={() =>
                   verifyOtp.mutate({
-                    mobile: `${countryCode}${watch("phoneNumber")}`,
+                    mobile: `${countryCode}${watch("mobile")}`,
                     otp,
                   })
                 }
@@ -266,9 +368,7 @@ const RegisterScreen: React.FC = () => {
               </CustomHeading>
             </TouchableOpacity>
           </View>
-          {(checkMobileNumber?.isPending ||
-            sendOtp?.isPending ||
-            verifyOtp?.isPending) && (
+          {(sendOtp?.isPending || verifyOtp?.isPending) && (
             <ActivityIndicator size="large" color={Colors.primary} />
           )}
         </View>
@@ -276,6 +376,10 @@ const RegisterScreen: React.FC = () => {
     </>
   );
 };
+
+// Style remains unchanged...
+
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -337,5 +441,3 @@ const styles = StyleSheet.create({
     gap: 5,
   },
 });
-
-export default RegisterScreen;

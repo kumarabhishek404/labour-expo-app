@@ -6,7 +6,7 @@ import { Button } from "react-native-paper";
 
 type ButtonProps = {
   isPrimary: boolean;
-  title: string;
+  title: any;
   onPress: any;
   icon?: any;
   style?: any;

@@ -106,8 +106,10 @@ const AddReview = () => {
         <Loader
           loading={mutationAddReview.isPending || mutationEditReview.isPending}
         />
-        <CustomHeading textAlign="left">{t("howWouldYouRate")}</CustomHeading>
 
+        <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+          {t("howWouldYouRate")}
+        </CustomHeading>
         <Controller
           control={control}
           name="rating"
@@ -135,7 +137,11 @@ const AddReview = () => {
                     <FontAwesome
                       name={num <= value ? "star" : "star-o"}
                       size={45}
-                      color={num <= value ? Colors?.primary : "#b3b3b3"}
+                      color={
+                        num <= value
+                          ? Colors?.highlight
+                          : Colors?.inputPlaceholder
+                      }
                     />
                   </TouchableOpacity>
                 ))}
@@ -143,8 +149,9 @@ const AddReview = () => {
               {errors?.rating && (
                 <CustomText
                   textAlign="left"
-                  baseFont={10}
+                  baseFont={14}
                   color={Colors?.danger}
+                  style={{ marginTop: 10 }}
                 >
                   {errors.rating.message}
                 </CustomText>
@@ -153,24 +160,27 @@ const AddReview = () => {
           )}
         />
 
-        <CustomHeading textAlign="left">{t("whatDidYouLike")}</CustomHeading>
+        <View style={{ marginBottom: 20 }}>
+          <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+            {t("whatDidYouLike")}
+          </CustomHeading>
+          <Controller
+            control={control}
+            name="feedbackType"
+            rules={{ required: false }}
+            render={({ field: { onChange, value, onBlur } }) => (
+              <ReasoneSelection
+                reason={value}
+                setReason={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="feedbackType"
-          rules={{ required: false }}
-          render={({ field: { onChange, value, onBlur } }) => (
-            <ReasoneSelection
-              reason={value}
-              setReason={onChange}
-              onBlur={onBlur}
-            />
+          {errors?.feedbackType && (
+            <ErrorText>{errors.feedbackType.message}</ErrorText>
           )}
-        />
-
-        {errors?.feedbackType && (
-          <ErrorText>{errors.feedbackType.message}</ErrorText>
-        )}
+        </View>
 
         <Controller
           control={control}
@@ -225,11 +235,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f7fa",
     paddingHorizontal: 20,
+    paddingTop: 20,
   },
   starContainer: {
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginVertical: 30,
+    marginTop: 15,
+    marginBottom: 30,
   },
 });

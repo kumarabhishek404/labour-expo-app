@@ -39,14 +39,14 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
               <CustomText style={styles.smallRequirementText}>
                 {requirement.count} {t(requirement.name)} • ₹
                 {requirement.payPerDay}
-                /day
+                /{t('days')}
               </CustomText>
             </View>
           ))}
         </View>
       ) : (
         <View style={styles.requirmentContainer}>
-          <CustomeAnimatedHeading color={Colors?.inputLabel} />
+          <CustomeAnimatedHeading />
           {requirements?.map((requirement: any, index: number) => {
             return (
               <View style={styles.card} key={index}>

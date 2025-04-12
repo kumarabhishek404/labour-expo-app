@@ -1,25 +1,19 @@
 import React, { useMemo, useState } from "react";
 import {
   View,
-  TouchableOpacity,
   StyleSheet,
   RefreshControl,
 } from "react-native";
-import { router, Stack, useFocusEffect } from "expo-router";
-import Colors from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Stack, useFocusEffect } from "expo-router";
 import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
-import WORKER from "../../api/workers";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
-import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import { SERVICES, WORKERS, WORKERTYPES } from "@/constants";
+import { SERVICES } from "@/constants";
 import SearchFilter from "@/components/commons/SearchFilter";
 import CustomHeader from "@/components/commons/Header";
 import USER from "@/app/api/user";

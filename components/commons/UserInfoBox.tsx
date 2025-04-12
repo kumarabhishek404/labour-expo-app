@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   changeAddress: {
     width: "30%",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "center",
   },
   lastBox: {

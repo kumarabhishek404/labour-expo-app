@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
+const TeamDetails = ({ type, mediatorId, teamDetails, isInYourTeam }: any) => {
   return (
     <>
       {type === "WORKER" ? (
@@ -43,14 +43,14 @@ const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
                 {t("team")}
               </CustomHeading>
               <CustomText color={Colors?.white}>
-                ({t(mediator?.teamDetails?.status?.toLowerCase())})
+                ({t(teamDetails?.status?.toLowerCase())})
               </CustomText>
             </View>
             <CustomText color={Colors?.white}>
-              {mediator?.teamDetails?.memberCount || 0} {t("members")}
+              {teamDetails?.memberCount || 0} {t("members")}
             </CustomText>
           </View>
-          {mediator?.teamDetails?.memberCount > 0 && (
+          {teamDetails?.memberCount > 0 && (
             <Button
               isPrimary={false}
               style={{ minHeight: 30 }}
@@ -59,7 +59,7 @@ const TeamDetails = ({ type, mediator, isInYourTeam }: any) => {
                 router?.push({
                   pathname: "/screens/team/[id]",
                   params: {
-                    id: mediator?._id,
+                    id: mediatorId,
                     role: "mediator",
                     title: t("teamMembers"),
                     type: "details",

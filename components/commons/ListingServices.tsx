@@ -38,9 +38,12 @@ const ListingsServices = ({ item }: any) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
-      Speech.stop();
+      try {
+        Speech.stop();
+      } catch (e) {
+        console.warn("Speech error:", e);
+      }
     });
-
     return unsubscribe;
   }, [navigation]);
 
@@ -56,11 +59,19 @@ const ListingsServices = ({ item }: any) => {
     (selectedUser: any) =>
       (selectedUser?.status === "SELECTED" &&
         selectedUser?.user === userDetails?._id) ||
-      selectedUser?.workers?.some((worker: any) => worker === userDetails?._id)
+      (Array.isArray(selectedUser?.workers) &&
+        selectedUser?.workers.some(
+          (worker: any) =>
+            worker?.worker === userDetails?._id && worker?.status === "SELECTED"
+        ))
   );
 
   const handleSpeakAboutSerivceDetails = () => {
-    const textToSpeak = generateServiceSummary(item, locale?.language, userDetails?.location);
+    const textToSpeak = generateServiceSummary(
+      item,
+      locale?.language,
+      userDetails?.location
+    );
     speakText(textToSpeak, locale?.language, setIsSpeaking);
   };
 
@@ -85,184 +96,183 @@ const ListingsServices = ({ item }: any) => {
             📢 {isSpeaking ? t("speakingAndClose") : t("listenAboutService")}
           </CustomText>
         </TouchableOpacity>
-        <Link href={`/screens/service/${item._id}`} asChild>
-          <TouchableOpacity>
-            {item?.bookingType === "direct" && (
-              <View
-                style={[
-                  styles?.tag,
-                  { backgroundColor: Colors?.tertieryButton },
-                ]}
-              >
-                <CustomText color={Colors?.white} fontWeight="bold">
-                  {t("direct")}
-                </CustomText>
-              </View>
-            )}
+        <TouchableOpacity
+          onPress={() => {
+            if (item._id)
+              router?.push({
+                pathname: "/screens/service/[id]",
+                params: {
+                  id: item._id,
+                  title: "titleMyAllServicesAndBookings",
+                  type: "myServices",
+                  showApplicationDetails: JSON.stringify(true),
+                },
+              });
+          }}
+        >
+          {item?.bookingType === "direct" && (
+            <View
+              style={[styles?.tag, { backgroundColor: Colors?.tertieryButton }]}
+            >
+              <CustomText color={Colors?.white} fontWeight="bold">
+                {t("direct")}
+              </CustomText>
+            </View>
+          )}
 
-            <View style={styles.item}>
-              <Image
-                source={
-                  item?.images?.length > 0
-                    ? { uri: item?.images[0] }
-                    : coverImage
-                }
-                style={styles.image}
-              />
+          <View style={styles.item}>
+            <Image
+              source={
+                item?.images?.length > 0 ? { uri: item?.images[0] } : coverImage
+              }
+              style={styles.image}
+            />
 
-              {userDetails?._id === item?.employer &&
-                item?.bookingType === "byService" && (
-                  <View
-                    style={[
-                      styles.applicants,
-                      { backgroundColor: Colors?.white, gap: 20 },
-                    ]}
-                  >
-                    <View style={styles?.proposalsItem}>
-                      <Ionicons
-                        name="happy"
-                        size={20}
-                        color={Colors.tertieryButton}
-                      />
-                      <View style={styles?.proposalsItemText}>
-                        <CustomHeading color={Colors?.tertieryButton}>
-                          {selectedWorkers}
-                        </CustomHeading>
-                        <CustomHeading color={Colors?.tertieryButton}>
-                          {t("selected")}
-                        </CustomHeading>
-                      </View>
-                    </View>
-
-                    <View style={styles?.proposalsItem}>
-                      <Fontisto
-                        name="persons"
-                        size={18}
-                        color={Colors.primary}
-                      />
-                      <View style={styles?.proposalsItemText}>
-                        <CustomHeading color={Colors?.primary}>
-                          {proposals}
-                        </CustomHeading>
-                        <CustomHeading color={Colors?.primary}>
-                          {t("proposals")}
-                        </CustomHeading>
-                      </View>
-                    </View>
-
-                    <TouchableOpacity
-                      onPress={() =>
-                        router?.push({
-                          pathname: "/screens/service/[id]",
-                          params: {
-                            id: item._id,
-                            title: "titleMyAllServicesAndBookings",
-                            type: "myServices",
-                            showApplicationDetails: JSON.stringify(true),
-                          },
-                        })
-                      }
-                    >
-                      <AntDesign
-                        name="select1"
-                        size={20}
-                        color={Colors.primary}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                )}
-
-              {userDetails?._id !== item?.employer && isSelected && (
+            {userDetails?._id === item?.employer &&
+              item?.bookingType === "byService" && (
                 <View
                   style={[
                     styles.applicants,
-                    { backgroundColor: Colors?.tertiery },
+                    { backgroundColor: Colors?.white, gap: 20 },
                   ]}
                 >
-                  <Ionicons name="happy" size={20} color={Colors.white} />
+                  <View style={styles?.proposalsItem}>
+                    <Ionicons
+                      name="happy"
+                      size={20}
+                      color={Colors.tertieryButton}
+                    />
+                    <View style={styles?.proposalsItemText}>
+                      <CustomHeading color={Colors?.tertieryButton}>
+                        {selectedWorkers}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.tertieryButton}>
+                        {t("selected")}
+                      </CustomHeading>
+                    </View>
+                  </View>
+
+                  <View style={styles?.proposalsItem}>
+                    <Fontisto name="persons" size={18} color={Colors.primary} />
+                    <View style={styles?.proposalsItemText}>
+                      <CustomHeading color={Colors?.primary}>
+                        {proposals}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.primary}>
+                        {t("proposals")}
+                      </CustomHeading>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() =>
+                      router?.push({
+                        pathname: "/screens/service/[id]",
+                        params: {
+                          id: item._id,
+                          title: "titleMyAllServicesAndBookings",
+                          type: "myServices",
+                          showApplicationDetails: JSON.stringify(true),
+                        },
+                      })
+                    }
+                  >
+                    <AntDesign
+                      name="select1"
+                      size={20}
+                      color={Colors.primary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+            {userDetails?._id !== item?.employer && isSelected && (
+              <View
+                style={[
+                  styles.applicants,
+                  { backgroundColor: Colors?.tertiery },
+                ]}
+              >
+                <Ionicons name="happy" size={20} color={Colors.white} />
+                <CustomHeading color={Colors?.white}>
+                  {t("youAreSelected")}
+                </CustomHeading>
+              </View>
+            )}
+
+            {userDetails?._id !== item?.employer &&
+              !isSelected &&
+              proposals > 0 && (
+                <View style={styles.applicants}>
+                  <Fontisto name="persons" size={18} color={Colors.white} />
                   <CustomHeading color={Colors?.white}>
-                    {t("selected")}
+                    {proposals}
+                  </CustomHeading>
+                  <CustomHeading color={Colors?.white}>
+                    {t("proposals")}
                   </CustomHeading>
                 </View>
               )}
 
-              {userDetails?._id !== item?.employer &&
-                !isSelected &&
-                proposals > 0 && (
-                  <View style={styles.applicants}>
-                    <Fontisto name="persons" size={18} color={Colors.white} />
-                    <CustomHeading color={Colors?.white}>
-                      {proposals}
-                    </CustomHeading>
-                    <CustomHeading color={Colors?.white}>
-                      {t("proposals")}
-                    </CustomHeading>
-                  </View>
-                )}
+            <Requirements type="highlights" requirements={item?.requirements} />
 
-              <Requirements
-                type="highlights"
-                requirements={item?.requirements}
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ width: "75%", flexDirection: "column" }}>
-                  <CustomHeading
-                    textAlign="left"
-                    style={{ textTransform: "capitalize", marginRight: 10 }}
-                    baseFont={20}
-                  >
-                    {t(item?.type)} - {t(item?.subType)}
-                  </CustomHeading>
-                </View>
-                <CustomText textAlign="right" style={{ width: "25%" }}>
-                  {getTimeAgo(item?.createdAt)}
-                </CustomText>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ width: "75%", flexDirection: "column" }}>
+                <CustomHeading
+                  textAlign="left"
+                  style={{ textTransform: "capitalize", marginRight: 10 }}
+                  baseFont={20}
+                >
+                  {t(item?.type || "unknown")} - {t(item?.subType || "unknown")}
+                </CustomHeading>
               </View>
+              <CustomText textAlign="right" style={{ width: "25%" }}>
+                {getTimeAgo(item?.createdAt)}
+              </CustomText>
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: 5,
+              }}
+            >
               <View
                 style={{
+                  width: "100%",
                   flexDirection: "column",
-                  justifyContent: "space-between",
                   gap: 5,
                 }}
               >
                 <View
                   style={{
-                    width: "100%",
-                    flexDirection: "column",
-                    gap: 5,
+                    flexDirection: "row",
+                    alignItems: "flex-start",
                   }}
                 >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <ShowAddress address={item?.address} numberOfLines={1} />
-                  </View>
-
-                  <DateDisplay date={item?.startDate} type="startDate" />
+                  <ShowAddress address={item?.address} numberOfLines={1} />
                 </View>
 
-                <View style={styles?.actionContainer}>
-                  <ShowDuration duration={item?.duration} alignment="left" />
-                  <ShowDistance
-                    loggedInUserLocation={userDetails?.location}
-                    targetLocation={item?.location}
-                  />
-                </View>
+                <DateDisplay date={item?.startDate} type="startDate" />
               </View>
-              <ShowFacilities facilities={item?.facilities} />
+
+              <View style={styles?.actionContainer}>
+                <ShowDuration duration={item?.duration} alignment="left" />
+                <ShowDistance
+                  loggedInUserLocation={userDetails?.location}
+                  targetLocation={item?.location}
+                />
+              </View>
             </View>
-          </TouchableOpacity>
-        </Link>
+            <ShowFacilities facilities={item?.facilities} />
+          </View>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -310,7 +320,7 @@ const styles = StyleSheet.create({
   },
   applicants: {
     position: "absolute",
-    top: 158,
+    top: 155,
     right: 5,
     backgroundColor: Colors.primary,
     paddingVertical: 6,

@@ -58,8 +58,12 @@ const BookingDetails = () => {
   let workersList =
     booking?.bookingType === "byService"
       ? [
-          ...(booking?.selectedUsers || []),
-          ...booking.selectedUsers.flatMap((user: any) => user?.workers || []),
+          ...(booking.selectedUsers?.filter(
+            (user: any) => user?.status === "SELECTED"
+          ) || []),
+          ...booking.selectedUsers
+            .filter((user: any) => user?.status === "SELECTED")
+            .flatMap((user: any) => user?.workers || []),
         ]
       : [booking?.bookedWorker];
 
@@ -132,7 +136,7 @@ const BookingDetails = () => {
                     textAlign="left"
                     baseFont={20}
                     color={Colors?.tertieryButton}
-                    style={{ marginVertical: 10 }}
+                    style={{ marginTop: 10, marginBottom: 5 }}
                   >
                     {t("bookedWorker")}
                   </CustomHeading>
@@ -143,6 +147,7 @@ const BookingDetails = () => {
                     ].filter(Boolean)}
                     bookingId={booking?._id}
                     bookingType={booking?.bookingType}
+                    appliedSkill={booking?.appliedSkill}
                     refetch={refetch}
                   />
                 </View>
@@ -170,7 +175,7 @@ const BookingDetails = () => {
                           },
                         })
                       }
-                      style={{ flex: 1, paddingVertical: 6 }}
+                      style={{ flex: 1, paddingVertical: 6, marginTop: 10 }}
                     />
                   ) : (
                     <ButtonComp

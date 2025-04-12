@@ -1,34 +1,8 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  ListRenderItem,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import React from "react";
 import debounce from "lodash/debounce";
 import Colors from "@/constants/Colors";
-import { Entypo, FontAwesome5, Fontisto, Ionicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
-import coverImage from "../../assets/images/placeholder-cover.jpg";
-import { ServiceType } from "@/types/type";
-import {
-  calculateDistance,
-  dateDifference,
-  getTimeAgo,
-} from "@/constants/functions";
-import Atoms from "@/app/AtomStore";
-import { useAtomValue, useSetAtom } from "jotai";
-import moment from "moment";
-import ImageSlider from "./ImageSlider";
-import Requirements from "./Requirements";
-import CustomText from "./CustomText";
-import CustomHeading from "./CustomHeading";
-import { t } from "@/utils/translationHelper";
 import ListingsServices from "./ListingServices";
-import ListingsBookings from "./ListingBookings";
 
 type Props = {
   listings: any[];
@@ -37,40 +11,13 @@ type Props = {
   refreshControl: any;
 };
 
-type RenderItemTypes = {
-  item: {
-    _id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    coverImage: string;
-    images: Array<string>;
-    duration: string;
-    type: string;
-    subType: string;
-    location: any;
-    price: string;
-    address: string;
-    startDate: Date;
-    endDate: Date;
-    appliedBy: Array<string>;
-    selected: Array<string>;
-    requirements: any;
-    employer: any;
-  };
-};
-
 const ListingsVerticalServices = ({
   listings,
   isFetchingNextPage,
   loadMore,
   refreshControl,
 }: Props) => {
-  const RenderItem = React?.memo(({ item }: any) => {
-    return <ListingsServices item={item} />;
-  });
-
-  RenderItem.displayName = "RenderItem";
-  const renderItem = ({ item }: RenderItemTypes) => <RenderItem item={item} />;
+  const renderItem = ({ item }: any) => <ListingsServices item={item} />;
 
   return (
     <View style={{ marginBottom: 30 }}>
@@ -89,11 +36,6 @@ const ListingsVerticalServices = ({
             />
           ) : null
         }
-        getItemLayout={(data, index) => ({
-          length: 100,
-          offset: 100 * index,
-          index,
-        })}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={3}

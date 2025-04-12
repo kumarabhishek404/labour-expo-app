@@ -12,6 +12,8 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
   AntDesign,
+  Ionicons,
+  FontAwesome,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
@@ -25,9 +27,9 @@ export default function Layout() {
   const [notificationCount, setNotificationCount] = useAtom(
     Atoms?.notificationCount
   );
-  const [history, setHistory] = useState<string[]>([]); // Store visited tab history
+  const [history, setHistory] = useState<string[]>([]);
   const currentPath = usePathname();
-  const pathname = usePathname(); // ✅ Get current route
+  const pathname = usePathname();
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   useEffect(() => {
@@ -40,18 +42,19 @@ export default function Layout() {
       }
     };
 
-    if (userDetails?.token && userDetails?.token !== "" && userDetails?._id) {
+    if (
+      userDetails?.token &&
+      userDetails?.token !== "" &&
+      userDetails?._id &&
+      userDetails?.isAuth
+    ) {
       fetchUnreadNotificationsCount();
-
-      // Start polling only if the user is logged in
       const interval = setInterval(fetchUnreadNotificationsCount, 30000);
-
-      return () => clearInterval(interval); // Cleanup when the user logs out
+      return () => clearInterval(interval);
     }
-  }, [userDetails?.token, userDetails?._id]); // Depend on userDetails
+  }, [userDetails?.token, userDetails?._id]);
 
   useEffect(() => {
-    // Update history when path changes, but prevent duplicates
     setHistory((prevHistory) => {
       if (
         prevHistory.length > 0 &&
@@ -65,26 +68,21 @@ export default function Layout() {
 
   useEffect(() => {
     const exitPaths = ["/", "/first", "/second", "/third", "/fourth"];
-
     const backAction = () => {
       if (exitPaths.includes(pathname)) {
-        // ✅ If at home or predefined exit paths, ask for confirmation
         Alert.alert("Exit", "Do you want to exit the app?", [
           { text: "Cancel", style: "cancel" },
           { text: "Exit", onPress: () => BackHandler.exitApp() },
         ]);
       } else {
-        // ✅ Use router.back() for proper navigation
         router?.back();
       }
       return true;
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
   }, [pathname, history]);
 
@@ -113,9 +111,19 @@ export default function Layout() {
       ]).start();
     }, [isSelected]);
 
-    const IconComponent = { MaterialIcons, MaterialCommunityIcons, AntDesign }[
-      iconLibrary
-    ];
+    const IconComponent =
+      {
+        MaterialIcons,
+        MaterialCommunityIcons,
+        AntDesign,
+        Ionicons,
+        FontAwesome,
+      }[iconLibrary] || MaterialIcons;
+
+    if (!IconComponent) {
+      console.error("Icon library not found:", iconLibrary);
+      return null; // or render a default icon / placeholder
+    }
 
     return (
       <TouchableOpacity
@@ -143,24 +151,11 @@ export default function Layout() {
     );
   };
 
+  const isAdmin = userDetails?.isAdmin === true;
+
   return (
     <View style={styles.container}>
       <Tabs screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar }}>
-        <Tabs.Screen
-          name="third"
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/third"
-                title="myBookings"
-                iconName="calendar"
-                iconLibrary="AntDesign"
-              />
-            ),
-          }}
-        />
-
         <Tabs.Screen
           name="fourth"
           options={{
@@ -168,28 +163,10 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/fourth"
-                title="allRequests"
-                iconName="hand-front-right-outline"
-                iconLibrary="MaterialCommunityIcons"
+                title={isAdmin ? "users" : "allRequests"}
+                iconName={isAdmin ? "people-sharp" : "hand-front-right-outline"}
+                iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
               />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarButton: (props) => (
-              <TouchableOpacity
-                style={styles.postButton}
-                onPress={() => router.push("/(tabs)")}
-              >
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={36}
-                  color={Colors.white}
-                />
-              </TouchableOpacity>
             ),
           }}
         />
@@ -201,8 +178,51 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/second"
-                title="search"
-                iconName="search"
+                title={isAdmin ? "services" : "search"}
+                iconName={isAdmin ? "sickle" : "search"}
+                iconLibrary={isAdmin ? "MaterialCommunityIcons" : null}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarButton: (props) =>
+              isAdmin ? (
+                <TabButton
+                  props={props}
+                  path="/(tabs)"
+                  title="teams"
+                  iconName="group"
+                  iconLibrary="FontAwesome"
+                />
+              ) : (
+                <TouchableOpacity
+                  style={styles.postButton}
+                  onPress={() => router.push("/(tabs)")}
+                >
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={36}
+                    color={Colors.white}
+                  />
+                </TouchableOpacity>
+              ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="third"
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                props={props}
+                path="/(tabs)/third"
+                title={isAdmin ? "errors" : "myBookings"}
+                iconName={isAdmin ? "error" : "calendar"}
+                iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
               />
             ),
           }}
@@ -215,8 +235,8 @@ export default function Layout() {
               <TabButton
                 props={props}
                 path="/(tabs)/fifth"
-                title="myProfile"
-                iconName="person-outline"
+                title={isAdmin ? "myProfile" : "myProfile"}
+                iconName={isAdmin ? "person" : "person-outline"}
               />
             ),
           }}

@@ -25,6 +25,7 @@ import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import LOCAL_CONTEXT from "./context/locale";
 import APP_ICON from "../assets/app/adaptive-icon.png";
 import { t } from "@/utils/translationHelper";
+import AppWithErrorBoundary from "@/components/commons/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +52,11 @@ export default function RootLayout() {
         } else {
           const parsedUser = JSON.parse(userData);
           const isTokenValid = await validateToken(parsedUser.token);
-          setIsLoggedIn(isTokenValid);
+          if (isTokenValid && parsedUser?.isAuth) {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+          }
           if (!isTokenValid) {
             await AsyncStorage.removeItem("user");
           }
@@ -155,36 +160,41 @@ function RootLayoutNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <NOTIFICATION_CONTEXT.NotificationProvider>
-        <LOCAL_CONTEXT.LocaleProvider>
-          <PaperProvider>
-            <ToastProvider>
-              {notification && (
-                <NotificationBanner
-                  title={notification.title}
-                  body={notification.body}
-                  onClose={() => setNotification(null)}
+    <AppWithErrorBoundary>
+      <SafeAreaProvider>
+        <NOTIFICATION_CONTEXT.NotificationProvider>
+          <LOCAL_CONTEXT.LocaleProvider>
+            <PaperProvider>
+              <ToastProvider>
+                {notification && (
+                  <NotificationBanner
+                    title={notification.title}
+                    body={notification.body}
+                    onClose={() => setNotification(null)}
+                  />
+                )}
+                <StatusBar
+                  backgroundColor={Colors.primary}
+                  barStyle="light-content"
                 />
-              )}
-              <StatusBar
-                backgroundColor={Colors.primary}
-                barStyle="light-content"
-              />
-              <Stack
-                screenOptions={{
-                  headerShown: true,
-                  animation: "slide_from_right",
-                }}
-              >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
-              <GlobalBottomDrawer />
-              <GlobalSideDrawer />
-            </ToastProvider>
-          </PaperProvider>
-        </LOCAL_CONTEXT.LocaleProvider>
-      </NOTIFICATION_CONTEXT.NotificationProvider>
-    </SafeAreaProvider>
+                <Stack
+                  screenOptions={{
+                    headerShown: true,
+                    animation: "slide_from_right",
+                  }}
+                >
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+                <GlobalBottomDrawer />
+                <GlobalSideDrawer />
+              </ToastProvider>
+            </PaperProvider>
+          </LOCAL_CONTEXT.LocaleProvider>
+        </NOTIFICATION_CONTEXT.NotificationProvider>
+      </SafeAreaProvider>
+    </AppWithErrorBoundary>
   );
 }

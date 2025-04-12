@@ -86,13 +86,17 @@ const ReusableCategoryComponent = ({
           (
             x: number,
             y: number,
-            width: number,
+            itemWidth: number, // Get the actual width of the item
             height: number,
             pageX: number
           ) => {
             if (scrollRef.current) {
+              const screenWidth = width;
+              const scrollToX = pageX - screenWidth / 2 + itemWidth / 4; // Calculate the scroll position to center the item
+              console.log("scrollToX", scrollToX);
+
               scrollRef.current.scrollTo({
-                x: pageX - width / 2,
+                x: Math.max(0, scrollToX * 100), // Ensure we don't scroll to negative values
                 animated: true,
               });
             }
@@ -178,8 +182,6 @@ const styles = StyleSheet.create({
   containerStyle: {
     flexDirection: "row",
     gap: 10,
-    paddingVertical: 6,
-    marginBottom: 3,
   },
   categoryBtn: {
     flexDirection: "row",

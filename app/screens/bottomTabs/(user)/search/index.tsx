@@ -1,19 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import * as Speech from "expo-speech";
-import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 import USER from "@/app/api/user";
-import GradientWrapper from "@/components/commons/GradientWrapper";
-import Colors from "@/constants/Colors";
 
 const Search = () => {
-  const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
@@ -56,7 +53,7 @@ const Search = () => {
       return undefined;
     },
   });
-
+  
   useEffect(() => {
     // Stop any ongoing speech
     Speech.stop();
@@ -77,23 +74,42 @@ const Search = () => {
     React.useCallback(() => {
       const totalData = response?.pages[0]?.pagination?.total;
       setTotalData(totalData);
-      const unsubscribe = setFilteredData(
-        response?.pages.flatMap((page: any) => page.data || [])
+
+      const mergedData = response?.pages.flatMap(
+        (page: any) => page.data || []
       );
-      return () => unsubscribe;
+
+      // ✅ Deduplicate by _id
+      const uniqueData = Object.values(
+        mergedData?.reduce((acc: any, item: any) => {
+          acc[item._id] = item;
+          return acc;
+        }, {}) || {}
+      );
+
+      setFilteredData(uniqueData);
+
+      return () => {}; // Clean-up not needed here
     }, [response])
   );
 
   const loadMore = () => {
+    
     if (hasNextPage && !isFetchingNextPage) {
+      console.log("Load more is called");
       fetchNextPage();
     }
   };
 
-  const memoizedData = useMemo(
-    () => filteredData?.flatMap((data: any) => data),
-    [filteredData]
-  );
+  const memoizedData = useMemo(() => {
+    const unique = Object.values(
+      filteredData?.reduce((acc: any, item: any) => {
+        acc[item._id] = item;
+        return acc;
+      }, {}) || {}
+    );
+    return unique;
+  }, [filteredData]);
 
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
     async () => {

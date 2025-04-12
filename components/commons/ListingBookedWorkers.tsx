@@ -126,7 +126,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
                     })
                   }
                   textStyle={{ fontSize: 16 }}
-                  style={{ width: "50%", marginTop: 10, paddingVertical: 6 }}
+                  style={{ width: "100%", marginTop: 15, paddingVertical: 6 }}
                 />
               )}
             </View>

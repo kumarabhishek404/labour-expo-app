@@ -9,7 +9,7 @@ interface MobileNumberFieldProps {
   countriesPhoneCode?: Array<any>;
   countryCode?: string;
   setCountryCode?: any;
-  phoneNumber: string;
+  mobile: string;
   setPhoneNumber: any;
   onBlur?: any;
   errors: any;
@@ -25,7 +25,7 @@ const MobileNumberField = ({
   countriesPhoneCode,
   countryCode,
   setCountryCode,
-  phoneNumber,
+  mobile,
   setPhoneNumber,
   onBlur,
   errors,
@@ -39,13 +39,13 @@ const MobileNumberField = ({
     <>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <TextInputComponent
-          value={phoneNumber}
+          value={mobile}
           onBlur={onBlur}
           type="number"
           onChangeText={setPhoneNumber}
           placeholder={placeholder}
           maxLength={10}
-          label="phoneNumber"
+          label="mobileNumber"
           name={name}
           isMobileNumberExist={isMobileNumberExist}
           isMobileNumberNotExist={isMobileNumberNotExist}

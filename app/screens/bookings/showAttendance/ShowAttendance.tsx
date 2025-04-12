@@ -124,7 +124,7 @@ export default function ShowAttendanceComponent({
           uri={worker?.workerDetails?.profilePicture}
           style={styles.drawerProfileImage}
         />
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.drawerWorkerName}>
             {worker?.workerDetails?.name}
           </Text>
@@ -226,17 +226,6 @@ export default function ShowAttendanceComponent({
           </>
         )}
       </ScrollView>
-
-      {/* <Drawer
-        title={t("attendanceDetails")}
-        visible={isDrawerVisible}
-        content={addBookingModalContent}
-        onClose={() => setIsDrawerVisible(false)}
-        secondaryButton={{
-          title: t("back"),
-          action: () => setIsDrawerVisible(false),
-        }}
-      /> */}
     </>
   );
 }

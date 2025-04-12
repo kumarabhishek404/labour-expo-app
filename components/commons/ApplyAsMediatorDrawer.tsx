@@ -111,7 +111,7 @@ const ApplyAsMediatorDrawer = ({
                     fontWeight="600"
                     style={styles.buttonItem}
                   >
-                    {skill?.count} {skill?.name}
+                    {skill?.count} {t(skill?.name)}
                   </CustomText>
                 </Button>
               ))}

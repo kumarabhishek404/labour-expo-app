@@ -151,21 +151,6 @@ const UserWorkers = () => {
           />
 
           {memoizedData && memoizedData?.length > 0 ? (
-            // <>
-            //     <ListingsVerticalWorkers
-            //       type="worker"
-            //       availableInterest={WORKERTYPES}
-            //       listings={memoizedData || []}
-            //       loadMore={loadMore}
-            //       isFetchingNextPage={isFetchingNextPage}
-            //       refreshControl={
-            //         <RefreshControl
-            //           refreshing={!isRefetching && refreshing}
-            //           onRefresh={onRefresh}
-            //         />
-            //       }
-            //     />
-            //   ) : (
             <ListingsVerticalServices
               listings={memoizedData || []}
               loadMore={loadMore}

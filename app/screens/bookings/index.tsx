@@ -98,12 +98,12 @@ const Bookings = () => {
           <ListingsBookingsPlaceholder />
         ) : (
           <View style={styles.container}>
-            <PaginationString
+            {/* <PaginationString
               type="bookedWorker"
               isLoading={isLoading || isRefetching}
               totalFetchedData={memoizedBookedWorkers?.length}
               totalData={totalData}
-            />
+            /> */}
 
             {memoizedBookedWorkers?.length > 0 ? (
               <ListingsVerticalBookings // ✅ Fixed component
