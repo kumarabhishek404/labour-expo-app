@@ -130,6 +130,7 @@ const ServiceDetails = () => {
   const {
     isLoading,
     data: response,
+    isFetching,
     refetch,
   } = useQuery({
     queryKey: ["serviceDetails", id],
@@ -642,38 +643,40 @@ const ServiceDetails = () => {
             </Animated.ScrollView>
           </ScrollView>
 
-          {service?.bookingType === "byService" && (
-            <ServiceActionButtons
-              service={service}
-              members={workers}
-              mediatorMobile={mediatorMobile}
-              isSelectedWorkerLoading={isSelectedWorkerLoading}
-              isMemberLoading={isMemberLoading}
-              isMemberFetchingNextPage={isMemberFetchingNextPage}
-              userDetails={userDetails}
-              isAdmin={isAdmin}
-              isSelected={isSelected}
-              isMediatorOrSingleWorker={isMediatorOrSingleWorker}
-              isWorkerBooked={isWorkerBooked}
-              isServiceApplied={isServiceApplied}
-              isServiceAppliedByMediator={isServiceAppliedByMediator}
-              isServiceLiked={isServiceLiked}
-              id={id as string}
-              refetch={refetch}
-              refreshUser={refreshUser}
-              selectedWorkersIds={selectedWorkersIds}
-              setSelectedWorkersIds={setSelectedWorkersIds}
-              setIsWorkerSelectModal={setIsWorkerSelectModal}
-              setModalVisible={setModalVisible}
-              setIsCompleteModalVisible={setIsCompleteModalVisible}
-              hasMemberNextPage={hasMemberNextPage}
-              memberFetchPage={memberFetchPage}
-              setAddService={setAddService}
-              isCompleteModalVisible={isCompleteModalVisible}
-              modalVisible={modalVisible}
-              isWorkerSelectModal={isWorkerSelectModal}
-            />
-          )}
+          {service?.bookingType === "byService" &&
+            !isFetching &&
+            !isLoading && (
+              <ServiceActionButtons
+                service={service}
+                members={workers}
+                mediatorMobile={mediatorMobile}
+                isSelectedWorkerLoading={isSelectedWorkerLoading}
+                isMemberLoading={isMemberLoading}
+                isMemberFetchingNextPage={isMemberFetchingNextPage}
+                userDetails={userDetails}
+                isAdmin={isAdmin}
+                isSelected={isSelected}
+                isMediatorOrSingleWorker={isMediatorOrSingleWorker}
+                isWorkerBooked={isWorkerBooked}
+                isServiceApplied={isServiceApplied}
+                isServiceAppliedByMediator={isServiceAppliedByMediator}
+                isServiceLiked={isServiceLiked}
+                id={id as string}
+                refetch={refetch}
+                refreshUser={refreshUser}
+                selectedWorkersIds={selectedWorkersIds}
+                setSelectedWorkersIds={setSelectedWorkersIds}
+                setIsWorkerSelectModal={setIsWorkerSelectModal}
+                setModalVisible={setModalVisible}
+                setIsCompleteModalVisible={setIsCompleteModalVisible}
+                hasMemberNextPage={hasMemberNextPage}
+                memberFetchPage={memberFetchPage}
+                setAddService={setAddService}
+                isCompleteModalVisible={isCompleteModalVisible}
+                modalVisible={modalVisible}
+                isWorkerSelectModal={isWorkerSelectModal}
+              />
+            )}
 
           {service?.bookingType === "direct" && (
             <BookingActionButtons

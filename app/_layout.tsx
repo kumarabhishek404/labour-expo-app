@@ -38,7 +38,7 @@ export default function RootLayout() {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const fadeAnim = new Animated.Value(0);
   const router = useRouter();
-  const navigationState = useRootNavigationState(); // Check if navigation is ready
+  const navigationState = useRootNavigationState(); // ✅ ALWAYS called at top
 
   useEffect(() => {
     const checkUser = async () => {
@@ -51,18 +51,22 @@ export default function RootLayout() {
           setIsLoggedIn(false);
         } else {
           const parsedUser = JSON.parse(userData);
-          const isTokenValid = await validateToken(parsedUser.token);
-          if (isTokenValid && parsedUser?.isAuth) {
+          const response = await AUTH?.validateToken();
+
+          if (response?.errorCode === "TOKEN_VALID" && parsedUser?.isAuth) {
             setIsLoggedIn(true);
           } else {
             setIsLoggedIn(false);
-          }
-          if (!isTokenValid) {
-            await AsyncStorage.removeItem("user");
+
+            // ⚠️ Only remove user if token is explicitly not valid
+            if (response?.errorCode === "TOKEN_NOT_VALID") {
+              await AsyncStorage.removeItem("user");
+            }
           }
         }
       } catch (err) {
         console.error("Error checking authentication:", err);
+        setIsLoggedIn(false); // fallback
       } finally {
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.max(2000 - elapsedTime, 0);
@@ -89,19 +93,9 @@ export default function RootLayout() {
   // Ensure navigation happens only when root layout is fully mounted
   useEffect(() => {
     if (isAuthChecked && navigationState?.key) {
-      router.replace(isLoggedIn ? "/(tabs)" : "/screens/auth/login");
+      router?.replace(isLoggedIn ? "/(tabs)" : "/screens/auth/login");
     }
   }, [isAuthChecked, isLoggedIn, navigationState?.key]);
-
-  const validateToken = async (token: string | null) => {
-    if (!token) return false;
-    try {
-      const response = await AUTH?.validateToken();
-      return response?.status === 200;
-    } catch {
-      return false;
-    }
-  };
 
   // Show splash screen with animation for 2 seconds
   if (isSplashVisible) {

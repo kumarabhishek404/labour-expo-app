@@ -174,11 +174,15 @@ const verifyEmailCode = async (code: string) => {
 
 const validateToken = async () => {
   try {
-    const response = await API_CLIENT.makeGetRequest("/auth/validate-token");
-    return response;
-  } catch (error) {
-    console.error("Error validating token:", error);
-    throw error;
+    const response: any = await API_CLIENT.makeGetRequest(
+      "/auth/validate-token"
+    );
+
+    console.log("Res----", response?.data);
+    return response?.data;
+  } catch (err) {
+    console.error("Token validation network error:", err);
+    return "FAILURE";
   }
 };
 

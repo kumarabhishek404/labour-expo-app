@@ -34,7 +34,7 @@ const Search = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["allServices", selectedTab],
+    queryKey: [selectedTab === 0 ? "allWorkers" : "allServices", selectedTab],
     queryFn: ({ pageParam }) =>
       selectedTab === 0
         ? USER?.fetchAllUsers({
@@ -53,7 +53,7 @@ const Search = () => {
       return undefined;
     },
   });
-  
+
   useEffect(() => {
     // Stop any ongoing speech
     Speech.stop();
@@ -94,7 +94,6 @@ const Search = () => {
   );
 
   const loadMore = () => {
-    
     if (hasNextPage && !isFetchingNextPage) {
       console.log("Load more is called");
       fetchNextPage();

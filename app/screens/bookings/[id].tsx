@@ -69,6 +69,7 @@ const BookingDetails = () => {
 
   const {
     isLoading,
+    isRefetching,
     data: response,
     refetch,
   } = useQuery({
@@ -303,19 +304,21 @@ const BookingDetails = () => {
         </ScrollView>
       )}
 
-      <BookingActionButtons
-        category={category}
-        booking={booking}
-        userDetails={userDetails}
-        isAdmin={isAdmin}
-        id={id as string}
-        refetch={refetch}
-        refreshUser={refreshUser}
-        setModalVisible={setModalVisible}
-        setIsCompleteModalVisible={setIsCompleteModalVisible}
-        isCompleteModalVisible={isCompleteModalVisible}
-        modalVisible={modalVisible}
-      />
+      {!isLoading && !isRefetching && (
+        <BookingActionButtons
+          category={category}
+          booking={booking}
+          userDetails={userDetails}
+          isAdmin={isAdmin}
+          id={id as string}
+          refetch={refetch}
+          refreshUser={refreshUser}
+          setModalVisible={setModalVisible}
+          setIsCompleteModalVisible={setIsCompleteModalVisible}
+          isCompleteModalVisible={isCompleteModalVisible}
+          modalVisible={modalVisible}
+        />
+      )}
     </>
   );
 };

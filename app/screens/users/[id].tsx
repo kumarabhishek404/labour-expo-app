@@ -67,6 +67,7 @@ const User = () => {
 
   const {
     isLoading,
+    isRefetching,
     data: response,
     refetch,
   } = useQuery({
@@ -260,16 +261,18 @@ const User = () => {
         </View>
       )}
 
-      <ButtonContainer
-        user={user}
-        refetch={refetch}
-        isUserBooked={isUserBooked}
-        isUserLiked={isUserLiked}
-        isUserRequestedToJoinTeam={isUserRequestedToJoinTeam}
-        isInYourTeam={isInYourTeam}
-        isWorkerBookingRequested={isWorkerBookingRequested}
-        isWorkerBooked={isWorkerBooked}
-      />
+      {!isLoading && !isRefetching && (
+        <ButtonContainer
+          user={user}
+          refetch={refetch}
+          isUserBooked={isUserBooked}
+          isUserLiked={isUserLiked}
+          isUserRequestedToJoinTeam={isUserRequestedToJoinTeam}
+          isInYourTeam={isInYourTeam}
+          isWorkerBookingRequested={isWorkerBookingRequested}
+          isWorkerBooked={isWorkerBooked}
+        />
+      )}
     </>
   );
 };

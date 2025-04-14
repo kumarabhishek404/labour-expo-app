@@ -21,6 +21,8 @@ export default function LanguageSelectionScreen() {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
 
+  console.log("locale--", locale);
+
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
     mutationFn: (payload: any) => USER?.updateUserById(payload),

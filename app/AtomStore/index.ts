@@ -6,7 +6,7 @@ const asyncStorage = createJSONStorage(() => AsyncStorage);
 
 const UserAtom = atomWithStorage<any>("user", {}, asyncStorage);
 
-const LanguageAtom = atomWithStorage<any>("language", "", asyncStorage);
+const LanguageAtom = atomWithStorage<any>("language", "hi", asyncStorage);
 
 const EarningAtom = atomWithStorage<any>("earnings", {}, asyncStorage);
 
