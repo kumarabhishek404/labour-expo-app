@@ -11,8 +11,6 @@ const ApplicantSummary = ({
   onShowDetails,
   isLoading,
 }: any) => {
-
-  console.log("appliedCount---", appliedCount);
   
   return (
     <View style={styles.container}>

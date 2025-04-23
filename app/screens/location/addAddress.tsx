@@ -205,8 +205,8 @@ const AddAddressDrawer = ({
 
     if (type === "secondary") setAddress({ address: address });
 
-    setUserDetails({
-      ...userDetails,
+    setUserDetails((prev: any) => ({
+      ...prev,
       ...(isMainAddress
         ? {
             address, // If main address, update the address field
@@ -215,7 +215,7 @@ const AddAddressDrawer = ({
         : {
             savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
           }),
-    });
+    }));
 
     if (isMainAddress)
       mutationUpdateProfileInfo.mutate(
@@ -459,6 +459,9 @@ const AddAddressDrawer = ({
           tabs={["savedAddresses", "addNewAddress"]}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
+          containerStyle={{ backgroundColor: Colors?.background }}
+          textStyle={{ color: Colors?.primary }}
+          indicator={{ backgroundColor: Colors?.primary }}
         />
       )}
       {type === "secondary" || selectedTab === "addNewAddress"
@@ -476,7 +479,18 @@ const AddAddressDrawer = ({
         primaryButton: {
           title: "saveAddress",
           action: handleSubmit(onAddAddress),
-          disabled: !selectedAddress && !locationAddress && !isEditing,
+          disabled:
+            (selectedTab === "savedAddresses" &&
+              userDetails?.savedAddresses?.length === 0) ||
+            (selectedTab === "addNewAddress" &&
+              isEditing &&
+              (!watch("state") ||
+                !watch("district") ||
+                !watch("subDistrict") ||
+                !watch("village") ||
+                pinCode?.length < 6)) ||
+            (selectedTab === "addNewAddress" && !isEditing && !locationAddress),
+          // (!selectedAddress && !isEditing),
         },
         secondaryButton: {
           title: "cancel",
@@ -506,6 +520,7 @@ const AddAddressDrawer = ({
     isFetchingLocation,
     fetchStateDetailsMutation?.isPending,
     mutationUpdateProfileInfo?.isPending,
+    userDetails,
   ]);
 
   return <Loader loading={mutationUpdateProfileInfo?.isPending} />;

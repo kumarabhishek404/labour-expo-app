@@ -67,7 +67,6 @@ const LocationField = ({
         placeholder={t("selectAddress")}
         options={allSavedAddresses}
         errors={isError}
-        search={false}
         icon={
           <Ionicons
             name={"location"}

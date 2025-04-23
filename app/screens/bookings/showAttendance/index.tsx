@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ATTENDANCE from "@/app/api/attendance";
-import Loader from "@/components/commons/Loaders/Loader";
 import { Stack, useLocalSearchParams } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
 import ShowAttendanceComponent from "@/app/screens/bookings/showAttendance/ShowAttendance";
+import SingleUserAttendanceSkeleton from "@/components/commons/LoadingPlaceholders/Attendance";
 
 export default function ShowAttendance() {
   const { bookingDetails }: any = useLocalSearchParams();
@@ -36,9 +36,14 @@ export default function ShowAttendance() {
           ),
         }}
       />
-
-      <Loader loading={isLoading || isRefetching} />
-      <ShowAttendanceComponent booking={booking} attendanceReport={attendanceReport} />
+      {isLoading || isRefetching ? (
+        <SingleUserAttendanceSkeleton />
+      ) : (
+        <ShowAttendanceComponent
+          booking={booking}
+          attendanceReport={attendanceReport}
+        />
+      )}
     </>
   );
 }

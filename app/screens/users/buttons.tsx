@@ -38,8 +38,6 @@ const ButtonContainer = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      type: "",
-      subType: "",
       appliedSkill: {},
       address: userDetails?.address || "",
       location: {},
@@ -87,8 +85,6 @@ const ButtonContainer = ({
     console.log("handleSubmitBooking", data);
 
     if (
-      !data?.type ||
-      !data?.subType ||
       !data?.appliedSkill ||
       !data?.address ||
       !data?.startDate ||
@@ -101,8 +97,6 @@ const ButtonContainer = ({
 
     formData.append("requiredNumberOfWorkers", data?.noOfWorkers);
     formData.append("userId", id);
-    formData.append("type", data?.type);
-    formData.append("subType", data?.subType);
     formData.append("duration", data?.duration);
     formData.append("description", data?.description);
     formData.append("address", data?.address);
@@ -113,16 +107,15 @@ const ButtonContainer = ({
 
     console.log("Form data --", formData);
 
-    // const response: any = mutationAddBookingRequest?.mutate(formData);
-    // return response?.data;
+    const response: any = mutationAddBookingRequest?.mutate(formData);
+    return response?.data;
   };
 
   useEffect(() => {
-    if (watch("type")) {
-      setDrawerState((prevState: any) => ({
-        ...prevState, // Preserve existing drawer state
-        visible: true,
-        title: "addBookingDetails",
+    setDrawerState((prevState: any) => {
+      if (!prevState?.visible) return prevState;
+      return {
+        ...prevState,
         content: () => (
           <AddBookingDetails
             control={control}
@@ -132,17 +125,19 @@ const ButtonContainer = ({
             workerSkills={user?.skills}
           />
         ),
-        primaryButton: {
-          title: "addBookingDetails",
-          action: handleSubmit(handleSubmitBooking),
-        },
-        secondaryButton: {
-          title: "cancel",
-          action: () => setDrawerState({ visible: false }),
-        },
-      }));
-    }
-  }, [watch("type"), watch("facilities")]); // ✅ Re-renders drawer when 'type' and 'facilities changes
+      };
+    });
+  }, [
+    watch("appliedSkill"),
+    watch("facilities"),
+    watch("duration"),
+    watch("noOfWorkers"),
+    watch("startDate"),
+    watch("address"),
+    errors,
+  ]); // ✅ Re-renders drawer when 'appliedSkill' and 'facilities changes
+
+  console.log("err---", errors);
 
   const handleAddBookingDetails = () => {
     setDrawerState({

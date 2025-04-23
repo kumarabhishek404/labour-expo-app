@@ -43,7 +43,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, type }) => {
 
     return (
       <CustomText textAlign="left">
-        📅 {"  "}
+        📅{" "}
         {t("dateRange", { startDate: formattedStart, endDate: formattedEnd })}
       </CustomText>
     );
@@ -75,12 +75,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, type }) => {
       day: translatedWeekday,
     });
 
-    return (
-      <CustomText textAlign="left">
-        📅 {"  "}
-        {displayText}
-      </CustomText>
-    );
+    return <CustomText textAlign="left">📅 {displayText}</CustomText>;
   }
 };
 

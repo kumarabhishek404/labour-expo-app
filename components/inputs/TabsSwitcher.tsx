@@ -16,6 +16,8 @@ const ProfileTabs = ({
   selectedTab,
   setSelectedTab,
   containerStyle,
+  textStyle,
+  indicator,
 }: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -53,6 +55,7 @@ const ProfileTabs = ({
           style={[
             styles.activeIndicator,
             { transform: [{ translateX }], width: `${tabWidth / 4}%` },
+            indicator,
           ]}
         />
         {tabs.map((tab: string, index: number) => (
@@ -66,6 +69,7 @@ const ProfileTabs = ({
                 styles.tabText,
                 selectedTab === tab && styles.activeTabText,
                 { opacity: selectedTab === tab ? opacityAnim : 0.6 },
+                textStyle,
               ]}
             >
               {tabCounts && tabCounts[index] ? tabCounts[index] : ""} {t(tab)}

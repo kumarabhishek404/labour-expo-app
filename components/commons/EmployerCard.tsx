@@ -11,15 +11,7 @@ import ProfilePicture from "./ProfilePicture";
 
 const EmployerCard = ({ employer }: any) => {
   return (
-    <View
-      style={[
-        styles.employerContainer,
-        {
-          marginVertical: 10,
-          marginHorizontal: 15,
-        },
-      ]}
-    >
+    <View style={[styles.employerContainer]}>
       <View
         style={[
           styles.card,
@@ -36,7 +28,6 @@ const EmployerCard = ({ employer }: any) => {
           style={{ width: "60%", gap: 10, justifyContent: "space-between" }}
         >
           <View style={{ gap: 2 }}>
-            <CustomHeading textAlign="left">{t("employer")}</CustomHeading>
             <CustomText textAlign="left">
               <CustomText style={styles?.employerLabel}>
                 {t("name")} :{" "}

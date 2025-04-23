@@ -168,13 +168,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   skillsContainer: {
-    marginVertical: 5,
+    marginTop: 5,
   },
   skillTag: {
     backgroundColor: "#e0e0e0",
     borderRadius: 5,
     marginVertical: 0,
-    marginBottom: 5,
   },
   skillTagText: {
     fontSize: 10,

@@ -44,6 +44,15 @@ export const setI18nLocale = (locale: string) => {
   i18n.locale = locale;
 };
 
+// Function to get dynamic worker type translation
+export const getDynamicWorkerType = (key: string, count: number): string => {
+  const translations = i18n.t(key);
+  if (translations && translations.singular && translations.plural) {
+    return count === 1 ? translations.singular : translations.plural;
+  }
+  return i18n.t(key); // Fallback to the regular translation if singular/plural not found
+};
+
 // Custom hook to use `t` directly
 export const useTranslation = () => {
   const t = useCallback(

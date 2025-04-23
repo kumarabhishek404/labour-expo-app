@@ -31,7 +31,12 @@ const TextAreaInputComponent = ({
   return (
     <View style={styles?.inputField}>
       {label && (
-        <CustomHeading textAlign="left" color={Colors?.inputLabel}>
+        <CustomHeading
+          textAlign="left"
+          color={Colors?.inputLabel}
+          baseFont={18}
+          fontWeight="600"
+        >
           {t(label)}
         </CustomHeading>
       )}

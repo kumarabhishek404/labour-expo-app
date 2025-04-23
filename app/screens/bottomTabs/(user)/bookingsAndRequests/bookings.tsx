@@ -27,6 +27,7 @@ import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
+import { getToken } from "@/utils/authStorage";
 
 const Bookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -49,20 +50,20 @@ const Bookings = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["myServices", category],
-    queryFn: ({ pageParam }) => {
+    queryKey: ["myServices", category, userDetails?._id],
+    queryFn: async ({ pageParam = 1 }) => {
+      const token = await getToken();
+      if (!token || !userDetails?._id || !userDetails?.isAuth) {
+        throw new Error("Unauthorized: Missing token or user details");
+      }
+
       return category === "selected"
-        ? WORKER?.fetchAllMyBookings({
-            pageParam,
-          })
-        : WORKER?.fetchMyAppliedServices({
-            pageParam,
-          });
+        ? await WORKER?.fetchAllMyBookings({ pageParam })
+        : await WORKER?.fetchMyAppliedServices({ pageParam });
     },
     retry: false,
     initialPageParam: 1,
-    enabled:
-      !!userDetails?._id && !!userDetails?.token && !!userDetails?.isAuth,
+    enabled: !!userDetails?._id && !!userDetails?.isAuth,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -221,8 +222,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingHorizontal: 15,
-    paddingVertical: 20,
-    // backgroundColor: Colors?.fourth,
   },
   applicationText: {
     flex: 1,

@@ -12,8 +12,8 @@ import Colors from "@/constants/Colors";
 import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import ReusableCategoryComponent from "../inputs/CategoryButtons";
 import CustomText from "./CustomText";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const ApplyAsMediatorDrawer = ({
   isDrawerVisible,
@@ -94,7 +94,11 @@ const ApplyAsMediatorDrawer = ({
         title: "applyAsMediator",
         content: () => (
           <View style={{ paddingVertical: 10 }}>
-            <ScrollView horizontal contentContainerStyle={styles.skillButtons}>
+            <ScrollView
+              horizontal
+              contentContainerStyle={styles.skillButtons}
+              showsHorizontalScrollIndicator={false}
+            >
               {requirements?.map((skill: any, index: number) => (
                 <Button
                   key={index}
@@ -111,11 +115,13 @@ const ApplyAsMediatorDrawer = ({
                     fontWeight="600"
                     style={styles.buttonItem}
                   >
-                    {skill?.count} {t(skill?.name)}
+                    {skill?.count}{" "}
+                    {getDynamicWorkerType(skill?.name, skill?.count)}
                   </CustomText>
                 </Button>
               ))}
             </ScrollView>
+
             <ScrollView style={{ maxHeight: 300 }}>
               {matchedMembers.length > 0 ? (
                 matchedMembers.map((member: any, index: number) => {

@@ -6,6 +6,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomeAnimatedHeading from "./CustomeAnimatedHeading";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface RequirementsProps {
   type: string;
@@ -24,7 +25,11 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
                 color={Colors?.white}
                 style={{ textTransform: "capitalize" }}
               >
-                {requirement?.count} {t(`${requirement?.name}`)}
+                {requirement?.count}{" "}
+                {`${getDynamicWorkerType(
+                  requirement?.name,
+                  requirement?.count
+                )}`}
               </CustomHeading>
               <CustomText color={Colors?.white} baseFont={12}>
                 ₹ {requirement?.payPerDay} {t("perDay")}
@@ -37,9 +42,9 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
           {requirements?.map((requirement: any, index: number) => (
             <View key={index} style={styles.smallTag}>
               <CustomText style={styles.smallRequirementText}>
-                {requirement.count} {t(requirement.name)} • ₹
-                {requirement.payPerDay}
-                /{t('days')}
+                {requirement.count}{" "}
+                {getDynamicWorkerType(requirement?.name, requirement?.count)} •
+                ₹{requirement.payPerDay}/{t("days")}
               </CustomText>
             </View>
           ))}
@@ -52,7 +57,10 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
               <View style={styles.card} key={index}>
                 <View style={styles.header}>
                   <CustomHeading style={{ textTransform: "capitalize" }}>
-                    {t(`${requirement?.name}`)}
+                    {getDynamicWorkerType(
+                      requirement?.name,
+                      requirement?.count
+                    )}
                   </CustomHeading>
                   <CustomText
                     baseFont={17}

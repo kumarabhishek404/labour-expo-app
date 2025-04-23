@@ -16,7 +16,7 @@ const ShowAddress: React.FC<ShowAddressProps> = ({
   return (
     <View style={styles.container}>
       <CustomText textAlign="left" baseFont={17} numberOfLines={numberOfLines}>
-        📍
+        📍{' '}
       </CustomText>
       <CustomText
         textAlign="left"

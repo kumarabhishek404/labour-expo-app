@@ -16,9 +16,9 @@ const NumberOfWorkers = ({
     <View style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <View style={styles.container}>
         <CustomHeading
-          baseFont={16}
+          baseFont={18}
           color={Colors?.inputLabel}
-          fontWeight="500"
+          fontWeight="600"
         >
           {t("noOfWorkers")}
         </CustomHeading>

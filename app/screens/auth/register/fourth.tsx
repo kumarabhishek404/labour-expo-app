@@ -121,13 +121,10 @@ const UpdateUserSkillsScreen = () => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <SkillsSelector
-                  name="skills"
                   isPricePerDayNeeded={true}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
                   availableOptions={WORKTYPES}
-                  onBlur={onBlur}
-                  errors={errors}
                 />
               )}
             />
@@ -142,13 +139,10 @@ const UpdateUserSkillsScreen = () => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <SkillsSelector
-                  name="skills"
                   isPricePerDayNeeded={false}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
                   availableOptions={WORKTYPES}
-                  onBlur={onBlur}
-                  errors={errors}
                 />
               )}
             />

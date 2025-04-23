@@ -14,6 +14,7 @@ import { t } from "@/utils/translationHelper";
 import { filterWorkerTypes } from "@/constants/functions";
 import PaperDropdown from "@/components/inputs/Dropdown";
 import CustomCheckbox from "../commons/CustomCheckbox";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface WorkRequirmentProps {
   label?: string;
@@ -179,19 +180,21 @@ const WorkRequirment = ({
             <View style={styles.addRequirment}>
               <View style={{ zIndex: 7 }}>
                 <PaperDropdown
-                  selectedValue={requirement?.name}
+                  selectedValue={
+                    requirement?.name
+                      ? getDynamicWorkerType(requirement?.name, 1)
+                      : ""
+                  }
                   onSelect={(name: any) =>
                     handleRequirementTypeChange(index, name)
                   }
-                  translationEnabled
                   placeholder={
                     subType
-                      ? "selectWorkRequirementType"
-                      : "pleaseSelectWorkTypeAndSubTypeFirst"
+                      ? t("selectWorkRequirementType")
+                      : t("pleaseSelectWorkTypeAndSubTypeFirst")
                   }
                   options={getFilteredWorkerTypes(index) ?? []}
                   errors={errors}
-                  search={false}
                   icon={
                     <CustomHeading baseFont={20} color={Colors?.secondary}>
                       {index + 1}

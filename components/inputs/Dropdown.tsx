@@ -39,8 +39,10 @@ const PaperDropdown = ({
   };
 
   // Filter options based on search input
-  const filteredOptions = options?.filter((item: any) =>
-    item?.label?.toLowerCase()?.includes(searchText?.toLowerCase())
+  const filteredOptions = options?.filter(
+    (item: any) =>
+      item?.label?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      item?.value?.toLowerCase()?.includes(searchText?.toLowerCase())
   );
 
   return (

@@ -120,15 +120,15 @@ const UserProfile = () => {
       let user = response?.data?.data;
       setIsEditProfile(false);
       setProfilePicture(user?.profilePicture);
-      setUserDetails({
-        ...userDetails,
+      setUserDetails((prev: any) => ({
+        ...prev,
         name: user?.name,
         profilePicture: user?.profilePicture,
         email: {
           value: user?.email?.value,
           isVerified: false,
         },
-      });
+      }));
     },
     onError: (err) => {
       console.error("error while updating the profile ", err);
@@ -142,10 +142,10 @@ const UserProfile = () => {
     onSuccess: (response) => {
       let user = response?.data?.data;
       setProfilePicture(user?.profilePicture);
-      setUserDetails({
-        ...userDetails,
+      setUserDetails((prev: any) => ({
+        ...prev,
         profilePicture: user?.profilePicture,
-      });
+      }));
     },
   });
 
@@ -179,7 +179,10 @@ const UserProfile = () => {
     mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails({ ...userDetails, skills: user?.skills });
+      setUserDetails((prev: any) => ({
+        ...prev,
+        skills: user?.skills,
+      }));
       setSelectedSkills([]);
       TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
@@ -194,7 +197,10 @@ const UserProfile = () => {
     mutationFn: (skill: string) => USER?.removeSkill({ skillName: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails({ ...userDetails, skills: user?.skills });
+      setUserDetails((prev: any) => ({
+        ...prev,
+        skills: user?.skills,
+      }));
       setSelectedSkills([]);
       TOAST?.success(t("skillRemovedSuccessfully"));
       console.log("Response while removing skill from the worker - ", response);

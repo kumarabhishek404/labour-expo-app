@@ -61,8 +61,8 @@ const BookingActionButtons = ({
     mutationKey: ["completeService", { id }],
     mutationFn: () => EMPLOYER?.completeBooking({ serviceId: id }),
     onSuccess: async (response) => {
-      await refetch();
-      await refreshUser();
+      refetch();
+      refreshUser();
       queryClient.invalidateQueries({ queryKey: ["bookedWorkers"] });
       TOAST?.success(t("serviceCompletedSuccessfully"));
       console.log("Response while completing a booking - ", response);
@@ -162,7 +162,7 @@ const BookingActionButtons = ({
           />
         );
 
-      case booking.employer?._id !== userDetails?._id &&
+      case booking.employer !== userDetails?._id &&
         (booking.status === "HIRING" || booking.status === "PENDING"):
         return (
           <Button
@@ -175,7 +175,7 @@ const BookingActionButtons = ({
           />
         );
 
-      case booking.employer?._id === userDetails?._id &&
+      case booking.employer === userDetails?._id &&
         booking.status !== "CANCELLED" &&
         booking.status !== "COMPLETED":
         return (

@@ -107,6 +107,8 @@ const BookingDetails = () => {
     }, [response])
   );
 
+  console.log("booking?.bookedWorker-", booking?.bookedWorker);
+
   return (
     <>
       <Stack.Screen
@@ -136,8 +138,8 @@ const BookingDetails = () => {
                   <CustomHeading
                     textAlign="left"
                     baseFont={20}
-                    color={Colors?.tertieryButton}
-                    style={{ marginTop: 10, marginBottom: 5 }}
+                    color={Colors?.black}
+                    style={{ marginTop: 10, marginBottom: 10 }}
                   >
                     {t("bookedWorker")}
                   </CustomHeading>
@@ -252,17 +254,48 @@ const BookingDetails = () => {
                 </View>
               )}
 
-              <CustomHeading
-                textAlign="left"
-                baseFont={20}
-                color={Colors?.tertieryButton}
-                style={{ marginBottom: 10, marginTop: 10 }}
-              >
-                {t("bookingDetails")}
-              </CustomHeading>
-              <CustomHeading baseFont={18} textAlign="left">
-                {t(booking?.type)} - {t(booking?.subType)}
-              </CustomHeading>
+              <View style={{ marginTop: 20, marginBottom: 10 }}>
+                {booking?.type &&
+                  booking?.subType &&
+                  booking?.bookingType === "byService" && (
+                    <CustomHeading baseFont={18} textAlign="left">
+                      {t(booking?.type)} - {t(booking?.subType)}
+                    </CustomHeading>
+                  )}
+
+                {booking?.appliedSkill && booking?.appliedSkill?.skill && (
+                  <View
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 10,
+                    }}
+                  >
+                    <CustomHeading
+                      baseFont={20}
+                      textAlign="left"
+                      style={{
+                        flex: 1,
+                      }}
+                    >
+                      {t(booking?.appliedSkill?.skill)}
+                    </CustomHeading>
+
+                    {booking?.appliedSkill?.pricePerDay && (
+                      <CustomHeading
+                        baseFont={20}
+                        textAlign="right"
+                        color={Colors?.tertieryButton}
+                        style={{ width: "35%" }}
+                      >
+                        {booking?.appliedSkill?.pricePerDay} {t("perDay")}
+                      </CustomHeading>
+                    )}
+                  </View>
+                )}
+              </View>
+
               <View style={styles.listingLocationWrapper}>
                 <ShowAddress address={booking?.address} />
               </View>
@@ -294,17 +327,26 @@ const BookingDetails = () => {
                   requirements={booking?.requirements}
                 />
               )}
-            </View>
 
-            {booking?.employer?._id &&
-              booking?.employer?._id !== userDetails?._id && (
-                <EmployerCard employer={booking?.employer} />
-              )}
+              {booking?.employer?._id &&
+                booking?.employer?._id !== userDetails?._id && (
+                  <View style={{ marginTop: 20 }}>
+                    <CustomHeading
+                      textAlign="left"
+                      baseFont={20}
+                      color={Colors?.black}
+                    >
+                      {t("employer")}
+                    </CustomHeading>
+                    <EmployerCard employer={booking?.employer} />
+                  </View>
+                )}
+            </View>
           </Animated.ScrollView>
         </ScrollView>
       )}
 
-      {!isLoading && !isRefetching && (
+      {!isLoading && (
         <BookingActionButtons
           category={category}
           booking={booking}

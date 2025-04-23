@@ -261,7 +261,7 @@ const User = () => {
         </View>
       )}
 
-      {!isLoading && !isRefetching && (
+      {!isLoading && (
         <ButtonContainer
           user={user}
           refetch={refetch}

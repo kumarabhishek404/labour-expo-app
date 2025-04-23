@@ -14,8 +14,13 @@ import Loader from "./Loaders/Loader";
 import PaperDropdown from "../inputs/Dropdown";
 import CustomSegmentedButton from "@/app/screens/bottomTabs/(user)/bookingsAndRequests/customTabs";
 import { set } from "lodash";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
-const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible, filteredSkills }: any) => {
+const AddSkillDrawer = ({
+  isDrawerVisible,
+  setIsDrawerVisible,
+  filteredSkills,
+}: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [skillWithPrice, setSkillWithPrice] = useState<any>(null);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
@@ -32,7 +37,10 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible, filteredSkills }:
     mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails({ ...userDetails, skills: user?.skills });
+      setUserDetails((prev: any) => ({
+        ...prev,
+        skills: user?.skills,
+      }));
       TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
@@ -119,14 +127,13 @@ const AddSkillDrawer = ({ isDrawerVisible, setIsDrawerVisible, filteredSkills }:
             <PaperDropdown
               name="addSkill"
               label="selectSkill"
-              selectedValue={selectedSkill}
+              selectedValue={
+                selectedSkill ? getDynamicWorkerType(selectedSkill, 1) : ""
+              }
               onSelect={(skill: string) => handleSkillSelection(skill)}
-              translationEnabled
               searchEnabled
-              placeholder="searchAndSelectSkills"
-              options={filteredSkills ?? WORKERTYPES}
-              // errors={errors}
-              search={false}
+              placeholder={t("searchAndSelectSkills")}
+              options={filteredSkills}
               icon={
                 <MaterialCommunityIcons
                   style={styles.icon}

@@ -11,6 +11,8 @@ import ShowAddress from "./ShowAddress";
 import ShowDuration from "./ShowDuration";
 
 const ListingsBookings = ({ title, item, category }: any) => {
+  console.log("item --", item?.appliedSkill);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -34,26 +36,65 @@ const ListingsBookings = ({ title, item, category }: any) => {
           </CustomText>
         </View>
         <View style={styles.card}>
-          <CustomText
-            textAlign="left"
-            fontWeight="600"
-            style={{ marginBottom: 5 }}
-          >
-            {getTimeAgo(item?.createdAt)}
-          </CustomText>
-          <View style={styles.infoContainer}>
-            <View style={{ width: "76%" }}>
+          {item?.appliedSkill?.pricePerDay && (
+            <View>
               <CustomHeading
-                color={Colors?.primary}
+                color={Colors?.tertieryButton}
                 textAlign="left"
                 baseFont={20}
               >
-                {t(item?.type)} - {t(item?.subType)}
+                {item?.appliedSkill?.pricePerDay} {t("perDay")}
               </CustomHeading>
             </View>
-            <ShowAddress address={item?.address} numberOfLines={1} />
-            <DateDisplay date={item?.startDate} type="startDate" />
-            <ShowDuration duration={item?.duration} />
+          )}
+          <View style={styles.infoContainer}>
+            <View style={{ width: "76%" }}>
+              {item?.appliedSkill && item?.appliedSkill?.skill ? (
+                <CustomHeading
+                  color={Colors?.primary}
+                  textAlign="left"
+                  baseFont={20}
+                >
+                  {t(item?.appliedSkill?.skill)}
+                </CustomHeading>
+              ) : (
+                <CustomHeading
+                  color={Colors?.primary}
+                  textAlign="left"
+                  baseFont={20}
+                >
+                  {t(item?.subType)}
+                </CustomHeading>
+              )}
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: 5,
+              }}
+            >
+              <View
+                style={{
+                  width: "70%",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 8,
+                }}
+              >
+                <ShowAddress address={item?.address} numberOfLines={1} />
+                <DateDisplay date={item?.startDate} type="startDate" />
+                <ShowDuration duration={item?.duration} />
+              </View>
+              <CustomText
+                textAlign="left"
+                fontWeight="600"
+                style={{ marginBottom: 5 }}
+              >
+                {getTimeAgo(item?.createdAt)}
+              </CustomText>
+            </View>
           </View>
         </View>
       </TouchableOpacity>

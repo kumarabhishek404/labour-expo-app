@@ -69,14 +69,14 @@ const ProfileNotification: React.FC = () => {
     onSuccess: (response) => {
       let user = response?.data?.data;
       refreshUser();
-      setUserDetails({
-        ...userDetails,
+      setUserDetails((prev: any) => ({
+        ...prev,
         email: user?.email?.value,
         address: user?.address,
         location: user?.location,
         dateOfBirth: user?.dateOfBirth,
         gender: user?.gender,
-      });
+      }));
       setDrawerState({ visible: false }); // Close the drawer after success
     },
     onError: (err) => {
@@ -126,7 +126,6 @@ const ProfileNotification: React.FC = () => {
                   name="email"
                   email={value}
                   setEmail={onChange}
-                  onBlur={onBlur}
                   errors={errors}
                   placeholder={t("enterYourEmailAddress")}
                   icon={
@@ -157,8 +156,6 @@ const ProfileNotification: React.FC = () => {
                     location={location}
                     setLocation={setLocation}
                     selectedOption={selectedOption}
-                    setSelectedOption={setSelectedOption}
-                    onBlur={onBlur}
                     errors={errors}
                   />
                 )}
@@ -193,7 +190,6 @@ const ProfileNotification: React.FC = () => {
                   type="dateOfBirth"
                   date={moment(value)}
                   setDate={onChange}
-                  onBlur={onBlur}
                   errors={errors}
                 />
               )}

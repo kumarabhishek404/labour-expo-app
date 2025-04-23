@@ -26,6 +26,7 @@ import { useMutation } from "@tanstack/react-query";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { Badge, Divider } from "react-native-paper";
 import BadgeComponent from "./Badge";
+import { removeToken } from "@/utils/authStorage";
 
 const ProfileMenu = ({ disabled }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -57,22 +58,20 @@ const ProfileMenu = ({ disabled }: any) => {
     setIsAdmin(userDetails?.isAdmin);
   }, [userDetails?.role]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUserDetails({
       isAuth: false,
       _id: "",
-      token: "",
     });
+    await removeToken();
     router.navigate("/screens/auth/login");
   };
 
   const registerNotification = async () => {
     try {
-      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-        notificationConsent
-      );
+      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(true);
       setNotificationConsent(true);
-      TOAST?.success("Notifications enabled");
+      TOAST?.success(t("notificationsEnabled"));
       console.log("Notifications enabled");
     } catch (err) {
       console.error("Failed to enable notifications", err);
@@ -164,9 +163,7 @@ const ProfileMenu = ({ disabled }: any) => {
     },
     {
       title: t("yourTeam"),
-      icon: (
-        <AntDesign name="team" size={28} color={Colors.primary} />
-      ),
+      icon: <AntDesign name="team" size={28} color={Colors.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/team/[id]",
@@ -212,7 +209,9 @@ const ProfileMenu = ({ disabled }: any) => {
     },
     {
       title: t("savedWorkers"),
-      icon: <MaterialIcons name="people-outline" size={28} color={Colors.primary} />,
+      icon: (
+        <MaterialIcons name="people-outline" size={28} color={Colors.primary} />
+      ),
       onPress: () =>
         router?.push({
           pathname: "/screens/users",

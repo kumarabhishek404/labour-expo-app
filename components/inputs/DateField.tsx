@@ -37,7 +37,7 @@ const DateField: React.FC<DateFieldProps> = ({
         onPress={() => setShowDatePicker(true)}
       >
         <View style={styles.dateItem}>
-          <CustomHeading baseFont={16} fontWeight="500">
+          <CustomHeading baseFont={18} fontWeight="600">
             {title}
           </CustomHeading>
           <View style={styles?.calendar}>

@@ -928,8 +928,8 @@ export const WORKTYPES = [
         ],
       },
       {
-        label: "securityGuards",
-        value: "securityGuards",
+        label: "security",
+        value: "security",
         workerTypes: [{ label: "securityGuards", value: "securityGuards" }],
       },
       {

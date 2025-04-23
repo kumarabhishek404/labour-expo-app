@@ -28,16 +28,14 @@ const RadioSkillSelector: React.FC<RadioSkillSelectorProps> = ({
   onChange,
   options,
 }) => {
-  console.log("options---", options);
-
   return (
     <View style={styles.container}>
       {label && (
         <CustomHeading
           textAlign="left"
           color={Colors?.inputLabel}
-          baseFont={16}
-          fontWeight="500"
+          baseFont={18}
+          fontWeight="600"
         >
           {t(label)}
         </CustomHeading>
@@ -56,7 +54,11 @@ const RadioSkillSelector: React.FC<RadioSkillSelectorProps> = ({
             <View
               style={[styles.radioCircle, isSelected && styles.radioSelected]}
             />
-            <CustomText baseFont={18}>{`${t(option.skill)} - ${
+            <CustomText
+              textAlign="left"
+              style={{ flex: 1 }}
+              baseFont={18}
+            >{`${t(option.skill)} - ${
               option.pricePerDay
                 ? `₹${option.pricePerDay} / ${t("perDay")}`
                 : t("notAdded")
@@ -83,8 +85,9 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   optionContainer: {
+    flex: 1,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     padding: 10,
   },
   selectedOption: {
@@ -100,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
+    marginTop: 4,
   },
   radioSelected: {
     backgroundColor: Colors.primary,

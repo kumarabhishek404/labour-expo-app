@@ -9,6 +9,7 @@ import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 import USER from "@/app/api/user";
+import Colors from "@/constants/Colors";
 
 const Search = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -80,7 +81,7 @@ const Search = () => {
       );
 
       // ✅ Deduplicate by _id
-      const uniqueData = Object.values(
+      const uniqueData: any = Object.values(
         mergedData?.reduce((acc: any, item: any) => {
           acc[item._id] = item;
           return acc;
@@ -117,7 +118,7 @@ const Search = () => {
   );
 
   return (
-    <>
+    <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
       <TabSwitcher
         tabs={TABS}
         actvieTab={selectedTab}
@@ -125,7 +126,7 @@ const Search = () => {
       />
 
       <View style={styles.container}>
-        <View style={{ flex: 1, justifyContent: "flex-start", gap: 20 }}>
+        <View style={{ flex: 1 }}>
           {selectedTab === 0 && (
             <AllWorkers
               isLoading={isLoading}
@@ -152,7 +153,7 @@ const Search = () => {
           )}
         </View>
       </View>
-    </>
+    </View>
   );
 };
 
@@ -163,7 +164,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "space-between",
     minHeight: "100%",
-    // paddingBottom: 75,
   },
   shadowBox: {
     shadowColor: "#000", // Subtle black shadow

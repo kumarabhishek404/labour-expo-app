@@ -19,9 +19,10 @@ import AUTH from "@/app/api/auth";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loaders/Loader";
+import { saveToken } from "@/utils/authStorage";
 
 interface FormData {
   mobile: string;
@@ -30,8 +31,7 @@ interface FormData {
 // Same import section...
 
 const RegisterScreen: React.FC = () => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  const setUserDetails = useSetAtom(Atoms?.UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const locale = useAtomValue(Atoms?.LocaleAtom);
   const { userId } = useLocalSearchParams();
 
@@ -97,8 +97,8 @@ const RegisterScreen: React.FC = () => {
   const mutationRegister = useMutation({
     mutationKey: ["register"],
     mutationFn: (payload) => AUTH.register(payload),
-    onSuccess: (data) => {
-      setUserDetails({ token: data?.data?.token });
+    onSuccess: async (data) => {
+      await saveToken(data?.data?.token)
       router.push({
         pathname: "/screens/auth/register/second",
         params: { userId: userId || data?.data?.userId },
@@ -110,69 +110,64 @@ const RegisterScreen: React.FC = () => {
   const checkMobileNumber = useMutation({
     mutationFn: async (payload: { mobile: string }) =>
       AUTH.checkMobileExistance(payload),
-    onSuccess: ({ data }) => {
+
+    onSuccess: async ({ data }) => {
       const exists = data?.data?.exists;
       const token = data?.data?.token;
       const user = data?.data?.user;
-      setUserDetails({ ...user, token: token });
+
+      if (!token || !user) {
+        setUserCanResumeRegistration(false);
+        return;
+      }
+
+      // ✅ Securely store token
+      await saveToken(token);
+
+      // ✅ Store user in app state
+      setUserDetails({ ...user });
+
       setMobileNumberExist(exists ? "exist" : "notExist");
 
-      if (exists && user) {
-        const {
-          name,
-          gender,
-          address,
-          dateOfBirth,
-          password,
-          profilePicture,
-          _id,
-        } = user;
+      const {
+        name,
+        gender,
+        address,
+        dateOfBirth,
+        password,
+        profilePicture,
+        _id,
+      } = user;
 
-        const isEmpty = (val: any) =>
-          val === undefined || val === null || String(val).trim() === "";
+      const isEmpty = (val: any) =>
+        val === undefined || val === null || String(val).trim() === "";
 
-        const missingBasics =
-          isEmpty(name) ||
-          isEmpty(gender) ||
-          isEmpty(address) ||
-          isEmpty(dateOfBirth);
+      const missingBasics =
+        isEmpty(name) ||
+        isEmpty(gender) ||
+        isEmpty(address) ||
+        isEmpty(dateOfBirth);
 
-        let route = "";
-        if (missingBasics) route = "/screens/auth/register/second";
-        else if (isEmpty(password)) route = "/screens/auth/register/third";
-        else if (isEmpty(profilePicture))
-          route = "/screens/auth/register/fourth";
-        else route = "/screens/auth/login";
+      let route: string = "";
+      if (missingBasics) route = "/screens/auth/register/second";
+      else if (isEmpty(password)) route = "/screens/auth/register/third";
+      else if (isEmpty(profilePicture)) route = "/screens/auth/register/fourth";
+      else route = "/screens/auth/login";
 
-        const userTokenExists = userDetails?.token;
+      // ✅ Always set next step based on data presence, regardless of in-memory token
+      setUserCanResumeRegistration(true);
+      setNextStepAfterOtp({
+        route,
+        params:
+          route === "/screens/auth/login"
+            ? { mobile: user.mobile }
+            : { userId: _id },
+      });
 
-        if (userTokenExists) {
-          router.push({
-            pathname: route,
-            params:
-              route === "/screens/auth/login"
-                ? { mobile: user.mobile }
-                : { userId: _id },
-          });
-          setValue("mobile", "");
-        } else {
-          // ✅ Mark that user can resume registration
-          setUserCanResumeRegistration(true);
-
-          setNextStepAfterOtp({
-            route,
-            params:
-              route === "/screens/auth/login"
-                ? { mobile: user.mobile }
-                : { userId: _id },
-          });
-          setStep(1);
-          setValue("mobile", "");
-        }
-      } else {
-        setUserCanResumeRegistration(false); // user doesn't exist, no resume possible
-      }
+      setStep(1);
+      setValue("mobile", "");
     },
+
     onError: () => TOAST.error(t("errorCheckingMobile")),
   });
 

@@ -26,6 +26,7 @@ import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholder
 import GradientWrapper from "@/components/commons/GradientWrapper";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import { getToken } from "@/utils/authStorage";
 
 const Requests = () => {
   const [totalData, setTotalData] = useState(0);
@@ -33,11 +34,6 @@ const Requests = () => {
   const firstTimeRef = React.useRef(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("recievedRequests");
-
-  const TABS = [
-    { value: "recievedRequests", label: "received" },
-    { value: "sentRequests", label: "sent" },
-  ];
 
   const {
     data: response,
@@ -50,11 +46,18 @@ const Requests = () => {
   } = useInfiniteQuery({
     queryKey: [
       category === "recievedRequests" ? "recievedRequests" : "sentRequests",
+      userDetails?._id,
     ],
-    queryFn: ({ pageParam }) =>
-      category === "recievedRequests"
-        ? WORKER?.fetchAllBookingReceivedInvitations({ pageParam })
-        : EMPLOYER?.fetchAllBookingSentRequests({ pageParam }),
+    queryFn: async ({ pageParam = 1 }) => {
+      const token = await getToken();
+      if (!token || !userDetails?._id || !userDetails?.isAuth) {
+        throw new Error("Unauthorized: Missing token or user information");
+      }
+
+      return category === "recievedRequests"
+        ? await WORKER?.fetchAllBookingReceivedInvitations({ pageParam, token })
+        : await EMPLOYER?.fetchAllBookingSentRequests({ pageParam, token });
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
@@ -62,8 +65,7 @@ const Requests = () => {
       }
       return undefined;
     },
-    enabled:
-      !!userDetails?._id && !!userDetails?.token && !!userDetails?.isAuth,
+    enabled: !!userDetails?._id && !!userDetails?.isAuth,
     retry: false,
   });
 
@@ -131,19 +133,6 @@ const Requests = () => {
             alignItems: "center",
           }}
         >
-          {/* <CustomHeading baseFont={22} textAlign="left" color={Colors?.white}>
-            {category === "sentRequests"
-              ? t("sentRequestsUpper")
-              : t("receivedRequestsUpper")}
-          </CustomHeading>
-          <TouchableOpacity onPress={ShowAllSentRequests}>
-            <CustomText baseFont={15} color={Colors?.tertieryButton} fontWeight="600">
-              {category === "sentRequests"
-                ? t("receivedRequests")
-                : t("sentRequests")}
-            </CustomText>
-          </TouchableOpacity> */}
-
           <CustomHeading
             baseFont={24}
             textAlign="left"
@@ -232,7 +221,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingHorizontal: 15,
-    // backgroundColor: Colors?.fourth,
   },
   applicationText: {
     flex: 1,

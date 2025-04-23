@@ -73,7 +73,7 @@ export const removeEmptyStrings = (arr: any) => {
 
 export const getWorkLabel = (availableSkills: any, skill: string) => {
   let object = availableSkills?.filter((type: any) => type?.value === skill)[0];
-  return object?.label && t(object?.label);
+  return object?.label && getDynamicWorkerType(object?.label, 1);
 };
 
 export const calculateDistance = (
@@ -237,8 +237,17 @@ export const filterWorkerTypes = (
     (type) => type.value === subTypeValue
   );
 
+  const workers = subType?.workerTypes?.map((worker: any) => {
+    return {
+      label: getDynamicWorkerType(worker?.label, 1),
+      value: worker?.value,
+    };
+  });
+
+  console.log("workers---", workers);
+
   // Return the workerTypes of the selected subType
-  return subType?.workerTypes ?? [];
+  return workers ?? [];
 };
 
 export const convertToLabelValueArray = (stringArray: string[]) => {
@@ -285,6 +294,7 @@ export const getFontSize = (locale: string, baseSize = BASE_FONT_SIZE) => {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import USER from "@/app/api/user";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 export const logoutUser = async (setUserDetails: any, router: any) => {
   await AsyncStorage.removeItem("user"); // Remove from AsyncStorage
@@ -334,12 +344,12 @@ export const generateServiceSummary = (
     esi_pf: lang === "hi" ? "बीमा और पीएफ" : "ESI & PF",
   };
 
-  const enabledFacilities =
-    Object.keys(facilities || {})
-      .filter((key) => facilities[key])
-      .map((key) => facilityMap[key])
-      .join(", ") || (lang === "hi" ? "कोई सुविधा नहीं" : "No facilities");
+  const enabledFacilities = Object.keys(facilities || {})
+    .filter((key) => facilities[key])
+    .map((key) => facilityMap[key])
+    .join(", ");
 
+  console.log("enabledFacilities---0", enabledFacilities);
   // Count only applied users with status "PENDING"
   const appliedUsersCount = (appliedUsers || []).filter(
     (user: any) => user.status === "PENDING"
@@ -355,9 +365,10 @@ export const generateServiceSummary = (
     requirementDetails = requirements
       .map((req: any) =>
         lang === "hi"
-          ? `${req.count} ${t(req.name)} चाहिए, रोज़ की मजदूरी ₹${
-              req.payPerDay
-            } होगी`
+          ? `${req.count} ${getDynamicWorkerType(
+              req.name,
+              req?.count
+            )} चाहिए, रोज़ की मजदूरी ₹${req.payPerDay} होगी`
           : `Need ${req.count} ${t(req.name)}, daily wage ₹${req.payPerDay}`
       )
       .join(". ");
@@ -377,7 +388,10 @@ export const generateServiceSummary = (
       distance ? `at ${distance} km` : `at ${address}`
     }. It is under ${t(
       type
-    )} category. Work starts on ${formattedDate} and will last for ${duration} days. Employer will provide ${enabledFacilities} facilities. ${requirementDetails}. ${appliedUsersCount} ${
+    )} category. Work starts on ${formattedDate} and will last for ${duration} days. ${
+      enabledFacilities &&
+      `Employer will provide ${enabledFacilities} facilities.`
+    } ${requirementDetails}. ${appliedUsersCount} ${
       appliedUsersCount > 1 ? "people have" : "person has"
     } applied.`;
   } else {
@@ -385,9 +399,15 @@ export const generateServiceSummary = (
       distance ? `, दूरी ${distance} किमी` : ` ${address} में`
     }। यह ${t(
       type
-    )} श्रेणी के अंतर्गत आता है। काम ${formattedDate} से शुरू होगा और ${duration} दिन तक चलेगा। मालिक ${enabledFacilities} की सुविधा देगा। ${requirementDetails} अभी तक ${appliedUsersCount} ${
-      appliedUsersCount > 1 ? "लोगों" : "लोग"
-    } ने आवेदन किया है।`;
+    )} श्रेणी के अंतर्गत आता है। काम ${formattedDate} से शुरू होगा और ${duration} दिन तक चलेगा।${
+      enabledFacilities ? ` मालिक ${enabledFacilities} की सुविधा देगा।` : ""
+    } ${requirementDetails} ${
+      appliedUsersCount === 0
+        ? "अभी तक किसी ने आवेदन नहीं किया है।"
+        : appliedUsersCount === 1
+        ? "अभी तक 1 व्यक्ति ने आवेदन किया है।"
+        : `अभी तक ${appliedUsersCount} लोगों ने आवेदन किया है।`
+    }`;
   }
 };
 

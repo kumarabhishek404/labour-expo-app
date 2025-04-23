@@ -9,23 +9,20 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import CustomHeading from "../commons/CustomHeading";
 import Colors from "@/constants/Colors";
-import CustomText from "../commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import ModalComponent from "../commons/Modal";
 import TextInputComponent from "./TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
 import TOAST from "@/app/hooks/toast";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const { height } = Dimensions.get("window");
 
 interface SkillsSelectorProps {
-  name: string;
   isPricePerDayNeeded: boolean;
   selectedInterests: Array<any>;
   setSelectedInterests: any;
   availableOptions: Array<any>;
-  onBlur?: any;
-  errors: any;
 }
 
 const flattenSkills = (options: any[]) =>
@@ -36,13 +33,10 @@ const flattenSkills = (options: any[]) =>
   }));
 
 const SkillsSelector = ({
-  name,
   isPricePerDayNeeded,
   selectedInterests,
   setSelectedInterests,
   availableOptions,
-  onBlur,
-  errors,
 }: SkillsSelectorProps) => {
   const [pricePopupVisible, setPricePopupVisible] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<any>(null);
@@ -152,10 +146,10 @@ const SkillsSelector = ({
           <TouchableOpacity
             key={index}
             style={styles.selectedItem}
-            onPress={() => handleEdit(interest.skill)}
+            // onPress={() => handleEdit(interest.skill)}
           >
             <CustomHeading color={Colors?.white}>
-              {t(interest.skill)}
+              {getDynamicWorkerType(interest.skill, 1)}
               {isPricePerDayNeeded && interest.pricePerDay
                 ? ` - ₹ ${interest.pricePerDay} / ${t("perDay")}`
                 : ""}
@@ -199,7 +193,9 @@ const SkillsSelector = ({
                     style={styles.interestItem}
                     onPress={() => handleSelect(skill)}
                   >
-                    <CustomHeading>+ {t(skill.label)}</CustomHeading>
+                    <CustomHeading>
+                      + {getDynamicWorkerType(skill.label, 1)}
+                    </CustomHeading>
                   </TouchableOpacity>
                 ))}
             </View>
@@ -216,7 +212,7 @@ const SkillsSelector = ({
           animationType="slide"
           title={`${
             isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")
-          } (${t(selectedSkill?.label)})`}
+          } (${getDynamicWorkerType(selectedSkill.label, 1)})`}
           onClose={() => {
             setPricePopupVisible(false);
             reset({ pricePerDay: "" });
@@ -241,7 +237,7 @@ const SkillsSelector = ({
 const styles = StyleSheet.create({
   mainContainer: {
     flexGrow: 1,
-    backgroundColor: Colors?.background,
+    backgroundColor: Colors?.fourth,
   },
   selectedContainer: {
     flexDirection: "row",

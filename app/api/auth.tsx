@@ -177,8 +177,6 @@ const validateToken = async () => {
     const response: any = await API_CLIENT.makeGetRequest(
       "/auth/validate-token"
     );
-
-    console.log("Res----", response?.data);
     return response?.data;
   } catch (err) {
     console.error("Token validation network error:", err);

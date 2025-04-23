@@ -11,8 +11,8 @@ const Duration = ({ duration, setDuration, errors, name }: any) => {
     <View style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <View style={styles.container}>
         <CustomHeading
-          baseFont={16}
-          fontWeight="500"
+          baseFont={18}
+          fontWeight="600"
           color={Colors?.inputLabel}
         >
           {t("duration")}{" "}

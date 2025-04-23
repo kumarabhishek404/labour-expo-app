@@ -180,7 +180,6 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
             {user?.email?.value ||
-              user?.alternateEmail ||
               t("emailNotFound")}{" "}
           </CustomHeading>
           {user?._id === userDetails?._id &&

@@ -26,6 +26,7 @@ import LOCAL_CONTEXT from "./context/locale";
 import APP_ICON from "../assets/app/adaptive-icon.png";
 import { t } from "@/utils/translationHelper";
 import AppWithErrorBoundary from "@/components/commons/ErrorBoundary";
+import { getToken } from "@/utils/authStorage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ export default function RootLayout() {
   useEffect(() => {
     const checkUser = async () => {
       const startTime = Date.now();
+      const token = await getToken();
 
       try {
         const userData = await AsyncStorage.getItem("user");
@@ -50,18 +52,17 @@ export default function RootLayout() {
         if (!userData || userData === "null" || userData === "undefined") {
           setIsLoggedIn(false);
         } else {
-          const parsedUser = JSON.parse(userData);
           const response = await AUTH?.validateToken();
 
-          if (response?.errorCode === "TOKEN_VALID" && parsedUser?.isAuth) {
+          if (response?.errorCode === "TOKEN_VALID" && token) {
             setIsLoggedIn(true);
           } else {
             setIsLoggedIn(false);
 
-            // ⚠️ Only remove user if token is explicitly not valid
-            if (response?.errorCode === "TOKEN_NOT_VALID") {
-              await AsyncStorage.removeItem("user");
-            }
+            // // ⚠️ Only remove user if token is explicitly not valid
+            // if (response?.errorCode === "TOKEN_NOT_VALID") {
+            await AsyncStorage.removeItem("user");
+            // }
           }
         }
       } catch (err) {

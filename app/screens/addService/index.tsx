@@ -6,32 +6,26 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import Colors from "@/constants/Colors";
 import { router, useFocusEffect, useNavigation } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation } from "@tanstack/react-query";
 import FirstScreen from "./first";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import moment from "moment";
 import TOAST from "@/app/hooks/toast";
 import FinalScreen from "./final";
 import { t } from "@/utils/translationHelper";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import Stepper from "@/components/commons/Stepper";
-import { ADDSERVICESTEPS } from "@/constants";
 import EMPLOYER from "@/app/api/employer";
 import CustomHeading from "@/components/commons/CustomHeading";
-import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
 import ThirdScreen from "./third";
 import SecondScreen from "./second";
 import IconButtonGroup from "@/components/commons/IconGroupButtons";
 import myServices from "../../../assets/myServices.png";
 import bookedWorkers from "../../../assets/bookedWorkers.png";
-import bookingIcon from "../../../assets/bookings.gif";
-import { useRoute } from "@react-navigation/native";
 import GradientWrapper from "../../../components/commons/GradientWrapper";
 
 const AddServiceScreen = () => {
@@ -133,6 +127,11 @@ const AddServiceScreen = () => {
   const navigation = useNavigation();
   const [isNavigating, setIsNavigating] = useState(false);
   const [prevSubType, setPrevSubType] = useState(subType);
+  const contentRef = useRef<View>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [screenHeight, setScreenHeight] = useState(
+    Dimensions.get("window").height
+  );
 
   useEffect(() => {
     if (prevType !== type || prevSubType !== subType) {
@@ -320,11 +319,6 @@ const AddServiceScreen = () => {
     }
   };
 
-  // // Call this function in your input fields' `onChangeText`
-  // const handleInputChange = (value: string) => {
-  //   setIsFormDirty(value.trim().length > 0);
-  // };
-
   const renderFormComponents = () => {
     switch (step) {
       case 1:
@@ -424,87 +418,69 @@ const AddServiceScreen = () => {
       label: t("myServices"),
       onPress: ClickMyAllServices,
     },
-    // {
-    //   icon: bookingIcon,
-    //   label: "Check balance",
-    //   onPress: () => console.log("Check Balance"),
-    // },
   ];
 
-  return (
-    <>
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          flexGrow: 1,
-          backgroundColor: Colors?.fourth,
-          minHeight: "100%",
-          // paddingBottom: 90,
-        }}
-      >
-        <View style={{ flex: 1, justifyContent: "flex-start" }}>
-          <View style={styles.header}>
-            <IconButtonGroup buttons={buttons} />
-          </View>
+  const onContentLayout = useCallback((event: any) => {
+    const { height } = event.nativeEvent.layout;
+    setContentHeight(height);
+  }, []);
 
-          <GradientWrapper
-            height={Dimensions.get("window").height - (step === 4 ? 0 : 230)}
+  const shouldShowScroll =
+    contentHeight > screenHeight - (step === 4 ? 0 : 230);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <IconButtonGroup buttons={buttons} />
+      </View>
+      <GradientWrapper
+        height={Dimensions.get("window").height - (step === 4 ? 0 : 230)}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[
+            styles.scrollViewContent,
+            shouldShowScroll ? {} : { flexGrow: 1 }, // Allow content to grow if no scroll needed
+          ]}
+          showsVerticalScrollIndicator={shouldShowScroll}
+        >
+          <View
+            style={[styles.searchContainer, styles.shadowBox]}
+            onLayout={onContentLayout}
+            ref={contentRef}
           >
-            <View style={[styles.searchContainer, styles.shadowBox]}>
-              <CustomHeading
-                textAlign="left"
-                baseFont={22}
-                style={styles?.boxHeader}
-                color={Colors?.primary}
-              >
-                {step === 1 && t("step1")}
-                {step === 2 && t("step2")}
-                {step === 3 && t("step3")}
-                {step === 4 && t("step4")}
-              </CustomHeading>
-              <Loader loading={mutationAddService?.isPending} />
-              <View>{renderFormComponents()}</View>
-            </View>
-          </GradientWrapper>
-          <View></View>
-        </View>
-      </ScrollView>
-    </>
+            <CustomHeading
+              textAlign="left"
+              baseFont={22}
+              style={styles?.boxHeader}
+              color={Colors?.primary}
+            >
+              {step === 1 && t("step1")}
+              {step === 2 && t("step2")}
+              {step === 3 && t("step3")}
+              {step === 4 && t("step4")}
+            </CustomHeading>
+            <Loader loading={mutationAddService?.isPending} />
+            <View>{renderFormComponents()}</View>
+          </View>
+        </ScrollView>
+      </GradientWrapper>
+    </View>
   );
 };
 
 export default AddServiceScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "space-between",
+  scrollViewContent: {
+    paddingBottom: 80, // Add some padding at the bottom if needed
   },
   header: {
     backgroundColor: Colors?.primary,
     paddingBottom: 20,
     position: "relative",
   },
-  tab: {
-    alignItems: "center",
-    alignSelf: "flex-start",
-    padding: 10,
-    marginHorizontal: 10,
-  },
-  activeTab: {
-    backgroundColor: "yellow",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-  },
-  tabText: {
-    fontSize: 14,
-    color: "white",
-    marginTop: 5,
-  },
-  activeTabText: {
-    color: "black",
-    fontWeight: "bold",
-  },
+
   searchContainer: {
     backgroundColor: Colors?.white,
     padding: 15,
@@ -525,10 +501,6 @@ const styles = StyleSheet.create({
   boxHeader: {
     marginBottom: 10,
     paddingBottom: 10,
-    // padding: 15,
-    // backgroundColor: Colors?.primary,
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
   },
   input: {
     height: 53,

@@ -4,7 +4,6 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { Controller, useForm } from "react-hook-form";
-import WorkRequirment from "@/components/inputs/WorkRequirements";
 import { WORKTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
@@ -88,7 +87,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 placeholder="selectWorkType"
                 options={WORKTYPES}
                 errors={errors}
-                search={false}
                 icon={
                   <Ionicons
                     name={"mail-outline"}
@@ -125,7 +123,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
                 translationEnabled
                 options={filterSubCategories(watch("type"))}
                 errors={errors}
-                search={false}
                 icon={
                   <Ionicons
                     name={"mail-outline"}

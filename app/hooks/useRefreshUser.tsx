@@ -28,8 +28,10 @@ const useRefreshUser = (): UseRefreshUserReturn => {
     try {
       const response = await USER?.getUserInfo();
       if (response?.success) {
-        setUserDetails({ ...userDetails, ...response.data });
-        // TOAST?.success(t("userDetailsFetchedSuccessfully"));
+        setUserDetails((prev: any) => ({
+          ...prev,
+          ...response.data,
+        }));
         if (response.data?.status === "ACTIVE") setIsAccountInactive(false);
         else setIsAccountInactive(true);
         return response.data;

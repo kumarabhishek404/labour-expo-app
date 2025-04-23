@@ -22,6 +22,8 @@ import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
 import { useAtom, useAtomValue } from "jotai";
 import Atoms from "../AtomStore";
 import NOTIFICATION from "../api/notification";
+import ExitConfirmationModal from "@/components/commons/ExitPopup";
+import { getToken } from "@/utils/authStorage";
 
 export default function Layout() {
   const [notificationCount, setNotificationCount] = useAtom(
@@ -31,10 +33,16 @@ export default function Layout() {
   const currentPath = usePathname();
   const pathname = usePathname();
   const userDetails = useAtomValue(Atoms?.UserAtom);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
+    let interval: any;
+
     const fetchUnreadNotificationsCount = async () => {
       try {
+        const token = await getToken();
+        if (!token || !userDetails?._id || !userDetails?.isAuth) return;
+
         const data = await NOTIFICATION?.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
       } catch (error: any) {
@@ -42,17 +50,20 @@ export default function Layout() {
       }
     };
 
-    if (
-      userDetails?.token &&
-      userDetails?.token !== "" &&
-      userDetails?._id &&
-      userDetails?.isAuth
-    ) {
-      fetchUnreadNotificationsCount();
-      const interval = setInterval(fetchUnreadNotificationsCount, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [userDetails?.token, userDetails?._id]);
+    const initializeNotificationPolling = async () => {
+      const token = await getToken();
+      if (token && userDetails?._id && userDetails?.isAuth) {
+        fetchUnreadNotificationsCount();
+        interval = setInterval(fetchUnreadNotificationsCount, 30000);
+      }
+    };
+
+    initializeNotificationPolling();
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [userDetails?._id, userDetails?.isAuth]);
 
   useEffect(() => {
     setHistory((prevHistory) => {
@@ -70,10 +81,7 @@ export default function Layout() {
     const exitPaths = ["/", "/first", "/second", "/third", "/fourth"];
     const backAction = () => {
       if (exitPaths.includes(pathname)) {
-        Alert.alert("Exit", "Do you want to exit the app?", [
-          { text: "Cancel", style: "cancel" },
-          { text: "Exit", onPress: () => BackHandler.exitApp() },
-        ]);
+        setShowExitModal(true); // show custom modal
       } else {
         router?.back();
       }
@@ -251,6 +259,12 @@ export default function Layout() {
           })
         }
         notificationCount={notificationCount}
+      />
+
+      <ExitConfirmationModal
+        visible={showExitModal}
+        onCancel={() => setShowExitModal(false)}
+        onConfirm={() => BackHandler.exitApp()}
       />
     </View>
   );

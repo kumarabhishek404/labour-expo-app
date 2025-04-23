@@ -216,26 +216,23 @@ const ListingsServices = ({ item }: any) => {
 
             <Requirements type="highlights" requirements={item?.requirements} />
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <View style={{ width: "75%", flexDirection: "column" }}>
+            {item?.subType && (
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <CustomHeading
                   textAlign="left"
                   style={{ textTransform: "capitalize", marginRight: 10 }}
-                  baseFont={20}
                 >
-                  {t(item?.type || "unknown")} - {t(item?.subType || "unknown")}
+                  {t(item?.subType || "unknown")}
                 </CustomHeading>
               </View>
-              <CustomText textAlign="right" style={{ width: "25%" }}>
-                {getTimeAgo(item?.createdAt)}
-              </CustomText>
-            </View>
+            )}
             <View
               style={{
                 flexDirection: "column",
@@ -246,20 +243,25 @@ const ListingsServices = ({ item }: any) => {
               <View
                 style={{
                   width: "100%",
-                  flexDirection: "column",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                   gap: 5,
                 }}
               >
                 <View
                   style={{
-                    flexDirection: "row",
+                    width: "70%",
+                    flexDirection: "column",
                     alignItems: "flex-start",
+                    gap: 8,
                   }}
                 >
                   <ShowAddress address={item?.address} numberOfLines={1} />
+                  <DateDisplay date={item?.startDate} type="startDate" />
                 </View>
-
-                <DateDisplay date={item?.startDate} type="startDate" />
+                <CustomText textAlign="right" style={{ flex: 1 }}>
+                  {getTimeAgo(item?.createdAt)}
+                </CustomText>
               </View>
 
               <View style={styles?.actionContainer}>

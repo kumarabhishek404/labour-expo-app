@@ -159,7 +159,7 @@ const Applicants = ({
                         >
                           {workers && workers?.length > 0
                             ? t("mediator")
-                            : t(appliedUser?.appliedSkill)}
+                            : t(appliedUser?.appliedSkill ?? "worker")}
                         </CustomHeading>
                         <ShowDistance
                           loggedInUserLocation={userDetails?.location}

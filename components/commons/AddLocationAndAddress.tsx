@@ -65,22 +65,14 @@ const AddLocationAndAddress = ({
         longitude: tempLocation?.longitude,
       });
       setIsLoading(false);
-      console.log(
-        "response[0]?.formattedAddress---",
-        response[0]?.formattedAddress
-      );
-
       setAddress(response[0]?.formattedAddress);
-      let tempUserDetails = { ...userDetails };
-      tempUserDetails = {
-        ...userDetails,
+      setUserDetails((prev: any) => ({
+        ...prev,
         savedAddresses: [
           ...(userDetails?.savedAddresses ?? []),
           response[0]?.formattedAddress,
         ],
-      };
-      setUserDetails(tempUserDetails);
-      console.log("222", response);
+      }));
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");
@@ -92,8 +84,8 @@ const AddLocationAndAddress = ({
       <View style={styles.radioContainer}>
         <CustomHeading
           color={Colors?.inputLabel}
-          baseFont={16}
-          fontWeight="500"
+          baseFont={18}
+          fontWeight="600"
         >
           {label}
         </CustomHeading>

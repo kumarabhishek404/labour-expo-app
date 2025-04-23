@@ -203,7 +203,6 @@ const acceptTeamRequest = async (payload: any) => {
       "/worker/team/request/accept",
       payload
     );
-    TOAST?.success("Request accepted successfully");
     return data.data;
   } catch (error: any) {
     console.error(

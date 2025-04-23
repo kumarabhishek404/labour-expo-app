@@ -15,6 +15,7 @@ import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
 import PaperDropdown from "@/components/inputs/Dropdown";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";
 import RadioSkillSelector from "@/components/inputs/RadioButton";
+import CustomHeading from "@/components/commons/CustomHeading";
 
 const AddBookingDetails = ({
   control,
@@ -39,7 +40,7 @@ const AddBookingDetails = ({
 
   return (
     <View style={styles?.container}>
-      <Controller
+      {/* <Controller
         control={control}
         name="type"
         defaultValue=""
@@ -59,7 +60,6 @@ const AddBookingDetails = ({
             placeholder="selectWorkType"
             options={WORKTYPES}
             errors={errors}
-            search={false}
             icon={
               <Ionicons
                 name={"mail-outline"}
@@ -91,7 +91,6 @@ const AddBookingDetails = ({
             translationEnabled
             options={filterSubCategories(watch("type"))}
             errors={errors}
-            search={false}
             icon={
               <Ionicons
                 name={"mail-outline"}
@@ -102,7 +101,7 @@ const AddBookingDetails = ({
             }
           />
         )}
-      />
+      /> */}
 
       <Controller
         control={control}
@@ -198,26 +197,36 @@ const AddBookingDetails = ({
       />
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckbox
-          label={t("living")}
-          isChecked={watch("facilities").living}
-          onToggle={() => handleCheckboxChange("living")}
-        />
-        <CustomCheckbox
-          label={t("food")}
-          isChecked={watch("facilities").food}
-          onToggle={() => handleCheckboxChange("food")}
-        />
-        <CustomCheckbox
-          label={t("travelling")}
-          isChecked={watch("facilities").travelling}
-          onToggle={() => handleCheckboxChange("travelling")}
-        />
-        <CustomCheckbox
-          label={t("esi_pf")}
-          isChecked={watch("facilities").esi_pf}
-          onToggle={() => handleCheckboxChange("esi_pf")}
-        />
+        <CustomHeading
+          baseFont={18}
+          textAlign="left"
+          color={Colors?.inputLabel}
+          fontWeight="600"
+        >
+          {t("facilities")}
+        </CustomHeading>
+        <View style={styles?.checkboxes}>
+          <CustomCheckbox
+            label={t("living")}
+            isChecked={watch("facilities").living}
+            onToggle={() => handleCheckboxChange("living")}
+          />
+          <CustomCheckbox
+            label={t("food")}
+            isChecked={watch("facilities").food}
+            onToggle={() => handleCheckboxChange("food")}
+          />
+          <CustomCheckbox
+            label={t("travelling")}
+            isChecked={watch("facilities").travelling}
+            onToggle={() => handleCheckboxChange("travelling")}
+          />
+          <CustomCheckbox
+            label={t("esi_pf")}
+            isChecked={watch("facilities").esi_pf}
+            onToggle={() => handleCheckboxChange("esi_pf")}
+          />
+        </View>
       </View>
 
       <View style={{ flexDirection: "row", gap: 10 }}>
@@ -277,6 +286,10 @@ export default AddBookingDetails;
 const styles = StyleSheet.create({
   container: { flexDirection: "column", gap: 20 },
   checkboxContainer: {
+    flexDirection: "column",
+    gap: 15,
+  },
+  checkboxes: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",

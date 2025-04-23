@@ -65,6 +65,8 @@ const fetchAllMembers = async ({
   pageParam,
   category = "",
 }: any) => {
+  console.log("mediatorId--", mediatorId);
+  
   try {
     const data = await API_CLIENT.makeGetRequest(
       `/mediator/team/${mediatorId}/members?category=${category}&page=${pageParam}&limit=3`

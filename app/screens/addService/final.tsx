@@ -1,15 +1,12 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/Colors";
-import Button from "@/components/inputs/Button";
 import moment from "moment";
-import { isEmptyObject } from "@/constants/functions";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import Stepper from "@/components/commons/Stepper";
-import { ADDSERVICESTEPS } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import ButtonComp from "@/components/inputs/Button";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface FinalScreenProps {
   setStep: any;
@@ -140,14 +137,21 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                   return (
                     <View style={styles.card} key={index}>
                       <View style={styles.header}>
-                        <View style={{ flexDirection: "column" }}>
+                        <View style={{ flex: 1, flexDirection: "column" }}>
                           <CustomHeading
+                            textAlign="left"
                             style={{ textTransform: "capitalize" }}
                           >
-                            {t(requirement?.name)}
+                            {getDynamicWorkerType(
+                              requirement?.name,
+                              requirement?.count
+                            )}
                           </CustomHeading>
                         </View>
-                        <CustomHeading>
+                        <CustomHeading
+                          textAlign="right"
+                          style={{ width: "30%" }}
+                        >
                           ₹ {requirement?.payPerDay} {t("perDay")}
                         </CustomHeading>
                       </View>

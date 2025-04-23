@@ -34,8 +34,6 @@ const SelectedUsers = ({
   appliedSkill,
   refetch,
 }: SelectedApplicantsProps) => {
-  console.log("selectedApplicants ---", selectedApplicants[0]?.workers);
-
   const [expandedItems, setExpandedItems] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -89,7 +87,7 @@ const SelectedUsers = ({
             const appliedUser = mediator?.name ? mediator : mediator?.user;
             const workers = mediator?.workers;
 
-            console.log("appliedUser--", appliedUser);
+            console.log("appliedUser--11", appliedUser);
 
             return (
               <View key={index} style={styles.workerCard}>
@@ -109,7 +107,7 @@ const SelectedUsers = ({
                     >
                       {workers && workers?.length > 0
                         ? t("mediator")
-                        : t(appliedUser?.skill || appliedSkill?.skill)}
+                        : t(appliedSkill?.skill || "worker")}
                     </CustomText>
                     {/* <ShowSkills type="small" userSkills={appliedUser?.skills} /> */}
                   </View>

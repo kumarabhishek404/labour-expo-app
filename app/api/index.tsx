@@ -1,6 +1,7 @@
 import EventEmitter from "eventemitter3"; // ✅ Correct import
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
+import { getToken } from "@/utils/authStorage";
 
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
@@ -10,15 +11,16 @@ let isLoggedOut = false;
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
-    const user = await AsyncStorage.getItem("user");
-    if (!user || user === "null" || user === "undefined") {
+    // const user = await AsyncStorage.getItem("user");
+    const token = await getToken();
+    
+    if (!token || token === "null" || token === "undefined") {
       console.warn("No valid user session found.");
       return { Authorization: "" }; // Stop retries
     }
 
-    const parsedUser = JSON.parse(user);
-    if (parsedUser?.token) {
-      return { Authorization: `Bearer ${parsedUser.token}` };
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
     } else if (retries > 0) {
       await new Promise((resolve) => setTimeout(resolve, delay));
       return getHeaders(retries - 1, delay);
@@ -53,10 +55,11 @@ api.interceptors.response.use(
         errorMessage === "jwt expired" ||
         errorMessage === "jwt malformed" ||
         statusText === "TokenExpiredError" ||
+        errorMessage === "Unauthorized Request" ||
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
-        await AsyncStorage.removeItem("user"); // Clear local storage
+        AsyncStorage.removeItem("user"); // Clear local storage
         eventEmitter.emit("logout"); // Emit logout event
       }
     } else if (error.request) {
@@ -70,10 +73,6 @@ api.interceptors.response.use(
 
 // ✅ API Request Functions
 const makeGetRequest = async (url: string, headers?: object) => {
-  if (isLoggedOut) {
-    console.warn("Skipping API call - User logged out");
-    return;
-  }
   return api.get(url, { headers: { ...(await getHeaders()), ...headers } });
 };
 

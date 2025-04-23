@@ -25,6 +25,8 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 
   const firstWorker = workersList?.[0];
 
+  console.log("item----", item?.bookingType, item?.appliedSkill);
+
   return (
     <View style={styles.container} key={item?._id}>
       <TouchableOpacity
@@ -62,9 +64,10 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
                 color={Colors.tertieryButton}
                 textAlign="right"
               >
-                {firstWorker?.skills?.map(
-                  (skill: any) => `${t(skill?.skill)}, `
-                )}
+                {t(item?.appliedSkill?.skill || "worker")}
+                <CustomText fontWeight="600" color={Colors.tertieryButton}>
+                  {" - "} ({item?.appliedSkill?.pricePerDay} {t("perDay")})
+                </CustomText>
               </CustomText>
             </View>
           </View>
@@ -97,11 +100,14 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
                 flexDirection: "row",
                 justifyContent: "space-between",
                 gap: 10,
+                marginBottom: 5,
               }}
             >
-              <CustomHeading textAlign="left" style={{ flex: 1 }}>
-                {t(item?.type)} - {t(item?.subType)}
-              </CustomHeading>
+              {item?.subType && (
+                <CustomHeading textAlign="left" style={{ flex: 1 }}>
+                  {t(item?.subType)}
+                </CustomHeading>
+              )}
               <ShowDuration duration={item?.duration} />
             </View>
             <DateDisplay date={item?.startDate} type="startDate" />

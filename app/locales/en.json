@@ -706,71 +706,6 @@
   "workerName": "Worker Name",
   "workerSkill": "Worker Skill",
 
-  // "agricultureAndFarming": "Agriculture and Farming",
-  // "tractorRental": "Tractor Rental",
-  // "tractorDriver": "Tractor Driver",
-  // "equipmentSupplier": "Equipment Supplier",
-  // "irrigationManagement": "Irrigation Management",
-  // "wellDigger": "Well Digger",
-  // "pumpMechanic": "Pump Mechanic",
-  // "borewellTechnician": "Borewell Technician",
-  // "soilTesting": "Soil Testing",
-  // "soilTester": "Soil Tester",
-  // "agricultureExpert": "Agriculture Expert",
-  // "cropProtection": "Crop Protection",
-  // "pesticideSupplier": "Pesticide Supplier",
-  // "fertilizerSupplier": "Fertilizer Supplier",
-  // "farmConsultant": "Farm Consultant",
-
-  // "homeAndConstruction": "Home and Construction",
-  // "buildingAndRenovation": "Building and Renovation",
-  // "mason": "Mason",
-  // "laborers": "Laborers",
-  // "carpenter": "Carpenter",
-  // "plumber": "Plumber",
-  // "electrician": "Electrician",
-  // "steelFixer": "Steel Fixer",
-  // "wallPainting": "Wall Painting",
-  // "painter": "Painter",
-  // "wallPlasteringWorker": "Wall Plastering Worker",
-  // "scaffoldingLaborer": "Scaffolding Laborer",
-  // "roofRepair": "Roof Repair",
-  // "roofMason": "Roof Mason",
-  // "waterproofingExpert": "Waterproofing Expert",
-  // "thatcher": "Thatcher",
-
-  // "plumbingServices": "Plumbing Services",
-  // "fixingLeaks": "Fixing Leaks",
-  // "pipeInstallations": "Pipe Installations",
-  // "repairingWaterTanks": "Repairing Water Tanks",
-  // "waterTankRepairer": "Water Tank Repairer",
-
-  // "dailyWageAndSkilledLabor": "Daily Wage and Skilled Labor",
-  // "constructionWorkers": "Construction Workers",
-  // "masons": "Masons",
-  // "carpenters": "Carpenters",
-  // "welders": "Welders",
-  // "loadingAndUnloading": "Loading and Unloading",
-  // "movers": "Movers",
-  // "warehouseWorkers": "Warehouse Workers",
-  // "securityGuards": "Security Guards",
-
-  // "transportationAndLogistics": "Transportation and Logistics",
-  // "tempoTruckRental": "Tempo Truck Rental",
-  // "truckDrivers": "Truck Drivers",
-  // "transportOperators": "Transport Operators",
-  // "bullockCartServices": "Bullock Cart Services",
-  // "cartPullers": "Cart Pullers",
-  // "packAndMove": "Pack and Move",
-  // "packers": "Packers",
-
-  // "healthAndMedicalServices": "Health and Medical Services",
-  // "generalPhysician": "General Physician",
-  // "doctor": "Doctor",
-  // "nurse": "Nurse",
-  // "ambulanceServices": "Ambulance Services",
-  // "ambulanceDriver": "Ambulance Driver",
-  // "paramedic": "Paramedic",
   "removeBookedWorker": "Remove Booked Worker",
   "byService": "Applied In Service",
   "direct": "Direct Booking",
@@ -1123,299 +1058,961 @@
 
   "farms": "Farms",
   "landPreparation": "Land Preparation",
-  "plowing": "Plowing",
-  "leveling": "Leveling",
-  "tilling": "Tilling",
-  "weeding": "Weeding",
-  "fieldClearing": "Field Clearing",
-  "stonePicking": "Stone Picking",
-  "bundMaking": "Bund Making",
   "sowingAndPlanting": "Sowing and Planting",
-  "seedSowing": "Seed Sowing",
-  "transplantingSeedlings": "Transplanting Seedlings",
-  "manualPlanting": "Manual Planting",
-  "fertilizerApplication": "Fertilizer Application",
-  "manureSpreading": "Manure Spreading",
   "irrigation": "Irrigation",
-  "canalManagement": "Canal Management",
-  "waterChannelDigging": "Water Channel Digging",
-  "waterDistribution": "Water Distribution",
-  "pumpOperation": "Pump Operation",
-  "hoseManagement": "Hose Management",
   "cropMaintenance": "Crop Maintenance",
-  "pestControlSpraying": "Pest Control Spraying",
-  "fertilizerTopDressing": "Fertilizer Top Dressing",
-  "pruning": "Pruning",
-  "staking": "Staking",
-  "cropWatching": "Crop Watching",
   "harvesting": "Harvesting",
-  "manualCutting": "Manual Cutting",
-  "cropGathering": "Crop Gathering",
-  "threshing": "Threshing",
-  "winnowing": "Winnowing",
-  "cropBundling": "Crop Bundling",
   "postHarvest": "Post Harvest",
-  "cropSorting": "Crop Sorting",
-  "cropCleaning": "Crop Cleaning",
-  "cropPacking": "Crop Packing",
-  "loadingForTransport": "Loading For Transport",
-  "unloadingFromTransport": "Unloading From Transport",
-  "storageAssistance": "Storage Assistance",
   "farmSupport": "Farm Support",
-  "farmCleaning": "Farm Cleaning",
-  "livestockFeeding": "Livestock Feeding",
-  "livestockCare": "Livestock Care",
-  "fenceRepair": "Fence Repair",
-  "toolMaintenance": "Tool Maintenance",
-  "generalFarmHelp": "General Farm Help",
-  "farmSecurity": "Farm Security",
   "specializedFarming": "Specialized Farming",
-  "apiaryManagementBeekeeping": "Apiary Management (Beekeeping)",
-  "sericultureSilkFarming": "Sericulture (Silk Farming)",
-  "horticultureGardening": "Horticulture (Gardening)",
-  "floricultureFlowerFarming": "Floriculture (Flower Farming)",
   "farmPartnershipsAndAssistance": "Farm Partnerships & Assistance",
-  "farmHand": "Farm Hand",
-  "agriculturalPartnership": "Agricultural Partnership",
-  "seasonalFarmLabor": "Seasonal Farm Labor",
-  "home": "Home",
   "housekeeping": "Housekeeping",
-  "sweeping": "Sweeping",
-  "mopping": "Mopping",
-  "dishwashing": "Dishwashing",
-  "laundry": "Laundry",
-  "cleaningUtensils": "Cleaning Utensils",
-  "dusting": "Dusting",
-  "arrangingItems": "Arranging Items",
   "gardening": "Gardening",
-  "lawnMowing": "Lawn Mowing",
-  "wateringPlants": "Watering Plants",
-  "weedingGardens": "Weeding Gardens",
-  "plantingFlowers": "Planting Flowers",
-  "pruningTreesAndBushes": "Pruning Trees And Bushes",
-  "gardenCleaning": "Garden Cleaning",
-  "soilPreparationForGardening": "Soil Preparation for Gardening",
   "generalHomeHelp": "General Home Help",
-  "carryingItems": "Carrying Items",
-  "fetchingWater": "Fetching Water",
-  "runningErrands": "Running Errands",
-  "basicRepairs": "Basic Repairs",
-  "cookingAssistance": "Cooking Assistance",
-  "elderlyCareNonMedical": "Elderly Care (non-medical)",
-  "childcareNonFormal": "Childcare (non-formal)",
   "homeSecurity": "Home Security",
-  "nightWatchman": "Night Watchman",
-  "dayWatchman": "Day Watchman",
-  "propertyGuarding": "Property Guarding",
   "homeManagement": "Home Management",
-  "propertySupervision": "Property Supervision",
-  "billPaymentAssistance": "Bill Payment Assistance",
-  "organizingHouseholdTasks": "Organizing Household Tasks",
   "livestockCareHome": "Livestock Care (Home)",
-  "animalFeeding": "Animal Feeding",
-  "animalCleaning": "Animal Cleaning",
-  "grazingAssistance": "Grazing Assistance",
   "factories": "Factories",
   "productionLineWork": "Production Line Work",
-  "assemblyLineWorker": "Assembly Line Worker",
-  "packagingWorker": "Packaging Worker",
-  "sortingAndGrading": "Sorting and Grading",
-  "machineOperationAssistant": "Machine Operation Assistant",
-  "qualityCheckingManual": "Quality Checking (manual)",
   "materialHandling": "Material Handling",
-  "loader": "Loader",
-  "unloader": "Unloader",
-  "materialCarrier": "Material Carrier",
-  "stackingWorker": "Stacking Worker",
-  "forkliftAssistant": "Forklift Assistant",
   "cleaningAndMaintenance": "Cleaning And Maintenance",
-  "factoryCleaner": "Factory Cleaner",
-  "machineCleaner": "Machine Cleaner",
-  "wasteDisposal": "Waste Disposal",
-  "basicMachineMaintenanceAssistant": "Basic Machine Maintenance Assistant",
   "supportServices": "Support Services",
-  "helper": "Helper",
-  "generalAssistant": "General Assistant",
-  "securityGuard": "Security Guard",
-  "canteenWorker": "Canteen Worker",
   "shops": "Shops",
   "salesAssistance": "Sales Assistance",
-  "shopHelper": "Shop Helper",
-  "displayArranger": "Display Arranger",
-  "customerServiceAssistant": "Customer Service Assistant",
   "stockManagement": "Stock Management",
-  "stockUnloader": "Stock Unloader",
-  "shelfStocker": "Shelf Stocker",
-  "inventoryAssistant": "Inventory Assistant",
   "deliveryServices": "Delivery Services",
-  "deliveryPersonBicycleScooter": "Delivery Person (bicycle/scooter)",
-  "deliveryHelper": "Delivery Helper",
   "supportRoles": "Support Roles",
-  "cashierAssistant": "Cashier Assistant",
   "godownsWarehouses": "Godowns (Warehouses)",
-  "loadingAndUnloading": "Loading And Unloading",
-  "materialHandler": "Material Handler",
-  "goodsOrganizer": "Goods Organizer",
   "packingAndDispatch": "Packing And Dispatch",
-  "packer": "Packer",
-  "dispatchAssistant": "Dispatch Assistant",
-  "gatekeeper": "Gatekeeper",
   "buildingConstruction": "Building Construction",
   "sitePreparation": "Site Preparation",
-  "landClearingLaborer": "Land Clearing Laborer",
-  "levelingWorker": "Leveling Worker",
-  "excavationHelper": "Excavation Helper",
   "foundationWork": "Foundation Work",
-  "foundationDigger": "Foundation Digger",
-  "concreteMixerOperatorAssistant": "Concrete Mixer Operator Assistant",
-  "shutteringHelper": "Shuttering Helper",
-  "steelFixingHelper": "Steel Fixing Helper",
-  "masonry": "Masonry",
-  "bricklayerMason": "Bricklayer (Mason)",
-  "blockLayer": "Block Layer",
-  "plasteringHelper": "Plastering Helper",
   "carpentry": "Carpentry",
-  "carpenter": "Carpenter",
-  "shutteringCarpenter": "Shuttering Carpenter",
-  "formworkCarpenterHelper": "Formwork Carpenter Helper",
   "plumbing": "Plumbing",
-  "plumber": "Plumber",
-  "plumbingAssistant": "Plumbing Assistant",
-  "pipeFitterHelper": "Pipe Fitter Helper",
   "electricalWork": "Electrical Work",
-  "electrician": "Electrician",
-  "electricalWiringHelper": "Electrical Wiring Helper",
   "steelWork": "Steel Work",
-  "steelFixer": "Steel Fixer",
-  "welder": "Welder",
-  "steelCuttingHelper": "Steel Cutting Helper",
   "concreteWork": "Concrete Work",
-  "concreteMixerOperator": "Concrete Mixer Operator",
-  "concretePourer": "Concrete Pourer",
-  "concreteFinisher": "Concrete Finisher",
-  "vibratorOperator": "Vibrator Operator",
   "scaffolding": "Scaffolding",
-  "scaffoldingErector": "Scaffolding Erector",
-  "scaffoldingDismantler": "Scaffolding Dismantler",
-  "scaffoldingLaborer": "Scaffolding Laborer",
   "painting": "Painting",
-  "painter": "Painter",
-  "paintingHelper": "Painting Helper",
-  "wallPuttyApplicator": "Wall Putty Applicator",
   "flooringAndTiling": "Flooring And Tiling",
-  "tileLayer": "Tile Layer",
-  "flooringInstaller": "Flooring Installer",
-  "marbleFitter": "Marble Fitter",
-  "flooringHelper": "Flooring Helper",
   "roofing": "Roofing",
-  "roofer": "Roofer",
-  "roofingSheetInstaller": "Roofing Sheet Installer",
-  "waterproofingApplicator": "Waterproofing Applicator",
-  "roofingHelper": "Roofing Helper",
   "finishingWork": "Finishing Work",
-  "glassFitter": "Glass Fitter",
-  "grillFitter": "Grill Fitter",
-  "falseCeilingInstaller": "False Ceiling Installer",
-  "finishingHelper": "Finishing Helper",
   "heavyEquipmentOperation": "Heavy Equipment Operation",
-  "craneOperator": "Crane Operator",
-  "excavatorOperator": "Excavator Operator",
-  "heavyEquipmentHelper": "Heavy Equipment Helper",
   "generalLabor": "General Labor",
-  "constructionLaborer": "Construction Laborer",
-  "materialCarrier": "Material Carrier",
-  "siteCleaner": "Site Cleaner",
   "security": "Security",
-  "siteSecurityGuard": "Site Security Guard",
   "plumbingServices": "Plumbing Services",
   "fixingLeaks": "Fixing Leaks",
-  "leakDetectionSpecialist": "Leak Detection Specialist",
   "pipeInstallations": "Pipe Installations",
-  "pipeFitter": "Pipe Fitter",
   "repairingWaterTanks": "Repairing Water Tanks",
-  "waterTankRepairer": "Water Tank Repairer",
-  "tankCleaner": "Tank Cleaner",
   "sanitationServices": "Sanitation Services",
-  "septicTankCleaner": "Septic Tank Cleaner",
-  "drainCleaner": "Drain Cleaner",
-  "toiletCleanerRepairer": "Toilet Cleaner/Repairer",
   "fixtureInstallation": "Fixture Installation",
-  "faucetInstaller": "Faucet Installer",
-  "sinkInstaller": "Sink Installer",
-  "toiletInstaller": "Toilet Installer",
-  "showerInstaller": "Shower Installer",
   "dailyWageAndSkilledLabor": "Daily Wage And Skilled Labor",
   "constructionWorkers": "Construction Workers",
-  "laborers": "Laborers",
-  "masons": "Masons",
-  "carpenters": "Carpenters",
-  "welders": "Welders",
-  "steelFixers": "Steel Fixers",
   "loadingAndUnloading": "Loading And Unloading",
-  "movers": "Movers",
-  "warehouseWorkers": "Warehouse Workers",
-  "porters": "Porters",
-  "securityGuards": "Security Guards",
   "eventStaffing": "Event Staffing",
-  "eventSetupCrew": "Event Setup Crew",
-  "eventCleanupCrew": "Event Cleanup Crew",
-  "waitstaff": "Waitstaff",
-  "usher": "Usher",
   "agriculturalLabor": "Agricultural Labor",
-  "fieldWorker": "Field Worker",
-  "harvester": "Harvester",
-  "planter": "Planter",
   "transportationAndLogistics": "Transportation And Logistics",
   "tempoTruckRental": "Tempo Truck Rental",
-  "truckDrivers": "Truck Drivers",
-  "transportOperators": "Transport Operators",
-  "truckCleaners": "Truck Cleaners",
   "bullockCartServices": "Bullock Cart Services",
-  "cartPullers": "Cart Pullers",
-  "animalCaretakers": "Animal Caretakers",
   "packAndMove": "Pack And Move",
-  "packers": "Packers",
-  "furnitureDismantlersAssemblers": "Furniture Dismantlers/Assemblers",
   "courierServices": "Courier Services",
-  "courier": "Courier",
-  "deliveryAssistant": "Delivery Assistant",
   "vehicleMaintenance": "Vehicle Maintenance",
-  "vehicleCleaner": "Vehicle Cleaner",
-  "tireChanger": "Tire Changer",
   "healthAndMedicalServices": "Health And Medical Services",
   "generalPhysician": "General Physician",
-  "doctor": "Doctor",
-  "nurse": "Nurse",
-  "wardBoyGirl": "Ward Boy/Girl",
   "ambulanceServices": "Ambulance Services",
-  "ambulanceDriver": "Ambulance Driver",
-  "paramedic": "Paramedic",
-  "firstAidProvider": "First Aid Provider",
   "homeHealthCare": "Home Health Care",
-  "caregiver": "Caregiver",
-  "homeNurse": "Home Nurse",
-  "attendant": "Attendant",
   "pharmacyAssistance": "Pharmacy Assistance",
-  "pharmacyHelper": "Pharmacy Helper",
-  "medicineDeliveryPerson": "Medicine Delivery Person",
   "miscellaneous": "Miscellaneous",
-  "assistant": "Assistant",
-  "generalLaborer": "General Laborer",
   "animalServices": "Animal Services",
-  "animalGroomer": "Animal Groomer",
-  "animalTrainer": "Animal Trainer",
   "eventServices": "Event Services",
-  "decorator": "Decorator",
-  "catererHelper": "Caterer Helper",
   "textileWork": "Textile Work",
-  "tailorAssistant": "Tailor Assistant",
-  "weaver": "Weaver",
   "wasteManagement": "Waste Management",
-  "wasteCollector": "Waste Collector",
-  "recyclingWorker": "Recycling Worker",
+
+  "plowing": {
+    "singular": "Plowing Worker",
+    "plural": "Plowing Workers"
+  },
+  "leveling": {
+    "singular": "Leveling Worker",
+    "plural": "Leveling Workers"
+  },
+  "tilling": {
+    "singular": "Tilling Worker",
+    "plural": "Tilling Workers"
+  },
+  "weeding": {
+    "singular": "Weeding Worker",
+    "plural": "Weeding Workers"
+  },
+  "fieldClearing": {
+    "singular": "Field Clearing Worker",
+    "plural": "Field Clearing Workers"
+  },
+  "stonePicking": {
+    "singular": "Stone Picking Worker",
+    "plural": "Stone Picking Workers"
+  },
+  "bundMaking": {
+    "singular": "Bund Making Worker",
+    "plural": "Bund Making Workers"
+  },
+  "seedSowing": {
+    "singular": "Seed Sowing Worker",
+    "plural": "Seed Sowing Workers"
+  },
+  "transplantingSeedlings": {
+    "singular": "Seedling Transplanter",
+    "plural": "Seedling Transplanters"
+  },
+  "manualPlanting": {
+    "singular": "Manual Planter",
+    "plural": "Manual Planters"
+  },
+  "fertilizerApplication": {
+    "singular": "Fertilizer Applicator",
+    "plural": "Fertilizer Applicators"
+  },
+  "manureSpreading": {
+    "singular": "Manure Spreader",
+    "plural": "Manure Spreaders"
+  },
+  "canalManagement": {
+    "singular": "Canal Manager",
+    "plural": "Canal Managers"
+  },
+  "waterChannelDigging": {
+    "singular": "Water Channel Digger",
+    "plural": "Water Channel Diggers"
+  },
+  "waterDistribution": {
+    "singular": "Water Distributor",
+    "plural": "Water Distributors"
+  },
+  "pumpOperation": {
+    "singular": "Pump Operator",
+    "plural": "Pump Operators"
+  },
+  "hoseManagement": {
+    "singular": "Hose Manager",
+    "plural": "Hose Managers"
+  },
+  "pestControlSpraying": {
+    "singular": "Pest Control Sprayer",
+    "plural": "Pest Control Sprayers"
+  },
+  "fertilizerTopDressing": {
+    "singular": "Fertilizer Top Dresser",
+    "plural": "Fertilizer Top Dressers"
+  },
+  "pruning": {
+    "singular": "Pruner",
+    "plural": "Pruners"
+  },
+  "staking": {
+    "singular": "Staker",
+    "plural": "Stakers"
+  },
+  "cropWatching": {
+    "singular": "Crop Watcher",
+    "plural": "Crop Watchers"
+  },
+  "manualCutting": {
+    "singular": "Manual Cutter",
+    "plural": "Manual Cutters"
+  },
+  "cropGathering": {
+    "singular": "Crop Gatherer",
+    "plural": "Crop Gatherers"
+  },
+  "threshing": {
+    "singular": "Thresher",
+    "plural": "Threshers"
+  },
+  "winnowing": {
+    "singular": "Winower",
+    "plural": "Winowers"
+  },
+  "cropBundling": {
+    "singular": "Crop Bundler",
+    "plural": "Crop Bundlers"
+  },
+  "cropSorting": {
+    "singular": "Crop Sorter",
+    "plural": "Crop Sorters"
+  },
+  "cropCleaning": {
+    "singular": "Crop Cleaner",
+    "plural": "Crop Cleaners"
+  },
+  "cropPacking": {
+    "singular": "Crop Packer",
+    "plural": "Crop Packers"
+  },
+  "loadingForTransport": {
+    "singular": "Transport Loader",
+    "plural": "Transport Loaders"
+  },
+  "unloadingFromTransport": {
+    "singular": "Transport Unloader",
+    "plural": "Transport Unloaders"
+  },
+  "storageAssistance": {
+    "singular": "Storage Assistant",
+    "plural": "Storage Assistants"
+  },
+  "farmCleaning": {
+    "singular": "Farm Cleaner",
+    "plural": "Farm Cleaners"
+  },
+  "livestockFeeding": {
+    "singular": "Livestock Feeder",
+    "plural": "Livestock Feeders"
+  },
+  "livestockCare": {
+    "singular": "Livestock Caretaker",
+    "plural": "Livestock Caretakers"
+  },
+  "fenceRepair": {
+    "singular": "Fence Repairer",
+    "plural": "Fence Repairers"
+  },
+  "toolMaintenance": {
+    "singular": "Tool Maintainer",
+    "plural": "Tool Maintainers"
+  },
+  "generalFarmHelp": {
+    "singular": "General Farm Helper",
+    "plural": "General Farm Helpers"
+  },
+  "farmSecurity": {
+    "singular": "Farm Security Guard",
+    "plural": "Farm Security Guards"
+  },
+  "apiaryManagementBeekeeping": {
+    "singular": "Beekeeper",
+    "plural": "Beekeepers"
+  },
+  "sericultureSilkFarming": {
+    "singular": "Silk Farmer",
+    "plural": "Silk Farmers"
+  },
+  "horticultureGardening": {
+    "singular": "Gardener",
+    "plural": "Gardeners"
+  },
+  "floricultureFlowerFarming": {
+    "singular": "Flower Farmer",
+    "plural": "Flower Farmers"
+  },
+  "farmHand": {
+    "singular": "Farm Hand",
+    "plural": "Farm Hands"
+  },
+  "agriculturalPartnership": {
+    "singular": "Agricultural Partner",
+    "plural": "Agricultural Partners"
+  },
+  "seasonalFarmLabor": {
+    "singular": "Seasonal Farm Laborer",
+    "plural": "Seasonal Farm Laborers"
+  },
+  "sweeping": {
+    "singular": "Sweeper",
+    "plural": "Sweepers"
+  },
+  "mopping": {
+    "singular": "Mopper",
+    "plural": "Moppers"
+  },
+  "dishwashing": {
+    "singular": "Dishwasher",
+    "plural": "Dishwashers"
+  },
+  "laundry": {
+    "singular": "Laundry Worker",
+    "plural": "Laundry Workers"
+  },
+  "cleaningUtensils": {
+    "singular": "Utensil Cleaner",
+    "plural": "Utensil Cleaners"
+  },
+  "dusting": {
+    "singular": "Duster",
+    "plural": "Dusters"
+  },
+  "arrangingItems": {
+    "singular": "Item Arranger",
+    "plural": "Item Arrangers"
+  },
+  "lawnMowing": {
+    "singular": "Lawn Mower",
+    "plural": "Lawn Mowers"
+  },
+  "wateringPlants": {
+    "singular": "Plant Waterer",
+    "plural": "Plant Waterers"
+  },
+  "weedingGardens": {
+    "singular": "Garden Weeder",
+    "plural": "Garden Weeders"
+  },
+  "plantingFlowers": {
+    "singular": "Flower Planter",
+    "plural": "Flower Planters"
+  },
+  "pruningTreesAndBushes": {
+    "singular": "Tree and Bush Pruner",
+    "plural": "Tree and Bush Pruners"
+  },
+  "gardenCleaning": {
+    "singular": "Garden Cleaner",
+    "plural": "Garden Cleaners"
+  },
+  "soilPreparationForGardening": {
+    "singular": "Soil Preparer (Gardening)",
+    "plural": "Soil Preparers (Gardening)"
+  },
+  "carryingItems": {
+    "singular": "Item Carrier",
+    "plural": "Item Carriers"
+  },
+  "fetchingWater": {
+    "singular": "Water Fetcher",
+    "plural": "Water Fetchers"
+  },
+  "runningErrands": {
+    "singular": "Errand Runner",
+    "plural": "Errand Runners"
+  },
+  "basicRepairs": {
+    "singular": "Basic Repairer",
+    "plural": "Basic Repairers"
+  },
+  "cookingAssistance": {
+    "singular": "Cooking Assistant",
+    "plural": "Cooking Assistants"
+  },
+  "elderlyCareNonMedical": {
+    "singular": "Elderly Caregiver",
+    "plural": "Elderly Caregivers"
+  },
+  "childcareNonFormal": {
+    "singular": "Childcare Provider",
+    "plural": "Childcare Providers"
+  },
+  "nightWatchman": {
+    "singular": "Night Watchman",
+    "plural": "Night Watchmen"
+  },
+  "dayWatchman": {
+    "singular": "Day Watchman",
+    "plural": "Day Watchmen"
+  },
+  "propertyGuarding": {
+    "singular": "Property Guard",
+    "plural": "Property Guards"
+  },
+  "propertySupervision": {
+    "singular": "Property Supervisor",
+    "plural": "Property Supervisors"
+  },
+  "billPaymentAssistance": {
+    "singular": "Bill Payment Assistant",
+    "plural": "Bill Payment Assistants"
+  },
+  "organizingHouseholdTasks": {
+    "singular": "Household Task Organizer",
+    "plural": "Household Task Organizers"
+  },
+  "animalFeeding": {
+    "singular": "Animal Feeder",
+    "plural": "Animal Feeders"
+  },
+  "animalCleaning": {
+    "singular": "Animal Cleaner",
+    "plural": "Animal Cleaners"
+  },
+  "grazingAssistance": {
+    "singular": "Grazing Assistant",
+    "plural": "Grazing Assistants"
+  },
+  "assemblyLineWorker": {
+    "singular": "Assembly Line Worker",
+    "plural": "Assembly Line Workers"
+  },
+  "packagingWorker": {
+    "singular": "Packaging Worker",
+    "plural": "Packaging Workers"
+  },
+  "sortingAndGrading": {
+    "singular": "Sorting and Grading Worker",
+    "plural": "Sorting and Grading Workers"
+  },
+  "machineOperationAssistant": {
+    "singular": "Machine Operation Assistant",
+    "plural": "Machine Operation Assistants"
+  },
+  "qualityCheckingManual": {
+    "singular": "Manual Quality Checker",
+    "plural": "Manual Quality Checkers"
+  },
+  "loader": {
+    "singular": "Loader",
+    "plural": "Loaders"
+  },
+  "unloader": {
+    "singular": "Unloader",
+    "plural": "Unloaders"
+  },
+  "materialCarrier": {
+    "singular": "Material Carrier",
+    "plural": "Material Carriers"
+  },
+  "stackingWorker": {
+    "singular": "Stacking Worker",
+    "plural": "Stacking Workers"
+  },
+  "forkliftAssistant": {
+    "singular": "Forklift Assistant",
+    "plural": "Forklift Assistants"
+  },
+  "factoryCleaner": {
+    "singular": "Factory Cleaner",
+    "plural": "Factory Cleaners"
+  },
+  "machineCleaner": {
+    "singular": "Machine Cleaner",
+    "plural": "Machine Cleaners"
+  },
+  "wasteDisposal": {
+    "singular": "Waste Disposer",
+    "plural": "Waste Disposers"
+  },
+  "basicMachineMaintenanceAssistant": {
+    "singular": "Basic Machine Maintenance Assistant",
+    "plural": "Basic Machine Maintenance Assistants"
+  },
+  "helper": {
+    "singular": "Helper",
+    "plural": "Helpers"
+  },
+  "generalAssistant": {
+    "singular": "General Assistant",
+    "plural": "General Assistants"
+  },
+  "securityGuard": {
+    "singular": "Security Guard",
+    "plural": "Security Guards"
+  },
+  "canteenWorker": {
+    "singular": "Canteen Worker",
+    "plural": "Canteen Workers"
+  },
+  "shopHelper": {
+    "singular": "Shop Helper",
+    "plural": "Shop Helpers"
+  },
+  "displayArranger": {
+    "singular": "Display Arranger",
+    "plural": "Display Arrangers"
+  },
+  "customerServiceAssistant": {
+    "singular": "Customer Service Assistant",
+    "plural": "Customer Service Assistants"
+  },
+  "stockUnloader": {
+    "singular": "Stock Unloader",
+    "plural": "Stock Unloaders"
+  },
+  "shelfStocker": {
+    "singular": "Shelf Stocker",
+    "plural": "Shelf Stockers"
+  },
+  "inventoryAssistant": {
+    "singular": "Inventory Assistant",
+    "plural": "Inventory Assistants"
+  },
+  "deliveryPersonBicycleScooter": {
+    "singular": "Delivery Person",
+    "plural": "Delivery People"
+  },
+  "deliveryHelper": {
+    "singular": "Delivery Helper",
+    "plural": "Delivery Helpers"
+  },
+  "cashierAssistant": {
+    "singular": "Cashier Assistant",
+    "plural": "Cashier Assistants"
+  },
+  "materialHandler": {
+    "singular": "Material Handler",
+    "plural": "Material Handlers"
+  },
+  "goodsOrganizer": {
+    "singular": "Goods Organizer",
+    "plural": "Goods Organizers"
+  },
+  "packer": {
+    "singular": "Packer",
+    "plural": "Packers"
+  },
+  "dispatchAssistant": {
+    "singular": "Dispatch Assistant",
+    "plural": "Dispatch Assistants"
+  },
+  "gatekeeper": {
+    "singular": "Gatekeeper",
+    "plural": "Gatekeepers"
+  },
+  "landClearingLaborer": {
+    "singular": "Land Clearing Laborer",
+    "plural": "Land Clearing Laborers"
+  },
+  "levelingWorker": {
+    "singular": "Leveling Worker",
+    "plural": "Leveling Workers"
+  },
+  "excavationHelper": {
+    "singular": "Excavation Helper",
+    "plural": "Excavation Helpers"
+  },
+  "foundationDigger": {
+    "singular": "Foundation Digger",
+    "plural": "Foundation Diggers"
+  },
+  "concreteMixerOperatorAssistant": {
+    "singular": "Concrete Mixer Operator Assistant",
+    "plural": "Concrete Mixer Operator Assistants"
+  },
+  "shutteringHelper": {
+    "singular": "Shuttering Helper",
+    "plural": "Shuttering Helpers"
+  },
+  "steelFixingHelper": {
+    "singular": "Steel Fixing Helper",
+    "plural": "Steel Fixing Helpers"
+  },
+  "bricklayerMason": {
+    "singular": "Bricklayer",
+    "plural": "Bricklayers"
+  },
+  "blockLayer": {
+    "singular": "Block Layer",
+    "plural": "Block Layers"
+  },
+  "plasteringHelper": {
+    "singular": "Plastering Helper",
+    "plural": "Plastering Helpers"
+  },
+  "carpenter": {
+    "singular": "Carpenter",
+    "plural": "Carpenters"
+  },
+  "shutteringCarpenter": {
+    "singular": "Shuttering Carpenter",
+    "plural": "Shuttering Carpenters"
+  },
+  "formworkCarpenterHelper": {
+    "singular": "Formwork Carpenter Helper",
+    "plural": "Formwork Carpenter Helpers"
+  },
+  "plumber": {
+    "singular": "Plumber",
+    "plural": "Plumbers"
+  },
+  "plumbingAssistant": {
+    "singular": "Plumbing Assistant",
+    "plural": "Plumbing Assistants"
+  },
+  "pipeFitterHelper": {
+    "singular": "Pipe Fitter Helper",
+    "plural": "Pipe Fitter Helpers"
+  },
+  "electrician": {
+    "singular": "Electrician",
+    "plural": "Electricians"
+  },
+  "electricalWiringHelper": {
+    "singular": "Electrical Wiring Helper",
+    "plural": "Electrical Wiring Helpers"
+  },
+  "steelFixer": {
+    "singular": "Steel Fixer",
+    "plural": "Steel Fixers"
+  },
+  "welder": {
+    "singular": "Welder",
+    "plural": "Welders"
+  },
+  "steelCuttingHelper": {
+    "singular": "Steel Cutting Helper",
+    "plural": "Steel Cutting Helpers"
+  },
+  "concreteMixerOperator": {
+    "singular": "Concrete Mixer Operator",
+    "plural": "Concrete Mixer Operators"
+  },
+  "concretePourer": {
+    "singular": "Concrete Pourer",
+    "plural": "Concrete Pourers"
+  },
+  "concreteFinisher": {
+    "singular": "Concrete Finisher",
+    "plural": "Concrete Finishers"
+  },
+  "vibratorOperator": {
+    "singular": "Vibrator Operator",
+    "plural": "Vibrator Operators"
+  },
+  "scaffoldingErector": {
+    "singular": "Scaffolding Erector",
+    "plural": "Scaffolding Erectors"
+  },
+  "scaffoldingDismantler": {
+    "singular": "Scaffolding Dismantler",
+    "plural": "Scaffolding Dismantlers"
+  },
+  "scaffoldingLaborer": {
+    "singular": "Scaffolding Laborer",
+    "plural": "Scaffolding Laborers"
+  },
+  "painter": {
+    "singular": "Painter",
+    "plural": "Painters"
+  },
+  "paintingHelper": {
+    "singular": "Painting Helper",
+    "plural": "Painting Helpers"
+  },
+  "wallPuttyApplicator": {
+    "singular": "Wall Putty Applicator",
+    "plural": "Wall Putty Applicators"
+  },
+  "tileLayer": {
+    "singular": "Tile Layer",
+    "plural": "Tile Layers"
+  },
+  "flooringInstaller": {
+    "singular": "Flooring Installer",
+    "plural": "Flooring Installers"
+  },
+  "marbleFitter": {
+    "singular": "Marble Fitter",
+    "plural": "Marble Fitters"
+  },
+  "flooringHelper": {
+    "singular": "Flooring Helper",
+    "plural": "Flooring Helpers"
+  },
+  "roofer": {
+    "singular": "Roofer",
+    "plural": "Roofers"
+  },
+  "roofingSheetInstaller": {
+    "singular": "Roofing Sheet Installer",
+    "plural": "Roofing Sheet Installers"
+  },
+  "waterproofingApplicator": {
+    "singular": "Waterproofing Applicator",
+    "plural": "Waterproofing Applicators"
+  },
+  "roofingHelper": {
+    "singular": "Roofing Helper",
+    "plural": "Roofing Helpers"
+  },
+  "glassFitter": {
+    "singular": "Glass Fitter",
+    "plural": "Glass Fitters"
+  },
+  "grillFitter": {
+    "singular": "Grill Fitter",
+    "plural": "Grill Fitters"
+  },
+  "falseCeilingInstaller": {
+    "singular": "False Ceiling Installer",
+    "plural": "False Ceiling Installers"
+  },
+  "finishingHelper": {
+    "singular": "Finishing Helper",
+    "plural": "Finishing Helpers"
+  },
+  "craneOperator": {
+    "singular": "Crane Operator",
+    "plural": "Crane Operators"
+  },
+  "excavatorOperator": {
+    "singular": "Excavator Operator",
+    "plural": "Excavator Operators"
+  },
+  "heavyEquipmentHelper": {
+    "singular": "Heavy Equipment Helper",
+    "plural": "Heavy Equipment Helpers"
+  },
+  "constructionLaborer": {
+    "singular": "Construction Laborer",
+    "plural": "Construction Laborers"
+  },
+  "siteCleaner": {
+    "singular": "Site Cleaner",
+    "plural": "Site Cleaners"
+  },
+  "siteSecurityGuard": {
+    "singular": "Site Security Guard",
+    "plural": "Site Security Guards"
+  },
+  "leakDetectionSpecialist": {
+    "singular": "Leak Detection Specialist",
+    "plural": "Leak Detection Specialists"
+  },
+  "pipeFitter": {
+    "singular": "Pipe Fitter",
+    "plural": "Pipe Fitters"
+  },
+  "waterTankRepairer": {
+    "singular": "Water Tank Repairer",
+    "plural": "Water Tank Repairers"
+  },
+  "tankCleaner": {
+    "singular": "Tank Cleaner",
+    "plural": "Tank Cleaners"
+  },
+  "septicTankCleaner": {
+    "singular": "Septic Tank Cleaner",
+    "plural": "Septic Tank Cleaners"
+  },
+  "drainCleaner": {
+    "singular": "Drain Cleaner",
+    "plural": "Drain Cleaners"
+  },
+  "toiletCleanerRepairer": {
+    "singular": "Toilet Cleaner/Repairer",
+    "plural": "Toilet Cleaners/Repairers"
+  },
+  "faucetInstaller": {
+    "singular": "Faucet Installer",
+    "plural": "Faucet Installers"
+  },
+  "sinkInstaller": {
+    "singular": "Sink Installer",
+    "plural": "Sink Installers"
+  },
+  "toiletInstaller": {
+    "singular": "Toilet Installer",
+    "plural": "Toilet Installers"
+  },
+  "showerInstaller": {
+    "singular": "Shower Installer",
+    "plural": "Shower Installers"
+  },
+  "laborers": {
+    "singular": "Laborer",
+    "plural": "Laborers"
+  },
+  "masons": {
+    "singular": "Mason",
+    "plural": "Masons"
+  },
+  "carpenters": {
+    "singular": "Carpenter",
+    "plural": "Carpenters"
+  },
+  "welders": {
+    "singular": "Welder",
+    "plural": "Welders"
+  },
+  "steelFixers": {
+    "singular": "Steel Fixer",
+    "plural": "Steel Fixers"
+  },
+  "movers": {
+    "singular": "Mover",
+    "plural": "Movers"
+  },
+  "warehouseWorkers": {
+    "singular": "Warehouse Worker",
+    "plural": "Warehouse Workers"
+  },
+  "porters": {
+    "singular": "Porter",
+    "plural": "Porters"
+  },
+  "securityGuards": {
+    "singular": "Security Guard",
+    "plural": "Security Guards"
+  },
+  "eventSetupCrew": {
+    "singular": "Event Setup Crew Member",
+    "plural": "Event Setup Crew Members"
+  },
+  "eventCleanupCrew": {
+    "singular": "Event Cleanup Crew Member",
+    "plural": "Event Cleanup Crew Members"
+  },
+  "waitstaff": {
+    "singular": "Waitstaff",
+    "plural": "Waitstaff"
+  },
+  "usher": {
+    "singular": "Usher",
+    "plural": "Ushers"
+  },
+  "fieldWorker": {
+    "singular": "Field Worker",
+    "plural": "Field Workers"
+  },
+  "harvester": {
+    "singular": "Harvester",
+    "plural": "Harvesters"
+  },
+  "planter": {
+    "singular": "Planter",
+    "plural": "Planters"
+  },
+  "truckDrivers": {
+    "singular": "Truck Driver",
+    "plural": "Truck Drivers"
+  },
+  "transportOperators": {
+    "singular": "Transport Operator",
+    "plural": "Transport Operators"
+  },
+  "truckCleaners": {
+    "singular": "Truck Cleaner",
+    "plural": "Truck Cleaners"
+  },
+  "cartPullers": {
+    "singular": "Cart Puller",
+    "plural": "Cart Pullers"
+  },
+  "animalCaretakers": {
+    "singular": "Animal Caretaker",
+    "plural": "Animal Caretakers"
+  },
+  "packers": {
+    "singular": "Packer",
+    "plural": "Packers"
+  },
+  "furnitureDismantlersAssemblers": {
+    "singular": "Furniture Dismantler/Assembler",
+    "plural": "Furniture Dismantlers/Assemblers"
+  },
+  "courier": {
+    "singular": "Courier",
+    "plural": "Couriers"
+  },
+  "deliveryAssistant": {
+    "singular": "Delivery Assistant",
+    "plural": "Delivery Assistants"
+  },
+  "vehicleCleaner": {
+    "singular": "Vehicle Cleaner",
+    "plural": "Vehicle Cleaners"
+  },
+  "tireChanger": {
+    "singular": "Tire Changer",
+    "plural": "Tire Changers"
+  },
+  "doctor": {
+    "singular": "Doctor",
+    "plural": "Doctors"
+  },
+  "nurse": {
+    "singular": "Nurse",
+    "plural": "Nurses"
+  },
+  "wardBoyGirl": {
+    "singular": "Ward Boy/Girl",
+    "plural": "Ward Boys/Girls"
+  },
+  "ambulanceDriver": {
+    "singular": "Ambulance Driver",
+    "plural": "Ambulance Drivers"
+  },
+  "paramedic": {
+    "singular": "Paramedic",
+    "plural": "Paramedics"
+  },
+  "firstAidProvider": {
+    "singular": "First Aid Provider",
+    "plural": "First Aid Providers"
+  },
+  "caregiver": {
+    "singular": "Caregiver",
+    "plural": "Caregivers"
+  },
+  "homeNurse": {
+    "singular": "Home Nurse",
+    "plural": "Home Nurses"
+  },
+  "attendant": {
+    "singular": "Attendant",
+    "plural": "Attendants"
+  },
+  "pharmacyHelper": {
+    "singular": "Pharmacy Helper",
+    "plural": "Pharmacy Helpers"
+  },
+  "medicineDeliveryPerson": {
+    "singular": "Medicine Delivery Person",
+    "plural": "Medicine Delivery People"
+  },
+  "assistant": {
+    "singular": "Assistant",
+    "plural": "Assistants"
+  },
+  "generalLaborer": {
+    "singular": "General Laborer",
+    "plural": "General Laborers"
+  },
+  "animalGroomer": {
+    "singular": "Animal Groomer",
+    "plural": "Animal Groomers"
+  },
+  "animalTrainer": {
+    "singular": "Animal Trainer",
+    "plural": "Animal Trainers"
+  },
+  "decorator": {
+    "singular": "Decorator",
+    "plural": "Decorators"
+  },
+  "catererHelper": {
+    "singular": "Caterer Helper",
+    "plural": "Caterer Helpers"
+  },
+  "tailorAssistant": {
+    "singular": "Tailor Assistant",
+    "plural": "Tailor Assistants"
+  },
+  "weaver": {
+    "singular": "Weaver",
+    "plural": "Weavers"
+  },
+  "wasteCollector": {
+    "singular": "Waste Collector",
+    "plural": "Waste Collectors"
+  },
+  "recyclingWorker": {
+    "singular": "Recycling Worker",
+    "plural": "Recycling Workers"
+  },
+  "shopCleaner": {
+    "singular": "Shop Cleaner",
+    "plural": "Shop Cleaners"
+  },
+  "inventoryTaker": {
+    "singular": "Inventory Taker",
+    "plural": "Inventory Takers"
+  },
+  "warehouseCleaner": {
+    "singular": "Warehouse Cleaner",
+    "plural": "Warehouse Cleaners"
+  },
 
   "noInternetTitle": "No internet connection",
   "noInternetSubtitle": "Please check your internet connection and try again",
   "noInternetRetry": "TRY AGAIN",
-  "noInternetConnectAdmin": "CONNECT TO ADMINISTRATION"
+  "noInternetConnectAdmin": "CONNECT TO ADMINISTRATION",
+
+  "notificationsEnabled": "Notifications enabled"
 }

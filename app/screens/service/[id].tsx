@@ -442,7 +442,7 @@ const ServiceDetails = () => {
                       <CustomHeading
                         textAlign="left"
                         baseFont={20}
-                        color={Colors?.tertieryButton}
+                        color={Colors?.black}
                         style={{ marginBottom: 10 }}
                       >
                         {t("bookedWorker")}
@@ -568,6 +568,25 @@ const ServiceDetails = () => {
                   </View>
                 )}
 
+                {service?.bookingType === "direct" &&
+                  service?.bookedWorker === userDetails?._id && (
+                    <ButtonComp
+                      isPrimary={true}
+                      title={t("showYourAttendance")}
+                      onPress={() =>
+                        router?.push({
+                          pathname: "/screens/bookings/showAttendance",
+                          params: {
+                            bookingDetails: JSON.stringify(service),
+                          },
+                        })
+                      }
+                      bgColor={Colors?.tertieryButton}
+                      borderColor={Colors?.tertieryButton}
+                      style={{ flex: 1, paddingVertical: 6, marginBottom: 20 }}
+                    />
+                  )}
+
                 <View style={styles.headingWrapper}>
                   <CustomHeading
                     textAlign="left"
@@ -600,9 +619,41 @@ const ServiceDetails = () => {
                   </TouchableOpacity>
                 </View>
 
-                <CustomHeading baseFont={18} textAlign="left">
-                  {t(service?.type)} - {t(service?.subType)}
-                </CustomHeading>
+                {service?.type && service?.subType && (
+                  <CustomHeading baseFont={18} textAlign="left">
+                    {t(service?.type)} - {t(service?.subType)}
+                  </CustomHeading>
+                )}
+
+                {service?.appliedSkill && service?.appliedSkill?.skill && (
+                  <View
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 10,
+                    }}
+                  >
+                    <CustomHeading
+                      baseFont={20}
+                      textAlign="left"
+                      style={{
+                        flex: 1,
+                      }}
+                    >
+                      {t(service?.appliedSkill?.skill)}
+                    </CustomHeading>
+
+                    <CustomHeading
+                      baseFont={20}
+                      textAlign="right"
+                      color={Colors?.tertieryButton}
+                      style={{ width: "35%" }}
+                    >
+                      {service?.appliedSkill?.pricePerDay} {t("perDay")}
+                    </CustomHeading>
+                  </View>
+                )}
                 <View style={styles.listingLocationWrapper}>
                   <ShowAddress address={service?.address} />
                 </View>
@@ -634,12 +685,21 @@ const ServiceDetails = () => {
                     requirements={service?.requirements}
                   />
                 )}
-              </View>
 
-              {service?.employer?._id &&
-                service?.employer?._id !== userDetails?._id && (
-                  <EmployerCard employer={service?.employer} />
-                )}
+                {service?.employer?._id &&
+                  service?.employer?._id !== userDetails?._id && (
+                    <View style={{ marginTop: 20 }}>
+                      <CustomHeading
+                        textAlign="left"
+                        baseFont={20}
+                        color={Colors?.black}
+                      >
+                        {t("employer")}
+                      </CustomHeading>
+                      <EmployerCard employer={service?.employer} />
+                    </View>
+                  )}
+              </View>
             </Animated.ScrollView>
           </ScrollView>
 

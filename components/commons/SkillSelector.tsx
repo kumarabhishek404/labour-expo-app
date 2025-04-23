@@ -11,6 +11,7 @@ import { useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import PaperDropdown from "../inputs/Dropdown";
 import AddSkillDrawer from "./AddSkillModal";
+import { getDynamicWorkerType } from "@/utils/i18n";
 interface SkillSelectorProps {
   canAddSkills: boolean;
   isShowLabel?: boolean;
@@ -56,7 +57,13 @@ const SkillSelector = ({
         })
     );
 
-    setFilteredSkills(filteredSkills);
+    const finalSkills = filteredSkills?.map((skill: any) => {
+      return {
+        label: getDynamicWorkerType(skill?.label, 1),
+        value: skill?.value,
+      };
+    });
+    setFilteredSkills(finalSkills);
   }, [availableSkills, userSkills]);
 
   useEffect(() => {
@@ -69,7 +76,14 @@ const SkillSelector = ({
       })
     );
 
-    setSelectedUserSkills(filteredSkills);
+    const finalSkills = filteredSkills?.map((skill: any) => {
+      return {
+        label: getDynamicWorkerType(skill?.label, 1),
+        value: skill?.value,
+      };
+    });
+
+    setSelectedUserSkills(finalSkills);
   }, [availableSkills, userSkills]);
 
   const handleSkillToRemoveSelection = (skill: string) => {
@@ -91,7 +105,6 @@ const SkillSelector = ({
             onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
             placeholder="selectSkillToRemove"
             options={selectedUserSkills}
-            search={false}
             translationEnabled
             searchEnabled
             icon={
@@ -108,7 +121,7 @@ const SkillSelector = ({
       primaryButton: {
         title: "removeSkill",
         action: onRemoveSkill,
-        disabled: !selectedSkillToRemove || userSkills?.length <= 1,
+        disabled: !selectedSkillToRemove,
       },
       secondaryButton: {
         title: "cancel",
@@ -147,7 +160,9 @@ const SkillSelector = ({
             </View>
           ))
         ) : (
-          <CustomText baseFont={14}>{t("noSkillsFound")}</CustomText>
+          <View style={{ marginTop: 20 }}>
+            <CustomText baseFont={14}>{t("noSkillsFound")}</CustomText>
+          </View>
         )}
       </>
     );
@@ -166,7 +181,6 @@ const SkillSelector = ({
             onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
             placeholder="selectSkillToRemove"
             options={selectedUserSkills}
-            search={false}
             searchEnabled
             translationEnabled
             icon={
@@ -239,25 +253,28 @@ const SkillSelector = ({
 
         <View
           style={{
+            width: "100%",
             flexDirection: "row",
             justifyContent: "space-between",
+            paddingTop: 20,
           }}
         >
+          {canAddSkills && userSkills?.length > 0 ? (
+            <TouchableOpacity onPress={handleOpenRemoveSkillDrawer}>
+              <CustomHeading color={Colors?.danger} fontWeight="bold">
+                {t("removeSkill")}
+              </CustomHeading>
+            </TouchableOpacity>
+          ) : (
+            <View></View>
+          )}
           {canAddSkills && (
             <TouchableOpacity
-              style={style?.addNewSkill}
+              style={{ justifyContent: "flex-end" }}
               onPress={() => setIsAddSkill(true)}
             >
               <CustomHeading color={Colors?.link} fontWeight="bold">
                 {t("addNewSkills")}
-              </CustomHeading>
-            </TouchableOpacity>
-          )}
-
-          {canAddSkills && (
-            <TouchableOpacity onPress={handleOpenRemoveSkillDrawer}>
-              <CustomHeading color={Colors?.danger} fontWeight="bold">
-                {t("removeSkill")}
               </CustomHeading>
             </TouchableOpacity>
           )}
@@ -281,6 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-end",
+    gap: 5,
   },
   skillBox: {
     backgroundColor: Colors?.white,

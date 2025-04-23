@@ -51,8 +51,6 @@ const AllWorkers = ({
       },
     });
   };
-
-  console.log("extractWorkerSkills(WORKTYPES)---", extractWorkerSkills(WORKTYPES));
   
   return (
     <GradientWrapper height={Dimensions.get("window").height - 180}>

@@ -10,7 +10,7 @@ interface ShowDurationProps {
 const ShowDuration: React.FC<ShowDurationProps> = ({ duration, alignment }) => {
   return (
     <CustomText textAlign={alignment ? alignment : "left"}>
-      ⏳   {t("duration")} {duration} {duration > 1 ? t("days") : t("day")}
+      ⏳  {t("duration")} {duration} {duration > 1 ? t("days") : t("day")}
     </CustomText>
   );
 };

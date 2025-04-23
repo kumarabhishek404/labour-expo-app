@@ -7,6 +7,7 @@ import {
   Dimensions,
   ScrollView,
   BackHandler,
+  Pressable,
 } from "react-native";
 import { useAtom } from "jotai";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,12 +17,14 @@ import { Ionicons } from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
 import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
+import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const GlobalSideDrawer = () => {
   const [drawerState, setDrawerState]: any = useAtom(Atoms?.SideDrawerAtom);
   const slideAnim = useRef(new Animated.Value(width)).current;
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -34,7 +37,6 @@ const GlobalSideDrawer = () => {
       };
 
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [drawerState, setDrawerState])
@@ -42,20 +44,34 @@ const GlobalSideDrawer = () => {
 
   useEffect(() => {
     if (drawerState.visible) {
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   }, [drawerState.visible]);
 
   const closeDrawer = () => {
-    Animated.timing(slideAnim, {
-      toValue: width,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => setDrawerState({ ...drawerState, visible: false }));
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: width,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backdropOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setDrawerState({ ...drawerState, visible: false }));
   };
 
   if (!drawerState.visible) return null;
@@ -63,7 +79,9 @@ const GlobalSideDrawer = () => {
   return (
     <>
       <TouchableWithoutFeedback onPress={closeDrawer}>
-        <View style={styles.backdrop} />
+        <Animated.View
+          style={[styles.backdrop, { opacity: backdropOpacity }]}
+        />
       </TouchableWithoutFeedback>
 
       <Animated.View
@@ -72,19 +90,30 @@ const GlobalSideDrawer = () => {
           { transform: [{ translateX: slideAnim }] },
         ]}
       >
-        <View style={styles?.wrapper}>
+        <View style={styles.wrapper}>
           <View style={styles.header}>
-            <CustomHeading baseFont={20} fontWeight="bold">
+            <CustomHeading
+              baseFont={20}
+              fontWeight="bold"
+              style={styles.headerText}
+              color={Colors?.white}
+            >
               {t(drawerState.title)}
             </CustomHeading>
-            <Ionicons
-              name="close"
-              size={28}
-              color={Colors.primary}
+            <Pressable
               onPress={closeDrawer}
-            />
+              hitSlop={10}
+              style={{
+                position: "absolute",
+                right: 5,
+                top: 17,
+                marginRight: 10,
+              }}
+            >
+              <Ionicons name="close" size={28} color={Colors.white} />
+            </Pressable>
           </View>
-          {/* Scrollable Content */}
+
           <ScrollView
             style={styles.scrollContainer}
             contentContainerStyle={styles.contentContainer}
@@ -95,7 +124,6 @@ const GlobalSideDrawer = () => {
           </ScrollView>
         </View>
 
-        {/* Fixed Footer Buttons */}
         {(drawerState.primaryButton || drawerState.secondaryButton) && (
           <View style={styles.footer}>
             {drawerState.secondaryButton && (
@@ -106,7 +134,7 @@ const GlobalSideDrawer = () => {
                 bgColor={Colors?.danger}
                 borderColor={Colors?.danger}
                 textColor={Colors?.white}
-                style={{ width: "35%" }}
+                style={{ width: "30%" }}
               />
             )}
             {drawerState.primaryButton && (
@@ -137,13 +165,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 98,
   },
   drawerContainer: {
     width: "100%",
     height: "100%",
-    backgroundColor: Colors.background,
-    paddingHorizontal: 15,
+    backgroundColor: Colors.fourth,
     zIndex: 99,
     flexDirection: "column",
     justifyContent: "space-between",
@@ -153,23 +181,28 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
-    paddingTop: 10,
+    justifyContent: "space-between",
+    paddingTop: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderColor: Colors.white,
+    backgroundColor: Colors?.primary,
+  },
+  headerText: {
+    flex: 1,
   },
   scrollContainer: {},
   contentContainer: {
-    paddingBottom: 100, // Avoid content being cut off behind buttons
+    paddingBottom: 100,
+    paddingTop: 20,
+    paddingHorizontal: 15,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 10,
-    width: "100%",
+    paddingHorizontal: 15,
     marginBottom: 10,
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
   },

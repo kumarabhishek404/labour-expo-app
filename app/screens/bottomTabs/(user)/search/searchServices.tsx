@@ -155,7 +155,6 @@ const SearchServices = ({ style }: any) => {
                   placeholder="selectWorkType"
                   options={WORKTYPES}
                   errors={errors}
-                  search={false}
                   icon={
                     <Ionicons
                       name={"mail-outline"}
@@ -189,7 +188,6 @@ const SearchServices = ({ style }: any) => {
                   // disabled={!watch("type")}
                   options={filterSubCategories(watch("type"))}
                   errors={errors}
-                  search={false}
                   icon={
                     <Ionicons
                       name={"mail-outline"}

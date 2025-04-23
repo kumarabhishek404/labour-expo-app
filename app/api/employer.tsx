@@ -235,7 +235,7 @@ const completeBooking = async (payload: any) => {
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while completing booking : `,
-      error?.response?.data?.message
+      error?.response
     );
     TOAST?.error(
       error?.response?.data?.message ||

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -27,15 +27,33 @@ import WORKER1 from "../../../assets/worker1.png";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import AUTH from "@/app/api/auth";
 import useFirstTimeLaunch from "@/app/hooks/useFirstTimeLaunch";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import { saveToken } from "@/utils/authStorage";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
+  const hasNavigated = useRef(false);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
   const hasUpdatedLocation = useRef(false); // add this at top of component
   const isFirstLaunch = useFirstTimeLaunch();
-  const setUserDetails = useSetAtom(Atoms?.UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
   const { mobile } = useLocalSearchParams();
+  const [loggedInUser, setLoggedInUser]: any = useState(null);
+
+  useEffect(() => {
+    if (!hasNavigated.current && loggedInUser) {
+      hasNavigated.current = true;
+
+      // Add a small delay before navigation to avoid race condition
+      setTimeout(() => {
+        router.replace(
+          loggedInUser?.skills?.length > 0 ? "/(tabs)/second" : "/(tabs)"
+        );
+      }, 100);
+    }
+  }, [loggedInUser]);
 
   const {
     control,
@@ -67,71 +85,86 @@ const LoginScreen = () => {
     mutationFn: (data) => AUTH?.signIn(data),
 
     onSuccess: async (response) => {
-      const user = response?.user;
       const token = response?.token;
+      const minimalUser = response?.user;
+      setLoggedInUser(minimalUser);
+      // Set minimal details immediately
+      await saveToken(token);
+      setUserDetails({ isAuth: true, ...minimalUser });
 
-      // Update user details
-      setUserDetails({
-        isAuth: true,
-        token,
-        ...user,
-      });
+      // ---------------------
+      // Run background tasks
+      // ---------------------
 
-      if (!user?.profilePicture) {
-        return router.push({
-          pathname: "/screens/auth/register/fourth",
-          params: { userId: user?._id },
-        });
-      }
+      (async () => {
+        try {
+          const updatedUser: any = await refreshUser();
 
-      if (user?.status !== "ACTIVE") {
-        setIsAccountInactive(true);
-        return setTimeout(() => {
-          router.replace("/(tabs)/fifth");
-        }, 0);
-      }
+          if (!updatedUser) {
+            console.error("❌ Failed to fetch updated user info.");
+            return;
+          }
 
-      setIsAccountInactive(false);
-      // defer navigation to next tick
-      setTimeout(() => {
-        router.replace(user?.skills?.length > 0 ? "/(tabs)/second" : "/(tabs)");
-      }, 0);
+          console.log("✅ Fetched full user info");
 
-      // Fetch and update location if missing
-      if (!user?.location?.latitude || !user?.location?.longitude) {
-        const locationData: any = await fetchCurrentLocation();
+          // Handle inactive account
+          if (updatedUser?.status !== "ACTIVE") {
+            setIsAccountInactive(true);
+            router.replace("/(tabs)/fifth");
+            return;
+          }
 
-        if (
-          locationData &&
-          (!user.location ||
-            user.location.latitude !== locationData.location.latitude ||
-            user.location.longitude !== locationData.location.longitude)
-        ) {
-          // Only update if it's truly different
-          setUserDetails((prev: any) => ({
-            ...prev,
-            location: locationData.location,
-          }));
+          // Update profile picture if missing (optional)
+          if (!updatedUser.profilePicture) {
+            router.push({
+              pathname: "/screens/auth/register/fourth",
+              params: { userId: updatedUser._id },
+            });
+          }
 
-          mutationUpdateProfileInfo?.mutate({
-            _id: user?._id,
-            location: locationData.location,
-          });
+          // Update location if missing or outdated
+          if (
+            !updatedUser?.location?.latitude ||
+            !updatedUser?.location?.longitude
+          ) {
+            const locationData: any = await fetchCurrentLocation();
+
+            if (
+              locationData &&
+              (!updatedUser.location ||
+                updatedUser.location.latitude !==
+                  locationData.location.latitude ||
+                updatedUser.location.longitude !==
+                  locationData.location.longitude)
+            ) {
+              setUserDetails((prev: any) => ({
+                ...prev,
+                location: locationData.location,
+              }));
+
+              mutationUpdateProfileInfo?.mutate({
+                _id: updatedUser._id,
+                location: locationData.location,
+              });
+            }
+          }
+
+          // Register for push notifications
+          try {
+            await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+              updatedUser?.notificationConsent
+            );
+            console.log("✅ Push notifications enabled");
+          } catch (err) {
+            console.error("❌ Push notification registration failed", err);
+          }
+        } catch (err) {
+          console.error("❌ Background task error after login:", err);
         }
-      }
-
-      // Register for push notifications
-      try {
-        await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-          user?.notificationConsent
-        );
-        console.log("Notifications enabled");
-      } catch (err) {
-        console.error("Failed to enable notifications", err);
-      }
+      })();
     },
 
-    onError: (err: any) => {
+    onError: async (err: any) => {
       const errorCode = err?.response?.data?.errorCode;
       const userId = err?.response?.data?.userId;
       const token = err?.response?.data?.token;
@@ -140,7 +173,7 @@ const LoginScreen = () => {
         errorCode === "SET_PASSWORD_FIRST" ||
         errorCode === "SET_PROFILE_PICTURE_FIRST"
       ) {
-        setUserDetails({ token });
+        await saveToken(token);
 
         const route =
           errorCode === "SET_PASSWORD_FIRST"
@@ -149,6 +182,7 @@ const LoginScreen = () => {
 
         return router.push({ pathname: route, params: { userId } });
       }
+      TOAST?.error(err?.response?.data?.message || "Login failed");
     },
   });
 

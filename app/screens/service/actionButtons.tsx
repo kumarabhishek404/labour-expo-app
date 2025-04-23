@@ -236,7 +236,12 @@ const ServiceActionButtons = ({
   };
 
   const handleApply = () => {
-    if (!userDetails?.skills || userDetails?.skills?.length === 0) {
+    console.log("members---", members);
+
+    if (
+      (!userDetails?.skills || userDetails?.skills?.length === 0) &&
+      (!members || members?.length === 0)
+    ) {
       return setIsAddSkill(true);
     }
 
