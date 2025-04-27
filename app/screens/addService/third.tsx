@@ -86,11 +86,9 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
                 name="address"
                 address={value}
                 setAddress={onChange}
-                onBlur={onBlur}
                 location={location}
                 setLocation={setLocation}
                 selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
                 errors={errors}
               />
             )}
@@ -98,32 +96,31 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
         </View>
 
         <View style={{ zIndex: 8 }}>
-        <Controller
-          control={control}
-          name="startDate"
-          defaultValue={new Date()}
-          rules={{
-            required: t("startDateIsRequired"),
-            validate: (value) => {
-              if (new Date(value) < new Date()) {
-                return t("startDateNotEarlierThanToday");
-              } else {
-                return true;
-              }
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <DateField
-              title={t("startDate")}
-              name="startDate"
-              type="serviceDate"
-              date={moment(value)}
-              setDate={onChange}
-              onBlur={onBlur}
-              errors={errors}
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="startDate"
+            defaultValue={new Date()}
+            rules={{
+              required: t("startDateIsRequired"),
+              validate: (value) => {
+                if (new Date(value) < new Date()) {
+                  return t("startDateNotEarlierThanToday");
+                } else {
+                  return true;
+                }
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DateField
+                title={t("startDate")}
+                name="startDate"
+                type="serviceDate"
+                date={moment(value)}
+                setDate={onChange}
+                errors={errors}
+              />
+            )}
+          />
         </View>
 
         <Controller
@@ -158,10 +155,11 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
             render={({ field: { onChange, onBlur, value } }) => (
               <TextAreaInputComponent
                 name="description"
+                label="description"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder={t('enterWorkDescription')}
+                placeholder={t("enterWorkDescription")}
                 errors={errors}
                 icon={
                   <Ionicons

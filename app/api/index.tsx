@@ -2,6 +2,7 @@ import EventEmitter from "eventemitter3"; // ✅ Correct import
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 import { getToken } from "@/utils/authStorage";
+import { router } from "expo-router";
 
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
@@ -13,7 +14,7 @@ const getHeaders = async (retries = 3, delay = 500) => {
   try {
     // const user = await AsyncStorage.getItem("user");
     const token = await getToken();
-    
+
     if (!token || token === "null" || token === "undefined") {
       console.warn("No valid user session found.");
       return { Authorization: "" }; // Stop retries
@@ -37,9 +38,16 @@ const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
-eventEmitter.on("logout", () => {
-  isLoggedOut = true;
-});
+const logout = async () => {
+  try {
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("token"); // If you store token separately
+    // setIsLoggedIn(false);
+    router.replace("/screens/auth/login"); // Or wherever your login screen route is
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};
 
 // ✅ Interceptor: Handle Token Expiry and Emit Logout Event
 api.interceptors.response.use(
@@ -59,8 +67,9 @@ api.interceptors.response.use(
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
-        AsyncStorage.removeItem("user"); // Clear local storage
-        eventEmitter.emit("logout"); // Emit logout event
+        // AsyncStorage.removeItem("user"); // Clear local storage
+        // eventEmitter.emit("logout"); // Emit logout event
+        logout();
       }
     } else if (error.request) {
       console.error("No response received:", error.request);

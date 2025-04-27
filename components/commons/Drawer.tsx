@@ -8,12 +8,17 @@ import {
   ScrollView,
   BackHandler,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { useAtom } from "jotai";
 import { useFocusEffect } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
 import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
@@ -92,6 +97,14 @@ const GlobalSideDrawer = () => {
       >
         <View style={styles.wrapper}>
           <View style={styles.header}>
+            <TouchableOpacity
+              onPress={closeDrawer}
+              style={{
+                marginLeft: 10,
+              }}
+            >
+              <AntDesign name="arrowleft" size={28} color={Colors.white} />
+            </TouchableOpacity>
             <CustomHeading
               baseFont={20}
               fontWeight="bold"
@@ -100,18 +113,6 @@ const GlobalSideDrawer = () => {
             >
               {t(drawerState.title)}
             </CustomHeading>
-            <Pressable
-              onPress={closeDrawer}
-              hitSlop={10}
-              style={{
-                position: "absolute",
-                right: 5,
-                top: 17,
-                marginRight: 10,
-              }}
-            >
-              <Ionicons name="close" size={28} color={Colors.white} />
-            </Pressable>
           </View>
 
           <ScrollView

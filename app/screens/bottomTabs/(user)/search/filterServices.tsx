@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   scrollbarContent: {
-    // marginBottom: 50
+    marginTop: 15,
+    gap: 20,
   },
   header: {
     flexDirection: "row",

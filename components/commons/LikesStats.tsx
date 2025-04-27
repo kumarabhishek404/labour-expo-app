@@ -14,14 +14,9 @@ const StatsCard = () => {
     <View style={styles.container}>
       <View>
         <CustomHeading baseFont={24}>
-          {userDetails?.myBookings?.length || 0}
+          {userDetails?.likedUsers?.length || 0}
         </CustomHeading>
-        <CustomText
-          color={Colors?.heading}
-          style={{ textTransform: "uppercase" }}
-        >
-          {t("myBookings")}
-        </CustomText>
+        <CustomText color={Colors?.heading}>{t("savedWorkers")}</CustomText>
       </View>
       <View>
         <CustomHeading baseFont={24}>

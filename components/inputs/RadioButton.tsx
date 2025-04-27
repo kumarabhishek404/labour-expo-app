@@ -1,50 +1,53 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Controller } from "react-hook-form";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 
-interface SkillOption {
-  skill: string;
-  pricePerDay: number;
-}
-
-interface RadioSkillSelectorProps {
+interface RadioSelectorProps<T> {
   name: string;
   label: string;
-  value: any;
+  value: T | null;
   errors: any;
-  onChange: any;
-  options: SkillOption[];
+  onChange: (val: T) => void;
+  options: T[];
+  keyExtractor: (option: T) => string;
+  renderOption: (option: T) => string;
+  translationEnabled?: boolean;
 }
 
-const RadioSkillSelector: React.FC<RadioSkillSelectorProps> = ({
+function RadioSelector<T>({
   name,
   label,
   value,
   errors,
   onChange,
   options,
-}) => {
+  keyExtractor,
+  renderOption,
+  translationEnabled,
+}: RadioSelectorProps<T>) {
   return (
     <View style={styles.container}>
       {label && (
         <CustomHeading
           textAlign="left"
-          color={Colors?.inputLabel}
+          color={Colors.inputLabel}
           baseFont={18}
           fontWeight="600"
         >
-          {t(label)}
+          {translationEnabled ? t(label) : label}
         </CustomHeading>
       )}
       {options?.map((option, index) => {
-        const isSelected = value?.skill === option.skill;
+        const selectedKey = value ? keyExtractor(value) : "";
+        const optionKey = keyExtractor(option);
+        const isSelected = selectedKey === optionKey;
+
         return (
           <TouchableOpacity
-            key={index}
+            key={optionKey}
             style={[
               styles.optionContainer,
               isSelected && styles.selectedOption,
@@ -54,15 +57,11 @@ const RadioSkillSelector: React.FC<RadioSkillSelectorProps> = ({
             <View
               style={[styles.radioCircle, isSelected && styles.radioSelected]}
             />
-            <CustomText
-              textAlign="left"
-              style={{ flex: 1 }}
-              baseFont={18}
-            >{`${t(option.skill)} - ${
-              option.pricePerDay
-                ? `₹${option.pricePerDay} / ${t("perDay")}`
-                : t("notAdded")
-            }`}</CustomText>
+            <CustomText textAlign="left" style={{ flex: 1 }} baseFont={18}>
+              {translationEnabled
+                ? t(renderOption(option))
+                : renderOption(option)}
+            </CustomText>
           </TouchableOpacity>
         );
       })}
@@ -71,23 +70,17 @@ const RadioSkillSelector: React.FC<RadioSkillSelectorProps> = ({
       )}
     </View>
   );
-};
+}
 
-export default RadioSkillSelector;
+export default RadioSelector;
 
 const styles = StyleSheet.create({
   container: {
     gap: 10,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: Colors.text,
-  },
   optionContainer: {
-    flex: 1,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: 10,
   },
   selectedOption: {

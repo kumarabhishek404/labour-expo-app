@@ -6,6 +6,8 @@ const asyncStorage = createJSONStorage(() => AsyncStorage);
 
 const UserAtom = atomWithStorage<any>("user", {}, asyncStorage);
 
+const IsLoggedInAtom = atomWithStorage<any>("loggedIn", {}, asyncStorage);
+
 const LanguageAtom = atomWithStorage<any>("language", "hi", asyncStorage);
 
 const EarningAtom = atomWithStorage<any>("earnings", {}, asyncStorage);
@@ -94,6 +96,7 @@ const Atoms = {
   LocaleAtom,
   BottomDrawerAtom,
   SideDrawerAtom,
+  IsLoggedInAtom
 };
 
 // Export the object as default

@@ -133,7 +133,7 @@ const AddSkillDrawer = ({
               onSelect={(skill: string) => handleSkillSelection(skill)}
               searchEnabled
               placeholder={t("searchAndSelectSkills")}
-              options={filteredSkills}
+              options={filteredSkills ?? WORKERTYPES}
               icon={
                 <MaterialCommunityIcons
                   style={styles.icon}

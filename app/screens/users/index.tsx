@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexGrow: 1,
+    marginBottom: 100
   },
 });
 

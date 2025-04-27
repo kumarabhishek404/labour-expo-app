@@ -7,13 +7,10 @@ import {
   Dimensions,
 } from "react-native";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/Pagination/PaginationString";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import { router } from "expo-router";
 import Colors from "@/constants/Colors";
-import FloatingButton from "@/components/inputs/FloatingButton";
 import FiltersServices from "./filterServices";
-import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
@@ -31,10 +28,6 @@ const AllServices = ({
   loadMore,
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
-
-  // if (!router?.canGoBack || !memoizedData) {
-  //   return null; // or a safe loader fallback
-  // }
 
   const onSearchService = (data: any) => {
     setIsAddFilters(false);
@@ -109,6 +102,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
+    paddingBottom: 150,
   },
   paginationHeader: {
     width: "100%",

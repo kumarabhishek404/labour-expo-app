@@ -5,13 +5,18 @@ import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import USER from "../api/user";
 import EMPLOYER from "../api/employer";
+import REFRESH_USER from "./useRefreshUser";
 
 const useApiCalls = (id: any, refetch: any) => {
+  const { refreshUser, isLoading: isRefreshLoading } =
+    REFRESH_USER.useRefreshUser();
+
   const mutationLikeUser = useMutation({
     mutationKey: ["likeUser", { id }],
     mutationFn: () => USER?.likeUser({ userId: id }),
     onSuccess: () => {
       refetch();
+      refreshUser();
       TOAST?.success(t("userAddedToFavourites"));
     },
   });
@@ -21,6 +26,7 @@ const useApiCalls = (id: any, refetch: any) => {
     mutationFn: () => USER?.unlikeUser({ userId: id }),
     onSuccess: () => {
       refetch();
+      refreshUser()
       TOAST?.success(t("userRemovedFromFavourites"));
     },
   });

@@ -48,6 +48,7 @@ import ApplicantsTabScreen from "./showApplicationsAndSelections";
 import ApplicantSummary from "./applicantsSummary";
 import BookingActionButtons from "../bookings/actionButtons";
 import ServicePlaceholder from "@/components/commons/LoadingPlaceholders/ServiceDetailsPlaceholder";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -521,6 +522,163 @@ const ServiceDetails = () => {
                   </View>
                 )}
 
+                {(isServiceApplied || isServiceAppliedByMediator) &&
+                  service?.status !== "CANCELLED" && (
+                    <View style={styles?.appliedWrapper}>
+                      <CustomHeading color={Colors?.white} textAlign="left">
+                        {t("youHaveAppliedSuccessfully")}
+                      </CustomHeading>
+
+                      <CustomText
+                        textAlign="left"
+                        color={Colors?.white}
+                        style={{ marginBottom: 10 }}
+                      >
+                        {workers && workers.length > 0
+                          ? t("youAppliedWithTheseMembers")
+                          : isServiceAppliedByMediator
+                          ? t("youAppliedByMediator")
+                          : t("youAppliedIndividually")}
+                      </CustomText>
+
+                      {/* If mediator, show only applied workers */}
+                      {workers && workers.length > 0 && (
+                        <View style={{ gap: 10 }}>
+                          {service?.appliedUsers
+                            ?.filter(
+                              (appliedUser: any) =>
+                                appliedUser?.user === userDetails?._id &&
+                                appliedUser?.status === "PENDING"
+                            )
+                            ?.flatMap(
+                              (appliedUser: any) => appliedUser?.workers || []
+                            )
+                            ?.map((appliedWorker: any, index: number) => {
+                              const matchedWorker = workers.find(
+                                (worker: any) =>
+                                  worker?._id === appliedWorker?.worker &&
+                                  appliedWorker?.status === "PENDING"
+                              );
+
+                              if (!matchedWorker) return null;
+
+                              const { name, mobile, profilePicture, address } =
+                                matchedWorker;
+
+                              return (
+                                <View
+                                  key={matchedWorker?._id || index}
+                                  style={styles?.mediatorAppliedWorkers}
+                                >
+                                  <ProfilePicture
+                                    uri={profilePicture}
+                                    style={{
+                                      width: 50,
+                                      height: 50,
+                                      borderRadius: 25,
+                                      backgroundColor: Colors.white,
+                                    }}
+                                  />
+
+                                  <View style={{ flex: 1 }}>
+                                    <CustomText
+                                      textAlign="left"
+                                      color={Colors.white}
+                                    >
+                                      {t("name")}: {name || "-"}
+                                    </CustomText>
+                                    <CustomText
+                                      textAlign="left"
+                                      color={Colors.white}
+                                    >
+                                      {t("mobile")}: {mobile || "-"}
+                                    </CustomText>
+                                    <CustomText
+                                      textAlign="left"
+                                      color={Colors.white}
+                                    >
+                                      {t("appliedSkill")}:{" "}
+                                      {getDynamicWorkerType(
+                                        appliedWorker?.skill,
+                                        1
+                                      ) || "-"}
+                                    </CustomText>
+                                    <CustomText
+                                      textAlign="left"
+                                      color={Colors.white}
+                                    >
+                                      {t("address")}: {address || "-"}
+                                    </CustomText>
+                                  </View>
+                                </View>
+                              );
+                            })}
+                        </View>
+                      )}
+
+                      {/* If individual worker, show their applied skill */}
+                      {(!workers || workers.length === 0) && (
+                        <View
+                          style={{
+                            backgroundColor: Colors?.fourth,
+                            padding: 10,
+                            borderRadius: 8,
+                          }}
+                        >
+                          {service?.appliedUsers
+                            ?.filter(
+                              (appliedUser: any) =>
+                                appliedUser?.user === userDetails?._id &&
+                                appliedUser?.status === "PENDING"
+                            )
+                            ?.map((appliedUser: any, index: number) => (
+                              <CustomText key={index} color={Colors?.primary}>
+                                {t("yourAppliedSkill")}:{" "}
+                                <CustomText
+                                  fontWeight="600"
+                                  color={Colors?.primary}
+                                >
+                                  {getDynamicWorkerType(
+                                    appliedUser?.skill,
+                                    1
+                                  ) || "-"}
+                                </CustomText>
+                              </CustomText>
+                            ))}
+
+                          {isServiceAppliedByMediator &&
+                            service?.appliedUsers
+                              ?.find((user: any) =>
+                                user?.workers?.some(
+                                  (worker: any) =>
+                                    worker?.worker?.toString() ===
+                                      userDetails?._id &&
+                                    worker?.status === "PENDING"
+                                )
+                              )
+                              ?.workers?.filter(
+                                (worker: any) =>
+                                  worker?.worker?.toString() ===
+                                    userDetails?._id &&
+                                  worker?.status === "PENDING"
+                              )
+                              ?.map((worker: any, index: number) => (
+                                <CustomText key={index} color={Colors?.primary}>
+                                  {t("yourAppliedSkill")}:{" "}
+                                  <CustomText
+                                    fontWeight="600"
+                                    color={Colors?.primary}
+                                  >
+                                    {getDynamicWorkerType(worker?.skill, 1) ||
+                                      "-"}
+                                  </CustomText>
+                                </CustomText>
+                              ))}
+                        </View>
+                      )}
+                    </View>
+                  )}
+
                 {isSelected && service?.status !== "CANCELLED" && (
                   <View style={styles?.selectedWrapper}>
                     <CustomHeading color={Colors?.white} textAlign="left">
@@ -641,7 +799,7 @@ const ServiceDetails = () => {
                         flex: 1,
                       }}
                     >
-                      {t(service?.appliedSkill?.skill)}
+                      {getDynamicWorkerType(service?.appliedSkill?.skill, 1)}
                     </CustomHeading>
 
                     <CustomHeading
@@ -703,40 +861,38 @@ const ServiceDetails = () => {
             </Animated.ScrollView>
           </ScrollView>
 
-          {service?.bookingType === "byService" &&
-            !isFetching &&
-            !isLoading && (
-              <ServiceActionButtons
-                service={service}
-                members={workers}
-                mediatorMobile={mediatorMobile}
-                isSelectedWorkerLoading={isSelectedWorkerLoading}
-                isMemberLoading={isMemberLoading}
-                isMemberFetchingNextPage={isMemberFetchingNextPage}
-                userDetails={userDetails}
-                isAdmin={isAdmin}
-                isSelected={isSelected}
-                isMediatorOrSingleWorker={isMediatorOrSingleWorker}
-                isWorkerBooked={isWorkerBooked}
-                isServiceApplied={isServiceApplied}
-                isServiceAppliedByMediator={isServiceAppliedByMediator}
-                isServiceLiked={isServiceLiked}
-                id={id as string}
-                refetch={refetch}
-                refreshUser={refreshUser}
-                selectedWorkersIds={selectedWorkersIds}
-                setSelectedWorkersIds={setSelectedWorkersIds}
-                setIsWorkerSelectModal={setIsWorkerSelectModal}
-                setModalVisible={setModalVisible}
-                setIsCompleteModalVisible={setIsCompleteModalVisible}
-                hasMemberNextPage={hasMemberNextPage}
-                memberFetchPage={memberFetchPage}
-                setAddService={setAddService}
-                isCompleteModalVisible={isCompleteModalVisible}
-                modalVisible={modalVisible}
-                isWorkerSelectModal={isWorkerSelectModal}
-              />
-            )}
+          {service?.bookingType === "byService" && !isLoading && (
+            <ServiceActionButtons
+              service={service}
+              members={workers}
+              mediatorMobile={mediatorMobile}
+              isSelectedWorkerLoading={isSelectedWorkerLoading}
+              isMemberLoading={isMemberLoading}
+              isMemberFetchingNextPage={isMemberFetchingNextPage}
+              userDetails={userDetails}
+              isAdmin={isAdmin}
+              isSelected={isSelected}
+              isMediatorOrSingleWorker={isMediatorOrSingleWorker}
+              isWorkerBooked={isWorkerBooked}
+              isServiceApplied={isServiceApplied}
+              isServiceAppliedByMediator={isServiceAppliedByMediator}
+              isServiceLiked={isServiceLiked}
+              id={id as string}
+              refetch={refetch}
+              refreshUser={refreshUser}
+              selectedWorkersIds={selectedWorkersIds}
+              setSelectedWorkersIds={setSelectedWorkersIds}
+              setIsWorkerSelectModal={setIsWorkerSelectModal}
+              setModalVisible={setModalVisible}
+              setIsCompleteModalVisible={setIsCompleteModalVisible}
+              hasMemberNextPage={hasMemberNextPage}
+              memberFetchPage={memberFetchPage}
+              setAddService={setAddService}
+              isCompleteModalVisible={isCompleteModalVisible}
+              modalVisible={modalVisible}
+              isWorkerSelectModal={isWorkerSelectModal}
+            />
+          )}
 
           {service?.bookingType === "direct" && (
             <BookingActionButtons
@@ -775,16 +931,22 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   selectedWrapper: {
-    padding: 15,
+    padding: 10,
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors?.success,
   },
   cancelledService: {
-    padding: 15,
+    padding: 10,
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors?.danger,
+  },
+  appliedWrapper: {
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: Colors?.tertieryButton,
   },
   editContainer: {
     flexDirection: "row",
@@ -952,5 +1114,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 8,
+  },
+  mediatorAppliedWorkers: {
+    backgroundColor: Colors?.highlight,
+    borderRadius: 8,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
   },
 });

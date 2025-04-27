@@ -9,6 +9,7 @@ import ProfilePicture from "./ProfilePicture";
 import ButtonComp from "../inputs/Button";
 import DateDisplay from "./ShowDate";
 import ShowDuration from "./ShowDuration";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const ListingsBookedWorkers = ({ title, item, category }: any) => {
   let workersList =
@@ -25,7 +26,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 
   const firstWorker = workersList?.[0];
 
-  console.log("item----", item?.bookingType, item?.appliedSkill);
+  console.log("firstWorker----", firstWorker);
 
   return (
     <View style={styles.container} key={item?._id}>
@@ -46,7 +47,7 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
           {/* Worker Profile Section */}
           <View style={styles.workerHeader}>
             <View style={styles.workerImagesContainer}>
-              {workersList?.slice(0, 3).map((worker: any, index: number) => (
+              {workersList?.slice(0, 5).map((worker: any, index: number) => (
                 <ProfilePicture
                   key={index}
                   uri={worker.profilePicture}
@@ -57,18 +58,30 @@ const ListingsBookedWorkers = ({ title, item, category }: any) => {
 
             <View style={styles.workerInfo}>
               <CustomHeading baseFont={18} fontWeight="bold" textAlign="right">
-                {firstWorker?.name}
+                {workersList && workersList?.length > 1
+                  ? t("moreThanOneWorkers")
+                  : firstWorker?.name}
               </CustomHeading>
-              <CustomText
-                baseFont={15}
-                color={Colors.tertieryButton}
-                textAlign="right"
-              >
-                {t(item?.appliedSkill?.skill || "worker")}
-                <CustomText fontWeight="600" color={Colors.tertieryButton}>
-                  {" - "} ({item?.appliedSkill?.pricePerDay} {t("perDay")})
+              {workersList && workersList?.length > 1 ? (
+                <CustomText
+                  baseFont={15}
+                  color={Colors.tertieryButton}
+                  textAlign="right"
+                >
+                  {t("multipleSkills")}
                 </CustomText>
-              </CustomText>
+              ) : (
+                <CustomText
+                  baseFont={15}
+                  color={Colors.tertieryButton}
+                  textAlign="right"
+                >
+                  {getDynamicWorkerType(item?.appliedSkill?.skill, 1)}
+                  <CustomText fontWeight="600" color={Colors.tertieryButton}>
+                    {" - "} ({item?.appliedSkill?.pricePerDay} {t("perDay")})
+                  </CustomText>
+                </CustomText>
+              )}
             </View>
           </View>
 
@@ -154,14 +167,14 @@ const styles = StyleSheet.create({
   },
   workerHeader: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: 10,
   },
   workerImagesContainer: {
     flexDirection: "row",
     position: "relative",
-    width: 80,
-    height: 50,
+    width: 62,
+    height: 62,
   },
   workerImage: {
     position: "absolute",

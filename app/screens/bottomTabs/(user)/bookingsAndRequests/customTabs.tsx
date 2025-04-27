@@ -114,7 +114,7 @@ const CustomSegmentedButton = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 5,
   },
   segmentedContainer: {
     flexDirection: "row",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 8,
     justifyContent: "center",
     alignItems: "center",

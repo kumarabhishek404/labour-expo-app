@@ -10,6 +10,7 @@ interface SelectableTagsProps {
   options: any;
   selectedTag: string;
   setSelectedTag: any;
+  tagStyle?: any;
 }
 
 const SelectableTags = ({
@@ -17,6 +18,7 @@ const SelectableTags = ({
   options,
   selectedTag,
   setSelectedTag,
+  tagStyle,
 }: SelectableTagsProps) => {
   const handleTagPress = (tag: any) => {
     setSelectedTag(tag);
@@ -24,20 +26,24 @@ const SelectableTags = ({
 
   return (
     <View style={styles.container}>
-      <CustomHeading textAlign="left" style={styles?.label}>
-        {label}
-      </CustomHeading>
+      {label && (
+        <CustomHeading textAlign="left" style={styles?.label}>
+          {label}
+        </CustomHeading>
+      )}
       <View style={styles?.tagContainer}>
         {options.map((option: any, index: number) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.tag,
-              selectedTag === option?.value && styles.selectedTag, // Apply selected style if the tag is selected
+              tagStyle, // Apply selected style if the tag is selected
+              selectedTag === option?.value && styles.selectedTag,
             ]}
             onPress={() => handleTagPress(option?.value)} // Select tag on press
           >
             <CustomText
+              fontWeight="500"
               style={[
                 styles.tagText,
                 selectedTag === option?.value && styles.selectedTagText,
@@ -58,7 +64,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginVertical: 20,
   },
   label: {
     marginBottom: 10,
@@ -77,11 +82,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedTag: {
-    backgroundColor: "#4A90E2",
+    backgroundColor: Colors?.highlight,
   },
-  tagText: {},
+  tagText: {
+    color: Colors?.black,
+  },
   selectedTagText: {
-    color: "#fff", // Selected text color
+    color: Colors?.white, // Selected text color
   },
 });
 

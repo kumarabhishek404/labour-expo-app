@@ -53,7 +53,9 @@ const Bookings = () => {
     queryKey: ["myServices", category, userDetails?._id],
     queryFn: async ({ pageParam = 1 }) => {
       const token = await getToken();
-      if (!token || !userDetails?._id || !userDetails?.isAuth) {
+      console.log("token---", token, userDetails?._id);
+
+      if (!token || !userDetails?._id) {
         throw new Error("Unauthorized: Missing token or user details");
       }
 
@@ -63,7 +65,7 @@ const Bookings = () => {
     },
     retry: false,
     initialPageParam: 1,
-    enabled: !!userDetails?._id && !!userDetails?.isAuth,
+    enabled: !!userDetails?._id,
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
         return lastPage?.pagination?.page + 1;
@@ -72,6 +74,7 @@ const Bookings = () => {
     },
   });
 
+  
   useFocusEffect(
     React.useCallback(() => {
       if (firstTimeRef.current) {
@@ -136,7 +139,7 @@ const Bookings = () => {
           style={{
             backgroundColor: Colors?.primary,
             padding: 10,
-            // paddingBottom: 20,
+            paddingBottom: 20,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",

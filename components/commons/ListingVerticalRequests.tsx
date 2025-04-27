@@ -21,6 +21,7 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import ProfilePicture from "./ProfilePicture";
 import OnPageLoader from "./Loaders/OnPageLoader";
+import Loader from "./Loaders/Loader";
 
 const getStatusColor = (status: string): string => {
   const statusColors = {
@@ -450,7 +451,7 @@ const ListingVerticalRequests = ({
   };
 
   if (isLoading) {
-    return <OnPageLoader />;
+    return <Loader />;
   }
 
   return <View style={styles.container}>{renderContent()}</View>;

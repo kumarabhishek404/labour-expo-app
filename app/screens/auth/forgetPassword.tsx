@@ -1,33 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
-import {
-  Ionicons,
-  MaterialIcons,
-  Entypo,
-  FontAwesome,
-  Feather,
-  AntDesign,
-} from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Loader from "@/components/commons/Loaders/Loader";
 import { Controller, useForm } from "react-hook-form";
-import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
 import { t } from "@/utils/translationHelper";
 import TOAST from "@/app/hooks/toast";
-import Step2 from "../../../assets/step4.jpg";
 import AUTH from "@/app/api/auth";
 import MobileNumberField from "@/components/inputs/MobileNumber";
 
@@ -43,7 +27,6 @@ const ForgetPasswordScreen: React.FC = () => {
     control,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors, isValid },
   } = useForm<FormData>();
 
@@ -74,13 +57,15 @@ const ForgetPasswordScreen: React.FC = () => {
     }
   }, [step]);
 
+  console.log("userId --", userId);
+  
   const checkMobileNumber = useMutation({
     mutationFn: async (payload: { mobile: string }) =>
       AUTH.checkMobileExistance(payload),
     onSuccess: ({ data }) => {
       if (data?.data?.exists) {
         setMobileNumberExist("exist");
-        setUserId(data?.data?.userId);
+        setUserId(data?.data?.user?._id);
       } else {
         setMobileNumberExist("notExist");
         TOAST.error(t("mobileNumberNotExist"));
@@ -129,15 +114,13 @@ const ForgetPasswordScreen: React.FC = () => {
       if (status === 200) {
         TOAST.success(t("passwordResetSuccess"));
         router.push("/screens/auth/login");
-      } else {
-        TOAST.error(t("failedToResetPassword"));
       }
     },
-    onError: () => TOAST.error(t("failedToResetPassword")),
   });
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
+    console.log("Stappp-===", step, data, userId);
 
     if (step === 1) {
       if (mobileNumberExist !== "exist") {
@@ -146,13 +129,17 @@ const ForgetPasswordScreen: React.FC = () => {
       }
       sendOTP.mutate(`${countryCode}${data.mobile}`);
     } else if (step === 2) {
-      verifyOTP.mutate({
-        mobile: `${countryCode}${watch("mobile")}`,
-        otp: otp || "",
-      });
+      if (otp) {
+        verifyOTP.mutate({
+          mobile: `${countryCode}${watch("mobile")}`,
+          otp: otp || "",
+        });
+      } else {
+        TOAST?.error(t("pleaseEnterOTP"));
+      }
     } else if (step === 3 && userId) {
       resetPassword.mutate({
-        userId: userId, // Replace with actual user ID
+        userId: userId,
         mobile: watch("mobile"),
         password: data.password || "",
       });
@@ -164,7 +151,14 @@ const ForgetPasswordScreen: React.FC = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={loading} />
+      <Loader
+        loading={
+          sendOTP?.isPending ||
+          verifyOTP?.isPending ||
+          resetPassword?.isPending ||
+          loading
+        }
+      />
       <View style={styles.container}>
         <View style={styles.centeredView}>
           <AntDesign
@@ -200,7 +194,7 @@ const ForgetPasswordScreen: React.FC = () => {
                   name="phoneNumber"
                   countryCode={countryCode}
                   setCountryCode={setCountryCode}
-                  phoneNumber={value}
+                  mobile={value}
                   setPhoneNumber={(val: string) => {
                     setMobileNumberExist("notSet");
                     if (val.length === 10)
@@ -208,6 +202,7 @@ const ForgetPasswordScreen: React.FC = () => {
                     onChange(val);
                   }}
                   errors={errors}
+                  loading={checkMobileNumber?.isPending}
                   isMobileNumberNotExist={mobileNumberExist === "notExist"}
                   placeholder={t("enterMobileTitle")}
                   icon={
@@ -326,12 +321,12 @@ const ForgetPasswordScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          {(checkMobileNumber?.isPending ||
+          {/* {(checkMobileNumber?.isPending ||
             sendOTP?.isPending ||
             verifyOTP?.isPending ||
             resetPassword?.isPending) && (
             <ActivityIndicator size="large" color={Colors.primary} />
-          )}
+          )} */}
         </View>
       </View>
     </>

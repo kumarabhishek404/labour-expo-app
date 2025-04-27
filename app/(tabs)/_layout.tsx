@@ -4,7 +4,6 @@ import {
   Animated,
   View,
   BackHandler,
-  Alert,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
@@ -25,65 +24,51 @@ import NOTIFICATION from "../api/notification";
 import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import { getToken } from "@/utils/authStorage";
 
+const POLLING_INTERVAL = 30000;
+
 export default function Layout() {
   const [notificationCount, setNotificationCount] = useAtom(
-    Atoms?.notificationCount
+    Atoms.notificationCount
   );
-  const [history, setHistory] = useState<string[]>([]);
-  const currentPath = usePathname();
   const pathname = usePathname();
-  const userDetails = useAtomValue(Atoms?.UserAtom);
+  const userDetails = useAtomValue(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
+  const history = useRef<string[]>([]);
 
   useEffect(() => {
-    let interval: any;
-
-    const fetchUnreadNotificationsCount = async () => {
+    const fetchUnreadNotifications = async () => {
       try {
         const token = await getToken();
-        if (!token || !userDetails?._id || !userDetails?.isAuth) return;
-
-        const data = await NOTIFICATION?.fetchUnreadNotificationsCount();
+        if (!token || !userDetails?._id) return;
+        const data = await NOTIFICATION.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
       } catch (error: any) {
-        console.error("Error fetching unread notifications:", error?.response);
+        console.error("Error fetching notifications:", error?.response);
       }
     };
 
-    const initializeNotificationPolling = async () => {
-      const token = await getToken();
-      if (token && userDetails?._id && userDetails?.isAuth) {
-        fetchUnreadNotificationsCount();
-        interval = setInterval(fetchUnreadNotificationsCount, 30000);
-      }
-    };
+    let intervalId: NodeJS.Timeout;
+    if (userDetails?._id) {
+      fetchUnreadNotifications();
+      intervalId = setInterval(fetchUnreadNotifications, POLLING_INTERVAL);
+    }
 
-    initializeNotificationPolling();
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [userDetails?._id, userDetails?.isAuth]);
+    return () => clearInterval(intervalId);
+  }, [userDetails?._id]);
 
   useEffect(() => {
-    setHistory((prevHistory) => {
-      if (
-        prevHistory.length > 0 &&
-        prevHistory[prevHistory.length - 1] === currentPath
-      ) {
-        return prevHistory;
-      }
-      return [...prevHistory, currentPath];
-    });
-  }, [currentPath]);
+    if (!history.current.includes(pathname)) {
+      history.current.push(pathname);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const exitPaths = ["/", "/first", "/second", "/third", "/fourth"];
     const backAction = () => {
       if (exitPaths.includes(pathname)) {
-        setShowExitModal(true); // show custom modal
+        setShowExitModal(true);
       } else {
-        router?.back();
+        router.back();
       }
       return true;
     };
@@ -92,7 +77,7 @@ export default function Layout() {
       backAction
     );
     return () => backHandler.remove();
-  }, [pathname, history]);
+  }, [pathname]);
 
   const TabButton = ({
     props,
@@ -119,7 +104,7 @@ export default function Layout() {
       ]).start();
     }, [isSelected]);
 
-    const IconComponent =
+    const Icon =
       {
         MaterialIcons,
         MaterialCommunityIcons,
@@ -127,11 +112,6 @@ export default function Layout() {
         Ionicons,
         FontAwesome,
       }[iconLibrary] || MaterialIcons;
-
-    if (!IconComponent) {
-      console.error("Icon library not found:", iconLibrary);
-      return null; // or render a default icon / placeholder
-    }
 
     return (
       <TouchableOpacity
@@ -143,7 +123,7 @@ export default function Layout() {
             transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
           }}
         >
-          <IconComponent
+          <Icon
             name={iconName}
             size={iconSize}
             color={isSelected ? Colors.primary : "#888"}
@@ -159,7 +139,7 @@ export default function Layout() {
     );
   };
 
-  const isAdmin = userDetails?.isAdmin === true;
+  const isAdmin = userDetails?.isAdmin;
 
   return (
     <View style={styles.container}>

@@ -1,12 +1,11 @@
 import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import SelectableTags from "../../../../../components/inputs/SingleSelectedTag";
 import CustomText from "../../../../../components/commons/CustomText";
-import SelectableList from "../../../../../components/inputs/MultiSelectDropdown";
 import { t } from "@/utils/translationHelper";
 import { useAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
@@ -46,8 +45,6 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
     },
   });
 
-  const [selectedWorkers, setSelectedWorkers] = useState([]);
-
   const handleApply = (data: any) => {
     reset();
     setFilterVisible(false);
@@ -57,10 +54,7 @@ const FiltersWorkers = ({ filterVisible, setFilterVisible, onApply }: any) => {
   const handleClear = () => {
     reset();
     setFilterVisible(false);
-    setSelectedWorkers([]);
   };
-
-  //   console.log("ratin000", watch('rating'));
 
   const filterContent = () => (
     <View style={styles.scrollbarContent}>
@@ -188,7 +182,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   scrollbarContent: {
-    // marginBottom: 50
+    marginTop: 15,
+    gap: 20,
   },
   header: {
     flexDirection: "row",

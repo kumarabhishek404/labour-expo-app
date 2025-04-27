@@ -31,6 +31,7 @@ import { handleCall } from "@/constants/functions";
 import ShowDistance from "./ShowDistance";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface ApplicantsProps {
   type?: string;
@@ -159,7 +160,10 @@ const Applicants = ({
                         >
                           {workers && workers?.length > 0
                             ? t("mediator")
-                            : t(appliedUser?.appliedSkill ?? "worker")}
+                            : getDynamicWorkerType(
+                                appliedUser?.appliedSkill,
+                                1
+                              ) ?? t("worker")}
                         </CustomHeading>
                         <ShowDistance
                           loggedInUserLocation={userDetails?.location}
@@ -268,7 +272,10 @@ const Applicants = ({
                                       color={Colors?.tertieryButton}
                                       style={{ textTransform: "uppercase" }}
                                     >
-                                      {t(worker?.appliedSkill)}
+                                      {getDynamicWorkerType(
+                                        worker?.appliedSkill,
+                                        1
+                                      ) ?? t("worker")}
                                     </CustomHeading>
                                     <ShowDistance
                                       loggedInUserLocation={

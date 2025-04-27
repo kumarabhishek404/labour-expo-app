@@ -113,7 +113,7 @@ const PaperDropdown = ({
           dismissable={false}
         >
           {/* Search Bar */}
-          {!isLoading && options.length > 0 && searchEnabled && (
+          {!isLoading && options?.length > 0 && searchEnabled && (
             <TextInput
               label="Search..."
               value={searchText}
@@ -141,8 +141,8 @@ const PaperDropdown = ({
               style={styles.listContainer}
               keyboardShouldPersistTaps="handled"
             >
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((item: any) => (
+              {filteredOptions?.length > 0 ? (
+                filteredOptions?.map((item: any) => (
                   <TouchableOpacity
                     key={item.value}
                     style={styles.optionItem}

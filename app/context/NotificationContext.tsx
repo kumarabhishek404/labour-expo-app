@@ -88,13 +88,6 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     };
   }, [notificationConsent]);
 
-  // Logic for handling logged-in users (Optional)
-  useEffect(() => {
-    if (userDetails?.isAuth) {
-      // Perform additional notification handling for logged-in users
-    }
-  }, [userDetails]);
-
   return (
     <NotificationContext.Provider
       value={{ expoPushToken, notification, error }}

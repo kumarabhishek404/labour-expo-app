@@ -887,6 +887,7 @@
   "less_15_days": "Less than 15 days",
   "less_one_month": "Less than one month",
   "more_one_month": "More than one month",
+  "more_six_months": "More than six months",
   "within_one_month": "One Month",
   "within_six_months": "Six Months",
   "within_one_year": "One Year",
@@ -2014,5 +2015,17 @@
   "noInternetRetry": "TRY AGAIN",
   "noInternetConnectAdmin": "CONNECT TO ADMINISTRATION",
 
-  "notificationsEnabled": "Notifications enabled"
+  "notificationsEnabled": "Notifications enabled",
+
+  "youHaveAppliedSuccessfully": "You have applied successfully",
+  "youAppliedWithTheseMembers": "You applied with these members",
+  "youAppliedIndividually": "You applied individually",
+  "youAppliedByMediator": "You applied by mediator",
+  "appliedSkill": "Applied skill",
+  "yourAppliedSkill": "Your applied skill",
+
+  "pleaseEnterOTP": "Please Enter OTP",
+
+  "moreThanOneWorkers": "More than one workers",
+  "multipleSkills": "Multiple skills"
 }

@@ -8,12 +8,9 @@ import {
 } from "react-native";
 import ListingsVerticalWorkers from "@/components/commons/ListingsVerticalWorkers";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/Pagination/PaginationString";
-import { extractWorkerSkills, WORKERTYPES, WORKTYPES } from "@/constants";
+import { WORKERTYPES } from "@/constants";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
-import FloatingButton from "@/components/inputs/FloatingButton";
-import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
 import FiltersWorkers from "./filterWorkers";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
@@ -28,7 +25,6 @@ const AllWorkers = ({
   refreshing,
   memoizedData,
   onRefresh,
-  totalData,
   loadMore,
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
@@ -112,9 +108,8 @@ const AllWorkers = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: Colors?.fourth,
     paddingHorizontal: 15,
-    // paddingVertical: 10,
+    paddingBottom: 150
   },
   paginationHeader: {
     width: "100%",

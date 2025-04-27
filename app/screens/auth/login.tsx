@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -26,7 +26,6 @@ import { useTranslation } from "@/utils/i18n";
 import WORKER1 from "../../../assets/worker1.png";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import AUTH from "@/app/api/auth";
-import useFirstTimeLaunch from "@/app/hooks/useFirstTimeLaunch";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { saveToken } from "@/utils/authStorage";
 
@@ -34,26 +33,23 @@ const LoginScreen = () => {
   const { t } = useTranslation();
   const hasNavigated = useRef(false);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
-  const hasUpdatedLocation = useRef(false); // add this at top of component
-  const isFirstLaunch = useFirstTimeLaunch();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
-  const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
   const { mobile } = useLocalSearchParams();
   const [loggedInUser, setLoggedInUser]: any = useState(null);
+  const [loginComplete, setLoginComplete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!hasNavigated.current && loggedInUser) {
+    if (!hasNavigated.current && loggedInUser && loginComplete) {
       hasNavigated.current = true;
-
-      // Add a small delay before navigation to avoid race condition
       setTimeout(() => {
         router.replace(
           loggedInUser?.skills?.length > 0 ? "/(tabs)/second" : "/(tabs)"
         );
       }, 100);
     }
-  }, [loggedInUser]);
+  }, [loggedInUser, loginComplete]);
 
   const {
     control,
@@ -85,6 +81,7 @@ const LoginScreen = () => {
     mutationFn: (data) => AUTH?.signIn(data),
 
     onSuccess: async (response) => {
+      setLoading(true);
       const token = response?.token;
       const minimalUser = response?.user;
       setLoggedInUser(minimalUser);
@@ -158,7 +155,9 @@ const LoginScreen = () => {
           } catch (err) {
             console.error("❌ Push notification registration failed", err);
           }
+          setLoginComplete(true);
         } catch (err) {
+          setLoading(false);
           console.error("❌ Background task error after login:", err);
         }
       })();
@@ -182,7 +181,6 @@ const LoginScreen = () => {
 
         return router.push({ pathname: route, params: { userId } });
       }
-      TOAST?.error(err?.response?.data?.message || "Login failed");
     },
   });
 
@@ -199,7 +197,9 @@ const LoginScreen = () => {
       <Stack.Screen options={{ headerShown: false }} />
       <Loader
         loading={
-          mutationSignIn?.isPending || mutationUpdateProfileInfo?.isPending
+          loading ||
+          mutationSignIn?.isPending ||
+          mutationUpdateProfileInfo?.isPending
         }
       />
       <ScrollView

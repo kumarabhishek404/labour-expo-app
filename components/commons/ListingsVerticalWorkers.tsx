@@ -122,7 +122,7 @@ const ListingsVerticalWorkers = ({
         maxToRenderPerBatch={10}
         windowSize={3}
         removeClippedSubviews={true}
-        contentContainerStyle={{ paddingBottom: 160 }}
+        contentContainerStyle={{ paddingBottom: 160, marginBottom: 100 }}
         refreshControl={refreshControl}
         showsVerticalScrollIndicator={false}
       />

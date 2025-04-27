@@ -150,9 +150,7 @@ const Services = () => {
 
       <View style={{ flex: 1 }}>
         {type === "myServices" && (
-          <View
-            style={{ paddingHorizontal: 10, paddingTop: 15, marginBottom: 15 }}
-          >
+          <View style={{ paddingHorizontal: 10, paddingTop: 15 }}>
             <CategoryButtons
               type="workerType"
               options={MYSERVICES}
@@ -222,6 +220,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors?.background,
     paddingHorizontal: 10,
+    marginTop: 15,
   },
   loaderStyle: {
     alignItems: "center",

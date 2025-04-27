@@ -5,25 +5,39 @@ import CustomText from "../commons/CustomText";
 import CustomHeading from "../commons/CustomHeading";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
+import SelectableTags from "./SingleSelectedTag";
+import ErrorText from "../commons/ErrorText";
+
+const DURATION = [
+  { label: "less_5_days", value: "5" },
+  { label: "less_15_days", value: "15" },
+  { label: "less_one_month", value: "30" },
+  { label: "more_one_month", value: "100" },
+  { label: "more_six_months", value: "365" },
+];
 
 const Duration = ({ duration, setDuration, errors, name }: any) => {
   return (
-    <View style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <View style={{ gap: 10 }}>
       <View style={styles.container}>
         <CustomHeading
+          textAlign="left"
           baseFont={18}
           fontWeight="600"
           color={Colors?.inputLabel}
         >
-          {t("duration")}{" "}
+          {t("duration_of_service")}{" "}
           <CustomText baseFont={14}> ({t("InDays")})</CustomText>
         </CustomHeading>
-        <Counter counter={duration} setCounter={setDuration} />
+        <SelectableTags
+          options={DURATION}
+          selectedTag={duration}
+          setSelectedTag={setDuration}
+          tagStyle={styles?.tagStyle}
+        />
       </View>
       {errors?.[name] && (
-        <CustomText textAlign="right" baseFont={10} color={Colors?.danger}>
-          {errors?.[name]?.message || ""}
-        </CustomText>
+        <ErrorText baseFont={16}> {errors?.[name]?.message || ""}</ErrorText>
       )}
     </View>
   );
@@ -31,10 +45,10 @@ const Duration = ({ duration, setDuration, errors, name }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
+    gap: 10,
+  },
+  tagStyle: {
+    backgroundColor: Colors?.fourth,
   },
 });
 

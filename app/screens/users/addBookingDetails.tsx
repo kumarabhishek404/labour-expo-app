@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import { Controller } from "react-hook-form";
@@ -12,10 +12,10 @@ import Duration from "@/components/inputs/Duration";
 import TextAreaInputComponent from "@/components/inputs/TextArea";
 import moment from "moment";
 import NumberOfWorkers from "@/components/inputs/NumberOfWorkers";
-import PaperDropdown from "@/components/inputs/Dropdown";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";
-import RadioSkillSelector from "@/components/inputs/RadioButton";
 import CustomHeading from "@/components/commons/CustomHeading";
+import { getDynamicWorkerType } from "@/utils/i18n";
+import RadioSelector from "@/components/inputs/RadioButton";
 
 const AddBookingDetails = ({
   control,
@@ -31,78 +31,26 @@ const AddBookingDetails = ({
 
   const facilities = watch("facilities");
 
+  // 🧠 useMemo to optimize dynamic skill transformation
+  const dynamicWorkerSkills = useMemo(() => {
+    return (
+      workerSkills?.map((requirement: any) => ({
+        ...requirement,
+        label: getDynamicWorkerType(requirement?.skill, requirement?.count),
+      })) || []
+    );
+  }, [workerSkills]);
+
   const handleCheckboxChange = (key: string) => {
     setValue("facilities", {
       ...facilities,
       [key]: !facilities?.[key],
     });
   };
+  console.log("dynamicWorkerSkills--", dynamicWorkerSkills);
 
   return (
     <View style={styles?.container}>
-      {/* <Controller
-        control={control}
-        name="type"
-        defaultValue=""
-        rules={{
-          required: t("workTypeIsRequired"),
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <PaperDropdown
-            label="workType"
-            name="type"
-            selectedValue={value}
-            onSelect={(selectedValue: any) => {
-              onChange(selectedValue);
-              setValue("subType", "");
-            }}
-            translationEnabled
-            placeholder="selectWorkType"
-            options={WORKTYPES}
-            errors={errors}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="subType"
-        defaultValue=""
-        rules={{
-          required: t("workSubTypeIsRequired"),
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <PaperDropdown
-            label="workSubType"
-            name="subType"
-            selectedValue={value}
-            onSelect={onChange}
-            placeholder={
-              watch("type") ? "selectWorkSubType" : "pleaseSelectWorkTypeFirst"
-            }
-            translationEnabled
-            options={filterSubCategories(watch("type"))}
-            errors={errors}
-            icon={
-              <Ionicons
-                name={"mail-outline"}
-                size={30}
-                color={Colors.secondary}
-                style={{ paddingVertical: 10, paddingRight: 10 }}
-              />
-            }
-          />
-        )}
-      /> */}
-
       <Controller
         control={control}
         name="appliedSkill"
@@ -111,13 +59,22 @@ const AddBookingDetails = ({
           required: t("skillIsRequired"),
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <RadioSkillSelector
+          <RadioSelector
             name="appliedSkill"
-            label="selectRequestedSkillToBook"
+            label={t("selectRequestedSkillToBook")}
             onChange={onChange}
             value={value}
             errors={errors}
-            options={workerSkills || []}
+            options={dynamicWorkerSkills}
+            keyExtractor={(item) => item.skill} // how to identify item
+            renderOption={(item) =>
+              `${item.label} - ${
+                item.pricePerDay
+                  ? `₹${item.pricePerDay} / ${t("perDay")}`
+                  : t("notAdded")
+              }`
+            }
+            translationEnabled={false}
           />
         )}
       />

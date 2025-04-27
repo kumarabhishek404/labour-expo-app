@@ -6,6 +6,7 @@ import moment from "moment";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import CustomDatePicker from "./CustomDatePicker";
+import ErrorText from "../commons/ErrorText";
 
 interface DateFieldProps {
   title: string;
@@ -58,21 +59,16 @@ const DateField: React.FC<DateFieldProps> = ({
         )}
       </TouchableOpacity>
       {errors?.[name] && (
-        <CustomText
-          textAlign="left"
-          baseFont={10}
-          color={Colors?.danger}
-          style={{ marginTop: 5 }}
-        >
-          {errors?.[name]?.message || ""}
-        </CustomText>
+        <ErrorText baseFont={16}> {errors?.[name]?.message || ""}</ErrorText>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    gap: 10,
+  },
   dateField: {
     width: "100%",
     display: "flex",

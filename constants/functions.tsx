@@ -9,10 +9,9 @@ import { Linking } from "react-native";
 import { AppState } from "react-native";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
-  // Convert both dates to moments and calculate inclusive difference in days
   const startDate = moment(date1);
   const endDate = moment(date2);
-  const diffDays = endDate.diff(startDate, "days") + 1; // Adding 1 for inclusive difference
+  const diffDays = endDate.diff(startDate, "days") + 1;
 
   // If the difference is less than 30 days, return in days
   if (diffDays < 30) {
@@ -243,8 +242,6 @@ export const filterWorkerTypes = (
       value: worker?.value,
     };
   });
-
-  console.log("workers---", workers);
 
   // Return the workerTypes of the selected subType
   return workers ?? [];

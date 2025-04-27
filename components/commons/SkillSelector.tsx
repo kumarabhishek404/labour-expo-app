@@ -87,7 +87,7 @@ const SkillSelector = ({
   }, [availableSkills, userSkills]);
 
   const handleSkillToRemoveSelection = (skill: string) => {
-    setSelectedSkillToRemove(skill);
+    setSelectedSkillToRemove(getDynamicWorkerType(skill, 1));
   };
 
   useEffect(() => {
@@ -103,9 +103,8 @@ const SkillSelector = ({
             label="removeSkill"
             selectedValue={selectedSkillToRemove}
             onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
-            placeholder="selectSkillToRemove"
+            placeholder={t("selectSkillToRemove")}
             options={selectedUserSkills}
-            translationEnabled
             searchEnabled
             icon={
               <MaterialCommunityIcons
@@ -179,10 +178,9 @@ const SkillSelector = ({
             label="removeSkill"
             selectedValue={selectedSkillToRemove}
             onSelect={(skill: string) => handleSkillToRemoveSelection(skill)}
-            placeholder="selectSkillToRemove"
+            placeholder={t("selectSkillToRemove")}
             options={selectedUserSkills}
             searchEnabled
-            translationEnabled
             icon={
               <MaterialCommunityIcons
                 style={styles.icon}

@@ -903,6 +903,7 @@
   "less_15_days": "15 दिनों से कम",
   "less_one_month": "एक महीने से कम",
   "more_one_month": "एक महीने से अधिक",
+  "more_six_months": "छह महीने से अधिक",
   "within_one_month": "एक महीना में",
   "within_six_months": "छह महीने में",
   "within_one_year": "एक वर्ष में",
@@ -1756,5 +1757,15 @@
   "notFoundAnySavedAddress": "कोई सहेजा गया पता नहीं मिला",
   "fetchCurrentLocation": "वर्तमान स्थान प्राप्त करें",
   "additionalDetails": "अतिरिक्त विवरण",
-  "enterAdditionalDetails": "अतिरिक्त विवरण दर्ज करें"
+  "enterAdditionalDetails": "अतिरिक्त विवरण दर्ज करें",
+
+  "youHaveAppliedSuccessfully": "आपने इस सेवा के लिए सफलतापूर्वक आवेदन किया है",
+  "youAppliedWithTheseMembers": "आपने इन सदस्यों के साथ आवेदन किया है",
+  "youAppliedIndividually": "आपने व्यक्तिगत रूप से आवेदन किया है",
+  "youAppliedByMediator": "आपने ठेकेदार के माध्यम से आवेदन किया है",
+  "appliedSkill": "आवेदन किया गया कौशल",
+  "yourAppliedSkill": "आपका आवेदन किया गया कौशल",
+
+  "moreThanOneWorkers": "एक से अधिक मजदूर",
+  "multipleSkills": "कई कौशल"
 }

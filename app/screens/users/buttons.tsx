@@ -137,8 +137,6 @@ const ButtonContainer = ({
     errors,
   ]); // ✅ Re-renders drawer when 'appliedSkill' and 'facilities changes
 
-  console.log("err---", errors);
-
   const handleAddBookingDetails = () => {
     setDrawerState({
       visible: true,
@@ -192,8 +190,9 @@ const ButtonContainer = ({
 
         {/* Button for team related actions */}
         {!userDetails?.employedBy &&
-          !user?.employedBy &&
-          (!user?.teamDetails || user?.teamDetails?.status !== "ACTIVE") && (
+          (!user?.teamDetails ||
+            user?.teamDetails?.status !== "ACTIVE" ||
+            !user?.teamDetails?.memberCount) && (
             <Button
               isPrimary={true}
               bgColor={

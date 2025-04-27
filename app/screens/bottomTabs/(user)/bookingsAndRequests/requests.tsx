@@ -50,7 +50,7 @@ const Requests = () => {
     ],
     queryFn: async ({ pageParam = 1 }) => {
       const token = await getToken();
-      if (!token || !userDetails?._id || !userDetails?.isAuth) {
+      if (!token || !userDetails?._id) {
         throw new Error("Unauthorized: Missing token or user information");
       }
 
@@ -65,7 +65,7 @@ const Requests = () => {
       }
       return undefined;
     },
-    enabled: !!userDetails?._id && !!userDetails?.isAuth,
+    enabled: !!userDetails?._id,
     retry: false,
   });
 
@@ -127,7 +127,7 @@ const Requests = () => {
           style={{
             backgroundColor: Colors?.primary,
             padding: 10,
-            // paddingBottom: 20,
+            paddingBottom: 20,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",

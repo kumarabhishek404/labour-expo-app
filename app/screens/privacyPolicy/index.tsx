@@ -17,12 +17,12 @@ const PrivacyPolicyScreen = () => {
       <View style={styles.container}>
         <ScrollView style={styles.contentContainer}>
           <View style={styles.contentBox}>
-            <CustomText baseFont={14}>
+            <CustomText>
               Our human-friendly Terms of Service for the Tribevibe platform
               prevails over the detailed one, which specifies all rights and
               obligations for both you and Tribevibe in more complex legalese.
             </CustomText>
-            <CustomText baseFont={14}>
+            <CustomText>
               In the event of a contradiction between the two documents, the
               “human-friendly” Terms of Service shall prevail. That means no
               nasty surprises if you read only the human-friendly version.

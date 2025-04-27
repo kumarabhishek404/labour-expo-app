@@ -29,14 +29,7 @@ const SkeletonPlaceholder = ({ style }: { style: any }) => {
 
 const ListingsServicesPlaceholder = () => {
   return (
-    <View
-      style={{
-        gap: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-        // backgroundColor: Colors?.fourth,
-      }}
-    >
+    <View style={{ gap: 20, paddingHorizontal: 20, paddingVertical: 20 }}>
       {Array.from({ length: 4 }).map((_, index) => (
         <View
           key={index}

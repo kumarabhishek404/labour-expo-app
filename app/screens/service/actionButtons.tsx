@@ -116,6 +116,7 @@ const ServiceActionButtons = ({
     mutationFn: () => USER?.likeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
+      refreshUser();
       TOAST?.success(t("serviceAddedInFavourites"));
       console.log("Response while liking a service - ", response);
     },
@@ -129,6 +130,7 @@ const ServiceActionButtons = ({
     mutationFn: () => USER?.unLikeService({ serviceId: id }),
     onSuccess: (response) => {
       refetch();
+      refreshUser();
       TOAST?.success(t("serviceRemovedInFavourites"));
       console.log("Response while unliking a service - ", response);
     },
