@@ -115,7 +115,7 @@ const PaperDropdown = ({
           {/* Search Bar */}
           {!isLoading && options?.length > 0 && searchEnabled && (
             <TextInput
-              label="Search..."
+              label={translationEnabled ? t(placeholder) : placeholder}
               value={searchText}
               onChangeText={setSearchText}
               mode="outlined"

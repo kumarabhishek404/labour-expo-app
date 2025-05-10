@@ -19,9 +19,12 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ModalComponent from "./Modal";
 import WORKER from "@/app/api/workers";
 import { handleCall } from "@/constants/functions";
+import Atoms from "@/app/AtomStore";
+import { useAtomValue } from "jotai";
 
 const TeamAdminCard = ({ admin }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const mutationLeaveTeam = useMutation({
@@ -108,45 +111,53 @@ const TeamAdminCard = ({ admin }: any) => {
             </CustomText>
           </View>
 
-          <Button
-            isPrimary={false}
-            title={t("callTeamAdmin")}
-            onPress={() => handleCall(admin?.mobile)}
-            icon={
-              <FontAwesome5 name="phone-alt" size={16} color={Colors.primary} />
-            }
-            style={{
-              minHeight: 35,
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
-          />
-
-          <Button
-            isPrimary={false}
-            title={t("leaveTeam")}
-            onPress={() => setModalVisible(true)}
-            icon={
-              <MaterialCommunityIcons
-                name="exit-run"
-                size={18}
-                color={Colors.primary}
+          {userDetails?.status === "ACTIVE" && (
+            <>
+              <Button
+                isPrimary={false}
+                title={t("callTeamAdmin")}
+                onPress={() => handleCall(admin?.mobile)}
+                icon={
+                  <FontAwesome5
+                    name="phone-alt"
+                    size={16}
+                    color={Colors.primary}
+                  />
+                }
+                style={{
+                  minHeight: 35,
+                  paddingVertical: 6,
+                  paddingHorizontal: 6,
+                }}
+                textStyle={{
+                  marginLeft: 6,
+                  fontSize: 12,
+                }}
               />
-            }
-            style={{
-              minHeight: 35,
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
-          />
+
+              <Button
+                isPrimary={false}
+                title={t("leaveTeam")}
+                onPress={() => setModalVisible(true)}
+                icon={
+                  <MaterialCommunityIcons
+                    name="exit-run"
+                    size={18}
+                    color={Colors.primary}
+                  />
+                }
+                style={{
+                  minHeight: 35,
+                  paddingVertical: 6,
+                  paddingHorizontal: 6,
+                }}
+                textStyle={{
+                  marginLeft: 6,
+                  fontSize: 12,
+                }}
+              />
+            </>
+          )}
         </View>
         <View
           style={{
@@ -161,31 +172,33 @@ const TeamAdminCard = ({ admin }: any) => {
             profileImage={admin?.profilePicture}
             avatarWrapperStyle={{ width: 100, height: 100 }}
           />
-          <Button
-            isPrimary={true}
-            title={t("viewDetails")}
-            onPress={() =>
-              router.push({
-                pathname: "/screens/users/[id]",
-                params: {
-                  id: admin?._id,
-                  role: admin?.role,
-                  title: "teamAdminDetails",
-                  type: "details",
-                },
-              })
-            }
-            icon={<AntDesign name="eye" size={18} color={Colors.white} />}
-            style={{
-              minHeight: 35,
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-            }}
-            textStyle={{
-              marginLeft: 6,
-              fontSize: 12,
-            }}
-          />
+          {userDetails?.status === "ACTIVE" && (
+            <Button
+              isPrimary={true}
+              title={t("viewDetails")}
+              onPress={() =>
+                router.push({
+                  pathname: "/screens/users/[id]",
+                  params: {
+                    id: admin?._id,
+                    role: admin?.role,
+                    title: "teamAdminDetails",
+                    type: "details",
+                  },
+                })
+              }
+              icon={<AntDesign name="eye" size={18} color={Colors.white} />}
+              style={{
+                minHeight: 35,
+                paddingVertical: 6,
+                paddingHorizontal: 6,
+              }}
+              textStyle={{
+                marginLeft: 6,
+                fontSize: 12,
+              }}
+            />
+          )}
         </View>
       </View>
     </View>

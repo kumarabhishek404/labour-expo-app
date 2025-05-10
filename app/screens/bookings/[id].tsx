@@ -31,6 +31,7 @@ import WORKER from "@/app/api/workers";
 import DateDisplay from "@/components/commons/ShowDate";
 import ShowAddress from "@/components/commons/ShowAddress";
 import BookingDetailsPlaceholder from "@/components/commons/LoadingPlaceholders/BookingDetails";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -279,7 +280,7 @@ const BookingDetails = () => {
                         flex: 1,
                       }}
                     >
-                      {t(booking?.appliedSkill?.skill)}
+                      {getDynamicWorkerType(booking?.appliedSkill?.skill, 1)}
                     </CustomHeading>
 
                     {booking?.appliedSkill?.pricePerDay && (

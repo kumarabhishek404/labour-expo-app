@@ -23,25 +23,26 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 
 const SecondScreen = () => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: userDetails?.name || "", // Fixed syntax error by adding '||'
-      address: userDetails?.address || "", // Fixed syntax error by adding '||'
-      email: userDetails?.email?.value || "", // Fixed syntax error by adding '||'
-      dateOfBirth:
-        userDetails?.dateOfBirth ||
-        moment().subtract(18, "years").startOf("year"),
-      gender: userDetails?.gender || "", // Fixed syntax error by changing to 'userDetails?.gender || ""'
+      name: "",
+      address: "",
+      email: "",
+      dateOfBirth: moment()
+        .subtract(18, "years")
+        .startOf("year")
+        .format("YYYY-MM-DD"),
+      gender: "",
     },
   });
   const [location, setLocation] = useState<any>({});
   const { userId } = useLocalSearchParams();
+
+  console.log("userId---", userId);
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
@@ -52,6 +53,7 @@ const SecondScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
+      TOAST?.success(t("userDetailsAddedSuccessfully"));
       router.push({
         pathname: "/screens/auth/register/third",
         params: { userId: userId },
@@ -71,7 +73,7 @@ const SecondScreen = () => {
         latitude: location?.latitude,
         longitude: location?.longitude,
       },
-      address: data?.address,
+      address: data?.address ?? "",
       email: data?.email,
       dateOfBirth: data?.dateOfBirth,
       gender: data?.gender,
@@ -163,7 +165,6 @@ const SecondScreen = () => {
               <Controller
                 control={control}
                 name="dateOfBirth"
-                defaultValue={moment().subtract(18, "years").startOf("year")}
                 rules={{
                   required: t("dateOfBirthIsRequired"),
                   validate: (value) => {

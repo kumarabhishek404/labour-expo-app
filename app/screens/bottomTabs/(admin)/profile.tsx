@@ -39,7 +39,6 @@ import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
-import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
@@ -47,7 +46,6 @@ import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 
 const AdminProfile = () => {
   LOCAL_CONTEXT?.useLocale();
-  const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedTab, setSelectedTab] = useState("profileInformation");
 
@@ -77,7 +75,7 @@ const AdminProfile = () => {
 
   useEffect(() => {
     const backAction = () => {
-      if (isAccountInactive) {
+      if (userDetails?.status !== "ACTIVE") {
         TOAST?.error(
           `${
             userDetails?.status === "SUSPENDED" ||
@@ -102,7 +100,7 @@ const AdminProfile = () => {
     );
 
     return () => backHandler.remove();
-  }, [isAccountInactive]);
+  }, [userDetails]);
 
   useEffect(() => {
     setValue("name", userDetails?.name);

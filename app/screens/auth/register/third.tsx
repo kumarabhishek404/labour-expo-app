@@ -35,7 +35,7 @@ const FourthScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.success(t("profileUpdated"));
+      TOAST?.success(t("passwordAddedSuccessfully"));
       router.push({
         pathname: "/screens/auth/register/fourth",
         params: { userId: userId },

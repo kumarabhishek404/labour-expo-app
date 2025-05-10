@@ -22,7 +22,7 @@ import { useAtom, useAtomValue } from "jotai";
 import Atoms from "../AtomStore";
 import NOTIFICATION from "../api/notification";
 import ExitConfirmationModal from "@/components/commons/ExitPopup";
-import { getToken } from "@/utils/authStorage";
+import UserProfile from "../screens/bottomTabs/(user)/profile";
 
 const POLLING_INTERVAL = 30000;
 
@@ -30,15 +30,22 @@ export default function Layout() {
   const [notificationCount, setNotificationCount] = useAtom(
     Atoms.notificationCount
   );
+  const [token, setToken] = useAtom(Atoms?.tokenAtom);
   const pathname = usePathname();
   const userDetails = useAtomValue(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
 
   useEffect(() => {
+    // If not logged in, redirect to login page
+    if (!userDetails || !userDetails?._id) {
+      router.replace("/screens/auth/login");
+    }
+  }, [userDetails, router]);
+
+  useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
-        const token = await getToken();
         if (!token || !userDetails?._id) return;
         const data = await NOTIFICATION.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
@@ -54,7 +61,7 @@ export default function Layout() {
     }
 
     return () => clearInterval(intervalId);
-  }, [userDetails?._id]);
+  }, [userDetails?._id, token, setNotificationCount]); // Added setNotificationCount to dependencies
 
   useEffect(() => {
     if (!history.current.includes(pathname)) {
@@ -63,12 +70,21 @@ export default function Layout() {
   }, [pathname]);
 
   useEffect(() => {
-    const exitPaths = ["/", "/first", "/second", "/third", "/fourth"];
+    const exitPaths = [
+      "/",
+      "/(tabs)",
+      "/(tabs)/first",
+      "/(tabs)/second",
+      "/(tabs)/third",
+      "/(tabs)/fourth",
+    ]; // Adjusted for tab routes
     const backAction = () => {
       if (exitPaths.includes(pathname)) {
         setShowExitModal(true);
-      } else {
+      } else if (router?.canGoBack()) {
         router.back();
+      } else {
+        setShowExitModal(true); // Consider showing exit modal if router can't go back
       }
       return true;
     };
@@ -143,93 +159,106 @@ export default function Layout() {
 
   return (
     <View style={styles.container}>
-      <Tabs screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar }}>
-        <Tabs.Screen
-          name="fourth"
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/fourth"
-                title={isAdmin ? "users" : "allRequests"}
-                iconName={isAdmin ? "people-sharp" : "hand-front-right-outline"}
-                iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
-              />
-            ),
+      {userDetails && userDetails?.status !== "ACTIVE" ? (
+        <UserProfile />
+      ) : (
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: styles.tabBar,
+            tabBarActiveTintColor: Colors.primary, // Added for consistency
+            tabBarInactiveTintColor: "#888",
           }}
-        />
-
-        <Tabs.Screen
-          name="second"
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/second"
-                title={isAdmin ? "services" : "search"}
-                iconName={isAdmin ? "sickle" : "search"}
-                iconLibrary={isAdmin ? "MaterialCommunityIcons" : null}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarButton: (props) =>
-              isAdmin ? (
+        >
+          <Tabs.Screen
+            name="fourth"
+            options={{
+              tabBarButton: (props) => (
                 <TabButton
                   props={props}
-                  path="/(tabs)"
-                  title="teams"
-                  iconName="group"
-                  iconLibrary="FontAwesome"
+                  path="/(tabs)/fourth"
+                  title={isAdmin ? "users" : "allRequests"}
+                  iconName={
+                    isAdmin ? "people-sharp" : "hand-front-right-outline"
+                  }
+                  iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
                 />
-              ) : (
-                <TouchableOpacity
-                  style={styles.postButton}
-                  onPress={() => router.push("/(tabs)")}
-                >
-                  <MaterialCommunityIcons
-                    name="plus"
-                    size={36}
-                    color={Colors.white}
-                  />
-                </TouchableOpacity>
               ),
-          }}
-        />
+            }}
+          />
 
-        <Tabs.Screen
-          name="third"
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/third"
-                title={isAdmin ? "errors" : "myBookings"}
-                iconName={isAdmin ? "error" : "calendar"}
-                iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
-              />
-            ),
-          }}
-        />
+          <Tabs.Screen
+            name="second"
+            options={{
+              tabBarButton: (props) => (
+                <TabButton
+                  props={props}
+                  path="/(tabs)/second"
+                  title={isAdmin ? "services" : "search"}
+                  iconName={isAdmin ? "sickle" : "search"}
+                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : null}
+                />
+              ),
+            }}
+          />
 
-        <Tabs.Screen
-          name="fifth"
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                props={props}
-                path="/(tabs)/fifth"
-                title={isAdmin ? "myProfile" : "myProfile"}
-                iconName={isAdmin ? "person" : "person-outline"}
-              />
-            ),
-          }}
-        />
-      </Tabs>
+          <Tabs.Screen
+            name="index"
+            options={{
+              tabBarButton: (props) =>
+                isAdmin ? (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)"
+                    title="teams"
+                    iconName="group"
+                    iconLibrary="FontAwesome"
+                  />
+                ) : (
+                  <TouchableOpacity
+                    style={styles.postButton}
+                    onPress={() => router.push("/(tabs)")}
+                  >
+                    <MaterialCommunityIcons
+                      name="plus"
+                      size={36}
+                      color={Colors.white}
+                    />
+                  </TouchableOpacity>
+                ),
+            }}
+          />
+
+          <Tabs.Screen
+            name="third"
+            options={{
+              tabBarButton: (props) => (
+                <TabButton
+                  props={props}
+                  path="/(tabs)/third"
+                  title={isAdmin ? "errors" : "myBookings"}
+                  iconName={isAdmin ? "error" : "calendar"}
+                  iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+                />
+              ),
+            }}
+          />
+
+          <Tabs.Screen
+            name="fifth"
+            options={{
+              tabBarButton: (props) => (
+                <TabButton
+                  props={props}
+                  path="/(tabs)/fifth"
+                  title={isAdmin ? "myProfile" : "myProfile"}
+                  iconName={isAdmin ? "person" : "person-outline"}
+                />
+              ),
+            }}
+          />
+        </Tabs>
+      )}
 
       <StickButtonWithWall
         onPress={() =>

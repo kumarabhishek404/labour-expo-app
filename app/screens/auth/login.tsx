@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   ScrollView,
@@ -6,15 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
-import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Loader from "@/components/commons/Loaders/Loader";
 import Atoms from "@/app/AtomStore";
 import USER from "@/app/api/user";
-import TOAST from "../../hooks/toast";
 import { useForm, Controller } from "react-hook-form";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import PasswordComponent from "@/components/inputs/Password";
@@ -23,33 +21,21 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Button from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { useTranslation } from "@/utils/i18n";
-import WORKER1 from "../../../assets/worker1.png";
+import WORKER1 from "@/assets/worker1.png";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import AUTH from "@/app/api/auth";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { saveToken } from "@/utils/authStorage";
+import Loader from "@/components/commons/Loaders/Loader";
 
-const LoginScreen = () => {
+export default function Login() {
   const { t } = useTranslation();
-  const hasNavigated = useRef(false);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
-  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const { mobile } = useLocalSearchParams();
-  const [loggedInUser, setLoggedInUser]: any = useState(null);
-  const [loginComplete, setLoginComplete] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!hasNavigated.current && loggedInUser && loginComplete) {
-      hasNavigated.current = true;
-      setTimeout(() => {
-        router.replace(
-          loggedInUser?.skills?.length > 0 ? "/(tabs)/second" : "/(tabs)"
-        );
-      }, 100);
-    }
-  }, [loggedInUser, loginComplete]);
+  const [token, setToken] = useAtom(Atoms?.tokenAtom);
+  const [loginError, setLoginError] = useState<string | null>(null); // State for login error
 
   const {
     control,
@@ -82,89 +68,66 @@ const LoginScreen = () => {
 
     onSuccess: async (response) => {
       setLoading(true);
-      const token = response?.token;
-      const minimalUser = response?.user;
-      setLoggedInUser(minimalUser);
-      // Set minimal details immediately
-      await saveToken(token);
-      setUserDetails({ isAuth: true, ...minimalUser });
+      setLoginError(null); // Clear any previous error
+      const authToken = response?.token;
+      await saveToken(authToken);
+      await setToken(authToken);
 
-      // ---------------------
-      // Run background tasks
-      // ---------------------
+      try {
+        const updatedUser: any = await refreshUser();
+        if (!updatedUser) {
+          console.error("❌ Failed to fetch updated user info.");
+          setLoading(false);
+          return;
+        }
 
-      (async () => {
-        try {
-          const updatedUser: any = await refreshUser();
+        if (updatedUser?.status !== "ACTIVE") {
+          setUserDetails({ isAuth: true, ...updatedUser }); //set user details
+          router.replace("/(tabs)/fifth");
+          return;
+        }
 
-          if (!updatedUser) {
-            console.error("❌ Failed to fetch updated user info.");
-            return;
-          }
+        if (!updatedUser.profilePicture) {
+          setUserDetails({ isAuth: true, ...updatedUser }); //set user details
+          router.replace({
+            pathname: "/screens/auth/register/fourth",
+            params: { userId: updatedUser._id },
+          });
+          return;
+        }
 
-          console.log("✅ Fetched full user info");
-
-          // Handle inactive account
-          if (updatedUser?.status !== "ACTIVE") {
-            setIsAccountInactive(true);
-            router.replace("/(tabs)/fifth");
-            return;
-          }
-
-          // Update profile picture if missing (optional)
-          if (!updatedUser.profilePicture) {
-            router.push({
-              pathname: "/screens/auth/register/fourth",
-              params: { userId: updatedUser._id },
+        if (
+          !updatedUser?.location?.latitude ||
+          !updatedUser?.location?.longitude
+        ) {
+          const locationData: any = await fetchCurrentLocation();
+          if (locationData) {
+            await mutationUpdateProfileInfo.mutateAsync({
+              _id: updatedUser._id,
+              location: locationData.location,
             });
           }
-
-          // Update location if missing or outdated
-          if (
-            !updatedUser?.location?.latitude ||
-            !updatedUser?.location?.longitude
-          ) {
-            const locationData: any = await fetchCurrentLocation();
-
-            if (
-              locationData &&
-              (!updatedUser.location ||
-                updatedUser.location.latitude !==
-                  locationData.location.latitude ||
-                updatedUser.location.longitude !==
-                  locationData.location.longitude)
-            ) {
-              setUserDetails((prev: any) => ({
-                ...prev,
-                location: locationData.location,
-              }));
-
-              mutationUpdateProfileInfo?.mutate({
-                _id: updatedUser._id,
-                location: locationData.location,
-              });
-            }
-          }
-
-          // Register for push notifications
-          try {
-            await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-              updatedUser?.notificationConsent
-            );
-            console.log("✅ Push notifications enabled");
-          } catch (err) {
-            console.error("❌ Push notification registration failed", err);
-          }
-          setLoginComplete(true);
-        } catch (err) {
-          setLoading(false);
-          console.error("❌ Background task error after login:", err);
         }
-      })();
+
+        await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+          updatedUser?.notificationConsent
+        );
+
+        setUserDetails({ isAuth: true, ...updatedUser }); //set user details
+        router.replace("/(tabs)"); // Use replace for smoother navigation
+        setLoading(false);
+      } catch (err) {
+        console.error("❌ Background task error after login:", err);
+        setLoading(false);
+      }
     },
 
     onError: async (err: any) => {
+      setLoading(false);
       const errorCode = err?.response?.data?.errorCode;
+      const errorMessage = err?.response?.data?.message; // Get the error message
+      setLoginError(errorMessage || "Login failed"); // Set the error state
+
       const userId = err?.response?.data?.userId;
       const token = err?.response?.data?.token;
 
@@ -179,7 +142,7 @@ const LoginScreen = () => {
             ? "/screens/auth/register/second"
             : "/screens/auth/register/fourth";
 
-        return router.push({ pathname: route, params: { userId } });
+        router.replace({ pathname: route, params: { userId } }); // Use replace
       }
     },
   });
@@ -188,20 +151,20 @@ const LoginScreen = () => {
     router.push("/screens/auth/forgetPassword");
   };
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = async (data: any) => {
     mutationSignIn.mutate(data);
+    // await loginUser(data?.mobile, data?.pass)
+  };
+
+  const handleNewRegistration = () => {
+    router.replace("/screens/auth/register/first"); // Use replace
+    setUserDetails(null);
   };
 
   return (
     <>
+      <Loader loading={mutationSignIn?.isPending || loading} />
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader
-        loading={
-          loading ||
-          mutationSignIn?.isPending ||
-          mutationUpdateProfileInfo?.isPending
-        }
-      />
       <ScrollView
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
@@ -281,29 +244,34 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
 
+          {loginError && ( // Display error message
+            <CustomText style={styles.errorText} color={Colors.error}>
+              {loginError}
+            </CustomText>
+          )}
+
           <Button
             isPrimary
             title={t("login")}
             onPress={handleSubmit(handleFormSubmit)}
             style={styles.loginButtonWrapper}
             textStyle={{ fontSize: 24, fontWeight: "600" }}
+            disabled={loading} // Disable button when loading
           />
 
           <View style={styles.footerContainer}>
             <CustomText>{t("dontHaveAnAccount")}</CustomText>
-            <Link href="/screens/auth/register/first" asChild>
-              <TouchableOpacity>
-                <CustomHeading baseFont={24} color={Colors.tertieryButton}>
-                  {t("signUp")}
-                </CustomHeading>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity onPress={handleNewRegistration}>
+              <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                {t("signUp")}
+              </CustomHeading>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -339,11 +307,25 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   image: {
-    // width: "100%",
     height: 270,
     resizeMode: "contain",
     alignSelf: "center",
   },
+  errorText: {
+    color: Colors.error,
+    textAlign: "center",
+    marginTop: 8,
+  },
+  loaderOverlay: {
+    // Styles for the overlay
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10, // Ensure it's above other content
+  },
 });
-
-export default LoginScreen;

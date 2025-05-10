@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, Platform } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -12,25 +12,11 @@ import { useMutation } from "@tanstack/react-query";
 import CustomHeading from "@/components/commons/CustomHeading";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import AUTH from "@/app/api/auth";
 
 const SignupScreen = () => {
-  const locale = useAtomValue(Atoms?.LocaleAtom);
   const [step, setStep] = useState(1);
-  const [userId, setUserId] = useState(null); // Store user ID for later updates
-  const [name, setFirstName] = useState("");
-  const [gender, setGender] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState();
-  const [address, setAddress] = useState("");
-  const [location, setLocation] = useState<any>({});
-  const [countryCode, setCountryCode] = useState("+91");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-
-  const [profilePicture, setProfilePicture] = useState("");
-  const [mobileNumberExist, setMobileNumberExist] = useState("notSet");
+  const [userId, setUserId] = useState(null);
 
   // Register User (Step 1)
   const mutationRegister = useMutation({
@@ -65,76 +51,10 @@ const SignupScreen = () => {
     },
   });
 
-  // Handles form submission on each step
-  const handleSubmit = async () => {
-    if (step === 1) {
-      if (!name || !phoneNumber) {
-        TOAST?.error(t("pleaseFillAllFields"));
-        return;
-      }
-      const payload: any = {
-        name: name,
-        countryCode: countryCode,
-        phoneNumber: phoneNumber,
-        locale: JSON.stringify(locale),
-      };
-      mutationRegister.mutate(payload);
-      // } else {
-      // const formData: any = new FormData();
-      // const cleanLocation: any = location
-      //   ? { latitude: location?.latitude, longitude: location?.longitude }
-      //   : {};
-
-      // if (profilePicture) {
-      //   const imageName = profilePicture.split("/").pop();
-      //   formData.append("profileImage", {
-      //     uri:
-      //       Platform.OS === "android"
-      //         ? profilePicture
-      //         : profilePicture.replace("file://", ""),
-      //     type: "image/jpeg",
-      //     name: imageName || "photo.jpg",
-      //   });
-      // }
-
-      // formData.append("address", address);
-      // formData.append("locale", JSON.stringify(locale));
-      // formData.append("location", JSON.stringify(cleanLocation));
-      // formData.append("email", email);
-      // formData.append("gender", gender);
-      // formData.append(
-      //   "dateOfBirth",
-      //   dateOfBirth ? moment(dateOfBirth).format("DD-MM-YYYY") : ""
-      // );
-      // formData.append("skills", JSON.stringify(skills));
-      // formData.append("password", password);
-
-      // mutationUpdateProfile.mutate(formData);
-    }
-  };
-
   const renderFormComponents = () => {
     switch (step) {
       case 1:
         return <FirstScreen />;
-
-      // case 2:
-      //   return (
-      //     <SecondScreen
-      //       setStep={setStep}
-      //       address={address}
-      //       setAddress={setAddress}
-      //       location={location}
-      //       setLocation={setLocation}
-      //       email={email}
-      //       setEmail={setEmail}
-      //       dateOfBirth={dateOfBirth}
-      //       setDateOfBirth={setDateOfBirth}
-      //       gender={gender}
-      //       setGender={setGender}
-      //       handleUpdate={handleSubmit}
-      //     />
-      //   );
 
       case 2:
         return <ThirdScreen />;

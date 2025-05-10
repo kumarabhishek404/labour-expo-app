@@ -151,7 +151,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             {"  "}
             {user?.address || t("addressNotFound")}{" "}
           </CustomHeading>
-          {user?._id === userDetails?._id && (
+          {user?.status === "ACTIVE" && (
             <TouchableOpacity
               onPress={() => setIsAddress(true)}
               style={styles?.changeAddress}
@@ -179,8 +179,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           >
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
-            {user?.email?.value ||
-              t("emailNotFound")}{" "}
+            {user?.email?.value || t("emailNotFound")}{" "}
           </CustomHeading>
           {user?._id === userDetails?._id &&
             userDetails?.status === "ACTIVE" &&

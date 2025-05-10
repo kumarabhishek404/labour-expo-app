@@ -6,37 +6,43 @@ import { getToken } from "@/utils/authStorage";
 import AUTH from "../api/auth";
 import AdminServices from "../screens/bottomTabs/(admin)/services";
 import AddServiceScreen from "../screens/addService";
+import REFRESH_USER from "../hooks/useRefreshUser";
 
 export default function BookingsScreen() {
   const userDetails = useAtomValue(Atoms.UserAtom);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const { logout } = USE_LOGOUT.useLogout();
 
-  useEffect(() => {
-    const validateUserToken = async () => {
-      try {
-        const token = await getToken();
+  // useEffect(() => {
+  //   const validateUserToken = async () => {
+  //     try {
+  //       const token = await getToken();
 
-        if (!token) {
-          USE_LOGOUT?.useLogout();
-          return;
-        }
+  //       console.log("token--sad", token);
 
-        const response = await AUTH.validateToken();
+  //       if (!token) {
+  //         logout();
+  //         return;
+  //       }
 
-        if (response?.errorCode === "TOKEN_VALID") {
-          // Do nothing
-          console.log("Token is valid");
-        } else {
-          // Do nothing
-          USE_LOGOUT?.useLogout(); // 🔥 logout immediately on invalid token
-        }
-      } catch (error) {
-        console.error("Error validating token:", error);
-        USE_LOGOUT?.useLogout(); // 🔥 logout on any error also
-      }
-    };
+  //       const response = await AUTH.validateToken();
 
-    validateUserToken();
-  }, [USE_LOGOUT?.useLogout]);
+  //       if (response?.errorCode === "TOKEN_VALID") {
+  //         // Do nothing
+  //         console.log("Token is valid");
+  //         refreshUser();
+  //       } else {
+  //         // Do nothing
+  //         logout(); // 🔥 logout immediately on invalid token
+  //       }
+  //     } catch (error) {
+  //       console.error("Error validating token:", error);
+  //       logout(); // 🔥 logout on any error also
+  //     }
+  //   };
+
+  //   validateUserToken();
+  // }, [logout]);
 
   if (userDetails?.isAdmin) return <AdminServices />;
   else return <AddServiceScreen />;

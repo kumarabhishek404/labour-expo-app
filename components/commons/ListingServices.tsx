@@ -52,8 +52,10 @@ const ListingsServices = ({ item }: any) => {
       ?.length || 0;
 
   const selectedWorkers =
-    item?.selectedUsers?.filter((user: any) => user?.status === "SELECTED")
-      ?.length || 0;
+    item?.selectedUsers?.filter(
+      (user: any) =>
+        user?.status === "SELECTED" || user?.status === "SERVICE_COMPLETED"
+    )?.length || 0;
 
   const isSelected = item?.selectedUsers?.some(
     (selectedUser: any) =>
@@ -137,6 +139,18 @@ const ListingsServices = ({ item }: any) => {
                   ]}
                 >
                   <View style={styles?.proposalsItem}>
+                    <Fontisto name="persons" size={18} color={Colors.primary} />
+                    <View style={styles?.proposalsItemText}>
+                      <CustomHeading color={Colors?.primary}>
+                        {proposals}
+                      </CustomHeading>
+                      <CustomHeading color={Colors?.primary}>
+                        {t("proposals")}
+                      </CustomHeading>
+                    </View>
+                  </View>
+
+                  <View style={styles?.proposalsItem}>
                     <Ionicons
                       name="happy"
                       size={20}
@@ -148,18 +162,6 @@ const ListingsServices = ({ item }: any) => {
                       </CustomHeading>
                       <CustomHeading color={Colors?.tertieryButton}>
                         {t("selected")}
-                      </CustomHeading>
-                    </View>
-                  </View>
-
-                  <View style={styles?.proposalsItem}>
-                    <Fontisto name="persons" size={18} color={Colors.primary} />
-                    <View style={styles?.proposalsItemText}>
-                      <CustomHeading color={Colors?.primary}>
-                        {proposals}
-                      </CustomHeading>
-                      <CustomHeading color={Colors?.primary}>
-                        {t("proposals")}
                       </CustomHeading>
                     </View>
                   </View>

@@ -1,8 +1,9 @@
 import EventEmitter from "eventemitter3"; // ✅ Correct import
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
-import { getToken } from "@/utils/authStorage";
+import { getToken, removeToken } from "@/utils/authStorage";
 import { router } from "expo-router";
+import REFRESH_USER from "../hooks/useRefreshUser";
 
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
@@ -41,9 +42,6 @@ const api = axios.create({
 const logout = async () => {
   try {
     await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("token"); // If you store token separately
-    // setIsLoggedIn(false);
-    router.replace("/screens/auth/login"); // Or wherever your login screen route is
   } catch (error) {
     console.error("Error during logout:", error);
   }
@@ -62,14 +60,22 @@ api.interceptors.response.use(
       if (
         errorMessage === "jwt expired" ||
         errorMessage === "jwt malformed" ||
+        errorMessage === "Invalid Token" ||
         statusText === "TokenExpiredError" ||
         errorMessage === "Unauthorized Request" ||
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
-        // AsyncStorage.removeItem("user"); // Clear local storage
-        // eventEmitter.emit("logout"); // Emit logout event
         logout();
+      }
+
+      if (
+        error.response?.data &&
+        (error.response?.data?.message === "User account is disabled" ||
+          error.response?.data?.message === "User is not activated yet" ||
+          error.response?.data?.message === "User is suspended")
+      ) {
+        router.replace("/(tabs)/fifth");
       }
     } else if (error.request) {
       console.error("No response received:", error.request);

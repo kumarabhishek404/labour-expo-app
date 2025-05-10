@@ -18,9 +18,7 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 const InactiveAccountMessage = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const userDetails = useAtomValue(Atoms?.UserAtom);
-  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const mutationRestoreAccount = useMutation({
     mutationKey: ["updateProfile"],
@@ -29,7 +27,6 @@ const InactiveAccountMessage = () => {
       TOAST?.success(t("successActivatedMessage"));
       refreshUser();
       setModalVisible(false);
-      setIsAccountInactive(false);
     },
     onError: (err) => {
       console.error("error while deactivatibg the profile ", err);
@@ -45,7 +42,7 @@ const InactiveAccountMessage = () => {
 
   return (
     <>
-      <Loader loading={isLoading || mutationRestoreAccount?.isPending} />
+      <Loader loading={mutationRestoreAccount?.isPending} />
       <View style={styles.container}>
         <View style={styles.gradientBackground}>
           <FontAwesome name="exclamation-circle" size={80} color="#fff" />
@@ -59,7 +56,7 @@ const InactiveAccountMessage = () => {
           {userDetails?.status === "DISABLED" ? (
             <Button
               isPrimary={true}
-              title={t("activateAccountButton")}
+              title={t("requestToActivateAccountButton")}
               onPress={() => setModalVisible(true)}
               style={{
                 backgroundColor: Colors?.white,

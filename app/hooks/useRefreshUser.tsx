@@ -3,7 +3,6 @@ import { useAtom, useSetAtom } from "jotai";
 import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import Atoms from "@/app/AtomStore";
-import { t } from "@/utils/translationHelper";
 
 interface UserDetails {
   id: string;
@@ -19,7 +18,6 @@ const useRefreshUser = (): UseRefreshUserReturn => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
@@ -32,8 +30,6 @@ const useRefreshUser = (): UseRefreshUserReturn => {
           ...prev,
           ...response.data,
         }));
-        if (response.data?.status === "ACTIVE") setIsAccountInactive(false);
-        else setIsAccountInactive(true);
         return response.data;
       }
     } catch (error: any) {

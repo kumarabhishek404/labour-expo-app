@@ -212,7 +212,10 @@ const SkillsSelector = ({
           animationType="slide"
           title={`${
             isEditMode ? t("editPriceForSkill") : t("enterPriceForSkill")
-          } (${getDynamicWorkerType(selectedSkill.label, 1)})`}
+          } (${
+            selectedSkill?.label &&
+            getDynamicWorkerType(selectedSkill?.label, 1)
+          })`}
           onClose={() => {
             setPricePopupVisible(false);
             reset({ pricePerDay: "" });

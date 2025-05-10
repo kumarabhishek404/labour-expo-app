@@ -6,9 +6,10 @@ import moment from "moment";
 interface DateDisplayProps {
   date: string | Date | [string | Date, string | Date]; // Can be ISO string, Date object, or array of both
   type: "startDate" | "endDate" | "date" | "dateRange";
+  styles?: any; // Optional styles for the text
 }
 
-const DateDisplay: React.FC<DateDisplayProps> = ({ date, type }) => {
+const DateDisplay: React.FC<DateDisplayProps> = ({ date, type, styles }) => {
   // Helper function to parse date
   const parseDate = (input: string | Date) => {
     if (typeof input === "string") {
@@ -75,7 +76,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, type }) => {
       day: translatedWeekday,
     });
 
-    return <CustomText textAlign="left">📅 {displayText}</CustomText>;
+    return <CustomText textAlign="left" style={styles}>📅 {displayText}</CustomText>;
   }
 };
 

@@ -1767,5 +1767,11 @@
   "yourAppliedSkill": "आपका आवेदन किया गया कौशल",
 
   "moreThanOneWorkers": "एक से अधिक मजदूर",
-  "multipleSkills": "कई कौशल"
+  "multipleSkills": "कई कौशल",
+  "requestToActivateAccountButton": "खाता सक्रिय करने का अनुरोध करें",
+
+  "userAddedSuccessfully": "उपयोगकर्ता सफलतापूर्वक जोड़ा गया",
+  "userDetailsAddedSuccessfully": "उपयोगकर्ता विवरण सफलतापूर्वक जोड़े गए",
+  "userRoleAddedSuccessfully": "उपयोगकर्ता की भूमिका सफलतापूर्वक जोड़ी गई",
+  "profilePictureAddedSuccessfully": "प्रोफ़ाइल चित्र सफलतापूर्वक जोड़ा गया"
 }

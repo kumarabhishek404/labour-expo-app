@@ -32,7 +32,13 @@ const LocationField = ({
       ? convertToLabelValueArray(userDetails?.savedAddresses)
       : []),
   ]);
-  
+
+  console.log("userDetailssavedAddresses---", userDetails?.savedAddresses);
+
+  console.log("address---", address);
+
+  console.log("userDetails?.address---", userDetails?.address);
+
   useEffect(() => {
     if (userDetails?.savedAddresses) {
       const uniqueAddresses = Array.from(

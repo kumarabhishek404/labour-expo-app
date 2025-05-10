@@ -486,3 +486,10 @@ export const speakText = (
 //     appliedUsersCount > 1 ? "लोगों" : "लोग"
 //   } ने आवेदन किया है।`;
 // }
+
+export const translateWorkerTypes = (workerTypes: any[]) => {
+  return workerTypes.map((item: any) => ({
+    label: getDynamicWorkerType(item.label, 1),
+    value: item.value,
+  }));
+};

@@ -30,11 +30,12 @@ const FifthScreen = () => {
     mutationKey: ["updateProfile"],
     mutationFn: (payload: any) => USER.updateUserById(payload),
     onSuccess: () => {
+      TOAST?.success(t("profilePictureAddedSuccessfully"));
       console.log("Profile updated successfully");
       router?.push("/screens/auth/login");
     },
     onError: (error) => {
-      console.error("Profile update error:", error);
+      console.error("Error while updating profile picture: ", error);
     },
   });
 
@@ -63,14 +64,7 @@ const FifthScreen = () => {
 
       formData.append("_id", userId);
 
-      mutationUpdateProfile.mutate(formData, {
-        onSuccess: () => {
-          TOAST?.success(t("profileUpdatedSuccessfully"));
-        },
-        onError: () => {
-          TOAST?.error(t("errorUpdatingProfile"));
-        },
-      });
+      mutationUpdateProfile.mutate(formData);
     } catch (error) {
       console.error("Error submitting profile picture:", error);
       TOAST?.error(t("somethingWentWrong"));

@@ -14,6 +14,8 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import Atoms from "@/app/AtomStore";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
+import ShowDistance from "@/components/commons/ShowDistance";
+import DateDisplay from "@/components/commons/ShowDate";
 
 const Experience = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -55,9 +57,11 @@ const Experience = () => {
         >
           {t(work?.type)} {" - "} {t(work?.subType)}
         </CustomHeading>
-        <CustomText style={styles.date}>
-          {new Date(work.startDate).toLocaleDateString()}
-        </CustomText>
+        <DateDisplay
+          date={work.startDate}
+          type="date"
+          styles={{ color: Colors?.white }}
+        />
       </View>
 
       <Requirements type="small" requirements={work?.requirements} />
@@ -68,8 +72,20 @@ const Experience = () => {
         </View> */}
 
         <View style={styles.footerRow}>
-          <CustomText style={styles.address}>📍 {work.address}</CustomText>
-          <CustomText style={styles.duration}>
+          <CustomText
+            baseFont={14}
+            color={Colors?.white}
+            textAlign="left"
+            style={styles.address}
+          >
+            📍 {work.address} {work.address}
+          </CustomText>
+          <CustomText
+            textAlign="right"
+            baseFont={14}
+            color={Colors?.white}
+            style={styles.duration}
+          >
             ⏱️ {work.duration} {t("days")}
           </CustomText>
         </View>
@@ -132,12 +148,12 @@ const Experience = () => {
             setFilteredData={setFilteredData}
           /> */}
 
-            <PaginationString
+            {/* <PaginationString
               type="requests"
               isLoading={isLoading}
               totalFetchedData={filteredData?.length}
               totalData={filteredData?.length}
-            />
+            /> */}
             {filteredData?.length > 0 ? (
               <>
                 <FlatList
@@ -207,14 +223,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 8,
     alignItems: "center",
+    gap: 10,
   },
   address: {
-    fontSize: 12,
-    color: Colors.white,
+    flex: 1,
   },
   duration: {
-    fontSize: 12,
-    color: Colors.white,
+    width: "20%",
   },
   detailRow: {
     flexDirection: "row",

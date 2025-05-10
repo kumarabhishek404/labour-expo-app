@@ -4,17 +4,12 @@ import {
   StyleSheet,
   ScrollView,
   BackHandler,
-  TouchableOpacity,
-  Text,
-  StatusBar,
   Platform,
 } from "react-native";
-// import { StatusBar } from "expo-status-bar";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { router, Stack } from "expo-router";
 import Atoms from "@/app/AtomStore";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import USER from "../../../api/user";
 import { useMutation } from "@tanstack/react-query";
@@ -24,9 +19,8 @@ import Button from "@/components/inputs/Button";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
 import { Controller, useForm } from "react-hook-form";
-import WORKER from "../../../api/workers";
 import TOAST from "@/app/hooks/toast";
-import { MEDIATORTYPES, WORKERTYPES } from "@/constants";
+import { WORKERTYPES } from "@/constants";
 import SkillSelector from "@/components/commons/SkillSelector";
 import WorkInformation from "@/components/commons/WorkInformation";
 import ServiceInformation from "@/components/commons/ServiceInformation";
@@ -39,24 +33,24 @@ import LOCAL_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
-import { isEmptyObject } from "@/constants/functions";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
+import AUTH from "@/app/api/auth";
+import USE_LOGOUT from "@/app/hooks/useLogout";
+import { getToken } from "@/utils/authStorage";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
-  const isAccountInactive = useAtomValue(Atoms?.AccountStatusAtom);
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedTab, setSelectedTab] = useState("profileInformation");
-
   const [isEditProfile, setIsEditProfile] = useState(false);
-
   const [profilePicture, setProfilePicture] = useState(
     userDetails?.profilePicture
   );
-  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { logout } = USE_LOGOUT.useLogout();
 
   const {
     control,
@@ -71,13 +65,39 @@ const UserProfile = () => {
     },
   });
 
-  const [location, setLocation] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
+
+  // useEffect(() => {
+  //   const validateUserToken = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const token = await getToken();
+
+  //       if (!token) {
+  //         return logout();
+  //       }
+
+  //       const response = await AUTH.validateToken();
+
+  //       if (response?.errorCode === "TOKEN_VALID") {
+  //         console.log("Token is valid");
+  //         refreshUser();
+  //         setLoading(false);
+  //       } else {
+  //         logout(); // 🔥 logout immediately on invalid token
+  //       }
+  //     } catch (error) {
+  //       console.error("Error validating token:", error);
+  //       logout(); // 🔥 logout on any error also
+  //     }
+  //   };
+
+  //   validateUserToken();
+  // }, [logout]);
 
   useEffect(() => {
     const backAction = () => {
-      if (isAccountInactive) {
+      if (userDetails?.status !== "ACTIVE") {
         TOAST?.error(
           `${
             userDetails?.status === "SUSPENDED" ||
@@ -102,7 +122,7 @@ const UserProfile = () => {
     );
 
     return () => backHandler.remove();
-  }, [isAccountInactive]);
+  }, [userDetails]);
 
   useEffect(() => {
     setValue("name", userDetails?.name);
@@ -183,7 +203,6 @@ const UserProfile = () => {
         ...prev,
         skills: user?.skills,
       }));
-      setSelectedSkills([]);
       TOAST?.success(t("skillsAddedSuccessfully"));
       console.log("Response while adding new skills in a worker - ", response);
     },
@@ -201,7 +220,6 @@ const UserProfile = () => {
         ...prev,
         skills: user?.skills,
       }));
-      setSelectedSkills([]);
       TOAST?.success(t("skillRemovedSuccessfully"));
       console.log("Response while removing skill from the worker - ", response);
     },
@@ -249,19 +267,11 @@ const UserProfile = () => {
           control={control}
           name="email"
           defaultValue=""
-          // rules={{
-          //   required: t("emailAddressIsRequired"),
-          //   pattern: {
-          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-          //     message: t("enterAValidEmailAddress"),
-          //   },
-          // }}
           render={({ field: { onChange, onBlur, value } }) => (
             <EmailAddressField
               name="email"
               email={value}
               setEmail={onChange}
-              onBlur={onBlur}
               errors={errors}
               placeholder={t("enterYourEmailAddress")}
               icon={
@@ -275,29 +285,6 @@ const UserProfile = () => {
             />
           )}
         />
-
-        {/* <Controller
-          control={control}
-          name="address"
-          defaultValue=""
-          rules={{
-            required: t("addressIsRequired"),
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <AddLocationAndAddress
-              label={t("address")}
-              name="address"
-              address={value}
-              setAddress={onChange}
-              onBlur={onBlur}
-              location={location}
-              setLocation={setLocation}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              errors={errors}
-            />
-          )}
-        /> */}
       </View>
     );
   };
@@ -338,7 +325,8 @@ const UserProfile = () => {
           mutationUpdateProfileInfo?.isPending ||
           mutationAddSkills?.isPending ||
           mutationRemoveSkill?.isPending ||
-          isLoading
+          isLoading ||
+          loading
         }
       />
       <View style={styles.container}>
@@ -410,7 +398,7 @@ const UserProfile = () => {
             <StatsCard />
 
             <SkillSelector
-              canAddSkills={true}
+              canAddSkills={userDetails?.status === "ACTIVE"}
               isShowLabel={true}
               style={styles?.skillsContainer}
               userSkills={userDetails?.skills}

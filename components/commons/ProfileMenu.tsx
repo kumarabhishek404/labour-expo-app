@@ -4,7 +4,6 @@ import {
   AntDesign,
   Entypo,
   Feather,
-  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
@@ -24,21 +23,21 @@ import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import { Badge, Divider } from "react-native-paper";
+import { Divider } from "react-native-paper";
 import BadgeComponent from "./Badge";
 import { removeToken } from "@/utils/authStorage";
+import USE_LOGOUT from "@/app/hooks/useLogout";
 
 const ProfileMenu = ({ disabled }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const notificationCount = useAtomValue(Atoms?.notificationCount);
-  const setIsAccountInactive = useSetAtom(Atoms?.AccountStatusAtom);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [notificationConsent, setNotificationConsent] = useAtom(
     Atoms?.NotificationConsentAtom
   );
   const [isAdmin, setIsAdmin] = useState(false);
+  const { logout } = USE_LOGOUT.useLogout();
 
   const mutationDeactivateAccount = useMutation({
     mutationKey: ["updateProfile"],
@@ -47,7 +46,6 @@ const ProfileMenu = ({ disabled }: any) => {
       TOAST?.success(t("successDeactivatedMessage"));
       refreshUser();
       setModalVisible(false);
-      setIsAccountInactive(true);
     },
     onError: (err) => {
       console.error("error while deactivatibg the profile ", err);
@@ -59,12 +57,7 @@ const ProfileMenu = ({ disabled }: any) => {
   }, [userDetails?.role]);
 
   const handleLogout = async () => {
-    setUserDetails({
-      isAuth: false,
-      _id: "",
-    });
-    await removeToken();
-    router.navigate("/screens/auth/login");
+    logout();
   };
 
   const registerNotification = async () => {
@@ -417,7 +410,7 @@ const ProfileMenu = ({ disabled }: any) => {
 
   return (
     <>
-      <Loader loading={isLoading || mutationDeactivateAccount?.isPending} />
+      <Loader loading={mutationDeactivateAccount?.isPending} />
       <View style={styles.menuWrapper}>
         {menus.map(
           (menu, index) =>

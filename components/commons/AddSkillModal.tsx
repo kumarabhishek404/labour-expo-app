@@ -15,6 +15,7 @@ import PaperDropdown from "../inputs/Dropdown";
 import CustomSegmentedButton from "@/app/screens/bottomTabs/(user)/bookingsAndRequests/customTabs";
 import { set } from "lodash";
 import { getDynamicWorkerType } from "@/utils/i18n";
+import { translateWorkerTypes } from "@/constants/functions";
 
 const AddSkillDrawer = ({
   isDrawerVisible,
@@ -133,7 +134,7 @@ const AddSkillDrawer = ({
               onSelect={(skill: string) => handleSkillSelection(skill)}
               searchEnabled
               placeholder={t("searchAndSelectSkills")}
-              options={filteredSkills ?? WORKERTYPES}
+              options={filteredSkills ?? translateWorkerTypes(WORKERTYPES)}
               icon={
                 <MaterialCommunityIcons
                   style={styles.icon}

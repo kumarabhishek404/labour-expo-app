@@ -18,6 +18,7 @@ import ShowAddress from "@/components/commons/ShowAddress";
 import SkillSelector from "@/components/commons/SkillSelector";
 import ReviewScreen from "../reviews";
 import RatingAndReviews from "@/components/commons/RatingAndReviews";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface SelectedApplicantsProps {
   selectedApplicants: any;
@@ -107,7 +108,8 @@ const SelectedUsers = ({
                     >
                       {workers && workers?.length > 0
                         ? t("mediator")
-                        : t(appliedSkill?.skill || "worker")}
+                        : getDynamicWorkerType(appliedSkill?.skill, 1) ||
+                          t("worker")}
                     </CustomText>
                     {/* <ShowSkills type="small" userSkills={appliedUser?.skills} /> */}
                   </View>
@@ -220,7 +222,7 @@ const SelectedUsers = ({
                                 fontWeight="600"
                                 style={{ textTransform: "uppercase" }}
                               >
-                                {t(worker?.skill)}
+                                {getDynamicWorkerType(worker?.skill, 1)}
                               </CustomText>
                             </View>
                             <RatingAndReviews

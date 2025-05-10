@@ -54,10 +54,6 @@ const fetchUnreadNotificationsCount = async () => {
       `[userService] An error occurred while fetching unread notifications count : `,
       error?.response
     );
-    TOAST?.error(
-      error?.response?.data?.message ||
-        "An error occurred while fetching unread notifications count "
-    );
     throw error;
   }
 };

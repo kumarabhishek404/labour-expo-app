@@ -73,6 +73,15 @@ const RegisterScreen: React.FC = () => {
     };
   }, [step]);
 
+  useEffect(() => {
+    if (nextStepAfterOtp) {
+      router.push({
+        pathname: nextStepAfterOtp.route as any,
+        params: nextStepAfterOtp.params,
+      });
+    }
+  }, [nextStepAfterOtp]);
+
   const startResendTimer = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -98,13 +107,22 @@ const RegisterScreen: React.FC = () => {
     mutationKey: ["register"],
     mutationFn: (payload) => AUTH.register(payload),
     onSuccess: async (data) => {
-      await saveToken(data?.data?.token)
+      TOAST?.success(t("userAddedSuccessfully"));
+
+      // Save token and update user state first
+      await Promise.all([
+        saveToken(data?.data?.token),
+        setUserDetails((prev: any) => ({ ...prev, _id: data?.data?.userId })), // Ensure user ID is set
+      ]);
+
       router.push({
         pathname: "/screens/auth/register/second",
         params: { userId: userId || data?.data?.userId },
       });
     },
-    onError: () => TOAST.error(t("registrationFailed")),
+    onError: (err) => {
+      console.log("Failed while registering the new user", err);
+    },
   });
 
   const checkMobileNumber = useMutation({
@@ -165,7 +183,6 @@ const RegisterScreen: React.FC = () => {
       });
 
       setStep(1);
-      setValue("mobile", "");
     },
 
     onError: () => TOAST.error(t("errorCheckingMobile")),
@@ -196,15 +213,6 @@ const RegisterScreen: React.FC = () => {
 
         // Reset step to initial state
         setStep(1);
-
-        // If user already exists and we had a next step planned, resume registration
-        if (nextStepAfterOtp) {
-          router.push({
-            pathname: nextStepAfterOtp.route,
-            params: nextStepAfterOtp.params,
-          });
-          return;
-        }
 
         // Otherwise, treat this as a fresh registration
         const payload: any = {

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   tagStyle: {
-    backgroundColor: Colors?.fourth,
+    backgroundColor: Colors?.white,
   },
 });
 

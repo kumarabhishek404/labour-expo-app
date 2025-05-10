@@ -33,7 +33,6 @@ const register = async (payload: any) => {
 
   try {
     const data = await API_CLIENT.makePostRequest("/auth/register", payload);
-    TOAST?.success("Your account has registered successfully");
     router.push("/screens/auth/login");
     return data?.data;
   } catch (error: any) {

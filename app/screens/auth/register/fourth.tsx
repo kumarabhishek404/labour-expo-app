@@ -42,15 +42,14 @@ const UpdateUserSkillsScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      TOAST?.success(t("profileUpdated"));
+      TOAST?.success(t("userRoleAddedSuccessfully"));
       router.push({
         pathname: "/screens/auth/register/fifth",
         params: { userId: userId },
       });
     },
     onError: (error) => {
-      console.error("Profile update error:", error);
-      TOAST?.error(error?.message || t("updateFailed"));
+      console.error("Error while adding user details: ", error);
     },
   });
 

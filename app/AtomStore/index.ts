@@ -1,6 +1,7 @@
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { atom } from "jotai";
+import { getToken, removeToken, saveToken } from "@/utils/authStorage";
 
 const asyncStorage = createJSONStorage(() => AsyncStorage);
 
@@ -24,12 +25,6 @@ const NotificationConsentAtom = atomWithStorage<any>(
 const unreadNotificationIdsAtom = atom<string[]>([]);
 
 const LocationAtom = atomWithStorage<any>("location", {}, asyncStorage);
-
-const AccountStatusAtom = atomWithStorage<any>(
-  "accountStatus",
-  false,
-  asyncStorage
-);
 
 const AddServiceAtom = atom<any>({});
 
@@ -76,6 +71,28 @@ const SideDrawerAtom = atom({
   secondaryButton: null,
 });
 
+// 1️⃣ Base atom for in-memory token (default is null)
+const tokenAtomBase = atom<string | null>(null);
+
+// 2️⃣ Load token from SecureStore when app starts
+const tokenAtom = atom(
+  async (get) => {
+    const storedToken = await getToken();
+    return storedToken;
+  },
+  async (get, set, newToken: string | null) => {
+    if (newToken) {
+      await saveToken(newToken);
+      set(tokenAtomBase, newToken);
+    } else {
+      await removeToken();
+      set(tokenAtomBase, null);
+    }
+  }
+);
+
+export const userAtom = atomWithStorage("user", {}, asyncStorage);
+
 // Bundle all atoms into an object
 const Atoms = {
   UserAtom,
@@ -84,7 +101,6 @@ const Atoms = {
   SpentAtom,
   NotificationConsentAtom,
   LocationAtom,
-  AccountStatusAtom,
   AddServiceAtom,
   AddServiceStepAtom,
   hasNewNotificationAtom,
@@ -96,7 +112,8 @@ const Atoms = {
   LocaleAtom,
   BottomDrawerAtom,
   SideDrawerAtom,
-  IsLoggedInAtom
+  IsLoggedInAtom,
+  tokenAtom,
 };
 
 // Export the object as default

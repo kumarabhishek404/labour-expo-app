@@ -9,10 +9,9 @@ import { t } from "@/utils/translationHelper";
 import DateDisplay from "./ShowDate";
 import ShowAddress from "./ShowAddress";
 import ShowDuration from "./ShowDuration";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 const ListingsBookings = ({ title, item, category }: any) => {
-  console.log("item --", item?.appliedSkill);
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -55,7 +54,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
                   textAlign="left"
                   baseFont={20}
                 >
-                  {t(item?.appliedSkill?.skill)}
+                  {getDynamicWorkerType(item?.appliedSkill?.skill, 1)}
                 </CustomHeading>
               ) : (
                 <CustomHeading
