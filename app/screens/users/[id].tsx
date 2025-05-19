@@ -12,7 +12,6 @@ import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
 import CoverImage from "../../../assets/banner-placeholder.jpg";
 import SkillSelector from "@/components/commons/SkillSelector";
@@ -31,6 +30,7 @@ import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
 import TeamDetails from "../team/teamDetails";
 import UserProfilePlaceholder from "@/components/commons/LoadingPlaceholders/UserDetailsPlaceholder";
+import Atoms from "@/app/AtomStore";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;

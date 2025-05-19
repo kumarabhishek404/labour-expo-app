@@ -10,7 +10,6 @@ import {
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
@@ -28,6 +27,7 @@ import { t } from "@/utils/translationHelper";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
 import { getToken } from "@/utils/authStorage";
+import Atoms from "@/app/AtomStore";
 
 const Bookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);

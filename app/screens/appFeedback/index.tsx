@@ -15,11 +15,11 @@ import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import * as DeviceInfo from "expo-device";
 import { Platform } from "react-native";
 import ReasoneSelection from "../allFeedback/reasons";
 import ErrorText from "@/components/commons/ErrorText";
+import Atoms from "@/app/AtomStore";
 const FeedbackForm = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [deviceInfo, setDeviceInfo] = useState<any>(null);

@@ -19,8 +19,6 @@ import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loaders/Loader";
-import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 
 const SecondScreen = () => {
   const {

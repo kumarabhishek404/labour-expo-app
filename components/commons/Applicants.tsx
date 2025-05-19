@@ -30,8 +30,8 @@ import ShowAddress from "./ShowAddress";
 import { handleCall } from "@/constants/functions";
 import ShowDistance from "./ShowDistance";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import { getDynamicWorkerType } from "@/utils/i18n";
+import Atoms from "@/app/AtomStore";
 
 interface ApplicantsProps {
   type?: string;

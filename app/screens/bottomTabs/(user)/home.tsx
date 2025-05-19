@@ -5,7 +5,6 @@ import Colors from "@/constants/Colors";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import SERVICE from "../../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
 import ListingHorizontalWorkers from "@/components/commons/ListingHorizontalWorkers";
@@ -26,6 +25,7 @@ import OurMission from "@/components/commons/OurMission";
 import OurVision from "@/components/commons/OurVision";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import USER from "@/app/api/user";
+import Atoms from "@/app/AtomStore";
 
 const UserHome = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);

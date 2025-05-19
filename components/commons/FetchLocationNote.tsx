@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Colors from "@/constants/Colors"; // Update this to your color constants path
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
 import { fetchCurrentLocation } from "@/constants/functions";
 import Button from "../inputs/Button";
 import CustomText from "./CustomText";
+import Atoms from "@/app/AtomStore";
 
 const FetchLocationNote = ({ motiveItem }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);

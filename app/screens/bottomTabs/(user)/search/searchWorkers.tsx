@@ -6,7 +6,6 @@ import { router } from "expo-router";
 import { WORKERTYPES } from "@/constants";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import TextInputComponent from "@/components/inputs/TextInputWithIcon";
@@ -15,6 +14,7 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import USER from "@/app/api/user";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
 import PaperDropdown from "@/components/inputs/Dropdown";
+import Atoms from "@/app/AtomStore";
 
 const SearchWorkers = ({ style }: any) => {
   const {

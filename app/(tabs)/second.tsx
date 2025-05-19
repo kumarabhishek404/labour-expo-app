@@ -1,8 +1,8 @@
 import React from "react";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import Search from "../screens/bottomTabs/(user)/search";
 import AdminUsers from "../screens/bottomTabs/(admin)/users";
+import Atoms from "../AtomStore";
 
 export default function ProfileScreen() {
   const userDetails = useAtomValue(Atoms?.UserAtom);

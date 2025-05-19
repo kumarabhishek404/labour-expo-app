@@ -16,8 +16,8 @@ import TOAST from "@/app/hooks/toast";
 import RATING from "@/app/api/rating";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import ErrorText from "@/components/commons/ErrorText";
+import Atoms from "@/app/AtomStore";
 
 const AddReview = () => {
   const { id, type, data }: any = useLocalSearchParams();

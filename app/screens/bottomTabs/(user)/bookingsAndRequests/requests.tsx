@@ -25,8 +25,8 @@ import { t } from "@/utils/translationHelper";
 import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholders/ListingBookingPlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import { getToken } from "@/utils/authStorage";
+import Atoms from "@/app/AtomStore";
 
 const Requests = () => {
   const [totalData, setTotalData] = useState(0);

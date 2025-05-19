@@ -3,6 +3,7 @@
     "name": "KAARYA",
     "slug": "labour-app",
     "version": "1.0.0",
+    "versionCode": 1,
     "orientation": "portrait",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",

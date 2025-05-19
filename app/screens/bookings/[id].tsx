@@ -9,7 +9,6 @@ import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import Button from "@/components/inputs/Button";
 import moment from "moment";
 import Requirements from "@/components/commons/Requirements";
@@ -32,6 +31,7 @@ import DateDisplay from "@/components/commons/ShowDate";
 import ShowAddress from "@/components/commons/ShowAddress";
 import BookingDetailsPlaceholder from "@/components/commons/LoadingPlaceholders/BookingDetails";
 import { getDynamicWorkerType } from "@/utils/i18n";
+import Atoms from "@/app/AtomStore";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;

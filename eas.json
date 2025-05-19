@@ -5,9 +5,8 @@
   },
   "build": {
     "production": {
-      "autoIncrement": true,
-      "env": {
-        "NODE_ENV": "production"
+      "android": {
+        "buildType": "app-bundle"
       }
     },
     "development": {

@@ -1,6 +1,6 @@
 import React from "react";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
+import Atoms from "../AtomStore";
 import AdminProfile from "../screens/bottomTabs/(admin)/profile";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 

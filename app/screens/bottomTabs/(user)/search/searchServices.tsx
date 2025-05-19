@@ -13,7 +13,6 @@ import { WORKTYPES } from "@/constants";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
 import { useAtomValue } from "jotai";
-import Atoms from "@/app/AtomStore";
 import { Controller, useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import { filterSubCategories } from "@/constants/functions";
@@ -24,6 +23,7 @@ import PaperDropdown from "@/components/inputs/Dropdown";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { Button } from "react-native-paper";
 import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
+import Atoms from "@/app/AtomStore";
 
 const SearchServices = ({ style }: any) => {
   const {
