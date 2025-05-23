@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 12.3.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "production": {
@@ -19,6 +19,11 @@
     "preview": {
       "android": {
         "buildType": "apk"
+      }
+    },
+    "release": {
+      "android": {
+        "gradleCommand": ":app:bundleRelease"
       }
     }
   },

@@ -374,7 +374,7 @@ const ProfileMenu = ({ disabled }: any) => {
       roleCondition: isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
-      isSuspended: false,
+      isSuspended: userDetails?.status === "DELETED",
     },
     {
       title: t("logOut"),

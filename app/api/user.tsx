@@ -21,7 +21,7 @@ const getUserInfo = async () => {
 
 const updateUserById = async (payload: any) => {
   console.log("Payload---", payload);
-  
+
   try {
     const response = await API_CLIENT.makePatchRequestFormData(
       `/user/info`,
@@ -84,13 +84,24 @@ const disableAccount = async () => {
     const data = await API_CLIENT.makeDeleteRequest(`/user/disable-account`);
     return data;
   } catch (error: any) {
-    console.log(
-      `[Forget Password] [userService] An error occured while disabling account : `,
-      error
-    );
+    console.log(`An error occured while disabling account : `, error);
     TOAST?.error(
       error?.response?.data?.message ||
         "An error occurred while disabling account"
+    );
+    throw error;
+  }
+};
+
+const deleteAccount = async () => {
+  try {
+    const data = await API_CLIENT.makeDeleteRequest(`/user/delete-account`);
+    return data;
+  } catch (error: any) {
+    console.log(`An error occured while deleting account : `, error);
+    TOAST?.error(
+      error?.response?.data?.message ||
+        "An error occurred while deleting account"
     );
     throw error;
   }
@@ -287,6 +298,7 @@ const USER = {
   updateUserById,
   updateSkills,
   removeSkill,
+  deleteAccount,
   disableAccount,
   enableAccount,
   fetchAllUsers,

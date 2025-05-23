@@ -365,7 +365,7 @@ const RegisterScreen: React.FC = () => {
 
           <View style={styles.footerContainer}>
             <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={() => router.replace("/screens/auth/login")}>
               <CustomHeading baseFont={24} color={Colors.tertieryButton}>
                 {t("signIn")}
               </CustomHeading>

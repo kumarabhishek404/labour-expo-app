@@ -20,9 +20,11 @@ import CustomText from "@/components/commons/CustomText";
 import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import { t } from "@/utils/translationHelper";
+import USE_LOGOUT from "@/app/hooks/useLogout";
 
 const DeleteAccountScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { logout } = USE_LOGOUT.useLogout();
 
   // useForm setup
   const {
@@ -48,9 +50,10 @@ const DeleteAccountScreen = () => {
 
   const mutationDeleteService = useMutation({
     mutationKey: ["deleteProfile"],
-    mutationFn: () => USER?.disableAccount(),
+    mutationFn: () => USER?.deleteAccount(),
     onSuccess: (response) => {
       console.log("Response while deleting the user - ", response);
+      logout();
     },
     onError: (err) => {
       console.error("Error while deleting the user", err);

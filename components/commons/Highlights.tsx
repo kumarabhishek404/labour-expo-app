@@ -66,7 +66,7 @@ const Highlights = ({ service }: any) => {
                 </CustomHeading>
               </View>
             </View>
-            <Button
+            {/* <Button
               isPrimary={false}
               title={t("getDirection")}
               onPress={() => {}}
@@ -89,7 +89,7 @@ const Highlights = ({ service }: any) => {
                 fontWeight: "700",
                 fontSize: 12,
               }}
-            />
+            /> */}
           </View>
         ) : (
           <View>
@@ -101,11 +101,7 @@ const Highlights = ({ service }: any) => {
       </View>
 
       <View style={styles?.facilitiesHeading}>
-        <CustomHeading
-          textAlign="left"
-          baseFont={20}
-          color={Colors?.black}
-        >
+        <CustomHeading textAlign="left" baseFont={20} color={Colors?.black}>
           {t("facilitiesProvidedByEmployer")}
         </CustomHeading>
         <MaterialCommunityIcons

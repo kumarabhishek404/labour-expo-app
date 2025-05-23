@@ -102,6 +102,20 @@ const Services = () => {
     }, [response])
   );
 
+  // ✅ Ensure refetch happens when the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch(); // Ensure fresh data is fetched when navigating back
+
+      if (response) {
+        setTotalData(response?.pages[0]?.pagination?.total || 0);
+        setFilteredData(
+          response?.pages.flatMap((page: any) => page.data || [])
+        );
+      }
+    }, [response, refetch]) // Dependencies added for correct reactivity
+  );
+
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
