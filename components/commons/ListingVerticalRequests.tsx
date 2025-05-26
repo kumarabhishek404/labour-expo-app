@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import { debounce } from "lodash";
@@ -378,11 +378,13 @@ const ListingVerticalRequests = ({
       />
     ) : null;
 
+    const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   const commonFlatListProps = {
     data: listings ?? [],
     keyExtractor: (item: any) => item?._id?.toString(),
-    onEndReached: debounce(loadMore, 300),
-    onEndReachedThreshold: 0.9,
+    onEndReached: debouncedLoadMore,
+    onEndReachedThreshold: 0.2,
     ListFooterComponent: renderLoader,
     getItemLayout: (data: any, index: number) => ({
       length: 200,

@@ -26,10 +26,10 @@ const useRefreshUser = (): UseRefreshUserReturn => {
     try {
       const response = await USER?.getUserInfo();
       if (response?.success) {
-        setUserDetails((prev: any) => ({
-          ...prev,
+        setUserDetails({
+          ...userDetails,
           ...response.data,
-        }));
+        });
         return response.data;
       }
     } catch (error: any) {

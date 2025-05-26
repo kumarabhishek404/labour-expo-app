@@ -65,11 +65,11 @@ const Search = () => {
     };
   }, [selectedTab]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      refetch(); // <-- Trigger API call when tab is selected
-    }, [selectedTab])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     refetch(); // <-- Trigger API call when tab is selected
+  //   }, [selectedTab])
+  // );
 
   useFocusEffect(
     React.useCallback(() => {

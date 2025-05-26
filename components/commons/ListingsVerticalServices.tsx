@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import debounce from "lodash/debounce";
 import Colors from "@/constants/Colors";
 import ListingsServices from "./ListingServices";
@@ -19,14 +19,16 @@ const ListingsVerticalServices = ({
 }: Props) => {
   const RenderItem = ({ item }: any) => <ListingsServices item={item} />;
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   return (
     <View>
       <FlatList
         data={listings}
         renderItem={({ item }) => <RenderItem item={item} />}
         keyExtractor={(item, index) => index?.toString()}
-        onEndReached={debounce(loadMore, 200)}
-        onEndReachedThreshold={0.9}
+        onEndReached={debouncedLoadMore}
+        onEndReachedThreshold={0.2}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <ActivityIndicator

@@ -66,13 +66,13 @@ const AddLocationAndAddress = ({
       });
       setIsLoading(false);
       setAddress(response[0]?.formattedAddress);
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         savedAddresses: [
           ...(userDetails?.savedAddresses ?? []),
           response[0]?.formattedAddress,
         ],
-      }));
+      });
     } catch (err) {
       setIsLoading(false);
       console.log("Error while fetching location");

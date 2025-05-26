@@ -53,7 +53,6 @@ const Bookings = () => {
     queryKey: ["myServices", category, userDetails?._id],
     queryFn: async ({ pageParam = 1 }) => {
       const token = await getToken();
-      console.log("token---", token, userDetails?._id);
 
       if (!token || !userDetails?._id) {
         throw new Error("Unauthorized: Missing token or user details");

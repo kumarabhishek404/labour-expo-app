@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -159,14 +159,16 @@ const ListingsVerticalUsersAdmin = ({
   RenderItem.displayName = "RenderItem";
   const renderItem = ({ item }: any) => <RenderItem item={item} />;
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   return (
     <View style={{ marginBottom: 110 }}>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)}
-        onEndReachedThreshold={0.9}
+        onEndReached={debouncedLoadMore}
+        onEndReachedThreshold={0.2}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <ActivityIndicator

@@ -35,7 +35,7 @@ const getServiceById = async (id: any) => {
 const fetchAllServices = async ({ pageParam, status, payload }: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
-      `/service/all?status=${status}&page=${pageParam}&limit=5`,
+      `/service/all?status=${status}&page=${pageParam}&limit=10`,
       payload
     );
     return data.data;
@@ -47,7 +47,7 @@ const fetchAllServices = async ({ pageParam, status, payload }: any) => {
 const fetchMyAppliedWorkers = async ({ pageParam, serviceId }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/service/${serviceId}/applied/users?page=${pageParam}&limit=5`
+      `/service/${serviceId}/applied/users?page=${pageParam}&limit=10`
     );
     return data.data;
   } catch (error: any) {
@@ -66,7 +66,7 @@ const fetchMyAppliedWorkers = async ({ pageParam, serviceId }: any) => {
 const fetchSelectedWorkers = async ({ pageParam, serviceId }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/service/${serviceId}/selected/users?page=${pageParam}&limit=5`
+      `/service/${serviceId}/selected/users?page=${pageParam}&limit=10`
     );
     return data.data;
   } catch (error: any) {

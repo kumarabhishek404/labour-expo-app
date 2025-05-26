@@ -42,7 +42,7 @@ const ListingsBookings = ({ title, item, category }: any) => {
                 textAlign="left"
                 baseFont={20}
               >
-                {item?.appliedSkill?.pricePerDay} {t("perDay")}
+                ₹ {item?.appliedSkill?.pricePerDay} {t("perDay")}
               </CustomHeading>
             </View>
           )}

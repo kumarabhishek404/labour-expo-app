@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
@@ -127,14 +127,16 @@ const ListingHorizontalServices = ({
     <RenderItem item={item} index={index} />
   );
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   return (
     <View>
       <FlatList
         data={listings ?? []}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-        onEndReachedThreshold={0.9}
+        onEndReached={debouncedLoadMore} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.2}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 20 }}

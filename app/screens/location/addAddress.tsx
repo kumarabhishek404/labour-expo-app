@@ -99,7 +99,7 @@ const AddAddressDrawer = ({
       setIsEditing(false);
       setLocationAddress("");
       TOAST?.success(t("addressAddedSuccessfully"));
-      console.log("Address updated successfully", response?.data?.data);
+      // console.log("Address updated successfully", response?.data?.data);
     },
     onError: (err) => {
       console.error("Error updating address", err);
@@ -190,8 +190,6 @@ const AddAddressDrawer = ({
         ? `${additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${pinCode}`
         : locationAddress;
 
-    console.log("Addres---", address, selectedTab);
-
     const isAddressAlreadySaved = userDetails?.savedAddresses?.some(
       (savedAddress: string) =>
         JSON.stringify(savedAddress) === JSON.stringify(address)
@@ -205,8 +203,8 @@ const AddAddressDrawer = ({
 
     if (type === "secondary") setAddress({ address: address });
 
-    setUserDetails((prev: any) => ({
-      ...prev,
+    setUserDetails({
+      ...userDetails,
       ...(isMainAddress
         ? {
             address, // If main address, update the address field
@@ -215,7 +213,7 @@ const AddAddressDrawer = ({
         : {
             savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
           }),
-    }));
+    });
 
     if (isMainAddress)
       mutationUpdateProfileInfo.mutate(

@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import ListingsBookings from "./ListingBookings";
 import ListingsBookedWorkers from "./ListingBookedWorkers";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
@@ -47,14 +47,16 @@ const ListingsVerticalBookings = ({
     return <OnPageLoader />;
   }
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   return (
     <View>
       <FlatList
         data={listings ?? []}
         renderItem={({ item }) => <RenderItem item={item} />}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)}
-        onEndReachedThreshold={0.9}
+        onEndReached={debouncedLoadMore}
+        onEndReachedThreshold={0.2}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <ActivityIndicator

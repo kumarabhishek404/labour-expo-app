@@ -58,7 +58,7 @@ const ForgetPasswordScreen: React.FC = () => {
   }, [step]);
 
   console.log("userId --", userId);
-  
+
   const checkMobileNumber = useMutation({
     mutationFn: async (payload: { mobile: string }) =>
       AUTH.checkMobileExistance(payload),
@@ -174,6 +174,18 @@ const ForgetPasswordScreen: React.FC = () => {
             style={{ textAlign: "center" }}
           >
             {t("resetPasswordDescription")}
+          </CustomText>
+
+          <CustomText
+            baseFont={20}
+            color="#FF6B00"
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              marginTop: 20,
+            }}
+          >
+            {t("voiceCallMayBeCome")}
           </CustomText>
         </View>
 

@@ -1,10 +1,9 @@
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  View,
-  BackHandler,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View, BackHandler } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import {
@@ -25,6 +24,12 @@ import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 
 const POLLING_INTERVAL = 30000;
+type IconLibrary =
+  | "MaterialIcons"
+  | "MaterialCommunityIcons"
+  | "AntDesign"
+  | "Ionicons"
+  | "FontAwesome";
 
 export default function Layout() {
   const [notificationCount, setNotificationCount] = useAtom(
@@ -39,6 +44,7 @@ export default function Layout() {
   useEffect(() => {
     // If not logged in, redirect to login page
     if (!userDetails || !userDetails?._id) {
+      console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
     }
   }, [userDetails, router]);
@@ -54,7 +60,7 @@ export default function Layout() {
       }
     };
 
-    let intervalId: NodeJS.Timeout;
+    let intervalId: ReturnType<typeof setInterval>;
     if (userDetails?._id) {
       fetchUnreadNotifications();
       intervalId = setInterval(fetchUnreadNotifications, POLLING_INTERVAL);
@@ -102,45 +108,48 @@ export default function Layout() {
     iconName,
     iconLibrary = "MaterialIcons",
     iconSize = 28,
-  }: any) => {
+  }: {
+    props: any;
+    path: string;
+    title: string;
+    iconName: string;
+    iconLibrary?: IconLibrary;
+    iconSize?: number;
+  }) => {
     const isSelected = props.accessibilityState?.selected;
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-    const translateYAnim = useRef(new Animated.Value(0)).current;
+    const scale = useSharedValue(1);
+    const translateY = useSharedValue(0);
 
     useEffect(() => {
-      Animated.parallel([
-        Animated.spring(scaleAnim, {
-          toValue: isSelected ? 1.2 : 1,
-          useNativeDriver: true,
-        }),
-        Animated.spring(translateYAnim, {
-          toValue: isSelected ? -5 : 0,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      scale.value = withSpring(isSelected ? 1.2 : 1, { damping: 10 });
+      translateY.value = withSpring(isSelected ? -5 : 0, { damping: 10 });
     }, [isSelected]);
 
-    const Icon =
-      {
-        MaterialIcons,
-        MaterialCommunityIcons,
-        AntDesign,
-        Ionicons,
-        FontAwesome,
-      }[iconLibrary] || MaterialIcons;
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }, { translateY: translateY.value }],
+    }));
+
+    const iconMap = {
+      MaterialIcons,
+      MaterialCommunityIcons,
+      AntDesign,
+      Ionicons,
+      FontAwesome,
+    };
+
+    const Icon = iconMap[iconLibrary as IconLibrary] || MaterialIcons;
+
+    // Ensure iconName is a string literal type using 'as const'
+    const iconNameLiteral = iconName as any;
 
     return (
       <TouchableOpacity
         style={styles.tabButton}
-        onPress={() => router.push(path)}
+        onPress={() => router.push(path as any)}
       >
-        <Animated.View
-          style={{
-            transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
-          }}
-        >
+        <Animated.View style={animatedStyle}>
           <Icon
-            name={iconName}
+            name={iconNameLiteral}
             size={iconSize}
             color={isSelected ? Colors.primary : "#888"}
           />
@@ -196,7 +205,7 @@ export default function Layout() {
                   path="/(tabs)/second"
                   title={isAdmin ? "services" : "search"}
                   iconName={isAdmin ? "sickle" : "search"}
-                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : null}
+                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
                 />
               ),
             }}

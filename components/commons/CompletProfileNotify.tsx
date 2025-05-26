@@ -69,14 +69,14 @@ const ProfileNotification: React.FC = () => {
     onSuccess: (response) => {
       let user = response?.data?.data;
       refreshUser();
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         email: user?.email?.value,
         address: user?.address,
         location: user?.location,
         dateOfBirth: user?.dateOfBirth,
         gender: user?.gender,
-      }));
+      });
       setDrawerState({ visible: false }); // Close the drawer after success
     },
     onError: (err) => {

@@ -24,7 +24,7 @@ const sendTeamRequest = async (payload: any) => {
 const fetchSentTeamRequests = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/mediator/team/request/sent/all?page=${pageParam}&limit=5`
+      `/mediator/team/request/sent/all?page=${pageParam}&limit=10`
     );
     return data.data;
   } catch (error: any) {
@@ -69,7 +69,7 @@ const fetchAllMembers = async ({
   
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/mediator/team/${mediatorId}/members?category=${category}&page=${pageParam}&limit=3`
+      `/mediator/team/${mediatorId}/members?category=${category}&page=${pageParam}&limit=10`
     );
     console.log("[userService] member fetched successfully ");
 

@@ -148,6 +148,8 @@ const Services = () => {
   RenderItem.displayName = "RenderItem";
   const renderItem = ({ item }: any) => <RenderItem item={item} />;
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+  
   return (
     <>
       <Stack.Screen
@@ -195,8 +197,8 @@ const Services = () => {
                 data={memoizedData}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index?.toString()}
-                onEndReached={debounce(loadMore, 200)}
-                onEndReachedThreshold={0.9}
+                onEndReached={debouncedLoadMore}
+                onEndReachedThreshold={0.2}
                 ListFooterComponent={() =>
                   isFetchingNextPage ? (
                     <ActivityIndicator

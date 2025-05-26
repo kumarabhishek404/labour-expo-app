@@ -20,8 +20,6 @@ const getUserInfo = async () => {
 };
 
 const updateUserById = async (payload: any) => {
-  console.log("Payload---", payload);
-
   try {
     const response = await API_CLIENT.makePatchRequestFormData(
       `/user/info`,
@@ -41,8 +39,6 @@ const updateUserById = async (payload: any) => {
 };
 
 const updateSkills = async (payload: any) => {
-  console.log("payloet--", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest("/user/add-skill", payload);
     return data.data;
@@ -127,7 +123,7 @@ const enableAccount = async () => {
 const fetchAllUsers = async ({ pageParam, payload }: any) => {
   try {
     const data = await API_CLIENT.makePostRequest(
-      `/user/all?role=WORKER&page=1&${pageParam}&limit=5`,
+      `/user/all?role=WORKER&page=${pageParam}&limit=10`,
       payload
     );
     return data.data;
@@ -199,7 +195,7 @@ const fetchAllLikedUsers = async ({ pageParam, skill }: any) => {
 
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all-liked?skill=${skill}&page=${pageParam}&limit=5`
+      `/user/all-liked?skill=${skill}&page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {
@@ -258,7 +254,7 @@ const unLikeService = async (payload: any) => {
 const fetchAllLikedServices = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/user/all-liked-services?page${pageParam}&limit=5`
+      `/user/all-liked-services?page${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {

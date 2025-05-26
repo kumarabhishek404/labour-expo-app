@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
 import profileImage from "../../assets/images/placeholder-person.jpg";
 import { Link, router } from "expo-router";
@@ -88,6 +88,8 @@ const GroupWorkersListing = ({
     <RenderItem item={item} index={index} />
   );
 
+  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+
   return (
     <View style={{ marginTop: 20 }}>
       <CustomHeading textAlign="left">{t("topRatedWorkers")}</CustomHeading>
@@ -96,8 +98,8 @@ const GroupWorkersListing = ({
         data={listings ?? []}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debounce(loadMore, 300)} // Trigger load more when user scrolls to bottom
-        onEndReachedThreshold={0.9}
+        onEndReached={debouncedLoadMore} // Trigger load more when user scrolls to bottom
+        onEndReachedThreshold={0.2}
         horizontal
         showsHorizontalScrollIndicator={false}
         ListFooterComponent={() =>

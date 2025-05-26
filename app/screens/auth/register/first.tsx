@@ -112,7 +112,10 @@ const RegisterScreen: React.FC = () => {
       // Save token and update user state first
       await Promise.all([
         saveToken(data?.data?.token),
-        setUserDetails((prev: any) => ({ ...prev, _id: data?.data?.userId })), // Ensure user ID is set
+        setUserDetails({
+          ...userDetails,
+          _id: data?.data?.userId,
+        }), // Ensure user ID is set
       ]);
 
       router.push({
@@ -365,7 +368,9 @@ const RegisterScreen: React.FC = () => {
 
           <View style={styles.footerContainer}>
             <CustomText>{t("alreadyHaveAnAccount")}</CustomText>
-            <TouchableOpacity onPress={() => router.replace("/screens/auth/login")}>
+            <TouchableOpacity
+              onPress={() => router.replace("/screens/auth/login")}
+            >
               <CustomHeading baseFont={24} color={Colors.tertieryButton}>
                 {t("signIn")}
               </CustomHeading>

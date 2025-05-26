@@ -1773,5 +1773,7 @@
   "userAddedSuccessfully": "उपयोगकर्ता सफलतापूर्वक जोड़ा गया",
   "userDetailsAddedSuccessfully": "उपयोगकर्ता विवरण सफलतापूर्वक जोड़े गए",
   "userRoleAddedSuccessfully": "उपयोगकर्ता की भूमिका सफलतापूर्वक जोड़ी गई",
-  "profilePictureAddedSuccessfully": "प्रोफ़ाइल चित्र सफलतापूर्वक जोड़ा गया"
+  "profilePictureAddedSuccessfully": "प्रोफ़ाइल चित्र सफलतापूर्वक जोड़ा गया",
+
+  "voiceCallMayBeCome": "OTP आपको वॉइस कॉल के ज़रिए भी मिल सकता है।"
 }

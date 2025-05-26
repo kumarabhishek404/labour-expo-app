@@ -2,8 +2,6 @@ import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
 const applyService = async (payload: any) => {
-  console.log("Payload---", payload);
-  
   try {
     const data = await API_CLIENT.makePostRequest("/worker/apply", payload);
     return data.data;
@@ -43,7 +41,7 @@ const unApplyService = async (payload: any) => {
 const fetchMyAppliedServices = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/worker/applied-services?page=${pageParam}&limit=5`
+      `/worker/applied-services?page=${pageParam}&limit=10`
     );
     return data.data;
   } catch (error: any) {
@@ -62,7 +60,7 @@ const fetchMyAppliedServices = async ({ pageParam }: any) => {
 const fetchAllBookingReceivedInvitations = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/worker/booking/invitation/received?page=${pageParam}&limit=5`
+      `/worker/booking/invitation/received?page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {
@@ -142,7 +140,7 @@ const rejectBookingRequest = async (payload: any) => {
 const fetchAllMyBookings = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/worker/booking/all?page=${pageParam}&limit=5`
+      `/worker/booking/all?page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {
@@ -181,7 +179,7 @@ const cancelBooking = async (payload: any) => {
 const fetchAllRecievedTeamRequests = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/worker/team/request/received/all?page=${pageParam}&limit=5`
+      `/worker/team/request/received/all?page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {

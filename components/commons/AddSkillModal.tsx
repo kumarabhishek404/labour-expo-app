@@ -38,12 +38,12 @@ const AddSkillDrawer = ({
     mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         skills: user?.skills,
-      }));
+      });
       TOAST?.success(t("skillsAddedSuccessfully"));
-      console.log("Response while adding new skills in a worker - ", response);
+      // console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
       console.error("error while adding new skills in a worker ", err);
@@ -63,7 +63,6 @@ const AddSkillDrawer = ({
 
   const onAddSkills = async () => {
     try {
-      console.log("Skiiiiii-", skillWithPrice);
       const payload =
         role === "worker" ? skillWithPrice : { skill: selectedSkill };
       await mutationAddSkills.mutateAsync(payload, {

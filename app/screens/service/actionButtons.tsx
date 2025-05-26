@@ -17,7 +17,6 @@ import TOAST from "@/app/hooks/toast";
 import Loader from "@/components/commons/Loaders/Loader";
 import ModalComponent from "@/components/commons/Modal";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { debounce } from "lodash";
 import CustomText from "@/components/commons/CustomText";
 import ProfilePicture from "@/components/commons/ProfilePicture";
 import CustomCheckbox from "@/components/commons/CustomCheckbox";

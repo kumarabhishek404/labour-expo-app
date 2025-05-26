@@ -50,7 +50,7 @@ const editService = async (payload: any) => {
 const fetchMyServices = async ({ pageParam, status }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/employer/my-services?status=${status}&page=${pageParam}&limit=5`
+      `/employer/my-services?status=${status}&page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {
@@ -148,7 +148,7 @@ const addBookingRequest = async (payload: any) => {
 const fetchAllBookingSentRequests = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/employer/booking/invitations/sent?page=${pageParam}&limit=5`
+      `/employer/booking/invitations/sent?page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {
@@ -189,7 +189,7 @@ const cancelBookingRequest = async (payload: any) => {
 const fetchAllBookedWorkers = async ({ pageParam }: any) => {
   try {
     const data = await API_CLIENT.makeGetRequest(
-      `/employer/booked-worker/all?page=${pageParam}&limit=5`
+      `/employer/booked-worker/all?page=${pageParam}&limit=10`
     );
     return data?.data;
   } catch (error: any) {

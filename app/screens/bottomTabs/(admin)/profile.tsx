@@ -118,15 +118,15 @@ const AdminProfile = () => {
       let user = response?.data?.data;
       setIsEditProfile(false);
       setProfilePicture(user?.profilePicture);
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         name: user?.name,
         profilePicture: user?.profilePicture,
         email: {
           value: user?.email?.value,
           isVerified: false,
         },
-      }));
+      });
     },
     onError: (err) => {
       console.error("error while updating the profile ", err);
@@ -140,10 +140,10 @@ const AdminProfile = () => {
     onSuccess: (response) => {
       let user = response?.data?.data;
       setProfilePicture(user?.profilePicture);
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         profilePicture: user?.profilePicture,
-      }));
+      });
     },
   });
 
@@ -177,13 +177,13 @@ const AdminProfile = () => {
     mutationFn: (skill: any) => USER?.updateSkills({ skill: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         skills: user?.skills,
-      }));
+      });
       setSelectedSkills([]);
       TOAST?.success(t("skillsAddedSuccessfully"));
-      console.log("Response while adding new skills in a worker - ", response);
+      // console.log("Response while adding new skills in a worker - ", response);
     },
     onError: (err) => {
       console.error("error while adding new skills in a worker ", err);
@@ -195,10 +195,10 @@ const AdminProfile = () => {
     mutationFn: (skill: string) => USER?.removeSkill({ skillName: skill }),
     onSuccess: (response) => {
       let user = response?.data;
-      setUserDetails((prev: any) => ({
-        ...prev,
+      setUserDetails({
+        ...userDetails,
         skills: user?.skills,
-      }));
+      });
       setSelectedSkills([]);
       TOAST?.success(t("skillRemovedSuccessfully"));
       console.log("Response while removing skill from the worker - ", response);

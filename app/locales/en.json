@@ -2034,5 +2034,7 @@
   "userAddedSuccessfully": "User added successfully",
   "userDetailsAddedSuccessfully": "User details added successfully",
   "userRoleAddedSuccessfully": "User role added successfully",
-  "profilePictureAddedSuccessfully": "Profile picture added successfully"
+  "profilePictureAddedSuccessfully": "Profile picture added successfully",
+
+  "voiceCallMayBeCome": "You may receive the OTP via a voice call."
 }

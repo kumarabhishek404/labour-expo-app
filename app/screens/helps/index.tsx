@@ -201,7 +201,7 @@ const HelpScreen = () => {
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item?.id?.toString()}
-            onEndReachedThreshold={0.9}
+            onEndReachedThreshold={0.2}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
             windowSize={3}
