@@ -51,7 +51,8 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
   useEffect(() => {
     // Register push notifications
     PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-      notificationConsent
+      notificationConsent,
+      userDetails?._id
     ).then(
       (token: any) => setExpoPushToken(token),
       (error: React.SetStateAction<Error | null>) => setError(error)

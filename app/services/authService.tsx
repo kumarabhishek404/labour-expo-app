@@ -49,7 +49,8 @@ const loginUser = async (mobile: string, password: string) => {
     }
 
     await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-      updatedUser?.notificationConsent
+      updatedUser?.notificationConsent,
+      updatedUser._id
     );
 
     // setUserDetails({ isAuth: true, ...updatedUser });

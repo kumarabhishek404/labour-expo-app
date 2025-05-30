@@ -22,6 +22,8 @@ import Atoms from "../AtomStore";
 import NOTIFICATION from "../api/notification";
 import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
+import API_CLIENT from "../api";
+import RippleDot from "@/components/commons/RippleDot";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -32,14 +34,29 @@ type IconLibrary =
   | "FontAwesome";
 
 export default function Layout() {
-  const [notificationCount, setNotificationCount] = useAtom(
+  const [notificationCount, setNotificationCount]: any = useAtom(
     Atoms.notificationCount
   );
   const [token, setToken] = useAtom(Atoms?.tokenAtom);
   const pathname = usePathname();
-  const userDetails = useAtomValue(Atoms.UserAtom);
+  const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
+
+  useEffect(() => {
+    const handleLogout = () => {
+      console.log("🚪 Logging out user (atom reset)");
+      setUserDetails(null);
+      // Optionally:
+      // router.replace("/login");
+    };
+
+    API_CLIENT.eventEmitter.on("logout", handleLogout);
+
+    return () => {
+      API_CLIENT.eventEmitter.off("logout", handleLogout);
+    };
+  }, []);
 
   useEffect(() => {
     // If not logged in, redirect to login page
@@ -182,7 +199,7 @@ export default function Layout() {
           <Tabs.Screen
             name="fourth"
             options={{
-              tabBarButton: (props) => (
+              tabBarButton: (props: any) => (
                 <TabButton
                   props={props}
                   path="/(tabs)/fourth"
@@ -199,7 +216,7 @@ export default function Layout() {
           <Tabs.Screen
             name="second"
             options={{
-              tabBarButton: (props) => (
+              tabBarButton: (props: any) => (
                 <TabButton
                   props={props}
                   path="/(tabs)/second"
@@ -214,7 +231,7 @@ export default function Layout() {
           <Tabs.Screen
             name="index"
             options={{
-              tabBarButton: (props) =>
+              tabBarButton: (props: any) =>
                 isAdmin ? (
                   <TabButton
                     props={props}
@@ -241,7 +258,7 @@ export default function Layout() {
           <Tabs.Screen
             name="third"
             options={{
-              tabBarButton: (props) => (
+              tabBarButton: (props: any) => (
                 <TabButton
                   props={props}
                   path="/(tabs)/third"
@@ -256,7 +273,7 @@ export default function Layout() {
           <Tabs.Screen
             name="fifth"
             options={{
-              tabBarButton: (props) => (
+              tabBarButton: (props: any) => (
                 <TabButton
                   props={props}
                   path="/(tabs)/fifth"
@@ -270,19 +287,28 @@ export default function Layout() {
       )}
 
       <StickButtonWithWall
+        content={
+          <>
+            <MaterialIcons name="notifications" size={28} color="#fff" />
+            {notificationCount > 0 && <RippleDot />}
+          </>
+        }
         onPress={() =>
           router.push({
             pathname: "/screens/notifications",
             params: { title: "notifications", type: "all" },
           })
         }
-        notificationCount={notificationCount}
+        // notificationCount={notificationCount}
       />
 
       <ExitConfirmationModal
         visible={showExitModal}
         onCancel={() => setShowExitModal(false)}
-        onConfirm={() => BackHandler.exitApp()}
+        onConfirm={() => {
+          BackHandler.exitApp();
+          setShowExitModal(false);
+        }}
       />
     </View>
   );

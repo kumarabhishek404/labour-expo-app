@@ -1176,17 +1176,17 @@ export const LANGUAGE_KEY = "selectedLanguage";
 export const LANGUAGES = [
   { label: "English", value: "en" },
   { label: "हिंदी", value: "hi" },
-  { label: "मराठी", value: "mr" },
-  { label: "राजस्थानी", value: "rj" },
-  { label: "தமிழ்", value: "ta" },
-  { label: "ગુજરાતી", value: "gu" },
-  { label: "বাংলা", value: "bn" },
-  { label: "ਪੰਜਾਬੀ", value: "pa" },
-  { label: "తెలుగు", value: "te" },
-  { label: "ಕನ್ನಡ", value: "kn" },
-  { label: "മലയാളം", value: "ml" },
-  { label: "कश्मीरी", value: "ks" },
-  { label: "اردو", value: "ur" },
+  // { label: "मराठी", value: "mr" },
+  // { label: "राजस्थानी", value: "rj" },
+  // { label: "தமிழ்", value: "ta" },
+  // { label: "ગુજરાતી", value: "gu" },
+  // { label: "বাংলা", value: "bn" },
+  // { label: "ਪੰਜਾਬੀ", value: "pa" },
+  // { label: "తెలుగు", value: "te" },
+  // { label: "ಕನ್ನಡ", value: "kn" },
+  // { label: "മലയാളം", value: "ml" },
+  // { label: "कश्मीरी", value: "ks" },
+  // { label: "اردو", value: "ur" },
 ];
 
 export const REASONS = [

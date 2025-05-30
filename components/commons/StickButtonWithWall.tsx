@@ -3,19 +3,23 @@ import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Using Material Icons
 import RippleDot from "./RippleDot";
 
-const StickButtonWithWall = ({ onPress, notificationCount }: any) => {
+const StickButtonWithWall = ({
+  content,
+  onPress,
+  position = "bottom",
+  containerStyles,
+}: any) => {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[
+        styles.container,
+        position == "top" ? { top: 10 } : { bottom: 90 },
+        containerStyles,
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={{}}>
-        <MaterialIcons name="notifications" size={28} color="#fff" />
-        {notificationCount > 0 && (
-          <RippleDot />
-        )}
-      </View>
+      <View style={{}}>{content}</View>
     </TouchableOpacity>
   );
 };
@@ -23,7 +27,6 @@ const StickButtonWithWall = ({ onPress, notificationCount }: any) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 90, // Adjust to be above bottom navigation
     right: -25, // Half of the button hidden in the right wall
     backgroundColor: "#1E3A8A", // Deep Blue Color
     // width: 50,

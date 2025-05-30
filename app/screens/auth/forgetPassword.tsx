@@ -57,8 +57,6 @@ const ForgetPasswordScreen: React.FC = () => {
     }
   }, [step]);
 
-  console.log("userId --", userId);
-
   const checkMobileNumber = useMutation({
     mutationFn: async (payload: { mobile: string }) =>
       AUTH.checkMobileExistance(payload),

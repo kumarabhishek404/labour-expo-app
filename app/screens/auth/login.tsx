@@ -27,8 +27,11 @@ import AUTH from "@/app/api/auth";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { saveToken } from "@/utils/authStorage";
 import Loader from "@/components/commons/Loaders/Loader";
+import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
+import LOCAL_CONTEXT from "@/app/context/locale";
 
 export default function Login() {
+  LOCAL_CONTEXT?.useLocale();
   const { t } = useTranslation();
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
@@ -110,7 +113,8 @@ export default function Login() {
         }
 
         await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-          updatedUser?.notificationConsent
+          updatedUser?.notificationConsent,
+          updatedUser._id
         );
 
         setUserDetails({ isAuth: true, ...updatedUser }); //set user details
@@ -269,6 +273,24 @@ export default function Login() {
           </View>
         </View>
       </ScrollView>
+
+      <StickButtonWithWall
+        content={
+          <View style={{ paddingHorizontal: 4 }}>
+            <CustomText fontWeight="bold" baseFont={16} color={Colors?.white}>
+              {t("changeLanguage")}
+            </CustomText>
+          </View>
+        }
+        onPress={() =>
+          router.push({
+            pathname: "/screens/settings/changeLanguage",
+            params: { title: "notifications", type: "all" },
+          })
+        }
+        position="top"
+        containerStyles={{ height: 40 }}
+      />
     </>
   );
 }

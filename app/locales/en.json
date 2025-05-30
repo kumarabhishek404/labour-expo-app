@@ -2036,5 +2036,9 @@
   "userRoleAddedSuccessfully": "User role added successfully",
   "profilePictureAddedSuccessfully": "Profile picture added successfully",
 
-  "voiceCallMayBeCome": "You may receive the OTP via a voice call."
+  "voiceCallMayBeCome": "You may receive the OTP via a voice call.",
+
+  "updateAvailable": "Update Available",
+  "newVersionIsAvailable": "A new version is available. Restarting...",
+  "restart": "Restart"
 }

@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 import { getToken, removeToken } from "@/utils/authStorage";
 import { router } from "expo-router";
-import REFRESH_USER from "../hooks/useRefreshUser";
+import TOAST from "../hooks/toast";
 
 const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
 
@@ -39,9 +39,13 @@ const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
+
+// Logout logic enhanced to emit event and clear all relevant data
 const logout = async () => {
   try {
+    console.log("🔒 Logout triggered from API client");
     await AsyncStorage.removeItem("user");
+    eventEmitter.emit("logout"); // ⬅️ Notify the app
   } catch (error) {
     console.error("Error during logout:", error);
   }
@@ -66,6 +70,7 @@ api.interceptors.response.use(
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
+        TOAST.error("Token expired. Logging out...");
         logout();
       }
 

@@ -6,6 +6,8 @@
     "paths": {
       "@/*": ["./*"]
     },
+    "module": "Node16",
+    "moduleResolution": "node16",
     "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": [

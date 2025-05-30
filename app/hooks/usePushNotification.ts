@@ -6,7 +6,8 @@ import TOAST from "@/app/hooks/toast";
 import NOTIFICATION from "../api/notification";
 
 const registerForPushNotificationsAsync = async (
-  notificationConsent: boolean
+  notificationConsent: boolean,
+  userId: any
 ) => {
   console.log("[PushNotification] Starting registration process...");
 
@@ -73,6 +74,7 @@ const registerForPushNotificationsAsync = async (
           pushToken: pushTokenString,
           notificationConsent: notificationConsent,
           deviceType: Device?.DeviceType[Device?.deviceType ?? 0],
+          userId: userId || null,
         });
         console.log("[PushNotification] Device registered successfully.");
       } catch (err) {

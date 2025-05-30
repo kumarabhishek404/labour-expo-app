@@ -255,6 +255,18 @@ const RegisterScreen: React.FC = () => {
               ? t("verificationDescription1")
               : t("verificationDescription2")}
           </CustomText>
+
+          <CustomText
+            baseFont={20}
+            color="#FF6B00"
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              marginTop: 20,
+            }}
+          >
+            {t("voiceCallMayBeCome")}
+          </CustomText>
         </View>
 
         <View style={styles.formContainer}>

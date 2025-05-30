@@ -46,10 +46,12 @@ export default function LanguageSelectionScreen() {
 
     setLocale(selectedLanguage);
     await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
-    await mutationUpdateProfileInfo?.mutate({
-      _id: userDetails?._id,
-      locale: { language: selectedLanguage },
-    });
+    if (userDetails?._id) {
+      mutationUpdateProfileInfo?.mutate({
+        _id: userDetails?._id,
+        locale: { language: selectedLanguage },
+      });
+    }
     router?.back();
   };
 
@@ -79,7 +81,7 @@ export default function LanguageSelectionScreen() {
       />
       <View style={styles.container}>
         <CustomHeading textAlign="left" baseFont={22}>
-          Selected Language
+          चुनी गई भाषा
         </CustomHeading>
         <FlatList
           style={{ marginBottom: 30 }}
@@ -105,7 +107,7 @@ export default function LanguageSelectionScreen() {
         />
 
         <CustomHeading textAlign="left" baseFont={20}>
-          Available Languages
+          उपलब्ध भाषाएँ
         </CustomHeading>
         <FlatList
           data={LANGUAGES}
@@ -149,7 +151,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 62,
     backgroundColor: Colors?.fourth,
-    justifyContent: "space-between",
   },
   languageItem: {
     flexDirection: "row",

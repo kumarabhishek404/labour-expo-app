@@ -62,7 +62,10 @@ const ProfileMenu = ({ disabled }: any) => {
 
   const registerNotification = async () => {
     try {
-      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(true);
+      await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+        true,
+        userDetails?._id
+      );
       setNotificationConsent(true);
       TOAST?.success(t("notificationsEnabled"));
       console.log("Notifications enabled");
