@@ -12,6 +12,8 @@ import {
   AntDesign,
   Ionicons,
   FontAwesome,
+  FontAwesome5,
+  Fontisto,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
@@ -31,7 +33,9 @@ type IconLibrary =
   | "MaterialCommunityIcons"
   | "AntDesign"
   | "Ionicons"
-  | "FontAwesome";
+  | "FontAwesome"
+  | "FontAwesome5"
+  | "Fontisto";
 
 export default function Layout() {
   const [notificationCount, setNotificationCount]: any = useAtom(
@@ -42,29 +46,6 @@ export default function Layout() {
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
-
-  useEffect(() => {
-    const handleLogout = () => {
-      console.log("🚪 Logging out user (atom reset)");
-      setUserDetails(null);
-      // Optionally:
-      // router.replace("/login");
-    };
-
-    API_CLIENT.eventEmitter.on("logout", handleLogout);
-
-    return () => {
-      API_CLIENT.eventEmitter.off("logout", handleLogout);
-    };
-  }, []);
-
-  useEffect(() => {
-    // If not logged in, redirect to login page
-    if (!userDetails || !userDetails?._id) {
-      console.log("Redirecting to login screen -  ", userDetails);
-      router.replace("/screens/auth/login");
-    }
-  }, [userDetails, router]);
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
@@ -93,14 +74,7 @@ export default function Layout() {
   }, [pathname]);
 
   useEffect(() => {
-    const exitPaths = [
-      "/",
-      "/(tabs)",
-      "/(tabs)/first",
-      "/(tabs)/second",
-      "/(tabs)/third",
-      "/(tabs)/fourth",
-    ]; // Adjusted for tab routes
+    const exitPaths = ["/", "/(tabs)", "/(tabs)/third", "/(tabs)/fourth"]; // Adjusted for tab routes
     const backAction = () => {
       if (exitPaths.includes(pathname)) {
         setShowExitModal(true);
@@ -133,13 +107,14 @@ export default function Layout() {
     iconLibrary?: IconLibrary;
     iconSize?: number;
   }) => {
-    const isSelected = props.accessibilityState?.selected;
-    const scale = useSharedValue(1);
-    const translateY = useSharedValue(0);
+    const isSelected = pathname === path;
+
+    const scale = useSharedValue(isSelected ? 1.1 : 1);
+    const translateY = useSharedValue(isSelected ? -5 : 0);
 
     useEffect(() => {
-      scale.value = withSpring(isSelected ? 1.2 : 1, { damping: 10 });
-      translateY.value = withSpring(isSelected ? -5 : 0, { damping: 10 });
+      scale.value = withSpring(isSelected ? 1.2 : 1, { damping: 12 });
+      translateY.value = withSpring(isSelected ? -5 : 0, { damping: 12 });
     }, [isSelected]);
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -152,28 +127,29 @@ export default function Layout() {
       AntDesign,
       Ionicons,
       FontAwesome,
+      FontAwesome5,
+      Fontisto,
     };
 
     const Icon = iconMap[iconLibrary as IconLibrary] || MaterialIcons;
-
-    // Ensure iconName is a string literal type using 'as const'
-    const iconNameLiteral = iconName as any;
+    const color = isSelected ? Colors.primary : "#888";
 
     return (
       <TouchableOpacity
         style={styles.tabButton}
-        onPress={() => router.push(path as any)}
+        onPress={() => router.push(path)}
       >
         <Animated.View style={animatedStyle}>
           <Icon
-            name={iconNameLiteral}
+            name={iconName as any}
             size={iconSize}
-            color={isSelected ? Colors.primary : "#888"}
+            color={isSelected ? Colors?.primary : color}
           />
         </Animated.View>
         <CustomText
-          color={isSelected ? Colors.primary : "#888"}
+          color={color}
           fontWeight="600"
+          style={{ marginTop: 4, fontSize: 14 }}
         >
           {t(title)}
         </CustomText>
@@ -185,122 +161,59 @@ export default function Layout() {
 
   return (
     <View style={styles.container}>
-      {userDetails && userDetails?.status !== "ACTIVE" ? (
-        <UserProfile />
-      ) : (
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: styles.tabBar,
-            tabBarActiveTintColor: Colors.primary, // Added for consistency
-            tabBarInactiveTintColor: "#888",
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarActiveTintColor: Colors.primary, // Added for consistency
+          tabBarInactiveTintColor: "#888",
+        }}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarButton: (props: any) => (
+              <TabButton
+                props={props}
+                path="/"
+                title={isAdmin ? "teams" : "services"}
+                iconName={isAdmin ? "error" : "plussquare"}
+                iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+              />
+            ),
           }}
-        >
-          <Tabs.Screen
-            name="fourth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fourth"
-                  title={isAdmin ? "users" : "allRequests"}
-                  iconName={
-                    isAdmin ? "people-sharp" : "hand-front-right-outline"
-                  }
-                  iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
-                />
-              ),
-            }}
-          />
+        />
 
-          <Tabs.Screen
-            name="second"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/second"
-                  title={isAdmin ? "services" : "search"}
-                  iconName={isAdmin ? "sickle" : "search"}
-                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
-                />
-              ),
-            }}
-          />
+        <Tabs.Screen
+          name="third"
+          options={{
+            tabBarButton: (props: any) => (
+              <TabButton
+                props={props}
+                path="/third"
+                title={isAdmin ? "errors" : "myBookings"}
+                iconName={isAdmin ? "error" : "calendar-alt"}
+                iconLibrary={isAdmin ? "MaterialIcons" : "FontAwesome5"}
+              />
+            ),
+          }}
+        />
 
-          <Tabs.Screen
-            name="index"
-            options={{
-              tabBarButton: (props: any) =>
-                isAdmin ? (
-                  <TabButton
-                    props={props}
-                    path="/(tabs)"
-                    title="teams"
-                    iconName="group"
-                    iconLibrary="FontAwesome"
-                  />
-                ) : (
-                  <TouchableOpacity
-                    style={styles.postButton}
-                    onPress={() => router.push("/(tabs)")}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      size={36}
-                      color={Colors.white}
-                    />
-                  </TouchableOpacity>
-                ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="third"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/third"
-                  title={isAdmin ? "errors" : "myBookings"}
-                  iconName={isAdmin ? "error" : "calendar"}
-                  iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
-                />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="fifth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fifth"
-                  title={isAdmin ? "myProfile" : "myProfile"}
-                  iconName={isAdmin ? "person" : "person-outline"}
-                />
-              ),
-            }}
-          />
-        </Tabs>
-      )}
-
-      <StickButtonWithWall
-        content={
-          <>
-            <MaterialIcons name="notifications" size={28} color="#fff" />
-            {notificationCount > 0 && <RippleDot />}
-          </>
-        }
-        onPress={() =>
-          router.push({
-            pathname: "/screens/notifications",
-            params: { title: "notifications", type: "all" },
-          })
-        }
-        // notificationCount={notificationCount}
-      />
+        <Tabs.Screen
+          name="fifth"
+          options={{
+            tabBarButton: (props: any) => (
+              <TabButton
+                props={props}
+                path="/fifth"
+                title={isAdmin ? "myProfile" : "myProfile"}
+                iconName={isAdmin ? "person" : "person"}
+                iconLibrary={isAdmin ? "MaterialIcons" : "Fontisto"}
+              />
+            ),
+          }}
+        />
+      </Tabs>
 
       <ExitConfirmationModal
         visible={showExitModal}

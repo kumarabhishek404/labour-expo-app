@@ -12,7 +12,7 @@ import {
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import Atoms from "@/app/AtomStore";
+import Atoms, { mobileNumberAtom } from "@/app/AtomStore";
 import ModalComponent from "./Modal";
 import Loader from "./Loaders/Loader";
 import TOAST from "@/app/hooks/toast";
@@ -27,6 +27,7 @@ import { Divider } from "react-native-paper";
 import BadgeComponent from "./Badge";
 import { removeToken } from "@/utils/authStorage";
 import USE_LOGOUT from "@/app/hooks/useLogout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileMenu = ({ disabled }: any) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -37,7 +38,9 @@ const ProfileMenu = ({ disabled }: any) => {
     Atoms?.NotificationConsentAtom
   );
   const [isAdmin, setIsAdmin] = useState(false);
-  const { logout } = USE_LOGOUT.useLogout();
+
+  const [mobileNumber, setMobileNumber] = useAtom(mobileNumberAtom);
+  // const { logout } = USE_LOGOUT.useLogout();
 
   const mutationDeactivateAccount = useMutation({
     mutationKey: ["updateProfile"],
@@ -57,7 +60,14 @@ const ProfileMenu = ({ disabled }: any) => {
   }, [userDetails?.role]);
 
   const handleLogout = async () => {
-    logout();
+    try {
+      await AsyncStorage.removeItem("mobileNumber");
+      setMobileNumber(null);
+      TOAST?.success("You have been logged out");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      TOAST?.error("Something went wrong while logging out");
+    }
   };
 
   const registerNotification = async () => {
@@ -155,7 +165,7 @@ const ProfileMenu = ({ disabled }: any) => {
           params: { title: "notifications", type: "all" },
         }),
       style: [styles?.menuItem],
-      isSuspended: false,
+      isSuspended: true,
     },
     {
       title: t("yourTeam"),
@@ -266,7 +276,7 @@ const ProfileMenu = ({ disabled }: any) => {
       switchValue: notificationConsent,
       onSwitchToggle: () => handleNotificationToggle(notificationConsent),
       style: [styles?.menuItem],
-      isSuspended: false,
+      isSuspended: true,
     },
     {
       title: t("changeLanguage"),
@@ -377,7 +387,7 @@ const ProfileMenu = ({ disabled }: any) => {
       roleCondition: isAdmin,
       style: [styles?.menuItem],
       textStyle: { color: Colors.danger },
-      isSuspended: userDetails?.status === "DELETED",
+      isSuspended: true,
     },
     {
       title: t("logOut"),
@@ -392,7 +402,7 @@ const ProfileMenu = ({ disabled }: any) => {
       onPress: handleLogout,
       textStyle: { color: Colors.danger },
       style: [styles?.menuItem],
-      isSuspended: false,
+      isSuspended: mobileNumber ? false : true, // Disable logout if mobile number is not set
     },
   ];
 
@@ -425,8 +435,7 @@ const ProfileMenu = ({ disabled }: any) => {
                     menu?.style,
                     styles.settingsItem,
                     menu?.isSuspended && {
-                      pointerEvents: "none",
-                      opacity: 0.5,
+                      display: "none",
                     },
                   ]}
                 >
@@ -447,7 +456,7 @@ const ProfileMenu = ({ disabled }: any) => {
                     />
                   )}
                 </TouchableOpacity>
-                <Divider />
+                {/* <Divider /> */}
               </View>
             )
         )}

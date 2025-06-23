@@ -1,4 +1,5 @@
 {
+  "kaarya": "KAARYA",
   "welcome": "Welcome",
   "changeLanguage": "Change Language",
   "address": "Address",
@@ -1617,10 +1618,6 @@
     "singular": "Formwork Carpenter Helper",
     "plural": "Formwork Carpenter Helpers"
   },
-  "plumber": {
-    "singular": "Plumber",
-    "plural": "Plumbers"
-  },
   "plumbingAssistant": {
     "singular": "Plumbing Assistant",
     "plural": "Plumbing Assistants"
@@ -1628,10 +1625,6 @@
   "pipeFitterHelper": {
     "singular": "Pipe Fitter Helper",
     "plural": "Pipe Fitter Helpers"
-  },
-  "electrician": {
-    "singular": "Electrician",
-    "plural": "Electricians"
   },
   "electricalWiringHelper": {
     "singular": "Electrical Wiring Helper",
@@ -2040,5 +2033,52 @@
 
   "updateAvailable": "Update Available",
   "newVersionIsAvailable": "A new version is available. Restarting...",
-  "restart": "Restart"
+  "restart": "Restart",
+
+  "exploreServices": "Explore our services",
+
+  "cost": "Cost",
+  "estimatedTime": "Estimated Time",
+  "book": "Book",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "useCurrentLocation": "📍 Use Current Location",
+  "enterAddressManually": "✍️ Enter Address Manually",
+  "fetchingLocation": "Fetching Location...",
+  "getMyCurrentLocation": "Get My Current Location",
+  "houseStreet": "House No. / Street",
+  "areaLandmark": "Area / Landmark",
+  "confirmBooking": "Confirm Booking",
+  "bookingConfirmed": "Booking Confirmed",
+  "thankYouBooking": "Thank you {{name}}, your booking is confirmed.",
+  "permissionDenied": "Permission Denied",
+  "locationPermissionRequired": "Location permission is required.",
+  "error": "Error",
+  "failedToFetchLocation": "Failed to fetch location.",
+
+  "electricianServices": "Electrician Services",
+  "electricianServicesSubheading": "Get trusted help for your household electrical needs.",
+  "switchBoardRepair": "Switch Board Repair",
+  "fanInstallationRepair": "Fan Installation / Repair",
+  "lightPointFitting": "Light Point Fitting",
+  "mcbRepair": "MCB Repair",
+  "roomWiring": "Room Wiring",
+  "earthing": "Earthing",
+  "fuseReplacement": "Fuse Replacement",
+
+  "homeRepairTitle": "Home Repair & Services",
+  "chooseServiceSubtitle": "Choose a service category to explore details",
+  "searchPlaceholder": "Search e.g. ‘Plumber’, ‘Light’, ‘Fan’",
+  "noMatchingServices": "No matching services found.",
+  "electrician": "Electrician",
+  "plumber": "Plumber",
+
+  "fanInstallation": "Professional electrician will visit and install your ceiling or wall fan. Includes wiring, mounting and safety testing.",
+
+  "homeRepairServices": "Home Repair & Services",
+  "chooseServiceCategoryExploreDetails": "Choose a service category to explore details",
+  "noMatchingServicesFound": "No matching services found.",
+
+  "noBookingsFound": "No bookings found.",
+  "contactSupport": "Contact Support"
 }

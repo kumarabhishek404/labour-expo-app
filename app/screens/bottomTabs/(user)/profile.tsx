@@ -8,7 +8,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Atoms from "@/app/AtomStore";
+import Atoms, {
+  initializeMobileAtom,
+  mobileNumberAtom,
+  updateMobileNumberAtom,
+} from "@/app/AtomStore";
 import { useAtom } from "jotai";
 import ModalComponent from "@/components/commons/Modal";
 import USER from "../../../api/user";
@@ -40,6 +44,10 @@ import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import AUTH from "@/app/api/auth";
 import USE_LOGOUT from "@/app/hooks/useLogout";
 import { getToken } from "@/utils/authStorage";
+import { Stack } from "expo-router";
+import CustomHeader from "@/components/commons/Header";
+import ButtonComp from "@/components/inputs/Button";
+import { Divider } from "react-native-paper";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
@@ -51,6 +59,12 @@ const UserProfile = () => {
   );
   const [loading, setLoading] = useState(false);
   const { logout } = USE_LOGOUT.useLogout();
+
+  const [mobileNumber, setMobileNumber] = useAtom(mobileNumberAtom);
+  const [, initializeMobile] = useAtom(initializeMobileAtom);
+  const [, updateMobile] = useAtom(updateMobileNumberAtom);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [tempMobile, setTempMobile] = useState("");
 
   const {
     control,
@@ -128,6 +142,10 @@ const UserProfile = () => {
     setValue("name", userDetails?.name);
     setValue("email", userDetails?.email?.value);
   }, [isEditProfile, userDetails]);
+
+  useEffect(() => {
+    initializeMobile();
+  }, []);
 
   const mutationUpdateProfileInfo = useMutation({
     mutationKey: ["updateProfile"],
@@ -318,8 +336,36 @@ const UserProfile = () => {
     }
   };
 
+  const loginModalContent = () => {
+    return (
+      <View style={{ padding: 0, marginBottom: 20, marginTop: 20 }}>
+        <TextInputComponent
+          label="mobileNumber"
+          name="mobile"
+          value={tempMobile}
+          onChangeText={setTempMobile}
+          placeholder="Enter 10-digit number"
+          icon={
+            <Ionicons
+              style={{ marginRight: 10 }}
+              name="call-outline"
+              size={24}
+              color={Colors.secondary}
+            />
+          }
+        />
+      </View>
+    );
+  };
+
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <CustomHeader title="kaarya" />,
+        }}
+      />
       <Loader
         loading={
           mutationUpdateProfileInfo?.isPending ||
@@ -330,110 +376,66 @@ const UserProfile = () => {
         }
       />
       <View style={styles.container}>
-        <ProfileTabs
-          tabs={["profileInformation", "otherInformation"]}
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
-        {selectedTab === "profileInformation" ? (
-          <ScrollView>
-            <View style={styles.userInfoSection}>
-              <AvatarComponent
-                isLoading={mutationUpdateProfilePicture?.isPending}
-                isEditable={true}
-                onUpload={handleProfilePictureSubmit}
-                profileImage={profilePicture}
-              />
-              <CustomHeading baseFont={22} style={{ marginTop: 10 }}>
-                {userDetails?.name || "Name"}
-              </CustomHeading>
-            </View>
-
-            {(!userDetails?.email?.value ||
-              !userDetails?.address ||
-              !userDetails?.dateOfBirth ||
-              !userDetails?.gender) && <ProfileNotification />}
-
-            {(userDetails?.status === "SUSPENDED" ||
-              userDetails?.status === "DISABLED") && <InactiveAccountMessage />}
-
-            {userDetails?.status === "PENDING" && <PendingApprovalMessage />}
-
-            <View style={styles?.changeRoleWrapper}>
-              <Button
-                disabled={false}
-                style={{ ...styles?.mediatorButton }}
-                textStyle={styles?.mediatorButtonText}
+        <ScrollView style={{ flex: 1 }}>
+          <View
+            style={{
+              paddingHorizontal: 20,
+              marginBottom: 20,
+              alignItems: "flex-end",
+            }}
+          >
+            {!mobileNumber ? (
+              <ButtonComp
                 isPrimary={true}
-                title={t("refreshUser")}
-                onPress={handleRefreshUser}
-              />
-              <View style={[{ justifyContent: "flex-end" }, { width: "45%" }]}>
-                <Button
-                  textStyle={styles?.mediatorButtonText}
-                  isPrimary={true}
-                  title={t("editProfile")}
-                  onPress={() => !isEditProfile && handleEditProfile()}
-                  style={{ flex: 1 }}
-                />
-              </View>
-              <ModalComponent
-                visible={isEditProfile}
-                title={t("editProfile")}
-                onClose={() => setIsEditProfile(false)}
-                content={modalContent}
-                primaryButton={{
-                  action: handleSubmit(onSubmit),
-                }}
-                secondaryButton={{
-                  action: () => setIsEditProfile(false),
+                title="Login"
+                onPress={() => setShowLoginModal(true)}
+                style={{
+                  backgroundColor: Colors.primary,
+                  paddingHorizontal: 20,
                 }}
               />
-            </View>
-
-            {userDetails?.employedBy && (
-              <TeamAdminCard admin={userDetails?.employedBy} />
+            ) : (
+              <CustomText
+                color={Colors?.secondary}
+                fontWeight="600"
+                baseFont={24}
+              >
+                Hello, +91{mobileNumber}
+              </CustomText>
             )}
-
-            <StatsCard />
-
-            <SkillSelector
-              canAddSkills={userDetails?.status === "ACTIVE"}
-              isShowLabel={true}
-              style={styles?.skillsContainer}
-              userSkills={userDetails?.skills}
-              handleAddSkill={mutationAddSkills?.mutate}
-              handleRemoveSkill={mutationRemoveSkill?.mutate}
-              availableSkills={WORKERTYPES}
-            />
-
-            <UserInfoComponent user={userDetails} />
-
-            <WorkInformation
-              information={userDetails?.workDetails}
-              style={{ marginLeft: 20 }}
-            />
-
-            <View style={{ paddingTop: 20 }}>
-              <ServiceInformation
-                information={userDetails?.serviceDetails}
-                style={{ marginLeft: 20 }}
-              />
-            </View>
-
-            <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
-            </CustomText>
-          </ScrollView>
-        ) : (
-          <ScrollView>
-            <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
-            <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
-            </CustomText>
-          </ScrollView>
-        )}
+          </View>
+          <Divider />
+          <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
+          <CustomText style={styles.copyright}>
+            © 2024 KAARYA. All rights reserved.
+          </CustomText>
+        </ScrollView>
       </View>
+
+      <ModalComponent
+        title={t("login")}
+        visible={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        content={loginModalContent}
+        primaryButton={{
+          title: t("login"),
+          action: () => {
+            if (tempMobile.length === 10) {
+              updateMobile(tempMobile);
+              setShowLoginModal(false);
+              setTempMobile("");
+              TOAST.success("Mobile number saved!");
+            } else {
+              TOAST.error("Please enter a valid mobile number.");
+            }
+          },
+        }}
+        secondaryButton={{
+          title: t("cancel"),
+          styles: "",
+          action: () => setShowLoginModal(false),
+        }}
+      />
     </>
   );
 };
@@ -444,9 +446,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    backgroundColor: Colors?.fourth,
+    backgroundColor: Colors?.white,
     position: "relative",
     top: 0,
+    paddingTop: 20,
   },
   changeRoleWrapper: {
     paddingHorizontal: 20,
@@ -549,5 +552,6 @@ const styles = StyleSheet.create({
   },
   copyright: {
     marginVertical: 20,
+    marginTop: 100,
   },
 });

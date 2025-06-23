@@ -118,3 +118,22 @@ const Atoms = {
 
 // Export the object as default
 export default Atoms;
+
+export const mobileNumberAtom = atom<string | null>(null);
+
+// Effect to load initial value from AsyncStorage
+export const initializeMobileAtom = atom(null, async (get, set) => {
+  const storedMobile = await AsyncStorage.getItem("user_mobile");
+  if (storedMobile) {
+    set(mobileNumberAtom, storedMobile);
+  }
+});
+
+// Effect to update both atom and AsyncStorage
+export const updateMobileNumberAtom = atom(
+  null,
+  async (get, set, newMobile: string) => {
+    set(mobileNumberAtom, newMobile);
+    await AsyncStorage.setItem("user_mobile", newMobile);
+  }
+);

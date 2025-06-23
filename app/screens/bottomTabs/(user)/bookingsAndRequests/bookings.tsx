@@ -1,238 +1,158 @@
-import React, { useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  StatusBar,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "expo-router";
+import React from "react";
+import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
+import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
-import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
-import PaginationString from "@/components/commons/Pagination/PaginationString";
-import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
-import CustomSegmentedButton from "./customTabs";
-import OnPageLoader from "@/components/commons/Loaders/OnPageLoader";
-import WORKER from "@/app/api/workers";
-import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
-import TopHeaderLinks from "@/components/commons/TopHeaderLinks";
-import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
+import Atoms, { mobileNumberAtom } from "@/app/AtomStore";
+import BOOKINGS from "@/app/api/booking";
+import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import CustomHeading from "@/components/commons/CustomHeading";
+import Colors from "@/constants/Colors";
+import ButtonComp from "@/components/inputs/Button";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
-import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
-import GradientWrapper from "@/components/commons/GradientWrapper";
-import { getToken } from "@/utils/authStorage";
-import Atoms from "@/app/AtomStore";
+import { router } from "expo-router";
 
 const Bookings = () => {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
-  const [filteredData, setFilteredData]: any = useState([]);
-  const [totalData, setTotalData] = useState(0);
-  const firstTimeRef = React.useRef(true);
-  const [category, setCategory] = useState("selected");
+  const mobileNumber = useAtomValue(mobileNumberAtom);
 
-  const TABS: any = [
-    { value: "selected", label: "selected" },
-    { value: "applied", label: "applied" },
-  ];
-
-  const {
-    data: response,
-    isLoading,
-    isRefetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ["myServices", category, userDetails?._id],
-    queryFn: async ({ pageParam = 1 }) => {
-      const token = await getToken();
-
-      if (!token || !userDetails?._id) {
-        throw new Error("Unauthorized: Missing token or user details");
-      }
-
-      return category === "selected"
-        ? await WORKER?.fetchAllMyBookings({ pageParam })
-        : await WORKER?.fetchMyAppliedServices({ pageParam });
+  const { data, isLoading, isRefetching, refetch } = useQuery({
+    queryKey: ["userBookings", mobileNumber],
+    queryFn: async () => {
+      if (!mobileNumber) throw new Error("Mobile number is required");
+      const response = await BOOKINGS.fetchBookingsByMobile(mobileNumber);
+      return response;
     },
-    retry: false,
-    initialPageParam: 1,
-    enabled: !!userDetails?._id,
-    getNextPageParam: (lastPage: any, pages) => {
-      if (lastPage?.pagination?.page < lastPage?.pagination?.pages) {
-        return lastPage?.pagination?.page + 1;
-      }
-      return undefined;
-    },
+    enabled: !!mobileNumber,
   });
 
-  
-  useFocusEffect(
-    React.useCallback(() => {
-      if (firstTimeRef.current) {
-        firstTimeRef.current = false;
-        return;
-      }
-      refetch();
-    }, [refetch])
-  );
+  console.log("[Bookings] Fetched bookings data:", data?.data);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const totalData = response?.pages[0]?.pagination?.total;
-      setTotalData(totalData);
-
-      // For employers, keep existing behavior
-      // setFilteredData(
-      //   response?.pages.flatMap((page: any) => page.data || [])
-      // );
-      // For mediators and workers, combine both responses
-      const appliedServices =
-        response?.pages?.flatMap((page: any) => page.data || []) || [];
-
-      setFilteredData([...appliedServices]);
-    }, [response, userDetails?.role])
-  );
-
-  const loadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  const memoizedData = useMemo(
-    () => filteredData?.flatMap((data: any) => data) || [],
-    [filteredData]
-  );
-
-  const onCatChanged = (category: string) => {
-    setCategory(category);
-    // refetch();
-  };
-
-  const ClickAppliedInService = () => {
-    if (category === "applied") {
-      setCategory("selected");
-    } else {
-      setCategory("applied");
-    }
-  };
-
-  const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
-    async () => {
-      await refetch();
-    }
+  const renderBookingItem = ({ item }: any) => (
+    <View style={styles.card}>
+      {item.bookingDetails?.serviceTitle && (
+        <Text style={styles.title}>{item.bookingDetails.serviceTitle}</Text>
+      )}
+      {item.bookingDetails?.serviceDescription && (
+        <Text style={styles.description}>
+          {item.bookingDetails.serviceDescription}
+        </Text>
+      )}
+      {(item.bookingDetails?.price || item.bookingDetails?.estimateTime) && (
+        <Text style={styles.meta}>
+          {item.bookingDetails?.price ? `₹${item.bookingDetails.price}` : ""}
+          {item.bookingDetails?.price && item.bookingDetails?.estimateTime
+            ? " • "
+            : ""}
+          {item.bookingDetails?.estimateTime || ""}
+        </Text>
+      )}
+      <View style={styles.separator} />
+      <Text style={styles.userInfo}>
+        {item.firstName} {item.lastName}
+      </Text>
+      <Text style={styles.address}>{item.address}</Text>
+      <Text style={styles.date}>
+        {new Date(item.createdAt).toLocaleString()}
+      </Text>
+    </View>
   );
 
   return (
-    <>
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            backgroundColor: Colors?.primary,
-            padding: 10,
-            paddingBottom: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <CustomHeading
-            baseFont={24}
-            textAlign="left"
-            color={Colors?.white}
-            style={{ width: "65%" }}
-          >
-            {category === "applied" ? t("allApplications") : t("allBookings")}
-          </CustomHeading>
-          <TouchableOpacity
-            onPress={ClickAppliedInService}
-            style={styles?.applicationText}
-          >
-            {category === "applied" ? (
-              <FontAwesome6
-                name="calendar-check"
-                size={20}
-                color={Colors?.fourthButton}
-              />
-            ) : (
-              <MaterialIcons
-                name="pending-actions"
-                size={20}
-                color={Colors?.fourthButton}
-              />
-            )}
-            <CustomText
-              baseFont={16}
-              color={Colors?.fourthButton}
-              fontWeight="600"
-            >
-              {category === "applied"
-                ? t("yourBookings")
-                : t("yourApplications")}
-            </CustomText>
-          </TouchableOpacity>
-        </View>
-        <GradientWrapper height={Dimensions.get("window").height - 180}>
-          {isLoading ? (
-            <ListingsServicesPlaceholder />
-          ) : (
-            <>
-              <View style={styles.container}>
-                {memoizedData && memoizedData?.length > 0 ? (
-                  <ListingsVerticalServices
-                    listings={memoizedData || []}
-                    isFetchingNextPage={isFetchingNextPage}
-                    loadMore={loadMore}
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={!isRefetching && refreshing}
-                        onRefresh={onRefresh}
-                      />
-                    }
-                  />
-                ) : (
-                  <EmptyDataPlaceholder
-                    title={category === "applied" ? "applications" : "booking"}
-                    leftHeight={200}
-                    buttonTitle={
-                      category === "applied"
-                        ? "backToBookings"
-                        : "showApplications"
-                    }
-                    onPress={ClickAppliedInService}
-                    type="gradient"
-                  />
-                )}
-              </View>
-            </>
-          )}
-        </GradientWrapper>
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <CustomHeading baseFont={24} textAlign="left" color={Colors?.white}>
+          {t("myBookings")}
+        </CustomHeading>
       </View>
-    </>
+
+      {isLoading ? (
+        <ListingsServicesPlaceholder />
+      ) : data?.data?.length > 0 ? (
+        <FlatList
+          data={data?.data || []}
+          keyExtractor={(item) => item._id}
+          renderItem={renderBookingItem}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <View style={styles.empty}>
+            <CustomText baseFont={24} fontWeight="600" style={styles.emptyText}>{t("noBookingsFound")}</CustomText>
+            <ButtonComp isPrimary title={t("exploreServices")} onPress={() => router?.push("/")} />
+          </View>
+        </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    paddingHorizontal: 15,
+  header: {
+    backgroundColor: Colors?.primary,
+    padding: 15,
   },
-  applicationText: {
+  card: {
+    backgroundColor: "#f2f2f2",
+    margin: 10,
+    padding: 15,
+    borderRadius: 8,
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 4,
+    color: "#333",
+  },
+  description: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 4,
+  },
+  meta: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#222",
+    marginBottom: 8,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#ccc",
+    marginVertical: 8,
+  },
+  userInfo: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#444",
+  },
+  address: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+  date: {
+    fontSize: 12,
+    color: "#999",
+  },
+  emptyContainer: {
     flex: 1,
+    width: "100%",
     display: "flex",
-    justifyContent: "flex-end",
+    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
-    gap: 5,
+    padding: 20,
   },
+  empty: {
+    width: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+  emptyText: {
+    marginBottom: 10,
+  }
 });
 
 export default Bookings;

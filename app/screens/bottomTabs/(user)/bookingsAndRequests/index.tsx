@@ -36,7 +36,7 @@ export default BookingsAndRequests;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: "#fff",
     justifyContent: "space-between",
   },
 });

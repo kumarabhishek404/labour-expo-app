@@ -7,6 +7,7 @@ import AUTH from "../api/auth";
 import AdminServices from "../screens/bottomTabs/(admin)/services";
 import AddServiceScreen from "../screens/addService";
 import REFRESH_USER from "../hooks/useRefreshUser";
+import HomeServices from "../screens/homeServices";
 
 export default function BookingsScreen() {
   const userDetails = useAtomValue(Atoms.UserAtom);
@@ -45,5 +46,5 @@ export default function BookingsScreen() {
   // }, [logout]);
 
   if (userDetails?.isAdmin) return <AdminServices />;
-  else return <AddServiceScreen />;
+  else return <HomeServices />;
 }
