@@ -2,7 +2,7 @@
   "expo": {
     "name": "KAARYA",
     "slug": "labour-app",
-    "version": "1.0.5",
+    "version": "1.0.8",
     "orientation": "portrait",
     "scheme": "myapp",
     "jsEngine": "hermes",
@@ -39,7 +39,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 12,
+      "versionCode": 16,
       "jsEngine": "hermes",
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",

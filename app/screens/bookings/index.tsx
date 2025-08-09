@@ -2,7 +2,7 @@ import Colors from "@/constants/Colors";
 import React, { useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";

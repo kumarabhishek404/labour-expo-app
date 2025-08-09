@@ -36,13 +36,13 @@ import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage"
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import LOCAL_CONTEXT from "@/app/context/locale";
-import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
 import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
+import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 
 const AdminProfile = () => {
   LOCAL_CONTEXT?.useLocale();

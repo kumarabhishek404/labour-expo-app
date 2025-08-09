@@ -21,7 +21,7 @@ import Colors from "@/constants/Colors";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import SERVICE from "../../api/services";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Requirements from "@/components/commons/Requirements";

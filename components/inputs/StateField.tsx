@@ -1,4 +1,3 @@
-
 import { STETESOFINDIA } from "@/constants";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";

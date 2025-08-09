@@ -7,7 +7,7 @@ import Animated, { useAnimatedRef } from "react-native-reanimated";
 import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import Button from "@/components/inputs/Button";
 import moment from "moment";

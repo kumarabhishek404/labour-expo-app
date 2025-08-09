@@ -37,7 +37,7 @@ const NotificationBanner = ({ title, body, onClose }: any) => {
     }, 10000);
 
     return () => {
-      clearTimeout(timer);
+      // clearTimeout(timer);
       cancelAnimation(translateY);
       translateY.value = -100;
     };

@@ -20,7 +20,7 @@ const RangeSlider = () => {
     ((distance - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE)) * SLIDER_WIDTH;
 
   // Calculate distance based on thumb's position on track
-  const calculateDistance = (positionX) => {
+  const calculateDistance = (positionX: any) => {
     const positionRatio = positionX / SLIDER_WIDTH;
     let newDistance = Math.round(
       positionRatio * (MAX_DISTANCE - MIN_DISTANCE) + MIN_DISTANCE
@@ -38,7 +38,7 @@ const RangeSlider = () => {
   });
 
   // Move the thumb to the tapped position on track
-  const handleTrackPress = (event) => {
+  const handleTrackPress = (event:any) => {
     const tappedPositionX = event.nativeEvent.locationX;
     const newDistance = calculateDistance(tappedPositionX);
     setDistance(newDistance);

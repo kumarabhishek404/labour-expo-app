@@ -2,7 +2,7 @@ import Colors from "@/constants/Colors";
 import React, { useState } from "react";
 import { View, StyleSheet, RefreshControl, StatusBar } from "react-native";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import Atoms from "@/app/AtomStore";
@@ -26,7 +26,7 @@ import ListingsBookingsPlaceholder from "@/components/commons/LoadingPlaceholder
 const Requests = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [totalData, setTotalData] = useState(0);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData]: any = useState([]);
   const [category, setCategory] = useState("RECEIVED");
   const { title } = useLocalSearchParams();
 

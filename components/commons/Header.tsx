@@ -7,7 +7,7 @@ import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
 import CustomHeading from "./CustomHeading";
 import ProfilePicture from "./ProfilePicture";
-import { DrawerActions } from "@react-navigation/native";
+// import { DrawerActions } from "@react-navigation/native";
 import RippleDot from "./RippleDot";
 import { t } from "@/utils/translationHelper";
 
@@ -44,9 +44,9 @@ const CustomHeader = ({
         )} */}
         {left === "profile" && (
           <TouchableOpacity
-            // onPress={() => router.push("/(tabs)/fifth")}
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-            // style={{ marginLeft: 20 }}
+          // onPress={() => router.push("/(tabs)/fifth")}
+          // onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          // style={{ marginLeft: 20 }}
           >
             <ProfilePicture
               uri={userDetails?.profilePicture}

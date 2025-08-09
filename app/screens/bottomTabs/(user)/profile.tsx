@@ -37,9 +37,7 @@ import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
-import AUTH from "@/app/api/auth";
 import USE_LOGOUT from "@/app/hooks/useLogout";
-import { getToken } from "@/utils/authStorage";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
