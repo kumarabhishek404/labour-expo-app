@@ -1,9 +1,4 @@
 import { StyleSheet, TouchableOpacity, View, BackHandler } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import {
@@ -17,7 +12,7 @@ import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import Atoms from "../AtomStore";
 import NOTIFICATION from "../api/notification";
 import ExitConfirmationModal from "@/components/commons/ExitPopup";
@@ -57,6 +52,8 @@ export default function Layout() {
       API_CLIENT.eventEmitter.off("logout", handleLogout);
     };
   }, []);
+
+  console.log("pathname ---", pathname);
 
   useEffect(() => {
     // If not logged in, redirect to login page
@@ -133,18 +130,7 @@ export default function Layout() {
     iconLibrary?: IconLibrary;
     iconSize?: number;
   }) => {
-    const isSelected = props.accessibilityState?.selected;
-    const scale = useSharedValue(1);
-    const translateY = useSharedValue(0);
-
-    useEffect(() => {
-      scale.value = withSpring(isSelected ? 1.2 : 1, { damping: 10 });
-      translateY.value = withSpring(isSelected ? -5 : 0, { damping: 10 });
-    }, [isSelected]);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }, { translateY: translateY.value }],
-    }));
+    const isSelected = `/(tabs)${pathname}` === path;
 
     const iconMap = {
       MaterialIcons,
@@ -155,8 +141,6 @@ export default function Layout() {
     };
 
     const Icon = iconMap[iconLibrary as IconLibrary] || MaterialIcons;
-
-    // Ensure iconName is a string literal type using 'as const'
     const iconNameLiteral = iconName as any;
 
     return (
@@ -164,13 +148,13 @@ export default function Layout() {
         style={styles.tabButton}
         onPress={() => router.push(path as any)}
       >
-        <Animated.View style={animatedStyle}>
+        <View>
           <Icon
             name={iconNameLiteral}
-            size={iconSize}
+            size={isSelected ? iconSize + 5 : iconSize}
             color={isSelected ? Colors.primary : "#888"}
           />
-        </Animated.View>
+        </View>
         <CustomText
           color={isSelected ? Colors.primary : "#888"}
           fontWeight="600"
