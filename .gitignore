@@ -16,8 +16,6 @@ yarn-error.log
 google-services.json
 GoogleService-Info.plist
 labour-app-d27c8-firebase-adminsdk-hkj4c-d729f83092.json
-/android
-/ios
 
 # Ruby
 .direnv
