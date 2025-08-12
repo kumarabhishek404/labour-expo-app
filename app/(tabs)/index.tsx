@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-import { useAtomValue } from "jotai";
-import Atoms from "../AtomStore";
 import USE_LOGOUT from "@/app/hooks/useLogout";
-import { getToken } from "@/utils/authStorage";
-import AUTH from "../api/auth";
-import AdminServices from "../screens/bottomTabs/(admin)/services";
-import AddServiceScreen from "../screens/addService";
+import { checkForUpdates } from "@/components/commons/InAppUpdates";
+import { useAtomValue } from "jotai";
+import React, { useEffect } from "react";
+import Atoms from "../AtomStore";
 import REFRESH_USER from "../hooks/useRefreshUser";
+import AddServiceScreen from "../screens/addService";
+import AdminServices from "../screens/bottomTabs/(admin)/services";
 
 export default function BookingsScreen() {
   const userDetails = useAtomValue(Atoms.UserAtom);
@@ -43,6 +42,10 @@ export default function BookingsScreen() {
 
   //   validateUserToken();
   // }, [logout]);
+
+  useEffect(() => {
+    checkForUpdates();
+  }, []);
 
   if (userDetails?.isAdmin) return <AdminServices />;
   else return <AddServiceScreen />;

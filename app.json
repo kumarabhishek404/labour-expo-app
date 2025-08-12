@@ -2,7 +2,7 @@
   "expo": {
     "name": "KAARYA",
     "slug": "labour-app",
-    "version": "1.0.9",
+    "version": "1.0.11",
     "orientation": "portrait",
     "scheme": "myapp",
     "jsEngine": "hermes",
@@ -13,9 +13,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "plugins": [
       "expo-av",
       "expo-router",
@@ -38,7 +36,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 17,
+      "versionCode": 19,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
@@ -51,6 +49,8 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ]
@@ -66,6 +66,14 @@
         "projectId": "38023a03-3848-401a-bc2c-04efd071ef83"
       }
     },
-    "owner": "kaarya.app"
+    "owner": "kaarya.app",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/38023a03-3848-401a-bc2c-04efd071ef83",
+      "enabled": true
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }
