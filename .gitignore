@@ -17,10 +17,9 @@ google-services.json
 GoogleService-Info.plist
 labour-app-d27c8-firebase-adminsdk-hkj4c-d729f83092.json
 
-android/app/build/
-ios/build/
-Pods/
-
+# Native folders should be ignored in Expo managed workflow
+android/
+ios/
 
 # Ruby
 .direnv

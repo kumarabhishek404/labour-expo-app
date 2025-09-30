@@ -117,7 +117,7 @@ const resetPassword = async (payload: any) => {
 const sendOTP = async (mobile: string) => {
   try {
     const response = await axios?.get(
-      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/OTP1`
+      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/temp1`
     );
     console.log("response", response?.data);
 
