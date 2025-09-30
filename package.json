@@ -1,7 +1,7 @@
 {
   "name": "labour-app",
   "main": "expo-router/entry",
-  "version": "1.0.11",
+  "version": "1.0.13",
   "scripts": {
     "start": "WATCHMAN_USE_POLLING=true expo start",
     "android": "expo run:android",
@@ -11,8 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@expo/config-plugins": "~9.0.0",
-    "@expo/vector-icons": "^14.0.4",
+    "@expo/vector-icons": "~14.0.4",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-firebase/app": "^21.7.1",
@@ -86,14 +85,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@react-native-community/cli": "latest",
     "@types/lodash": "^4.17.9",
     "@types/react": "~18.3.12",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
     "eslint": "^9.14.0",
     "eslint-plugin-react": "^7.37.2",
-    "typescript": "~5.3.3",
-    "@react-native-community/cli": "latest"
+    "typescript": "~5.3.3"
   },
   "expo": {
     "doctor": {
