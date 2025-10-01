@@ -28,7 +28,17 @@
         }
       ],
       "expo-asset",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": true,
@@ -38,7 +48,7 @@
     "android": {
       "targetSdkVersion": 35,
       "compileSdkVersion": 35,
-      "versionCode": 23,
+      "versionCode": 25,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
