@@ -2,6 +2,9 @@
   "name": "labour-app",
   "main": "expo-router/entry",
   "version": "1.0.13",
+  "engines": {
+    "node": ">=20.19.4"
+  },
   "scripts": {
     "start": "WATCHMAN_USE_POLLING=true expo start",
     "android": "expo run:android",
@@ -101,5 +104,6 @@
       }
     }
   },
-  "private": true
+  "private": true,
+  "license": "UNLICENSED"
 }
