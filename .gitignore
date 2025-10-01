@@ -14,7 +14,7 @@ yarn-error.log
 
 google-services.json
 GoogleService-Info.plist
-labour-app-d27c8-firebase-adminsdk-hkj4c-d729f83092.json
+google-services-account.json
 
 # Native folders should be ignored in Expo managed workflow
 android/

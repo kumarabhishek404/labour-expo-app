@@ -36,7 +36,9 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 22,
+      "targetSdkVersion": 35,
+      "compileSdkVersion": 35,
+      "versionCode": 23,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
