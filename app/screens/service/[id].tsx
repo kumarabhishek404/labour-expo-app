@@ -18,7 +18,7 @@ import {
 } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { useAnimatedRef } from "react-native-reanimated";
+import { Animated } from "react-native";
 import SERVICE from "../../api/services";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
@@ -63,7 +63,7 @@ const ServiceDetails = () => {
   const { id, showApplicationDetails } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollRef = React.useRef<Animated.ScrollView>(null);
   const [isServiceLiked, setIsServiceLiked] = useState(
     service?.likedBy?.find((id: any) => id === userDetails?._id)
   );

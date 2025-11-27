@@ -160,7 +160,7 @@ const ForgetPasswordScreen: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.centeredView}>
           <AntDesign
-            name="mobile1"
+            name="mobile"
             size={150}
             color={Colors.tertieryButton}
             style={styles.image}

@@ -1,44 +1,21 @@
 // UpdateManager.tsx
 
-import React, { useEffect } from 'react';
-import { Alert, Platform } from 'react-native';
-import InAppUpdates, { IAUUpdateKind } from 'react-native-in-app-updates';
-import * as Updates from 'expo-updates';
-
-const inAppUpdates = new InAppUpdates(true); // true = debug mode (optional)
+import React, { useEffect } from "react";
+import { Alert } from "react-native";
+import * as Updates from "expo-updates";
 
 const UpdateManager = () => {
   useEffect(() => {
-    const checkPlayStoreUpdate = async () => {
-      if (Platform.OS === 'android') {
-        try {
-          const result = await inAppUpdates.checkNeedsUpdate();
-
-          if (result.shouldUpdate) {
-            console.log("⬆️ Native update required. Launching Play Store update...");
-
-            await inAppUpdates.startUpdate({
-              updateType: Platform.Version >= 21 ? IAUUpdateKind.FLEXIBLE : IAUUpdateKind.IMMEDIATE,
-            });
-
-            return; // Exit if native update is triggered
-          }
-        } catch (err) {
-          console.warn("❌ Failed to check Play Store update:", err);
-        }
-      }
-
-      // If no native update is needed or not Android, check for OTA
-      checkExpoUpdate();
-    };
-
-    const checkExpoUpdate = async () => {
+    const checkForUpdate = async () => {
       try {
-        const updateAvailable = await Updates.checkForUpdateAsync();
-        if (updateAvailable.isAvailable) {
+        const update = await Updates.checkForUpdateAsync();
+
+        if (update.isAvailable) {
           console.log("📡 OTA update available via Expo. Fetching...");
+
           await Updates.fetchUpdateAsync();
 
+          // Prompt the user to restart and apply update
           Alert.alert(
             "Update Available",
             "A new version of the app is ready. Restart now?",
@@ -49,17 +26,22 @@ const UpdateManager = () => {
               },
               {
                 text: "Restart",
-                onPress: () => Updates.reloadAsync(),
+                onPress: async () => {
+                  await Updates.reloadAsync();
+                },
               },
             ]
           );
+        } else {
+          console.log("✅ App is up to date.");
         }
       } catch (error) {
-        console.warn("⚠️ OTA update check failed:", error);
+        console.warn("⚠️ Failed to check for updates:", error);
       }
     };
 
-    checkPlayStoreUpdate();
+    // Only check for updates on app launch
+    checkForUpdate();
   }, []);
 
   return null;

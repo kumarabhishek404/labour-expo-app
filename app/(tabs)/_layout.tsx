@@ -1,4 +1,11 @@
-import { StyleSheet, TouchableOpacity, View, BackHandler } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  BackHandler,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import {
@@ -19,6 +26,7 @@ import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -29,6 +37,14 @@ type IconLibrary =
   | "FontAwesome";
 
 export default function Layout() {
+  const { height, width } = useWindowDimensions();
+
+  // Base scaling factor (change if needed)
+  const scale = width / 375; // 375 is iPhone X width
+  const tabHeight = Math.max(60 * scale, 60); // Prevents being too small
+  const iconSize = Math.min(28 * scale, 34);
+  const textSize = Math.min(12 * scale, 14);
+
   const [notificationCount, setNotificationCount]: any = useAtom(
     Atoms.notificationCount
   );
@@ -108,11 +124,12 @@ export default function Layout() {
       }
       return true;
     };
-    const backHandler = BackHandler.addEventListener(
+    const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-    return () => backHandler.remove();
+
+    return () => subscription.remove();
   }, [pathname]);
 
   const TabButton = ({
@@ -158,6 +175,7 @@ export default function Layout() {
         <CustomText
           color={isSelected ? Colors.primary : "#888"}
           fontWeight="600"
+          baseFont={textSize}
         >
           {t(title)}
         </CustomText>
@@ -168,140 +186,148 @@ export default function Layout() {
   const isAdmin = userDetails?.isAdmin;
 
   return (
-    <View style={styles.container}>
-      {userDetails && userDetails?.status !== "ACTIVE" ? (
-        <UserProfile />
-      ) : (
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: styles.tabBar,
-            tabBarActiveTintColor: Colors.primary, // Added for consistency
-            tabBarInactiveTintColor: "#888",
-          }}
-        >
-          <Tabs.Screen
-            name="fourth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fourth"
-                  title={isAdmin ? "users" : "allRequests"}
-                  iconName={
-                    isAdmin ? "people-sharp" : "hand-front-right-outline"
-                  }
-                  iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
-                />
-              ),
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
+      <View style={styles.container}>
+        {userDetails && userDetails?.status !== "ACTIVE" ? (
+          <UserProfile />
+        ) : (
+          <Tabs
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: [
+                styles.tabBar,
+                {
+                  height: tabHeight,
+                  paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
+                  paddingTop: 6 * scale,
+                },
+              ],
             }}
-          />
-
-          <Tabs.Screen
-            name="second"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/second"
-                  title={isAdmin ? "services" : "search"}
-                  iconName={isAdmin ? "sickle" : "search"}
-                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
-                />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="index"
-            options={{
-              tabBarButton: (props: any) =>
-                isAdmin ? (
+          >
+            <Tabs.Screen
+              name="fourth"
+              options={{
+                tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)"
-                    title="teams"
-                    iconName="group"
-                    iconLibrary="FontAwesome"
+                    path="/(tabs)/fourth"
+                    title={isAdmin ? "users" : "allRequests"}
+                    iconName={
+                      isAdmin ? "people-sharp" : "hand-front-right-outline"
+                    }
+                    iconLibrary={
+                      isAdmin ? "Ionicons" : "MaterialCommunityIcons"
+                    }
                   />
-                ) : (
-                  <TouchableOpacity
-                    style={styles.postButton}
-                    onPress={() => router.push("/(tabs)")}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      size={36}
-                      color={Colors.white}
-                    />
-                  </TouchableOpacity>
                 ),
-            }}
-          />
+              }}
+            />
 
-          <Tabs.Screen
-            name="third"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/third"
-                  title={isAdmin ? "errors" : "myBookings"}
-                  iconName={isAdmin ? "error" : "calendar"}
-                  iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
-                />
-              ),
-            }}
-          />
+            <Tabs.Screen
+              name="second"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/second"
+                    title={isAdmin ? "services" : "search"}
+                    iconName={isAdmin ? "sickle" : "search"}
+                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
+                  />
+                ),
+              }}
+            />
 
-          <Tabs.Screen
-            name="fifth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fifth"
-                  title={isAdmin ? "myProfile" : "myProfile"}
-                  iconName={isAdmin ? "person" : "person-outline"}
-                />
-              ),
-            }}
-          />
-        </Tabs>
-      )}
+            <Tabs.Screen
+              name="index"
+              options={{
+                tabBarButton: (props: any) =>
+                  isAdmin ? (
+                    <TabButton
+                      props={props}
+                      path="/(tabs)"
+                      title="teams"
+                      iconName="group"
+                      iconLibrary="FontAwesome"
+                    />
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.postButton}
+                      onPress={() => router.push("/(tabs)")}
+                    >
+                      <MaterialCommunityIcons
+                        name="plus"
+                        size={36}
+                        color={Colors.white}
+                      />
+                    </TouchableOpacity>
+                  ),
+              }}
+            />
 
-      <StickButtonWithWall
-        content={
-          <>
-            <MaterialIcons name="notifications" size={28} color="#fff" />
-            {notificationCount > 0 && <RippleDot />}
-          </>
-        }
-        onPress={() =>
-          router.push({
-            pathname: "/screens/notifications",
-            params: { title: "notifications", type: "all" },
-          })
-        }
-        // notificationCount={notificationCount}
-      />
+            <Tabs.Screen
+              name="third"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/third"
+                    title={isAdmin ? "errors" : "myBookings"}
+                    iconName={isAdmin ? "error" : "calendar"}
+                    iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+                  />
+                ),
+              }}
+            />
 
-      <ExitConfirmationModal
-        visible={showExitModal}
-        onCancel={() => setShowExitModal(false)}
-        onConfirm={() => {
-          BackHandler.exitApp();
-          setShowExitModal(false);
-        }}
-      />
-    </View>
+            <Tabs.Screen
+              name="fifth"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/fifth"
+                    title={isAdmin ? "myProfile" : "myProfile"}
+                    iconName={isAdmin ? "person" : "person-outline"}
+                  />
+                ),
+              }}
+            />
+          </Tabs>
+        )}
+
+        <StickButtonWithWall
+          content={
+            <>
+              <MaterialIcons name="notifications" size={28} color="#fff" />
+              {notificationCount > 0 && <RippleDot />}
+            </>
+          }
+          onPress={() =>
+            router.push({
+              pathname: "/screens/notifications",
+              params: { title: "notifications", type: "all" },
+            })
+          }
+          // notificationCount={notificationCount}
+        />
+
+        <ExitConfirmationModal
+          visible={showExitModal}
+          onCancel={() => setShowExitModal(false)}
+          onConfirm={() => {
+            BackHandler.exitApp();
+            setShowExitModal(false);
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   tabBar: {
-    height: 80,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -311,8 +337,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 5 },
+    paddingBottom: Platform.OS === "ios" ? 20 : 10,
   },
-  tabButton: { alignItems: "center", justifyContent: "center" },
+  tabButton: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   postButton: {
     position: "absolute",
     bottom: 20,

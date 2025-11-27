@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-} from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
+  Animated,
   Easing,
-  cancelAnimation,
-} from "react-native-reanimated";
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
@@ -20,42 +15,45 @@ const { width } = Dimensions.get("window");
 
 const NotificationBanner = ({ title, body, onClose }: any) => {
   const [visible, setVisible] = useState(true);
-  const translateY = useSharedValue(-100);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+  const translateY = useRef(new Animated.Value(-100)).current;
 
   useEffect(() => {
-    translateY.value = withTiming(0, {
+    // Slide down
+    Animated.timing(translateY, {
+      toValue: 0,
       duration: 500,
       easing: Easing.out(Easing.ease),
-    });
+      useNativeDriver: true,
+    }).start();
 
+    // Auto hide after 10s
     const timer = setTimeout(() => {
       hideBanner();
     }, 10000);
 
     return () => {
-      // clearTimeout(timer);
-      cancelAnimation(translateY);
-      translateY.value = -100;
+      clearTimeout(timer);
     };
   }, []);
 
   const hideBanner = () => {
-    translateY.value = withTiming(-100, {
+    Animated.timing(translateY, {
+      toValue: -100,
       duration: 500,
       easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      setVisible(false);
+      onClose?.();
     });
-    setTimeout(() => setVisible(false), 500);
-    onClose?.();
   };
 
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.bannerContainer, animatedStyle]}>
+    <Animated.View
+      style={[styles.bannerContainer, { transform: [{ translateY }] }]}
+    >
       <View style={styles.contentContainer}>
         <Ionicons
           name="notifications-outline"

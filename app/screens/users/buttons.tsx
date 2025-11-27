@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Animated, Easing } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Colors from "@/constants/Colors";
-import Animated, { SlideInDown } from "react-native-reanimated";
 import Loader from "@/components/commons/Loaders/Loader";
 import Button from "@/components/inputs/Button";
 import AddBookingDetails from "./addBookingDetails";
@@ -68,6 +67,17 @@ const ButtonContainer = ({
     mutationCancelRequest,
     mutationRemoveMemberFromTeam,
   } = useApiCalls(id, refetch);
+
+  const slideAnim = React.useRef(new Animated.Value(100)).current;
+
+  React.useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0, // move to original position
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const mutationAddBookingRequest = useMutation({
     mutationKey: ["addBookingRequest"],
@@ -178,7 +188,14 @@ const ButtonContainer = ({
         }
       />
 
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+      <Animated.View
+        style={[
+          styles.footer,
+          {
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {/* Button for "select" or "selected" */}
         {user?.type === "applicant" && (
           <Button

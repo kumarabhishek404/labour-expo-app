@@ -114,12 +114,12 @@ const UserProfile = () => {
       return false;
     };
 
-    const backHandler = BackHandler.addEventListener(
+    const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
 
-    return () => backHandler.remove();
+    return () => subscription.remove();
   }, [userDetails]);
 
   useEffect(() => {

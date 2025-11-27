@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ActivityIndicator,
+  Animated,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { t } from "@/utils/translationHelper";
 import Colors from "@/constants/Colors";
@@ -37,10 +33,27 @@ const CustomSegmentedButton = ({
   onValueChange,
 }: Props) => {
   const [selected, setSelected] = useState(selectedTab);
-  const animationValue = useSharedValue(0);
 
-  const handlePress = (value: string) => {
-    animationValue.value = withTiming(1, { duration: 300 });
+  // 🔹 Animated values for each button
+  const animations = useRef(
+    buttons.map(() => new Animated.Value(1)) // default scale = 1
+  ).current;
+
+  const handlePress = (value: string, index: number) => {
+    // Animate button press (scale down then up)
+    Animated.sequence([
+      Animated.timing(animations[index], {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animations[index], {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
     setSelected(value);
     if (onValueChange) {
       onValueChange(value);
@@ -58,6 +71,8 @@ const CustomSegmentedButton = ({
           return (
             <TouchableOpacity
               key={button.value}
+              activeOpacity={0.8}
+              onPress={() => handlePress(button.value, index)}
               style={[
                 styles.button,
                 isFirst && styles.firstButton,
@@ -66,9 +81,14 @@ const CustomSegmentedButton = ({
                 isSelected && styles.selectedButton,
                 isFirst ? { borderRightWidth: 0 } : { borderLeftWidth: 0 },
               ]}
-              onPress={() => handlePress(button.value)}
             >
-              <Animated.View style={[styles.buttonContent]}>
+              {/* 🔹 Animated scale on press */}
+              <Animated.View
+                style={[
+                  styles.buttonContent,
+                  { transform: [{ scale: animations[index] }] },
+                ]}
+              >
                 {button.loading && (
                   <ActivityIndicator
                     size="small"
@@ -99,7 +119,7 @@ const CustomSegmentedButton = ({
                       : Colors?.tertieryButton
                   }
                 >
-                  {tabCounts && tabCounts[index] ? tabCounts[index] : ""} {" "}
+                  {tabCounts && tabCounts[index] ? tabCounts[index] : ""}{" "}
                   {t(button.label)}
                 </CustomText>
               </Animated.View>

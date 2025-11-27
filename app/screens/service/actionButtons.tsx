@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import { Animated, Easing } from "react-native";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
@@ -105,6 +105,17 @@ const ServiceActionButtons = ({
   const hasUsersAppliedOrSelected =
     service?.appliedUsers?.some((user: any) => user.status === "PENDING") ||
     service?.selectedUsers?.some((user: any) => user.status === "SELECTED");
+
+  const slideAnim = React.useRef(new Animated.Value(100)).current;
+
+  React.useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   useEffect(() => {
     setSelectedWorkers(selectedWorkersIds);
@@ -647,7 +658,14 @@ const ServiceActionButtons = ({
           mutationCancelServiceByMediatorAfterSelection?.isPending
         }
       />
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+      <Animated.View
+        style={[
+          styles.footer,
+          {
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {renderButtons()}
       </Animated.View>
 

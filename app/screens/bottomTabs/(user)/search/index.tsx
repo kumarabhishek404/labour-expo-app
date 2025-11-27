@@ -119,11 +119,11 @@ const Search = () => {
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
-      <TabSwitcher
-        tabs={TABS}
-        actvieTab={selectedTab}
-        setActiveTab={setSelectedTab}
-      />
+        <TabSwitcher
+          tabs={TABS}
+          actvieTab={selectedTab}
+          setActiveTab={setSelectedTab}
+        />
 
       <View style={styles.container}>
         <View style={{ flex: 1 }}>

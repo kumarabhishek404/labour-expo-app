@@ -149,14 +149,14 @@ const Requests = () => {
           >
             {category === "sentRequests" ? (
               <AntDesign
-                name="rocket1"
+                name="rocket"
                 size={20}
                 color={Colors?.fourthButton}
                 style={{ transform: [{ rotate: "180deg" }] }}
               />
             ) : (
               <AntDesign
-                name="rocket1"
+                name="rocket"
                 size={20}
                 color={Colors?.fourthButton}
               />

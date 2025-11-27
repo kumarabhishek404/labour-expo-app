@@ -13,7 +13,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "androidStatusBar": {
+      "translucent": false,
+      "backgroundColor": "#22409a",
+      "barStyle": "light-content"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "plugins": [
       "expo-av",
       "expo-router",
@@ -38,7 +45,8 @@
             "buildToolsVersion": "35.0.0"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "ios": {
       "supportsTablet": true,
@@ -46,8 +54,6 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "targetSdkVersion": 35,
-      "compileSdkVersion": 35,
       "versionCode": 25,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",

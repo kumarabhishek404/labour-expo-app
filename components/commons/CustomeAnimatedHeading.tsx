@@ -1,14 +1,6 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Animated, Easing } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-  cancelAnimation,
-} from "react-native-reanimated";
 import CustomHeading from "./CustomHeading";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
@@ -21,27 +13,33 @@ const CustomeAnimatedHeading = ({
   color = Colors?.black,
   icon,
 }: any) => {
-  const bounce = useSharedValue(0);
+  const bounce = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    bounce.value = withRepeat(
-      withTiming(-10, {
-        duration: 800,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      -1,
-      true
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bounce, {
+          toValue: -10,
+          duration: 800,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(bounce, {
+          toValue: 0,
+          duration: 800,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
     );
 
-    return () => {
-      cancelAnimation(bounce);
-      bounce.value = 0;
-    };
-  }, []);
+    animation.start();
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: bounce.value }],
-  }));
+    return () => {
+      animation.stop();
+      bounce.setValue(0);
+    };
+  }, [bounce]);
 
   return (
     <View style={styles.container}>
@@ -53,7 +51,14 @@ const CustomeAnimatedHeading = ({
       >
         {title}
       </CustomHeading>
-      <Animated.View style={[animatedStyle, styles.icon]}>
+      <Animated.View
+        style={[
+          styles.icon,
+          {
+            transform: [{ translateY: bounce }],
+          },
+        ]}
+      >
         {icon ? (
           icon
         ) : (
