@@ -93,7 +93,6 @@ const ForgetPasswordScreen: React.FC = () => {
     onSuccess: ({ Status }) => {
       if (Status === "Success") {
         TOAST.success(t("otpVerified"));
-        setStep(3);
       } else {
         TOAST.error(t("otpInvalidMessage"));
       }

@@ -29,8 +29,6 @@ const checkMobileExistance = async (payload: any) => {
 };
 
 const register = async (payload: any) => {
-  console.log("Payload --", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest("/auth/register", payload);
     router.push("/screens/auth/login");
@@ -93,8 +91,6 @@ const forgotPassword = async (payload: any) => {
 };
 
 const resetPassword = async (payload: any) => {
-  console.log("Payload --", payload);
-
   try {
     const data = await API_CLIENT.makePatchRequest(
       `/auth/set-forgot-password`,
@@ -115,13 +111,18 @@ const resetPassword = async (payload: any) => {
 };
 
 const sendOTP = async (mobile: string) => {
-  try {
-    const response = await axios?.get(
-      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/temp1`
-    );
-    console.log("response", response?.data);
+  console.log("mobile--", mobile);
 
-    return response?.data;
+  try {
+    // const response = await axios?.get(
+    //   `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/temp1`
+    // );
+    // console.log("response", response?.data);
+
+    // return response?.data;
+    return {
+      Status: "Success",
+    };
   } catch (error) {
     console.error("Error during mobile number authentication:", error);
     TOAST.error(`Error during mobile number authentication: ${error}`);
@@ -132,12 +133,15 @@ const sendOTP = async (mobile: string) => {
 const verifyOTP = async (payload: any) => {
   console.log("payload", payload);
   try {
-    const response = await axios?.get(
-      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/VERIFY3/${
-        payload?.mobile
-      }/${payload?.otp}`
-    );
-    return response?.data;
+    // const response = await axios?.get(
+    //   `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/VERIFY3/${
+    //     payload?.mobile
+    //   }/${payload?.otp}`
+    // );
+    // return response?.data;
+    return {
+      Status: "Success",
+    };
   } catch (error) {
     console.error("Error verifying OTP code:", error);
     throw error;

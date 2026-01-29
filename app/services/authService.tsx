@@ -6,11 +6,11 @@ import { fetchCurrentLocation } from "@/constants/functions";
 import USER from "../api/user";
 import PUSH_NOTIFICATION from "../hooks/usePushNotification";
 
-const loginUser = async (mobile: string, password: string) => {
+const loginUser = async (mobile: string, otp: string) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   try {
     // Simulate API call (replace with real login API)
-    const response: any = await AUTH?.signIn({ mobile, password });
+    const response: any = await AUTH?.signIn({ mobile, otp });
 
     if (!response?.token) throw new Error("No token returned");
 

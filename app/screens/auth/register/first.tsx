@@ -107,7 +107,7 @@ const RegisterScreen: React.FC = () => {
     mutationKey: ["register"],
     mutationFn: (payload) => AUTH.register(payload),
     onSuccess: async (data) => {
-      TOAST?.success(t("userAddedSuccessfully"));
+      // TOAST?.success(t("userAddedSuccessfully"));
 
       // Save token and update user state first
       await Promise.all([
@@ -155,7 +155,7 @@ const RegisterScreen: React.FC = () => {
         gender,
         address,
         dateOfBirth,
-        password,
+        // password,
         profilePicture,
         _id,
       } = user;
@@ -171,7 +171,7 @@ const RegisterScreen: React.FC = () => {
 
       let route: string = "";
       if (missingBasics) route = "/screens/auth/register/second";
-      else if (isEmpty(password)) route = "/screens/auth/register/third";
+      // else if (isEmpty(password)) route = "/screens/auth/register/third";
       else if (isEmpty(profilePicture)) route = "/screens/auth/register/fourth";
       else route = "/screens/auth/login";
 
@@ -194,6 +194,8 @@ const RegisterScreen: React.FC = () => {
   const sendOtp = useMutation({
     mutationFn: async (mobile: string) => AUTH.sendOTP(mobile),
     onSuccess: ({ Status }) => {
+      console.log("Status---", Status);
+
       if (Status === "Success") {
         setStep(2);
         startResendTimer();
@@ -208,14 +210,12 @@ const RegisterScreen: React.FC = () => {
     mutationFn: async (payload: { mobile: string; otp: string }) =>
       AUTH.verifyOTP(payload),
     onSuccess: ({ Status }) => {
+      console.log("Status-----", Status);
+
       if (Status === "Success") {
         TOAST.success(t("otpVerified"));
-
-        // Reset OTP input
-        setOtp("");
-
         // Reset step to initial state
-        setStep(1);
+        // setStep(1);
 
         // Otherwise, treat this as a fresh registration
         const payload: any = {
@@ -223,7 +223,10 @@ const RegisterScreen: React.FC = () => {
           mobile: watch("mobile"),
           locale: locale,
         };
+        console.log("payload-----", payload);
         mutationRegister.mutate(payload);
+        // Reset OTP input
+        setOtp("");
       } else {
         TOAST.error(t("otpInvalidMessage"));
       }

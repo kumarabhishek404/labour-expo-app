@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import LocationField from "../inputs/LocationField";
 import Button from "../inputs/Button";
 import * as Location from "expo-location";
@@ -23,6 +23,7 @@ interface AddLocationAndAddressProps {
   errors: any;
   icon?: any;
   style?: any;
+  isRequired?: boolean;
 }
 
 const AddLocationAndAddress = ({
@@ -35,6 +36,7 @@ const AddLocationAndAddress = ({
   selectedOption = "address",
   errors,
   style,
+  isRequired,
 }: AddLocationAndAddressProps) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -82,24 +84,28 @@ const AddLocationAndAddress = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
-        <CustomHeading
-          color={Colors?.inputLabel}
-          baseFont={18}
-          fontWeight="600"
-        >
-          {label}
-        </CustomHeading>
-        <TouchableOpacity
-          style={styles.radioButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <CustomHeading color={Colors?.primary} baseFont={16} fontWeight="500">
-            {t("addNewAddress")}
+        <Text style={styles?.labelContainer}>
+          <CustomHeading
+            color={Colors?.inputLabel}
+            baseFont={18}
+            fontWeight="600"
+          >
+            {label}
           </CustomHeading>
-        </TouchableOpacity>
+          {isRequired && (
+            <CustomHeading
+              textAlign="left"
+              color={Colors.danger}
+              baseFont={16}
+              fontWeight="500"
+            >
+              {" "}
+              ({t("required")})
+            </CustomHeading>
+          )}
+        </Text>
       </View>
 
-      {/* {selectedOption === "address" ? ( */}
       <LocationField
         address={address}
         setAddress={setAddress}
@@ -153,6 +159,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  labelContainer: {
+    flexDirection: "row",
+    gap: 5,
   },
   radioContainer: {
     flexDirection: "row",

@@ -2,6 +2,7 @@ import {
   AntDesign,
   FontAwesome6,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import React from "react";
 import { View, StyleSheet } from "react-native";
@@ -28,7 +29,7 @@ const AboutCompany = () => {
       <View style={styles.iconsRow}>
         {/* Vision Icon */}
         <View style={styles.iconContainer}>
-          <AntDesign name="staro" size={40} color="#1F3E72" />
+          <MaterialIcons name="reviews" size={40} color="#1F3E72" />
           <CustomHeading baseFont={14}>{t("vision")}</CustomHeading>
         </View>
 

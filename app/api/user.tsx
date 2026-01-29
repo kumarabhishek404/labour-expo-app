@@ -271,7 +271,6 @@ const fetchAllLikedServices = async ({ pageParam }: any) => {
 };
 
 const addAppFeedback = async (payload: any) => {
-  console.log("Payload --", payload);
   try {
     const data = await API_CLIENT.makePostRequest("/feedback/submit", payload);
     TOAST?.success(t("feedbackSubmittedSuccessfully"));

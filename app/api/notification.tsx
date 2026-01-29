@@ -2,8 +2,6 @@ import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
 const registerDevice = async (payload: any) => {
-  console.log("Payload --", payload);
-
   try {
     console.log(
       `[Sign In] [userService] registering the user device with API /notification/register and payload `,

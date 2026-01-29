@@ -3,7 +3,6 @@ import API_CLIENT from ".";
 import TOAST from "@/app/hooks/toast";
 
 const addReview = async (payload: any) => {
-  console.log("Payload --", payload);
   try {
     const data = await API_CLIENT.makePostRequest(
       `/review/add/${payload?.id}`,
@@ -24,7 +23,6 @@ const addReview = async (payload: any) => {
 };
 
 const editReview = async (payload: any) => {
-  console.log("Payload --", payload);
   try {
     const data = await API_CLIENT.makePutRequest(
       `/review/update/${payload?.id}`,
@@ -45,7 +43,6 @@ const editReview = async (payload: any) => {
 };
 
 const deleteReview = async (payload: any) => {
-  console.log("Payload --", payload);
   try {
     const data = await API_CLIENT.makeDeleteRequest(
       `/review/delete/${payload?.id}`

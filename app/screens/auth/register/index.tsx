@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import FirstScreen from "./first";
-import ThirdScreen from "./third";
+// import ThirdScreen from "./third";
 import FourthScreen from "./second";
 import FifthScreen from "./fourth";
 import USER from "@/app/api/user";
@@ -43,7 +43,7 @@ const SignupScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      setStep((prev) => prev + 1); // Move to next step
+      setStep((prev) => prev + 1);
     },
     onError: (error) => {
       console.error("Profile update error:", error);
@@ -56,13 +56,13 @@ const SignupScreen = () => {
       case 1:
         return <FirstScreen />;
 
-      case 2:
-        return <ThirdScreen />;
+      // case 2:
+      //   return <ThirdScreen />;
 
-      case 3:
+      case 2:
         return <FourthScreen />;
 
-      case 4:
+      case 3:
         return <FifthScreen />;
 
       default:

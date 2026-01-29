@@ -91,10 +91,7 @@ const UpdateUserSkillsScreen = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending || loading} />
-      <View
-        style={styles.container}
-        // keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.container}>
         <CustomHeading baseFont={26}>
           {t("updateYourSkillsAndRole")}
         </CustomHeading>
@@ -120,7 +117,7 @@ const UpdateUserSkillsScreen = () => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <SkillsSelector
-                  isPricePerDayNeeded={true}
+                  isPricePerDayNeeded={false}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
                   availableOptions={WORKTYPES}

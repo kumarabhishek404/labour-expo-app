@@ -173,7 +173,6 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
         </View>
         <View style={[styles.row, styles.lastBox]}>
           <CustomHeading
-            style={{ width: "70%" }}
             baseFont={14}
             textAlign="left"
           >

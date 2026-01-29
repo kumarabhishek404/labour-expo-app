@@ -26,7 +26,6 @@ import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -43,10 +42,10 @@ export default function Layout() {
   const scale = width / 375; // 375 is iPhone X width
   const tabHeight = Math.max(60 * scale, 60); // Prevents being too small
   const iconSize = Math.min(28 * scale, 34);
-  const textSize = Math.min(12 * scale, 14);
+  const textSize = Math.min(24 * scale, 14);
 
   const [notificationCount, setNotificationCount]: any = useAtom(
-    Atoms.notificationCount
+    Atoms.notificationCount,
   );
   const [token, setToken] = useAtom(Atoms?.tokenAtom);
   const pathname = usePathname();
@@ -55,25 +54,16 @@ export default function Layout() {
   const history = useRef<string[]>([]);
 
   useEffect(() => {
-    const handleLogout = () => {
-      console.log("🚪 Logging out user (atom reset)");
-      setUserDetails(null);
-      // Optionally:
-      // router.replace("/login");
-    };
-
-    API_CLIENT.eventEmitter.on("logout", handleLogout);
-
-    return () => {
-      API_CLIENT.eventEmitter.off("logout", handleLogout);
-    };
-  }, []);
-
-  console.log("pathname ---", pathname);
-
-  useEffect(() => {
     // If not logged in, redirect to login page
-    if (!userDetails || !userDetails?._id) {
+    if (
+      !userDetails ||
+      !userDetails?._id ||
+      !userDetails?.name ||
+      !userDetails?.address ||
+      !userDetails?.age ||
+      !userDetails?.gender ||
+      !userDetails?.profilePicture
+    ) {
       console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
     }
@@ -126,7 +116,7 @@ export default function Layout() {
     };
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
 
     return () => subscription.remove();
@@ -138,14 +128,14 @@ export default function Layout() {
     title,
     iconName,
     iconLibrary = "MaterialIcons",
-    iconSize = 28,
+    itemStyles,
   }: {
     props: any;
     path: string;
     title: string;
     iconName: string;
     iconLibrary?: IconLibrary;
-    iconSize?: number;
+    itemStyles?: any;
   }) => {
     const isSelected = `/(tabs)${pathname}` === path;
 
@@ -157,23 +147,26 @@ export default function Layout() {
       FontAwesome,
     };
 
-    const Icon = iconMap[iconLibrary as IconLibrary] || MaterialIcons;
+    const Icon = iconMap[iconLibrary];
     const iconNameLiteral = iconName as any;
 
     return (
       <TouchableOpacity
-        style={styles.tabButton}
+        style={[
+          styles.tabButton,
+          itemStyles,
+          isSelected && styles.activeTabButton,
+        ]}
         onPress={() => router.push(path as any)}
+        activeOpacity={0.8}
       >
-        <View>
-          <Icon
-            name={iconNameLiteral}
-            size={isSelected ? iconSize + 5 : iconSize}
-            color={isSelected ? Colors.primary : "#888"}
-          />
-        </View>
+        <Icon
+          name={iconNameLiteral}
+          size={iconSize}
+          color={isSelected ? "#fff" : "#888"}
+        />
         <CustomText
-          color={isSelected ? Colors.primary : "#888"}
+          color={isSelected ? "#fff" : "#888"}
           fontWeight="600"
           baseFont={textSize}
         >
@@ -183,12 +176,16 @@ export default function Layout() {
     );
   };
 
+  console.log("userDetails---", userDetails);
+
   const isAdmin = userDetails?.isAdmin;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.container}>
-        {userDetails && userDetails?.status !== "ACTIVE" ? (
+        {userDetails &&
+        !userDetails?.token &&
+        userDetails?.status !== "ACTIVE" ? (
           <UserProfile />
         ) : (
           <Tabs
@@ -197,9 +194,9 @@ export default function Layout() {
               tabBarStyle: [
                 styles.tabBar,
                 {
-                  height: tabHeight,
-                  paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
-                  paddingTop: 6 * scale,
+                  // height: tabHeight,
+                  // paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
+                  // paddingTop: 6 * scale,
                 },
               ],
             }}
@@ -218,6 +215,9 @@ export default function Layout() {
                     iconLibrary={
                       isAdmin ? "Ionicons" : "MaterialCommunityIcons"
                     }
+                    // itemStyles={{
+                    //   borderTopRightRadius: 12,
+                    // }}
                   />
                 ),
               }}
@@ -233,6 +233,10 @@ export default function Layout() {
                     title={isAdmin ? "services" : "search"}
                     iconName={isAdmin ? "sickle" : "search"}
                     iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
+                    // itemStyles={{
+                    //   borderTopLeftRadius: 12,
+                    //   borderTopRightRadius: 12,
+                    // }}
                   />
                 ),
               }}
@@ -241,27 +245,15 @@ export default function Layout() {
             <Tabs.Screen
               name="index"
               options={{
-                tabBarButton: (props: any) =>
-                  isAdmin ? (
-                    <TabButton
-                      props={props}
-                      path="/(tabs)"
-                      title="teams"
-                      iconName="group"
-                      iconLibrary="FontAwesome"
-                    />
-                  ) : (
-                    <TouchableOpacity
-                      style={styles.postButton}
-                      onPress={() => router.push("/(tabs)")}
-                    >
-                      <MaterialCommunityIcons
-                        name="plus"
-                        size={36}
-                        color={Colors.white}
-                      />
-                    </TouchableOpacity>
-                  ),
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/"
+                    title={isAdmin ? "teams" : "home"}
+                    iconName={isAdmin ? "group" : "home"}
+                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
+                  />
+                ),
               }}
             />
 
@@ -321,7 +313,7 @@ export default function Layout() {
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -330,7 +322,7 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
+    // alignItems: "flex-end",
     backgroundColor: Colors.white,
     elevation: 10,
     shadowColor: "#000",
@@ -340,20 +332,11 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 20 : 10,
   },
   tabButton: {
+    height: 75,
     alignItems: "center",
     justifyContent: "center",
   },
-  postButton: {
-    position: "absolute",
-    bottom: 20,
-    left: "50%",
-    transform: [{ translateX: -30 }],
+  activeTabButton: {
     backgroundColor: Colors.primary,
-    borderRadius: 50,
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
   },
 });

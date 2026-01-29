@@ -844,7 +844,7 @@ const ServiceDetails = () => {
                   />
                 )}
 
-                {service?.employer?._id &&
+                {/* {service?.employer?._id &&
                   service?.employer?._id !== userDetails?._id && (
                     <View style={{ marginTop: 20 }}>
                       <CustomHeading
@@ -856,7 +856,7 @@ const ServiceDetails = () => {
                       </CustomHeading>
                       <EmployerCard employer={service?.employer} />
                     </View>
-                  )}
+                  )} */}
               </View>
             </Animated.ScrollView>
           </ScrollView>

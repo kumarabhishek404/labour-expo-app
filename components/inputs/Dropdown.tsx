@@ -192,7 +192,6 @@ export default PaperDropdown;
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    // backgroundColor: Colors?.background,
     flexGrow: 1,
     gap: 5,
   },

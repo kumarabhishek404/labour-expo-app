@@ -1,23 +1,8 @@
 const { getDefaultConfig } = require("expo/metro-config");
 
-module.exports = (() => {
-  const config = getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname);
 
-  // keep default assetExts and sourceExts
-  const { assetExts, sourceExts } = config.resolver;
+// DO NOT blacklist node_modules
+// DO NOT override watchFolders unless you know why
 
-  return {
-    ...config,
-
-    watchFolders: [],
-
-    resolver: {
-      // include your custom blacklist
-      blacklistRE: /node_modules\/.*\/node_modules|\.git|logs|tmp/,
-
-      // merge with Expo default required extensions
-      assetExts,
-      sourceExts,
-    },
-  };
-})();
+module.exports = config;

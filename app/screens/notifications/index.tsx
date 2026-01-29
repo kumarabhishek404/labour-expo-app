@@ -236,8 +236,8 @@ const NotificationScreen = () => {
         size={100}
         style={styles?.notificationIcon}
       />
-      <CustomHeading>{t("noNotificationsYet")}</CustomHeading>
-      <CustomText>{t("noNotificationsDesc")}</CustomText>
+      <CustomHeading color={Colors?.highlight}>{t("noNotificationsYet")}</CustomHeading>
+      <CustomText color={Colors?.white}>{t("noNotificationsDesc")}</CustomText>
       <TouchableOpacity>
         <CustomText color={Colors?.link}>
           {t("goToHistoricalNotifications")}

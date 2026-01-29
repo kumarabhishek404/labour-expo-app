@@ -19,28 +19,29 @@ import USER from "@/app/api/user";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "@/components/commons/Loaders/Loader";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const SecondScreen = () => {
+  const userDetails = useAtomValue(Atoms?.UserAtom);
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      address: "",
-      email: "",
-      dateOfBirth: moment()
-        .subtract(18, "years")
-        .startOf("year")
-        .format("YYYY-MM-DD"),
-      gender: "",
+      name: userDetails?.name || "",
+      address: userDetails?.address || "",
+      email: userDetails?.email || "",
+      gender: userDetails?.gender || "",
+      age: userDetails?.age || "",
+      aadhaarNumber: userDetails?.aadhaarNumber || "",
     },
   });
   const [location, setLocation] = useState<any>({});
   const { userId } = useLocalSearchParams();
 
-  console.log("userId---", userId);
+  console.log("userDetails---", userDetails);
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
@@ -53,7 +54,7 @@ const SecondScreen = () => {
       console.log("Profile updated successfully");
       TOAST?.success(t("userDetailsAddedSuccessfully"));
       router.push({
-        pathname: "/screens/auth/register/third",
+        pathname: "/screens/auth/register/fourth",
         params: { userId: userId },
       });
     },
@@ -67,13 +68,15 @@ const SecondScreen = () => {
 
     mutationUpdateProfile.mutate({
       name: data?.name,
+      age: Number(data?.age),
+      aadhaarNumber: data?.aadhaarNumber,
       location: {
         latitude: location?.latitude,
         longitude: location?.longitude,
       },
       address: data?.address ?? "",
       email: data?.email,
-      dateOfBirth: data?.dateOfBirth,
+      // dateOfBirth: data?.dateOfBirth,
       gender: data?.gender,
     });
   };
@@ -113,6 +116,7 @@ const SecondScreen = () => {
                   placeholder={t("enterYourFirstName")}
                   textStyles={{ fontSize: 16 }}
                   errors={errors}
+                  isRequired={true}
                 />
               )}
             />
@@ -131,6 +135,7 @@ const SecondScreen = () => {
                   location={location}
                   setLocation={setLocation}
                   errors={errors}
+                  isRequired={true}
                 />
               )}
             />
@@ -159,7 +164,7 @@ const SecondScreen = () => {
             />
 
             {/* Date of Birth Field */}
-            <View style={{ marginTop: 10 }}>
+            {/* <View style={{ marginTop: 10 }}>
               <Controller
                 control={control}
                 name="dateOfBirth"
@@ -185,7 +190,7 @@ const SecondScreen = () => {
                   />
                 )}
               />
-            </View>
+            </View> */}
 
             {/* Gender Selection */}
             <Controller
@@ -204,6 +209,47 @@ const SecondScreen = () => {
                   gender={value}
                   setGender={onChange}
                   containerStyle={errors?.gender && styles.errorInput}
+                  errors={errors}
+                  isRequired={true}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="age"
+              rules={{
+                required: t("ageIsRequired"),
+                validate: (value) =>
+                  Number(value) >= 18 || t("youMustBeAtLeast18YearsOld"),
+              }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputComponent
+                  name="age"
+                  label="age"
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={t("enterYourAge")}
+                  type="numeric"
+                  maxLength={2}
+                  errors={errors}
+                  isRequired={true}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="aadhaarNumber"
+              render={({ field: { onChange, value } }) => (
+                <TextInputComponent
+                  name="aadhaarNumber"
+                  label="aadhaarNumber"
+                  value={value}
+                  onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ""))}
+                  placeholder="XXXX XXXX XXXX"
+                  type="numeric"
+                  maxLength={12}
                   errors={errors}
                 />
               )}
