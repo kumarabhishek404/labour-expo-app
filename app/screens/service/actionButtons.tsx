@@ -278,7 +278,6 @@ const ServiceActionButtons = ({
       // Mediator applying with workers
       setIsWorkerSelectModal(true);
     } else {
-      console.log("matchedSkills - ", matchedSkills);
       // Individual worker applying
       if (matchedSkills.length === 0) {
         return setIsAddSkill(true); // No valid skill found, prompt user to add skill
