@@ -424,6 +424,8 @@ export const WORKTYPES = [
             value: "agriculturalPartnership",
           },
           { label: "seasonalFarmLabor", value: "seasonalFarmLabor" },
+          { label: "farmConsultant", value: "farmConsultant" },
+
         ],
       },
     ],

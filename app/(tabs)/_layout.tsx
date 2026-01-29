@@ -57,6 +57,7 @@ export default function Layout() {
     // If not logged in, redirect to login page
     if (
       !userDetails ||
+      !userDetails?.isAuth ||
       !userDetails?._id ||
       !userDetails?.name ||
       !userDetails?.address ||

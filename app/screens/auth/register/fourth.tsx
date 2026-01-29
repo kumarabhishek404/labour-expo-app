@@ -117,7 +117,7 @@ const UpdateUserSkillsScreen = () => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <SkillsSelector
-                  isPricePerDayNeeded={false}
+                  isPricePerDayNeeded={true}
                   selectedInterests={value}
                   setSelectedInterests={onChange}
                   availableOptions={WORKTYPES}
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // ✅ Allows buttons to wrap if needed
-    justifyContent: "space-evenly", // ✅ Ensures even spacing
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
     alignItems: "center",
     gap: 10,
     position: "absolute",

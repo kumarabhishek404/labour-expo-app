@@ -144,7 +144,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                           >
                             {getDynamicWorkerType(
                               requirement?.name,
-                              requirement?.count
+                              requirement?.count,
                             )}
                           </CustomHeading>
                         </View>
@@ -239,6 +239,9 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             <CustomText style={styles.value} textAlign="left">
               {duration} {t("days")}
             </CustomText>
+            <CustomHeading textAlign="left">
+              {t("lessThanMultipleDays", { duration: duration })}
+            </CustomHeading>
           </View>
 
           {images && images?.length > 0 && (

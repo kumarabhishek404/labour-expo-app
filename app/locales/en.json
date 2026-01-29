@@ -1129,6 +1129,7 @@
   "eventServices": "Event Services",
   "textileWork": "Textile Work",
   "wasteManagement": "Waste Management",
+  "farmConsultant": "Farm Consultant",
 
   "plowing": {
     "singular": "Plowing Worker",
@@ -2052,5 +2053,8 @@
   "aadhaarIsRequired": "Aadhaar number is required",
   "aadhaarMustBe12Digits": "Aadhaar number must be exactly 12 digits",
 
-  "required": "required"
+  "required": "required",
+  "noSkill": "No skill",
+  "lessThanOneDay": "Less than {{duration}} day",
+  "lessThanMultipleDays": "Less than {{duration}} days"
 }

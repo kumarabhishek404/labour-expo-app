@@ -1,4 +1,10 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -71,28 +77,34 @@ const SignupScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
-      <Stack.Screen options={{ headerShown: false }} />
-      <Loader
-        loading={
-          mutationRegister?.isPending || mutationUpdateProfile?.isPending
-        }
-      />
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <CustomHeading textAlign="left" baseFont={22}>
-            {step === 5 ? t("clickSelfie") : t("hello")}
-          </CustomHeading>
-          <CustomHeading textAlign="left" baseFont={22}>
-            {step === 5 ? t("toVerify") : t("makeNewAccount")}
-          </CustomHeading>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Stack.Screen options={{ headerShown: false }} />
+        <Loader
+          loading={
+            mutationRegister?.isPending || mutationUpdateProfile?.isPending
+          }
+        />
+        <View style={styles.container}>
+          <View style={styles.textContainer}>
+            <CustomHeading textAlign="left" baseFont={22}>
+              {step === 5 ? t("clickSelfie") : t("hello")}
+            </CustomHeading>
+            <CustomHeading textAlign="left" baseFont={22}>
+              {step === 5 ? t("toVerify") : t("makeNewAccount")}
+            </CustomHeading>
+          </View>
+          <View style={styles.formContainer}>{renderFormComponents()}</View>
         </View>
-        <View style={styles.formContainer}>{renderFormComponents()}</View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

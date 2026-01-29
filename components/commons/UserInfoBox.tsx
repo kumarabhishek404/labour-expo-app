@@ -146,12 +146,12 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             styles?.addressRow,
           ]}
         >
-          <CustomHeading style={{ flex: 1 }} baseFont={14} textAlign="left">
-            <CustomText>{t("address")}</CustomText>
+          <CustomHeading style={{ width: user?._id === userDetails?._id ? "70%" : "100%" }} baseFont={14}>
+            <CustomText textAlign="left">{t("address")}</CustomText>
             {"  "}
             {user?.address || t("addressNotFound")}{" "}
           </CustomHeading>
-          {user?.status === "ACTIVE" && (
+          {user?.status === "ACTIVE" && user?._id === userDetails?._id && (
             <TouchableOpacity
               onPress={() => setIsAddress(true)}
               style={styles?.changeAddress}
@@ -166,16 +166,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           <CustomHeading baseFont={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
-            {user?._id === userDetails?._id
-              ? user?.mobile || user?.alternateMobile || t("mobileNotFound")
-              : "**********"}
+            {user?.mobile || user?.alternateMobile || t("mobileNotFound")}
           </CustomHeading>
         </View>
         <View style={[styles.row, styles.lastBox]}>
-          <CustomHeading
-            baseFont={14}
-            textAlign="left"
-          >
+          <CustomHeading baseFont={14} textAlign="left">
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
             {user?.email?.value || t("emailNotFound")}{" "}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
@@ -39,6 +41,10 @@ export default function Login() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const { mobile } = useLocalSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState<boolean>(true);
+  const [timer, setTimer] = useState<number>(30);
+  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   const {
     control,
@@ -51,6 +57,41 @@ export default function Login() {
       otp: "",
     },
   });
+
+  useEffect(() => {
+    if (step === 2) {
+      startResendTimer();
+    }
+
+    // Optional cleanup if user leaves the screen
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [step]);
+
+  const startResendTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    setResendDisabled(true);
+    setTimer(30);
+
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          setResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   /* -------------------- STEP 1: SEND OTP -------------------- */
   const sendOtpMutation = useMutation({
@@ -115,8 +156,22 @@ export default function Login() {
       ]);
     },
 
-    onError: (err: any) => {
-      setLoginError(err?.response?.data?.message || "Invalid OTP");
+    onError: async (err: any) => {
+      setLoading(false);
+      const errorCode = err?.response?.data?.errorCode;
+      const errorMessage = err?.response?.data?.message; // Get the error message
+      setLoginError(errorMessage || "Login failed"); // Set the error state
+
+      const userId = err?.response?.data?.userId;
+      const token = err?.response?.data?.token;
+
+      if (errorCode === "SET_PROFILE_PICTURE_FIRST") {
+        await saveToken(token);
+
+        const route = "/screens/auth/register/fifth";
+
+        router.replace({ pathname: route, params: { userId } }); // Use replace
+      }
     },
   });
 
@@ -132,6 +187,11 @@ export default function Login() {
     }
   };
 
+  const handleNewRegistration = () => {
+    router.replace("/screens/auth/register/first"); // Use replace
+    setUserDetails(null);
+  };
+
   /* -------------------- UI -------------------- */
   return (
     <>
@@ -140,68 +200,42 @@ export default function Login() {
       />
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image source={WORKER1} style={styles.image} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Image source={WORKER1} style={styles.image} />
 
-        <CustomHeading baseFont={24}>
-          {t("welcome")} {t("users")}
-        </CustomHeading>
+          <CustomHeading baseFont={24}>
+            {t("welcome")} {t("users")}
+          </CustomHeading>
 
-        <View style={styles.formContainer}>
-          {/* MOBILE INPUT */}
-          <Controller
-            control={control}
-            name="mobile"
-            rules={{
-              required: t("mobileIsRequired"),
-              pattern: {
-                value: /^[0-9]{10}$/,
-                message: t("enterAValidMobileNumber"),
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInputComponent
-                label="mobile"
-                name="mobile"
-                value={value as string}
-                type="number"
-                maxLength={10}
-                onChangeText={onChange}
-                placeholder={t("enterYourMobile")}
-                errors={errors}
-                textStyles={{ marginLeft: 10 }}
-                icon={
-                  <Ionicons
-                    name="call-outline"
-                    size={25}
-                    color={Colors.secondary}
-                  />
-                }
-              />
-            )}
-          />
-
-          {/* OTP INPUT (STEP 2 ONLY) */}
-          {step === 2 && (
+          <View style={styles.formContainer}>
+            {/* MOBILE INPUT */}
             <Controller
               control={control}
-              name="otp"
+              name="mobile"
               rules={{
-                required: t("otpIsRequired"),
+                required: t("mobileIsRequired"),
                 pattern: {
-                  value: /^[0-9]{6}$/,
-                  message: t("enterAValidOtp"),
+                  value: /^[0-9]{10}$/,
+                  message: t("enterAValidMobileNumber"),
                 },
               }}
               render={({ field: { onChange, value } }) => (
                 <TextInputComponent
-                  label="otp"
-                  name="otp"
+                  label="mobile"
+                  name="mobile"
                   value={value as string}
                   type="number"
-                  maxLength={6}
+                  maxLength={10}
                   onChangeText={onChange}
-                  placeholder={t("enterYourOtp")}
+                  placeholder={t("enterYourMobile")}
                   errors={errors}
                   textStyles={{ marginLeft: 10 }}
                   icon={
@@ -214,50 +248,102 @@ export default function Login() {
                 />
               )}
             />
-            // <View>
-            //   <TextInputComponent
-            //     label="otp"
-            //     name="otp"
-            //     style={styles.otpInput}
-            //     type="numeric"
-            //     placeholder={t("enterYourOtp")}
-            //     maxLength={6}
-            //     value={otp}
-            //     onChangeText={setOtp}
-            //     errors={errors}
-            //     icon={
-            //       <Ionicons
-            //         name="call-outline"
-            //         size={30}
-            //         color={Colors.secondary}
-            //       />
-            //     }
-            //   />
-            // </View>
-          )}
 
-          {loginError && (
-            <CustomText color={Colors.error} style={styles.errorText}>
-              {loginError}
-            </CustomText>
-          )}
+            {/* OTP INPUT (STEP 2 ONLY) */}
+            {step === 2 && (
+              <Controller
+                control={control}
+                name="otp"
+                rules={{
+                  required: t("otpIsRequired"),
+                  pattern: {
+                    value: /^[0-9]{6}$/,
+                    message: t("enterAValidOtp"),
+                  },
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputComponent
+                    label="otp"
+                    name="otp"
+                    value={value as string}
+                    type="number"
+                    maxLength={6}
+                    onChangeText={onChange}
+                    placeholder={t("enterYourOtp")}
+                    errors={errors}
+                    textStyles={{ marginLeft: 10 }}
+                    icon={
+                      <Ionicons
+                        name="call-outline"
+                        size={25}
+                        color={Colors.secondary}
+                      />
+                    }
+                  />
+                )}
+              />
+            )}
 
-          <Button
-            isPrimary
-            title={step === 1 ? t("sendOtp") : t("login")}
-            onPress={handleSubmit(handleLoginPress)}
-            style={styles.loginButton}
-          />
-        </View>
-      </ScrollView>
+            {step === 2 && (
+              <TouchableOpacity
+                onPress={() =>
+                  sendOtpMutation.mutate({ mobile: watch("mobile") })
+                }
+                disabled={resendDisabled}
+              >
+                <CustomText
+                  color={resendDisabled ? Colors.primary : Colors.danger}
+                  baseFont={16}
+                  textAlign="right"
+                >
+                  {resendDisabled
+                    ? `${t("resendOtpIn", { seconds: timer })}`
+                    : t("resendOtp")}
+                </CustomText>
+              </TouchableOpacity>
+            )}
+
+            {loginError && (
+              <CustomText color={Colors.error} style={styles.errorText}>
+                {loginError}
+              </CustomText>
+            )}
+
+            <Button
+              isPrimary
+              title={step === 1 ? t("sendOtp") : t("login")}
+              onPress={handleSubmit(handleLoginPress)}
+              style={styles.loginButtonWrapper}
+              textStyle={{ fontSize: 24, fontWeight: "600" }}
+              disabled={loading} // Disable button when loading
+            />
+
+            <View style={styles.footerContainer}>
+              <CustomText>{t("dontHaveAnAccount")}</CustomText>
+              <TouchableOpacity onPress={handleNewRegistration}>
+                <CustomHeading baseFont={24} color={Colors.tertieryButton}>
+                  {t("signUp")}
+                </CustomHeading>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <StickButtonWithWall
         content={
-          <CustomText fontWeight="bold" color={Colors.white}>
-            {t("changeLanguage")}
-          </CustomText>
+          <View style={{ paddingHorizontal: 4 }}>
+            <CustomText fontWeight="bold" baseFont={16} color={Colors?.white}>
+              {t("changeLanguage")}
+            </CustomText>
+          </View>
         }
-        onPress={() => router.push("/screens/settings/changeLanguage")}
+        onPress={() =>
+          router.push({
+            pathname: "/screens/settings/changeLanguage",
+            params: { title: "notifications", type: "all" },
+          })
+        }
         position="top"
         containerStyles={{ height: 40 }}
       />
@@ -297,5 +383,19 @@ const styles = StyleSheet.create({
   },
   errorText: {
     textAlign: "center",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+  },
+  loginButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 8,
+    height: 53,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

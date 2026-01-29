@@ -16,6 +16,11 @@ const ShowDistance: React.FC<ShowDistanceProps> = ({
   targetLocation,
   align
 }: any) => {
+
+  console.log("loggedInUserLocation---", loggedInUserLocation);
+  console.log("targetLocation---", targetLocation);
+  
+  
   return (
     <Text>
       {loggedInUserLocation &&

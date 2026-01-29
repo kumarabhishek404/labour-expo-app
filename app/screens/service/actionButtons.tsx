@@ -30,6 +30,7 @@ import AddSkillDrawer from "@/components/commons/AddSkillModal";
 import ApplyAsMediatorDrawer from "@/components/commons/ApplyAsMediatorDrawer";
 import { handleCall } from "@/constants/functions";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -99,7 +100,7 @@ const ServiceActionButtons = ({
   const [isSelectSkillModal, setIsSelectSkillModal] = useState(false);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState("");
-
+  const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [isAddSkill, setIsAddSkill] = useState(false);
 
   const hasUsersAppliedOrSelected =
@@ -181,7 +182,7 @@ const ServiceActionButtons = ({
     },
     onError: (err: any) => {
       TOAST?.error(
-        `Error while cancelling your application in the service - ${err?.response?.data?.message}`
+        `Error while cancelling your application in the service - ${err?.response?.data?.message}`,
       );
       console.error("error while unapplying the service ", err);
     },
@@ -199,7 +200,7 @@ const ServiceActionButtons = ({
     onError: (err) => {
       console.error(
         "error while cancelling the booking or remove selected from the service by mediator ",
-        err
+        err,
       );
     },
   });
@@ -265,6 +266,14 @@ const ServiceActionButtons = ({
       .map((skill: any) => skill.skill)
       .filter((skill: any) => serviceRequirements.includes(skill));
 
+    const finalSkills = serviceRequirements?.map((skill: any) => {
+      return {
+        label: getDynamicWorkerType(skill, 1),
+        value: skill,
+      };
+    });
+
+    setFilteredSkills(finalSkills);
     if (members && members.length > 0) {
       // Mediator applying with workers
       setIsWorkerSelectModal(true);
@@ -504,7 +513,7 @@ const ServiceActionButtons = ({
     setSelectedWorkersIds((prev: string[]) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
@@ -534,7 +543,7 @@ const ServiceActionButtons = ({
               { pricePerDay: 300, skill: "brickLayer" },
             ].map(
               (skill: any) =>
-                `${t(skill?.skill)} ${skill?.pricePerDay} / ${t("perDay")}, `
+                `${t(skill?.skill)} ${skill?.pricePerDay} / ${t("perDay")}, `,
             )}
           </CustomText>
           <CustomText style={styles.userAddress} textAlign="left">
@@ -547,7 +556,7 @@ const ServiceActionButtons = ({
 
   const memoizedData = useMemo(
     () => members && members?.flatMap((data: any) => data),
-    [members]
+    [members],
   );
 
   const loadMore = () => {
@@ -763,6 +772,7 @@ const ServiceActionButtons = ({
       <AddSkillDrawer
         isDrawerVisible={isAddSkill}
         setIsDrawerVisible={setIsAddSkill}
+        filteredSkills={filteredSkills}
       />
 
       <ApplyAsMediatorDrawer

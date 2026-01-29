@@ -1139,6 +1139,7 @@
   "eventServices": "इवेंट सेवाएं",
   "textileWork": "वस्त्र कार्य",
   "wasteManagement": "अपशिष्ट प्रबंधन",
+  "farmConsultant": "कृषि सलाहकार",
 
   "plowing": { "singular": "जुताई करने वाला", "plural": "जुताई करने वाले" },
   "leveling": {
@@ -1791,5 +1792,8 @@
   "aadhaarIsRequired": "आधार नंबर आवश्यक है",
   "aadhaarMustBe12Digits": "आधार नंबर 12 अंकों का होना चाहिए",
 
-  "required": "यह ज़रूरी है"
+  "required": "यह ज़रूरी है",
+  "noSkill": "कोई कौशल नहीं",
+  "lessThanOneDay": "{{duration}} दिन से कम",
+  "lessThanMultipleDays": "{{duration}} दिनों से कम"
 }

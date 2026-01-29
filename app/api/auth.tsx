@@ -10,19 +10,19 @@ const checkMobileExistance = async (payload: any) => {
   try {
     const response: any = await API_CLIENT.makePostRequest(
       "/user/check-mobile",
-      payload
+      payload,
     );
     return response;
   } catch (error: any) {
     console.log(
       `[Check Mobile] [userService] An error occurred while checking mobile number existence: `,
-      error?.response?.data?.message
+      error?.response?.data?.message,
     );
 
     // Display error message if the API call fails
     TOAST?.error(
       error?.response?.data?.message ||
-        "An error occurred while checking mobile number existence."
+        "An error occurred while checking mobile number existence.",
     );
     throw error;
   }
@@ -36,10 +36,10 @@ const register = async (payload: any) => {
   } catch (error: any) {
     console.error(
       `[userService] An error occurred while adding new user : `,
-      error?.response?.data?.message
+      error?.response?.data?.message,
     );
     TOAST?.error(
-      error?.response?.data?.message || "An error occurred while adding user"
+      error?.response?.data?.message || "An error occurred while adding user",
     );
     throw error;
   }
@@ -49,80 +49,80 @@ const signIn = async (payload: any) => {
   try {
     console.log(
       `[Sign In] [userService] Signing in the user with API /auth/login and payload `,
-      payload
+      payload,
     );
     const data = await API_CLIENT.makePostRequest("/auth/login", payload);
     console.log(
       `[Sign In] [userService] User signed in with the response `,
-      data.data
+      data.data,
     );
     return data.data;
   } catch (error: any) {
     console.log(
       `[Sign In] [userService] An error occurred while signing the user `,
-      error?.response?.data
+      error?.response?.data,
     );
     TOAST?.error(
-      error?.response?.data?.message || "An error occurred while login user"
+      error?.response?.data?.message || "An error occurred while login user",
     );
     throw error;
   }
 };
 
-const forgotPassword = async (payload: any) => {
-  try {
-    const response: any = await API_CLIENT.makePostRequest(
-      `/auth/forgot-password-code`,
-      payload
-    );
-    TOAST?.success("Password reset code is sent to your email successfully");
-    return response;
-  } catch (error: any) {
-    console.log(
-      `[Forget Password] [userService] An error occured while sending reset password code to your email : `,
-      error
-    );
-    TOAST?.error(
-      error?.response?.data?.message ||
-        "An error occured while sending reset password code to your email"
-    );
-    throw error;
-  }
-};
+// const forgotPassword = async (payload: any) => {
+//   try {
+//     const response: any = await API_CLIENT.makePostRequest(
+//       `/auth/forgot-password-code`,
+//       payload
+//     );
+//     TOAST?.success("Password reset code is sent to your email successfully");
+//     return response;
+//   } catch (error: any) {
+//     console.log(
+//       `[Forget Password] [userService] An error occured while sending reset password code to your email : `,
+//       error
+//     );
+//     TOAST?.error(
+//       error?.response?.data?.message ||
+//         "An error occured while sending reset password code to your email"
+//     );
+//     throw error;
+//   }
+// };
 
-const resetPassword = async (payload: any) => {
-  try {
-    const data = await API_CLIENT.makePatchRequest(
-      `/auth/set-forgot-password`,
-      payload
-    );
-    return data;
-  } catch (error: any) {
-    console.log(
-      `[Forget Password] [userService] An error occured while reseting password : `,
-      error
-    );
-    TOAST?.error(
-      error?.response?.data?.message ||
-        "An error occurred while reseting password"
-    );
-    throw error;
-  }
-};
+// const resetPassword = async (payload: any) => {
+//   try {
+//     const data = await API_CLIENT.makePatchRequest(
+//       `/auth/set-forgot-password`,
+//       payload
+//     );
+//     return data;
+//   } catch (error: any) {
+//     console.log(
+//       `[Forget Password] [userService] An error occured while reseting password : `,
+//       error
+//     );
+//     TOAST?.error(
+//       error?.response?.data?.message ||
+//         "An error occurred while reseting password"
+//     );
+//     throw error;
+//   }
+// };
 
 const sendOTP = async (mobile: string) => {
   console.log("mobile--", mobile);
 
   try {
-    // const response = await axios?.get(
-    //   `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/temp1`
-    // );
-    // console.log("response", response?.data);
+    const response = await axios?.get(
+      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/${mobile}/AUTOGEN/temp1`,
+    );
+    console.log("response", response?.data);
 
-    // return response?.data;
-    return {
-      Status: "Success",
-    };
+    return response?.data;
+    // return {
+    //   Status: "Success",
+    // };
   } catch (error) {
     console.error("Error during mobile number authentication:", error);
     TOAST.error(`Error during mobile number authentication: ${error}`);
@@ -133,15 +133,15 @@ const sendOTP = async (mobile: string) => {
 const verifyOTP = async (payload: any) => {
   console.log("payload", payload);
   try {
-    // const response = await axios?.get(
-    //   `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/VERIFY3/${
-    //     payload?.mobile
-    //   }/${payload?.otp}`
-    // );
-    // return response?.data;
-    return {
-      Status: "Success",
-    };
+    const response = await axios?.get(
+      `https://2factor.in/API/V1/${"d0fa8207-0f16-11f0-8b17-0200cd936042"}/SMS/VERIFY3/${
+        payload?.mobile
+      }/${payload?.otp}`,
+    );
+    return response?.data;
+    // return {
+    //   Status: "Success",
+    // };
   } catch (error) {
     console.error("Error verifying OTP code:", error);
     throw error;
@@ -166,7 +166,7 @@ const verifyEmailCode = async (code: string) => {
   try {
     const response = await API_CLIENT.makePostRequest(
       "/auth/verify-email-code",
-      { code }
+      { code },
     );
     return response;
   } catch (error) {
@@ -178,7 +178,7 @@ const verifyEmailCode = async (code: string) => {
 const validateToken = async () => {
   try {
     const response: any = await API_CLIENT.makeGetRequest(
-      "/auth/validate-token"
+      "/auth/validate-token",
     );
     return response?.data;
   } catch (err) {
@@ -191,8 +191,8 @@ const AUTH = {
   checkMobileExistance,
   register,
   signIn,
-  forgotPassword,
-  resetPassword,
+  // forgotPassword,
+  // resetPassword,
   sendOTP,
   verifyOTP,
   sendEmailCode,
