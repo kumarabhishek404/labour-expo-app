@@ -237,11 +237,8 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
               {t("duration")}
             </CustomHeading>
             <CustomText style={styles.value} textAlign="left">
-              {duration} {t("days")}
-            </CustomText>
-            <CustomHeading textAlign="left">
               {t("lessThanMultipleDays", { duration: duration })}
-            </CustomHeading>
+            </CustomText>
           </View>
 
           {images && images?.length > 0 && (

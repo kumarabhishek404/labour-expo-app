@@ -12,7 +12,7 @@ import {
 import { useAtom } from "jotai";
 import { useMutation } from "@tanstack/react-query";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Atoms from "@/app/AtomStore";
 import USER from "@/app/api/user";
@@ -30,12 +30,14 @@ import { saveToken } from "@/utils/authStorage";
 import Loader from "@/components/commons/Loaders/Loader";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
 import LOCAL_CONTEXT from "@/app/context/locale";
+import MobileNumberField from "@/components/inputs/MobileNumber";
 
 export default function Login() {
   LOCAL_CONTEXT?.useLocale();
   const { t } = useTranslation();
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
+  const [countryCode, setCountryCode] = useState<string>("+91");
 
   const [step, setStep] = useState<1 | 2>(1);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -228,24 +230,36 @@ export default function Login() {
                 },
               }}
               render={({ field: { onChange, value } }) => (
-                <TextInputComponent
-                  label="mobile"
+                <MobileNumberField
                   name="mobile"
-                  value={value as string}
-                  type="number"
-                  maxLength={10}
-                  onChangeText={onChange}
-                  placeholder={t("enterYourMobile")}
+                  countryCode={countryCode}
+                  setCountryCode={setCountryCode}
+                  mobile={value as string}
+                  setPhoneNumber={onChange}
                   errors={errors}
-                  textStyles={{ marginLeft: 10 }}
+                  placeholder={t("enterMobileTitle")}
                   icon={
-                    <Ionicons
-                      name="call-outline"
-                      size={25}
-                      color={Colors.secondary}
-                    />
+                    <Feather name="phone" size={25} color={Colors.disabled} />
                   }
                 />
+                // <TextInputComponent
+                //   label="mobile"
+                //   name="mobile"
+                //   value={value as string}
+                //   type="number"
+                //   maxLength={10}
+                //   onChangeText={onChange}
+                //   placeholder={t("enterYourMobile")}
+                //   errors={errors}
+                //   textStyles={{ marginLeft: 10 }}
+                //   icon={
+                //     <Ionicons
+                //       name="call-outline"
+                //       size={25}
+                //       color={Colors.secondary}
+                //     />
+                //   }
+                // />
               )}
             />
 
@@ -287,7 +301,7 @@ export default function Login() {
             {step === 2 && (
               <TouchableOpacity
                 onPress={() =>
-                  sendOtpMutation.mutate({ mobile: watch("mobile") })
+                  sendOtpMutation.mutate({ mobile: watch("mobile") as string })
                 }
                 disabled={resendDisabled}
               >

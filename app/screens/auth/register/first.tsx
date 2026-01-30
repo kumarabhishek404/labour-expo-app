@@ -25,6 +25,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Loader from "@/components/commons/Loaders/Loader";
 import { saveToken } from "@/utils/authStorage";
+import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
 
 interface FormData {
   mobile: string;
@@ -148,31 +149,19 @@ const RegisterScreen: React.FC = () => {
       await saveToken(token);
 
       console.log("user--", user);
-      
+
       // ✅ Store user in app state
       setUserDetails({ ...user });
 
       setMobileNumberExist(exists ? "exist" : "notExist");
 
-      const {
-        name,
-        gender,
-        address,
-        age,
-        aadhaarNumber,
-        profilePicture,
-        _id,
-      } = user;
+      const { name, gender, address, age, profilePicture, _id } = user;
 
       const isEmpty = (val: any) =>
         val === undefined || val === null || String(val).trim() === "";
 
       const missingBasics =
-        isEmpty(name) ||
-        isEmpty(gender) ||
-        isEmpty(address) ||
-        isEmpty(age) ||
-        isEmpty(aadhaarNumber)
+        isEmpty(name) || isEmpty(gender) || isEmpty(address) || isEmpty(age);
 
       let route: string = "";
       if (missingBasics) route = "/screens/auth/register/second";
@@ -180,6 +169,8 @@ const RegisterScreen: React.FC = () => {
       else if (isEmpty(profilePicture)) route = "/screens/auth/register/fifth";
       else route = "/screens/auth/login";
 
+      if (!missingBasics && !isEmpty(profilePicture))
+        TOAST.error(t("userAlreadyExist"));
       // ✅ Always set next step based on data presence, regardless of in-memory token
       setUserCanResumeRegistration(true);
       setNextStepAfterOtp({
@@ -190,7 +181,7 @@ const RegisterScreen: React.FC = () => {
             : { userId: _id },
       });
 
-      setStep(1);
+      // setStep(1);
     },
 
     onError: () => TOAST.error(t("errorCheckingMobile")),
@@ -316,7 +307,7 @@ const RegisterScreen: React.FC = () => {
                       icon={
                         <Feather
                           name="phone"
-                          size={26}
+                          size={25}
                           color={Colors.disabled}
                         />
                       }
@@ -413,6 +404,23 @@ const RegisterScreen: React.FC = () => {
             )}
           </View>
         </ScrollView>
+        <StickButtonWithWall
+          content={
+            <View style={{ paddingHorizontal: 4 }}>
+              <CustomText fontWeight="bold" baseFont={16} color={Colors?.white}>
+                {t("changeLanguage")}
+              </CustomText>
+            </View>
+          }
+          onPress={() =>
+            router.push({
+              pathname: "/screens/settings/changeLanguage",
+              params: { title: "notifications", type: "all" },
+            })
+          }
+          position="top"
+          containerStyles={{ height: 40 }}
+        />
       </KeyboardAvoidingView>
     </>
   );

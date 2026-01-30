@@ -323,14 +323,13 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    // alignItems: "flex-end",
     backgroundColor: Colors.white,
     elevation: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 5 },
-    paddingBottom: Platform.OS === "ios" ? 20 : 10,
+    paddingBottom: Platform.OS === "ios" ? 20 : 0,
   },
   tabButton: {
     height: 75,

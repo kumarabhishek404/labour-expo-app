@@ -442,9 +442,9 @@
   "endDateIsRequired": "समाप्ति तिथि आवश्यक है",
   "endDateNotEarlierThanToday": "समाप्ति तिथि आज से पहले नहीं हो सकती",
   "endDateNotEarlierThanStartDate": "समाप्ति तिथि प्रारंभ तिथि से पहले नहीं हो सकती",
-  "userDetailsUpdatedSuccessfully": "उपयोगकर्ता विवरण सफलतापूर्वक अपडेट हो गए",
-  "refreshUser": "उपयोगकर्ता अपडेट करें",
-  "userDetailsFetchedSuccessfully": "उपयोगकर्ता विवरण सफलतापूर्वक फ़ेच हो गए",
+  "userDetailsUpdatedSuccessfully": "उपयोगकर्ता की जानकारी सही से बदल दी गई है",
+  "refreshUser": "उपयोगकर्ता की जानकारी दोबारा लें",
+  "userDetailsFetchedSuccessfully": "उपयोगकर्ता की जानकारी सही से मिल गई है",
   "addAddress": "पता जोड़ें",
   "villageIsRequired": "गाँव आवश्यक है",
   "postIsRequired": "पोस्ट आवश्यक है",
@@ -1795,5 +1795,6 @@
   "required": "यह ज़रूरी है",
   "noSkill": "कोई कौशल नहीं",
   "lessThanOneDay": "{{duration}} दिन से कम",
-  "lessThanMultipleDays": "{{duration}} दिनों से कम"
+  "lessThanMultipleDays": "{{duration}} दिनों से कम",
+  "userAlreadyExist": "यह व्यक्ति पहले से मौजूद है"
 }

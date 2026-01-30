@@ -2056,5 +2056,6 @@
   "required": "required",
   "noSkill": "No skill",
   "lessThanOneDay": "Less than {{duration}} day",
-  "lessThanMultipleDays": "Less than {{duration}} days"
+  "lessThanMultipleDays": "Less than {{duration}} days",
+  "userAlreadyExist": "User is already exist"
 }

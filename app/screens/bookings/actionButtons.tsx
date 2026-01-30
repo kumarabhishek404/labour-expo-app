@@ -84,7 +84,7 @@ const BookingActionButtons = ({
 
   const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => WORKER?.cancelBooking(id),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       setModalVisible(false);
       refetch();

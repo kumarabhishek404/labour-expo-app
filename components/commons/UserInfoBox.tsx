@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { useTranslation } from "@/utils/i18n";
-import Button from "../inputs/Button";
 import Colors from "@/constants/Colors";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import Atoms from "@/app/AtomStore";
 import { useAtomValue, useSetAtom } from "jotai";
 import AUTH from "@/app/api/auth";
 import AddAddressDrawer from "@/app/screens/location/addAddress";
+import { handleCall } from "@/constants/functions";
 
 interface UserInfoComponentProps {
   user: any;
@@ -146,7 +146,10 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             styles?.addressRow,
           ]}
         >
-          <CustomHeading style={{ width: user?._id === userDetails?._id ? "70%" : "100%" }} baseFont={14}>
+          <CustomHeading
+            style={{ width: user?._id === userDetails?._id ? "70%" : "100%" }}
+            baseFont={14}
+          >
             <CustomText textAlign="left">{t("address")}</CustomText>
             {"  "}
             {user?.address || t("addressNotFound")}{" "}
@@ -166,8 +169,20 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           <CustomHeading baseFont={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
-            {user?.mobile || user?.alternateMobile || t("mobileNotFound")}
+            {user?.mobile || t("mobileNotFound")}
           </CustomHeading>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: "flex-end",
+              paddingRight: 10,
+            }}
+            onPress={() => handleCall(user?.mobile)}
+          >
+            <CustomText color={Colors?.link} fontWeight="600" baseFont={20}>
+              {t("callEmployer")}
+            </CustomText>
+          </TouchableOpacity>
         </View>
         <View style={[styles.row, styles.lastBox]}>
           <CustomHeading baseFont={14} textAlign="left">
@@ -232,6 +247,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: "row",
     backgroundColor: Colors?.background,
+    alignItems: "center",
   },
   userInfoTextWrapper: {
     marginBottom: 25,
