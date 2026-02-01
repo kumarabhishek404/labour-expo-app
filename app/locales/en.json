@@ -2057,5 +2057,9 @@
   "noSkill": "No skill",
   "lessThanOneDay": "Less than {{duration}} day",
   "lessThanMultipleDays": "Less than {{duration}} days",
-  "userAlreadyExist": "User is already exist"
+  "userAlreadyExist": "User is already exist",
+
+  "joinWhatsappGroupTitle": "Join Our WhatsApp Group",
+  "joinWhatsappGroupDescription": "Get new work updates, important information, and announcements directly on WhatsApp.",
+  "joinWhatsappGroupButton": "Join WhatsApp Group"
 }

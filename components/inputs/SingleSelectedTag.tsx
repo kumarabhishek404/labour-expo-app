@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   tag: {
-    backgroundColor: Colors?.danger,
+    backgroundColor: Colors?.white,
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,

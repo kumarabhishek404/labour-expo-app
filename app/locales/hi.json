@@ -1796,5 +1796,8 @@
   "noSkill": "कोई कौशल नहीं",
   "lessThanOneDay": "{{duration}} दिन से कम",
   "lessThanMultipleDays": "{{duration}} दिनों से कम",
-  "userAlreadyExist": "यह व्यक्ति पहले से मौजूद है"
+  "userAlreadyExist": "यह व्यक्ति पहले से मौजूद है",
+  "joinWhatsappGroupTitle": "WhatsApp ग्रुप से जुड़ें",
+  "joinWhatsappGroupDescription": "नए काम की जानकारी, जरूरी सूचना और अपडेट सीधे WhatsApp पर पाएं।",
+  "joinWhatsappGroupButton": "ग्रुप जॉइन करें"
 }

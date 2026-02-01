@@ -160,10 +160,10 @@ const Applicants = ({
                         >
                           {workers && workers?.length > 0
                             ? t("mediator")
-                            : getDynamicWorkerType(
+                            : (getDynamicWorkerType(
                                 appliedUser?.appliedSkill,
-                                1
-                              ) ?? t("worker")}
+                                1,
+                              ) ?? t("worker"))}
                         </CustomHeading>
                         <ShowDistance
                           loggedInUserLocation={userDetails?.location}
@@ -192,7 +192,7 @@ const Applicants = ({
                         {t(
                           workers?.length > 0
                             ? "mediatorDetails"
-                            : "workerDetails"
+                            : "workerDetails",
                         )}
                       </CustomText>
                     </TouchableOpacity>
@@ -274,7 +274,7 @@ const Applicants = ({
                                     >
                                       {getDynamicWorkerType(
                                         worker?.appliedSkill,
-                                        1
+                                        1,
                                       ) ?? t("worker")}
                                     </CustomHeading>
                                     <ShowDistance
@@ -354,7 +354,7 @@ const Applicants = ({
                       />
                       <Button
                         style={{
-                          width: "40%",
+                          width: "60%",
                           paddingVertical: 4,
                           paddingHorizontal: 8,
                         }}
@@ -475,7 +475,9 @@ const Applicants = ({
 };
 
 const styles = StyleSheet.create({
-  applicantWrapper: {},
+  applicantWrapper: {
+    minHeight: 400
+  },
   applicantContainer: {
     gap: 5,
   },

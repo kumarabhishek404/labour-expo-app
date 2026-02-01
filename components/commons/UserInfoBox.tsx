@@ -179,9 +179,11 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             }}
             onPress={() => handleCall(user?.mobile)}
           >
-            <CustomText color={Colors?.link} fontWeight="600" baseFont={20}>
-              {t("callEmployer")}
-            </CustomText>
+            {userDetails?._id !== user?._id && (
+              <CustomText color={Colors?.link} fontWeight="600" baseFont={18}>
+                {t("callEmployer")}
+              </CustomText>
+            )}
           </TouchableOpacity>
         </View>
         <View style={[styles.row, styles.lastBox]}>
@@ -193,6 +195,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           {user?._id === userDetails?._id &&
             userDetails?.status === "ACTIVE" &&
             user?.email &&
+            user?.email?.value &&
             !user?.email?.isVerified && (
               <TouchableOpacity onPress={handleSendOtp}>
                 <CustomText color={Colors?.link} fontWeight="600">

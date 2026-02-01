@@ -48,7 +48,7 @@ const AddAddressWithLocation = ({
 
   const fetchLocation = async () => {
     setIsFetchingLocation(true);
-    let { location, address }: any = await fetchCurrentLocation();
+    let { address }: any = await fetchCurrentLocation();
     setIsFetchingLocation(false);
 
     if (address) {

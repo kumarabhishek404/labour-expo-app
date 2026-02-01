@@ -38,6 +38,7 @@ import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import USE_LOGOUT from "@/app/hooks/useLogout";
+import JoinWhatsAppGroup from "@/components/commons/JoinWhatsappGroup";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
@@ -45,7 +46,7 @@ const UserProfile = () => {
   const [selectedTab, setSelectedTab] = useState("profileInformation");
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
-    userDetails?.profilePicture
+    userDetails?.profilePicture,
   );
   const [loading, setLoading] = useState(false);
   const { logout } = USE_LOGOUT.useLogout();
@@ -107,7 +108,7 @@ const UserProfile = () => {
             userDetails?.status === "DISABLED"
               ? t("suspended")
               : t("notApproved")
-          }.`
+          }.`,
         );
         return true;
       }
@@ -116,7 +117,7 @@ const UserProfile = () => {
 
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
 
     return () => subscription.remove();
@@ -133,7 +134,7 @@ const UserProfile = () => {
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
-        response?.data?.data?.email
+        response?.data?.data?.email,
       );
       let user = response?.data?.data;
       setIsEditProfile(false);
@@ -389,6 +390,12 @@ const UserProfile = () => {
               />
             </View>
 
+            <JoinWhatsAppGroup
+              groupLink="https://whatsapp.com/channel/0029Vb3Nqzs5a23w8frqRD1R"
+              title={t("joinWhatsappGroupTitle")}
+              description={t("joinWhatsappGroupDescription")}
+              buttonText={t("joinWhatsappGroupButton")}
+            />
             {userDetails?.employedBy && (
               <TeamAdminCard admin={userDetails?.employedBy} />
             )}

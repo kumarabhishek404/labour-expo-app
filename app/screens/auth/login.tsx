@@ -41,7 +41,6 @@ export default function Login() {
 
   const [step, setStep] = useState<1 | 2>(1);
   const [loginError, setLoginError] = useState<string | null>(null);
-
   const { mobile } = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
   const [resendDisabled, setResendDisabled] = useState<boolean>(true);
@@ -118,15 +117,15 @@ export default function Login() {
       await saveToken(token);
 
       // 1️⃣ Account not active
-      if (user?.status !== "ACTIVE") {
-        router.replace("/(tabs)/fifth");
-        return;
-      }
+      // if (user?.status !== "ACTIVE") {
+      //   router.replace("/(tabs)/fifth");
+      //   return;
+      // }
 
       // 2️⃣ Incomplete onboarding
       if (!user?.name || !user?.address || !user?.gender || !user?.age) {
         setUserDetails(user);
-        router.replace({
+        router.push({
           pathname: "/screens/auth/register/second",
           params: { userId: user._id },
         });
@@ -135,7 +134,7 @@ export default function Login() {
 
       if (!user.profilePicture) {
         setUserDetails(user);
-        router.replace({
+        router.push({
           pathname: "/screens/auth/register/fifth",
           params: { userId: user._id },
         });
@@ -160,20 +159,8 @@ export default function Login() {
 
     onError: async (err: any) => {
       setLoading(false);
-      const errorCode = err?.response?.data?.errorCode;
-      const errorMessage = err?.response?.data?.message; // Get the error message
-      setLoginError(errorMessage || "Login failed"); // Set the error state
-
-      const userId = err?.response?.data?.userId;
-      const token = err?.response?.data?.token;
-
-      if (errorCode === "SET_PROFILE_PICTURE_FIRST") {
-        await saveToken(token);
-
-        const route = "/screens/auth/register/fifth";
-
-        router.replace({ pathname: route, params: { userId } }); // Use replace
-      }
+      const errorMessage = err?.response?.data?.message;
+      setLoginError(errorMessage || "Login failed");
     },
   });
 

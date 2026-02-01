@@ -33,10 +33,13 @@ const LocationField = ({
       : []),
   ]);
 
+  console.log("address---", address);
+  console.log("userDetails?.savedAddresses---", userDetails?.savedAddresses);
+
   useEffect(() => {
     if (userDetails?.savedAddresses) {
       const uniqueAddresses = Array.from(
-        new Set(userDetails.savedAddresses)
+        new Set(userDetails.savedAddresses),
       ).map((address) => ({
         label: address as string,
         value: address as string,
@@ -49,7 +52,7 @@ const LocationField = ({
         userDetails.savedAddresses.length > 0
       ) {
         setAddress(
-          userDetails.savedAddresses[userDetails.savedAddresses.length - 1]
+          userDetails.savedAddresses[userDetails.savedAddresses.length - 1],
         );
       }
     }

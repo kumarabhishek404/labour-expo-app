@@ -165,7 +165,7 @@ const SkillsSelector = ({
       <ScrollView
         style={{
           ...styles.scrollContainer,
-          height: height * 0.65 - selectedContainerHeight, // Dynamic height calculation
+          height: height * 0.62 - selectedContainerHeight, // Dynamic height calculation
         }}
         contentContainerStyle={styles.skillContainer}
         showsVerticalScrollIndicator={false}

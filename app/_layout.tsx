@@ -18,6 +18,7 @@ const queryClient = new QueryClient();
 
 const AppNavigator = () => {
   useEffect(() => {
+    console.log("Checking In app updated -");
     checkForUpdates();
   }, []);
 

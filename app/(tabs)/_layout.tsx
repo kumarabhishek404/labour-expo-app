@@ -26,6 +26,7 @@ import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
+import { getToken } from "@/utils/authStorage";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -47,13 +48,20 @@ export default function Layout() {
   const [notificationCount, setNotificationCount]: any = useAtom(
     Atoms.notificationCount,
   );
-  const [token, setToken] = useAtom(Atoms?.tokenAtom);
   const pathname = usePathname();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    // wait one render cycle
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+
     // If not logged in, redirect to login page
     if (
       !userDetails ||
@@ -73,6 +81,7 @@ export default function Layout() {
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
+        const token = await getToken();
         if (!token || !userDetails?._id) return;
         const data = await NOTIFICATION.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
@@ -88,7 +97,7 @@ export default function Layout() {
     }
 
     return () => clearInterval(intervalId);
-  }, [userDetails?._id, token, setNotificationCount]); // Added setNotificationCount to dependencies
+  }, [userDetails?._id, setNotificationCount]); // Added setNotificationCount to dependencies
 
   useEffect(() => {
     if (!history.current.includes(pathname)) {

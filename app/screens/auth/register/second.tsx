@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -85,86 +92,91 @@ const SecondScreen = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending} />
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
-        <View style={styles.centeredView}>
-          <CustomHeading baseFont={26}>{t("personalDetails")}</CustomHeading>
-          <CustomText
-            baseFont={16}
-            color={Colors.disabledText}
-            style={{ textAlign: "center" }}
-          >
-            {t("pleaseEnterYourPersonalDetailsToContinue")}
-          </CustomText>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.centeredView}>
+            <CustomHeading baseFont={26}>{t("personalDetails")}</CustomHeading>
+            <CustomText
+              baseFont={16}
+              color={Colors.disabledText}
+              style={{ textAlign: "center" }}
+            >
+              {t("pleaseEnterYourPersonalDetailsToContinue")}
+            </CustomText>
+          </View>
 
-        <View style={styles.centeredView}>
-          <View style={{ flexDirection: "column", gap: 20 }}>
-            {/* Name Field - Required */}
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: t("firstNameIsRequired") }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputComponent
-                  name="name"
-                  label="name"
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={t("enterYourFirstName")}
-                  textStyles={{ fontSize: 16 }}
-                  errors={errors}
-                  isRequired={true}
-                />
-              )}
-            />
+          <View style={styles.centeredView}>
+            <View style={{ flexDirection: "column", gap: 20 }}>
+              {/* Name Field - Required */}
+              <Controller
+                control={control}
+                name="name"
+                rules={{ required: t("firstNameIsRequired") }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputComponent
+                    name="name"
+                    label="name"
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={t("enterYourFirstName")}
+                    textStyles={{ fontSize: 16 }}
+                    errors={errors}
+                    isRequired={true}
+                  />
+                )}
+              />
 
-            {/* Address Field - Required */}
-            <Controller
-              control={control}
-              name="address"
-              rules={{ required: t("addressIsRequired") }}
-              render={({ field: { onChange, value } }) => (
-                <AddLocationAndAddress
-                  label={t("address")}
-                  name="address"
-                  address={value}
-                  setAddress={onChange}
-                  location={location}
-                  setLocation={setLocation}
-                  errors={errors}
-                  isRequired={true}
-                />
-              )}
-            />
+              {/* Address Field - Required */}
+              <Controller
+                control={control}
+                name="address"
+                rules={{ required: t("addressIsRequired") }}
+                render={({ field: { onChange, value } }) => (
+                  <AddLocationAndAddress
+                    label={t("address")}
+                    name="address"
+                    address={value}
+                    setAddress={onChange}
+                    location={location}
+                    setLocation={setLocation}
+                    errors={errors}
+                    isRequired={true}
+                  />
+                )}
+              />
 
-            {/* Email Field */}
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, value } }) => (
-                <EmailAddressField
-                  name="email"
-                  email={value}
-                  setEmail={onChange}
-                  placeholder={t("enterYourEmailAddress")}
-                  icon={
-                    <Ionicons
-                      name={"mail-outline"}
-                      size={30}
-                      color={Colors.secondary}
-                      style={{ paddingVertical: 10, marginRight: 10 }}
-                    />
-                  }
-                  errors={errors}
-                />
-              )}
-            />
+              {/* Email Field */}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }) => (
+                  <EmailAddressField
+                    name="email"
+                    email={value}
+                    setEmail={onChange}
+                    placeholder={t("enterYourEmailAddress")}
+                    icon={
+                      <Ionicons
+                        name={"mail-outline"}
+                        size={30}
+                        color={Colors.secondary}
+                        style={{ paddingVertical: 10, marginRight: 10 }}
+                      />
+                    }
+                    errors={errors}
+                  />
+                )}
+              />
 
-            {/* Date of Birth Field */}
-            {/* <View style={{ marginTop: 10 }}>
+              {/* Date of Birth Field */}
+              {/* <View style={{ marginTop: 10 }}>
               <Controller
                 control={control}
                 name="dateOfBirth"
@@ -192,90 +204,93 @@ const SecondScreen = () => {
               />
             </View> */}
 
-            {/* Gender Selection */}
-            <Controller
-              control={control}
-              name="gender"
-              rules={{ required: t("genderIsRequired") }}
-              render={({ field: { onChange, value } }) => (
-                <Gender
-                  name="gender"
-                  label={t("whatIsYourGender")}
-                  options={[
-                    { title: t("male"), value: "male", icon: "👨" },
-                    { title: t("female"), value: "female", icon: "👩‍🦰" },
-                    { title: t("other"), value: "other", icon: "✨" },
-                  ]}
-                  gender={value}
-                  setGender={onChange}
-                  containerStyle={errors?.gender && styles.errorInput}
-                  errors={errors}
-                  isRequired={true}
-                />
-              )}
-            />
+              {/* Gender Selection */}
+              <Controller
+                control={control}
+                name="gender"
+                rules={{ required: t("genderIsRequired") }}
+                render={({ field: { onChange, value } }) => (
+                  <Gender
+                    name="gender"
+                    label={t("whatIsYourGender")}
+                    options={[
+                      { title: t("male"), value: "male", icon: "👨" },
+                      { title: t("female"), value: "female", icon: "👩‍🦰" },
+                      { title: t("other"), value: "other", icon: "✨" },
+                    ]}
+                    gender={value}
+                    setGender={onChange}
+                    containerStyle={errors?.gender && styles.errorInput}
+                    errors={errors}
+                    isRequired={true}
+                  />
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="age"
-              rules={{
-                required: t("ageIsRequired"),
-                validate: (value) =>
-                  Number(value) >= 18 || t("youMustBeAtLeast18YearsOld"),
-              }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputComponent
-                  name="age"
-                  label="age"
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={t("enterYourAge")}
-                  type="numeric"
-                  maxLength={2}
-                  errors={errors}
-                  isRequired={true}
-                />
-              )}
-            />
+              <Controller
+                control={control}
+                name="age"
+                rules={{
+                  required: t("ageIsRequired"),
+                  validate: (value) =>
+                    Number(value) >= 18 || t("youMustBeAtLeast18YearsOld"),
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputComponent
+                    name="age"
+                    label="age"
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={t("enterYourAge")}
+                    type="numeric"
+                    maxLength={2}
+                    errors={errors}
+                    isRequired={true}
+                  />
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="aadhaarNumber"
-              render={({ field: { onChange, value } }) => (
-                <TextInputComponent
-                  name="aadhaarNumber"
-                  label="aadhaarNumber"
-                  value={value}
-                  onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ""))}
-                  placeholder="XXXX XXXX XXXX"
-                  type="numeric"
-                  maxLength={12}
-                  errors={errors}
-                />
-              )}
+              <Controller
+                control={control}
+                name="aadhaarNumber"
+                render={({ field: { onChange, value } }) => (
+                  <TextInputComponent
+                    name="aadhaarNumber"
+                    label="aadhaarNumber"
+                    value={value}
+                    onChangeText={(text) =>
+                      onChange(text.replace(/[^0-9]/g, ""))
+                    }
+                    placeholder="XXXX XXXX XXXX"
+                    type="numeric"
+                    maxLength={12}
+                    errors={errors}
+                  />
+                )}
+              />
+            </View>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              isPrimary={true}
+              title={t("back")}
+              onPress={() => router.back()}
+              bgColor={Colors.danger}
+              borderColor={Colors.danger}
+              style={{ width: "30%" }}
+            />
+            <Button
+              isPrimary={true}
+              title={t("saveAndNext")}
+              onPress={handleSubmit(onSubmit)}
+              bgColor={Colors.success}
+              borderColor={Colors.success}
+              style={{ flex: 1 }}
             />
           </View>
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <Button
-            isPrimary={true}
-            title={t("back")}
-            onPress={() => router.back()}
-            bgColor={Colors.danger}
-            borderColor={Colors.danger}
-            style={{ width: "30%" }}
-          />
-          <Button
-            isPrimary={true}
-            title={t("saveAndNext")}
-            onPress={handleSubmit(onSubmit)}
-            bgColor={Colors.success}
-            borderColor={Colors.success}
-            style={{ flex: 1 }}
-          />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </>
   );
 };

@@ -36,7 +36,7 @@ const CustomSegmentedButton = ({
 
   // 🔹 Animated values for each button
   const animations = useRef(
-    buttons.map(() => new Animated.Value(1)) // default scale = 1
+    buttons.map(() => new Animated.Value(1)), // default scale = 1
   ).current;
 
   const handlePress = (value: string, index: number) => {
@@ -61,7 +61,7 @@ const CustomSegmentedButton = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.segmentedContainer}>
         {buttons.map((button, index) => {
           const isSelected = selected === button.value;
@@ -127,14 +127,14 @@ const CustomSegmentedButton = ({
           );
         })}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    paddingVertical: 5,
+    alignItems: "stretch",
+    paddingVertical: 10,
   },
   segmentedContainer: {
     flexDirection: "row",

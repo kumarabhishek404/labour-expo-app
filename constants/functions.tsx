@@ -141,11 +141,11 @@ export const fetchCurrentLocation = async () => {
 
     // Reverse geocode to get the address
     let response = await Location.reverseGeocodeAsync({
-      latitude: currentLocation?.coords?.latitude,
       longitude: currentLocation?.coords?.longitude,
+      latitude: currentLocation?.coords?.latitude,
     });
 
-    console.log("response--", response);
+    console.log("tempLocation--", tempLocation);
 
     return {
       location: tempLocation,

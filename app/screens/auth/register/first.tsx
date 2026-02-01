@@ -229,6 +229,8 @@ const RegisterScreen: React.FC = () => {
     },
   });
 
+  // console.log("checkMobileNumber?.isPending---", checkMobileNumber?.isPending);
+  
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -322,6 +324,7 @@ const RegisterScreen: React.FC = () => {
                   }
                   style={styles.button}
                   disabled={
+                    checkMobileNumber?.isPending ||
                     !isValid ||
                     (mobileNumberExist === "exist" &&
                       !userCanResumeRegistration)

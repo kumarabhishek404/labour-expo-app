@@ -3,7 +3,7 @@
     "name": "KAARYA",
     "slug": "labour-app",
     "version": "1.0.13",
-    "orientation": "portrait",
+    "orientation": "default",
     "scheme": "myapp",
     "jsEngine": "hermes",
     "userInterfaceStyle": "automatic",
@@ -40,7 +40,9 @@
           "android": {
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
-            "buildToolsVersion": "35.0.0"
+            "buildToolsVersion": "35.0.0",
+            "allowBackup": true,
+            "supportsTablet": true
           }
         }
       ],
@@ -52,7 +54,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 26,
+      "versionCode": 29,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
