@@ -1,0 +1,44 @@
+name: Play Store Release (Full Build)
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  playstore_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm ci
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # 1️⃣ Auto bump version: 1.0.0 → 1.1.0
+      - name: Bump minor version
+        run: |
+          node scripts/bump-minor-version.js
+
+      # 2️⃣ Auto bump Android versionCode
+      - name: Bump Android versionCode
+        run: |
+          node scripts/bump-version-code.js
+
+      # 3️⃣ Build AAB
+      - name: Build Android
+        run: |
+          eas build --platform android --profile production --non-interactive
+
+      # 4️⃣ Submit to Play Store
+      - name: Submit to Play Store
+        run: |
+          eas submit --platform android --profile production --non-interactive
