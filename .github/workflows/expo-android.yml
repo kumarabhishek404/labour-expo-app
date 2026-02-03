@@ -25,11 +25,13 @@ jobs:
         run: npm ci
 
       - name: Install jq
-        run: sudo apt-get install -y jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - uses: expo/expo-github-action@v8
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
         with:
-          expo-token: ${{ secrets.EXPO_TOKEN }}
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
 
       - name: Build Android (AAB)
         id: build
@@ -40,7 +42,7 @@ jobs:
             --non-interactive \
             --json)
 
-          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.builds[0].id // .[0].id')
+          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.[0].id')
 
           echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
 
@@ -50,9 +52,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: expo/expo-github-action@v8
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
         with:
-          expo-token: ${{ secrets.EXPO_TOKEN }}
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
 
       - name: Submit to Play Store
         run: |
@@ -77,9 +81,11 @@ jobs:
 
       - run: npm ci
 
-      - uses: expo/expo-github-action@v8
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
         with:
-          expo-token: ${{ secrets.EXPO_TOKEN }}
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
 
       - name: Publish OTA update
         run: |
