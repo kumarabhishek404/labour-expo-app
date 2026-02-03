@@ -259,8 +259,8 @@ export default function Layout() {
                   <TabButton
                     props={props}
                     path="/(tabs)/"
-                    title={isAdmin ? "teams" : "home"}
-                    iconName={isAdmin ? "group" : "home"}
+                    title={isAdmin ? "teams" : "add"}
+                    iconName={isAdmin ? "group" : "plus"}
                     iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
                   />
                 ),
