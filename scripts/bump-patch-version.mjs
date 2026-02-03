@@ -1,9 +1,16 @@
 import fs from "fs";
-import app from "../app.json";
+import path from "path";
 
-let [major, minor, patch] = app.expo.version.split(".");
+const appJsonPath = path.join(process.cwd(), "app.json");
+const raw = fs.readFileSync(appJsonPath, "utf8");
+const appJson = JSON.parse(raw);
 
-patch = Number(patch) + 1;
-app.expo.version = `${major}.${minor}.${patch}`;
+const version = appJson.expo.version || "1.0.0";
+const [major, minor, patch] = version.split(".").map(Number);
 
-fs.writeFileSync("app.json", JSON.stringify(app, null, 2));
+const newVersion = `${major}.${minor}.${patch + 1}`;
+appJson.expo.version = newVersion;
+
+fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
+
+console.log(`✅ OTA patch version bumped to ${newVersion}`);

@@ -1,10 +1,23 @@
 import fs from "fs";
-import app from "../app.json";
+import path from "path";
 
-let [major, minor, patch] = app.expo.version.split(".");
+const appJsonPath = path.join(process.cwd(), "app.json");
 
-minor = Number(minor) + 1;
+// Read app.json
+const raw = fs.readFileSync(appJsonPath, "utf8");
+const app = JSON.parse(raw);
+
+// Parse version
+let [major, minor, patch] = app.expo.version.split(".").map(Number);
+
+// Bump minor, reset patch
+minor += 1;
 patch = 0;
 
+// Set new version
 app.expo.version = `${major}.${minor}.${patch}`;
-fs.writeFileSync("app.json", JSON.stringify(app, null, 2));
+
+// Write back
+fs.writeFileSync(appJsonPath, JSON.stringify(app, null, 2));
+
+console.log(`✅ Version updated to ${app.expo.version}`);
