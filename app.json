@@ -2,7 +2,7 @@
   "expo": {
     "name": "KAARYA",
     "slug": "labour-app",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "orientation": "default",
     "scheme": "myapp",
     "jsEngine": "hermes",
