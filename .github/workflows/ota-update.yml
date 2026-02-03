@@ -1,4 +1,4 @@
-name: OTA Update Only
+name: OTA Update
 
 on:
   push:
@@ -22,6 +22,7 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
 
       # 1️⃣ Patch version bump: 1.0.0 → 1.0.1
       - name: Bump patch version
