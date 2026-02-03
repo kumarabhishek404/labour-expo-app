@@ -32,6 +32,10 @@ jobs:
         run: |
           node scripts/bump-minor-version.mjs
 
+      - name: Bump patch version in package.json
+        run: |
+          node scripts/bump-version.mjs
+
       # 2️⃣ Auto bump Android versionCode
       - name: Bump Android versionCode
         run: |

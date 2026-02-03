@@ -28,9 +28,13 @@ jobs:
           eas-version: latest
 
       # 1️⃣ Patch version bump: 1.0.0 → 1.0.1
-      - name: Bump patch version
+      - name: Bump patch version in app.json
         run: |
           node scripts/bump-patch-version.mjs
+      
+      - name: Bump patch version in package.json
+        run: |
+          node scripts/bump-version.mjs
 
       - name: Configure git
         run: |
