@@ -34,5 +34,7 @@ jobs:
         run: |
           eas update \
             --branch production \
+            --platform android \
             --message "OTA update from GitHub" \
             --non-interactive
+            
