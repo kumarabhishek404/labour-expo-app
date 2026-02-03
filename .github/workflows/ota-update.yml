@@ -5,6 +5,9 @@ on:
     branches:
       - ota
 
+permissions:
+  contents: write
+
 jobs:
   ota_update:
     runs-on: ubuntu-latest
@@ -28,14 +31,17 @@ jobs:
       - name: Bump patch version
         run: |
           node scripts/bump-patch-version.mjs
-      
-      # 2️⃣ Commit version bump (SAFE)
-      - name: Commit version bump
+
+      - name: Configure git
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
+      # 2️⃣ Commit version bump (SAFE)
+      - name: Commit & push version bump
+        run: |
           git add app.json
-          git commit -m "chore: bump app version [skip ci]"
+          git commit -m "chore: bump app version [skip ci]" || echo "No changes to commit"
           git push
 
       # 2️⃣ OTA publish (NO build)
@@ -46,4 +52,3 @@ jobs:
             --platform android \
             --message "OTA update from GitHub" \
             --non-interactive
-            
