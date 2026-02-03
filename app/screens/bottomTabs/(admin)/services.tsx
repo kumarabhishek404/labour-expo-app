@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, RefreshControl } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import CategoryButtons from "@/components/inputs/CategoryButtons";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
@@ -165,10 +165,10 @@ const AdminServices = () => {
           onApply={onSearchService}
         /> */}
 
-        <FloatingButton
+        {/* <FloatingButton
           title="applyFilters"
           onPress={() => setFilterVisible(true)}
-        />
+        /> */}
       </View>
     </>
   );

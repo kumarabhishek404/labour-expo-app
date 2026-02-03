@@ -132,19 +132,20 @@ export const fetchCurrentLocation = async () => {
       accuracy: Location.Accuracy.BestForNavigation,
     });
     let tempLocation = {
-      latitude: currentLocation?.coords?.latitude,
-      longitude: currentLocation?.coords?.longitude,
-      latitudeDelta: 2,
-      longitudeDelta: 2,
+      type: "Point",
+      coordinates: [
+        currentLocation?.coords?.longitude,
+        currentLocation?.coords?.latitude,
+      ],
     };
 
     // Reverse geocode to get the address
     let response = await Location.reverseGeocodeAsync({
-      latitude: tempLocation?.latitude,
-      longitude: tempLocation?.longitude,
+      longitude: currentLocation?.coords?.longitude,
+      latitude: currentLocation?.coords?.latitude,
     });
 
-    console.log("response--", response);
+    console.log("tempLocation--", tempLocation);
 
     return {
       location: tempLocation,
@@ -152,7 +153,6 @@ export const fetchCurrentLocation = async () => {
       addressObject: response[0],
     };
   } catch (err) {
-    // Handle any errors during location fetching
     TOAST?.error(
       `Error while fetching current location ${JSON?.stringify(err)}`
     );
@@ -268,7 +268,7 @@ export const handleEmail = (email: string) => {
 
 const FONT_SIZE_MULTIPLIER: any = {
   en: 0.8,
-  hi: 0.8,
+  hi: 0.9,
   mr: 0.8,
   rj: 0.8,
   ta: 0.7,

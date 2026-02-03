@@ -28,6 +28,7 @@ import ButtonComp from "@/components/inputs/Button";
 import { Checkbox } from "react-native-paper";
 import ProfileTabs from "@/components/inputs/TabsSwitcher";
 import CustomText from "@/components/commons/CustomText";
+import { Keyboard } from "react-native";
 
 const AddAddressDrawer = ({
   userId,
@@ -40,7 +41,7 @@ const AddAddressDrawer = ({
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [selectedTab, setSelectedTab] = useState(
-    type === "primary" ? "savedAddresses" : "addNewAddress"
+    type === "primary" ? "savedAddresses" : "addNewAddress",
   );
   const [districts, setDistricts]: any = useState([]);
   const [subDistricts, setSubDistricts]: any = useState([]);
@@ -53,7 +54,7 @@ const AddAddressDrawer = ({
   const [locationAddress, setLocationAddress] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(
-    userDetails?.address || ""
+    userDetails?.address || "",
   );
 
   const { watch, handleSubmit, setValue, reset } = useForm({
@@ -65,7 +66,9 @@ const AddAddressDrawer = ({
       village: "",
       pinCode: "",
       additionalDetails: "",
-      location: {},
+      location: {
+        coordinates: [],
+      },
     },
   });
 
@@ -105,6 +108,12 @@ const AddAddressDrawer = ({
       console.error("Error updating address", err);
     },
   });
+
+  useEffect(() => {
+    if (visible) {
+      Keyboard.dismiss();
+    }
+  }, [visible]);
 
   // API Trigger on State Selection
   useEffect(() => {
@@ -166,7 +175,7 @@ const AddAddressDrawer = ({
         allStateVillages?.districts
           ?.find((item: any) => item?.district === selectedDistrict)
           ?.subDistricts?.find(
-            (item: any) => item.subDistrict === selectedSubDistrict
+            (item: any) => item.subDistrict === selectedSubDistrict,
           )
           ?.villages?.map((item: any) => ({
             label: item,
@@ -183,16 +192,20 @@ const AddAddressDrawer = ({
   }, [selectedSubDistrict, allStateVillages]);
 
   const onAddAddress = async (data: any) => {
+    const location = {
+      longitude: data?.location?.coordinates[0],
+      latitude: data?.location?.coordinates[1],
+    };
     const address =
       selectedTab === "savedAddresses"
         ? selectedAddress
         : isEditing
-        ? `${additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${pinCode}`
-        : locationAddress;
+          ? `${additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${pinCode}`
+          : locationAddress;
 
     const isAddressAlreadySaved = userDetails?.savedAddresses?.some(
       (savedAddress: string) =>
-        JSON.stringify(savedAddress) === JSON.stringify(address)
+        JSON.stringify(savedAddress) === JSON.stringify(address),
     );
 
     const finalSavedAddress = isAddressAlreadySaved
@@ -209,20 +222,25 @@ const AddAddressDrawer = ({
         ? {
             address, // If main address, update the address field
             savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
+            location: location,
           }
         : {
             savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
+            location: location,
           }),
     });
 
     if (isMainAddress)
       mutationUpdateProfileInfo.mutate(
         isAddressAlreadySaved
-          ? { address, location: watch("location") }
-          : { address, savedAddresses: address, location: watch("location") }
+          ? { address, location: location }
+          : { address, savedAddresses: address, location: location },
       );
     else if (!isAddressAlreadySaved)
-      mutationUpdateProfileInfo.mutate({ savedAddresses: address });
+      mutationUpdateProfileInfo.mutate({
+        savedAddresses: address,
+        location: location,
+      });
     else return;
   };
 

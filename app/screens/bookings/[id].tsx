@@ -1,13 +1,13 @@
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Entypo, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { useAnimatedRef } from "react-native-reanimated";
+import { Animated } from "react-native";
 import SERVICE from "../../api/services";
 import Loader from "@/components/commons/Loaders/Loader";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import Button from "@/components/inputs/Button";
 import moment from "moment";
@@ -42,7 +42,7 @@ const BookingDetails = () => {
   const { id, data, category, title }: any = useLocalSearchParams();
   const [booking, setBooking] = useState(JSON.parse(data));
   const router = useRouter();
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollRef = React.useRef<any>(null);
   const [isSelected, setIsSelected] = useState(
     booking?.selectedUsers?.find(
       (user: any) => user?.user?._id === userDetails?._id
@@ -132,6 +132,8 @@ const BookingDetails = () => {
           <Animated.ScrollView
             ref={scrollRef}
             contentContainerStyle={{ paddingBottom: 150 }}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
           >
             <View style={styles.contentWrapper}>
               {booking?.employer && booking?.employer === userDetails?._id && (

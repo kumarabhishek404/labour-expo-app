@@ -11,13 +11,14 @@ bare-apps
 node_modules
 npm-debug.log
 yarn-error.log
-/package-lock.json
 
 google-services.json
 GoogleService-Info.plist
-labour-app-d27c8-firebase-adminsdk-hkj4c-d729f83092.json
-/android
-/ios
+google-services-account.json
+
+# Native folders should be ignored in Expo managed workflow
+android/
+ios/
 
 # Ruby
 .direnv
@@ -81,7 +82,6 @@ templates/**/android/**/generated/*
 templates/**/android/app/build
 templates/**/Pods/**
 templates/**/Podfile.lock
-templates/**/yarn.lock
 
 # Codemod
 .codemod.bookmark

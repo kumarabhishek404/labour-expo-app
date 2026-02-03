@@ -3,6 +3,7 @@ import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
 import { calculateDistance } from "@/constants/functions";
 import CustomHeading from "./CustomHeading";
+import { Text, View } from "react-native";
 
 interface ShowDistanceProps {
   loggedInUserLocation: object;
@@ -15,8 +16,13 @@ const ShowDistance: React.FC<ShowDistanceProps> = ({
   targetLocation,
   align
 }: any) => {
+
+  console.log("loggedInUserLocation---", loggedInUserLocation);
+  console.log("targetLocation---", targetLocation);
+  
+  
   return (
-    <>
+    <Text>
       {loggedInUserLocation &&
         loggedInUserLocation?.latitude &&
         targetLocation &&
@@ -25,7 +31,7 @@ const ShowDistance: React.FC<ShowDistanceProps> = ({
             {calculateDistance(loggedInUserLocation, targetLocation)} {t("kms")} {t('distance')}
           </CustomHeading>
         )}
-    </>
+    </Text>
   );
 };
 

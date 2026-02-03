@@ -28,7 +28,7 @@ const ApplicantsTabScreen = ({
   ];
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={{ marginVertical: 5 }}>
         <CustomSegmentedButton
           buttons={TABS}
@@ -37,53 +37,48 @@ const ApplicantsTabScreen = ({
           onValueChange={setActiveTab}
         />
       </View>
-
-      {/* Content */}
-      <ScrollView style={styles.contentContainer}>
-        {activeTab === "applicants" ? (
-          <Applicants
-            title="whoHaveApplied"
-            applicants={applicants}
-            serviceId={serviceId}
-            isAppliedWorkersLoading={isAppliedWorkersLoading}
-            isAppliedWorkersFetchingNextPage={isAppliedWorkersFetchingNextPage}
-            refetchApplicants={() => {
-              refetchAppliedWorkers();
-            }}
-            refetchSelectedApplicants={() => {
-              refetchSelectedWorkers();
-            }}
-            refetch={refetch}
-          />
-        ) : (
-          <Applicants
-            title="whoHaveSelected"
-            type="selectedApplicants"
-            applicants={selectedApplicants}
-            serviceId={serviceId}
-            isAppliedWorkersLoading={isSelectedWorkerLoading}
-            isAppliedWorkersFetchingNextPage={isSelectedWorkerFetchingNextPage}
-            refetchApplicants={() => {
-              refetchAppliedWorkers();
-            }}
-            refetchSelectedApplicants={() => {
-              refetchSelectedWorkers();
-            }}
-            refetch={refetch}
-          />
-        )}
-      </ScrollView>
-    </View>
+      {activeTab === "applicants" ? (
+        <Applicants
+          title="whoHaveApplied"
+          applicants={applicants}
+          serviceId={serviceId}
+          isAppliedWorkersLoading={isAppliedWorkersLoading}
+          isAppliedWorkersFetchingNextPage={isAppliedWorkersFetchingNextPage}
+          refetchApplicants={() => {
+            refetchAppliedWorkers();
+          }}
+          refetchSelectedApplicants={() => {
+            refetchSelectedWorkers();
+          }}
+          refetch={refetch}
+        />
+      ) : (
+        <Applicants
+          title="whoHaveSelected"
+          type="selectedApplicants"
+          applicants={selectedApplicants}
+          serviceId={serviceId}
+          isAppliedWorkersLoading={isSelectedWorkerLoading}
+          isAppliedWorkersFetchingNextPage={isSelectedWorkerFetchingNextPage}
+          refetchApplicants={() => {
+            refetchAppliedWorkers();
+          }}
+          refetchSelectedApplicants={() => {
+            refetchSelectedWorkers();
+          }}
+          refetch={refetch}
+        />
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "flex-start",
     backgroundColor: Colors.background,
-  },
-  contentContainer: {
-    flex: 1,
+    marginBottom: 20,
   },
 });
 

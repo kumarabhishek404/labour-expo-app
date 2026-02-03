@@ -75,8 +75,11 @@ const UpdateUserSkillsScreen = () => {
     // Fetch the user's current location
     try {
       setLoading(true);
-      const locationData = await fetchCurrentLocation();
-      payload.location = locationData?.location;
+      const locationData: any = await fetchCurrentLocation();
+      payload.location = {
+        longitude: locationData?.location?.coordinates[0],
+        latitude: locationData?.location?.coordinates[1],
+      };
       payload.address = locationData?.address;
       setLoading(false);
     } catch (err) {
@@ -91,11 +94,8 @@ const UpdateUserSkillsScreen = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <Loader loading={mutationUpdateProfile?.isPending || loading} />
-      <View
-        style={styles.container}
-        // keyboardShouldPersistTaps="handled"
-      >
-        <CustomHeading baseFont={26}>
+      <View style={styles.container}>
+        <CustomHeading style={{ marginTop: 20 }} baseFont={26}>
           {t("updateYourSkillsAndRole")}
         </CustomHeading>
 
@@ -178,12 +178,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors?.fourth,
     paddingHorizontal: 20,
     gap: 20,
-    paddingTop: 20,
+    // paddingTop: 20,
   },
   buttonContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // ✅ Allows buttons to wrap if needed
-    justifyContent: "space-evenly", // ✅ Ensures even spacing
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
     alignItems: "center",
     gap: 10,
     position: "absolute",

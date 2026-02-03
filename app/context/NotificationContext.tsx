@@ -44,8 +44,8 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     useState<Notifications.Notification | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const userDetails = useAtomValue(Atoms?.UserAtom);
-  const notificationListener = useRef<any>();
-  const responseListener = useRef<any>();
+  const notificationListener = useRef<any | null>(null);
+  const responseListener = useRef<any | null>(null);
   const notificationConsent = useAtomValue(Atoms?.NotificationConsentAtom);
 
   useEffect(() => {
@@ -78,13 +78,11 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     // Cleanup listeners on unmount
     return () => {
-      if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
+      if (notificationListener.current?.remove) {
+        notificationListener.current.remove();
       }
-      if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+      if (responseListener.current?.remove) {
+        responseListener.current.remove();
       }
     };
   }, [notificationConsent]);

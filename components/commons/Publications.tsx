@@ -28,7 +28,7 @@ const PublicationsScreen = () => {
           />
           <View style={{ paddingHorizontal: 6, paddingBottom: 6 }}>
             <CustomText
-              color={Colors?.secondaryText}
+              color={Colors?.secondaryButtonText}
               fontWeight="bold"
               textAlign="left"
             >
@@ -52,7 +52,7 @@ const PublicationsScreen = () => {
           />
           <View style={{ paddingHorizontal: 6, paddingBottom: 6 }}>
             <CustomText
-              color={Colors?.secondaryText}
+              color={Colors?.secondaryButtonText}
               fontWeight="bold"
               textAlign="left"
             >

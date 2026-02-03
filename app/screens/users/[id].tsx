@@ -1,5 +1,5 @@
-import { Dimensions, Image, StyleSheet, View } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
+import { Dimensions, Image, StyleSheet, View, Animated } from "react-native";
 import {
   Stack,
   useFocusEffect,
@@ -9,7 +9,6 @@ import {
 } from "expo-router";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import UserInfoComponent from "@/components/commons/UserInfoBox";
@@ -41,7 +40,7 @@ const User = () => {
   const [user, setUser]: any = useState({});
   const router = useRouter();
   const firstTimeRef = React.useRef(true);
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollRef = React.useRef<Animated.ScrollView>(null);
   const [isUserBooked, setIsUserBooked] = useState(user?.bookedBy || false);
   const [isUserLiked, setIsUserLiked] = useState(
     user?.likedBy?.includes(userDetails?._id)

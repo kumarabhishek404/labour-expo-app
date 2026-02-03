@@ -55,7 +55,7 @@ const AllServices = ({
       ) : (
         <>
           <View style={styles.container}>
-            <View style={styles?.paginationHeader}>
+            {/* <View style={styles?.paginationHeader}>
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
                 onPress={() => setIsAddFilters(true)}
@@ -69,7 +69,7 @@ const AllServices = ({
                   {t("applyFilters")}
                 </CustomText>
               </TouchableOpacity>
-            </View>
+            </View> */}
             {Array.isArray(memoizedData) && memoizedData.length > 0 ? (
               <ListingsVerticalServices
                 listings={memoizedData || []}
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingBottom: 150,
+    paddingTop: 10
   },
   paginationHeader: {
     width: "100%",

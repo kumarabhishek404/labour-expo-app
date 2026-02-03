@@ -5,29 +5,39 @@
   },
   "build": {
     "production": {
+      "node": "20.19.4",
       "android": {
         "buildType": "app-bundle"
-      }
+      },
+      "channel": "production"
     },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "env": {
         "NODE_ENV": "development"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "preview"
     },
     "release": {
       "android": {
         "gradleCommand": ":app:bundleRelease"
-      }
+      },
+      "channel": "release"
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-services-account.json",
+        "track": "internal"
+      }
+    }
   }
 }

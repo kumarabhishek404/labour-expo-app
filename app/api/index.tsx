@@ -1,15 +1,10 @@
-import EventEmitter from "eventemitter3"; // ✅ Correct import
+import EventEmitter from "eventemitter3";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
-import { getToken, removeToken } from "@/utils/authStorage";
+import { getToken } from "@/utils/authStorage";
 import { router } from "expo-router";
-import TOAST from "../hooks/toast";
 
-const eventEmitter = new EventEmitter(); // ✅ Create EventEmitter instance
-
-// AsyncStorage?.removeItem("user")
-// AsyncStorage?.removeItem("appearedNotifications")
-let isLoggedOut = false;
+const eventEmitter = new EventEmitter();
 
 const getHeaders = async (retries = 3, delay = 500) => {
   try {
@@ -17,8 +12,7 @@ const getHeaders = async (retries = 3, delay = 500) => {
     const token = await getToken();
 
     if (!token || token === "null" || token === "undefined") {
-      console.warn("No valid user session found.");
-      return { Authorization: "" }; // Stop retries
+      return { Authorization: "" };
     }
 
     if (token) {
@@ -39,19 +33,16 @@ const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
-
-// Logout logic enhanced to emit event and clear all relevant data
 const logout = async () => {
   try {
     console.log("🔒 Logout triggered from API client");
     await AsyncStorage.removeItem("user");
-    eventEmitter.emit("logout"); // ⬅️ Notify the app
+    eventEmitter.emit("logout");
   } catch (error) {
     console.error("Error during logout:", error);
   }
 };
 
-// ✅ Interceptor: Handle Token Expiry and Emit Logout Event
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -70,7 +61,6 @@ api.interceptors.response.use(
         statusText === "Unauthorized Request"
       ) {
         console.warn("Token expired. Logging out...");
-        TOAST.error("Token expired. Logging out...");
         logout();
       }
 
@@ -91,7 +81,6 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ API Request Functions
 const makeGetRequest = async (url: string, headers?: object) => {
   return api.get(url, { headers: { ...(await getHeaders()), ...headers } });
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, FlatList, TouchableOpacity, StyleSheet, Animated, Easing } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
 import LOCAL_CONTEXT from "@/app/context/locale";
@@ -9,7 +9,6 @@ import CustomHeader from "@/components/commons/Header";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Button from "@/components/inputs/Button";
-import Animated, { SlideInDown } from "react-native-reanimated";
 import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
@@ -36,6 +35,17 @@ export default function LanguageSelectionScreen() {
       console.error("error while updating the profile ", err);
     },
   });
+
+  const slideAnim = React.useRef(new Animated.Value(100)).current;
+
+  React.useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   useEffect(() => {
     setSelectedLanguage(locale);
@@ -135,8 +145,12 @@ export default function LanguageSelectionScreen() {
         />
 
         <Animated.View
-          style={styles.saveButtonContainer}
-          entering={SlideInDown.delay(200)}
+          style={[
+            styles.saveButtonContainer,
+            {
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
         >
           <Button isPrimary={true} title="Save" onPress={handleSave} />
         </Animated.View>

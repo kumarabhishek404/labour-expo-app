@@ -4,8 +4,7 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     plugins: [
       "react-native-paper/babel",
-      "react-native-worklets-core/plugin",
-      "react-native-reanimated/plugin",
+      "react-native-worklets-core/plugin"
     ],
   };
 };

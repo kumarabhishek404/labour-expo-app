@@ -1,0 +1,29 @@
+on:
+  push:
+    branches: ["user/abhishek/development/old-app"]
+
+jobs:
+  build_android:
+    name: Build Android app
+    type: build
+    params:
+      platform: android
+      profile: production
+
+  submit_android:
+    name: Submit to Google Play Store
+    needs: [build_android]
+    type: submit
+    params:
+      profile: production
+      build_id: ${{ needs.build_android.outputs.build_id }}
+  publish_ota:
+    name: Publish OTA update
+    needs: [submit_android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+      - run: eas update --branch production --non-interactive

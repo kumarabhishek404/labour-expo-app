@@ -23,7 +23,7 @@ const FourthScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordStep, setPasswordStep] = useState<"create" | "confirm">(
-    "create"
+    "create",
   );
 
   const mutationUpdateProfile = useMutation({
@@ -149,7 +149,7 @@ const FourthScreen = () => {
                   <Text style={styles.keyText}>{num}</Text>
                 )}
               </TouchableOpacity>
-            )
+            ),
           )}
         </View>
       </View>

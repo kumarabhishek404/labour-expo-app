@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -31,6 +32,7 @@ type TextInputProps = {
   textStyles?: object;
   disabled?: boolean | null;
   loading?: boolean;
+  isRequired?: boolean;
 };
 
 const TextInputComponent = ({
@@ -53,6 +55,7 @@ const TextInputComponent = ({
   textStyles,
   disabled,
   loading,
+  isRequired,
 }: TextInputProps) => {
   const inputRef = useRef<TextInput>(null);
   // const [isFocused, setIsFocused] = useState(false);
@@ -84,16 +87,29 @@ const TextInputComponent = ({
 
   return (
     <View style={[styles.inputField, style, disabled && styles.disabledInput]}>
-      {label && (
-        <CustomHeading
-          textAlign="left"
-          color={Colors.inputLabel}
-          baseFont={16}
-          fontWeight="500"
-        >
-          {t(label)}
-        </CustomHeading>
-      )}
+      <Text style={styles?.labelContainer}>
+        {label && (
+          <CustomHeading
+            textAlign="left"
+            color={Colors.inputLabel}
+            baseFont={16}
+            fontWeight="500"
+          >
+            {t(label)}
+          </CustomHeading>
+        )}
+        {isRequired && (
+          <CustomHeading
+            textAlign="left"
+            color={Colors.danger}
+            baseFont={16}
+            fontWeight="500"
+          >
+            {" "}
+            ({t("required")})
+          </CustomHeading>
+        )}
+      </Text>
       <View
         style={[
           styles.inputContainer,
@@ -173,5 +189,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     borderRadius: 8,
+  },
+  labelContainer: {
+    flexDirection: "row",
+    gap: 5,
   },
 });

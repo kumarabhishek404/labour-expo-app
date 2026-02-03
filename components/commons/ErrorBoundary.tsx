@@ -6,7 +6,10 @@ const ErrorFallback = ({ error, resetErrorBoundary }: any) => (
   <View style={styles.container}>
     <Text style={styles.title}>Something went wrong.</Text>
     <Text style={styles.error}>{error?.toString()}</Text>
-    <Button title="Try Again" onPress={resetErrorBoundary} />
+    <Button
+      title="Try Again"
+      onPress={resetErrorBoundary ? resetErrorBoundary : () => {}}
+    />
   </View>
 );
 

@@ -2,7 +2,7 @@ import { StyleSheet, View, Dimensions } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import { Animated, Easing } from "react-native";
 import { t } from "@/utils/translationHelper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
@@ -45,6 +45,16 @@ const BookingActionButtons = ({
   modalVisible,
 }: ServiceActionButtonsProps) => {
   const queryClient = useQueryClient();
+  const slideAnim = React.useRef(new Animated.Value(100)).current;
+
+  React.useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const mutationCancelBooking = useMutation({
     mutationKey: ["cancelServiceByWorkerAfterSelection", { id }],
@@ -74,7 +84,7 @@ const BookingActionButtons = ({
 
   const mutationCancelBookingByEmployer = useMutation({
     mutationKey: ["deleteService", { id }],
-    mutationFn: () => WORKER?.cancelBooking(id),
+    mutationFn: () => WORKER?.cancelBooking({ serviceId: id }),
     onSuccess: async (response) => {
       setModalVisible(false);
       refetch();
@@ -245,7 +255,14 @@ const BookingActionButtons = ({
           mutationRejectBookingRequest?.isPending
         }
       />
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+      <Animated.View
+        style={[
+          styles.footer,
+          {
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {renderDirectBookingButtons()}
       </Animated.View>
 

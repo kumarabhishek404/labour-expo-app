@@ -1,3 +1,17 @@
+import EMPLOYER from "@/app/api/employer";
+import Atoms from "@/app/AtomStore";
+import TOAST from "@/app/hooks/toast";
+import REFRESH_USER from "@/app/hooks/useRefreshUser";
+import CustomHeading from "@/components/commons/CustomHeading";
+import IconButtonGroup from "@/components/commons/IconGroupButtons";
+import Loader from "@/components/commons/Loaders/Loader";
+import Colors from "@/constants/Colors";
+import { t } from "@/utils/translationHelper";
+import { useMutation } from "@tanstack/react-query";
+import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useAtom } from "jotai";
+import moment from "moment";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   BackHandler,
@@ -6,27 +20,13 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import Colors from "@/constants/Colors";
-import { router, useFocusEffect, useNavigation } from "expo-router";
-import Loader from "@/components/commons/Loaders/Loader";
-import { useMutation } from "@tanstack/react-query";
-import FirstScreen from "./first";
-import { useAtom } from "jotai";
-import Atoms from "@/app/AtomStore";
-import moment from "moment";
-import TOAST from "@/app/hooks/toast";
-import FinalScreen from "./final";
-import { t } from "@/utils/translationHelper";
-import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import EMPLOYER from "@/app/api/employer";
-import CustomHeading from "@/components/commons/CustomHeading";
-import ThirdScreen from "./third";
-import SecondScreen from "./second";
-import IconButtonGroup from "@/components/commons/IconGroupButtons";
-import myServices from "../../../assets/myServices.png";
 import bookedWorkers from "../../../assets/bookedWorkers.png";
+import myServices from "../../../assets/myServices.png";
 import GradientWrapper from "../../../components/commons/GradientWrapper";
+import FinalScreen from "./final";
+import FirstScreen from "./first";
+import SecondScreen from "./second";
+import ThirdScreen from "./third";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -211,12 +211,12 @@ const AddServiceScreen = () => {
         return false; // Allow back navigation
       };
 
-      const backHandler = BackHandler.addEventListener(
+      const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
         backAction
       );
 
-      return () => backHandler.remove();
+      return () => subscription.remove();
     }, [step])
   );
 

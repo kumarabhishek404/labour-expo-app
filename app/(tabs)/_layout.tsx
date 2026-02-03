@@ -1,9 +1,11 @@
-import { StyleSheet, TouchableOpacity, View, BackHandler } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  BackHandler,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import {
@@ -17,13 +19,14 @@ import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import Atoms from "../AtomStore";
 import NOTIFICATION from "../api/notification";
 import ExitConfirmationModal from "@/components/commons/ExitPopup";
 import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
+import { getToken } from "@/utils/authStorage";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -34,41 +37,51 @@ type IconLibrary =
   | "FontAwesome";
 
 export default function Layout() {
+  const { height, width } = useWindowDimensions();
+
+  // Base scaling factor (change if needed)
+  const scale = width / 375; // 375 is iPhone X width
+  const tabHeight = Math.max(60 * scale, 60); // Prevents being too small
+  const iconSize = Math.min(28 * scale, 34);
+  const textSize = Math.min(24 * scale, 14);
+
   const [notificationCount, setNotificationCount]: any = useAtom(
-    Atoms.notificationCount
+    Atoms.notificationCount,
   );
-  const [token, setToken] = useAtom(Atoms?.tokenAtom);
   const pathname = usePathname();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const handleLogout = () => {
-      console.log("🚪 Logging out user (atom reset)");
-      setUserDetails(null);
-      // Optionally:
-      // router.replace("/login");
-    };
-
-    API_CLIENT.eventEmitter.on("logout", handleLogout);
-
-    return () => {
-      API_CLIENT.eventEmitter.off("logout", handleLogout);
-    };
+    // wait one render cycle
+    setIsReady(true);
   }, []);
 
   useEffect(() => {
+    if (!isReady) return;
+
     // If not logged in, redirect to login page
-    if (!userDetails || !userDetails?._id) {
+    if (
+      !userDetails ||
+      !userDetails?.isAuth ||
+      !userDetails?._id ||
+      !userDetails?.name ||
+      !userDetails?.address ||
+      !userDetails?.age ||
+      !userDetails?.gender ||
+      !userDetails?.profilePicture
+    ) {
       console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
     }
-  }, [userDetails, router]);
+  }, [userDetails, router, isReady]);
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
+        const token = await getToken();
         if (!token || !userDetails?._id) return;
         const data = await NOTIFICATION.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
@@ -84,7 +97,7 @@ export default function Layout() {
     }
 
     return () => clearInterval(intervalId);
-  }, [userDetails?._id, token, setNotificationCount]); // Added setNotificationCount to dependencies
+  }, [userDetails?._id, setNotificationCount]); // Added setNotificationCount to dependencies
 
   useEffect(() => {
     if (!history.current.includes(pathname)) {
@@ -111,11 +124,12 @@ export default function Layout() {
       }
       return true;
     };
-    const backHandler = BackHandler.addEventListener(
+    const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
-    return () => backHandler.remove();
+
+    return () => subscription.remove();
   }, [pathname]);
 
   const TabButton = ({
@@ -124,27 +138,16 @@ export default function Layout() {
     title,
     iconName,
     iconLibrary = "MaterialIcons",
-    iconSize = 28,
+    itemStyles,
   }: {
     props: any;
     path: string;
     title: string;
     iconName: string;
     iconLibrary?: IconLibrary;
-    iconSize?: number;
+    itemStyles?: any;
   }) => {
-    const isSelected = props.accessibilityState?.selected;
-    const scale = useSharedValue(1);
-    const translateY = useSharedValue(0);
-
-    useEffect(() => {
-      scale.value = withSpring(isSelected ? 1.2 : 1, { damping: 10 });
-      translateY.value = withSpring(isSelected ? -5 : 0, { damping: 10 });
-    }, [isSelected]);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }, { translateY: translateY.value }],
-    }));
+    const isSelected = `/(tabs)${pathname}` === path;
 
     const iconMap = {
       MaterialIcons,
@@ -154,26 +157,28 @@ export default function Layout() {
       FontAwesome,
     };
 
-    const Icon = iconMap[iconLibrary as IconLibrary] || MaterialIcons;
-
-    // Ensure iconName is a string literal type using 'as const'
+    const Icon = iconMap[iconLibrary];
     const iconNameLiteral = iconName as any;
 
     return (
       <TouchableOpacity
-        style={styles.tabButton}
+        style={[
+          styles.tabButton,
+          itemStyles,
+          isSelected && styles.activeTabButton,
+        ]}
         onPress={() => router.push(path as any)}
+        activeOpacity={0.8}
       >
-        <Animated.View style={animatedStyle}>
-          <Icon
-            name={iconNameLiteral}
-            size={iconSize}
-            color={isSelected ? Colors.primary : "#888"}
-          />
-        </Animated.View>
+        <Icon
+          name={iconNameLiteral}
+          size={iconSize}
+          color={isSelected ? "#fff" : "#888"}
+        />
         <CustomText
-          color={isSelected ? Colors.primary : "#888"}
+          color={isSelected ? "#fff" : "#888"}
           fontWeight="600"
+          baseFont={textSize}
         >
           {t(title)}
         </CustomText>
@@ -181,135 +186,143 @@ export default function Layout() {
     );
   };
 
+  console.log("userDetails---", userDetails);
+
   const isAdmin = userDetails?.isAdmin;
 
   return (
-    <View style={styles.container}>
-      {userDetails && userDetails?.status !== "ACTIVE" ? (
-        <UserProfile />
-      ) : (
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: styles.tabBar,
-            tabBarActiveTintColor: Colors.primary, // Added for consistency
-            tabBarInactiveTintColor: "#888",
-          }}
-        >
-          <Tabs.Screen
-            name="fourth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fourth"
-                  title={isAdmin ? "users" : "allRequests"}
-                  iconName={
-                    isAdmin ? "people-sharp" : "hand-front-right-outline"
-                  }
-                  iconLibrary={isAdmin ? "Ionicons" : "MaterialCommunityIcons"}
-                />
-              ),
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <View style={styles.container}>
+        {userDetails &&
+        !userDetails?.token &&
+        userDetails?.status !== "ACTIVE" ? (
+          <UserProfile />
+        ) : (
+          <Tabs
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: [
+                styles.tabBar,
+                {
+                  // height: tabHeight,
+                  // paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
+                  // paddingTop: 6 * scale,
+                },
+              ],
             }}
-          />
-
-          <Tabs.Screen
-            name="second"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/second"
-                  title={isAdmin ? "services" : "search"}
-                  iconName={isAdmin ? "sickle" : "search"}
-                  iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
-                />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="index"
-            options={{
-              tabBarButton: (props: any) =>
-                isAdmin ? (
+          >
+            <Tabs.Screen
+              name="fourth"
+              options={{
+                tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)"
-                    title="teams"
-                    iconName="group"
-                    iconLibrary="FontAwesome"
+                    path="/(tabs)/fourth"
+                    title={isAdmin ? "users" : "allRequests"}
+                    iconName={
+                      isAdmin ? "people-sharp" : "hand-front-right-outline"
+                    }
+                    iconLibrary={
+                      isAdmin ? "Ionicons" : "MaterialCommunityIcons"
+                    }
+                    // itemStyles={{
+                    //   borderTopRightRadius: 12,
+                    // }}
                   />
-                ) : (
-                  <TouchableOpacity
-                    style={styles.postButton}
-                    onPress={() => router.push("/(tabs)")}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      size={36}
-                      color={Colors.white}
-                    />
-                  </TouchableOpacity>
                 ),
-            }}
-          />
+              }}
+            />
 
-          <Tabs.Screen
-            name="third"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/third"
-                  title={isAdmin ? "errors" : "myBookings"}
-                  iconName={isAdmin ? "error" : "calendar"}
-                  iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
-                />
-              ),
-            }}
-          />
+            <Tabs.Screen
+              name="second"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/second"
+                    title={isAdmin ? "services" : "search"}
+                    iconName={isAdmin ? "sickle" : "search"}
+                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
+                    // itemStyles={{
+                    //   borderTopLeftRadius: 12,
+                    //   borderTopRightRadius: 12,
+                    // }}
+                  />
+                ),
+              }}
+            />
 
-          <Tabs.Screen
-            name="fifth"
-            options={{
-              tabBarButton: (props: any) => (
-                <TabButton
-                  props={props}
-                  path="/(tabs)/fifth"
-                  title={isAdmin ? "myProfile" : "myProfile"}
-                  iconName={isAdmin ? "person" : "person-outline"}
-                />
-              ),
-            }}
-          />
-        </Tabs>
-      )}
+            <Tabs.Screen
+              name="index"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/"
+                    title={isAdmin ? "teams" : "home"}
+                    iconName={isAdmin ? "group" : "home"}
+                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
+                  />
+                ),
+              }}
+            />
 
-      <StickButtonWithWall
-        content={
-          <>
-            <MaterialIcons name="notifications" size={28} color="#fff" />
-            {notificationCount > 0 && <RippleDot />}
-          </>
-        }
-        onPress={() =>
-          router.push({
-            pathname: "/screens/notifications",
-            params: { title: "notifications", type: "all" },
-          })
-        }
-        // notificationCount={notificationCount}
-      />
+            <Tabs.Screen
+              name="third"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/third"
+                    title={isAdmin ? "errors" : "myBookings"}
+                    iconName={isAdmin ? "error" : "calendar"}
+                    iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+                  />
+                ),
+              }}
+            />
 
-      <ExitConfirmationModal
-        visible={showExitModal}
-        onCancel={() => setShowExitModal(false)}
-        onConfirm={() => {
-          BackHandler.exitApp();
-          setShowExitModal(false);
-        }}
-      />
+            <Tabs.Screen
+              name="fifth"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/fifth"
+                    title={isAdmin ? "myProfile" : "myProfile"}
+                    iconName={isAdmin ? "person" : "person-outline"}
+                  />
+                ),
+              }}
+            />
+          </Tabs>
+        )}
+
+        <StickButtonWithWall
+          content={
+            <>
+              <MaterialIcons name="notifications" size={28} color="#fff" />
+              {notificationCount > 0 && <RippleDot />}
+            </>
+          }
+          onPress={() =>
+            router.push({
+              pathname: "/screens/notifications",
+              params: { title: "notifications", type: "all" },
+            })
+          }
+          // notificationCount={notificationCount}
+        />
+
+        <ExitConfirmationModal
+          visible={showExitModal}
+          onCancel={() => setShowExitModal(false)}
+          onConfirm={() => {
+            BackHandler.exitApp();
+            setShowExitModal(false);
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -317,29 +330,22 @@ export default function Layout() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   tabBar: {
-    height: 80,
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
     backgroundColor: Colors.white,
     elevation: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 5 },
+    paddingBottom: Platform.OS === "ios" ? 20 : 0,
   },
-  tabButton: { alignItems: "center", justifyContent: "center" },
-  postButton: {
-    position: "absolute",
-    bottom: 20,
-    left: "50%",
-    transform: [{ translateX: -30 }],
-    backgroundColor: Colors.primary,
-    borderRadius: 50,
-    width: 60,
-    height: 60,
-    justifyContent: "center",
+  tabButton: {
+    height: 75,
     alignItems: "center",
-    elevation: 5,
+    justifyContent: "center",
+  },
+  activeTabButton: {
+    backgroundColor: Colors.primary,
   },
 });

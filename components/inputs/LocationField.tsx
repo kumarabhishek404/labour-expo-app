@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
-import AddAddressModal from "@/app/screens/location/addAddress";
 import { convertToLabelValueArray } from "@/constants/functions";
 import { t } from "@/utils/translationHelper";
 import PaperDropdown from "./Dropdown";
 import AddAddressDrawer from "@/app/screens/location/addAddress";
+import CustomText from "../commons/CustomText";
 
 interface LocationFieldProps {
   address: string;
@@ -33,32 +33,26 @@ const LocationField = ({
       : []),
   ]);
 
-  console.log("userDetailssavedAddresses---", userDetails?.savedAddresses);
-
   console.log("address---", address);
-
-  console.log("userDetails?.address---", userDetails?.address);
+  console.log("userDetails?.savedAddresses---", userDetails?.savedAddresses);
 
   useEffect(() => {
     if (userDetails?.savedAddresses) {
       const uniqueAddresses = Array.from(
-        new Set(userDetails.savedAddresses)
+        new Set(userDetails.savedAddresses),
       ).map((address) => ({
         label: address as string,
         value: address as string,
       }));
 
-      setAllSavedAddresses([
-        ...uniqueAddresses,
-        // { label: t("addNewAddress"), value: "addAddress" },
-      ]);
+      setAllSavedAddresses([...uniqueAddresses]);
 
       if (
         userDetails.savedAddresses.includes(address) === false &&
         userDetails.savedAddresses.length > 0
       ) {
         setAddress(
-          userDetails.savedAddresses[userDetails.savedAddresses.length - 1]
+          userDetails.savedAddresses[userDetails.savedAddresses.length - 1],
         );
       }
     }
@@ -66,22 +60,38 @@ const LocationField = ({
 
   return (
     <View style={styles.container}>
-      <PaperDropdown
-        name="selectAddress"
-        selectedValue={address}
-        onSelect={setAddress}
-        placeholder={t("selectAddress")}
-        options={allSavedAddresses}
-        errors={isError}
-        icon={
+      {allSavedAddresses && allSavedAddresses?.length > 0 ? (
+        <PaperDropdown
+          name="selectAddress"
+          selectedValue={address}
+          onSelect={setAddress}
+          placeholder={t("selectAddress")}
+          options={allSavedAddresses}
+          errors={isError}
+          icon={
+            <Ionicons
+              name={"location"}
+              size={30}
+              color={Colors.secondary}
+              style={{ paddingVertical: 10, paddingRight: 10 }}
+            />
+          }
+        />
+      ) : (
+        <TouchableOpacity
+          style={styles.addAddressBox}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <CustomText baseFont={16} textAlign="left" color={Colors?.link}>
+            {t("addNewAddress")}
+          </CustomText>
           <Ionicons
-            name={"location"}
-            size={30}
-            color={Colors.secondary}
-            style={{ paddingVertical: 10, paddingRight: 10 }}
+            name="location-outline"
+            size={20}
+            color={Colors?.inputPlaceholder}
           />
-        }
-      />
+        </TouchableOpacity>
+      )}
       <AddAddressDrawer
         type="secondary"
         visible={isModalVisible}
@@ -102,7 +112,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "transparent",
-    // marginBottom: 10,
   },
   dropdown: {
     height: 53,
@@ -156,5 +165,18 @@ const styles = StyleSheet.create({
   },
   dropdownClosed: {
     borderColor: "gray",
+  },
+  addAddressBox: {
+    minHeight: 53,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: Colors?.inputBorder,
+    borderRadius: 8,
+    backgroundColor: Colors?.white,
+    gap: 5,
   },
 });

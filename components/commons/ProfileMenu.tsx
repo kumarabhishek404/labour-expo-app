@@ -56,10 +56,6 @@ const ProfileMenu = ({ disabled }: any) => {
     setIsAdmin(userDetails?.isAdmin);
   }, [userDetails?.role]);
 
-  const handleLogout = async () => {
-    logout();
-  };
-
   const registerNotification = async () => {
     try {
       await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
@@ -225,7 +221,7 @@ const ProfileMenu = ({ disabled }: any) => {
     },
     {
       title: t("reviews"),
-      icon: <AntDesign name="staro" size={28} color={Colors?.primary} />,
+      icon: <MaterialIcons name="reviews" size={28} color={Colors?.primary} />,
       onPress: () =>
         router?.push({
           pathname: "/screens/reviews",
@@ -389,7 +385,7 @@ const ProfileMenu = ({ disabled }: any) => {
           style={{ marginLeft: 5 }}
         />
       ),
-      onPress: handleLogout,
+      onPress: logout,
       textStyle: { color: Colors.danger },
       style: [styles?.menuItem],
       isSuspended: false,

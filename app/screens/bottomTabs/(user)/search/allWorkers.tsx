@@ -47,7 +47,7 @@ const AllWorkers = ({
       },
     });
   };
-  
+
   return (
     <GradientWrapper height={Dimensions.get("window").height - 180}>
       {isLoading ? (
@@ -55,7 +55,7 @@ const AllWorkers = ({
       ) : (
         <>
           <View style={styles.container}>
-            <View style={styles?.paginationHeader}>
+            {/* <View style={styles?.paginationHeader}>
               <TouchableOpacity
                 style={{
                   flexDirection: "row",
@@ -73,7 +73,7 @@ const AllWorkers = ({
                   {t("applyFilters")}
                 </CustomText>
               </TouchableOpacity>
-            </View>
+            </View> */}
             {Array.isArray(memoizedData) && memoizedData.length > 0 ? (
               <ListingsVerticalWorkers
                 style={styles.listContainer}
@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
-    paddingBottom: 150
+    paddingBottom: 150,
+    paddingTop: 10,
   },
   paginationHeader: {
     width: "100%",

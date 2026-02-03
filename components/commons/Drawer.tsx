@@ -7,22 +7,16 @@ import {
   Dimensions,
   ScrollView,
   BackHandler,
-  Pressable,
   TouchableOpacity,
 } from "react-native";
 import { useAtom } from "jotai";
-import { useFocusEffect } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
-import {
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
 import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
-import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+// import { useIsFocused } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -30,23 +24,29 @@ const GlobalSideDrawer = () => {
   const [drawerState, setDrawerState]: any = useAtom(Atoms?.SideDrawerAtom);
   const slideAnim = useRef(new Animated.Value(width)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
+  // const isFocused = useIsFocused(); // Expo Router's screen focus detection
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (drawerState.visible) {
-          closeDrawer();
-          return true;
-        }
-        return false;
-      };
+  // Back press handler for Android
+  useEffect(() => {
+    // if (!isFocused) return;
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [drawerState, setDrawerState])
-  );
+    const onBackPress = () => {
+      if (drawerState.visible) {
+        closeDrawer();
+        return true;
+      }
+      return false;
+    };
 
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, [drawerState.visible]);
+
+  // Drawer opening animation
   useEffect(() => {
     if (drawerState.visible) {
       Animated.parallel([
@@ -64,6 +64,7 @@ const GlobalSideDrawer = () => {
     }
   }, [drawerState.visible]);
 
+  // Close drawer animation
   const closeDrawer = () => {
     Animated.parallel([
       Animated.timing(slideAnim, {
@@ -97,19 +98,14 @@ const GlobalSideDrawer = () => {
       >
         <View style={styles.wrapper}>
           <View style={styles.header}>
-            <TouchableOpacity
-              onPress={closeDrawer}
-              style={{
-                marginLeft: 10,
-              }}
-            >
+            <TouchableOpacity onPress={closeDrawer} style={{ marginLeft: 10 }}>
               <AntDesign name="arrowleft" size={28} color={Colors.white} />
             </TouchableOpacity>
             <CustomHeading
               baseFont={20}
               fontWeight="bold"
               style={styles.headerText}
-              color={Colors?.white}
+              color={Colors.white}
             >
               {t(drawerState.title)}
             </CustomHeading>
@@ -188,7 +184,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderColor: Colors.white,
-    backgroundColor: Colors?.primary,
+    backgroundColor: Colors.primary,
   },
   headerText: {
     flex: 1,

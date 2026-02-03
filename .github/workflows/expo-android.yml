@@ -1,0 +1,95 @@
+name: Expo Android CI/CD
+
+on:
+  push:
+    branches:
+      - user/abhishek/development/old-app
+
+jobs:
+  build_android:
+    name: Build Android App
+    runs-on: ubuntu-latest
+
+    outputs:
+      build_id: ${{ steps.build.outputs.build_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
+
+      - name: Build Android (AAB)
+        id: build
+        run: |
+          BUILD_JSON=$(eas build \
+            --platform android \
+            --profile production \
+            --non-interactive \
+            --json)
+
+          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.[0].id')
+
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+
+  submit_android:
+    name: Submit Android to Play Store
+    needs: build_android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
+
+      - name: Submit to Play Store
+        run: |
+          eas submit \
+            --platform android \
+            --profile production \
+            --build-id ${{ needs.build_android.outputs.build_id }} \
+            --non-interactive
+
+  publish_ota:
+    name: Publish OTA Update
+    needs: build_android
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm ci
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
+
+      - name: Publish OTA update
+        run: |
+          eas update \
+            --branch production \
+            --message "OTA update from GitHub Actions" \
+            --non-interactive
