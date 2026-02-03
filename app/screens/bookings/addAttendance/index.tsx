@@ -12,6 +12,7 @@ import { Alert, StyleSheet, View } from "react-native";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
 import Colors from "@/constants/Colors";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 export default function AddAttendance() {
   const [selectedDate, setSelectedDate]: any = useState(moment());
@@ -92,7 +93,7 @@ export default function AddAttendance() {
         workerId,
         date: selectedDate?.format("YYYY-MM-DD"),
         status: records[selectedDate?.format("YYYY-MM-DD")] ?? "",
-      })
+      }),
     );
     mutationAddAttendance.mutate(formattedAttendance);
   };
@@ -124,7 +125,7 @@ export default function AddAttendance() {
     const totalDays: number = today.diff(start, "days") + 1;
 
     return Array.from({ length: totalDays }, (_, i: number) =>
-      moment(start).add(i, "days")
+      moment(start).add(i, "days"),
     );
   };
 
@@ -175,9 +176,15 @@ export default function AddAttendance() {
         <View style={styles.header}>
           <View style={{ width: "70%" }}>
             <View style={styles?.typAndSubType}>
-              <CustomHeading baseFont={20} textAlign="left">
-                {t(booking?.type)} {"-"} {t(booking?.subType)}
-              </CustomHeading>
+              {booking?.type ? (
+                <CustomHeading baseFont={20} textAlign="left">
+                  {t(booking?.type)} {"-"} {t(booking?.subType)}
+                </CustomHeading>
+              ) : (
+                <CustomHeading baseFont={20} textAlign="left">
+                  {getDynamicWorkerType(booking?.appliedSkill?.skill, 1)}
+                </CustomHeading>
+              )}
             </View>
             <CustomText textAlign="left">{booking?.address}</CustomText>
           </View>

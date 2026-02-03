@@ -1,13 +1,5 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withRepeat,
-  Easing,
-  cancelAnimation,
-} from "react-native-reanimated";
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Dimensions, Animated, Easing } from "react-native";
 import CustomText from "./CustomText";
 import Colors from "@/constants/Colors";
 
@@ -20,31 +12,36 @@ const ScrollingText = ({
   baseFont = 16,
   duration = 10000,
 }: any) => {
-  const translateX = useSharedValue(0);
+  const translateX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    translateX.value = withRepeat(
-      withTiming(-width, {
+    const animation = Animated.loop(
+      Animated.timing(translateX, {
+        toValue: -width, // scroll completely to the left
         duration,
         easing: Easing.linear,
-      }),
-      -1,
-      false
+        useNativeDriver: true,
+      })
     );
 
-    return () => {
-      cancelAnimation(translateX);
-      translateX.value = 0;
-    };
-  }, []);
+    animation.start();
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+    return () => {
+      animation.stop();
+      translateX.setValue(0);
+    };
+  }, [duration, translateX]);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[animatedStyle, styles.textWrapper]}>
+      <Animated.View
+        style={[
+          styles.textWrapper,
+          {
+            transform: [{ translateX }],
+          },
+        ]}
+      >
         <View style={styles.textContainer}>
           {icon}
           <CustomText baseFont={baseFont} color={textColor}>

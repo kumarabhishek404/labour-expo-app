@@ -7,7 +7,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import PaginationString from "@/components/commons/Pagination/PaginationString";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
@@ -149,14 +149,14 @@ const Requests = () => {
           >
             {category === "sentRequests" ? (
               <AntDesign
-                name="rocket1"
+                name="rocket"
                 size={20}
                 color={Colors?.fourthButton}
                 style={{ transform: [{ rotate: "180deg" }] }}
               />
             ) : (
               <AntDesign
-                name="rocket1"
+                name="rocket"
                 size={20}
                 color={Colors?.fourthButton}
               />

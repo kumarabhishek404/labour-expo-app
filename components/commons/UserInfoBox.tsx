@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { useTranslation } from "@/utils/i18n";
-import Button from "../inputs/Button";
 import Colors from "@/constants/Colors";
 import TOAST from "@/app/hooks/toast";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import Atoms from "@/app/AtomStore";
 import { useAtomValue, useSetAtom } from "jotai";
 import AUTH from "@/app/api/auth";
 import AddAddressDrawer from "@/app/screens/location/addAddress";
+import { handleCall } from "@/constants/functions";
 
 interface UserInfoComponentProps {
   user: any;
@@ -146,12 +146,15 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
             styles?.addressRow,
           ]}
         >
-          <CustomHeading style={{ flex: 1 }} baseFont={14} textAlign="left">
-            <CustomText>{t("address")}</CustomText>
+          <CustomHeading
+            style={{ width: user?._id === userDetails?._id ? "70%" : "100%" }}
+            baseFont={14}
+          >
+            <CustomText textAlign="left">{t("address")}</CustomText>
             {"  "}
             {user?.address || t("addressNotFound")}{" "}
           </CustomHeading>
-          {user?.status === "ACTIVE" && (
+          {user?.status === "ACTIVE" && user?._id === userDetails?._id && (
             <TouchableOpacity
               onPress={() => setIsAddress(true)}
               style={styles?.changeAddress}
@@ -166,17 +169,25 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           <CustomHeading baseFont={14} padding={12}>
             <CustomText>{t("mobileNumber")}</CustomText>
             {"  "}
-            {user?._id === userDetails?._id
-              ? user?.mobile || user?.alternateMobile || t("mobileNotFound")
-              : "**********"}
+            {user?.mobile || t("mobileNotFound")}
           </CustomHeading>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: "flex-end",
+              paddingRight: 10,
+            }}
+            onPress={() => handleCall(user?.mobile)}
+          >
+            {userDetails?._id !== user?._id && (
+              <CustomText color={Colors?.link} fontWeight="600" baseFont={18}>
+                {t("callEmployer")}
+              </CustomText>
+            )}
+          </TouchableOpacity>
         </View>
         <View style={[styles.row, styles.lastBox]}>
-          <CustomHeading
-            style={{ width: "70%" }}
-            baseFont={14}
-            textAlign="left"
-          >
+          <CustomHeading baseFont={14} textAlign="left">
             <CustomText>{t("emailAddress")}</CustomText>
             {"  "}
             {user?.email?.value || t("emailNotFound")}{" "}
@@ -184,6 +195,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           {user?._id === userDetails?._id &&
             userDetails?.status === "ACTIVE" &&
             user?.email &&
+            user?.email?.value &&
             !user?.email?.isVerified && (
               <TouchableOpacity onPress={handleSendOtp}>
                 <CustomText color={Colors?.link} fontWeight="600">
@@ -238,6 +250,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: "row",
     backgroundColor: Colors?.background,
+    alignItems: "center",
   },
   userInfoTextWrapper: {
     marginBottom: 25,

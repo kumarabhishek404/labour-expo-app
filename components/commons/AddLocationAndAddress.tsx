@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import LocationField from "../inputs/LocationField";
 import Button from "../inputs/Button";
 import * as Location from "expo-location";
@@ -23,6 +23,7 @@ interface AddLocationAndAddressProps {
   errors: any;
   icon?: any;
   style?: any;
+  isRequired?: boolean;
 }
 
 const AddLocationAndAddress = ({
@@ -35,71 +36,78 @@ const AddLocationAndAddress = ({
   selectedOption = "address",
   errors,
   style,
+  isRequired,
 }: AddLocationAndAddressProps) => {
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCurrentLocation = async () => {
-    setIsLoading(true);
+  // const fetchCurrentLocation = async () => {
+  //   setIsLoading(true);
 
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Please grant location permission");
-        return;
-      }
+  //   try {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       console.log("Please grant location permission");
+  //       return;
+  //     }
 
-      let currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
-      });
-      let tempLocation = {
-        latitude: currentLocation?.coords?.latitude,
-        longitude: currentLocation?.coords?.longitude,
-        latitudeDelta: 2,
-        longitudeDelta: 2,
-      };
-      setLocation(tempLocation);
-      let response: any = await Location.reverseGeocodeAsync({
-        latitude: tempLocation?.latitude,
-        longitude: tempLocation?.longitude,
-      });
-      setIsLoading(false);
-      setAddress(response[0]?.formattedAddress);
-      setUserDetails({
-        ...userDetails,
-        savedAddresses: [
-          ...(userDetails?.savedAddresses ?? []),
-          response[0]?.formattedAddress,
-        ],
-      });
-    } catch (err) {
-      setIsLoading(false);
-      console.log("Error while fetching location");
-    }
-  };
+  //     let currentLocation = await Location.getCurrentPositionAsync({
+  //       accuracy: Location.Accuracy.BestForNavigation,
+  //     });
+  //     let tempLocation = {
+  //       latitude: currentLocation?.coords?.latitude,
+  //       longitude: currentLocation?.coords?.longitude,
+  //       latitudeDelta: 2,
+  //       longitudeDelta: 2,
+  //     };
+  //     setLocation(tempLocation);
+  //     let response: any = await Location.reverseGeocodeAsync({
+  //       latitude: tempLocation?.latitude,
+  //       longitude: tempLocation?.longitude,
+  //     });
+  //     setIsLoading(false);
+  //     setAddress(response[0]?.formattedAddress);
+  //     setUserDetails({
+  //       ...userDetails,
+  //       savedAddresses: [
+  //         ...(userDetails?.savedAddresses ?? []),
+  //         response[0]?.formattedAddress,
+  //       ],
+  //     });
+  //   } catch (err) {
+  //     setIsLoading(false);
+  //     console.log("Error while fetching location");
+  //   }
+  // };
 
+  // console.log("address---", address);
+  
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
-        <CustomHeading
-          color={Colors?.inputLabel}
-          baseFont={18}
-          fontWeight="600"
-        >
-          {label}
-        </CustomHeading>
-        <TouchableOpacity
-          style={styles.radioButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <CustomHeading color={Colors?.primary} baseFont={16} fontWeight="500">
-            {t("addNewAddress")}
+        <Text style={styles?.labelContainer}>
+          <CustomHeading
+            color={Colors?.inputLabel}
+            baseFont={18}
+            fontWeight="600"
+          >
+            {label}
           </CustomHeading>
-        </TouchableOpacity>
+          {isRequired && (
+            <CustomHeading
+              textAlign="left"
+              color={Colors.danger}
+              baseFont={16}
+              fontWeight="500"
+            >
+              {" "}
+              ({t("required")})
+            </CustomHeading>
+          )}
+        </Text>
       </View>
 
-      {/* {selectedOption === "address" ? ( */}
       <LocationField
         address={address}
         setAddress={setAddress}
@@ -153,6 +161,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  labelContainer: {
+    flexDirection: "row",
+    gap: 5,
   },
   radioContainer: {
     flexDirection: "row",

@@ -15,15 +15,14 @@ const FetchLocationNote = ({ motiveItem }: any) => {
     !userDetails.location.latitude ||
     !userDetails.location.longitude;
 
-    if (!shouldRender) {
-      return null; // Don't render the component
-    }
+  if (!shouldRender) {
+    return null; // Don't render the component
+  }
 
   return (
     <View style={styles.container}>
       <CustomText textAlign="left" style={styles.noteText}>
         {t("fetchLocation", { entity: t(motiveItem).toLowerCase() })}
-        {/* {t("pleaseFetchNearestWorkers")} {t(motiveItem)} */}
       </CustomText>
       <Button
         style={styles?.button}

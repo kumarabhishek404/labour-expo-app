@@ -19,11 +19,6 @@ const useLogout = (): UseLogoutReturn => {
   const setUserDetails = useSetAtom(Atoms?.UserAtom);
 
   const logout = useCallback(async () => {
-    // if (!isLoggedIn) {
-    //   console.log("User already logged out. Skipping logout.");
-    //   return;
-    // }
-
     console.log("Starting logout...");
     setIsLoading(true);
     setError(null);
@@ -32,11 +27,11 @@ const useLogout = (): UseLogoutReturn => {
       await AsyncStorage.removeItem("user");
       await removeToken();
 
+      router.replace("/screens/auth/login");
       setIsLoggedIn(false);
 
       console.log("Redirected to login");
       setUserDetails({});
-      // router.replace("/screens/auth/login");
     } catch (error: any) {
       const errorMessage = error?.message || "Error during logout";
       setError(new Error(errorMessage));

@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import { Animated, Easing } from "react-native";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ import AddSkillDrawer from "@/components/commons/AddSkillModal";
 import ApplyAsMediatorDrawer from "@/components/commons/ApplyAsMediatorDrawer";
 import { handleCall } from "@/constants/functions";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { getDynamicWorkerType } from "@/utils/i18n";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -99,12 +100,23 @@ const ServiceActionButtons = ({
   const [isSelectSkillModal, setIsSelectSkillModal] = useState(false);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState("");
-
+  const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [isAddSkill, setIsAddSkill] = useState(false);
 
   const hasUsersAppliedOrSelected =
     service?.appliedUsers?.some((user: any) => user.status === "PENDING") ||
     service?.selectedUsers?.some((user: any) => user.status === "SELECTED");
+
+  const slideAnim = React.useRef(new Animated.Value(100)).current;
+
+  React.useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   useEffect(() => {
     setSelectedWorkers(selectedWorkersIds);
@@ -170,7 +182,7 @@ const ServiceActionButtons = ({
     },
     onError: (err: any) => {
       TOAST?.error(
-        `Error while cancelling your application in the service - ${err?.response?.data?.message}`
+        `Error while cancelling your application in the service - ${err?.response?.data?.message}`,
       );
       console.error("error while unapplying the service ", err);
     },
@@ -188,7 +200,7 @@ const ServiceActionButtons = ({
     onError: (err) => {
       console.error(
         "error while cancelling the booking or remove selected from the service by mediator ",
-        err
+        err,
       );
     },
   });
@@ -254,11 +266,18 @@ const ServiceActionButtons = ({
       .map((skill: any) => skill.skill)
       .filter((skill: any) => serviceRequirements.includes(skill));
 
+    const finalSkills = serviceRequirements?.map((skill: any) => {
+      return {
+        label: getDynamicWorkerType(skill, 1),
+        value: skill,
+      };
+    });
+
+    setFilteredSkills(finalSkills);
     if (members && members.length > 0) {
       // Mediator applying with workers
       setIsWorkerSelectModal(true);
     } else {
-      console.log("matchedSkills - ", matchedSkills);
       // Individual worker applying
       if (matchedSkills.length === 0) {
         return setIsAddSkill(true); // No valid skill found, prompt user to add skill
@@ -493,7 +512,7 @@ const ServiceActionButtons = ({
     setSelectedWorkersIds((prev: string[]) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
@@ -523,7 +542,7 @@ const ServiceActionButtons = ({
               { pricePerDay: 300, skill: "brickLayer" },
             ].map(
               (skill: any) =>
-                `${t(skill?.skill)} ${skill?.pricePerDay} / ${t("perDay")}, `
+                `${t(skill?.skill)} ${skill?.pricePerDay} / ${t("perDay")}, `,
             )}
           </CustomText>
           <CustomText style={styles.userAddress} textAlign="left">
@@ -536,7 +555,7 @@ const ServiceActionButtons = ({
 
   const memoizedData = useMemo(
     () => members && members?.flatMap((data: any) => data),
-    [members]
+    [members],
   );
 
   const loadMore = () => {
@@ -647,7 +666,14 @@ const ServiceActionButtons = ({
           mutationCancelServiceByMediatorAfterSelection?.isPending
         }
       />
-      <Animated.View style={styles.footer} entering={SlideInDown.delay(200)}>
+      <Animated.View
+        style={[
+          styles.footer,
+          {
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {renderButtons()}
       </Animated.View>
 
@@ -745,6 +771,7 @@ const ServiceActionButtons = ({
       <AddSkillDrawer
         isDrawerVisible={isAddSkill}
         setIsDrawerVisible={setIsAddSkill}
+        filteredSkills={filteredSkills}
       />
 
       <ApplyAsMediatorDrawer

@@ -11,10 +11,13 @@ import CustomHeading from "@/components/commons/CustomHeading";
 import { useMutation } from "@tanstack/react-query";
 import USER from "@/app/api/user";
 import Loader from "@/components/commons/Loaders/Loader";
-import { fetchCurrentLocation } from "@/constants/functions";
+import { saveToken } from "@/utils/authStorage";
+import { useAtom } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const FifthScreen = () => {
   const { userId } = useLocalSearchParams();
+  const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const {
     control,
     watch,
@@ -29,10 +32,13 @@ const FifthScreen = () => {
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
     mutationFn: (payload: any) => USER.updateUserById(payload),
-    onSuccess: () => {
-      TOAST?.success(t("profilePictureAddedSuccessfully"));
+    onSuccess: async (response: any) => {
+      const token = response?.data?.token;
+      const user = response?.data?.data;
+      await saveToken(token);
+      setUserDetails({ isAuth: true, ...user });
+      router.replace("/(tabs)");
       console.log("Profile updated successfully");
-      router?.push("/screens/auth/login");
     },
     onError: (error) => {
       console.error("Error while updating profile picture: ", error);

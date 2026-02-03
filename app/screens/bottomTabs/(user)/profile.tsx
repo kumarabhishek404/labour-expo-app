@@ -37,9 +37,8 @@ import EmailAddressField from "@/components/inputs/EmailAddress";
 import ProfileNotification from "@/components/commons/CompletProfileNotify";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
-import AUTH from "@/app/api/auth";
 import USE_LOGOUT from "@/app/hooks/useLogout";
-import { getToken } from "@/utils/authStorage";
+import JoinWhatsAppGroup from "@/components/commons/JoinWhatsappGroup";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
@@ -47,7 +46,7 @@ const UserProfile = () => {
   const [selectedTab, setSelectedTab] = useState("profileInformation");
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
-    userDetails?.profilePicture
+    userDetails?.profilePicture,
   );
   const [loading, setLoading] = useState(false);
   const { logout } = USE_LOGOUT.useLogout();
@@ -109,19 +108,19 @@ const UserProfile = () => {
             userDetails?.status === "DISABLED"
               ? t("suspended")
               : t("notApproved")
-          }.`
+          }.`,
         );
         return true;
       }
       return false;
     };
 
-    const backHandler = BackHandler.addEventListener(
+    const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
 
-    return () => backHandler.remove();
+    return () => subscription.remove();
   }, [userDetails]);
 
   useEffect(() => {
@@ -135,7 +134,7 @@ const UserProfile = () => {
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
-        response?.data?.data?.email
+        response?.data?.data?.email,
       );
       let user = response?.data?.data;
       setIsEditProfile(false);
@@ -391,6 +390,12 @@ const UserProfile = () => {
               />
             </View>
 
+            <JoinWhatsAppGroup
+              groupLink="https://chat.whatsapp.com/E5IuGZ8EXJR5ZO490tlfoD?mode=gi_t"
+              title={t("joinWhatsappGroupTitle")}
+              description={t("joinWhatsappGroupDescription")}
+              buttonText={t("joinWhatsappGroupButton")}
+            />
             {userDetails?.employedBy && (
               <TeamAdminCard admin={userDetails?.employedBy} />
             )}

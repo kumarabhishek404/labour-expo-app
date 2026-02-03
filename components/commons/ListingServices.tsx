@@ -180,7 +180,7 @@ const ListingsServices = ({ item }: any) => {
                     }
                   >
                     <AntDesign
-                      name="select1"
+                      name="select"
                       size={20}
                       color={Colors.primary}
                     />

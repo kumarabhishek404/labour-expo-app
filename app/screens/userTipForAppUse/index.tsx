@@ -50,7 +50,7 @@ const OnboardingScreen = () => {
       <CustomText
         baseFont={16}
         textAlign="center"
-        color={Colors?.secondaryText}
+        color={Colors?.secondaryButtonText}
         style={styles.description}
       >
         {item.description}

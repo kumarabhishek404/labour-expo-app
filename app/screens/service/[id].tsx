@@ -16,12 +16,12 @@ import {
   useNavigation,
   useRouter,
 } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import Animated, { useAnimatedRef } from "react-native-reanimated";
+import { Animated } from "react-native";
 import SERVICE from "../../api/services";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import Requirements from "@/components/commons/Requirements";
@@ -63,24 +63,24 @@ const ServiceDetails = () => {
   const { id, showApplicationDetails } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollRef = React.useRef<Animated.ScrollView>(null);
   const [isServiceLiked, setIsServiceLiked] = useState(
-    service?.likedBy?.find((id: any) => id === userDetails?._id)
+    service?.likedBy?.find((id: any) => id === userDetails?._id),
   );
   const [isServiceApplied, setIsServiceApplied] = useState(
     service?.appliedUsers?.find(
       (user: any) =>
-        user?.status === "PENDING" && user?.user === userDetails?._id
-    ) || false
+        user?.status === "PENDING" && user?.user === userDetails?._id,
+    ) || false,
   );
   const [isServiceAppliedByMediator, setIsServiceAppliedByMediator] = useState(
     service?.appliedUsers?.find((user: any) =>
       user?.workers?.some(
         (worker: any) =>
           worker?.worker?.toString() === userDetails?._id &&
-          worker?.status === "PENDING"
-      )
-    ) || false
+          worker?.status === "PENDING",
+      ),
+    ) || false,
   );
   const [isSelected, setIsSelected] = useState(
     service?.selectedUsers?.find(
@@ -89,27 +89,27 @@ const ServiceDetails = () => {
         user?.workers?.some(
           (worker: any) =>
             worker?.worker?.toString() === userDetails?._id &&
-            worker?.status === "SELECTED"
-        )
-    ) || false
+            worker?.status === "SELECTED",
+        ),
+    ) || false,
   );
 
   const [isMediatorOrSingleWorker, setIsMediatorOrSingleWorker] = useState(
     service?.selectedUsers?.find(
       (user: any) =>
-        user?.status === "SELECTED" && user?.user === userDetails?._id
-    ) || false
+        user?.status === "SELECTED" && user?.user === userDetails?._id,
+    ) || false,
   );
 
   const [isWorkerBooked, setIsWorkerBooked] = useState(
-    service?.bookedWorker === userDetails?._id
+    service?.bookedWorker === userDetails?._id,
   );
 
   const [mediatorMobile, setMediatorMobile] = useState(() => {
     const matchedMediator = selectedApplicants?.find((selectedUser: any) =>
       selectedUser?.workers?.some(
-        (workerObj: any) => workerObj?._id === userDetails?._id
-      )
+        (workerObj: any) => workerObj?._id === userDetails?._id,
+      ),
     );
 
     return matchedMediator?.user?.mobile;
@@ -162,7 +162,7 @@ const ServiceDetails = () => {
         return;
       }
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   const {
@@ -241,30 +241,30 @@ const ServiceDetails = () => {
   useFocusEffect(
     React.useCallback(() => {
       const unsubscribe = setWorkers(
-        members?.pages.flatMap((page: any) => page.data || [])[0]?.workers
+        members?.pages.flatMap((page: any) => page.data || [])[0]?.workers,
       );
       return () => unsubscribe;
-    }, [members])
+    }, [members]),
   );
 
   useEffect(() => {
     setIsServiceApplied(
       service?.appliedUsers?.find(
         (user: any) =>
-          user?.status === "PENDING" && user?.user === userDetails?._id
-      ) || false
+          user?.status === "PENDING" && user?.user === userDetails?._id,
+      ) || false,
     );
     setIsServiceAppliedByMediator(
       service?.appliedUsers?.find((user: any) =>
         user?.workers?.some(
           (worker: any) =>
             worker?.worker?.toString() === userDetails?._id &&
-            worker?.status === "PENDING"
-        )
-      ) || false
+            worker?.status === "PENDING",
+        ),
+      ) || false,
     );
     setIsServiceLiked(
-      service?.likedBy?.find((id: any) => id === userDetails?._id)
+      service?.likedBy?.find((id: any) => id === userDetails?._id),
     );
     setIsSelected(
       service?.selectedUsers?.find(
@@ -273,23 +273,23 @@ const ServiceDetails = () => {
           user?.workers?.some(
             (worker: any) =>
               worker?.worker?.toString() === userDetails?._id &&
-              worker?.status === "SELECTED"
-          )
-      ) || false
+              worker?.status === "SELECTED",
+          ),
+      ) || false,
     );
 
     setIsMediatorOrSingleWorker(
       service?.selectedUsers?.find(
         (user: any) =>
-          user?.status === "SELECTED" && user?.user === userDetails?._id
-      ) || false
+          user?.status === "SELECTED" && user?.user === userDetails?._id,
+      ) || false,
     );
     setIsWorkerBooked(service?.bookedWorker === userDetails?._id);
 
     const matchedMediator = selectedApplicants?.find((selectedUser: any) =>
       selectedUser?.workers?.some(
-        (workerObj: any) => workerObj?._id === userDetails?._id
-      )
+        (workerObj: any) => workerObj?._id === userDetails?._id,
+      ),
     );
 
     setMediatorMobile(matchedMediator?.user?.mobile);
@@ -298,7 +298,7 @@ const ServiceDetails = () => {
   useFocusEffect(
     React.useCallback(() => {
       let appliedUsers = response?.data?.appliedUsers?.find(
-        (mediator: any) => mediator?.user === userDetails?._id
+        (mediator: any) => mediator?.user === userDetails?._id,
       );
 
       // Extract worker IDs if the logged-in user is found
@@ -308,7 +308,7 @@ const ServiceDetails = () => {
 
       const unsubscribe = setService(response?.data);
       return () => unsubscribe;
-    }, [response])
+    }, [response]),
   );
 
   useEffect(() => {
@@ -357,7 +357,7 @@ const ServiceDetails = () => {
     const textToSpeak = generateServiceSummary(
       service,
       locale?.language,
-      userDetails?.location
+      userDetails?.location,
     );
 
     speakText(textToSpeak, locale?.language, setIsSpeaking);
@@ -537,8 +537,8 @@ const ServiceDetails = () => {
                         {workers && workers.length > 0
                           ? t("youAppliedWithTheseMembers")
                           : isServiceAppliedByMediator
-                          ? t("youAppliedByMediator")
-                          : t("youAppliedIndividually")}
+                            ? t("youAppliedByMediator")
+                            : t("youAppliedIndividually")}
                       </CustomText>
 
                       {/* If mediator, show only applied workers */}
@@ -548,16 +548,16 @@ const ServiceDetails = () => {
                             ?.filter(
                               (appliedUser: any) =>
                                 appliedUser?.user === userDetails?._id &&
-                                appliedUser?.status === "PENDING"
+                                appliedUser?.status === "PENDING",
                             )
                             ?.flatMap(
-                              (appliedUser: any) => appliedUser?.workers || []
+                              (appliedUser: any) => appliedUser?.workers || [],
                             )
                             ?.map((appliedWorker: any, index: number) => {
                               const matchedWorker = workers.find(
                                 (worker: any) =>
                                   worker?._id === appliedWorker?.worker &&
-                                  appliedWorker?.status === "PENDING"
+                                  appliedWorker?.status === "PENDING",
                               );
 
                               if (!matchedWorker) return null;
@@ -600,7 +600,7 @@ const ServiceDetails = () => {
                                       {t("appliedSkill")}:{" "}
                                       {getDynamicWorkerType(
                                         appliedWorker?.skill,
-                                        1
+                                        1,
                                       ) || "-"}
                                     </CustomText>
                                     <CustomText
@@ -629,7 +629,7 @@ const ServiceDetails = () => {
                             ?.filter(
                               (appliedUser: any) =>
                                 appliedUser?.user === userDetails?._id &&
-                                appliedUser?.status === "PENDING"
+                                appliedUser?.status === "PENDING",
                             )
                             ?.map((appliedUser: any, index: number) => (
                               <CustomText key={index} color={Colors?.primary}>
@@ -638,10 +638,12 @@ const ServiceDetails = () => {
                                   fontWeight="600"
                                   color={Colors?.primary}
                                 >
-                                  {getDynamicWorkerType(
-                                    appliedUser?.skill,
-                                    1
-                                  ) || "-"}
+                                  {appliedUser?.skill
+                                    ? getDynamicWorkerType(
+                                        appliedUser?.skill,
+                                        1,
+                                      )
+                                    : t("noSkill")}
                                 </CustomText>
                               </CustomText>
                             ))}
@@ -653,14 +655,14 @@ const ServiceDetails = () => {
                                   (worker: any) =>
                                     worker?.worker?.toString() ===
                                       userDetails?._id &&
-                                    worker?.status === "PENDING"
-                                )
+                                    worker?.status === "PENDING",
+                                ),
                               )
                               ?.workers?.filter(
                                 (worker: any) =>
                                   worker?.worker?.toString() ===
                                     userDetails?._id &&
-                                  worker?.status === "PENDING"
+                                  worker?.status === "PENDING",
                               )
                               ?.map((worker: any, index: number) => (
                                 <CustomText key={index} color={Colors?.primary}>
@@ -844,7 +846,7 @@ const ServiceDetails = () => {
                   />
                 )}
 
-                {service?.employer?._id &&
+                {/* {service?.employer?._id &&
                   service?.employer?._id !== userDetails?._id && (
                     <View style={{ marginTop: 20 }}>
                       <CustomHeading
@@ -856,7 +858,7 @@ const ServiceDetails = () => {
                       </CustomHeading>
                       <EmployerCard employer={service?.employer} />
                     </View>
-                  )}
+                  )} */}
               </View>
             </Animated.ScrollView>
           </ScrollView>
@@ -1122,5 +1124,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
+  },
+  highlightBox: {
+    flexDirection: "row",
+    width: "48%",
+  },
+  highlightIcon: {
+    backgroundColor: Colors?.white,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 8,
+    marginRight: 8,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -9,7 +9,11 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import { calculateDistance, dateDifference } from "@/constants/functions";
+import {
+  calculateDistance,
+  dateDifference,
+  handleCall,
+} from "@/constants/functions";
 // import { openGoogleMaps } from "@/app/hooks/map";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
@@ -37,7 +41,7 @@ const Highlights = ({ service }: any) => {
           <View style={{ flex: 1 }}>
             <CustomText textAlign="left">{t("duration")}</CustomText>
             <CustomHeading textAlign="left">
-              {service?.duration} {service?.duration > 1 ? t("days") : t("day")}
+              {t("lessThanMultipleDays", { duration: service?.duration })}
             </CustomHeading>
           </View>
         </View>
@@ -61,7 +65,7 @@ const Highlights = ({ service }: any) => {
                 <CustomHeading textAlign="left">
                   {`${calculateDistance(
                     service?.location,
-                    userDetails?.location
+                    userDetails?.location,
                   )} ${t("kms")}`}
                 </CustomHeading>
               </View>
@@ -99,6 +103,45 @@ const Highlights = ({ service }: any) => {
           </View>
         )}
       </View>
+
+      {userDetails?._id !== service?.employer && service?.employer?.mobile && (
+        <View style={[styles?.highlightBox, { width: "100%", marginTop: 20 }]}>
+          <View style={styles.highlightIcon}>
+            <Ionicons name="call" size={18} color={Colors.tertieryButton} />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View>
+              <CustomText textAlign="left">{t("mobileNumber")}</CustomText>
+              <CustomHeading textAlign="left">
+                {service?.employer?.mobile}
+              </CustomHeading>
+            </View>
+            <Button
+              isPrimary={true}
+              title={t("callEmployer")}
+              onPress={() => handleCall(service?.employer?.mobile)}
+              style={{
+                paddingVertical: 6,
+                paddingHorizontal: 10,
+              }}
+              icon={
+                <FontAwesome5
+                  name="phone-alt"
+                  size={16}
+                  color={Colors.white}
+                  style={{ marginRight: 10 }}
+                />
+              }
+            />
+          </View>
+        </View>
+      )}
 
       <View style={styles?.facilitiesHeading}>
         <CustomHeading textAlign="left" baseFont={20} color={Colors?.black}>

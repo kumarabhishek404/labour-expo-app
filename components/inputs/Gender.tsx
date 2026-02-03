@@ -1,9 +1,10 @@
 import Colors from "@/constants/Colors";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CustomHeading from "../commons/CustomHeading";
 import CustomText from "../commons/CustomText";
 import ErrorText from "../commons/ErrorText";
+import { t } from "@/utils/translationHelper";
 
 const Gender = ({
   name,
@@ -12,10 +13,24 @@ const Gender = ({
   gender,
   setGender,
   errors,
+  isRequired,
 }: any) => {
   return (
     <View style={styles.genderContainer}>
-      <CustomHeading textAlign="left">{label}</CustomHeading>
+      <Text style={styles?.labelContainer}>
+        <CustomHeading textAlign="left">{label}</CustomHeading>{" "}
+        {isRequired && (
+          <CustomHeading
+            textAlign="left"
+            color={Colors.danger}
+            baseFont={16}
+            fontWeight="500"
+          >
+            {" "}
+            ({t("required")})
+          </CustomHeading>
+        )}
+      </Text>
       <View style={styles.genderSelectionWrapper}>
         {options &&
           options?.length > 0 &&
@@ -37,7 +52,9 @@ const Gender = ({
             </TouchableOpacity>
           ))}
       </View>
-      {errors?.[name] && <ErrorText> {errors?.[name]?.message || ""}</ErrorText>}
+      {errors?.[name] && (
+        <ErrorText> {errors?.[name]?.message || ""}</ErrorText>
+      )}
     </View>
   );
 };
@@ -61,6 +78,10 @@ const styles = StyleSheet.create({
   selectedButton: {
     borderColor: Colors?.tertiery,
     backgroundColor: Colors?.tertiery,
+  },
+  labelContainer: {
+    flexDirection: "row",
+    gap: 5,
   },
 });
 

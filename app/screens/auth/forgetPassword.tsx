@@ -93,7 +93,6 @@ const ForgetPasswordScreen: React.FC = () => {
     onSuccess: ({ Status }) => {
       if (Status === "Success") {
         TOAST.success(t("otpVerified"));
-        setStep(3);
       } else {
         TOAST.error(t("otpInvalidMessage"));
       }
@@ -160,7 +159,7 @@ const ForgetPasswordScreen: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.centeredView}>
           <AntDesign
-            name="mobile1"
+            name="mobile"
             size={150}
             color={Colors.tertieryButton}
             style={styles.image}

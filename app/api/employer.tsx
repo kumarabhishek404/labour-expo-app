@@ -101,8 +101,6 @@ const rejectWorker = async (payload: any) => {
 };
 
 const cancelSelectedWorker = async (payload: any) => {
-  console.log("Payload --", payload);
-
   try {
     const data = await API_CLIENT.makePostRequest(
       "/employer/selection/cancel",
@@ -124,8 +122,6 @@ const cancelSelectedWorker = async (payload: any) => {
 
 // BOOKINGS
 const addBookingRequest = async (payload: any) => {
-  console.log("Payload --", payload);
-  
   try {
     const data = await API_CLIENT.makePostRequestFormData(
       "/employer/booking/invitations/send",

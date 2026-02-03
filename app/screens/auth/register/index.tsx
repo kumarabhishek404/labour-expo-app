@@ -1,10 +1,16 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
 import FirstScreen from "./first";
-import ThirdScreen from "./third";
+// import ThirdScreen from "./third";
 import FourthScreen from "./second";
 import FifthScreen from "./fourth";
 import USER from "@/app/api/user";
@@ -43,7 +49,7 @@ const SignupScreen = () => {
       }),
     onSuccess: () => {
       console.log("Profile updated successfully");
-      setStep((prev) => prev + 1); // Move to next step
+      setStep((prev) => prev + 1);
     },
     onError: (error) => {
       console.error("Profile update error:", error);
@@ -56,13 +62,13 @@ const SignupScreen = () => {
       case 1:
         return <FirstScreen />;
 
-      case 2:
-        return <ThirdScreen />;
+      // case 2:
+      //   return <ThirdScreen />;
 
-      case 3:
+      case 2:
         return <FourthScreen />;
 
-      case 4:
+      case 3:
         return <FifthScreen />;
 
       default:
@@ -71,28 +77,34 @@ const SignupScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
-      <Stack.Screen options={{ headerShown: false }} />
-      <Loader
-        loading={
-          mutationRegister?.isPending || mutationUpdateProfile?.isPending
-        }
-      />
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <CustomHeading textAlign="left" baseFont={22}>
-            {step === 5 ? t("clickSelfie") : t("hello")}
-          </CustomHeading>
-          <CustomHeading textAlign="left" baseFont={22}>
-            {step === 5 ? t("toVerify") : t("makeNewAccount")}
-          </CustomHeading>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Stack.Screen options={{ headerShown: false }} />
+        <Loader
+          loading={
+            mutationRegister?.isPending || mutationUpdateProfile?.isPending
+          }
+        />
+        <View style={styles.container}>
+          <View style={styles.textContainer}>
+            <CustomHeading textAlign="left" baseFont={22}>
+              {step === 5 ? t("clickSelfie") : t("hello")}
+            </CustomHeading>
+            <CustomHeading textAlign="left" baseFont={22}>
+              {step === 5 ? t("toVerify") : t("makeNewAccount")}
+            </CustomHeading>
+          </View>
+          <View style={styles.formContainer}>{renderFormComponents()}</View>
         </View>
-        <View style={styles.formContainer}>{renderFormComponents()}</View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

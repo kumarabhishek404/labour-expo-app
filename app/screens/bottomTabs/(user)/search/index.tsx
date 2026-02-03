@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
-import * as Speech from "expo-speech";
-import { View, StyleSheet } from "react-native";
-import TabSwitcher from "@/components/inputs/Tabs";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import SERVICE from "@/app/api/services";
-import { useFocusEffect, useNavigation } from "expo-router";
+import USER from "@/app/api/user";
 import PULL_TO_REFRESH from "@/app/hooks/usePullToRefresh";
+import TabSwitcher from "@/components/inputs/Tabs";
+import Colors from "@/constants/Colors";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "expo-router";
+import * as Speech from "expo-speech";
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
-import USER from "@/app/api/user";
-import Colors from "@/constants/Colors";
 
 const Search = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -119,11 +119,11 @@ const Search = () => {
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
-      <TabSwitcher
-        tabs={TABS}
-        actvieTab={selectedTab}
-        setActiveTab={setSelectedTab}
-      />
+        <TabSwitcher
+          tabs={TABS}
+          actvieTab={selectedTab}
+          setActiveTab={setSelectedTab}
+        />
 
       <View style={styles.container}>
         <View style={{ flex: 1 }}>

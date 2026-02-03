@@ -6,11 +6,11 @@ import { fetchCurrentLocation } from "@/constants/functions";
 import USER from "../api/user";
 import PUSH_NOTIFICATION from "../hooks/usePushNotification";
 
-const loginUser = async (mobile: string, password: string) => {
+const loginUser = async (mobile: string, otp: string) => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   try {
     // Simulate API call (replace with real login API)
-    const response: any = await AUTH?.signIn({ mobile, password });
+    const response: any = await AUTH?.signIn({ mobile, otp });
 
     if (!response?.token) throw new Error("No token returned");
 
@@ -39,18 +39,21 @@ const loginUser = async (mobile: string, password: string) => {
     }
 
     if (!updatedUser?.location?.latitude || !updatedUser?.location?.longitude) {
-      const locationData = await fetchCurrentLocation();
+      const locationData: any = await fetchCurrentLocation();
       if (locationData) {
         await USER?.updateUserById({
           _id: updatedUser._id,
-          location: locationData.location,
+          location: {
+            longitude: locationData?.location?.coordinates[0],
+            latitude: locationData?.location?.coordinates[1],
+          },
         });
       }
     }
 
     await PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
       updatedUser?.notificationConsent,
-      updatedUser._id
+      updatedUser._id,
     );
 
     // setUserDetails({ isAuth: true, ...updatedUser });
@@ -82,6 +85,5 @@ const loginUser = async (mobile: string, password: string) => {
     throw err; // for other unexpected errors
   }
 };
-
 
 export default loginUser;
