@@ -165,10 +165,10 @@ const AdminServices = () => {
           onApply={onSearchService}
         /> */}
 
-        <FloatingButton
+        {/* <FloatingButton
           title="applyFilters"
           onPress={() => setFilterVisible(true)}
-        />
+        /> */}
       </View>
     </>
   );

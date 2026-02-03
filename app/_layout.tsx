@@ -13,14 +13,21 @@ import LOCAL_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { ToastProvider } from "./hooks/toast";
 import { checkForUpdates } from "@/components/commons/InAppUpdates";
+import { useAppUpdateGuard } from "./hooks/useAppUpdateGuard";
+import ForceUpdateScreen from "@/components/commons/ForceUpdateSection";
 
 const queryClient = new QueryClient();
 
 const AppNavigator = () => {
-  useEffect(() => {
-    console.log("Checking In app updated -");
-    checkForUpdates();
-  }, []);
+  const { forceUpdate, message, appUrl } = useAppUpdateGuard();
+
+  if (forceUpdate) {
+    return <ForceUpdateScreen message={message} appUrl={appUrl} />;
+  }
+
+  // useEffect(() => {
+  //   checkForUpdates();
+  // }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

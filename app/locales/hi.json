@@ -1799,5 +1799,9 @@
   "userAlreadyExist": "यह व्यक्ति पहले से मौजूद है",
   "joinWhatsappGroupTitle": "WhatsApp ग्रुप से जुड़ें",
   "joinWhatsappGroupDescription": "नए काम की जानकारी, जरूरी सूचना और अपडेट सीधे WhatsApp पर पाएं।",
-  "joinWhatsappGroupButton": "ग्रुप जॉइन करें"
+  "joinWhatsappGroupButton": "ग्रुप जॉइन करें",
+
+  "updateRequired": "ऐप अपडेट करना ज़रूरी है",
+  "updateNow": "अभी अपडेट करें",
+  "forceUpdateMessage": "ऐप का नया रूप आ गया है। काम चालू रखने के लिए ऐप अपडेट करें।"
 }

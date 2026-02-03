@@ -242,7 +242,7 @@ const SecondScreen = () => {
                     value={value}
                     onChangeText={onChange}
                     placeholder={t("enterYourAge")}
-                    type="numeric"
+                    type="number"
                     maxLength={2}
                     errors={errors}
                     isRequired={true}

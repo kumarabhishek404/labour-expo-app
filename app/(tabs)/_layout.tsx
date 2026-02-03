@@ -76,7 +76,7 @@ export default function Layout() {
       console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
     }
-  }, [userDetails, router]);
+  }, [userDetails, router, isReady]);
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {

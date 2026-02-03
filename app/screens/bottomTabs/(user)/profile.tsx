@@ -391,7 +391,7 @@ const UserProfile = () => {
             </View>
 
             <JoinWhatsAppGroup
-              groupLink="https://whatsapp.com/channel/0029Vb3Nqzs5a23w8frqRD1R"
+              groupLink="https://chat.whatsapp.com/E5IuGZ8EXJR5ZO490tlfoD?mode=gi_t"
               title={t("joinWhatsappGroupTitle")}
               description={t("joinWhatsappGroupDescription")}
               buttonText={t("joinWhatsappGroupButton")}

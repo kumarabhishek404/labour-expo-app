@@ -4,10 +4,19 @@ import { Alert } from "react-native";
 
 export async function checkForUpdates() {
   try {
+    console.log("Updates---", Updates);
+
     // ❗ OTA updates only work in production builds
     if (!Updates.isEnabled) return;
 
     const update = await Updates.checkForUpdateAsync();
+
+    console.log("Updates logs---", {
+      isEnabled: Updates.isEnabled,
+      channel: Updates.channel,
+      runtimeVersion: Updates.runtimeVersion,
+      updateId: Updates.updateId,
+    });
 
     if (update.isAvailable) {
       Alert.alert(

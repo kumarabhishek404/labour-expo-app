@@ -237,10 +237,10 @@ const AdminUsers = () => {
           onApply={onSearchWorkers}
         />
 
-        <FloatingButton
+        {/* <FloatingButton
           title="applyFilters"
           onPress={() => setFilterVisible(true)}
-        />
+        /> */}
       </View>
     </>
   );
