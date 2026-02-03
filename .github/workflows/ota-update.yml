@@ -1,0 +1,37 @@
+name: OTA Update Only
+
+on:
+  push:
+    branches:
+      - ota
+
+jobs:
+  ota_update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm ci
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # 1️⃣ Patch version bump: 1.0.0 → 1.0.1
+      - name: Bump patch version
+        run: |
+          node scripts/bump-patch-version.js
+
+      # 2️⃣ OTA publish (NO build)
+      - name: Publish OTA Update
+        run: |
+          eas update \
+            --branch production \
+            --message "OTA update from GitHub" \
+            --non-interactive

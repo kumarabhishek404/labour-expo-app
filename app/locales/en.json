@@ -2065,5 +2065,7 @@
 
   "updateRequired": "Update Required",
   "updateNow": "Update Now",
-  "forceUpdateMessage": "A new version of the app is available. Please update the app to continue using all features."
+  "forceUpdateMessage": "A new version of the app is available. Please update the app to continue using all features.",
+
+  "add": "Add Work"
 }
