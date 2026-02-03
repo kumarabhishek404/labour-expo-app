@@ -1,0 +1,90 @@
+name: Expo Android CI/CD
+
+on:
+  push:
+    branches:
+      - production
+      - main
+
+jobs:
+  build_android:
+    name: Build Android App
+    runs-on: ubuntu-latest
+
+    outputs:
+      build_id: ${{ steps.build.outputs.build_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android (AAB)
+        id: build
+        run: |
+          BUILD_JSON=$(eas build \
+            --platform android \
+            --profile production \
+            --non-interactive \
+            --json)
+
+          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.builds[0].id // .[0].id')
+
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+
+  submit_android:
+    name: Submit Android to Play Store
+    needs: build_android
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit to Play Store
+        run: |
+          eas submit \
+            --platform android \
+            --profile production \
+            --build-id ${{ needs.build_android.outputs.build_id }} \
+            --non-interactive
+
+  publish_ota:
+    name: Publish OTA Update
+    needs: build_android
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm ci
+
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Publish OTA update
+        run: |
+          eas update \
+            --branch production \
+            --message "OTA update from GitHub Actions" \
+            --non-interactive
