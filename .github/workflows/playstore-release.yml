@@ -34,6 +34,15 @@ jobs:
         run: |
           node scripts/bump-version-code.mjs
 
+      # 3️⃣ Commit version changes safely
+      - name: Commit version changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add app.json
+          git diff --cached --quiet || git commit -m "chore: release version bump [skip ci]"
+          git push
+          
       # 3️⃣ Build AAB
       - name: Build Android
         run: |
