@@ -27,12 +27,12 @@ jobs:
       # 1️⃣ Auto bump version: 1.0.0 → 1.1.0
       - name: Bump minor version
         run: |
-          node scripts/bump-minor-version.js
+          node scripts/bump-minor-version.mjs
 
       # 2️⃣ Auto bump Android versionCode
       - name: Bump Android versionCode
         run: |
-          node scripts/bump-version-code.js
+          node scripts/bump-version-code.mjs
 
       # 3️⃣ Build AAB
       - name: Build Android

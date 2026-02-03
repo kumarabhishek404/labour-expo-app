@@ -27,7 +27,7 @@ jobs:
       # 1️⃣ Patch version bump: 1.0.0 → 1.0.1
       - name: Bump patch version
         run: |
-          node scripts/bump-patch-version.js
+          node scripts/bump-patch-version.mjs
 
       # 2️⃣ OTA publish (NO build)
       - name: Publish OTA Update
