@@ -3,8 +3,7 @@ name: Expo Android CI/CD
 on:
   push:
     branches:
-      - production
-      - main
+      - user/abhishek/development/old-app
 
 jobs:
   build_android:
