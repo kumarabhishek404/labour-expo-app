@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "KAARYA",
+    "name": "Apna Rozgar",
     "slug": "labour-app",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "default",
     "scheme": "myapp",
     "jsEngine": "hermes",
@@ -54,7 +54,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 32,
+      "versionCode": 33,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {

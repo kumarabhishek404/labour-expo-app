@@ -14,7 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -26,27 +25,6 @@ jobs:
         with:
           token: ${{ secrets.EXPO_TOKEN }}
           eas-version: latest
-
-      # 1️⃣ Patch version bump: 1.0.0 → 1.0.1
-      - name: Bump patch version in app.json
-        run: |
-          node scripts/bump-patch-version.mjs
-      
-      - name: Bump patch version in package.json
-        run: |
-          node scripts/bump-version.mjs
-
-      - name: Configure git
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
-      # 2️⃣ Commit version bump (SAFE)
-      - name: Commit & push version bump
-        run: |
-          git add app.json
-          git commit -m "chore: bump app version [skip ci]" || echo "No changes to commit"
-          git push
 
       # 2️⃣ OTA publish (NO build)
       - name: Publish OTA Update
