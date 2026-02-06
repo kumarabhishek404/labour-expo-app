@@ -74,7 +74,7 @@ const registerForPushNotificationsAsync = async (
           pushToken: pushTokenString,
           notificationConsent: notificationConsent,
           deviceType: Device?.DeviceType[Device?.deviceType ?? 0],
-          userId: userId || null,
+          userId: userId,
         });
         console.log("[PushNotification] Device registered successfully.");
       } catch (err) {

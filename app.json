@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Apna Rozgar",
+    "name": "Apna Rojgar",
     "slug": "labour-app",
     "version": "1.2.0",
     "orientation": "default",
@@ -29,7 +29,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/app/adaptive-icon.png"
+          "icon": "./assets/app/notification-icon.png"
         }
       ],
       "expo-asset",

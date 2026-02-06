@@ -431,14 +431,14 @@ const AdminProfile = () => {
             </View>
 
             <CustomText style={styles.copyright}>
-              © 2024 Apna Rozgar. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         ) : (
           <ScrollView>
             <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
             <CustomText style={styles.copyright}>
-              © 2024 Apna Rozgar. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         )}

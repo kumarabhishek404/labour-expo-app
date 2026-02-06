@@ -311,7 +311,6 @@ export default function Layout() {
               params: { title: "notifications", type: "all" },
             })
           }
-          // notificationCount={notificationCount}
         />
 
         <ExitConfirmationModal

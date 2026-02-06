@@ -6,13 +6,12 @@ import Colors from "@/constants/Colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import React, { useEffect } from "react";
+import React from "react";
 import { StatusBar } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import LOCAL_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { ToastProvider } from "./hooks/toast";
-import { checkForUpdates } from "@/components/commons/InAppUpdates";
 import { useAppUpdateGuard } from "./hooks/useAppUpdateGuard";
 import ForceUpdateScreen from "@/components/commons/ForceUpdateSection";
 
@@ -24,10 +23,6 @@ const AppNavigator = () => {
   if (forceUpdate) {
     return <ForceUpdateScreen message={message} appUrl={appUrl} />;
   }
-
-  // useEffect(() => {
-  //   checkForUpdates();
-  // }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
