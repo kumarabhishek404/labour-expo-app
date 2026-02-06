@@ -27,6 +27,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
       const response = await USER?.getUserInfo();
       if (response?.success) {
         setUserDetails({
+          isAuth: true,
           ...userDetails,
           ...response.data,
         });

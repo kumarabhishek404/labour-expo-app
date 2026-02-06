@@ -19,6 +19,8 @@ interface AddLocationAndAddressProps {
   setAddress: any;
   location: any;
   setLocation: any;
+  savedAddress: string[]
+  setSavedAddress: any;
   selectedOption?: string;
   errors: any;
   icon?: any;
@@ -33,6 +35,8 @@ const AddLocationAndAddress = ({
   setAddress,
   location,
   setLocation,
+  savedAddress,
+  setSavedAddress,
   selectedOption = "address",
   errors,
   style,
@@ -111,6 +115,9 @@ const AddLocationAndAddress = ({
       <LocationField
         address={address}
         setAddress={setAddress}
+        setLocation={setLocation}
+        savedAddress={savedAddress}
+        setSavedAddress={setSavedAddress}
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
         isError={errors?.[name]}

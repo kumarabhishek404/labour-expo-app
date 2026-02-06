@@ -181,7 +181,7 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
           >
             {userDetails?._id !== user?._id && (
               <CustomText color={Colors?.link} fontWeight="600" baseFont={18}>
-                {t("callEmployer")}
+                {t("talkDirect")}
               </CustomText>
             )}
           </TouchableOpacity>

@@ -37,6 +37,8 @@ const AddAddressDrawer = ({
   onClose,
   type,
   setAddress,
+  setSavedAddress,
+  setLocation,
 }: any) => {
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -96,13 +98,12 @@ const AddAddressDrawer = ({
         primaryButton: null,
         secondaryButton: null,
       });
-      await refreshUser();
+      // await refreshUser();
       onClose();
       reset();
       setIsEditing(false);
       setLocationAddress("");
       TOAST?.success(t("addressAddedSuccessfully"));
-      // console.log("Address updated successfully", response?.data?.data);
     },
     onError: (err) => {
       console.error("Error updating address", err);
@@ -192,10 +193,11 @@ const AddAddressDrawer = ({
   }, [selectedSubDistrict, allStateVillages]);
 
   const onAddAddress = async (data: any) => {
-    const location = {
-      longitude: data?.location?.coordinates[0],
-      latitude: data?.location?.coordinates[1],
-    };
+    // const location = {
+    //   longitude: data?.location?.coordinates[0],
+    //   latitude: data?.location?.coordinates[1],
+    // };
+
     const address =
       selectedTab === "savedAddresses"
         ? selectedAddress
@@ -214,34 +216,53 @@ const AddAddressDrawer = ({
 
     setSelectedAddress(address);
 
-    if (type === "secondary") setAddress({ address: address });
-
+    // ⭐ Always update local jotai state (existing behaviour)
     setUserDetails({
       ...userDetails,
       ...(isMainAddress
         ? {
-            address, // If main address, update the address field
-            savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
-            location: location,
+            address,
+            savedAddresses: finalSavedAddress,
+            location: data?.location,
           }
         : {
-            savedAddresses: finalSavedAddress, // Add to savedAddresses if not present
-            location: location,
+            savedAddresses: finalSavedAddress,
+            location: data?.location,
           }),
     });
+
+    // ================================
+    // ⭐⭐ REGISTRATION MODE START ⭐⭐
+    // ================================
+    // ⭐ if secondary address return immediately to parent
+    if (type === "secondary") {
+      setAddress({ address });
+      // Send address back to parent instead of calling API
+      setLocation(data?.location);
+      setSavedAddress(finalSavedAddress);
+
+      onClose();
+      reset();
+      setIsEditing(false);
+      setLocationAddress("");
+
+      return;
+    }
+    // ================================
+    // ⭐⭐ NORMAL MODE (EXISTING API) ⭐⭐
+    // ================================
 
     if (isMainAddress)
       mutationUpdateProfileInfo.mutate(
         isAddressAlreadySaved
-          ? { address, location: location }
-          : { address, savedAddresses: address, location: location },
+          ? { address, location: data?.location }
+          : { address, savedAddresses: address, location: data?.location },
       );
     else if (!isAddressAlreadySaved)
       mutationUpdateProfileInfo.mutate({
         savedAddresses: address,
-        location: location,
+        location: data?.location,
       });
-    else return;
   };
 
   const handleSelectAddress = (address: string) => {
@@ -269,6 +290,7 @@ const AddAddressDrawer = ({
     let { location, address, addressObject }: any =
       await fetchCurrentLocation();
     if (address) {
+      // const cleanAddress = address.split(",").slice(1).join(",").trim();
       setLocationAddress(address);
       setValue("location", location);
       setValue("state", addressObject?.region);
@@ -329,9 +351,9 @@ const AddAddressDrawer = ({
       {locationAddress && !isEditing ? (
         <View style={styles.addressContainer}>
           <Text style={styles.addressText}>{locationAddress}</Text>
-          <TouchableOpacity onPress={handleEdit}>
+          {/* <TouchableOpacity onPress={handleEdit}>
             <Text style={styles.editButton}>{t("edit")}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       ) : isEditing ? (
         <View style={styles.formContainer}>

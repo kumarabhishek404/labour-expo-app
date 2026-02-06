@@ -63,28 +63,31 @@ const ListingsVerticalWorkers = ({
             )}
 
             <View style={styles.itemInfo}>
-              <CustomHeading textAlign="left">{item?.name}</CustomHeading>
-              <SkillSelector
-                canAddSkills={false}
-                isShowLabel={false}
-                style={styles?.skillsContainer}
-                tagStyle={styles?.skillTag}
-                tagTextStyle={styles?.skillTagText}
-                userSkills={item?.skills}
-                availableSkills={availableInterest}
-                count={2}
-              />
-
-              <ShowAddress address={item?.address} numberOfLines={1} />
-              <View style={styles.ratingPriceContainer}>
-                <RatingAndReviews
-                  rating={item?.rating?.average}
-                  reviews={item?.rating?.count}
+              <View>
+                <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+                <SkillSelector
+                  canAddSkills={false}
+                  isShowLabel={false}
+                  style={styles?.skillsContainer}
+                  tagStyle={styles?.skillTag}
+                  tagTextStyle={styles?.skillTagText}
+                  userSkills={item?.skills}
+                  availableSkills={availableInterest}
+                  count={2}
                 />
-                <ShowDistance
-                  loggedInUserLocation={userDetails?.location}
-                  targetLocation={item?.location}
-                />
+              </View>
+              <View>
+                <ShowAddress address={item?.address} numberOfLines={1} />
+                <View style={styles.ratingPriceContainer}>
+                  <RatingAndReviews
+                    rating={item?.rating?.average}
+                    reviews={item?.rating?.count}
+                  />
+                  <ShowDistance
+                    loggedInUserLocation={userDetails?.location}
+                    targetLocation={item?.location}
+                  />
+                </View>
               </View>
             </View>
           </View>
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     minHeight: 100,
-    // maxHeight: 150,
+    maxHeight: 230,
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
   },

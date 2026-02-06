@@ -27,6 +27,8 @@ import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
 import { getToken } from "@/utils/authStorage";
+import { uploadPendingProfileImage } from "@/utils/backgroundImageUpload";
+import REFRESH_USER from "../hooks/useRefreshUser";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -53,6 +55,7 @@ export default function Layout() {
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
     // wait one render cycle
@@ -70,8 +73,7 @@ export default function Layout() {
       !userDetails?.name ||
       !userDetails?.address ||
       !userDetails?.age ||
-      !userDetails?.gender ||
-      !userDetails?.profilePicture
+      !userDetails?.gender
     ) {
       console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
@@ -132,6 +134,11 @@ export default function Layout() {
     return () => subscription.remove();
   }, [pathname]);
 
+  useEffect(() => {
+    if (userDetails?._id && userDetails?.isAuth) refreshUser();
+    uploadPendingProfileImage();
+  }, []);
+
   const TabButton = ({
     props,
     path,
@@ -186,8 +193,6 @@ export default function Layout() {
     );
   };
 
-  console.log("userDetails---", userDetails);
-
   const isAdmin = userDetails?.isAdmin;
 
   return (
@@ -201,14 +206,7 @@ export default function Layout() {
           <Tabs
             screenOptions={{
               headerShown: false,
-              tabBarStyle: [
-                styles.tabBar,
-                {
-                  // height: tabHeight,
-                  // paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
-                  // paddingTop: 6 * scale,
-                },
-              ],
+              tabBarStyle: [styles.tabBar],
             }}
           >
             <Tabs.Screen
@@ -225,9 +223,6 @@ export default function Layout() {
                     iconLibrary={
                       isAdmin ? "Ionicons" : "MaterialCommunityIcons"
                     }
-                    // itemStyles={{
-                    //   borderTopRightRadius: 12,
-                    // }}
                   />
                 ),
               }}
@@ -240,13 +235,9 @@ export default function Layout() {
                   <TabButton
                     props={props}
                     path="/(tabs)/second"
-                    title={isAdmin ? "services" : "search"}
-                    iconName={isAdmin ? "sickle" : "search"}
-                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
-                    // itemStyles={{
-                    //   borderTopLeftRadius: 12,
-                    //   borderTopRightRadius: 12,
-                    // }}
+                    title={isAdmin ? "teams" : "add"}
+                    iconName={isAdmin ? "group" : "plus"}
+                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
                   />
                 ),
               }}
@@ -259,9 +250,9 @@ export default function Layout() {
                   <TabButton
                     props={props}
                     path="/(tabs)/"
-                    title={isAdmin ? "teams" : "add"}
-                    iconName={isAdmin ? "group" : "plus"}
-                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
+                    title={isAdmin ? "services" : "search"}
+                    iconName={isAdmin ? "sickle" : "search"}
+                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
                   />
                 ),
               }}

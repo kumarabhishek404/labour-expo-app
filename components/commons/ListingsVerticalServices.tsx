@@ -17,7 +17,12 @@ const ListingsVerticalServices = ({
   loadMore,
   refreshControl,
 }: Props) => {
-  const RenderItem = ({ item }: any) => <ListingsServices item={item} />;
+  const RenderItem = React.memo(({ item }: any) => {
+    return <ListingsServices item={item} />;
+  });
+
+  RenderItem.displayName = "RenderItem";
+  const renderItem = ({ item }: any) => <RenderItem item={item} />;
 
   const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
 
@@ -25,7 +30,7 @@ const ListingsVerticalServices = ({
     <View>
       <FlatList
         data={listings}
-        renderItem={({ item }) => <RenderItem item={item} />}
+        renderItem={renderItem}
         keyExtractor={(item, index) => index?.toString()}
         onEndReached={debouncedLoadMore}
         onEndReachedThreshold={0.2}

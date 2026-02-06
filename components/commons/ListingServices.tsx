@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import {
   AntDesign,
-  Entypo,
-  FontAwesome5,
   Fontisto,
   Ionicons,
 } from "@expo/vector-icons";
@@ -18,12 +16,10 @@ import {
 } from "@/constants/functions";
 import Atoms from "@/app/AtomStore";
 import { useAtomValue } from "jotai";
-import moment, { locale } from "moment";
 import Requirements from "./Requirements";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
 import { t } from "@/utils/translationHelper";
-import ScrollingText from "./ScrollingText";
 import DateDisplay from "./ShowDate";
 import ShowAddress from "./ShowAddress";
 import ShowDistance from "./ShowDistance";

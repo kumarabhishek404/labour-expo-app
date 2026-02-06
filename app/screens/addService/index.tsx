@@ -32,7 +32,7 @@ const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
   const [addServiceStep, setAddServiceStep] = useAtom(
-    Atoms?.AddServiceStepAtom
+    Atoms?.AddServiceStepAtom,
   );
   const [step, setStep] = useState(1);
   const [type, setType] = useState(addService?.type ?? "");
@@ -41,7 +41,7 @@ const AddServiceScreen = () => {
   const [address, setAddress] = useState(addService?.address ?? "");
   const [location, setLocation] = useState<any>(addService?.location ?? {});
   const [startDate, setStartDate] = useState(
-    moment(addService?.startDate).toDate() ?? new Date()
+    moment(addService?.startDate).toDate() ?? new Date(),
   );
   const [duration, setDuration] = useState(addService?.duration ?? 0);
   const [isFormDirty, setIsFormDirty] = useState(false);
@@ -55,7 +55,7 @@ const AddServiceScreen = () => {
         living: false,
         esi_pf: false,
       },
-    ]
+    ],
   );
   const [facilities, setFacilities] = useState({
     food: addService?.facilities?.food || false,
@@ -75,7 +75,7 @@ const AddServiceScreen = () => {
       TOAST?.success(
         addService?._id
           ? t("serviceUpdatedSuccessfully")
-          : t("servicePostedSuccessfully")
+          : t("servicePostedSuccessfully"),
       );
       setAddService({});
       setType("");
@@ -95,7 +95,7 @@ const AddServiceScreen = () => {
             living: false,
             esi_pf: false,
           },
-        ]
+        ],
       );
       setImages([]);
       setStep(1);
@@ -118,7 +118,7 @@ const AddServiceScreen = () => {
 
       TOAST?.error(
         err?.response?.data?.message ||
-          "Failed to update service. Please try again."
+          "Failed to update service. Please try again.",
       );
     },
   });
@@ -130,7 +130,7 @@ const AddServiceScreen = () => {
   const contentRef = useRef<View>(null);
   const [contentHeight, setContentHeight] = useState(0);
   const [screenHeight, setScreenHeight] = useState(
-    Dimensions.get("window").height
+    Dimensions.get("window").height,
   );
 
   useEffect(() => {
@@ -184,7 +184,7 @@ const AddServiceScreen = () => {
     // Attach event listener
     const unsubscribe = navigation.addListener(
       "beforeRemove",
-      beforeRemoveListener
+      beforeRemoveListener,
     );
 
     // Cleanup function to remove listener
@@ -197,7 +197,7 @@ const AddServiceScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       return () => setStep(1); // Reset when leaving the screen
-    }, [])
+    }, []),
   );
 
   // Handle back button (Allow normal back navigation)
@@ -213,11 +213,11 @@ const AddServiceScreen = () => {
 
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
-        backAction
+        backAction,
       );
 
       return () => subscription.remove();
-    }, [step])
+    }, [step]),
   );
 
   useEffect(() => {
@@ -289,7 +289,7 @@ const AddServiceScreen = () => {
       });
 
       const existingImages = images.filter((img: string) =>
-        img.startsWith("http")
+        img.startsWith("http"),
       );
       if (existingImages.length) {
         formData.append("existingImages", JSON.stringify(existingImages));
