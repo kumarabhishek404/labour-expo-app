@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     minHeight: 100,
-    maxHeight: 230,
+    maxHeight: 210,
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
   },

@@ -127,11 +127,7 @@ const Services = () => {
     [filteredData]
   );
 
-  console.log("category---", category);
-
   const onCatChanged = (category: any) => {
-    console.log("Category changed", category);
-
     setCategory(category?.value);
   };
 

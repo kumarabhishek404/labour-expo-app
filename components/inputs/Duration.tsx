@@ -9,11 +9,11 @@ import SelectableTags from "./SingleSelectedTag";
 import ErrorText from "../commons/ErrorText";
 
 const DURATION = [
-  { label: "less_5_days", value: "5" },
-  { label: "less_15_days", value: "15" },
-  { label: "less_one_month", value: "30" },
-  { label: "more_one_month", value: "100" },
-  { label: "more_six_months", value: "365" },
+  { label: "less_5_days", value: 5 },
+  { label: "less_15_days", value: 15 },
+  { label: "less_one_month", value: 30 },
+  { label: "more_one_month", value: 100 },
+  { label: "more_six_months", value: 365 },
 ];
 
 const Duration = ({ duration, setDuration, errors, name }: any) => {

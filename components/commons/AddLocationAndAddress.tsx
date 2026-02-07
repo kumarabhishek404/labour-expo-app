@@ -19,8 +19,8 @@ interface AddLocationAndAddressProps {
   setAddress: any;
   location: any;
   setLocation: any;
-  savedAddress: string[]
-  setSavedAddress: any;
+  savedAddress?: string[]
+  setSavedAddress?: any;
   selectedOption?: string;
   errors: any;
   icon?: any;

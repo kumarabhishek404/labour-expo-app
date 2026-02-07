@@ -2068,5 +2068,9 @@
   "forceUpdateMessage": "A new version of the app is available. Please update the app to continue using all features.",
 
   "add": "Add Work",
-  "talkDirect": "Talk Direct"
+  "talkDirect": "Talk Direct",
+
+  "instaTitle": "Follow Us on Instagram",
+  "instaDescription": "Get daily updates, reels, job posts and important announcements on Instagram.",
+  "instaButtonText": "Follow Instagram"
 }

@@ -65,7 +65,6 @@ export default function Layout() {
   useEffect(() => {
     if (!isReady) return;
 
-    // If not logged in, redirect to login page
     if (
       !userDetails ||
       !userDetails?.isAuth ||
@@ -135,9 +134,11 @@ export default function Layout() {
   }, [pathname]);
 
   useEffect(() => {
+    console.log("userDetails---", userDetails);
+
     if (userDetails?._id && userDetails?.isAuth) refreshUser();
     uploadPendingProfileImage();
-  }, []);
+  }, [userDetails?._id]);
 
   const TabButton = ({
     props,
@@ -195,6 +196,8 @@ export default function Layout() {
 
   const isAdmin = userDetails?.isAdmin;
 
+  if (!isReady) return null;
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.container}>
@@ -229,15 +232,15 @@ export default function Layout() {
             />
 
             <Tabs.Screen
-              name="second"
+              name="third"
               options={{
                 tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)/second"
-                    title={isAdmin ? "teams" : "add"}
-                    iconName={isAdmin ? "group" : "plus"}
-                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
+                    path="/(tabs)/third"
+                    title={isAdmin ? "errors" : "myBookings"}
+                    iconName={isAdmin ? "error" : "calendar"}
+                    iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
                   />
                 ),
               }}
@@ -259,15 +262,15 @@ export default function Layout() {
             />
 
             <Tabs.Screen
-              name="third"
+              name="second"
               options={{
                 tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)/third"
-                    title={isAdmin ? "errors" : "myBookings"}
-                    iconName={isAdmin ? "error" : "calendar"}
-                    iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+                    path="/(tabs)/second"
+                    title={isAdmin ? "teams" : "add"}
+                    iconName={isAdmin ? "group" : "plus"}
+                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
                   />
                 ),
               }}

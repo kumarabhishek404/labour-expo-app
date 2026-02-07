@@ -53,7 +53,7 @@ const HelpScreen = () => {
   };
 
   const filteredQuestions = FAQS_QUESTIONS.filter((q) =>
-    q.question.toLowerCase().includes(searchQuery.toLowerCase())
+    q.question.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const RenderItem: any = React.memo(({ item }: RenderItemTypes) => (
@@ -148,7 +148,7 @@ const HelpScreen = () => {
           </View>
         </View>
 
-        <View style={styles.searchContainer}>
+        {/* <View style={styles.searchContainer}>
           <TextInputComponent
             value={searchQuery}
             placeholder={t("search")}
@@ -156,9 +156,9 @@ const HelpScreen = () => {
             label="haveAQuestion"
             name="search"
           />
-        </View>
+        </View> */}
 
-        {searchQuery.length > 0 && (
+        {/* {searchQuery.length > 0 && (
           <View style={styles.filteredQuestionsContainer}>
             {filteredQuestions.map((q, index) => (
               <TouchableOpacity
@@ -246,7 +246,7 @@ const HelpScreen = () => {
               </View>
             </View>
           </Modal>
-        )}
+        )} */}
 
         {/* <View style={styles?.startConversation}>
           <Button

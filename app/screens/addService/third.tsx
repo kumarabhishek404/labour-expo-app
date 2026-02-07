@@ -57,6 +57,9 @@ const ThirdScreen: React.FC<ThirdScreenProps> = ({
     },
   });
 
+  console.log("duration----", duration);
+  
+
   const [selectedOption, setSelectedOption] = useState(
     !isEmptyObject(location) ? "currentLocation" : "address"
   );

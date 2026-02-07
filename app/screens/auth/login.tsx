@@ -319,14 +319,14 @@ export default function Login() {
               disabled={loading} // Disable button when loading
             />
 
-            <View style={styles.footerContainer}>
+            {/* <View style={styles.footerContainer}>
               <CustomText>{t("dontHaveAnAccount")}</CustomText>
               <TouchableOpacity onPress={handleNewRegistration}>
                 <CustomHeading baseFont={24} color={Colors.tertieryButton}>
                   {t("signUp")}
                 </CustomHeading>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
