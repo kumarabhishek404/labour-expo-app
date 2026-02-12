@@ -16,6 +16,7 @@ import CustomText from "@/components/commons/CustomText";
 import { t } from "@/utils/translationHelper";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
+import TextButton from "@/components/inputs/TextButton";
 
 const AllServices = ({
   isLoading,
@@ -55,6 +56,31 @@ const AllServices = ({
       ) : (
         <>
           <View style={styles.container}>
+            <View style={styles.headingContainer}>
+              <View style={styles?.headingBox}>
+                <CustomText
+                  baseFont={30}
+                  fontWeight="700"
+                  color={Colors?.white}
+                  style={styles.heading}
+                >
+                  {t("allServices")}
+                </CustomText>
+                <TextButton
+                  title="refresh"
+                  color={Colors?.highlight}
+                  onPress={onRefresh}
+                />
+              </View>
+              <CustomText
+                baseFont={14}
+                color={Colors?.white}
+                style={styles.subHeading}
+              >
+                {t("allServicesSubHeading")}
+              </CustomText>
+            </View>
+
             {/* <View style={styles?.paginationHeader}>
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
@@ -83,7 +109,12 @@ const AllServices = ({
                 }
               />
             ) : (
-              <EmptyDataPlaceholder title="service" type="gradient" />
+              <EmptyDataPlaceholder
+                title="service"
+                type="gradient"
+                buttonTitle="refresh"
+                onPress={onRefresh}
+              />
             )}
           </View>
         </>
@@ -103,7 +134,30 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingBottom: 150,
-    paddingTop: 10
+    paddingTop: 10,
+  },
+  headingContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  headingBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  heading: {
+    paddingLeft: 5,
+  },
+  buttonText: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  subHeading: {
+    opacity: 0.9,
+    lineHeight: 20,
   },
   paginationHeader: {
     width: "100%",
