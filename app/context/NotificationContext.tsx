@@ -18,14 +18,14 @@ interface NotificationContextType {
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const useNotification = () => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
     throw new Error(
-      "useNotification must be used within a NotificationProvider"
+      "useNotification must be used within a NotificationProvider",
     );
   }
   return context;
@@ -50,13 +50,15 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   useEffect(() => {
     // Register push notifications
-    PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
-      notificationConsent,
-      userDetails?._id
-    ).then(
-      (token: any) => setExpoPushToken(token),
-      (error: React.SetStateAction<Error | null>) => setError(error)
-    );
+    if (userDetails?.isAuth && userDetails?._id) {
+      PUSH_NOTIFICATION?.registerForPushNotificationsAsync(
+        notificationConsent,
+        userDetails?._id,
+      ).then(
+        (token: any) => setExpoPushToken(token),
+        (error: React.SetStateAction<Error | null>) => setError(error),
+      );
+    }
 
     // Add notification listeners
     notificationListener.current =
@@ -71,7 +73,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
         console.log(
           "🔔 Notification Response:",
           JSON.stringify(response, null, 2),
-          JSON.stringify(response.notification.request.content.data, null, 2)
+          JSON.stringify(response.notification.request.content.data, null, 2),
         );
         // Handle the notification response here
       });

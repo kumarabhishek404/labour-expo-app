@@ -20,6 +20,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
   const [error, setError] = useState<Error | null>(null);
 
   const refreshUser = useCallback(async () => {
+    console.log("Refreshing the user");
     setIsLoading(true);
     setError(null);
 
@@ -27,6 +28,7 @@ const useRefreshUser = (): UseRefreshUserReturn => {
       const response = await USER?.getUserInfo();
       if (response?.success) {
         setUserDetails({
+          isAuth: true,
           ...userDetails,
           ...response.data,
         });

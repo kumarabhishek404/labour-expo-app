@@ -14,9 +14,13 @@ import Loader from "@/components/commons/Loaders/Loader";
 import { saveToken } from "@/utils/authStorage";
 import { useAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
+import {
+  savePendingProfileUpload,
+  uploadPendingProfileImage,
+} from "@/utils/backgroundImageUpload";
 
 const FifthScreen = () => {
-  const { userId } = useLocalSearchParams();
+  const { userId, skills } = useLocalSearchParams();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const {
     control,
@@ -29,8 +33,8 @@ const FifthScreen = () => {
     },
   });
 
-  const mutationUpdateProfile = useMutation({
-    mutationKey: ["updateProfile"],
+  const mutationFinishRegistration = useMutation({
+    mutationKey: ["finishRegistration"],
     mutationFn: (payload: any) => USER.updateUserById(payload),
     onSuccess: async (response: any) => {
       const token = response?.data?.token;
@@ -38,39 +42,43 @@ const FifthScreen = () => {
       await saveToken(token);
       setUserDetails({ isAuth: true, ...user });
       router.replace("/(tabs)");
-      console.log("Profile updated successfully");
+      uploadPendingProfileImage();
     },
     onError: (error) => {
-      console.error("Error while updating profile picture: ", error);
+      console.error("Error finishing registration: ", error);
     },
   });
 
   const handleProfilePictureSubmit = async (data: any) => {
     try {
-      if (
-        !data?.profilePicture ||
-        typeof data.profilePicture !== "string" ||
-        data.profilePicture.trim() === ""
-      ) {
+      if (!data?.profilePicture) {
         TOAST?.error(t("pleaseSelectAProfilePicture"));
         return;
       }
 
-      const formData: any = new FormData();
-      const imageName = data?.profilePicture.split("/").pop();
+      // ----------------------------------
+      // 1️⃣ COMPRESS IMAGE FIRST
+      // ----------------------------------
+      let uri =
+        Platform.OS === "android"
+          ? data.profilePicture
+          : data.profilePicture.replace("file://", "");
 
-      formData.append("profileImage", {
-        uri:
-          Platform.OS === "android"
-            ? data?.profilePicture
-            : data?.profilePicture.replace("file://", ""),
-        type: "image/jpeg",
-        name: imageName || "photo.jpg",
+      // uri = await compressImage(uri);
+
+      // ----------------------------------
+      // 2️⃣ SAVE IMAGE FOR BACKGROUND UPLOAD
+      // ----------------------------------
+      await savePendingProfileUpload({
+        uri,
+        userId,
       });
+      const parsedSkills = skills ? JSON.parse(skills as string) : [];
 
-      formData.append("_id", userId);
-
-      mutationUpdateProfile.mutate(formData);
+      mutationFinishRegistration.mutate({
+        _id: userId,
+        skills: parsedSkills,
+      });
     } catch (error) {
       console.error("Error submitting profile picture:", error);
       TOAST?.error(t("somethingWentWrong"));
@@ -80,7 +88,7 @@ const FifthScreen = () => {
   return (
     <View style={styles?.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationUpdateProfile?.isPending} />
+      {/* <Loader loading={mutationUpdateProfile?.isPending} /> */}
       <CustomHeading baseFont={25} style={styles.heading}>
         {t("takeSelfieForRegistration")}
       </CustomHeading>

@@ -31,6 +31,7 @@ import Loader from "@/components/commons/Loaders/Loader";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
 import LOCAL_CONTEXT from "@/app/context/locale";
 import MobileNumberField from "@/components/inputs/MobileNumber";
+import ContactSupport from "@/components/commons/ContactSupport";
 
 export default function Login() {
   LOCAL_CONTEXT?.useLocale();
@@ -195,138 +196,155 @@ export default function Login() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
         <ScrollView
-          contentContainerStyle={styles.container}
+          contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Image source={WORKER1} style={styles.image} />
+          <View style={styles.screenWrapper}>
+            <View
+              style={[
+                styles.centerBlock,
+                step === 2 ? { minHeight: 650 } : { minHeight: 550 },
+              ]}
+            >
+              <Image source={WORKER1} style={styles.image} />
 
-          <CustomHeading baseFont={24}>
-            {t("welcome")} {t("users")}
-          </CustomHeading>
+              <CustomHeading baseFont={24}>
+                {t("welcome")} {t("users")}
+              </CustomHeading>
 
-          <View style={styles.formContainer}>
-            {/* MOBILE INPUT */}
-            <Controller
-              control={control}
-              name="mobile"
-              rules={{
-                required: t("mobileIsRequired"),
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: t("enterAValidMobileNumber"),
-                },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <MobileNumberField
+              <View style={styles.formContainer}>
+                {/* MOBILE INPUT */}
+                <Controller
+                  control={control}
                   name="mobile"
-                  countryCode={countryCode}
-                  setCountryCode={setCountryCode}
-                  mobile={value as string}
-                  setPhoneNumber={onChange}
-                  errors={errors}
-                  placeholder={t("enterMobileTitle")}
-                  icon={
-                    <Feather name="phone" size={25} color={Colors.disabled} />
-                  }
+                  rules={{
+                    required: t("mobileIsRequired"),
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: t("enterAValidMobileNumber"),
+                    },
+                  }}
+                  render={({ field: { onChange, value } }) => (
+                    <MobileNumberField
+                      name="mobile"
+                      countryCode={countryCode}
+                      setCountryCode={setCountryCode}
+                      mobile={value as string}
+                      setPhoneNumber={onChange}
+                      errors={errors}
+                      placeholder={t("enterMobileTitle")}
+                      icon={
+                        <Feather
+                          name="phone"
+                          size={25}
+                          color={Colors.disabled}
+                        />
+                      }
+                    />
+                    // <TextInputComponent
+                    //   label="mobile"
+                    //   name="mobile"
+                    //   value={value as string}
+                    //   type="number"
+                    //   maxLength={10}
+                    //   onChangeText={onChange}
+                    //   placeholder={t("enterYourMobile")}
+                    //   errors={errors}
+                    //   textStyles={{ marginLeft: 10 }}
+                    //   icon={
+                    //     <Ionicons
+                    //       name="call-outline"
+                    //       size={25}
+                    //       color={Colors.secondary}
+                    //     />
+                    //   }
+                    // />
+                  )}
                 />
-                // <TextInputComponent
-                //   label="mobile"
-                //   name="mobile"
-                //   value={value as string}
-                //   type="number"
-                //   maxLength={10}
-                //   onChangeText={onChange}
-                //   placeholder={t("enterYourMobile")}
-                //   errors={errors}
-                //   textStyles={{ marginLeft: 10 }}
-                //   icon={
-                //     <Ionicons
-                //       name="call-outline"
-                //       size={25}
-                //       color={Colors.secondary}
-                //     />
-                //   }
-                // />
-              )}
-            />
 
-            {/* OTP INPUT (STEP 2 ONLY) */}
-            {step === 2 && (
-              <Controller
-                control={control}
-                name="otp"
-                rules={{
-                  required: t("otpIsRequired"),
-                  pattern: {
-                    value: /^[0-9]{6}$/,
-                    message: t("enterAValidOtp"),
-                  },
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputComponent
-                    label="otp"
+                {/* OTP INPUT (STEP 2 ONLY) */}
+                {step === 2 && (
+                  <Controller
+                    control={control}
                     name="otp"
-                    value={value as string}
-                    type="number"
-                    maxLength={6}
-                    onChangeText={onChange}
-                    placeholder={t("enterYourOtp")}
-                    errors={errors}
-                    textStyles={{ marginLeft: 10 }}
-                    icon={
-                      <Ionicons
-                        name="call-outline"
-                        size={25}
-                        color={Colors.secondary}
+                    rules={{
+                      required: t("otpIsRequired"),
+                      pattern: {
+                        value: /^[0-9]{6}$/,
+                        message: t("enterAValidOtp"),
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextInputComponent
+                        label="otp"
+                        name="otp"
+                        value={value as string}
+                        type="number"
+                        maxLength={6}
+                        onChangeText={onChange}
+                        placeholder={t("enterYourOtp")}
+                        errors={errors}
+                        textStyles={{ marginLeft: 10 }}
+                        icon={
+                          <Ionicons
+                            name="call-outline"
+                            size={25}
+                            color={Colors.secondary}
+                          />
+                        }
                       />
-                    }
+                    )}
                   />
                 )}
-              />
-            )}
 
-            {step === 2 && (
-              <TouchableOpacity
-                onPress={() =>
-                  sendOtpMutation.mutate({ mobile: watch("mobile") as string })
-                }
-                disabled={resendDisabled}
-              >
-                <CustomText
-                  color={resendDisabled ? Colors.primary : Colors.danger}
-                  baseFont={16}
-                  textAlign="right"
-                >
-                  {resendDisabled
-                    ? `${t("resendOtpIn", { seconds: timer })}`
-                    : t("resendOtp")}
-                </CustomText>
-              </TouchableOpacity>
-            )}
+                {step === 2 && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      sendOtpMutation.mutate({
+                        mobile: watch("mobile") as string,
+                      })
+                    }
+                    disabled={resendDisabled}
+                  >
+                    <CustomText
+                      color={resendDisabled ? Colors.primary : Colors.danger}
+                      baseFont={16}
+                      textAlign="right"
+                    >
+                      {resendDisabled
+                        ? `${t("resendOtpIn", { seconds: timer })}`
+                        : t("resendOtp")}
+                    </CustomText>
+                  </TouchableOpacity>
+                )}
 
-            {loginError && (
-              <CustomText color={Colors.error} style={styles.errorText}>
-                {loginError}
-              </CustomText>
-            )}
+                {loginError && (
+                  <CustomText color={Colors.error} style={styles.errorText}>
+                    {loginError}
+                  </CustomText>
+                )}
 
-            <Button
-              isPrimary
-              title={step === 1 ? t("sendOtp") : t("login")}
-              onPress={handleSubmit(handleLoginPress)}
-              style={styles.loginButtonWrapper}
-              textStyle={{ fontSize: 24, fontWeight: "600" }}
-              disabled={loading} // Disable button when loading
-            />
+                <Button
+                  isPrimary
+                  title={step === 1 ? t("sendOtp") : t("login")}
+                  onPress={handleSubmit(handleLoginPress)}
+                  style={styles.loginButtonWrapper}
+                  textStyle={{ fontSize: 24, fontWeight: "600" }}
+                  disabled={loading} // Disable button when loading
+                />
 
-            <View style={styles.footerContainer}>
+                {/* <View style={styles.footerContainer}>
               <CustomText>{t("dontHaveAnAccount")}</CustomText>
               <TouchableOpacity onPress={handleNewRegistration}>
                 <CustomHeading baseFont={24} color={Colors.tertieryButton}>
                   {t("signUp")}
                 </CustomHeading>
               </TouchableOpacity>
+            </View> */}
+              </View>
             </View>
+            <ContactSupport />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -354,21 +372,67 @@ export default function Login() {
 
 /* -------------------- STYLES -------------------- */
 const styles = StyleSheet.create({
+  /* Scroll takes full screen height */
+  scrollContainer: {
+    flexGrow: 1,
+    backgroundColor: Colors.fourth,
+  },
+
+  /* Full screen wrapper */
+  screenWrapper: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    justifyContent: "space-between", // ⭐ pushes support to bottom
+  },
+
+  /* Login section centered vertically */
+  centerBlock: {
+    flex: 1,
+    justifyContent: "flex-end",
+    marginBottom: 40,
+  },
+
+  image: {
+    height: 240,
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+
+  formContainer: {
+    marginTop: 10,
+    gap: 15,
+  },
+
+  errorText: {
+    textAlign: "center",
+  },
+
+  loginButtonWrapper: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    height: 55,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   container: {
     flexGrow: 1,
     backgroundColor: Colors.fourth,
     paddingHorizontal: 20,
     justifyContent: "center",
   },
-  image: {
-    height: 260,
-    resizeMode: "contain",
-    alignSelf: "center",
-  },
-  formContainer: {
-    marginTop: 20,
-    gap: 15,
-  },
+  // image: {
+  //   height: 260,
+  //   resizeMode: "contain",
+  //   alignSelf: "center",
+  // },
+  // formContainer: {
+  //   marginTop: 20,
+  //   gap: 15,
+  // },
   otpInput: {
     height: 50,
     borderWidth: 1,
@@ -382,21 +446,21 @@ const styles = StyleSheet.create({
     height: 53,
     borderRadius: 8,
   },
-  errorText: {
-    textAlign: "center",
-  },
+  // errorText: {
+  //   textAlign: "center",
+  // },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
   },
-  loginButtonWrapper: {
-    backgroundColor: Colors.primary,
-    borderRadius: 8,
-    height: 53,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // loginButtonWrapper: {
+  //   backgroundColor: Colors.primary,
+  //   borderRadius: 8,
+  //   height: 53,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
 });

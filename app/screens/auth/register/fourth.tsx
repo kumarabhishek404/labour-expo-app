@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, View, Text, Dimensions } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
@@ -13,12 +13,11 @@ import SkillsSelector from "@/components/inputs/SelectSkills";
 import { WORKTYPES } from "@/constants";
 import ButtonComp from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
-import { fetchCurrentLocation } from "@/constants/functions";
 const { width } = Dimensions.get("window");
 
 const UpdateUserSkillsScreen = () => {
   const [previousRole, setPreviousRole] = useState("WORKER");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const { userId } = useLocalSearchParams();
   const {
     control,
@@ -53,7 +52,7 @@ const UpdateUserSkillsScreen = () => {
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (previousRole !== watch("role")) {
       setValue("skills", []);
     } else {
@@ -68,32 +67,24 @@ const UpdateUserSkillsScreen = () => {
       return;
     }
 
-    let payload: any = {
-      skills: watch("skills"),
-    };
+    // let payload: any = {
+    //   skills: watch("skills"),
+    // };
 
-    // Fetch the user's current location
-    try {
-      setLoading(true);
-      const locationData: any = await fetchCurrentLocation();
-      payload.location = {
-        longitude: locationData?.location?.coordinates[0],
-        latitude: locationData?.location?.coordinates[1],
-      };
-      payload.address = locationData?.address;
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      TOAST?.error(t("unableToFetchLocation"));
-    }
-
-    mutationUpdateProfile.mutate(payload);
+    router.push({
+      pathname: "/screens/auth/register/fifth",
+      params: {
+        userId,
+        skills: JSON.stringify(watch("skills")), // 👈 MUST stringify
+      },
+    });
+    // mutationUpdateProfile.mutate(payload);
   };
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Loader loading={mutationUpdateProfile?.isPending || loading} />
+      {/* <Loader loading={loading} /> */}
       <View style={styles.container}>
         <CustomHeading style={{ marginTop: 20 }} baseFont={26}>
           {t("updateYourSkillsAndRole")}

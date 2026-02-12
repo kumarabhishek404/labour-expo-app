@@ -12,9 +12,9 @@ const QuickContact = () => {
       <View style={styles.contactContainer}>
         <View style={styles.contactInfo}>
           <CustomHeading baseFont={18}>ABHISHEK KUMAR</CustomHeading>
-          <CustomText style={styles.contactJob}>CEO of KAARYA</CustomText>
+          <CustomText style={styles.contactJob}>CEO of Apna Rojgar</CustomText>
           <CustomText baseFont={14} fontWeight="500">
-            +91 6394743923
+            +91 6397308499
           </CustomText>
           <CustomText baseFont={14} fontWeight="500">
             ceo@kaarya.com
@@ -50,7 +50,7 @@ const QuickContact = () => {
             </CustomText>
           </TouchableOpacity>
         </View>
-        <CustomText>© 2024 KAARYA. All rights reserved.</CustomText>
+        <CustomText>© 2024 Apna Rojgar. All rights reserved.</CustomText>
       </View>
     </View>
   );

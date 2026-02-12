@@ -27,6 +27,8 @@ import UserProfile from "../screens/bottomTabs/(user)/profile";
 import API_CLIENT from "../api";
 import RippleDot from "@/components/commons/RippleDot";
 import { getToken } from "@/utils/authStorage";
+import { uploadPendingProfileImage } from "@/utils/backgroundImageUpload";
+import REFRESH_USER from "../hooks/useRefreshUser";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -53,6 +55,7 @@ export default function Layout() {
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const { refreshUser } = REFRESH_USER.useRefreshUser();
 
   useEffect(() => {
     // wait one render cycle
@@ -62,7 +65,6 @@ export default function Layout() {
   useEffect(() => {
     if (!isReady) return;
 
-    // If not logged in, redirect to login page
     if (
       !userDetails ||
       !userDetails?.isAuth ||
@@ -70,8 +72,7 @@ export default function Layout() {
       !userDetails?.name ||
       !userDetails?.address ||
       !userDetails?.age ||
-      !userDetails?.gender ||
-      !userDetails?.profilePicture
+      !userDetails?.gender
     ) {
       console.log("Redirecting to login screen -  ", userDetails);
       router.replace("/screens/auth/login");
@@ -132,6 +133,13 @@ export default function Layout() {
     return () => subscription.remove();
   }, [pathname]);
 
+  useEffect(() => {
+    console.log("userDetails---", userDetails);
+
+    if (userDetails?._id && userDetails?.isAuth) refreshUser();
+    uploadPendingProfileImage();
+  }, [userDetails?._id]);
+
   const TabButton = ({
     props,
     path,
@@ -186,9 +194,9 @@ export default function Layout() {
     );
   };
 
-  console.log("userDetails---", userDetails);
-
   const isAdmin = userDetails?.isAdmin;
+
+  if (!isReady) return null;
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
@@ -201,14 +209,7 @@ export default function Layout() {
           <Tabs
             screenOptions={{
               headerShown: false,
-              tabBarStyle: [
-                styles.tabBar,
-                {
-                  // height: tabHeight,
-                  // paddingBottom: Platform.OS === "ios" ? 20 * scale : 8 * scale,
-                  // paddingTop: 6 * scale,
-                },
-              ],
+              tabBarStyle: [styles.tabBar],
             }}
           >
             <Tabs.Screen
@@ -225,43 +226,6 @@ export default function Layout() {
                     iconLibrary={
                       isAdmin ? "Ionicons" : "MaterialCommunityIcons"
                     }
-                    // itemStyles={{
-                    //   borderTopRightRadius: 12,
-                    // }}
-                  />
-                ),
-              }}
-            />
-
-            <Tabs.Screen
-              name="second"
-              options={{
-                tabBarButton: (props: any) => (
-                  <TabButton
-                    props={props}
-                    path="/(tabs)/second"
-                    title={isAdmin ? "services" : "search"}
-                    iconName={isAdmin ? "sickle" : "search"}
-                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
-                    // itemStyles={{
-                    //   borderTopLeftRadius: 12,
-                    //   borderTopRightRadius: 12,
-                    // }}
-                  />
-                ),
-              }}
-            />
-
-            <Tabs.Screen
-              name="index"
-              options={{
-                tabBarButton: (props: any) => (
-                  <TabButton
-                    props={props}
-                    path="/(tabs)/"
-                    title={isAdmin ? "teams" : "add"}
-                    iconName={isAdmin ? "group" : "plus"}
-                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
                   />
                 ),
               }}
@@ -277,6 +241,36 @@ export default function Layout() {
                     title={isAdmin ? "errors" : "myBookings"}
                     iconName={isAdmin ? "error" : "calendar"}
                     iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
+                  />
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="index"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/"
+                    title={isAdmin ? "services" : "search"}
+                    iconName={isAdmin ? "sickle" : "search"}
+                    iconLibrary={isAdmin ? "MaterialCommunityIcons" : undefined}
+                  />
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="second"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/second"
+                    title={isAdmin ? "teams" : "add"}
+                    iconName={isAdmin ? "group" : "plus"}
+                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
                   />
                 ),
               }}
@@ -311,7 +305,6 @@ export default function Layout() {
               params: { title: "notifications", type: "all" },
             })
           }
-          // notificationCount={notificationCount}
         />
 
         <ExitConfirmationModal

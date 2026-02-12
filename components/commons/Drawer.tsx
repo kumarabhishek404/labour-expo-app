@@ -12,7 +12,7 @@ import {
 import { useAtom } from "jotai";
 import Colors from "@/constants/Colors";
 import CustomHeading from "./CustomHeading";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import ButtonComp from "../inputs/Button";
 import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
@@ -40,7 +40,7 @@ const GlobalSideDrawer = () => {
 
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      onBackPress
+      onBackPress,
     );
 
     return () => subscription.remove();
@@ -99,7 +99,7 @@ const GlobalSideDrawer = () => {
         <View style={styles.wrapper}>
           <View style={styles.header}>
             <TouchableOpacity onPress={closeDrawer} style={{ marginLeft: 10 }}>
-              <AntDesign name="arrowleft" size={28} color={Colors.white} />
+              <Feather name="arrow-left" size={28} color={Colors.white} />
             </TouchableOpacity>
             <CustomHeading
               baseFont={20}

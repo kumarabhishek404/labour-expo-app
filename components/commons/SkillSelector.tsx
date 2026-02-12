@@ -87,7 +87,7 @@ const SkillSelector = ({
   }, [availableSkills, userSkills]);
 
   const handleSkillToRemoveSelection = (skill: string) => {
-    setSelectedSkillToRemove(getDynamicWorkerType(skill, 1));
+    setSelectedSkillToRemove(skill);
   };
 
   useEffect(() => {

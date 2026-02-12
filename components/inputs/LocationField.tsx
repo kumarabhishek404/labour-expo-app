@@ -13,6 +13,9 @@ import CustomText from "../commons/CustomText";
 interface LocationFieldProps {
   address: string;
   setAddress: any;
+  setLocation: any;
+  savedAddress: string[];
+  setSavedAddress: any;
   isModalVisible: boolean;
   setIsModalVisible: any;
   isError: boolean;
@@ -21,6 +24,9 @@ interface LocationFieldProps {
 const LocationField = ({
   address,
   setAddress,
+  setLocation,
+  savedAddress,
+  setSavedAddress,
   isModalVisible,
   setIsModalVisible,
   isError,
@@ -100,6 +106,12 @@ const LocationField = ({
         userId={userDetails?._id}
         setAddress={(address: any) => {
           setAddress(address?.address);
+        }}
+        setLocation={(location: any) => {
+          setLocation(location);
+        }}
+        setSavedAddress={(address: any) => {
+          setSavedAddress(...savedAddress, address);
         }}
       />
     </View>

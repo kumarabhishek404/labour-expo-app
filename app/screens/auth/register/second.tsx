@@ -46,9 +46,9 @@ const SecondScreen = () => {
     },
   });
   const [location, setLocation] = useState<any>({});
+  const [savedAddress, setSavedAddress] = useState<any>([]);
   const { userId } = useLocalSearchParams();
 
-  console.log("userDetails---", userDetails);
 
   const mutationUpdateProfile = useMutation({
     mutationKey: ["updateProfile"],
@@ -77,13 +77,10 @@ const SecondScreen = () => {
       name: data?.name,
       age: Number(data?.age),
       aadhaarNumber: data?.aadhaarNumber,
-      location: {
-        latitude: location?.latitude,
-        longitude: location?.longitude,
-      },
+      geoLocation: location,
+      savedAddresses: data?.address,
       address: data?.address ?? "",
       email: data?.email,
-      // dateOfBirth: data?.dateOfBirth,
       gender: data?.gender,
     });
   };
@@ -146,6 +143,8 @@ const SecondScreen = () => {
                     setAddress={onChange}
                     location={location}
                     setLocation={setLocation}
+                    savedAddress={savedAddress}
+                    setSavedAddress={setSavedAddress}
                     errors={errors}
                     isRequired={true}
                   />

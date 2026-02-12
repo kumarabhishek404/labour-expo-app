@@ -1,12 +1,12 @@
-import React from "react";
 import { useAtomValue } from "jotai";
-import Search from "../screens/bottomTabs/(user)/search";
-import AdminUsers from "../screens/bottomTabs/(admin)/users";
+import React, { useEffect } from "react";
 import Atoms from "../AtomStore";
+import AddServiceScreen from "../screens/addService";
+import AdminServices from "../screens/bottomTabs/(admin)/services";
 
-export default function ProfileScreen() {
-  const userDetails = useAtomValue(Atoms?.UserAtom);
+export default function BookingsScreen() {
+  const userDetails = useAtomValue(Atoms.UserAtom);
 
-  if (userDetails?.isAdmin) return <AdminUsers />;
-  else return <Search />;
+  if (userDetails?.isAdmin) return <AdminServices />;
+  else return <AddServiceScreen />;
 }

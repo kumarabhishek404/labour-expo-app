@@ -349,17 +349,17 @@ const ProfileMenu = ({ disabled }: any) => {
       style: [styles?.menuItem],
       isSuspended: false,
     },
-    {
-      title: t("deactivateAccount"),
-      icon: (
-        <Ionicons name="close-circle-outline" size={30} color={Colors.danger} />
-      ),
-      onPress: () => setModalVisible(true),
-      roleCondition: isAdmin,
-      style: [styles?.menuItem],
-      textStyle: { color: Colors.danger },
-      isSuspended: disabled,
-    },
+    // {
+    //   title: t("deactivateAccount"),
+    //   icon: (
+    //     <Ionicons name="close-circle-outline" size={30} color={Colors.danger} />
+    //   ),
+    //   onPress: () => setModalVisible(true),
+    //   roleCondition: isAdmin,
+    //   style: [styles?.menuItem],
+    //   textStyle: { color: Colors.danger },
+    //   isSuspended: disabled,
+    // },
     {
       title: t("deleteAccount"),
       icon: (
@@ -449,7 +449,7 @@ const ProfileMenu = ({ disabled }: any) => {
         )}
       </View>
 
-      <ModalComponent
+      {/* <ModalComponent
         visible={isModalVisible}
         title={t("deactivateAccount")}
         onClose={() => setModalVisible(false)}
@@ -468,7 +468,7 @@ const ProfileMenu = ({ disabled }: any) => {
             paddingHorizontal: 10,
           },
         }}
-      />
+      /> */}
 
       <ModalComponent
         visible={isNotificationModalVisible}

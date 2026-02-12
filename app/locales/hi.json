@@ -1805,5 +1805,16 @@
   "updateNow": "अभी अपडेट करें",
   "forceUpdateMessage": "ऐप का नया रूप आ गया है। काम चालू रखने के लिए ऐप अपडेट करें।",
 
-  "add": "काम जोड़ें"
+  "add": "काम जोड़ें",
+  "talkDirect": "सीधे बात करें",
+
+  "instaTitle": "Instagram (इंस्टाग्राम) पर हमें फॉलो करें",
+  "instaDescription": "रोज़ाना अपडेट, रील्स, जॉब पोस्ट और महत्वपूर्ण जानकारी इंस्टाग्राम पर पाएं।",
+  "instaButtonText": "Instagram फॉलो करें",
+
+  "supportTitle": "Login / Registration में मदद चाहिए?",
+  "supportSubtitle": "👉 तुरंत हमसे संपर्क करें",
+  "callUs": "Call करें",
+  "whatsappUs": "WhatsApp करें",
+  "supportWhatsappMessage": "नमस्ते, मुझे ऐप में लॉगिन/रजिस्ट्रेशन में मदद चाहिए"
 }

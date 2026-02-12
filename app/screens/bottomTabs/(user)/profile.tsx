@@ -39,6 +39,8 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import USE_LOGOUT from "@/app/hooks/useLogout";
 import JoinWhatsAppGroup from "@/components/commons/JoinWhatsappGroup";
+import JoinInstagramAccount from "@/components/commons/JoinInstagramAccount";
+import FollowInstagram from "@/components/commons/JoinInstagramAccount";
 
 const UserProfile = () => {
   LOCAL_CONTEXT?.useLocale();
@@ -396,6 +398,8 @@ const UserProfile = () => {
               description={t("joinWhatsappGroupDescription")}
               buttonText={t("joinWhatsappGroupButton")}
             />
+
+            <FollowInstagram profileLink="https://instagram.com/apnarojgarindia" />
             {userDetails?.employedBy && (
               <TeamAdminCard admin={userDetails?.employedBy} />
             )}
@@ -427,14 +431,14 @@ const UserProfile = () => {
             </View>
 
             <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         ) : (
           <ScrollView>
             <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
             <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         )}

@@ -37,7 +37,8 @@ const logout = async () => {
   try {
     console.log("🔒 Logout triggered from API client");
     await AsyncStorage.removeItem("user");
-    eventEmitter.emit("logout");
+    // eventEmitter.emit("logout");
+    router.replace('/screens/auth/login')
   } catch (error) {
     console.error("Error during logout:", error);
   }

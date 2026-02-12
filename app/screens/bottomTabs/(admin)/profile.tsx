@@ -52,7 +52,7 @@ const AdminProfile = () => {
   const [isEditProfile, setIsEditProfile] = useState(false);
 
   const [profilePicture, setProfilePicture] = useState(
-    userDetails?.profilePicture
+    userDetails?.profilePicture,
   );
   const [selectedSkills, setSelectedSkills] = useState([]);
 
@@ -87,7 +87,7 @@ const AdminProfile = () => {
             userDetails?.status === "DISABLED"
               ? t("suspended")
               : t("notApproved")
-          }.`
+          }.`,
         );
         return true;
       }
@@ -96,7 +96,7 @@ const AdminProfile = () => {
 
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
 
     return () => subscription.remove();
@@ -113,7 +113,7 @@ const AdminProfile = () => {
     onSuccess: (response) => {
       console.log(
         "Response while updating the profile - ",
-        response?.data?.data?.email
+        response?.data?.data?.email,
       );
       let user = response?.data?.data;
       setIsEditProfile(false);
@@ -360,7 +360,7 @@ const AdminProfile = () => {
 
             {(!userDetails?.email?.value ||
               !userDetails?.address ||
-              !userDetails?.dateOfBirth ||
+              !userDetails?.name ||
               !userDetails?.gender) && <ProfileNotification />}
 
             {(userDetails?.status === "SUSPENDED" ||
@@ -431,14 +431,14 @@ const AdminProfile = () => {
             </View>
 
             <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         ) : (
           <ScrollView>
             <ProfileMenu disabled={userDetails?.status !== "ACTIVE"} />
             <CustomText style={styles.copyright}>
-              © 2024 KAARYA. All rights reserved.
+              © 2024 Apna Rojgar. All rights reserved.
             </CustomText>
           </ScrollView>
         )}

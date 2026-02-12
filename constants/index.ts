@@ -2,7 +2,7 @@ import Image1 from "../assets/image1.png";
 import Image2 from "../assets/image2.png";
 import Image3 from "../assets/image3.png";
 
-export const APPLINK = "https://your-app-link.com"; // Replace with your actual app link"
+export const APPLINK = "https://play.google.com/store/apps/details?id=com.kumarabhishek404.labourapp"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
   { label: "andhrapradesh", value: "andhrapradesh" },

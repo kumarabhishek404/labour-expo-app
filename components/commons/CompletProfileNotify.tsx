@@ -163,7 +163,7 @@ const ProfileNotification: React.FC = () => {
             </View>
           )}
 
-          {!userDetails?.dateOfBirth && (
+          {/* {!userDetails?.dateOfBirth && (
             <Controller
               control={control}
               name="dateOfBirth"
@@ -194,7 +194,7 @@ const ProfileNotification: React.FC = () => {
                 />
               )}
             />
-          )}
+          )} */}
 
           {!userDetails?.gender && (
             <Controller
