@@ -2072,5 +2072,11 @@
 
   "instaTitle": "Follow Us on Instagram",
   "instaDescription": "Get daily updates, reels, job posts and important announcements on Instagram.",
-  "instaButtonText": "Follow Instagram"
+  "instaButtonText": "Follow Instagram",
+
+  "supportTitle": "Need help with Login / Registration?",
+  "supportSubtitle": "👉 Contact us immediately",
+  "callUs": "Call Us",
+  "whatsappUs": "WhatsApp Us",
+  "supportWhatsappMessage": "Namaste, I need help with login/registration in the app"
 }

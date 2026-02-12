@@ -22,11 +22,23 @@ const FollowInstagram: React.FC<FollowInstagramProps> = ({
   buttonText = "instaButtonText",
 }) => {
   const handleFollowPress = async () => {
-    const supported = await Linking.canOpenURL(profileLink);
-    if (supported) {
-      Linking.openURL(profileLink);
-    } else {
-      console.warn("Cannot open Instagram link");
+    const username = profileLink.split("instagram.com/")[1]?.replace("/", "");
+
+    const appUrl = `instagram://user?username=${username}`;
+    const webUrl = profileLink;
+
+    try {
+      const canOpen = await Linking.canOpenURL(appUrl);
+
+      if (canOpen) {
+        // Open profile directly in Instagram app
+        await Linking.openURL(appUrl);
+      } else {
+        // Fallback → open in browser
+        await Linking.openURL(webUrl);
+      }
+    } catch (err) {
+      console.warn("Error opening Instagram", err);
     }
   };
 
