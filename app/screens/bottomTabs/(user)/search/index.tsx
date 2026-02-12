@@ -12,7 +12,7 @@ import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 
 const Search = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(1);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const TABS = [
@@ -77,7 +77,7 @@ const Search = () => {
       setTotalData(totalData);
 
       const mergedData = response?.pages.flatMap(
-        (page: any) => page.data || []
+        (page: any) => page.data || [],
       );
 
       // ✅ Deduplicate by _id
@@ -85,13 +85,13 @@ const Search = () => {
         mergedData?.reduce((acc: any, item: any) => {
           acc[item._id] = item;
           return acc;
-        }, {}) || {}
+        }, {}) || {},
       );
 
       setFilteredData(uniqueData);
 
       return () => {}; // Clean-up not needed here
-    }, [response])
+    }, [response]),
   );
 
   const loadMore = () => {
@@ -106,7 +106,7 @@ const Search = () => {
       filteredData?.reduce((acc: any, item: any) => {
         acc[item._id] = item;
         return acc;
-      }, {}) || {}
+      }, {}) || {},
     );
     return unique;
   }, [filteredData]);
@@ -114,16 +114,16 @@ const Search = () => {
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
     async () => {
       await refetch();
-    }
+    },
   );
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
-        <TabSwitcher
+      {/* <TabSwitcher
           tabs={TABS}
           actvieTab={selectedTab}
           setActiveTab={setSelectedTab}
-        />
+        /> */}
 
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
