@@ -144,7 +144,6 @@
   "labour": "मजदूर",
   "brickLayer": "मजदूरी पत्थर",
   "stoneMason": "पत्थर मिस्त्री",
-  "mistri": "मिस्त्री",
   "dhaanBuwai": "धान बुवाई",
   "dhaanPitai": "धान पिटाई",
   "alooBuwai": "आलू बुवाई",
@@ -1065,689 +1064,221 @@
   "applyByMediator": "ठेकेदार द्वारा आवेदन किया गया",
   "askToMediator": "ठेकेदार को कॉल करें",
 
-  "farms": "खेती का काम",
-  "landPreparation": "खेत की तैयारी",
-  "sowingAndPlanting": "बीज डालना और पौधा लगाना",
-  "irrigation": "खेत में पानी देना",
-  "cropMaintenance": "फसल की देखभाल",
-  "harvesting": "कटाई",
-  "postHarvest": "कटाई के बाद",
-  "farmSupport": "खेत सहायता",
-  "specializedFarming": "विशेषीकृत खेती",
-  "farmPartnershipsAndAssistance": "कृषि भागीदारी और सहायता",
-  "home": "घर",
-  "housekeeping": "घर का काम",
-  "gardening": "बागवानी",
-  "generalHomeHelp": "सामान्य घरेलू सहायता",
-  "homeSecurity": "घर की सुरक्षा",
-  "homeManagement": "घर का प्रबंधन",
-  "livestockCareHome": "पशुधन की देखभाल",
-  "factories": "कारखाने",
-  "productionLineWork": "उत्पादन लाइन का काम",
-  "materialHandling": "सामग्री प्रबंधन",
-  "cleaningAndMaintenance": "सफाई और रखरखाव",
-  "supportServices": "सहायता सेवाएं",
-  "shops": "दुकानें",
-  "salesAssistance": "बिक्री सहायता",
-  "stockManagement": "स्टॉक प्रबंधन",
-  "deliveryServices": "वितरण सेवाएं",
-  "supportRoles": "सहायक भूमिकाएँ",
-  "godownsWarehouses": "गोदाम",
-  "loadingAndUnloading": "लोडिंग और अनलोडिंग",
-  "packingAndDispatch": "पैकिंग और प्रेषण",
-  "buildingConstruction": "भवन निर्माण",
-  "sitePreparation": "साइट तैयारी",
-  "foundationWork": "नींव का काम",
-  "masonry": "चिनाई",
-  "carpentry": "बढ़ईगीरी",
-  "plumbing": "नलसाजी",
-  "electricalWork": "विद्युत कार्य",
-  "steelWork": "स्टील का काम",
-  "concreteWork": "कंक्रीट का काम",
-  "scaffolding": "मचान",
-  "painting": "चित्रकला",
-  "flooringAndTiling": "फर्श और टाइलिंग",
-  "roofing": "छत",
-  "finishingWork": "परिष्करण कार्य",
-  "heavyEquipmentOperation": "भारी उपकरण संचालन",
-  "generalLabor": "सामान्य श्रम",
-  "security": "सुरक्षा",
-  "plumbingServices": "नलसाजी सेवाएं",
-  "fixingLeaks": "रिसाव ठीक करना",
-  "pipeInstallations": "पाइप स्थापना",
-  "repairingWaterTanks": "पानी की टंकी की मरम्मत",
-  "sanitationServices": "स्वच्छता सेवाएं",
-  "fixtureInstallation": "फिक्स्चर स्थापना",
-  "dailyWageAndSkilledLabor": "दैनिक वेतन और कुशल श्रम",
-  "constructionWorkers": "निर्माण श्रमिक",
-  "securityGuards": "सुरक्षा गार्ड",
-  "eventStaffing": "इवेंट स्टाफिंग",
-  "agriculturalLabor": "कृषि श्रम",
-  "transportationAndLogistics": "परिवहन और रसद",
-  "tempoTruckRental": "टेम्पो ट्रक किराया",
-  "bullockCartServices": "बैलगाड़ी सेवाएं",
-  "packAndMove": "पैक और मूव",
-  "courierServices": "कूरियर सेवाएं",
-  "vehicleMaintenance": "वाहन रखरखाव",
-  "healthAndMedicalServices": "स्वास्थ्य और चिकित्सा सेवाएं",
-  "generalPhysician": "सामान्य चिकित्सक",
-  "ambulanceServices": "एम्बुलेंस सेवाएं",
-  "homeHealthCare": "घरेलू स्वास्थ्य देखभाल",
-  "pharmacyAssistance": "फार्मेसी सहायता",
-  "miscellaneous": "विविध",
-  "animalServices": "पशु सेवाएं",
-  "eventServices": "इवेंट सेवाएं",
-  "textileWork": "वस्त्र कार्य",
-  "wasteManagement": "अपशिष्ट प्रबंधन",
-  "farmConsultant": "कृषि सलाहकार",
+  "farmingWork": "खेती का काम",
+  "fieldPreparation": "खेत की तैयारी",
+  "cropCare": "फसल की देखभाल",
+  "harvestWork": "कटाई का काम",
+  "farmSupport": "खेत सहयोग",
 
-  "plowing": { "singular": "जुताई करने वाला", "plural": "जुताई करने वाले" },
-  "leveling": {
-    "singular": "ज़मीन बराबर करने वाला",
-    "plural": "ज़मीन बराबर करने वाले"
-  },
-  "tilling": { "singular": "मिट्टी पलटने वाला", "plural": "मिट्टी पलटने वाले" },
-  "weeding": {
-    "singular": "खरपतवार निकालने वाला",
-    "plural": "खरपतवार निकालने वाले"
-  },
-  "fieldClearing": {
-    "singular": "खेत साफ करने वाला",
-    "plural": "खेत साफ करने वाले"
-  },
-  "stonePicking": {
-    "singular": "खेत से पत्थर हटाने वाला",
-    "plural": "खेत से पत्थर हटाने वाले"
-  },
-  "bundMaking": {
-    "singular": "मेंड़ बनाने वाला",
-    "plural": "मेंड़ बनाने वाले"
-  },
-  "seedSowing": { "singular": "बीज बोने वाला", "plural": "बीज बोने वाले" },
-  "transplantingSeedlings": {
-    "singular": "छोटा पौधा लगाने वाला",
-    "plural": "छोटे पौधे लगाने वाले"
-  },
-  "manualPlanting": {
-    "singular": "हाथ से पौधा लगाने वाला",
-    "plural": "हाथ से पौधे लगाने वाले"
-  },
-  "fertilizerApplication": {
-    "singular": "खाद डालने वाला",
-    "plural": "खाद डालने वाले"
-  },
-  "manureSpreading": {
-    "singular": "गोबर की खाद डालने वाला",
-    "plural": "गोबर की खाद डालने वाले"
-  },
-  "canalManagement": {
-    "singular": "नहर की देखभाल करने वाला",
-    "plural": "नहर की देखभाल करने वाले"
-  },
-  "waterChannelDigging": {
-    "singular": "पानी की नाली खोदने वाला",
-    "plural": "पानी की नाली खोदने वाले"
-  },
-  "waterDistribution": {
-    "singular": "खेतों तक पानी पहुँचाने वाला",
-    "plural": "खेतों तक पानी पहुँचाने वाले"
-  },
-  "pumpOperation": {
-    "singular": "पानी निकालने की मशीन चलाने वाला",
-    "plural": "पानी निकालने की मशीन चलाने वाले"
-  },
-  "hoseManagement": {
-    "singular": "पाइप लगाने और हटाने वाला",
-    "plural": "पाइप लगाने और हटाने वाले"
-  },
-  "pestControlSpraying": {
-    "singular": "कीटनाशक छिड़काव करने वाला",
-    "plural": "कीटनाशक छिड़काव करने वाले"
-  },
-  "fertilizerTopDressing": {
-    "singular": "ऊपरी उर्वरक डालने वाला",
-    "plural": "ऊपरी उर्वरक डालने वाले"
-  },
-  "pruning": { "singular": "छंटाई करने वाला", "plural": "छंटाई करने वाले" },
-  "staking": { "singular": "सहारा देने वाला", "plural": "सहारा देने वाले" },
-  "cropWatching": {
-    "singular": "फसल की निगरानी करने वाला",
-    "plural": "फसल की निगरानी करने वाले"
-  },
-  "manualCutting": {
-    "singular": "हाथ से कटाई करने वाला",
-    "plural": "हाथ से कटाई करने वाले"
-  },
-  "cropGathering": {
-    "singular": "फसल इकट्ठा करने वाला",
-    "plural": "फसल इकट्ठा करने वाले"
-  },
-  "threshing": { "singular": "मड़ाई करने वाला", "plural": "मड़ाई करने वाले" },
-  "winnowing": { "singular": "ओसाई करने वाला", "plural": "ओसाई करने वाले" },
-  "cropBundling": {
-    "singular": "फसल बांधने वाला",
-    "plural": "फसल बांधने वाले"
-  },
-  "cropSorting": {
-    "singular": "फसल की छंटाई करने वाला",
-    "plural": "फसल की छंटाई करने वाले"
-  },
-  "cropCleaning": {
-    "singular": "फसल की सफाई करने वाला",
-    "plural": "फसल की सफाई करने वाले"
-  },
-  "cropPacking": {
-    "singular": "फसल की पैकिंग करने वाला",
-    "plural": "फसल की पैकिंग करने वाले"
-  },
-  "loadingForTransport": {
-    "singular": "परिवहन के लिए लोडिंग करने वाला",
-    "plural": "परिवहन के लिए लोडिंग करने वाले"
-  },
-  "unloadingFromTransport": {
-    "singular": "परिवहन से उतराई करने वाला",
-    "plural": "परिवहन से उतराई करने वाले"
-  },
-  "storageAssistance": {
-    "singular": "भंडारण में सहायता करने वाला",
-    "plural": "भंडारण में सहायता करने वाले"
-  },
-  "farmCleaning": {
-    "singular": "खेत की सफाई करने वाला",
-    "plural": "खेत की सफाई करने वाले"
-  },
-  "livestockFeeding": {
-    "singular": "पशुओं को चारा देने वाला",
-    "plural": "पशुओं को चारा देने वाले"
-  },
-  "livestockCare": {
-    "singular": "पशुओं की देखभाल करने वाला",
-    "plural": "पशुओं की देखभाल करने वाले"
-  },
-  "fenceRepair": {
-    "singular": "बाड़ की मरम्मत करने वाला",
-    "plural": "बाड़ की मरम्मत करने वाले"
-  },
-  "toolMaintenance": {
-    "singular": "उपकरणों का रखरखाव करने वाला",
-    "plural": "उपकरणों का रखरखाव करने वाले"
-  },
-  "generalFarmHelp": {
-    "singular": "सामान्य खेत सहायता करने वाला",
-    "plural": "सामान्य खेत सहायता करने वाले"
-  },
-  "farmSecurity": {
-    "singular": "खेत सुरक्षा करने वाला",
-    "plural": "खेत सुरक्षा करने वाले"
-  },
-  "apiaryManagementBeekeeping": {
-    "singular": "मधुमक्खी पालक",
-    "plural": "मधुमक्खी पालक"
-  },
-  "sericultureSilkFarming": {
-    "singular": "रेशम कीट पालक",
-    "plural": "रेशम कीट पालक"
-  },
-  "horticultureGardening": {
-    "singular": "बागवानी करने वाला",
-    "plural": "बागवानी करने वाले"
-  },
-  "floricultureFlowerFarming": {
-    "singular": "फूलों की खेती करने वाला",
-    "plural": "फूलों की खेती करने वाले"
-  },
-  "farmHand": { "singular": "कृषि सहायक", "plural": "कृषि सहायक" },
-  "agriculturalPartnership": {
-    "singular": "कृषि भागीदार",
-    "plural": "कृषि भागीदार"
-  },
-  "seasonalFarmLabor": {
-    "singular": "मौसमी कृषि श्रमिक",
-    "plural": "मौसमी कृषि श्रमिक"
-  },
-  "sweeping": { "singular": "झाड़ू लगाने वाला", "plural": "झाड़ू लगाने वाले" },
-  "mopping": { "singular": "पोंछा लगाने वाला", "plural": "पोंछा लगाने वाले" },
-  "dishwashing": { "singular": "बर्तन धोने वाला", "plural": "बर्तन धोने वाले" },
-  "laundry": { "singular": "कपड़े धोने वाला", "plural": "कपड़े धोने वाले" },
-  "cleaningUtensils": {
-    "singular": "बर्तन साफ करने वाला",
-    "plural": "बर्तन साफ करने वाले"
-  },
-  "dusting": { "singular": "धूल झाड़ने वाला", "plural": "धूल झाड़ने वाले" },
-  "arrangingItems": {
-    "singular": "वस्तुएं व्यवस्थित करने वाला",
-    "plural": "वस्तुएं व्यवस्थित करने वाले"
-  },
-  "lawnMowing": { "singular": "लॉन काटने वाला", "plural": "लॉन काटने वाले" },
-  "wateringPlants": {
-    "singular": "पौधों को पानी देने वाला",
-    "plural": "पौधों को पानी देने वाले"
-  },
-  "weedingGardens": {
-    "singular": "बगीचे से खरपतवार निकालने वाला",
-    "plural": "बगीचों से खरपतवार निकालने वाले"
-  },
-  "plantingFlowers": {
-    "singular": "फूल लगाने वाला",
-    "plural": "फूल लगाने वाले"
-  },
-  "pruningTreesAndBushes": {
-    "singular": "पेड़ और झाड़ियाँ छाँटने वाला",
-    "plural": "पेड़ और झाड़ियाँ छाँटने वाले"
-  },
-  "gardenCleaning": {
-    "singular": "बगीचे की सफाई करने वाला",
-    "plural": "बगीचे की सफाई करने वाले"
-  },
-  "soilPreparationForGardening": {
-    "singular": "बागवानी के लिए मिट्टी तैयार करने वाला",
-    "plural": "बागवानी के लिए मिट्टी तैयार करने वाले"
-  },
-  "carryingItems": {
-    "singular": "वस्तु ले जाने वाला",
-    "plural": "वस्तुएं ले जाने वाले"
-  },
-  "fetchingWater": { "singular": "पानी लाने वाला", "plural": "पानी लाने वाले" },
-  "runningErrands": {
-    "singular": "दौड़-भाग का काम करने वाला",
-    "plural": "दौड़-भाग के काम करने वाले"
-  },
-  "basicRepairs": {
-    "singular": "बुनियादी मरम्मत करने वाला",
-    "plural": "बुनियादी मरम्मत करने वाले"
-  },
-  "cookingAssistance": {
-    "singular": "खाना पकाने में सहायता करने वाला",
-    "plural": "खाना पकाने में सहायता करने वाले"
-  },
-  "elderlyCareNonMedical": {
-    "singular": "बुजुर्ग की देखभाल करने वाला",
-    "plural": "बुजुर्गों की देखभाल करने वाले"
-  },
-  "childcareNonFormal": {
-    "singular": "बच्चे की देखभाल करने वाला",
-    "plural": "बच्चों की देखभाल करने वाले"
-  },
-  "nightWatchman": { "singular": "रात का चौकीदार", "plural": "रात के चौकीदार" },
-  "dayWatchman": { "singular": "दिन का चौकीदार", "plural": "दिन के चौकीदार" },
-  "propertyGuarding": {
-    "singular": "संपत्ति की रखवाली करने वाला",
-    "plural": "संपत्ति की रखवाली करने वाले"
-  },
-  "propertySupervision": {
-    "singular": "संपत्ति की देखरेख करने वाला",
-    "plural": "संपत्ति की देखरेख करने वाले"
-  },
-  "billPaymentAssistance": {
-    "singular": "बिल भुगतान में सहायता करने वाला",
-    "plural": "बिल भुगतान में सहायता करने वाले"
-  },
-  "organizingHouseholdTasks": {
-    "singular": "घरेलू कार्य आयोजित करने वाला",
-    "plural": "घरेलू कार्य आयोजित करने वाले"
-  },
-  "animalFeeding": {
-    "singular": "जानवर को खिलाने वाला",
-    "plural": "जानवरों को खिलाने वाले"
-  },
-  "animalCleaning": {
-    "singular": "जानवर की सफाई करने वाला",
-    "plural": "जानवरों की सफाई करने वाले"
-  },
-  "grazingAssistance": {
-    "singular": "चराई में सहायता करने वाला",
-    "plural": "चराई में सहायता करने वाले"
-  },
-  "assemblyLineWorker": {
-    "singular": "असेंबली लाइन मज़दूर",
-    "plural": "असेंबली लाइन मज़दूर"
-  },
-  "packagingWorker": {
-    "singular": "पैकेजिंग मज़दूर",
-    "plural": "पैकेजिंग मज़दूर"
-  },
-  "sortingAndGrading": {
-    "singular": "छंटाई और ग्रेडिंग करने वाला",
-    "plural": "छंटाई और ग्रेडिंग करने वाले"
-  },
-  "machineOperationAssistant": {
-    "singular": "मशीन संचालन सहायक",
-    "plural": "मशीन संचालन सहायक"
-  },
-  "qualityCheckingManual": {
-    "singular": "गुणवत्ता जांच करने वाला",
-    "plural": "गुणवत्ता जांच करने वाले"
-  },
-  "loader": { "singular": "लोडर", "plural": "लोडर" },
-  "unloader": { "singular": "अनलोडर", "plural": "अनलोडर" },
-  "materialCarrier": { "singular": "सामग्री वाहक", "plural": "सामग्री वाहक" },
-  "stackingWorker": {
-    "singular": "स्टैकिंग मज़दूर",
-    "plural": "स्टैकिंग मज़दूर"
-  },
-  "forkliftAssistant": {
-    "singular": "फोर्कलिफ्ट सहायक",
-    "plural": "फोर्कलिफ्ट सहायक"
-  },
-  "factoryCleaner": {
-    "singular": "कारखाना क्लीनर",
-    "plural": "कारखाना क्लीनर"
-  },
-  "machineCleaner": { "singular": "मशीन क्लीनर", "plural": "मशीन क्लीनर" },
-  "wasteDisposal": {
-    "singular": "अपशिष्ट निपटान करने वाला",
-    "plural": "अपशिष्ट निपटान करने वाले"
-  },
-  "basicMachineMaintenanceAssistant": {
-    "singular": "बुनियादी मशीन रखरखाव सहायक",
-    "plural": "बुनियादी मशीन रखरखाव सहायक"
-  },
-  "helper": { "singular": "सहायक", "plural": "सहायक" },
-  "generalAssistant": {
-    "singular": "सामान्य सहायक",
-    "plural": "सामान्य सहायक"
-  },
-  "securityGuard": { "singular": "सुरक्षा गार्ड", "plural": "सुरक्षा गार्ड" },
-  "canteenWorker": { "singular": "कैंटीन मज़दूर", "plural": "कैंटीन मज़दूर" },
+  "shopWork": "दुकान का काम",
+  "shopStaff": "दुकान स्टाफ",
+  "shopLogistics": "लोडिंग और डिलीवरी",
+  "shopBusiness": "व्यापार सहयोग",
+
+  "homeMaintenance": "घर का काम",
+  "houseHelp": "घर का सहायक",
+  "homeRepair": "मरम्मत का काम",
+
+  "constructionWork": "निर्माण कार्य",
+  "mistriWork": "मिस्त्री कार्य",
+  "siteStaff": "साइट स्टाफ",
+
+  "animalWork": "पशु पालन काम",
+  "dairyWork": "डेयरी काम",
+
+  "driverJobs": "ड्राइवर नौकरी",
+  "vehicleDrivers": "वाहन ड्राइवर",
+  "heavyDrivers": "भारी मशीन ड्राइवर",
+
+  "factoryJobs": "फैक्ट्री का काम",
+  "factoryStaff": "फैक्ट्री स्टाफ",
+  "factoryOffice": "ऑफिस स्टाफ",
+  "factoryLoading": "लोडिंग काम",
+
+  "electricalRepair": "इलेक्ट्रिकल और मशीन रिपेयर",
+  "applianceRepair": "मशीन रिपेयर",
+  "wiringWork": "वायरिंग काम",
+  "wiring": "वायरिंग सेटअप",
+
+  "generalLabour": "जनरल मजदूरी",
+  "dailyLabour": "दैनिक मजदूरी",
+
+  "jutai": { "singular": "जुताई मजदूर", "plural": "जुताई मजदूर" },
+  "bueai": { "singular": "बुआई मजदूर", "plural": "बुआई मजदूर" },
+  "sichai": { "singular": "सिंचाई मजदूर", "plural": "सिंचाई मजदूर" },
+  "khad": { "singular": "खाद डालने वाला", "plural": "खाद डालने वाले" },
+  "chidkaab": { "singular": "छिड़काव मजदूर", "plural": "छिड़काव मजदूर" },
+
+  "niraiGudai": {
+    "singular": "निराई गुड़ाई मजदूर",
+    "plural": "निराई गुड़ाई मजदूर"
+  },
+  "dekhbhal": { "singular": "फसल देखभाल मजदूर", "plural": "फसल देखभाल मजदूर" },
+  "rakhwali": { "singular": "फसल रखवाली", "plural": "फसल रखवाली" },
+
+  "katai": { "singular": "कटाई मजदूर", "plural": "कटाई मजदूर" },
+  "thresing": { "singular": "थ्रेसिंग मजदूर", "plural": "थ्रेसिंग मजदूर" },
+  "harvesting": {
+    "singular": "हार्वेस्टिंग मजदूर",
+    "plural": "हार्वेस्टिंग मजदूर"
+  },
+  "dulai": { "singular": "ढुलाई मजदूर", "plural": "ढुलाई मजदूर" },
+  "binai": { "singular": "बिनाई मजदूर", "plural": "बिनाई मजदूर" },
+  "chhatai": { "singular": "छंटाई मजदूर", "plural": "छंटाई मजदूर" },
+  "taarBandi": { "singular": "तारबंदी मजदूर", "plural": "तारबंदी मजदूर" },
+
   "shopHelper": { "singular": "दुकान सहायक", "plural": "दुकान सहायक" },
-  "displayArranger": {
-    "singular": "प्रदर्शन व्यवस्थापक",
-    "plural": "प्रदर्शन व्यवस्थापक"
+  "cashier": { "singular": "कैशियर", "plural": "कैशियर" },
+  "computerOperator": {
+    "singular": "कंप्यूटर ऑपरेटर",
+    "plural": "कंप्यूटर ऑपरेटर"
   },
-  "customerServiceAssistant": {
-    "singular": "ग्राहक सेवा सहायक",
-    "plural": "ग्राहक सेवा सहायक"
-  },
-  "stockUnloader": { "singular": "स्टॉक अनलोडर", "plural": "स्टॉक अनलोडर" },
-  "shelfStocker": { "singular": "शेल्फ स्टॉकर", "plural": "शेल्फ स्टॉकर" },
-  "inventoryAssistant": {
-    "singular": "इन्वेंटरी सहायक",
-    "plural": "इन्वेंटरी सहायक"
-  },
-  "deliveryPersonBicycleScooter": {
-    "singular": "वितरण व्यक्ति",
-    "plural": "वितरण व्यक्ति"
-  },
-  "deliveryHelper": { "singular": "वितरण सहायक", "plural": "वितरण सहायक" },
-  "cashierAssistant": { "singular": "कैशियर सहायक", "plural": "कैशियर सहायक" },
-  "materialHandler": {
-    "singular": "सामग्री हैंडलर",
-    "plural": "सामग्री हैंडलर"
-  },
-  "goodsOrganizer": { "singular": "माल आयोजक", "plural": "माल आयोजक" },
+  "accountant": { "singular": "अकाउंटेंट", "plural": "अकाउंटेंट" },
+  "palledar": { "singular": "पल्लेदार", "plural": "पल्लेदार" },
   "packer": { "singular": "पैकर", "plural": "पैकर" },
-  "dispatchAssistant": { "singular": "प्रेषण सहायक", "plural": "प्रेषण सहायक" },
-  "gatekeeper": { "singular": "द्वारपाल", "plural": "द्वारपाल" },
-  "landClearingLaborer": {
-    "singular": "भूमि समाशोधन मजदूर",
-    "plural": "भूमि समाशोधन मजदूर"
+  "deliveryBoy": { "singular": "डिलीवरी बॉय", "plural": "डिलीवरी बॉय" },
+  "recovery": { "singular": "रिकवरी कर्मचारी", "plural": "रिकवरी कर्मचारी" },
+  "marketing": {
+    "singular": "मार्केटिंग कर्मचारी",
+    "plural": "मार्केटिंग कर्मचारी"
   },
-  "levelingWorker": {
-    "singular": "समतलीकरण मज़दूर",
-    "plural": "समतलीकरण मज़दूर"
+
+  "maid": { "singular": "मेड", "plural": "मेड" },
+  "gardener": { "singular": "माली", "plural": "माली" },
+  "securityGuard": {
+    "singular": "सिक्योरिटी गार्ड",
+    "plural": "सिक्योरिटी गार्ड"
   },
-  "excavationHelper": { "singular": "खुदाई सहायक", "plural": "खुदाई सहायक" },
-  "foundationDigger": {
-    "singular": "नींव खोदने वाला",
-    "plural": "नींव खोदने वाले"
-  },
-  "concreteMixerOperatorAssistant": {
-    "singular": "कंक्रीट मिक्सर ऑपरेटर सहायक",
-    "plural": "कंक्रीट मिक्सर ऑपरेटर सहायक"
-  },
-  "shutteringHelper": { "singular": "शटरिंग सहायक", "plural": "शटरिंग सहायक" },
-  "steelFixingHelper": {
-    "singular": "स्टील फिक्सिंग सहायक",
-    "plural": "स्टील फिक्सिंग सहायक"
-  },
-  "bricklayerMason": {
-    "singular": "ईंट बनाने वाला (मिस्त्री)",
-    "plural": "ईंट बनाने वाले (मिस्त्री)"
-  },
-  "blockLayer": {
-    "singular": "ब्लॉक लगाने वाला",
-    "plural": "ब्लॉक लगाने वाले"
-  },
-  "plasteringHelper": { "singular": "पलस्तर सहायक", "plural": "पलस्तर सहायक" },
-  "carpenter": { "singular": "बढ़ई", "plural": "बढ़ई" },
-  "shutteringCarpenter": { "singular": "शटरिंग बढ़ई", "plural": "शटरिंग बढ़ई" },
-  "formworkCarpenterHelper": {
-    "singular": "फॉर्मवर्क बढ़ई सहायक",
-    "plural": "फॉर्मवर्क बढ़ई सहायक"
-  },
-  "plumber": { "singular": "नलसाज", "plural": "नलसाज" },
-  "plumbingAssistant": { "singular": "नलसाजी सहायक", "plural": "नलसाजी सहायक" },
-  "pipeFitterHelper": {
-    "singular": "पाइप फिटर सहायक",
-    "plural": "पाइप फिटर सहायक"
-  },
+  "driver": { "singular": "ड्राइवर", "plural": "ड्राइवर" },
+  "generalHelper": { "singular": "सामान्य सहायक", "plural": "सामान्य सहायक" },
+
+  "plumber": { "singular": "प्लंबर", "plural": "प्लंबर" },
   "electrician": { "singular": "इलेक्ट्रीशियन", "plural": "इलेक्ट्रीशियन" },
-  "electricalWiringHelper": {
-    "singular": "विद्युत वायरिंग सहायक",
-    "plural": "विद्युत वायरिंग सहायक"
+  "painter": { "singular": "पेंटर", "plural": "पेंटर" },
+  "carpenter": { "singular": "बढ़ई", "plural": "बढ़ई" },
+  "mistri": { "singular": "मिस्त्री", "plural": "मिस्त्री" },
+  "beldaar": { "singular": "बेलदार", "plural": "बेलदार" },
+  "lowVoltageTech": {
+    "singular": "लो वोल्टेज टेक्नीशियन",
+    "plural": "लो वोल्टेज टेक्नीशियन"
   },
+
+  "tileMistri": { "singular": "टाइल मिस्त्री", "plural": "टाइल मिस्त्री" },
+  "brickMistri": { "singular": "ईंट मिस्त्री", "plural": "ईंट मिस्त्री" },
+  "plasterMistri": {
+    "singular": "प्लास्टर मिस्त्री",
+    "plural": "प्लास्टर मिस्त्री"
+  },
+  "shuttering": { "singular": "शटरिंग मजदूर", "plural": "शटरिंग मजदूर" },
   "steelFixer": { "singular": "स्टील फिक्सर", "plural": "स्टील फिक्सर" },
   "welder": { "singular": "वेल्डर", "plural": "वेल्डर" },
-  "steelCuttingHelper": {
-    "singular": "स्टील कटिंग सहायक",
-    "plural": "स्टील कटिंग सहायक"
+  "pipeWelder": { "singular": "पाइप वेल्डर", "plural": "पाइप वेल्डर" },
+  "ducting": { "singular": "डक्टिंग मजदूर", "plural": "डक्टिंग मजदूर" },
+  "storeKeeper": { "singular": "स्टोर कीपर", "plural": "स्टोर कीपर" },
+  "supervisor": { "singular": "सुपरवाइजर", "plural": "सुपरवाइजर" },
+  "foreman": { "singular": "फोरमैन", "plural": "फोरमैन" },
+  "fitter": { "singular": "फिटर", "plural": "फिटर" },
+
+  "veterinary": {
+    "singular": "पशु चिकित्सक सहायक",
+    "plural": "पशु चिकित्सक सहायक"
   },
-  "concreteMixerOperator": {
-    "singular": "कंक्रीट मिक्सर ऑपरेटर",
-    "plural": "कंक्रीट मिक्सर ऑपरेटर"
+  "milking": { "singular": "दूध निकालने वाला", "plural": "दूध निकालने वाले" },
+  "animalFeeder": {
+    "singular": "पशु चारा देने वाला",
+    "plural": "पशु चारा देने वाले"
   },
-  "concretePourer": {
-    "singular": "कंक्रीट डालने वाला",
-    "plural": "कंक्रीट डालने वाले"
-  },
-  "concreteFinisher": {
-    "singular": "कंक्रीट फिनिशर",
-    "plural": "कंक्रीट फिनिशर"
-  },
-  "vibratorOperator": {
-    "singular": "वाइब्रेटर ऑपरेटर",
-    "plural": "वाइब्रेटर ऑपरेटर"
-  },
-  "scaffoldingErector": {
-    "singular": "मचान खड़ा करने वाला",
-    "plural": "मचान खड़ा करने वाले"
-  },
-  "scaffoldingDismantler": {
-    "singular": "मचान गिराने वाला",
-    "plural": "मचान गिराने वाले"
-  },
-  "scaffoldingLaborer": { "singular": "मचान मजदूर", "plural": "मचान मजदूर" },
-  "painter": { "singular": "चित्रकार", "plural": "चित्रकार" },
-  "paintingHelper": {
-    "singular": "चित्रकला सहायक",
-    "plural": "चित्रकला सहायक"
-  },
-  "wallPuttyApplicator": {
-    "singular": "दीवार पुट्टी लगाने वाला",
-    "plural": "दीवार पुट्टी लगाने वाले"
-  },
-  "tileLayer": { "singular": "टाइल लगाने वाला", "plural": "टाइल लगाने वाले" },
-  "flooringInstaller": {
-    "singular": "फर्श लगाने वाला",
-    "plural": "फर्श लगाने वाले"
-  },
-  "marbleFitter": {
-    "singular": "मार्बल लगाने वाला",
-    "plural": "मार्बल लगाने वाले"
-  },
-  "flooringHelper": { "singular": "फर्श सहायक", "plural": "फर्श सहायक" },
-  "roofer": { "singular": "छत बनाने वाला", "plural": "छत बनाने वाले" },
-  "roofingSheetInstaller": {
-    "singular": "छत की चादर लगाने वाला",
-    "plural": "छत की चादर लगाने वाले"
-  },
-  "waterproofingApplicator": {
-    "singular": "वाटरप्रूफिंग लगाने वाला",
-    "plural": "वाटरप्रूफिंग लगाने वाले"
-  },
-  "roofingHelper": { "singular": "छत सहायक", "plural": "छत सहायक" },
-  "glassFitter": { "singular": "ग्लास फिटर", "plural": "ग्लास फिटर" },
-  "grillFitter": { "singular": "ग्रिल फिटर", "plural": "ग्रिल फिटर" },
-  "falseCeilingInstaller": {
-    "singular": "झूठी छत लगाने वाला",
-    "plural": "झूठी छत लगाने वाले"
+  "animalCleaner": {
+    "singular": "पशु साफ करने वाला",
+    "plural": "पशु साफ करने वाले"
   },
 
-  "finishingHelper": {
-    "singular": "परिष्करण सहायक",
-    "plural": "परिष्करण सहायक"
+  "truckDriver": { "singular": "ट्रक ड्राइवर", "plural": "ट्रक ड्राइवर" },
+  "carDriver": { "singular": "कार ड्राइवर", "plural": "कार ड्राइवर" },
+  "tractorDriver": {
+    "singular": "ट्रैक्टर ड्राइवर",
+    "plural": "ट्रैक्टर ड्राइवर"
   },
-  "craneOperator": { "singular": "क्रेन ऑपरेटर", "plural": "क्रेन ऑपरेटर" },
-  "excavatorOperator": {
-    "singular": "खुदाई करने वाला ऑपरेटर",
-    "plural": "खुदाई करने वाले ऑपरेटर"
-  },
-  "heavyEquipmentHelper": {
-    "singular": "भारी उपकरण सहायक",
-    "plural": "भारी उपकरण सहायक"
-  },
-  "constructionLaborer": {
-    "singular": "निर्माण मजदूर",
-    "plural": "निर्माण मजदूर"
-  },
-  "siteCleaner": { "singular": "साइट क्लीनर", "plural": "साइट क्लीनर" },
-  "siteSecurityGuard": {
-    "singular": "साइट सुरक्षा गार्ड",
-    "plural": "साइट सुरक्षा गार्ड"
-  },
-  "leakDetectionSpecialist": {
-    "singular": "रिसाव पहचान विशेषज्ञ",
-    "plural": "रिसाव पहचान विशेषज्ञ"
-  },
-  "pipeFitter": { "singular": "पाइप फिटर", "plural": "पाइप फिटर" },
-  "waterTankRepairer": {
-    "singular": "पानी की टंकी मरम्मत करने वाला",
-    "plural": "पानी की टंकी मरम्मत करने वाले"
-  },
-  "tankCleaner": { "singular": "टैंक क्लीनर", "plural": "टैंक क्लीनर" },
-  "septicTankCleaner": {
-    "singular": "सेप्टिक टैंक क्लीनर",
-    "plural": "सेप्टिक टैंक क्लीनर"
-  },
-  "drainCleaner": { "singular": "नाली क्लीनर", "plural": "नाली क्लीनर" },
-  "toiletCleanerRepairer": {
-    "singular": "शौचालय क्लीनर/मरम्मत करने वाला",
-    "plural": "शौचालय क्लीनर/मरम्मत करने वाले"
-  },
-  "faucetInstaller": { "singular": "नल लगाने वाला", "plural": "नल लगाने वाले" },
-  "sinkInstaller": {
-    "singular": "सिंक लगाने वाला",
-    "plural": "सिंक लगाने वाले"
-  },
-  "toiletInstaller": {
-    "singular": "शौचालय लगाने वाला",
-    "plural": "शौचालय लगाने वाले"
-  },
-  "showerInstaller": {
-    "singular": "शावर लगाने वाला",
-    "plural": "शावर लगाने वाले"
-  },
-  "laborers": { "singular": "मजदूर", "plural": "मजदूर" },
-  "masons": { "singular": "राजमिस्त्री", "plural": "राजमिस्त्री" },
-  "carpenters": { "singular": "बढ़ई", "plural": "बढ़ई" },
-  "welders": { "singular": "वेल्डर", "plural": "वेल्डर" },
-  "steelFixers": { "singular": "स्टील फिक्सर", "plural": "स्टील फिक्सर" },
-  "movers": { "singular": "मूवर", "plural": "मूवर्स" },
-  "warehouseWorkers": {
-    "singular": "वेयरहाउस कर्मचारी",
-    "plural": "वेयरहाउस कर्मचारी"
-  },
-  "porters": { "singular": "कुली", "plural": "कुली" },
-  "eventSetupCrew": {
-    "singular": "इवेंट सेटअप क्रू",
-    "plural": "इवेंट सेटअप क्रू"
-  },
-  "eventCleanupCrew": {
-    "singular": "इवेंट क्लीनअप क्रू",
-    "plural": "इवेंट क्लीनअप क्रू"
-  },
-  "waitstaff": { "singular": "वेटस्टाफ", "plural": "वेटस्टाफ" },
-  "usher": {
-    "singular": "अतिथि सत्कार करने वाला",
-    "plural": "अतिथि सत्कार करने वाले"
-  },
-  "fieldWorker": { "singular": "खेत मज़दूर", "plural": "खेत मज़दूर" },
-  "harvester": { "singular": "कटाई करने वाला", "plural": "कटाई करने वाले" },
-  "planter": { "singular": "रोपण करने वाला", "plural": "रोपण करने वाले" },
-  "truckDrivers": { "singular": "ट्रक ड्राइवर", "plural": "ट्रक ड्राइवर" },
-  "transportOperators": {
-    "singular": "परिवहन ऑपरेटर",
-    "plural": "परिवहन ऑपरेटर"
-  },
-  "truckCleaners": { "singular": "ट्रक क्लीनर", "plural": "ट्रक क्लीनर" },
-  "cartPullers": {
-    "singular": "गाड़ी खींचने वाला",
-    "plural": "गाड़ी खींचने वाले"
-  },
-  "animalCaretakers": {
-    "singular": "पशु देखभाल करने वाला",
-    "plural": "पशु देखभाल करने वाले"
-  },
-  "packers": { "singular": "पैकर", "plural": "पैकर्स" },
-  "furnitureDismantlersAssemblers": {
-    "singular": "फर्नीचर तोड़ने/जोड़ने वाला",
-    "plural": "फर्नीचर तोड़ने/जोड़ने वाले"
-  },
-  "courier": { "singular": "कूरियर", "plural": "कूरियर" },
-  "deliveryAssistant": { "singular": "वितरण सहायक", "plural": "वितरण सहायक" },
-  "vehicleCleaner": { "singular": "वाहन क्लीनर", "plural": "वाहन क्लीनर" },
-  "tireChanger": { "singular": "टायर बदलने वाला", "plural": "टायर बदलने वाले" },
-  "doctor": { "singular": "डॉक्टर", "plural": "डॉक्टर" },
-  "nurse": { "singular": "नर्स", "plural": "नर्स" },
-  "wardBoyGirl": { "singular": "वार्ड बॉय/गर्ल", "plural": "वार्ड बॉय/गर्ल" },
+  "bikeDriver": { "singular": "बाइक ड्राइवर", "plural": "बाइक ड्राइवर" },
+  "busDriver": { "singular": "बस ड्राइवर", "plural": "बस ड्राइवर" },
   "ambulanceDriver": {
-    "singular": "एम्बुलेंस ड्राइवर",
-    "plural": "एम्बुलेंस ड्राइवर"
+    "singular": "एंबुलेंस ड्राइवर",
+    "plural": "एंबुलेंस ड्राइवर"
   },
-  "paramedic": { "singular": "पैरामेडिक", "plural": "पैरामेडिक" },
-  "firstAidProvider": {
-    "singular": "प्राथमिक चिकित्सा प्रदाता",
-    "plural": "प्राथमिक चिकित्सा प्रदाता"
+  "tempoDriver": { "singular": "टेम्पो ड्राइवर", "plural": "टेम्पो ड्राइवर" },
+  "jcbDriver": { "singular": "जेसीबी ड्राइवर", "plural": "जेसीबी ड्राइवर" },
+  "craneDriver": { "singular": "क्रेन ड्राइवर", "plural": "क्रेन ड्राइवर" },
+  "forkliftDriver": {
+    "singular": "फोर्कलिफ्ट ड्राइवर",
+    "plural": "फोर्कलिफ्ट ड्राइवर"
   },
-  "caregiver": { "singular": "देखभाल करने वाला", "plural": "देखभाल करने वाले" },
-  "homeNurse": { "singular": "होम नर्स", "plural": "होम नर्स" },
-  "attendant": { "singular": "परिचर", "plural": "परिचर" },
-  "pharmacyHelper": {
-    "singular": "फार्मेसी सहायक",
-    "plural": "फार्मेसी सहायक"
+  "roadRollerDriver": {
+    "singular": "रोड रोलर ड्राइवर",
+    "plural": "रोड रोलर ड्राइवर"
   },
-  "medicineDeliveryPerson": {
-    "singular": "दवा वितरण व्यक्ति",
-    "plural": "दवा वितरण व्यक्ति"
+  "rmcDriver": { "singular": "आरएमसी ड्राइवर", "plural": "आरएमसी ड्राइवर" },
+  "loaderDriver": { "singular": "लोडर ड्राइवर", "plural": "लोडर ड्राइवर" },
+  "combineDriver": {
+    "singular": "कम्बाइन ड्राइवर",
+    "plural": "कम्बाइन ड्राइवर"
   },
-  "assistant": { "singular": "सहायक", "plural": "सहायक" },
-  "generalLaborer": { "singular": "सामान्य मजदूर", "plural": "सामान्य मजदूर" },
-  "animalGroomer": { "singular": "पशु ग्रूमर", "plural": "पशु ग्रूमर" },
-  "animalTrainer": { "singular": "पशु प्रशिक्षक", "plural": "पशु प्रशिक्षक" },
-  "decorator": { "singular": "सजावट करने वाला", "plural": "सजावट करने वाले" },
-  "catererHelper": { "singular": "कैटरेर सहायक", "plural": "कैटरेर सहायक" },
-  "tailorAssistant": { "singular": "दर्जी सहायक", "plural": "दर्जी सहायक" },
-  "weaver": { "singular": "बुनकर", "plural": "बुनकर" },
-  "wasteCollector": {
-    "singular": "अपशिष्ट संग्राहक",
-    "plural": "अपशिष्ट संग्राहक"
+  "hydraDriver": { "singular": "हाइड्रा ड्राइवर", "plural": "हाइड्रा ड्राइवर" },
+
+  "factoryHelper": {
+    "singular": "फैक्ट्री हेल्पर",
+    "plural": "फैक्ट्री हेल्पर"
   },
-  "recyclingWorker": {
-    "singular": "पुनर्चक्रण मज़दूर",
-    "plural": "पुनर्चक्रण मज़दूर"
+  "operator": { "singular": "मशीन ऑपरेटर", "plural": "मशीन ऑपरेटर" },
+  "maintenance": {
+    "singular": "मेंटेनेंस कर्मचारी",
+    "plural": "मेंटेनेंस कर्मचारी"
   },
-  "shopCleaner": {
-    "singular": "दुकान सफाई करने वाला",
-    "plural": "दुकान सफाई करने वाले"
+  "janitor": { "singular": "सफाई कर्मचारी", "plural": "सफाई कर्मचारी" },
+  "factorySupervisor": {
+    "singular": "फैक्ट्री सुपरवाइजर",
+    "plural": "फैक्ट्री सुपरवाइजर"
   },
-  "inventoryTaker": {
-    "singular": "सामान गिनने वाला",
-    "plural": "सामान गिनने वाले"
+  "factoryForeman": {
+    "singular": "फैक्ट्री फोरमैन",
+    "plural": "फैक्ट्री फोरमैन"
   },
-  "warehouseCleaner": {
-    "singular": "गोदाम सफाई करने वाला",
-    "plural": "गोदाम सफाई करने वाले"
+  "factoryStoreKeeper": {
+    "singular": "फैक्ट्री स्टोर कीपर",
+    "plural": "फैक्ट्री स्टोर कीपर"
   },
+  "factoryAccountant": {
+    "singular": "फैक्ट्री अकाउंटेंट",
+    "plural": "फैक्ट्री अकाउंटेंट"
+  },
+  "dataEntry": {
+    "singular": "डेटा एंट्री ऑपरेटर",
+    "plural": "डेटा एंट्री ऑपरेटर"
+  },
+  "gateKeeper": { "singular": "गेट कीपर", "plural": "गेट कीपर" },
+  "factoryPalledar": {
+    "singular": "फैक्ट्री पल्लेदार",
+    "plural": "फैक्ट्री पल्लेदार"
+  },
+
+  "acMechanic": { "singular": "एसी मैकेनिक", "plural": "एसी मैकेनिक" },
+  "fridgeMechanic": { "singular": "फ्रिज मैकेनिक", "plural": "फ्रिज मैकेनिक" },
+  "washingMachineMechanic": {
+    "singular": "वॉशिंग मशीन मैकेनिक",
+    "plural": "वॉशिंग मशीन मैकेनिक"
+  },
+  "coolerMechanic": { "singular": "कूलर मैकेनिक", "plural": "कूलर मैकेनिक" },
+  "geyserMechanic": { "singular": "गीजर मैकेनिक", "plural": "गीजर मैकेनिक" },
+  "tvMechanic": { "singular": "टीवी मैकेनिक", "plural": "टीवी मैकेनिक" },
+  "inverterMechanic": {
+    "singular": "इन्वर्टर मैकेनिक",
+    "plural": "इन्वर्टर मैकेनिक"
+  },
+  "motorMechanic": { "singular": "मोटर मैकेनिक", "plural": "मोटर मैकेनिक" },
+
+  "generalLabourer": { "singular": "मजदूर", "plural": "मजदूर" },
+  "palledarGeneral": { "singular": "पल्लेदार", "plural": "पल्लेदार" },
+
+
 
   "noInternetTitle": "इंटरनेट कनेक्शन नहीं है",
   "noInternetSubtitle": "कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें",
