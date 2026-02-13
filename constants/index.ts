@@ -2,7 +2,8 @@ import Image1 from "../assets/image1.png";
 import Image2 from "../assets/image2.png";
 import Image3 from "../assets/image3.png";
 
-export const APPLINK = "https://play.google.com/store/apps/details?id=com.kumarabhishek404.labourapp"; // Replace with your actual app link"
+export const APPLINK =
+  "https://play.google.com/store/apps/details?id=com.kumarabhishek404.labourapp"; // Replace with your actual app link"
 
 export const STETESOFINDIA = [
   { label: "andhrapradesh", value: "andhrapradesh" },
@@ -306,790 +307,267 @@ export const WORKER_BOOKINGS = [
 
 export const WORKTYPES = [
   {
-    label: "farms",
-    value: "farms",
+    label: "farmingWork",
+    value: "farmingWork",
     subTypes: [
       {
-        label: "landPreparation",
-        value: "landPreparation",
+        label: "fieldPreparation",
+        value: "fieldPreparation",
         workerTypes: [
-          { label: "plowing", value: "plowing" },
-          { label: "leveling", value: "leveling" },
-          { label: "tilling", value: "tilling" },
-          { label: "weeding", value: "weeding" },
-          { label: "fieldClearing", value: "fieldClearing" },
-          { label: "stonePicking", value: "stonePicking" },
-          { label: "bundMaking", value: "bundMaking" },
+          { label: "jutai", value: "jutai" },
+          { label: "bueai", value: "bueai" },
+          { label: "sichai", value: "sichai" },
+          { label: "khad", value: "khad" },
+          { label: "chidkaab", value: "chidkaab" },
         ],
       },
       {
-        label: "sowingAndPlanting",
-        value: "sowingAndPlanting",
+        label: "cropCare",
+        value: "cropCare",
         workerTypes: [
-          { label: "seedSowing", value: "seedSowing" },
-          { label: "transplantingSeedlings", value: "transplantingSeedlings" },
-          { label: "manualPlanting", value: "manualPlanting" },
-          { label: "fertilizerApplication", value: "fertilizerApplication" },
-          { label: "manureSpreading", value: "manureSpreading" },
+          { label: "niraiGudai", value: "niraiGudai" },
+          { label: "dekhbhal", value: "dekhbhal" },
+          { label: "rakhwali", value: "rakhwali" },
         ],
       },
       {
-        label: "irrigation",
-        value: "irrigation",
+        label: "harvestWork",
+        value: "harvestWork",
         workerTypes: [
-          { label: "canalManagement", value: "canalManagement" },
-          { label: "waterChannelDigging", value: "waterChannelDigging" },
-          { label: "waterDistribution", value: "waterDistribution" },
-          { label: "pumpOperation", value: "pumpOperation" },
-          { label: "hoseManagement", value: "hoseManagement" },
-        ],
-      },
-      {
-        label: "cropMaintenance",
-        value: "cropMaintenance",
-        workerTypes: [
-          { label: "weeding", value: "weeding" },
-          { label: "pestControlSpraying", value: "pestControlSpraying" },
-          { label: "fertilizerTopDressing", value: "fertilizerTopDressing" },
-          { label: "pruning", value: "pruning" },
-          { label: "staking", value: "staking" },
-          { label: "cropWatching", value: "cropWatching" },
-        ],
-      },
-      {
-        label: "harvesting",
-        value: "harvesting",
-        workerTypes: [
-          { label: "manualCutting", value: "manualCutting" },
-          { label: "cropGathering", value: "cropGathering" },
-          { label: "threshing", value: "threshing" },
-          { label: "winnowing", value: "winnowing" },
-          { label: "cropBundling", value: "cropBundling" },
-        ],
-      },
-      {
-        label: "postHarvest",
-        value: "postHarvest",
-        workerTypes: [
-          { label: "cropSorting", value: "cropSorting" },
-          { label: "cropCleaning", value: "cropCleaning" },
-          { label: "cropPacking", value: "cropPacking" },
-          { label: "loadingForTransport", value: "loadingForTransport" },
-          { label: "unloadingFromTransport", value: "unloadingFromTransport" },
-          { label: "storageAssistance", value: "storageAssistance" },
+          { label: "katai", value: "katai" },
+          { label: "thresing", value: "thresing" },
+          { label: "harvesting", value: "harvesting" },
+          { label: "dulai", value: "dulai" },
+          { label: "binai", value: "binai" },
+          { label: "chhatai", value: "chhatai" },
         ],
       },
       {
         label: "farmSupport",
         value: "farmSupport",
-        workerTypes: [
-          { label: "farmCleaning", value: "farmCleaning" },
-          { label: "livestockFeeding", value: "livestockFeeding" },
-          { label: "livestockCare", value: "livestockCare" },
-          { label: "fenceRepair", value: "fenceRepair" },
-          { label: "toolMaintenance", value: "toolMaintenance" },
-          { label: "generalFarmHelp", value: "generalFarmHelp" },
-          { label: "farmSecurity", value: "farmSecurity" },
-        ],
+        workerTypes: [{ label: "taarBandi", value: "taarBandi" }],
       },
-      {
-        label: "specializedFarming",
-        value: "specializedFarming",
-        workerTypes: [
-          {
-            label: "apiaryManagementBeekeeping",
-            value: "apiaryManagementBeekeeping",
-          },
-          {
-            label: "sericultureSilkFarming",
-            value: "sericultureSilkFarming",
-          },
-          {
-            label: "horticultureGardening",
-            value: "horticultureGardening",
-          },
-          {
-            label: "floricultureFlowerFarming",
-            value: "floricultureFlowerFarming",
-          },
-        ],
-      },
-      {
-        label: "farmPartnershipsAndAssistance",
-        value: "farmPartnershipsAndAssistance",
-        workerTypes: [
-          { label: "farmHand", value: "farmHand" },
-          {
-            label: "agriculturalPartnership",
-            value: "agriculturalPartnership",
-          },
-          { label: "seasonalFarmLabor", value: "seasonalFarmLabor" },
-          { label: "farmConsultant", value: "farmConsultant" },
+    ],
+  },
 
-        ],
-      },
-    ],
-  },
   {
-    label: "home",
-    value: "home",
+    label: "shopWork",
+    value: "shopWork",
     subTypes: [
       {
-        label: "housekeeping",
-        value: "housekeeping",
-        workerTypes: [
-          { label: "sweeping", value: "sweeping" },
-          { label: "mopping", value: "mopping" },
-          { label: "dishwashing", value: "dishwashing" },
-          { label: "laundry", value: "laundry" },
-          { label: "cleaningUtensils", value: "cleaningUtensils" },
-          { label: "dusting", value: "dusting" },
-          { label: "arrangingItems", value: "arrangingItems" },
-        ],
-      },
-      {
-        label: "gardening",
-        value: "gardening",
-        workerTypes: [
-          { label: "lawnMowing", value: "lawnMowing" },
-          { label: "wateringPlants", value: "wateringPlants" },
-          { label: "weedingGardens", value: "weedingGardens" },
-          { label: "plantingFlowers", value: "plantingFlowers" },
-          { label: "pruningTreesAndBushes", value: "pruningTreesAndBushes" },
-          { label: "gardenCleaning", value: "gardenCleaning" },
-          {
-            label: "soilPreparationForGardening",
-            value: "soilPreparationForGardening",
-          },
-        ],
-      },
-      {
-        label: "generalHomeHelp",
-        value: "generalHomeHelp",
-        workerTypes: [
-          { label: "carryingItems", value: "carryingItems" },
-          { label: "fetchingWater", value: "fetchingWater" },
-          { label: "runningErrands", value: "runningErrands" },
-          { label: "basicRepairs", value: "basicRepairs" },
-          { label: "cookingAssistance", value: "cookingAssistance" },
-          {
-            label: "elderlyCareNonMedical",
-            value: "elderlyCareNonMedical",
-          },
-          { label: "childcareNonFormal", value: "childcareNonFormal" },
-        ],
-      },
-      {
-        label: "homeSecurity",
-        value: "homeSecurity",
-        workerTypes: [
-          { label: "nightWatchman", value: "nightWatchman" },
-          { label: "dayWatchman", value: "dayWatchman" },
-          { label: "propertyGuarding", value: "propertyGuarding" },
-        ],
-      },
-      {
-        label: "homeManagement",
-        value: "homeManagement",
-        workerTypes: [
-          { label: "propertySupervision", value: "propertySupervision" },
-          {
-            label: "billPaymentAssistance",
-            value: "billPaymentAssistance",
-          },
-          {
-            label: "organizingHouseholdTasks",
-            value: "organizingHouseholdTasks",
-          },
-        ],
-      },
-      {
-        label: "livestockCareHome",
-        value: "livestockCareHome",
-        workerTypes: [
-          { label: "animalFeeding", value: "animalFeeding" },
-          { label: "animalCleaning", value: "animalCleaning" },
-          { label: "grazingAssistance", value: "grazingAssistance" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "factories",
-    value: "factories",
-    subTypes: [
-      {
-        label: "productionLineWork",
-        value: "productionLineWork",
-        workerTypes: [
-          { label: "assemblyLineWorker", value: "assemblyLineWorker" },
-          { label: "packagingWorker", value: "packagingWorker" },
-          { label: "sortingAndGrading", value: "sortingAndGrading" },
-          {
-            label: "machineOperationAssistant",
-            value: "machineOperationAssistant",
-          },
-          {
-            label: "qualityCheckingManual",
-            value: "qualityCheckingManual",
-          },
-        ],
-      },
-      {
-        label: "materialHandling",
-        value: "materialHandling",
-        workerTypes: [
-          { label: "loader", value: "loader" },
-          { label: "unloader", value: "unloader" },
-          { label: "materialCarrier", value: "materialCarrier" },
-          { label: "stackingWorker", value: "stackingWorker" },
-          { label: "forkliftAssistant", value: "forkliftAssistant" },
-        ],
-      },
-      {
-        label: "cleaningAndMaintenance",
-        value: "cleaningAndMaintenance",
-        workerTypes: [
-          { label: "factoryCleaner", value: "factoryCleaner" },
-          { label: "machineCleaner", value: "machineCleaner" },
-          { label: "wasteDisposal", value: "wasteDisposal" },
-          {
-            label: "basicMachineMaintenanceAssistant",
-            value: "basicMachineMaintenanceAssistant",
-          },
-        ],
-      },
-      {
-        label: "supportServices",
-        value: "supportServices",
-        workerTypes: [
-          { label: "helper", value: "helper" },
-          { label: "generalAssistant", value: "generalAssistant" },
-          { label: "securityGuard", value: "securityGuard" },
-          { label: "canteenWorker", value: "canteenWorker" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "shops",
-    value: "shops",
-    subTypes: [
-      {
-        label: "salesAssistance",
-        value: "salesAssistance",
+        label: "shopStaff",
+        value: "shopStaff",
         workerTypes: [
           { label: "shopHelper", value: "shopHelper" },
-          { label: "displayArranger", value: "displayArranger" },
-          {
-            label: "customerServiceAssistant",
-            value: "customerServiceAssistant",
-          },
+          { label: "cashier", value: "cashier" },
+          { label: "computerOperator", value: "computerOperator" },
+          { label: "accountant", value: "accountant" },
         ],
       },
       {
-        label: "stockManagement",
-        value: "stockManagement",
+        label: "shopLogistics",
+        value: "shopLogistics",
         workerTypes: [
-          { label: "stockUnloader", value: "stockUnloader" },
-          { label: "shelfStocker", value: "shelfStocker" },
-          { label: "inventoryAssistant", value: "inventoryAssistant" },
-        ],
-      },
-      {
-        label: "cleaningAndMaintenance",
-        value: "cleaningAndMaintenance",
-        workerTypes: [
-          { label: "shopCleaner", value: "shopCleaner" },
-          { label: "basicRepairs", value: "basicRepairs" },
-        ],
-      },
-      {
-        label: "deliveryServices",
-        value: "deliveryServices",
-        workerTypes: [
-          {
-            label: "deliveryPersonBicycleScooter",
-            value: "deliveryPersonBicycleScooter",
-          },
-          { label: "deliveryHelper", value: "deliveryHelper" },
-        ],
-      },
-      {
-        label: "supportRoles",
-        value: "supportRoles",
-        workerTypes: [
-          { label: "cashierAssistant", value: "cashierAssistant" },
-          { label: "securityGuard", value: "securityGuard" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "godownsWarehouses",
-    value: "godownsWarehouses",
-    subTypes: [
-      {
-        label: "loadingAndUnloading",
-        value: "loadingAndUnloading",
-        workerTypes: [
-          { label: "loader", value: "loader" },
-          { label: "unloader", value: "unloader" },
-          { label: "materialHandler", value: "materialHandler" },
-        ],
-      },
-      {
-        label: "stockManagement",
-        value: "stockManagement",
-        workerTypes: [
-          { label: "stackingWorker", value: "stackingWorker" },
-          { label: "inventoryTaker", value: "inventoryTaker" },
-          { label: "goodsOrganizer", value: "goodsOrganizer" },
-        ],
-      },
-      {
-        label: "cleaningAndMaintenance",
-        value: "cleaningAndMaintenance",
-        workerTypes: [
-          { label: "warehouseCleaner", value: "warehouseCleaner" },
-          { label: "basicRepairs", value: "basicRepairs" },
-        ],
-      },
-      {
-        label: "packingAndDispatch",
-        value: "packingAndDispatch",
-        workerTypes: [
+          { label: "palledar", value: "palledar" },
           { label: "packer", value: "packer" },
-          { label: "dispatchAssistant", value: "dispatchAssistant" },
+          { label: "deliveryBoy", value: "deliveryBoy" },
         ],
       },
       {
-        label: "security",
-        value: "security",
+        label: "shopBusiness",
+        value: "shopBusiness",
         workerTypes: [
-          { label: "securityGuard", value: "securityGuard" },
-          { label: "gatekeeper", value: "gatekeeper" },
+          { label: "recovery", value: "recovery" },
+          { label: "marketing", value: "marketing" },
         ],
       },
     ],
   },
+
   {
-    label: "buildingConstruction",
-    value: "buildingConstruction",
+    label: "homeMaintenance",
+    value: "homeMaintenance",
     subTypes: [
       {
-        label: "sitePreparation",
-        value: "sitePreparation",
+        label: "houseHelp",
+        value: "houseHelp",
         workerTypes: [
-          { label: "landClearingLaborer", value: "landClearingLaborer" },
-          { label: "levelingWorker", value: "levelingWorker" },
-          { label: "excavationHelper", value: "excavationHelper" },
+          { label: "maid", value: "maid" },
+          { label: "gardener", value: "gardener" },
+          { label: "securityGuard", value: "securityGuard" },
+          { label: "driver", value: "driver" },
+          { label: "generalHelper", value: "generalHelper" },
         ],
       },
       {
-        label: "foundationWork",
-        value: "foundationWork",
-        workerTypes: [
-          { label: "foundationDigger", value: "foundationDigger" },
-          {
-            label: "concreteMixerOperatorAssistant",
-            value: "concreteMixerOperatorAssistant",
-          },
-          { label: "shutteringHelper", value: "shutteringHelper" },
-          { label: "steelFixingHelper", value: "steelFixingHelper" },
-        ],
-      },
-      {
-        label: "masonry",
-        value: "masonry",
-        workerTypes: [
-          { label: "bricklayerMason", value: "bricklayerMason" },
-          { label: "blockLayer", value: "blockLayer" },
-          { label: "plasteringHelper", value: "plasteringHelper" },
-        ],
-      },
-      {
-        label: "carpentry",
-        value: "carpentry",
-        workerTypes: [
-          { label: "carpenter", value: "carpenter" },
-          { label: "shutteringCarpenter", value: "shutteringCarpenter" },
-          {
-            label: "formworkCarpenterHelper",
-            value: "formworkCarpenterHelper",
-          },
-        ],
-      },
-      {
-        label: "plumbing",
-        value: "plumbing",
+        label: "homeRepair",
+        value: "homeRepair",
         workerTypes: [
           { label: "plumber", value: "plumber" },
-          { label: "plumbingAssistant", value: "plumbingAssistant" },
-          { label: "pipeFitterHelper", value: "pipeFitterHelper" },
-        ],
-      },
-      {
-        label: "electricalWork",
-        value: "electricalWork",
-        workerTypes: [
           { label: "electrician", value: "electrician" },
-          {
-            label: "electricalWiringHelper",
-            value: "electricalWiringHelper",
-          },
+          { label: "painter", value: "painter" },
+          { label: "carpenter", value: "carpenter" },
+          { label: "mistri", value: "mistri" },
+          { label: "beldaar", value: "beldaar" },
+          { label: "lowVoltageTech", value: "lowVoltageTech" },
         ],
       },
+    ],
+  },
+
+  {
+    label: "constructionWork",
+    value: "constructionWork",
+    subTypes: [
       {
-        label: "steelWork",
-        value: "steelWork",
+        label: "mistriWork",
+        value: "mistriWork",
         workerTypes: [
+          { label: "tileMistri", value: "tileMistri" },
+          { label: "brickMistri", value: "brickMistri" },
+          { label: "plasterMistri", value: "plasterMistri" },
+          { label: "shuttering", value: "shuttering" },
           { label: "steelFixer", value: "steelFixer" },
           { label: "welder", value: "welder" },
-          { label: "steelCuttingHelper", value: "steelCuttingHelper" },
+          { label: "pipeWelder", value: "pipeWelder" },
+          { label: "ducting", value: "ducting" },
         ],
       },
       {
-        label: "concreteWork",
-        value: "concreteWork",
+        label: "siteStaff",
+        value: "siteStaff",
         workerTypes: [
-          {
-            label: "concreteMixerOperator",
-            value: "concreteMixerOperator",
-          },
-          { label: "concretePourer", value: "concretePourer" },
-          { label: "concreteFinisher", value: "concreteFinisher" },
-          { label: "vibratorOperator", value: "vibratorOperator" },
-        ],
-      },
-      {
-        label: "scaffolding",
-        value: "scaffolding",
-        workerTypes: [
-          { label: "scaffoldingErector", value: "scaffoldingErector" },
-          { label: "scaffoldingDismantler", value: "scaffoldingDismantler" },
-          { label: "scaffoldingLaborer", value: "scaffoldingLaborer" },
-        ],
-      },
-      {
-        label: "painting",
-        value: "painting",
-        workerTypes: [
-          { label: "painter", value: "painter" },
-          { label: "paintingHelper", value: "paintingHelper" },
-          { label: "wallPuttyApplicator", value: "wallPuttyApplicator" },
-        ],
-      },
-      {
-        label: "flooringAndTiling",
-        value: "flooringAndTiling",
-        workerTypes: [
-          { label: "tileLayer", value: "tileLayer" },
-          { label: "flooringInstaller", value: "flooringInstaller" },
-          { label: "marbleFitter", value: "marbleFitter" },
-          { label: "flooringHelper", value: "flooringHelper" },
-        ],
-      },
-      {
-        label: "roofing",
-        value: "roofing",
-        workerTypes: [
-          { label: "roofer", value: "roofer" },
-          {
-            label: "roofingSheetInstaller",
-            value: "roofingSheetInstaller",
-          },
-          {
-            label: "waterproofingApplicator",
-            value: "waterproofingApplicator",
-          },
-          { label: "roofingHelper", value: "roofingHelper" },
-        ],
-      },
-      {
-        label: "finishingWork",
-        value: "finishingWork",
-        workerTypes: [
-          { label: "glassFitter", value: "glassFitter" },
-          { label: "grillFitter", value: "grillFitter" },
-          {
-            label: "falseCeilingInstaller",
-            value: "false Ceiling Installer",
-          },
-          { label: "finishingHelper", value: "finishingHelper" },
-        ],
-      },
-      {
-        label: "heavyEquipmentOperation",
-        value: "heavyEquipmentOperation",
-        workerTypes: [
-          { label: "craneOperator", value: "craneOperator" },
-          { label: "excavatorOperator", value: "excavatorOperator" },
-          { label: "heavyEquipmentHelper", value: "heavyEquipmentHelper" },
-        ],
-      },
-      {
-        label: "generalLabor",
-        value: "generalLabor",
-        workerTypes: [
-          { label: "constructionLaborer", value: "constructionLaborer" },
-          { label: "materialCarrier", value: "materialCarrier" },
-          { label: "siteCleaner", value: "siteCleaner" },
-          { label: "helper", value: "helper" },
-        ],
-      },
-      {
-        label: "security",
-        value: "security",
-        workerTypes: [
-          { label: "siteSecurityGuard", value: "siteSecurityGuard" },
+          { label: "beldaar", value: "beldaarConstruction" },
+          { label: "storeKeeper", value: "storeKeeper" },
+          { label: "supervisor", value: "supervisor" },
+          { label: "foreman", value: "foreman" },
+          { label: "fitter", value: "fitter" },
         ],
       },
     ],
   },
+
   {
-    label: "plumbingServices",
-    value: "plumbingServices",
+    label: "animalWork",
+    value: "animalWork",
     subTypes: [
       {
-        label: "fixingLeaks",
-        value: "fixingLeaks",
+        label: "dairyWork",
+        value: "dairyWork",
         workerTypes: [
-          { label: "plumber", value: "plumber" },
-          {
-            label: "leakDetectionSpecialist",
-            value: "leakDetectionSpecialist",
-          }, // Added
-        ],
-      },
-      {
-        label: "pipeInstallations",
-        value: "pipeInstallations",
-        workerTypes: [
-          { label: "plumber", value: "plumber" },
-          { label: "pipeFitter", value: "pipeFitter" }, // Added
-        ],
-      },
-      {
-        label: "repairingWaterTanks",
-        value: "repairingWaterTanks",
-        workerTypes: [
-          { label: "plumber", value: "plumber" },
-          { label: "waterTankRepairer", value: "waterTankRepairer" },
-          { label: "tankCleaner", value: "tankCleaner" }, // Added
-        ],
-      },
-      {
-        label: "sanitationServices", // Added new subtype
-        value: "sanitationServices",
-        workerTypes: [
-          { label: "septicTankCleaner", value: "septicTankCleaner" },
-          { label: "drainCleaner", value: "drainCleaner" },
-          {
-            label: "toiletCleanerRepairer",
-            value: "toiletCleanerRepairer",
-          },
-        ],
-      },
-      {
-        label: "fixtureInstallation", // Added new subtype
-        value: "fixtureInstallation",
-        workerTypes: [
-          { label: "faucetInstaller", value: "faucetInstaller" },
-          { label: "sinkInstaller", value: "sinkInstaller" },
-          { label: "toiletInstaller", value: "toiletInstaller" },
-          { label: "showerInstaller", value: "showerInstaller" },
+          { label: "veterinary", value: "veterinary" },
+          { label: "milking", value: "milking" },
+          { label: "animalFeeder", value: "animalFeeder" },
+          { label: "animalCleaner", value: "animalCleaner" },
         ],
       },
     ],
   },
+
   {
-    label: "dailyWageAndSkilledLabor",
-    value: "dailyWageAndSkilledLabor",
+    label: "driverJobs",
+    value: "driverJobs",
     subTypes: [
       {
-        label: "constructionWorkers",
-        value: "constructionWorkers",
+        label: "vehicleDrivers",
+        value: "vehicleDrivers",
         workerTypes: [
-          { label: "laborers", value: "laborers" },
-          { label: "masons", value: "masons" },
-          { label: "carpenters", value: "carpenters" },
-          { label: "welders", value: "welders" },
-          { label: "steelFixers", value: "steelFixers" }, // Added
-        ],
-      },
-      {
-        label: "loadingAndUnloading",
-        value: "loadingAndUnloading",
-        workerTypes: [
-          { label: "movers", value: "movers" },
-          { label: "warehouseWorkers", value: "warehouseWorkers" },
-          { label: "porters", value: "porters" }, // Added
-        ],
-      },
-      {
-        label: "security",
-        value: "security",
-        workerTypes: [{ label: "securityGuards", value: "securityGuards" }],
-      },
-      {
-        label: "eventStaffing", // Added new subtype
-        value: "eventStaffing",
-        workerTypes: [
-          { label: "eventSetupCrew", value: "eventSetupCrew" },
-          { label: "eventCleanupCrew", value: "eventCleanupCrew" },
-          { label: "waitstaff", value: "waitstaff" },
-          { label: "usher", value: "usher" },
-        ],
-      },
-      {
-        label: "agriculturalLabor", // Added new subtype
-        value: "agriculturalLabor",
-        workerTypes: [
-          { label: "fieldWorker", value: "fieldWorker" },
-          { label: "harvester", value: "harvester" },
-          { label: "planter", value: "planter" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "transportationAndLogistics",
-    value: "transportationAndLogistics",
-    subTypes: [
-      {
-        label: "tempoTruckRental",
-        value: "tempoTruckRental",
-        workerTypes: [
-          { label: "truckDrivers", value: "truckDrivers" },
-          { label: "transportOperators", value: "transportOperators" },
-          { label: "truckCleaners", value: "truckCleaners" }, // Added
-        ],
-      },
-      {
-        label: "bullockCartServices",
-        value: "bullockCartServices",
-        workerTypes: [
-          { label: "cartPullers", value: "cartPullers" },
-          { label: "animalCaretakers", value: "animalCaretakers" }, // Added
-        ],
-      },
-      {
-        label: "packAndMove",
-        value: "packAndMove",
-        workerTypes: [
-          { label: "packers", value: "packers" },
-          { label: "movers", value: "movers" },
-          {
-            label: "furnitureDismantlersAssemblers",
-            value: "furnitureDismantlersAssemblers",
-          }, // Added
-        ],
-      },
-      {
-        label: "courierServices", // Added new subtype
-        value: "courierServices",
-        workerTypes: [
-          { label: "courier", value: "courier" },
-          { label: "deliveryAssistant", value: "deliveryAssistant" },
-        ],
-      },
-      {
-        label: "vehicleMaintenance", // Added new subtype
-        value: "vehicleMaintenance",
-        workerTypes: [
-          { label: "vehicleCleaner", value: "vehicleCleaner" },
-          { label: "tireChanger", value: "tireChanger" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "healthAndMedicalServices",
-    value: "healthAndMedicalServices",
-    subTypes: [
-      {
-        label: "generalPhysician",
-        value: "generalPhysician",
-        workerTypes: [
-          { label: "doctor", value: "doctor" },
-          { label: "nurse", value: "nurse" },
-          { label: "wardBoyGirl", value: "wardBoyGirl" }, // Added
-        ],
-      },
-      {
-        label: "ambulanceServices",
-        value: "ambulanceServices",
-        workerTypes: [
+          { label: "truckDriver", value: "truckDriver" },
+          { label: "carDriver", value: "carDriver" },
+          { label: "tractorDriver", value: "tractorDriver" },
+          { label: "bikeDriver", value: "bikeDriver" },
+          { label: "busDriver", value: "busDriver" },
           { label: "ambulanceDriver", value: "ambulanceDriver" },
-          { label: "paramedic", value: "paramedic" },
-          { label: "firstAidProvider", value: "firstAidProvider" }, // Added
+          { label: "tempoDriver", value: "tempoDriver" },
         ],
       },
       {
-        label: "homeHealthCare", // Added new subtype
-        value: "homeHealthCare",
+        label: "heavyDrivers",
+        value: "heavyDrivers",
         workerTypes: [
-          { label: "caregiver", value: "caregiver" },
-          { label: "homeNurse", value: "homeNurse" },
-          { label: "attendant", value: "attendant" },
-        ],
-      },
-      {
-        label: "pharmacyAssistance", // Added new subtype
-        value: "pharmacyAssistance",
-        workerTypes: [
-          { label: "pharmacyHelper", value: "pharmacyHelper" },
-          {
-            label: "medicineDeliveryPerson",
-            value: "medicineDeliveryPerson",
-          },
+          { label: "jcbDriver", value: "jcbDriver" },
+          { label: "craneDriver", value: "craneDriver" },
+          { label: "forkliftDriver", value: "forkliftDriver" },
+          { label: "roadRollerDriver", value: "roadRollerDriver" },
+          { label: "rmcDriver", value: "rmcDriver" },
+          { label: "loaderDriver", value: "loaderDriver" },
+          { label: "combineDriver", value: "combineDriver" },
+          { label: "hydraDriver", value: "hydraDriver" },
         ],
       },
     ],
   },
+
   {
-    label: "other", // Catch-all for anything that doesn't fit neatly
-    value: "other",
+    label: "factoryJobs",
+    value: "factoryJobs",
     subTypes: [
       {
-        label: "miscellaneous",
-        value: "miscellaneous",
+        label: "factoryStaff",
+        value: "factoryStaff",
         workerTypes: [
-          { label: "helper", value: "helper" },
-          { label: "generalLaborer", value: "generalLaborer" },
+          { label: "factoryHelper", value: "factoryHelper" },
+          { label: "operator", value: "operator" },
+          { label: "maintenance", value: "maintenance" },
+          { label: "janitor", value: "janitor" },
         ],
       },
       {
-        label: "animalServices", // Added
-        value: "animalServices",
+        label: "factoryOffice",
+        value: "factoryOffice",
         workerTypes: [
-          { label: "animalGroomer", value: "animalGroomer" },
-          { label: "animalTrainer", value: "animalTrainer" },
+          { label: "factorySupervisor", value: "factorySupervisor" },
+          { label: "factoryForeman", value: "factoryForeman" },
+          { label: "factoryStoreKeeper", value: "factoryStoreKeeper" },
+          { label: "factoryAccountant", value: "factoryAccountant" },
+          { label: "dataEntry", value: "dataEntry" },
+          { label: "gateKeeper", value: "gateKeeper" },
         ],
       },
       {
-        label: "eventServices", // Added
-        value: "eventServices",
+        label: "factoryLoading",
+        value: "factoryLoading",
+        workerTypes: [{ label: "factoryPalledar", value: "factoryPalledar" }],
+      },
+    ],
+  },
+
+  {
+    label: "electricalRepair",
+    value: "electricalRepair",
+    subTypes: [
+      {
+        label: "applianceRepair",
+        value: "applianceRepair",
         workerTypes: [
-          { label: "decorator", value: "decorator" },
-          { label: "catererHelper", value: "catererHelper" },
+          { label: "acMechanic", value: "acMechanic" },
+          { label: "fridgeMechanic", value: "fridgeMechanic" },
+          { label: "washingMachineMechanic", value: "washingMachineMechanic" },
+          { label: "coolerMechanic", value: "coolerMechanic" },
+          { label: "geyserMechanic", value: "geyserMechanic" },
+          { label: "tvMechanic", value: "tvMechanic" },
+          { label: "inverterMechanic", value: "inverterMechanic" },
+          { label: "motorMechanic", value: "motorMechanic" },
         ],
       },
       {
-        label: "textileWork", // Added
-        value: "textileWork",
-        workerTypes: [
-          { label: "tailorAssistant", value: "tailorAssistant" },
-          { label: "weaver", value: "weaver" },
-        ],
+        label: "wiringWork",
+        value: "wiringWork",
+        workerTypes: [{ label: "wiring", value: "wiring" }],
       },
+    ],
+  },
+
+  {
+    label: "generalLabour",
+    value: "generalLabour",
+    subTypes: [
       {
-        label: "wasteManagement", // Added
-        value: "wasteManagement",
+        label: "dailyLabour",
+        value: "dailyLabour",
         workerTypes: [
-          { label: "wasteCollector", value: "wasteCollector" },
-          { label: "recyclingWorker", value: "recyclingWorker" },
+          { label: "generalLabourer", value: "generalLabourer" },
+          { label: "palledarGeneral", value: "palledarGeneral" },
         ],
       },
     ],
