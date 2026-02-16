@@ -29,7 +29,7 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
@@ -39,12 +39,13 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import USE_LOGOUT from "@/app/hooks/useLogout";
 import JoinWhatsAppGroup from "@/components/commons/JoinWhatsappGroup";
-import JoinInstagramAccount from "@/components/commons/JoinInstagramAccount";
 import FollowInstagram from "@/components/commons/JoinInstagramAccount";
+import RoleSwitcher from "@/components/commons/RoleSwitcher";
 
 const UserProfile = () => {
-  LOCAL_CONTEXT?.useLocale();
+  APP_CONTEXT?.useApp();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
+  const { role, setRole } = APP_CONTEXT.useApp();
   const [selectedTab, setSelectedTab] = useState("profileInformation");
   const [isEditProfile, setIsEditProfile] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
@@ -67,6 +68,12 @@ const UserProfile = () => {
   });
 
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
+
+  console.log("userRole---", role);
+
+  useEffect(() => {
+    setRole(userDetails?.role);
+  }, [userDetails]);
 
   // useEffect(() => {
   //   const validateUserToken = async () => {
@@ -336,6 +343,14 @@ const UserProfile = () => {
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
+
+        <RoleSwitcher
+          currentRole={role}
+          onChangeRole={(newRole) => {
+            setRole(newRole);
+          }}
+        />
+
         {selectedTab === "profileInformation" ? (
           <ScrollView>
             <View style={styles.userInfoSection}>

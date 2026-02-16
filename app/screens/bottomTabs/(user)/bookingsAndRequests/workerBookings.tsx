@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useFocusEffect } from "expo-router";
+import { router, Stack, useFocusEffect } from "expo-router";
 import { useAtomValue } from "jotai";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
@@ -29,17 +29,11 @@ import GradientWrapper from "@/components/commons/GradientWrapper";
 import { getToken } from "@/utils/authStorage";
 import Atoms from "@/app/AtomStore";
 
-const Bookings = () => {
+const WorkerBookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const firstTimeRef = React.useRef(true);
-  const [category, setCategory] = useState("selected");
-
-  const TABS: any = [
-    { value: "selected", label: "selected" },
-    { value: "applied", label: "applied" },
-  ];
 
   const {
     data: response,
@@ -50,7 +44,7 @@ const Bookings = () => {
     hasNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["myServices", category, userDetails?._id],
+    queryKey: ["myServices", userDetails?._id],
     queryFn: async ({ pageParam = 1 }) => {
       const token = await getToken();
 
@@ -58,9 +52,7 @@ const Bookings = () => {
         throw new Error("Unauthorized: Missing token or user details");
       }
 
-      return category === "selected"
-        ? await WORKER?.fetchAllMyBookings({ pageParam })
-        : await WORKER?.fetchMyAppliedServices({ pageParam });
+      return await WORKER?.fetchAllMyBookings({ pageParam });
     },
     retry: false,
     initialPageParam: 1,
@@ -73,7 +65,6 @@ const Bookings = () => {
     },
   });
 
-  
   useFocusEffect(
     React.useCallback(() => {
       if (firstTimeRef.current) {
@@ -81,7 +72,7 @@ const Bookings = () => {
         return;
       }
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   useFocusEffect(
@@ -98,7 +89,7 @@ const Bookings = () => {
         response?.pages?.flatMap((page: any) => page.data || []) || [];
 
       setFilteredData([...appliedServices]);
-    }, [response, userDetails?.role])
+    }, [response, userDetails?.role]),
   );
 
   const loadMore = () => {
@@ -109,76 +100,60 @@ const Bookings = () => {
 
   const memoizedData = useMemo(
     () => filteredData?.flatMap((data: any) => data) || [],
-    [filteredData]
+    [filteredData],
   );
 
-  const onCatChanged = (category: string) => {
-    setCategory(category);
-    // refetch();
-  };
-
   const ClickAppliedInService = () => {
-    if (category === "applied") {
-      setCategory("selected");
-    } else {
-      setCategory("applied");
-    }
+    router.push({
+      pathname: "/(tabs)",
+    });
   };
 
   const { refreshing, onRefresh } = PULL_TO_REFRESH.usePullToRefresh(
     async () => {
       await refetch();
-    }
+    },
   );
 
   return (
     <>
+      <Stack.Screen options={{ headerShown: false }} />
       <View style={{ flex: 1 }}>
         <View
           style={{
             backgroundColor: Colors?.primary,
-            padding: 10,
-            paddingBottom: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            paddingHorizontal: 16,
+            paddingTop: 10,
+            // paddingBottom: 25,
           }}
         >
-          <CustomHeading
-            baseFont={24}
-            textAlign="left"
-            color={Colors?.white}
-            style={{ width: "65%" }}
-          >
-            {category === "applied" ? t("allApplications") : t("allBookings")}
+          {/* Main Heading */}
+          <CustomHeading baseFont={26} textAlign="center" color={Colors?.white}>
+            💼 {t("myWorkDashboard")}
           </CustomHeading>
-          <TouchableOpacity
-            onPress={ClickAppliedInService}
-            style={styles?.applicationText}
+
+          {/* Guided subtitle */}
+          <CustomText
+            baseFont={15}
+            color={Colors?.white}
+            style={{ opacity: 0.95, lineHeight: 18 }}
           >
-            {category === "applied" ? (
-              <FontAwesome6
-                name="calendar-check"
-                size={20}
-                color={Colors?.fourthButton}
-              />
-            ) : (
-              <MaterialIcons
-                name="pending-actions"
-                size={20}
-                color={Colors?.fourthButton}
-              />
-            )}
-            <CustomText
-              baseFont={16}
-              color={Colors?.fourthButton}
-              fontWeight="600"
-            >
-              {category === "applied"
-                ? t("yourBookings")
-                : t("yourApplications")}
+            {t("myWorkDashboardSub")}
+          </CustomText>
+
+          {/* Small helper tip */}
+          <View
+            style={{
+              backgroundColor: "rgba(255,255,255,0.15)",
+              padding: 10,
+              borderRadius: 10,
+              marginTop: 12,
+            }}
+          >
+            <CustomText baseFont={14} color={Colors.white}>
+              💡 {t("workTip")}
             </CustomText>
-          </TouchableOpacity>
+          </View>
         </View>
         <GradientWrapper height={Dimensions.get("window").height - 180}>
           {isLoading ? (
@@ -200,13 +175,9 @@ const Bookings = () => {
                   />
                 ) : (
                   <EmptyDataPlaceholder
-                    title={category === "applied" ? "applications" : "booking"}
-                    leftHeight={200}
-                    buttonTitle={
-                      category === "applied"
-                        ? "backToBookings"
-                        : "showApplications"
-                    }
+                    title="noWorkYet"
+                    leftHeight={300}
+                    buttonTitle="findWork"
                     onPress={ClickAppliedInService}
                     type="gradient"
                   />
@@ -235,4 +206,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Bookings;
+export default WorkerBookings;

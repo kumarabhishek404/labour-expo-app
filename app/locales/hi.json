@@ -66,9 +66,6 @@
   "groceryFashion": "किराना, फैशन",
   "musicTvGames": "संगीत, टीवी, खेल",
   "perDay": "प्रति दिन",
-  "worker": "मज़दूर",
-  "employer": "मालिक",
-  "mediator": "ठेकेदार",
   "workerDetails": "मज़दूर का विवरण",
   "employerDetails": "मालिक का विवरण",
   "mediatorDetails": "ठेकेदार का विवरण",
@@ -277,8 +274,6 @@
   "next": "अगला",
   "saveAndNext": "सहेजें और आगे बढ़ें",
   "count": "संख्या",
-  "food": "खाने",
-  "living": "रहने",
   "esi_pf": "ईएसआई/पीएफ",
 
   "pendingApprovalHeading": "प्रोफ़ाइल अनुमोदन लंबित",
@@ -628,7 +623,6 @@
   "successDeactivatedMessage": "सफलतापूर्वक निष्क्रिय किया गया",
   "successActivatedMessage": "सफलतापूर्वक सक्रिय किया गया",
   "requestActivationButton": "सक्रियण अनुरोध",
-  "locationNotFound": "स्थान नहीं मिला",
   "priceIsRequired": "मूल्य आवश्यक है",
   "enterPriceForSkill": "कौशल के लिए मूल्य दर्ज करें",
   "pricePerDay": "प्रति दिन मूल्य",
@@ -676,7 +670,6 @@
   "completeProfile": "कृपया अपना खाता पूरा भरें",
   "completeYourProfileToUnlockAllFeatures": "सभी सुविधाएँ प्राप्त करने के लिए अपनी प्रोफ़ाइल पूरी तरह भरें!",
   "pleaseFetchNearestWorkers": "कृपया निकटतम मज़दूरों को पाने के लिए अपना वर्तमान स्थान प्राप्त करें",
-  "fetchLocation": "कृपया अपना वर्तमान स्थान प्राप्त करें ताकि निकटतम {{entity}} मिल सकें",
 
   "doWork": "मैं काम करना चाहता हूँ",
   "beMediator": "मैं ठेकेदार बनना चाहता हूँ",
@@ -1278,8 +1271,6 @@
   "generalLabourer": { "singular": "मजदूर", "plural": "मजदूर" },
   "palledarGeneral": { "singular": "पल्लेदार", "plural": "पल्लेदार" },
 
-
-
   "noInternetTitle": "इंटरनेट कनेक्शन नहीं है",
   "noInternetSubtitle": "कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें",
   "noInternetRetry": "फिर से प्रयास करें",
@@ -1350,5 +1341,172 @@
   "supportWhatsappMessage": "नमस्ते, मुझे ऐप में लॉगिन/रजिस्ट्रेशन में मदद चाहिए",
 
   "allServicesSubHeading": "सेवाएं देखें और पास के काम के लिए अभी आवेदन करें। 🚀",
-  "refresh": "फिर से लोड करें"
+  "workersListSubHeading": "अपने आस-पास भरोसेमंद मजदूर ढूंढें और तुरंत काम पर रखें 👷‍♂️",
+  "refresh": "फिर से लोड करें",
+
+  "fetchLocation": "मेरी लोकेशन लें",
+  "locationNotFound": "लोकेशन नहीं मिल पाई",
+  "locationSaved": "लोकेशन सेव हो गई ✅",
+  "locationError": "लोकेशन लेने में समस्या हुई",
+  "chooseFromFollowing": "नीचे दिए गए विकल्पों में से चुनें",
+
+  "yourRole": "आप क्या करना चाहते हैं?",
+  "changeRole": "काम का प्रकार बदलें",
+  "selectRole": "अपना काम चुनें",
+  "worker": "मजदूर",
+  "workerSubtitle": "काम ढूंढें",
+  "employer": "काम देने वाले",
+  "employerSubtitle": "काम पोस्ट करें",
+  "mediator": "ठेकेदार",
+  "mediatorSubtitle": "मजदूर और मालिक को जोड़ें",
+
+  "workTypeTitle": "आप किस प्रकार का काम पोस्ट करना चाहते हैं?",
+  "workTypeSubtitle": "सही श्रेणी चुनें ताकि सही मजदूर जल्दी आपका काम देख सकें।",
+  "workTypeHint": "इससे आपके आसपास के मजदूर आपका काम पहले देख पाएंगे।",
+  "workTypeRequired": "कृपया काम की श्रेणी चुनें",
+
+  "workSubTypeTitle": "काम का सही प्रकार चुनें",
+  "workSubTypeSubtitle": "बताएं कि आपको किस काम के लिए मजदूर चाहिए।",
+  "workSubTypeHint": "इससे सही और अनुभवी मजदूर आपसे जल्दी संपर्क करेंगे।",
+  "selectWorkSubType": "काम का प्रकार चुनें",
+  "workSubTypeRequired": "कृपया काम की उप-श्रेणी चुनें",
+  "back": "वापस",
+  "nextContinue": "अगला चरण",
+
+  "selectedWorkers": "चुने हुए मजदूर",
+  "tapToAddWorkers": "मजदूर जोड़ने के लिए टैप करें",
+  "enterDetailsFor": "जानकारी भरें",
+  "workersNeeded": "मजदूर चाहिए",
+  "perDay": "प्रति दिन",
+  "enterPayPerDay": "प्रति दिन मजदूरी दर्ज करें",
+  "remove": "हटाने के लिए टैप करें",
+  "save": "सेव करें",
+  "cancel": "रद्द करें",
+
+  "addWorkPhotos": "काम की फोटो जोड़ें",
+  "workPhotosGuide": "फोटो से मजदूर काम को बेहतर समझते हैं। आप अधिकतम 3 फोटो अपलोड कर सकते हैं।",
+  "tips": "सुझाव",
+  "tipClearPhoto": "काम की साफ फोटो अपलोड करें",
+  "tipShowWorkPlace": "संभव हो तो कार्य स्थल या औज़ार दिखाएँ",
+  "tipOptional": "फोटो वैकल्पिक हैं लेकिन ज्यादा रिस्पॉन्स मिलते हैं",
+  "maxThreeImages": "आप अधिकतम 3 फोटो अपलोड कर सकते हैं",
+  "postWork": "काम पोस्ट करें",
+
+  "extraBenefits": "अतिरिक्त सुविधाएँ जोड़ें",
+  "benefitsHelpYou": "सुविधाएँ देने से ज्यादा मजदूर आकर्षित होते हैं।",
+  "proTip": "सुझाव",
+  "benefitsIncreaseChances": "खाना, रहने या यात्रा की सुविधा वाले काम पर 2 गुना ज्यादा रिस्पॉन्स मिलता है।",
+
+  "jobDetailsTitle": "काम की जानकारी दें",
+  "jobDetailsSubtitle": "काम कितने दिन का है और क्या करना होगा — यह बताएं।",
+  "describeWorkExample": "उदाहरण: घर पेंट करने के लिए 2 पेंटर चाहिए। दीवार की तैयारी और पेंटिंग करनी होगी। उपकरण दिए जाएंगे।",
+  "whatToWrite": "क्या लिखें?",
+  "descriptionTips": "काम का प्रकार, उपकरण, जगह और जरूरी निर्देश जरूर लिखें।",
+
+  "whereAndWhenTitle": "काम की जगह और शुरू होने की तारीख",
+  "whereAndWhenSubtitle": "काम कहाँ है और कब शुरू होगा — यह बताएं।",
+  "locationTipTitle": "यह क्यों जरूरी है?",
+  "locationTipText": "मजदूर दूरी और तारीख देखकर जल्दी फैसला लेते हैं। सही जानकारी से जल्दी जवाब मिलता है।",
+
+  "hireWorkersTitle": "मजदूर जोड़ें",
+  "hireWorkersSubtitle": "मजदूर चुनें, संख्या और दिहाड़ी तय करें",
+  "salaryTipTitle": "जल्दी मजदूर पाने का तरीका",
+  "salaryTipText": "अच्छी और सही दिहाड़ी देने से जल्दी आवेदन मिलते हैं",
+  "enterValidSalary": "सही दिहाड़ी दर्ज करें",
+  "enterWorkerCount": "मजदूरों की संख्या दर्ज करें",
+
+  "selectWorkLocation": "काम कहाँ करवाना है?",
+
+  "reviewYourWorkPost": "अपना काम पोस्ट करने से पहले जाँच लें",
+  "reviewBeforeSubmitHint": "काम पोस्ट करने से पहले सभी जानकारी ध्यान से देख लें।",
+  "step": "स्टेप",
+
+  "food": "खाना मिलेगा",
+  "living": "रहने की जगह मिलेगी",
+  "travel": "आने-जाने का खर्च मिलेगा",
+
+  "discoverWorkers": "आपके आस-पास के मजदूर",
+  "discoverWorkersSubHeading": "ये मजदूर आपके आस-पास उपलब्ध हैं। आप उनका प्रोफाइल देख सकते हैं और आसानी से काम के लिए बुला सकते हैं।",
+
+  "myActivityTitle": "मेरी गतिविधियाँ",
+  "myWorkHeaderGuide": "यहाँ देखें किसने आपको काम के लिए बुलाया है और आपने कहाँ आवेदन किया है। जल्दी काम पाने के लिए रिक्वेस्ट स्वीकार करें।",
+
+  "tabReceivedWorkTitle": "काम के बुलावे",
+  "tabReceivedWorkSubtitle": "नियोक्ता ने आपको बुलाया",
+
+  "tabAppliedWorkTitle": "मेरे आवेदन",
+  "tabAppliedWorkSubtitle": "जिन कामों में आपने आवेदन किया",
+
+  "noReceivedRequestsTitle": "अभी कोई काम का बुलावा नहीं आया",
+  "noReceivedRequestsSubtitle": "जब नियोक्ता को आपका प्रोफाइल पसंद आएगा, वे यहाँ रिक्वेस्ट भेजेंगे।",
+  "noReceivedRequestsCTA": "प्रोफाइल पूरा करें",
+
+  "noAppliedServicesTitle": "आपने अभी तक किसी काम में आवेदन नहीं किया",
+  "noAppliedServicesSubtitle": "पास के काम खोजें और आवेदन करें ताकि आपको काम मिलना शुरू हो सके।",
+  "noAppliedServicesCTA": "काम खोजें",
+
+  "ctaCompleteProfileStep1": "अपनी स्किल जोड़ें",
+  "ctaCompleteProfileStep2": "काम की फोटो जोड़ें",
+  "ctaCompleteProfileStep3": "अपनी लोकेशन सेट करें",
+
+  "ctaFindWorkStep1": "सर्च खोलें",
+  "ctaFindWorkStep2": "पास के काम चुनें",
+  "ctaFindWorkStep3": "अप्लाई बटन दबाएँ",
+
+  "myWorkDashboard": "मेरा काम",
+  "myWorkDashboardSub": "यहाँ आपको मिला हुआ और आने वाला काम दिखेगा।",
+  "workTip": "समय पर काम पूरा करने से आपको और काम मिलेंगे।",
+
+  "noWorkYet": "अभी तक कोई काम नहीं मिला",
+  "findWork": "काम ढूंढें",
+
+  "employerActivityTitle": "मेरी गतिविधियाँ (नियोक्ता)",
+  "employerWorkHeaderGuide": "अपने कार्यों और बनाए गए सर्विसेस को यहां ट्रैक करें।",
+
+  "tabSentRequestsTitle": "भेजे गए अनुरोध",
+  "tabSentRequestsSubtitle": "वर्कर्स को भेजे गए रिक्वेस्ट देखें",
+  "tabCreatedServicesTitle": "बनाई गई सेवाएँ",
+  "tabCreatedServicesSubtitle": "आपकी बनाई गई सर्विसेस की लिस्ट",
+
+  "noSentRequestsTitle": "कोई भेजे गए अनुरोध नहीं",
+  "noSentRequestsSubtitle": "अभी आपने किसी वर्कर को रिक्वेस्ट नहीं भेजी है।",
+  "noCreatedServicesTitle": "कोई बनाई गई सेवाएँ नहीं",
+  "noCreatedServicesSubtitle": "अभी आपने कोई सर्विस बनाई नहीं है।",
+
+  "employerCtaCompleteProfileStep1": "अपनी प्रोफ़ाइल पूरी करें",
+  "employerCtaCompleteProfileStep2": "वर्कर्स को रिक्वेस्ट भेजें",
+  "employerCtaCompleteProfileStep3": "रिक्वेस्ट का जवाब ट्रैक करें",
+
+  "employerCtaCreateServiceStep1": "नई सर्विस बनाएं",
+  "employerCtaCreateServiceStep2": "सर्विस विवरण भरें",
+  "employerCtaCreateServiceStep3": "वर्कर्स को उपलब्ध कराएं",
+
+  "createNewService": "नई सेवा बनाएं",
+
+  "employerBookingHeaderGuide": "अपने बनाए गए सर्विसेस और बुक किए गए वर्कर्स को यहां ट्रैक करें।",
+  "employerTip": "आपकी सर्विसेस और रिक्वेस्ट्स को समय पर प्रबंधित करें।",
+
+  "mediatorActivityTitle": "मेरी गतिविधियाँ (मीडिएटर)",
+  "mediatorWorkHeaderGuide": "टीम जॉइनिंग रिक्वेस्ट्स और आपने आवेदन की गई सर्विसेस को ट्रैक करें।",
+  "tabTeamJoiningRequestsTitle": "टीम जॉइनिंग रिक्वेस्ट्स",
+  "tabTeamJoiningRequestsSubtitle": "वर्कर्स द्वारा टीम में शामिल होने के अनुरोध",
+  "tabAppliedServiceMediatorTitle": "आवेदन की गई सर्विसेस",
+  "tabAppliedServiceMediatorSubtitle": "आपने मीडिएटर के रूप में जिन सर्विसेस में आवेदन किया",
+  "noTeamJoiningRequestsTitle": "कोई टीम जॉइनिंग रिक्वेस्ट्स नहीं",
+  "noTeamJoiningRequestsSubtitle": "अभी तक किसी ने आपकी टीम में शामिल होने के लिए अनुरोध नहीं भेजा है।",
+  "noAppliedServicesMediatorTitle": "कोई आवेदन नहीं",
+  "noAppliedServicesMediatorSubtitle": "आपने अभी तक किसी सर्विस के लिए आवेदन नहीं किया है।",
+  "mediatorStepCompleteProfile": "अपनी प्रोफ़ाइल पूरी करें",
+  "mediatorStepInviteTeam": "टीम मेंबर आमंत्रित करें",
+  "mediatorStepTrackRequests": "रिक्वेस्ट्स ट्रैक करें",
+  "mediatorStepFindService": "मीडिएट करने के लिए सर्विस खोजें",
+  "mediatorStepApplyService": "सर्विस के लिए आवेदन करें",
+  "mediatorStepTrackService": "सर्विस स्टेटस ट्रैक करें",
+  "mediatorCTAApplyService": "अभी आवेदन करें",
+
+  "myMediatorDashboard": "मेरा डैशबोर्ड (ठेकेदार)",
+  "mediatorDashboardGuide": "यहाँ आप उन सभी सेवाओं को देख सकते हैं जहाँ आपने ठेकेदार के रूप में आवेदन किया है। अपनी चयनित सेवाओं को आसानी से प्रबंधित और ट्रैक करें।",
+  "mediatorTip": "सुझाव: सक्रिय रूप से आवेदन करें और अपनी प्रोफ़ाइल अपडेट रखें ताकि ठेकेदार के रूप में चयन होने की संभावना बढ़ सके।",
+  "noMediatorServicesTitle": "अभी तक कोई सेवा असाइन नहीं हुई",
+  "exploreServices": "उपलब्ध सेवाओं का अन्वेषण करें"
 }

@@ -31,6 +31,7 @@ import ApplyAsMediatorDrawer from "@/components/commons/ApplyAsMediatorDrawer";
 import { handleCall } from "@/constants/functions";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { getDynamicWorkerType } from "@/utils/i18n";
+import APP_CONTEXT from "@/app/context/locale";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -102,6 +103,7 @@ const ServiceActionButtons = ({
   const [selectedSkill, setSelectedSkill] = useState("");
   const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [isAddSkill, setIsAddSkill] = useState(false);
+  const { role } = APP_CONTEXT.useApp();
 
   const hasUsersAppliedOrSelected =
     service?.appliedUsers?.some((user: any) => user.status === "PENDING") ||
@@ -274,7 +276,7 @@ const ServiceActionButtons = ({
     });
 
     setFilteredSkills(finalSkills);
-    if (members && members.length > 0) {
+    if (role === "MEDIATOR") {
       // Mediator applying with workers
       setIsWorkerSelectModal(true);
     } else {

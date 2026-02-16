@@ -19,7 +19,7 @@ interface AddLocationAndAddressProps {
   setAddress: any;
   location: any;
   setLocation: any;
-  savedAddress?: string[]
+  savedAddress?: string[];
   setSavedAddress?: any;
   selectedOption?: string;
   errors: any;
@@ -42,51 +42,8 @@ const AddLocationAndAddress = ({
   style,
   isRequired,
 }: AddLocationAndAddressProps) => {
-  const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // const fetchCurrentLocation = async () => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       console.log("Please grant location permission");
-  //       return;
-  //     }
-
-  //     let currentLocation = await Location.getCurrentPositionAsync({
-  //       accuracy: Location.Accuracy.BestForNavigation,
-  //     });
-  //     let tempLocation = {
-  //       latitude: currentLocation?.coords?.latitude,
-  //       longitude: currentLocation?.coords?.longitude,
-  //       latitudeDelta: 2,
-  //       longitudeDelta: 2,
-  //     };
-  //     setLocation(tempLocation);
-  //     let response: any = await Location.reverseGeocodeAsync({
-  //       latitude: tempLocation?.latitude,
-  //       longitude: tempLocation?.longitude,
-  //     });
-  //     setIsLoading(false);
-  //     setAddress(response[0]?.formattedAddress);
-  //     setUserDetails({
-  //       ...userDetails,
-  //       savedAddresses: [
-  //         ...(userDetails?.savedAddresses ?? []),
-  //         response[0]?.formattedAddress,
-  //       ],
-  //     });
-  //   } catch (err) {
-  //     setIsLoading(false);
-  //     console.log("Error while fetching location");
-  //   }
-  // };
-
-  // console.log("address---", address);
-  
   return (
     <View style={[styles.container, style]}>
       <View style={styles.radioContainer}>
@@ -122,37 +79,6 @@ const AddLocationAndAddress = ({
         setIsModalVisible={setIsModalVisible}
         isError={errors?.[name]}
       />
-      {/* ) : (
-        <>
-          <View style={styles.locationContainer}>
-            <Button
-              isPrimary={true}
-              title={t("getCurrentLocation")}
-              onPress={fetchCurrentLocation}
-              loading={isLoading}
-            />
-
-            {location && (
-              <View style={styles.locationText}>
-                <CustomText>{t("address")}: </CustomText>
-                {!isEmptyObject(location) ? (
-                  <CustomText
-                    style={{ width: "92%" }}
-                    textAlign="left"
-                    fontWeight="bold"
-                  >
-                    {address}
-                  </CustomText>
-                ) : (
-                  <CustomText style={{ width: "92%" }} textAlign="left">
-                    {t("pleaseFetchCurrentLocation")}
-                  </CustomText>
-                )}
-              </View>
-            )}
-          </View>
-        </>
-      )} */}
       {errors?.[name] && (
         <ErrorText> {errors?.[name]?.message || ""}</ErrorText>
       )}

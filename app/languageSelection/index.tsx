@@ -8,14 +8,14 @@ import { LANGUAGE_KEY, LANGUAGES } from "@/constants";
 import Colors from "@/constants/Colors";
 import Button from "@/components/inputs/Button";
 import CustomHeading from "@/components/commons/CustomHeading";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import { useSetAtom } from "jotai";
 import Atoms from "../AtomStore";
 
 const LanguageSelectionScreen = () => {
   const setLocaleValue = useSetAtom(Atoms?.LocaleAtom);
 
-  const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
+  const { locale, setLocale } = APP_CONTEXT.useApp();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const router = useRouter();
 

@@ -17,6 +17,8 @@ import { t } from "@/utils/translationHelper";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import GradientWrapper from "@/components/commons/GradientWrapper";
 import TextButton from "@/components/inputs/TextButton";
+import { useAtomValue } from "jotai";
+import Atoms from "@/app/AtomStore";
 
 const AllServices = ({
   isLoading,
@@ -29,6 +31,7 @@ const AllServices = ({
   loadMore,
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
+const userRole = useAtomValue(Atoms.SelectedRoleAtom)
 
   const onSearchService = (data: any) => {
     setIsAddFilters(false);
@@ -55,23 +58,16 @@ const AllServices = ({
         <ListingsServicesPlaceholder />
       ) : (
         <>
-          <View style={styles.container}>
+          <View style={[styles.container, userRole !== "WORKER" && {paddingBottom: 150,}]}>
             <View style={styles.headingContainer}>
-              <View style={styles?.headingBox}>
-                <CustomText
-                  baseFont={30}
-                  fontWeight="700"
-                  color={Colors?.white}
-                  style={styles.heading}
-                >
-                  {t("allServices")}
-                </CustomText>
-                <TextButton
-                  title="refresh"
-                  color={Colors?.highlight}
-                  onPress={onRefresh}
-                />
-              </View>
+              {userRole === "WORKER" && <CustomText
+                baseFont={30}
+                fontWeight="700"
+                color={Colors?.white}
+                style={styles.heading}
+              >
+                {t("allServices")}
+              </CustomText>}
               <CustomText
                 baseFont={14}
                 color={Colors?.white}
@@ -133,7 +129,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
-    paddingBottom: 150,
     paddingTop: 10,
   },
   headingContainer: {

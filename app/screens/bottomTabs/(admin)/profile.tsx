@@ -35,7 +35,7 @@ import ProfileMenu from "@/components/commons/ProfileMenu";
 import InactiveAccountMessage from "@/components/commons/InactiveAccountMessage";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import TeamAdminCard from "@/components/commons/TeamAdminCard";
 import { t } from "@/utils/translationHelper";
 import EmailAddressField from "@/components/inputs/EmailAddress";
@@ -45,7 +45,7 @@ import ProfileTabs from "../../../../components/inputs/TabsSwitcher";
 import PendingApprovalMessage from "@/components/commons/PendingApprovalAccountMessage";
 
 const AdminProfile = () => {
-  LOCAL_CONTEXT?.useLocale();
+  APP_CONTEXT?.useApp();
   const [userDetails, setUserDetails] = useAtom(Atoms?.UserAtom);
   const [selectedTab, setSelectedTab] = useState("profileInformation");
 

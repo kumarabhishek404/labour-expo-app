@@ -8,7 +8,7 @@ import Loader from "@/components/commons/Loaders/Loader";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import { useMutation } from "@tanstack/react-query";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { router, Stack, useFocusEffect, useNavigation } from "expo-router";
 import { useAtom } from "jotai";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -27,6 +27,14 @@ import FinalScreen from "./final";
 import FirstScreen from "./first";
 import SecondScreen from "./second";
 import ThirdScreen from "./third";
+import SelectWorkCategoryStep from "./SelectWorkCategory";
+import SelectWorkSubCategoryStep from "./SelectWorkSubCategory";
+import AddRequirementsStep from "./SelectWorkerSalary";
+import SelectFacilitiesStep from "./SelectFacilities";
+import SelectLocationAndDateStep from "./SelectLocation&Date";
+import SelectDurationAndDescriptionStep from "./SetDuration&Description";
+import UploadWorkImagesStep from "./UploadImagesStep";
+import FormProgressBar from "@/components/commons/FormProgress";
 
 const AddServiceScreen = () => {
   const { refreshUser } = REFRESH_USER.useRefreshUser();
@@ -40,22 +48,21 @@ const AddServiceScreen = () => {
   const [description, setDescription] = useState(addService?.description ?? "");
   const [address, setAddress] = useState(addService?.address ?? "");
   const [location, setLocation] = useState<any>(addService?.location ?? {});
+  const getTomorrow = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d;
+  };
+
   const [startDate, setStartDate] = useState(
-    moment(addService?.startDate).toDate() ?? new Date(),
+    addService?.startDate
+      ? moment(addService.startDate).toDate()
+      : getTomorrow(),
   );
   const [duration, setDuration] = useState(addService?.duration ?? 0);
   const [isFormDirty, setIsFormDirty] = useState(false);
   const [requirements, setRequirements]: any = useState(
-    addService?.requirements || [
-      {
-        name: "",
-        count: 0,
-        payPerDay: 0,
-        food: false,
-        living: false,
-        esi_pf: false,
-      },
-    ],
+    addService?.requirements || [],
   );
   const [facilities, setFacilities] = useState({
     food: addService?.facilities?.food || false,
@@ -83,7 +90,7 @@ const AddServiceScreen = () => {
       setDescription("");
       setAddress("");
       setLocation("");
-      setStartDate(new Date());
+      setStartDate(getTomorrow());
       setDuration(0);
       setRequirements(
         addService?.requirements || [
@@ -135,16 +142,7 @@ const AddServiceScreen = () => {
 
   useEffect(() => {
     if (prevType !== type || prevSubType !== subType) {
-      setRequirements([
-        {
-          name: "",
-          count: 0,
-          payPerDay: 0,
-          food: false,
-          living: false,
-          esi_pf: false,
-        },
-      ]);
+      setRequirements([]);
 
       setFacilities({
         food: false,
@@ -319,52 +317,105 @@ const AddServiceScreen = () => {
     }
   };
 
+  const onSubmit = (data: any) => {
+    if (data?.images && data?.images?.length > 3) {
+      TOAST?.error("You can not upload more than 3 images");
+    } else {
+      if (data?.images && data?.images?.length > 0) setImages(data?.images);
+      setStep(8);
+    }
+  };
+
   const renderFormComponents = () => {
     switch (step) {
       case 1:
         return (
-          <FirstScreen
-            setStep={setStep}
-            type={type}
-            setType={setType}
-            subType={subType}
-            setSubType={setSubType}
-            images={images}
-            setImages={setImages}
-            requirements={requirements}
-            setRequirements={setRequirements}
+          <SelectWorkCategoryStep
+            defaultType={type}
+            onBack={() => router.back()}
+            onNext={(selectedType) => {
+              setType(selectedType);
+              setStep(2);
+            }}
           />
         );
       case 2:
         return (
-          <SecondScreen
-            setStep={setStep}
-            requirements={requirements}
-            setRequirements={setRequirements}
-            facilities={facilities}
-            setFacilities={setFacilities}
+          <SelectWorkSubCategoryStep
             type={type}
-            subType={subType}
+            defaultSubType={subType}
+            onBack={() => setStep(1)}
+            onNext={(selectedSubType) => {
+              setSubType(selectedSubType);
+              setStep(3);
+            }}
           />
         );
+
       case 3:
         return (
-          <ThirdScreen
-            setStep={setStep}
+          <AddRequirementsStep
+            type={type}
+            subType={subType}
+            defaultRequirements={requirements}
+            onBack={() => setStep(2)}
+            onNext={(data) => {
+              setRequirements(data);
+              setStep(4);
+            }}
+          />
+        );
+
+      case 4:
+        return (
+          <SelectLocationAndDateStep
             address={address}
             setAddress={setAddress}
             location={location}
             setLocation={setLocation}
             startDate={startDate}
             setStartDate={setStartDate}
+            onBack={() => setStep(3)}
+            onNext={() => {
+              setStep(5);
+            }}
+          />
+        );
+
+      case 5:
+        return (
+          <SelectDurationAndDescriptionStep
             duration={duration}
             setDuration={setDuration}
             description={description}
             setDescription={setDescription}
+            onBack={() => setStep(4)}
+            onNext={() => {
+              setStep(6);
+            }}
           />
         );
 
-      case 4:
+      case 6:
+        return (
+          <SelectFacilitiesStep
+            facilities={facilities}
+            setFacilities={setFacilities}
+            onBack={() => setStep(5)}
+            onNext={() => setStep(7)}
+          />
+        );
+
+      case 7:
+        return (
+          <UploadWorkImagesStep
+            defaultImages={images}
+            onBack={() => setStep(6)}
+            onSubmitFinal={onSubmit}
+          />
+        );
+
+      case 8:
         return (
           <FinalScreen
             setStep={setStep}
@@ -429,43 +480,34 @@ const AddServiceScreen = () => {
     contentHeight > screenHeight - (step === 4 ? 0 : 230);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.header}>
-        <IconButtonGroup buttons={buttons} />
-      </View>
-      <GradientWrapper
-        height={Dimensions.get("window").height - (step === 4 ? 0 : 230)}
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
-            styles.scrollViewContent,
-            shouldShowScroll ? {} : { flexGrow: 1 }, // Allow content to grow if no scroll needed
-          ]}
-          showsVerticalScrollIndicator={shouldShowScroll}
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+
+      <View style={{ flex: 1 }}>
+        <GradientWrapper
+          height={Dimensions.get("window").height - (step === 4 ? 0 : 230)}
         >
-          <View
-            style={[styles.searchContainer, styles.shadowBox]}
-            onLayout={onContentLayout}
-            ref={contentRef}
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={[
+              styles.scrollViewContent,
+              shouldShowScroll ? {} : { flexGrow: 1 }, // Allow content to grow if no scroll needed
+            ]}
+            showsVerticalScrollIndicator={shouldShowScroll}
           >
-            <CustomHeading
-              textAlign="left"
-              baseFont={22}
-              style={styles?.boxHeader}
-              color={Colors?.primary}
+            <FormProgressBar currentStep={step} />
+            <View
+              style={[styles.searchContainer, styles.shadowBox]}
+              onLayout={onContentLayout}
+              ref={contentRef}
             >
-              {step === 1 && t("step1")}
-              {step === 2 && t("step2")}
-              {step === 3 && t("step3")}
-              {step === 4 && t("step4")}
-            </CustomHeading>
-            <Loader loading={mutationAddService?.isPending} />
-            <View>{renderFormComponents()}</View>
-          </View>
-        </ScrollView>
-      </GradientWrapper>
-    </View>
+              <Loader loading={mutationAddService?.isPending} />
+              <View>{renderFormComponents()}</View>
+            </View>
+          </ScrollView>
+        </GradientWrapper>
+      </View>
+    </>
   );
 };
 
@@ -484,6 +526,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     backgroundColor: Colors?.white,
     padding: 15,
+    marginTop: 10,
     marginHorizontal: 15,
     borderRadius: 20,
     shadowColor: "#000",

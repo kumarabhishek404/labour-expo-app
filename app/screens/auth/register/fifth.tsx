@@ -20,7 +20,7 @@ import {
 } from "@/utils/backgroundImageUpload";
 
 const FifthScreen = () => {
-  const { userId, skills } = useLocalSearchParams();
+  const { userId, role, skills } = useLocalSearchParams();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const {
     control,
@@ -77,6 +77,7 @@ const FifthScreen = () => {
 
       mutationFinishRegistration.mutate({
         _id: userId,
+        role,
         skills: parsedSkills,
       });
     } catch (error) {

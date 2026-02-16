@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import TabSwitcher from "@/components/inputs/Tabs";
-import Bookings from "./bookings";
+import Bookings from "./workerBookings";
 import Requests from "./requests";
 
 const BookingsAndRequests = () => {

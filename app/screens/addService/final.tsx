@@ -43,6 +43,14 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      <View style={{ marginBottom: 20 }}>
+        <CustomHeading fontWeight="700" baseFont={24}>
+          {t("reviewYourWorkPost")}
+        </CustomHeading>
+        <CustomText color={Colors.secondary}>
+          {t("reviewBeforeSubmitHint")}
+        </CustomText>
+      </View>
       <View style={styles.box}>
         <View>
           <View style={styles.row}>
@@ -152,7 +160,9 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                           textAlign="right"
                           style={{ width: "30%" }}
                         >
-                          ₹ {requirement?.payPerDay} {t("perDay")}
+                          {requirement?.payPerDay
+                            ? `₹ ${requirement?.payPerDay} ${t("perDay")}`
+                            : ""}
                         </CustomHeading>
                       </View>
 
@@ -274,7 +284,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
           <ButtonComp
             isPrimary={true}
             title={t("back")}
-            onPress={() => setStep(3)}
+            onPress={() => setStep(7)}
             bgColor={Colors?.danger}
             borderColor={Colors?.danger}
             style={{ width: "35%" }}

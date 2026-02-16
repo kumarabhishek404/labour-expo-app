@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet, Animated, Easing } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { router, Stack } from "expo-router";
 import CustomHeader from "@/components/commons/Header";
@@ -16,7 +16,7 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 
 export default function LanguageSelectionScreen() {
-  const { locale, setLocale } = LOCAL_CONTEXT.useLocale();
+  const { locale, setLocale } = APP_CONTEXT.useApp();
   const userDetails = useAtomValue(Atoms?.UserAtom);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(locale);
 

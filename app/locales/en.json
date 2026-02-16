@@ -284,8 +284,6 @@
   "checkServiceDetails": "Check all the details which you have filled",
   "submitAllDetails": "Submit All Details",
   "count": "Count",
-  "food": "food",
-  "living": "living",
   "esi_pf": "ESI / PF",
 
   "pendingApprovalHeading": "Profile Approval Pending",
@@ -623,7 +621,6 @@
   "successDeactivatedMessage": "Your account is deactivated successfully",
   "successActivatedMessage": "Your account is activated successfully",
   "requestActivationButton": "Request Account Activation",
-  "locationNotFound": "Location not found",
   "priceIsRequired": "Price is required",
   "enterPriceForSkill": "Enter price for skill",
   "pricePerDay": "Price per day",
@@ -680,7 +677,6 @@
   "completeProfileButton": "Complete Profile",
   "completeYourProfileToUnlockAllFeatures": "Complete your profile to unlock all features!",
   "pleaseFetchNearestWorkers": "Please Fetch your current location to get nearest workers",
-  "fetchLocation": "Please Fetch your current location to get nearest {{entity}}",
   "callWorker": "Call Worker",
   "callTeamAdmin": "Call Team Admin",
   "messageEmployer": "Message Employer",
@@ -1356,5 +1352,173 @@
   "supportWhatsappMessage": "Namaste, I need help with login/registration in the app",
 
   "allServicesSubHeading": "Find trusted employers near you and book services instantly 🚀",
-  "refresh": "Refresh"
+  "workersListSubHeading": "Find trusted workers near you and hire instantly 👷‍♂️",
+  "refresh": "Refresh",
+
+  "fetchLocation": "Get My Location",
+  "locationNotFound": "Location not found",
+  "locationSaved": "Location saved successfully ✅",
+  "locationError": "Unable to fetch location",
+  "chooseFromFollowing": "Choose from the following options",
+
+  "yourRole": "Your role",
+  "changeRole": "Change role",
+  "selectRole": "Select your role",
+  "worker": "Worker",
+  "workerSubtitle": "Find jobs",
+  "employer": "Employer",
+  "employerSubtitle": "Post jobs",
+  "mediator": "Mediator",
+  "mediatorSubtitle": "Connect both",
+
+  "workTypeTitle": "What type of work do you want to post?",
+  "workTypeSubtitle": "Select the category so the right workers can find your job faster.",
+  "workTypeHint": "This helps workers near you see your job first.",
+  "workTypeRequired": "Please choose a work category",
+  "back": "Back",
+  "nextContinue": "Next Step",
+  "workSubTypeTitle": "Select the exact work",
+  "workSubTypeSubtitle": "Choose what work needs to be done.",
+  "workSubTypeHint": "This helps skilled workers contact you quickly.",
+  "selectWorkSubType": "Select Work Type",
+  "workSubTypeRequired": "Please choose a work sub category",
+
+  "selectedWorkers": "Selected workers",
+  "tapToAddWorkers": "Tap to add workers",
+  "enterDetailsFor": "Enter details for",
+  "workersNeeded": "workers needed",
+  "perDay": "per day",
+  "enterPayPerDay": "Enter pay per day",
+  "remove": "Tap to remove",
+  "save": "Save",
+  "cancel": "Cancel",
+
+  "addWorkPhotos": "Add work photos",
+  "workPhotosGuide": "Photos help workers understand your work better. You can upload up to 3 photos.",
+  "tips": "Tips",
+  "tipClearPhoto": "Upload clear photos of the work",
+  "tipShowWorkPlace": "Show workplace or tools if possible",
+  "tipOptional": "Photos are optional but increase responses",
+  "maxThreeImages": "You can upload maximum 3 images",
+  "postWork": "Post Work",
+
+  "extraBenefits": "Add extra benefits",
+  "benefitsHelpYou": "Providing facilities helps attract more workers.",
+  "proTip": "Pro Tip",
+  "benefitsIncreaseChances": "Jobs with food, stay or travel support get 2x more responses.",
+
+  "jobDetailsTitle": "Describe the job",
+  "jobDetailsSubtitle": "Tell workers how long the work is and what they need to do.",
+  "describeWorkExample": "Example: Need 2 painters for house painting. Work includes wall preparation and painting. Tools will be provided.",
+  "whatToWrite": "What should you write?",
+  "descriptionTips": "Mention work type, tools, location details and any important instructions.",
+
+  "whereAndWhenTitle": "Work location & start date",
+  "whereAndWhenSubtitle": "Tell workers where the work is and when it will start.",
+  "locationTipTitle": "Why this is important?",
+  "locationTipText": "Workers decide quickly based on distance and start date. Clear info gets faster responses.",
+
+  "hireWorkersTitle": "Hire workers",
+  "hireWorkersSubtitle": "Choose workers, set salary and quantity.",
+  "salaryTipTitle": "Tip to get faster applicants",
+  "salaryTipText": "Higher and fair salary attracts workers faster.",
+  "enterValidSalary": "Enter valid daily salary",
+  "enterWorkerCount": "Enter number of workers",
+
+  "selectWorkLocation": "Where should the work happen?",
+
+  "reviewYourWorkPost": "Review Your Job",
+  "reviewBeforeSubmitHint": "Please check all details carefully before posting the work.",
+
+  "allTopWorkers": "Top Workers",
+  "step": "Step",
+
+  "food": "Food Provided",
+  "living": "Stay / Room Provided",
+  "travel": "Travel Allowance",
+
+  "discoverWorkers": "Nearby workers ready to help",
+  "discoverWorkersSubHeading": "These workers are available near your location. You can view profiles and hire them for your work easily.",
+
+  "myActivityTitle": "My Activity",
+  "myWorkHeaderGuide": "Here you can see who invited you for work and where you have applied. Accept requests quickly to start earning.",
+
+  "tabReceivedWorkTitle": "Work Invitations",
+  "tabReceivedWorkSubtitle": "Employers invited you",
+
+  "tabAppliedWorkTitle": "Applied Jobs",
+  "tabAppliedWorkSubtitle": "Jobs you applied for",
+
+  "noReceivedRequestsTitle": "No work invitations yet",
+  "noReceivedRequestsSubtitle": "Employers will send you requests here when they like your profile.",
+  "noReceivedRequestsCTA": "Complete Profile",
+
+  "noAppliedServicesTitle": "You haven’t applied for work yet",
+  "noAppliedServicesSubtitle": "Go to search and apply for jobs near you to start getting work.",
+  "noAppliedServicesCTA": "Find Work",
+
+  "ctaCompleteProfileStep1": "Add your skills",
+  "ctaCompleteProfileStep2": "Add your work photos",
+  "ctaCompleteProfileStep3": "Set your location",
+
+  "ctaFindWorkStep1": "Open Search",
+  "ctaFindWorkStep2": "Choose nearby jobs",
+  "ctaFindWorkStep3": "Tap Apply",
+
+  "myWorkDashboard": "Your Work",
+  "myWorkDashboardSub": "Here you can see the work you got and your upcoming jobs.",
+  "workTip": "Complete your work on time to get more job offers.",
+
+  "noWorkYet": "No work yet",
+  "findWork": "Find Work",
+
+  "employerActivityTitle": "My Activity (Employer)",
+  "employerWorkHeaderGuide": "Track your tasks and created services here.",
+
+  "tabSentRequestsTitle": "Sent Requests",
+  "tabSentRequestsSubtitle": "View requests sent to workers",
+  "tabCreatedServicesTitle": "Created Services",
+  "tabCreatedServicesSubtitle": "List of services you have created",
+
+  "noSentRequestsTitle": "No Sent Requests",
+  "noSentRequestsSubtitle": "You haven’t sent any requests to workers yet.",
+  "noCreatedServicesTitle": "No Created Services",
+  "noCreatedServicesSubtitle": "You haven’t created any services yet.",
+
+  "employerCtaCompleteProfileStep1": "Complete your profile",
+  "employerCtaCompleteProfileStep2": "Send requests to workers",
+  "employerCtaCompleteProfileStep3": "Track responses to your requests",
+
+  "employerCtaCreateServiceStep1": "Create a new service",
+  "employerCtaCreateServiceStep2": "Fill in service details",
+  "employerCtaCreateServiceStep3": "Make it available to workers",
+
+  "createNewService": "Create New Service",
+
+  "employerBookingHeaderGuide": "Track your created services and booked workers here.",
+  "employerTip": "Manage your services and requests on time.",
+
+  "mediatorActivityTitle": "My Activity (Mediator)",
+  "mediatorWorkHeaderGuide": "Track team requests and services you applied for as a mediator.",
+  "tabTeamJoiningRequestsTitle": "Team Joining Requests",
+  "tabTeamJoiningRequestsSubtitle": "Requests from workers to join your team",
+  "tabAppliedServiceMediatorTitle": "Applied Service as Mediator",
+  "tabAppliedServiceMediatorSubtitle": "Services you applied as mediator",
+  "noTeamJoiningRequestsTitle": "No Team Joining Requests",
+  "noTeamJoiningRequestsSubtitle": "No one has sent a request to join your team yet.",
+  "noAppliedServicesMediatorTitle": "No Applied Services",
+  "noAppliedServicesMediatorSubtitle": "You haven't applied for any services yet.",
+  "mediatorStepCompleteProfile": "Complete your profile",
+  "mediatorStepInviteTeam": "Invite team members",
+  "mediatorStepTrackRequests": "Track requests",
+  "mediatorStepFindService": "Find services to mediate",
+  "mediatorStepApplyService": "Apply for service",
+  "mediatorStepTrackService": "Track service status",
+  "mediatorCTAApplyService": "Apply Now",
+
+  "myMediatorDashboard": "My Work (Mediator)",
+  "mediatorDashboardGuide": "Here you can see all the services where you have applied as a mediator. Manage and track your selections easily.",
+  "mediatorTip": "Tip: Apply proactively, and keep your profile updated to increase your chances of being selected as a mediator.",
+  "noMediatorServicesTitle": "No Services Assigned Yet",
+  "exploreServices": "Explore Available Services"
 }
