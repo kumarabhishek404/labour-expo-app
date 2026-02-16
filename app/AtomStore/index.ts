@@ -7,6 +7,8 @@ const asyncStorage = createJSONStorage(() => AsyncStorage);
 
 const UserAtom = atomWithStorage<any>("user", {}, asyncStorage);
 
+const SelectedRoleAtom = atomWithStorage<any>("role", "", asyncStorage);
+
 const IsLoggedInAtom = atomWithStorage<any>("loggedIn", {}, asyncStorage);
 
 const LanguageAtom = atomWithStorage<any>("language", "hi", asyncStorage);
@@ -96,6 +98,7 @@ export const userAtom = atomWithStorage("user", {}, asyncStorage);
 // Bundle all atoms into an object
 const Atoms = {
   UserAtom,
+  SelectedRoleAtom,
   LanguageAtom,
   EarningAtom,
   SpentAtom,

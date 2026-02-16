@@ -1,4 +1,4 @@
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import Colors from "@/constants/Colors";
 import { getFontSize } from "@/constants/functions";
 import React from "react";
@@ -29,7 +29,7 @@ const CustomHeading = ({
   style,
   ...restProps
 }: CustomTextProps) => {
-  const { locale } = LOCAL_CONTEXT.useLocale();
+  const { locale } = APP_CONTEXT.useApp();
   return (
     <Text
       style={[

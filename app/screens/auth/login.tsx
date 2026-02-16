@@ -29,12 +29,12 @@ import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import { saveToken } from "@/utils/authStorage";
 import Loader from "@/components/commons/Loaders/Loader";
 import StickButtonWithWall from "@/components/commons/StickButtonWithWall";
-import LOCAL_CONTEXT from "@/app/context/locale";
+import APP_CONTEXT from "@/app/context/locale";
 import MobileNumberField from "@/components/inputs/MobileNumber";
 import ContactSupport from "@/components/commons/ContactSupport";
 
 export default function Login() {
-  LOCAL_CONTEXT?.useLocale();
+  APP_CONTEXT?.useApp();
   const { t } = useTranslation();
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);

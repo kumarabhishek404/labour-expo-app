@@ -14,6 +14,7 @@ import {
   AntDesign,
   Ionicons,
   FontAwesome,
+  FontAwesome5,
 } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CustomText from "@/components/commons/CustomText";
@@ -29,6 +30,7 @@ import RippleDot from "@/components/commons/RippleDot";
 import { getToken } from "@/utils/authStorage";
 import { uploadPendingProfileImage } from "@/utils/backgroundImageUpload";
 import REFRESH_USER from "../hooks/useRefreshUser";
+import APP_CONTEXT from "../context/locale";
 
 const POLLING_INTERVAL = 30000;
 type IconLibrary =
@@ -36,7 +38,8 @@ type IconLibrary =
   | "MaterialCommunityIcons"
   | "AntDesign"
   | "Ionicons"
-  | "FontAwesome";
+  | "FontAwesome"
+  | "FontAwesome5";
 
 export default function Layout() {
   const { height, width } = useWindowDimensions();
@@ -52,10 +55,15 @@ export default function Layout() {
   );
   const pathname = usePathname();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
+  const [userRole, setUserRole] = useAtom(Atoms.SelectedRoleAtom);
+
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
   const [isReady, setIsReady] = useState(false);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
+  const { appKey } = APP_CONTEXT.useApp();
+
+  console.log("appKey----", appKey, userRole);
 
   useEffect(() => {
     // wait one render cycle
@@ -163,6 +171,7 @@ export default function Layout() {
       AntDesign,
       Ionicons,
       FontAwesome,
+      FontAwesome5,
     };
 
     const Icon = iconMap[iconLibrary];
@@ -212,7 +221,7 @@ export default function Layout() {
               tabBarStyle: [styles.tabBar],
             }}
           >
-            <Tabs.Screen
+            {/* <Tabs.Screen
               name="fourth"
               options={{
                 tabBarButton: (props: any) => (
@@ -229,22 +238,7 @@ export default function Layout() {
                   />
                 ),
               }}
-            />
-
-            <Tabs.Screen
-              name="third"
-              options={{
-                tabBarButton: (props: any) => (
-                  <TabButton
-                    props={props}
-                    path="/(tabs)/third"
-                    title={isAdmin ? "errors" : "myBookings"}
-                    iconName={isAdmin ? "error" : "calendar"}
-                    iconLibrary={isAdmin ? "MaterialIcons" : "AntDesign"}
-                  />
-                ),
-              }}
-            />
+            /> */}
 
             <Tabs.Screen
               name="index"
@@ -262,27 +256,44 @@ export default function Layout() {
             />
 
             <Tabs.Screen
-              name="second"
+              name="third"
               options={{
                 tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)/second"
-                    title={isAdmin ? "teams" : "add"}
-                    iconName={isAdmin ? "group" : "plus"}
-                    iconLibrary={isAdmin ? "FontAwesome" : "AntDesign"}
+                    path="/(tabs)/third"
+                    title={isAdmin ? "errors" : "myActivityTitle"}
+                    iconName={isAdmin ? "error" : "running"}
+                    iconLibrary={isAdmin ? "MaterialIcons" : "FontAwesome5"}
                   />
                 ),
               }}
             />
 
             <Tabs.Screen
-              name="fifth"
+              name="second"
               options={{
                 tabBarButton: (props: any) => (
                   <TabButton
                     props={props}
-                    path="/(tabs)/fifth"
+                    path="/(tabs)/second"
+                    title={isAdmin ? "teams" : "myWorkDashboard"}
+                    iconName={isAdmin ? "group" : "hammer"}
+                    iconLibrary={
+                      isAdmin ? "FontAwesome" : "FontAwesome5"
+                    }
+                  />
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="fourth"
+              options={{
+                tabBarButton: (props: any) => (
+                  <TabButton
+                    props={props}
+                    path="/(tabs)/fourth"
                     title={isAdmin ? "myProfile" : "myProfile"}
                     iconName={isAdmin ? "person" : "person-outline"}
                   />

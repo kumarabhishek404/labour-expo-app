@@ -8,8 +8,9 @@ import Colors from "@/constants/Colors";
 interface RoleSelectionProps {
   role: string;
   setRole: any;
+  resetSkills: () => void;
 }
-const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
+const RoleSelection = ({ role, setRole, resetSkills }: RoleSelectionProps) => {
   const roles = [
     {
       id: "WORKER",
@@ -32,7 +33,10 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
   ];
 
   const handleSelectRole = (selectedRole: any) => {
-    setRole(selectedRole?.id);
+    if (role !== selectedRole.id) {
+      resetSkills(); // ⭐ reset instantly
+    }
+    setRole(selectedRole.id);
   };
 
   return (
@@ -42,6 +46,7 @@ const RoleSelection = ({ role, setRole }: RoleSelectionProps) => {
         {roles.map((selectedRole, index) => (
           <TouchableOpacity
             key={index}
+            activeOpacity={0.7}
             style={[styles.roleBox, styles.selectedRoleBox]}
             onPress={() => handleSelectRole(selectedRole)}
           >

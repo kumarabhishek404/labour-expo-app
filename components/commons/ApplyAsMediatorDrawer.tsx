@@ -38,11 +38,11 @@ const ApplyAsMediatorDrawer = ({
   const matchedMembers = teamMembers?.filter(
     (member: any) =>
       member.skills?.some((s: any) => s.skill === selectedSkill?.name) &&
-      !Object.keys(selectedMembers).includes(member.id)
+      !Object.keys(selectedMembers).includes(member.id),
   );
 
   const selectedCount = Object.values(selectedMembers).filter(
-    (skill) => skill === selectedSkill?.name
+    (skill) => skill === selectedSkill?.name,
   ).length;
   const maxSelectable = selectedSkill?.count || 0;
 
@@ -71,7 +71,7 @@ const ApplyAsMediatorDrawer = ({
       return;
     }
     const validWorkers = Object.keys(selectedMembers).filter(
-      (workerId) => workerId !== "undefined"
+      (workerId) => workerId !== "undefined",
     );
     if (validWorkers.length === 0) {
       TOAST.error("Invalid worker selection.");
@@ -81,7 +81,7 @@ const ApplyAsMediatorDrawer = ({
       serviceId,
       workers: validWorkers,
       skills: Object.fromEntries(
-        validWorkers.map((workerId) => [workerId, selectedMembers[workerId]])
+        validWorkers.map((workerId) => [workerId, selectedMembers[workerId]]),
       ),
     };
     applyAsMediator(payload);
@@ -123,8 +123,8 @@ const ApplyAsMediatorDrawer = ({
             </ScrollView>
 
             <ScrollView style={{ maxHeight: 300 }}>
-              {matchedMembers.length > 0 ? (
-                matchedMembers.map((member: any, index: number) => {
+              {matchedMembers?.length > 0 ? (
+                matchedMembers?.map((member: any, index: number) => {
                   const isChecked = !!selectedMembers[member._id];
                   const isDisabled =
                     !isChecked && selectedCount >= maxSelectable;

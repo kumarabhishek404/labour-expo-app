@@ -8,13 +8,19 @@ interface GradientWrapperProps {
   height?: number | string;
 }
 
-const GradientWrapper: React.FC<GradientWrapperProps> = ({ children, height }) => {
+const GradientWrapper: React.FC<GradientWrapperProps> = ({
+  children,
+  height,
+}) => {
   const defaultHeight = height || Dimensions.get("window").height;
 
   return (
     <LinearGradient
       colors={[Colors?.primary, Colors?.secondaryButton]} // Light to dark gradient
-      style={[styles.container, { height: defaultHeight as number | undefined }]}
+      style={[
+        styles.container,
+        { height: defaultHeight as number | undefined },
+      ]}
     >
       {children}
     </LinearGradient>

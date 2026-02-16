@@ -55,6 +55,23 @@ const AllWorkers = ({
       ) : (
         <>
           <View style={styles.container}>
+            <View style={styles.headingContainer}>
+              {/* <CustomText
+                baseFont={30}
+                fontWeight="700"
+                color={Colors?.white}
+                style={styles.heading}
+              >
+                {t("allWorkers")}
+              </CustomText> */}
+              <CustomText
+                baseFont={14}
+                color={Colors?.white}
+                style={styles.subHeading}
+              >
+                {t("workersListSubHeading")}
+              </CustomText>
+            </View>
             {/* <View style={styles?.paginationHeader}>
               <TouchableOpacity
                 style={{
@@ -121,6 +138,18 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexGrow: 1,
+  },
+  headingContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  heading: {
+    paddingLeft: 5,
+  },
+  subHeading: {
+    opacity: 0.9,
+    lineHeight: 20,
   },
 });
 

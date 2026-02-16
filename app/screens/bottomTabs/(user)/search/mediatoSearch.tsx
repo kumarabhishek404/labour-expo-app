@@ -11,16 +11,18 @@ import { StyleSheet, View } from "react-native";
 import AllServices from "./allServices";
 import AllWorkers from "./allWorkers";
 
-const Search = () => {
-  const [selectedTab, setSelectedTab] = useState(1);
+const MediatorSearch = () => {
+  const [selectedTab, setSelectedTab] = useState(0);
   const [filteredData, setFilteredData]: any = useState([]);
   const [totalData, setTotalData] = useState(0);
   const TABS = [
     {
       label: "workers",
+      // description: "descriptionWorkers",
     },
     {
       label: "services",
+      // description: "descriptionServices",
     },
   ];
 
@@ -117,11 +119,11 @@ const Search = () => {
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
-      {/* <TabSwitcher
+      <TabSwitcher
           tabs={TABS}
           actvieTab={selectedTab}
           setActiveTab={setSelectedTab}
-        /> */}
+        />
 
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
@@ -155,7 +157,7 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default MediatorSearch;
 
 const styles = StyleSheet.create({
   container: {

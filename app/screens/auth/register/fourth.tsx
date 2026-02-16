@@ -7,7 +7,7 @@ import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
-import { Controller, useForm } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import RoleSelection from "@/components/inputs/SelectRole";
 import SkillsSelector from "@/components/inputs/SelectSkills";
 import { WORKTYPES } from "@/constants";
@@ -16,13 +16,12 @@ import CustomHeading from "@/components/commons/CustomHeading";
 const { width } = Dimensions.get("window");
 
 const UpdateUserSkillsScreen = () => {
-  const [previousRole, setPreviousRole] = useState("WORKER");
+  // const [previousRole, setPreviousRole] = useState("WORKER");
   // const [loading, setLoading] = useState(false);
   const { userId } = useLocalSearchParams();
   const {
     control,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm({
@@ -30,6 +29,15 @@ const UpdateUserSkillsScreen = () => {
       role: "WORKER",
       skills: [],
     },
+  });
+  const roleValue = useWatch({
+    control,
+    name: "role",
+  });
+
+  const skillsValue = useWatch({
+    control,
+    name: "skills",
   });
 
   const mutationUpdateProfile = useMutation({
@@ -52,30 +60,20 @@ const UpdateUserSkillsScreen = () => {
     },
   });
 
-  useEffect(() => {
-    if (previousRole !== watch("role")) {
-      setValue("skills", []);
-    } else {
-      setValue("skills", [...watch("skills")]);
-    }
-    setPreviousRole(watch("role"));
-  }, [watch("role")]);
-
+  console.log("roleValue----", roleValue);
+  
   const handleUpdate = async () => {
-    if (watch("role") !== "EMPLOYER" && !watch("skills").length) {
+    if (roleValue !== "EMPLOYER" && !skillsValue.length) {
       TOAST?.error(t("pleaseSelectSkills"));
       return;
     }
-
-    // let payload: any = {
-    //   skills: watch("skills"),
-    // };
 
     router.push({
       pathname: "/screens/auth/register/fifth",
       params: {
         userId,
-        skills: JSON.stringify(watch("skills")), // 👈 MUST stringify
+        role: roleValue,
+        skills: JSON.stringify(skillsValue), // 👈 MUST stringify
       },
     });
     // mutationUpdateProfile.mutate(payload);
@@ -94,15 +92,17 @@ const UpdateUserSkillsScreen = () => {
           <Controller
             control={control}
             name="role"
-            rules={{
-              required: t("selectAtLeastOneSkill"),
-            }}
+            rules={{ required: t("selectAtLeastOneSkill") }}
             render={({ field: { onChange, value } }) => (
-              <RoleSelection role={value} setRole={onChange} />
+              <RoleSelection
+                role={value}
+                setRole={onChange}
+                resetSkills={() => setValue("skills", [])} // ⭐ MAGIC LINE
+              />
             )}
           />
 
-          {watch("role") === "WORKER" && (
+          {roleValue === "WORKER" && (
             <Controller
               control={control}
               name="skills"
@@ -120,7 +120,7 @@ const UpdateUserSkillsScreen = () => {
             />
           )}
 
-          {watch("role") === "MEDIATOR" && (
+          {roleValue === "MEDIATOR" && (
             <Controller
               control={control}
               name="skills"

@@ -9,7 +9,7 @@ import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
 import { StatusBar } from "react-native";
 import { PaperProvider } from "react-native-paper";
-import LOCAL_CONTEXT from "./context/locale";
+import APP_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { ToastProvider } from "./hooks/toast";
 import { useAppUpdateGuard } from "./hooks/useAppUpdateGuard";
@@ -29,7 +29,7 @@ const AppNavigator = () => {
       <AppWithErrorBoundary>
         <SafeAreaProvider>
           <NOTIFICATION_CONTEXT.NotificationProvider>
-            <LOCAL_CONTEXT.LocaleProvider>
+            <APP_CONTEXT.AppProvider>
               <PaperProvider>
                 <ToastProvider>
                   {/* 👇 Handle status bar overlay safely */}
@@ -57,7 +57,7 @@ const AppNavigator = () => {
                   </SafeAreaView>
                 </ToastProvider>
               </PaperProvider>
-            </LOCAL_CONTEXT.LocaleProvider>
+            </APP_CONTEXT.AppProvider>
           </NOTIFICATION_CONTEXT.NotificationProvider>
         </SafeAreaProvider>
       </AppWithErrorBoundary>

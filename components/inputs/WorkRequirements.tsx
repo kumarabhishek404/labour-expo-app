@@ -1,360 +1,175 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import Counter from "@/components/inputs/Counter";
 import Colors from "@/constants/Colors";
-import {
-  Entypo,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import React, { useState, useEffect, useRef } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import CustomHeading from "../commons/CustomHeading";
-import CustomText from "../commons/CustomText";
-import TextInputComponent from "./TextInputWithIcon";
-import { t } from "@/utils/translationHelper";
+import Button from "@/components/inputs/Button";
 import { filterWorkerTypes } from "@/constants/functions";
-import PaperDropdown from "@/components/inputs/Dropdown";
-import CustomCheckbox from "../commons/CustomCheckbox";
+import { t } from "@/utils/translationHelper";
+import TextInputComponent from "./TextInputWithIcon";
 import { getDynamicWorkerType } from "@/utils/i18n";
 
-interface WorkRequirmentProps {
-  label?: string;
-  name: string;
-  watch: any;
+interface Props {
   type: string;
   subType: string;
-  requirements: any;
-  setRequirements: any;
-  facilities: any;
-  setFacilities: any;
-  errors: any;
-  errorField: any;
+  value: any[];
+  onChange: (data: any[]) => void;
 }
 
-const WorkRequirment = ({
-  name,
-  watch,
+export default function WorkerRequirementSelector({
   type,
   subType,
-  requirements,
-  setRequirements,
-  facilities,
-  setFacilities,
-  errors,
-  errorField,
-}: WorkRequirmentProps) => {
-  const [key, setKey] = useState(0);
+  value,
+  onChange,
+}: Props) {
+  const [selectedWorker, setSelectedWorker] = useState<any>(null);
+  const [count, setCount] = useState(1);
+  const [price, setPrice] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    const updatedRequirements = requirements.map((req: any) => ({
-      ...req,
-      ...facilities,
-    }));
-    setRequirements(updatedRequirements);
-  }, [facilities]);
+  const workerTypes = filterWorkerTypes(type, subType) || [];
 
-  // const [prevValues, setPrevValues] = useState({ type, subType });
+  const selectedNames = value?.map((v) => v.name);
+  const availableWorkers = workerTypes.filter(
+    (w: any) => !selectedNames.includes(w.value),
+  );
 
-  // useEffect(() => {
-  //   if (prevValues.type !== type || prevValues.subType !== subType) {
-  //     // Reset facilities
-  //     setFacilities({
-  //       living: false,
-  //       food: false,
-  //       travelling: false,
-  //       esi_pf: false,
-  //     });
-
-  //     // Reset requirements
-  //     setRequirements([
-  //       {
-  //         name: "",
-  //         count: 0,
-  //         payPerDay: 0,
-  //         living: false,
-  //         food: false,
-  //         travelling: false,
-  //         esi_pf: false,
-  //       },
-  //     ]);
-
-  //     // Change key to force re-render
-  //     setKey((prevKey) => prevKey + 1);
-
-  //     // Update previous values
-  //     setPrevValues({ type, subType });
-  //   }
-  // }, [type, subType]);
-
-  const getFilteredWorkerTypes = (index: number) => {
-    const selectedNames = requirements
-      .filter((_: any, i: any) => i !== index)
-      .map((req: any) => req.name);
-
-    return filterWorkerTypes(type, subType)?.filter(
-      (option: any) => !selectedNames.includes(option.value)
-    );
+  const openPopup = (worker: any) => {
+    setSelectedWorker(worker);
+    setCount(1);
+    setPrice("0");
   };
 
-  const handleCheckboxChange = (key: string) => {
-    setFacilities((prevState: any) => ({
-      ...prevState,
-      [key]: !prevState[key],
-    }));
+  const saveWorker = () => {
+    const newData = [
+      ...value,
+      {
+        name: selectedWorker.value,
+        count,
+        payPerDay: parseInt(price),
+      },
+    ];
+    onChange(newData);
+    setSelectedWorker(null);
   };
 
-  const addRequirments = () => {
-    let tempRequirements = [...requirements];
-    tempRequirements[requirements?.length] = {
-      name: "",
-      count: 0,
-      payPerDay: 0,
-      ...facilities,
-    };
-    setRequirements(tempRequirements);
+  const removeWorker = (name: string) => {
+    onChange(value.filter((v) => v.name !== name));
   };
 
-  const removeRequirment = (indexParam: number) => {
-    let allRequirements = [...requirements];
-    if (allRequirements && allRequirements?.length > 1) {
-      allRequirements.splice(indexParam, 1);
-    }
-    setRequirements(allRequirements);
-  };
-
-  const handleRequirementTypeChange = (index: number, name: string) => {
-    let tempRequirments = [...requirements];
-    tempRequirments[index].name = name;
-    setRequirements(tempRequirments);
-  };
-
-  const handleRequirementCountChange = (index: number, count: string) => {
-    let tempRequirments = [...requirements];
-    tempRequirments[index].count = count;
-    setRequirements(tempRequirments);
-  };
-
-  const handleRequirementPriceChange = (index: number, payPerDay: string) => {
-    let tempRequirments = [...requirements];
-    tempRequirments[index].payPerDay = isNaN(parseInt(payPerDay))
-      ? payPerDay
-      : parseInt(payPerDay);
-    setRequirements(tempRequirments);
-  };
+  const sentence = (item: any) =>
+    `${item.count} ${getDynamicWorkerType(item?.name, item.count)} ${t("workersNeeded")} ${item.payPerDay ? `₹${item.payPerDay}` : ""} ${
+      item.payPerDay ? t("perDay") : ""
+    }`;
 
   return (
-    <View key={key} style={styles.addRequirmentWrapper}>
-      {/* Common Checkboxes */}
-      <View style={styles.checkboxContainer}>
-        <CustomCheckbox
-          label={t("living")}
-          isChecked={facilities.living}
-          onToggle={() => handleCheckboxChange("living")}
-        />
-        <CustomCheckbox
-          label={t("food")}
-          isChecked={facilities.food}
-          onToggle={() => handleCheckboxChange("food")}
-        />
-        <CustomCheckbox
-          label={t("travelling")}
-          isChecked={facilities.travelling}
-          onToggle={() => handleCheckboxChange("travelling")}
-        />
-        <CustomCheckbox
-          label={t("esi_pf")}
-          isChecked={facilities.esi_pf}
-          onToggle={() => handleCheckboxChange("esi_pf")}
-        />
+    <View style={{ gap: 18 }}>
+      {/* ✅ Selected Workers */}
+      {value?.length > 0 && (
+        <View>
+          <Text style={styles.heading}>{t("selectedWorkers")}</Text>
+
+          {value?.map((item) => (
+            <TouchableOpacity
+              key={item.name}
+              style={styles.selectedCard}
+              onPress={() => removeWorker(item?.name)}
+            >
+              <Text style={styles.selectedText}>{sentence(item)}</Text>
+              <Text style={styles.remove}>{t("remove")}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* ✅ Available Workers */}
+      <Text style={styles.heading}>{t("tapToAddWorkers")}</Text>
+
+      <View style={styles.grid}>
+        {availableWorkers.map((worker: any) => (
+          <TouchableOpacity
+            key={worker.value}
+            style={styles.card}
+            onPress={() => openPopup(worker)}
+          >
+            <Text style={styles.cardText}>{worker.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {requirements &&
-        requirements.length > 0 &&
-        requirements?.map((requirement: any, index: number) => (
-          <View
-            style={[
-              styles.requirementCard,
-              requirements?.length > index + 1 && styles?.bottomBorder,
-            ]}
-            key={index}
-          >
-            <View style={styles.addRequirment}>
-              <View style={{ zIndex: 7 }}>
-                <PaperDropdown
-                  selectedValue={
-                    requirement?.name
-                      ? getDynamicWorkerType(requirement?.name, 1)
-                      : ""
-                  }
-                  onSelect={(name: any) =>
-                    handleRequirementTypeChange(index, name)
-                  }
-                  placeholder={
-                    subType
-                      ? t("selectWorkRequirementType")
-                      : t("pleaseSelectWorkTypeAndSubTypeFirst")
-                  }
-                  options={getFilteredWorkerTypes(index) ?? []}
-                  errors={errors}
-                  icon={
-                    <CustomHeading baseFont={20} color={Colors?.secondary}>
-                      {index + 1}
-                    </CustomHeading>
-                  }
-                />
-              </View>
-              <View style={styles.counterContainer}>
-                <Counter
-                  label={"count"}
-                  counter={requirement?.count}
-                  setCounter={(count: any) =>
-                    handleRequirementCountChange(index, count)
-                  }
-                  style={
-                    errorField?.index === index &&
-                    errorField?.name === "counter" && {
-                      borderColor: Colors?.error,
-                    }
-                  }
-                />
-                <TextInputComponent
-                  label="rupessPerDay"
-                  name="payPerDay"
-                  value={requirement?.payPerDay.toString()}
-                  placeholder={t("ratePerDay")}
-                  type="number"
-                  maxLength={4}
-                  onChangeText={(payPerDay: string) => {
-                    handleRequirementPriceChange(index, payPerDay);
-                  }}
-                  style={styles.textInput}
-                  inputStyle={{ height: 38 }}
-                  icon={
-                    <MaterialIcons
-                      name={"currency-rupee"}
-                      size={20}
-                      color={Colors.secondary}
-                    />
-                  }
-                />
-                {requirements && requirements?.length > 1 && (
-                  <MaterialCommunityIcons
-                    style={styles.deleteIcon}
-                    name="delete"
-                    size={40}
-                    color={Colors?.tertiery}
-                    onPress={() => removeRequirment(index)}
-                  />
-                )}
-              </View>
+      {/* ✅ POPUP */}
+      <Modal visible={!!selectedWorker} transparent animationType="slide">
+        <View style={styles.modalBg}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>
+              {t("enterDetailsFor")} {selectedWorker?.label}
+            </Text>
+
+            <Counter label="count" counter={count} setCounter={setCount} />
+
+            <TextInputComponent
+              name="payPerDay"
+              label="pricePerDay"
+              value={price}
+              placeholder={t("enterPayPerDay")}
+              type="number"
+              onChangeText={setPrice}
+              style={{ marginVertical: 30 }}
+            />
+
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Button
+                title={t("cancel")}
+                isPrimary={false}
+                onPress={() => setSelectedWorker(null)}
+                style={{ flex: 1 }}
+              />
+              <Button
+                title={t("save")}
+                isPrimary
+                onPress={saveWorker}
+                style={{ flex: 1 }}
+              />
             </View>
           </View>
-        ))}
-
-      <View style={errors?.[name] && styles?.addMore}>
-        {errors?.[name] && (
-          <CustomText
-            textAlign="left"
-            baseFont={14}
-            color={Colors?.danger}
-            style={{ width: "60%" }}
-          >
-            {errors?.[name]?.message || ""}
-          </CustomText>
-        )}
-        {filterWorkerTypes(type, subType)?.length !== requirements.length && (
-          <TouchableOpacity
-            onPress={addRequirments}
-            style={styles.addMoreWrapper}
-          >
-            <View style={styles.addMoreBox}>
-              <Entypo
-                color={Colors?.tertieryButtonText}
-                name="plus"
-                size={18}
-              />
-              <CustomHeading
-                textAlign="left"
-                color={Colors?.tertieryButtonText}
-              >
-                {t("addMore")}
-              </CustomHeading>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      </Modal>
     </View>
   );
-};
-
-export default WorkRequirment;
+}
 
 const styles = StyleSheet.create({
-  addRequirmentWrapper: {
-    width: "100%",
-    gap: 10,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    gap: 20,
-  },
-  requirementCard: {
-    width: "100%",
-  },
-  bottomBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors?.disabled,
-    paddingBottom: 15,
-    marginBottom: 15,
-  },
-  addRequirment: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  counterContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 10,
-    marginTop: 10,
-    zIndex: 6,
-  },
-  addMore: {
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    flexDirection: "row",
-  },
-  addMoreWrapper: {
-    alignSelf: "flex-end",
-  },
-  addMoreBox: {
-    padding: 6,
-    paddingRight: 8,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 5,
-    borderRadius: 8,
+  heading: { fontSize: 18, fontWeight: "600" },
+
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+
+  card: {
+    padding: 14,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors?.tertieryButtonText,
-    backgroundColor: Colors.tertieryButton,
+    borderColor: "#ddd",
   },
-  deleteIcon: {
-    width: "40%",
-    alignSelf: "flex-end",
+  cardText: { fontSize: 15 },
+
+  selectedCard: {
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: "#E8F5E9",
+    marginBottom: 10,
   },
-  textInput: {
-    width: "48%",
-    fontSize: 18,
-    color: Colors?.primary,
-    fontWeight: "600",
-    padding: 0,
-    margin: 0,
+  selectedText: { fontSize: 15, fontWeight: "600" },
+  remove: { color: "red", marginTop: 4 },
+
+  modalBg: {
+    flex: 1,
+    backgroundColor: "#00000088",
+    justifyContent: "center",
+    padding: 20,
   },
+  modalBox: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 20,
+    gap: 18,
+  },
+  modalTitle: { fontSize: 18, fontWeight: "700" },
 });

@@ -76,7 +76,7 @@ const SkillsSelector = ({
 
     const updatedInterests = isEditMode
       ? selectedInterests.map((item) =>
-          item.skill === selectedSkill.value ? newSkill : item
+          item.skill === selectedSkill.value ? newSkill : item,
         )
       : [...selectedInterests, newSkill];
 
@@ -87,12 +87,12 @@ const SkillsSelector = ({
 
   const handleRemove = (skill: any) =>
     setSelectedInterests(
-      selectedInterests.filter((item: any) => item.skill !== skill)
+      selectedInterests.filter((item: any) => item.skill !== skill),
     );
 
   const handleEdit = (skill: any) => {
     const existingSkill = selectedInterests.find(
-      (item) => item.skill === skill
+      (item) => item.skill === skill,
     );
     setSelectedSkill(existingSkill);
     if (isPricePerDayNeeded) {
@@ -184,8 +184,8 @@ const SkillsSelector = ({
                 ?.filter(
                   (skill: any) =>
                     !selectedInterests?.find(
-                      (sel) => sel?.skill === skill?.value
-                    )
+                      (sel) => sel?.skill === skill?.value,
+                    ),
                 )
                 ?.map((skill: any, index: number) => (
                   <TouchableOpacity
