@@ -7,7 +7,7 @@ import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
 import AllTopWorkers from "../topWorkers";
 
-import bookedWorkers from "../../../../../../assets/bookedWorkers.png";
+import bookedWorkers from "../../../../../../assets/add.gif";
 import myServices from "../../../../../../assets/myServices.png";
 
 const EmployerSearchScreen = () => {
@@ -23,14 +23,14 @@ const EmployerSearchScreen = () => {
   const buttons = [
     {
       icon: bookedWorkers,
-      label: t("add"),
+      label: t("addNewWork"),
       onPress: ClickAddService,
     },
-    {
-      icon: myServices,
-      label: t("myServices"),
-      onPress: ClickMyAllServices,
-    },
+    // {
+    //   icon: myServices,
+    //   label: t("myServices"),
+    //   onPress: ClickMyAllServices,
+    // },
   ];
 
   return (
@@ -53,6 +53,6 @@ export default EmployerSearchScreen;
 const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.primary,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
 });

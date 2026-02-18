@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import { useForm } from "react-hook-form";
+import APP_CONTEXT from "@/app/context/locale";
 
 const { width } = Dimensions.get("window");
 
@@ -28,6 +29,7 @@ const ButtonContainer = ({
   isWorkerBooked,
 }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
+  const { role } = APP_CONTEXT.useApp();
 
   const {
     control,
@@ -209,7 +211,8 @@ const ButtonContainer = ({
         {!userDetails?.employedBy &&
           (!user?.teamDetails ||
             user?.teamDetails?.status !== "ACTIVE" ||
-            !user?.teamDetails?.memberCount) && (
+            !user?.teamDetails?.memberCount) &&
+          role === "MEDIATOR" && (
             <Button
               isPrimary={true}
               bgColor={
@@ -227,8 +230,8 @@ const ButtonContainer = ({
                 isInYourTeam
                   ? t("leaveFromTeam")
                   : isUserRequestedToJoinTeam
-                  ? t("removeTeamJoingRequest")
-                  : t("addInYourTeam")
+                    ? t("removeTeamJoingRequest")
+                    : t("addInYourTeam")
               }
               onPress={() => {
                 if (isInYourTeam) {
@@ -257,37 +260,39 @@ const ButtonContainer = ({
         />
 
         {/* Button for booking related actions */}
-        <Button
-          isPrimary={true}
-          bgColor={
-            isWorkerBooked || isWorkerBookingRequested
-              ? Colors.danger
-              : Colors.primary
-          }
-          borderColor={
-            isWorkerBooked || isWorkerBookingRequested
-              ? Colors.danger
-              : Colors.primary
-          }
-          title={
-            isWorkerBooked
-              ? t("cancelBooking")
-              : isWorkerBookingRequested
-              ? t("cancelBookingRequest")
-              : t("bookWorker")
-          }
-          onPress={() => {
-            if (isWorkerBooked) {
-              mutationRemoveBookedWorker.mutate();
-            } else if (isWorkerBookingRequested) {
-              mutationCancelBookingRequest.mutate();
-            } else {
-              handleAddBookingDetails();
-              // setIsAddBookingModal(true);
+        {role === "EMPLOYER" && (
+          <Button
+            isPrimary={true}
+            bgColor={
+              isWorkerBooked || isWorkerBookingRequested
+                ? Colors.danger
+                : Colors.primary
             }
-          }}
-          style={styles.footerBtn}
-        />
+            borderColor={
+              isWorkerBooked || isWorkerBookingRequested
+                ? Colors.danger
+                : Colors.primary
+            }
+            title={
+              isWorkerBooked
+                ? t("cancelBooking")
+                : isWorkerBookingRequested
+                  ? t("cancelBookingRequest")
+                  : t("bookWorker")
+            }
+            onPress={() => {
+              if (isWorkerBooked) {
+                mutationRemoveBookedWorker.mutate();
+              } else if (isWorkerBookingRequested) {
+                mutationCancelBookingRequest.mutate();
+              } else {
+                handleAddBookingDetails();
+                // setIsAddBookingModal(true);
+              }
+            }}
+            style={styles.footerBtn}
+          />
+        )}
       </Animated.View>
 
       {/* Add Booking Modal */}

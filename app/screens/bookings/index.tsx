@@ -106,7 +106,7 @@ const Bookings = () => {
             /> */}
 
             {memoizedBookedWorkers?.length > 0 ? (
-              <ListingsVerticalBookings // ✅ Fixed component
+              <ListingsVerticalBookings
                 listings={memoizedBookedWorkers}
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}

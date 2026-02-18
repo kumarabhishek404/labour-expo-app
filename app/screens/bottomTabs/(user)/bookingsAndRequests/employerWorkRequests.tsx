@@ -27,7 +27,7 @@ import EMPLOYER from "@/app/api/employer";
 const EmployerWorkRequests = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
-  const [activeTab, setActiveTab] = useState("sent"); // sent | created
+  const [activeTab, setActiveTab] = useState("created"); // sent | created
   const [filteredData, setFilteredData]: any = useState([]);
 
   /* ---------------- API ---------------- */
@@ -185,16 +185,17 @@ const EmployerWorkRequests = () => {
 
       {/* 🌟 Tabs */}
       <View style={styles.tabsContainer}>
-        <TabButton
-          id="sent"
-          title={t("tabSentRequestsTitle")}
-          subtitle={t("tabSentRequestsSubtitle")}
-        />
 
         <TabButton
           id="created"
           title={t("tabCreatedServicesTitle")}
           subtitle={t("tabCreatedServicesSubtitle")}
+        />
+
+        <TabButton
+          id="sent"
+          title={t("tabSentRequestsTitle")}
+          subtitle={t("tabSentRequestsSubtitle")}
         />
       </View>
 

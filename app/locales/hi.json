@@ -1428,7 +1428,8 @@
   "discoverWorkers": "आपके आस-पास के मजदूर",
   "discoverWorkersSubHeading": "ये मजदूर आपके आस-पास उपलब्ध हैं। आप उनका प्रोफाइल देख सकते हैं और आसानी से काम के लिए बुला सकते हैं।",
 
-  "myActivityTitle": "मेरी गतिविधियाँ",
+  "myActivityHeading": "मेरी गतिविधियाँ (मजदूर)",
+  "myActivityTitle": "गतिविधियाँ",
   "myWorkHeaderGuide": "यहाँ देखें किसने आपको काम के लिए बुलाया है और आपने कहाँ आवेदन किया है। जल्दी काम पाने के लिए रिक्वेस्ट स्वीकार करें।",
 
   "tabReceivedWorkTitle": "काम के बुलावे",
@@ -1453,19 +1454,20 @@
   "ctaFindWorkStep2": "पास के काम चुनें",
   "ctaFindWorkStep3": "अप्लाई बटन दबाएँ",
 
-  "myWorkDashboard": "मेरा काम",
+  "myWorkDashboard": "मेरा काम (मजदूर)",
   "myWorkDashboardSub": "यहाँ आपको मिला हुआ और आने वाला काम दिखेगा।",
   "workTip": "समय पर काम पूरा करने से आपको और काम मिलेंगे।",
 
   "noWorkYet": "अभी तक कोई काम नहीं मिला",
   "findWork": "काम ढूंढें",
 
+  "myEmployerDashboard": "बुक किए गए कामगार",
   "employerActivityTitle": "मेरी गतिविधियाँ (नियोक्ता)",
   "employerWorkHeaderGuide": "अपने कार्यों और बनाए गए सर्विसेस को यहां ट्रैक करें।",
 
   "tabSentRequestsTitle": "भेजे गए अनुरोध",
   "tabSentRequestsSubtitle": "वर्कर्स को भेजे गए रिक्वेस्ट देखें",
-  "tabCreatedServicesTitle": "बनाई गई सेवाएँ",
+  "tabCreatedServicesTitle": "मेरी बनाई गई सेवाएँ",
   "tabCreatedServicesSubtitle": "आपकी बनाई गई सर्विसेस की लिस्ट",
 
   "noSentRequestsTitle": "कोई भेजे गए अनुरोध नहीं",
@@ -1508,5 +1510,8 @@
   "mediatorDashboardGuide": "यहाँ आप उन सभी सेवाओं को देख सकते हैं जहाँ आपने ठेकेदार के रूप में आवेदन किया है। अपनी चयनित सेवाओं को आसानी से प्रबंधित और ट्रैक करें।",
   "mediatorTip": "सुझाव: सक्रिय रूप से आवेदन करें और अपनी प्रोफ़ाइल अपडेट रखें ताकि ठेकेदार के रूप में चयन होने की संभावना बढ़ सके।",
   "noMediatorServicesTitle": "अभी तक कोई सेवा असाइन नहीं हुई",
-  "exploreServices": "उपलब्ध सेवाओं का अन्वेषण करें"
+  "exploreServices": "उपलब्ध सेवाओं का अन्वेषण करें",
+
+  "uploadImages": "काम की तस्वीरें अपलोड करें",
+  "addNewWork": "नया काम जोड़ें"
 }

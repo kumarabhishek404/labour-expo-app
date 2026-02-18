@@ -55,15 +55,12 @@ export default function Layout() {
   );
   const pathname = usePathname();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
-  const [userRole, setUserRole] = useAtom(Atoms.SelectedRoleAtom);
 
   const [showExitModal, setShowExitModal] = useState(false);
   const history = useRef<string[]>([]);
   const [isReady, setIsReady] = useState(false);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const { appKey } = APP_CONTEXT.useApp();
-
-  console.log("appKey----", appKey, userRole);
 
   useEffect(() => {
     // wait one render cycle
@@ -277,11 +274,9 @@ export default function Layout() {
                   <TabButton
                     props={props}
                     path="/(tabs)/second"
-                    title={isAdmin ? "teams" : "myWorkDashboard"}
+                    title={isAdmin ? "teams" : "myWorkTitle"}
                     iconName={isAdmin ? "group" : "hammer"}
-                    iconLibrary={
-                      isAdmin ? "FontAwesome" : "FontAwesome5"
-                    }
+                    iconLibrary={isAdmin ? "FontAwesome" : "FontAwesome5"}
                   />
                 ),
               }}

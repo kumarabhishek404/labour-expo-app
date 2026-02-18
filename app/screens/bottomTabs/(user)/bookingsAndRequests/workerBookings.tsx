@@ -147,7 +147,7 @@ const WorkerBookings = () => {
               backgroundColor: "rgba(255,255,255,0.15)",
               padding: 10,
               borderRadius: 10,
-              marginTop: 12,
+              marginTop: 5,
             }}
           >
             <CustomText baseFont={14} color={Colors.white}>
@@ -162,17 +162,19 @@ const WorkerBookings = () => {
             <>
               <View style={styles.container}>
                 {memoizedData && memoizedData?.length > 0 ? (
-                  <ListingsVerticalServices
-                    listings={memoizedData || []}
-                    isFetchingNextPage={isFetchingNextPage}
-                    loadMore={loadMore}
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={!isRefetching && refreshing}
-                        onRefresh={onRefresh}
-                      />
-                    }
-                  />
+                  <View style={{ marginTop: 15 }}>
+                    <ListingsVerticalServices
+                      listings={memoizedData || []}
+                      isFetchingNextPage={isFetchingNextPage}
+                      loadMore={loadMore}
+                      refreshControl={
+                        <RefreshControl
+                          refreshing={!isRefetching && refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
+                    />
+                  </View>
                 ) : (
                   <EmptyDataPlaceholder
                     title="noWorkYet"
