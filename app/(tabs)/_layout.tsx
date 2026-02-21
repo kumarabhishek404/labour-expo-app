@@ -60,12 +60,16 @@ export default function Layout() {
   const history = useRef<string[]>([]);
   const [isReady, setIsReady] = useState(false);
   const { refreshUser } = REFRESH_USER.useRefreshUser();
-  const { appKey } = APP_CONTEXT.useApp();
+  const { setRole } = APP_CONTEXT.useApp();
 
   useEffect(() => {
     // wait one render cycle
     setIsReady(true);
   }, []);
+
+  useEffect(() => {
+    setRole(userDetails?.role || "");
+  }, [userDetails]);
 
   useEffect(() => {
     if (!isReady) return;
