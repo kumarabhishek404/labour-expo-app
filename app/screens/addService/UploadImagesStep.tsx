@@ -26,11 +26,15 @@ export default function UploadWorkImagesStep({
     defaultValues: { images: defaultImages },
   });
 
+  console.log("defaultImages---", defaultImages);
+
   const submit = (data: any) => {
     if (data.images?.length > 3) {
       TOAST.error(t("maxThreeImages"));
       return;
     }
+    console.log("data---", data);
+    
     onSubmitFinal(data.images);
   };
 
@@ -84,7 +88,7 @@ export default function UploadWorkImagesStep({
         />
         <ButtonComp
           isPrimary
-          title={"🚀 " + t("postWork")}
+          title={"🚀 " + t("uploadImages")}
           onPress={handleSubmit(submit)}
           style={{ flex: 1 }}
         />

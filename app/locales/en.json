@@ -1440,7 +1440,8 @@
   "discoverWorkers": "Nearby workers ready to help",
   "discoverWorkersSubHeading": "These workers are available near your location. You can view profiles and hire them for your work easily.",
 
-  "myActivityTitle": "My Activity",
+  "myActivityHeading": "My Activities (WORKER)",
+  "myActivityTitle": "Activities",
   "myWorkHeaderGuide": "Here you can see who invited you for work and where you have applied. Accept requests quickly to start earning.",
 
   "tabReceivedWorkTitle": "Work Invitations",
@@ -1465,19 +1466,21 @@
   "ctaFindWorkStep2": "Choose nearby jobs",
   "ctaFindWorkStep3": "Tap Apply",
 
-  "myWorkDashboard": "Your Work",
+  "myWorkDashboard": "My Work (WORKER)",
+  "myWorkTitle": "My Work",
   "myWorkDashboardSub": "Here you can see the work you got and your upcoming jobs.",
   "workTip": "Complete your work on time to get more job offers.",
 
   "noWorkYet": "No work yet",
   "findWork": "Find Work",
 
-  "employerActivityTitle": "My Activity (Employer)",
+  "myEmployerDashboard": "Booked Workers",
+  "employerActivityTitle": "My Activities (EMPLOYER)",
   "employerWorkHeaderGuide": "Track your tasks and created services here.",
 
   "tabSentRequestsTitle": "Sent Requests",
   "tabSentRequestsSubtitle": "View requests sent to workers",
-  "tabCreatedServicesTitle": "Created Services",
+  "tabCreatedServicesTitle": "My Created Services",
   "tabCreatedServicesSubtitle": "List of services you have created",
 
   "noSentRequestsTitle": "No Sent Requests",
@@ -1498,7 +1501,7 @@
   "employerBookingHeaderGuide": "Track your created services and booked workers here.",
   "employerTip": "Manage your services and requests on time.",
 
-  "mediatorActivityTitle": "My Activity (Mediator)",
+  "mediatorActivityTitle": "My Activity (MEDIATOR)",
   "mediatorWorkHeaderGuide": "Track team requests and services you applied for as a mediator.",
   "tabTeamJoiningRequestsTitle": "Team Joining Requests",
   "tabTeamJoiningRequestsSubtitle": "Requests from workers to join your team",
@@ -1516,9 +1519,12 @@
   "mediatorStepTrackService": "Track service status",
   "mediatorCTAApplyService": "Apply Now",
 
-  "myMediatorDashboard": "My Work (Mediator)",
+  "myMediatorDashboard": "My Work (MEDIATOR)",
   "mediatorDashboardGuide": "Here you can see all the services where you have applied as a mediator. Manage and track your selections easily.",
   "mediatorTip": "Tip: Apply proactively, and keep your profile updated to increase your chances of being selected as a mediator.",
   "noMediatorServicesTitle": "No Services Assigned Yet",
-  "exploreServices": "Explore Available Services"
+  "exploreServices": "Explore Available Services",
+
+  "uploadImages": "Upload Work Photos",
+  "addNewWork": "Add new work"
 }

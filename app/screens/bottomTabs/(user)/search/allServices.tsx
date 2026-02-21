@@ -19,6 +19,7 @@ import GradientWrapper from "@/components/commons/GradientWrapper";
 import TextButton from "@/components/inputs/TextButton";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
+import APP_CONTEXT from "@/app/context/locale";
 
 const AllServices = ({
   isLoading,
@@ -31,7 +32,7 @@ const AllServices = ({
   loadMore,
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
-const userRole = useAtomValue(Atoms.SelectedRoleAtom)
+  const { role } = APP_CONTEXT.useApp();
 
   const onSearchService = (data: any) => {
     setIsAddFilters(false);
@@ -58,16 +59,23 @@ const userRole = useAtomValue(Atoms.SelectedRoleAtom)
         <ListingsServicesPlaceholder />
       ) : (
         <>
-          <View style={[styles.container, userRole !== "WORKER" && {paddingBottom: 150,}]}>
+          <View
+            style={[
+              styles.container,
+              role !== "WORKER" && { paddingBottom: 150 },
+            ]}
+          >
             <View style={styles.headingContainer}>
-              {userRole === "WORKER" && <CustomText
-                baseFont={30}
-                fontWeight="700"
-                color={Colors?.white}
-                style={styles.heading}
-              >
-                {t("allServices")}
-              </CustomText>}
+              {role === "WORKER" && (
+                <CustomText
+                  baseFont={30}
+                  fontWeight="700"
+                  color={Colors?.white}
+                  style={styles.heading}
+                >
+                  {t("allServices")}
+                </CustomText>
+              )}
               <CustomText
                 baseFont={14}
                 color={Colors?.white}

@@ -108,7 +108,7 @@ const AddServiceScreen = () => {
       setStep(1);
       setAddServiceStep(1);
       router?.push({
-        pathname: "/screens/service",
+        pathname: "/(tabs)/third",
         params: {
           title: "titleMyAllServicesAndBookings",
           type: "myServices",
@@ -317,11 +317,11 @@ const AddServiceScreen = () => {
     }
   };
 
-  const onSubmit = (data: any) => {
-    if (data?.images && data?.images?.length > 3) {
+  const onSubmit = (images: any) => {
+    if (images && images?.length > 3) {
       TOAST?.error("You can not upload more than 3 images");
     } else {
-      if (data?.images && data?.images?.length > 0) setImages(data?.images);
+      if (images && images?.length > 0) setImages(images);
       setStep(8);
     }
   };

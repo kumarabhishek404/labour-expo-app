@@ -22,6 +22,7 @@ import WORKER from "@/app/api/workers";
 import Atoms from "@/app/AtomStore";
 import { t } from "@/utils/translationHelper";
 import EMPLOYER from "@/app/api/employer";
+import ListingsVerticalBookings from "@/components/commons/ListingVerticalBookings";
 
 const EmployerBookings = () => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
@@ -98,7 +99,7 @@ const EmployerBookings = () => {
         {/* Header */}
         <View style={styles.header}>
           <CustomHeading baseFont={26} textAlign="center" color={Colors?.white}>
-            🏗️ {t("myWorkDashboard")}
+            🏗️ {t("myEmployerDashboard")}
           </CustomHeading>
 
           <CustomText
@@ -114,7 +115,6 @@ const EmployerBookings = () => {
               backgroundColor: "rgba(255,255,255,0.15)",
               padding: 10,
               borderRadius: 10,
-              marginTop: 12,
             }}
           >
             <CustomText baseFont={14} color={Colors.white}>
@@ -128,13 +128,13 @@ const EmployerBookings = () => {
             <ListingsServicesPlaceholder />
           ) : memoizedData?.length > 0 ? (
             <View style={styles.container}>
-              <ListingsVerticalServices
+              <ListingsVerticalBookings
                 listings={memoizedData}
-                isFetchingNextPage={isFetchingNextPage}
                 loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
                 refreshControl={
                   <RefreshControl
-                    refreshing={!isRefetching && refreshing}
+                    refreshing={refreshing}
                     onRefresh={onRefresh}
                   />
                 }
@@ -158,8 +158,7 @@ const EmployerBookings = () => {
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 15,
+    // paddingTop: 10,
     gap: 5,
     backgroundColor: Colors?.primary,
   },

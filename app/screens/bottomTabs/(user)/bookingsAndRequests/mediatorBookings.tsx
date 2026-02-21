@@ -103,18 +103,18 @@ const MediatorDashboard = () => {
             {t("mediatorDashboardGuide")}
           </CustomText>
 
-          <View
+          {/* <View
             style={{
               backgroundColor: "rgba(255,255,255,0.15)",
               padding: 10,
               borderRadius: 10,
-              marginTop: 12,
+              marginTop: 6,
             }}
           >
             <CustomText baseFont={14} color={Colors.white}>
               💡 {t("mediatorTip")}
             </CustomText>
-          </View>
+          </View> */}
         </View>
 
         <GradientWrapper height={Dimensions.get("window").height - 180}>

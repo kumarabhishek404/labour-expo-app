@@ -186,7 +186,7 @@ const WorkerWorkRequests = () => {
       {/* 🌟 Guided Header */}
       <View style={styles.header}>
         <CustomHeading baseFont={26} textAlign="center" color={Colors?.white}>
-          🧰 {t("myActivityTitle")}
+          🧰 {t("myActivityHeading")}
         </CustomHeading>
 
         <CustomText color={Colors.white} baseFont={14}>

@@ -69,10 +69,10 @@ const UserProfile = () => {
 
   const { refreshUser, isLoading } = REFRESH_USER.useRefreshUser();
 
-  console.log("userRole---", role);
+  console.log("userDetails?.role---", userDetails?.role);
 
   useEffect(() => {
-    setRole(userDetails?.role);
+    setRole(userDetails?.role || "");
   }, [userDetails]);
 
   // useEffect(() => {
@@ -161,6 +161,25 @@ const UserProfile = () => {
     onError: (err) => {
       console.error("error while updating the profile ", err);
       setIsEditProfile(false);
+    },
+  });
+
+  const mutationUpdateRole = useMutation({
+    mutationKey: ["updateRole"],
+    mutationFn: (newRole: string) =>
+      USER.updateUserById({ _id: userDetails._id, role: newRole }),
+    onSuccess: (response) => {
+      const updatedUser = response?.data?.data;
+      if (updatedUser) {
+        setUserDetails({
+          ...userDetails,
+          role: updatedUser.role,
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Error updating role: ", error);
+      // TOAST?.error(t("roleUpdateFailed"));
     },
   });
 
@@ -331,6 +350,7 @@ const UserProfile = () => {
       <Loader
         loading={
           mutationUpdateProfileInfo?.isPending ||
+          mutationUpdateRole?.isPending ||
           mutationAddSkills?.isPending ||
           mutationRemoveSkill?.isPending ||
           isLoading ||
@@ -348,6 +368,7 @@ const UserProfile = () => {
           currentRole={role}
           onChangeRole={(newRole) => {
             setRole(newRole);
+            mutationUpdateRole.mutate(newRole);
           }}
         />
 

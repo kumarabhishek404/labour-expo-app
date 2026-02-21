@@ -22,7 +22,7 @@ const IconButton = ({ icon, label, onPress }: any) => {
       >
         <Image
           source={icon}
-          style={{ width: 50, height: 50, marginBottom: -13 }}
+          style={{ width: 80, height: 80}}
         />
       </View>
       <CustomText

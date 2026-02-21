@@ -11,47 +11,46 @@ type Props = {
   refreshControl: any;
 };
 
+const RenderItem = React.memo(({ item }: any) => {
+  return <ListingsServices item={item} />;
+});
+RenderItem.displayName = "RenderItem";
+
 const ListingsVerticalServices = ({
   listings,
   isFetchingNextPage,
   loadMore,
   refreshControl,
 }: Props) => {
-  const RenderItem = React.memo(({ item }: any) => {
-    return <ListingsServices item={item} />;
-  });
-
-  RenderItem.displayName = "RenderItem";
-  const renderItem = ({ item }: any) => <RenderItem item={item} />;
-
   const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
-
+  React.useEffect(() => {
+    return () => {
+      debouncedLoadMore.cancel();
+    };
+  }, [debouncedLoadMore]);
   return (
     <View>
       <FlatList
         data={listings}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index?.toString()}
+        renderItem={({ item }) => <RenderItem item={item} />}
+        keyExtractor={(item) => item._id}
         onEndReached={debouncedLoadMore}
-        onEndReachedThreshold={0.2}
-        ListFooterComponent={() =>
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator
               size="large"
-              color={Colors?.primary}
+              color={Colors.primary}
               style={styles.loaderStyle}
             />
           ) : null
         }
         contentContainerStyle={{ paddingBottom: 200 }}
-        getItemLayout={(data, index) => ({
-          length: 100,
-          offset: 100 * index,
-          index,
-        })}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={3}
+        // 🚀 PERFORMANCE MAGIC
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+        windowSize={5}
+        updateCellsBatchingPeriod={50}
         removeClippedSubviews={true}
         refreshControl={refreshControl}
         showsVerticalScrollIndicator={false}

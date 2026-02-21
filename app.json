@@ -2,7 +2,7 @@
   "expo": {
     "name": "Apna Rojgar",
     "slug": "labour-app",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "default",
     "scheme": "myapp",
     "jsEngine": "hermes",
@@ -56,7 +56,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 35,
+      "versionCode": 37,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
