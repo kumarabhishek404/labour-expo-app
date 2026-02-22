@@ -1167,6 +1167,7 @@
   "welder": { "singular": "Welder", "plural": "Welders" },
   "pipeWelder": { "singular": "Pipe Welder", "plural": "Pipe Welders" },
   "ducting": { "singular": "Ducting Worker", "plural": "Ducting Workers" },
+  "beldaarConstruction": { "singular": "Beldaar", "plural": "Beldaars" },
   "storeKeeper": { "singular": "Store Keeper", "plural": "Store Keepers" },
   "supervisor": { "singular": "Supervisor", "plural": "Supervisors" },
   "foreman": { "singular": "Foreman", "plural": "Foremen" },

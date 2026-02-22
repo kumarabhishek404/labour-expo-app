@@ -1167,6 +1167,7 @@
   "welder": { "singular": "वेल्डर", "plural": "वेल्डर" },
   "pipeWelder": { "singular": "पाइप वेल्डर", "plural": "पाइप वेल्डर" },
   "ducting": { "singular": "डक्टिंग मजदूर", "plural": "डक्टिंग मजदूर" },
+  "beldaarConstruction": { "singular": "बेलदार", "plural": "बेलदारों" },
   "storeKeeper": { "singular": "स्टोर कीपर", "plural": "स्टोर कीपर" },
   "supervisor": { "singular": "सुपरवाइजर", "plural": "सुपरवाइजर" },
   "foreman": { "singular": "फोरमैन", "plural": "फोरमैन" },
