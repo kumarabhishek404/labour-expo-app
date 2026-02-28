@@ -18,6 +18,7 @@ import {
   savePendingProfileUpload,
   uploadPendingProfileImage,
 } from "@/utils/backgroundImageUpload";
+import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 
 const FifthScreen = () => {
   const { userId, role, skills } = useLocalSearchParams();
@@ -41,6 +42,18 @@ const FifthScreen = () => {
       const user = response?.data?.data;
       await saveToken(token);
       setUserDetails({ isAuth: true, ...user });
+
+      if (user?._id) {
+        try {
+          await PUSH_NOTIFICATION.registerForPushNotificationsAsync(
+            true,
+            user._id,
+          );
+        } catch (err) {
+          console.error("Push notification registration failed: ", err);
+        }
+      }
+
       router.replace("/(tabs)");
       uploadPendingProfileImage();
     },

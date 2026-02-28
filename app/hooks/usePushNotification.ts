@@ -7,7 +7,7 @@ import NOTIFICATION from "../api/notification";
 
 const registerForPushNotificationsAsync = async (
   notificationConsent: boolean,
-  userId: any
+  userId: any,
 ) => {
   console.log("[PushNotification] Starting registration process...");
 
@@ -23,13 +23,13 @@ const registerForPushNotificationsAsync = async (
 
   if (Device.isDevice) {
     console.log(
-      "[PushNotification] Device check passed. Checking permissions..."
+      "[PushNotification] Device check passed. Checking permissions...",
     );
 
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     console.log(
-      `[PushNotification] Existing permission status: ${existingStatus}`
+      `[PushNotification] Existing permission status: ${existingStatus}`,
     );
 
     let finalStatus = existingStatus;
@@ -59,7 +59,7 @@ const registerForPushNotificationsAsync = async (
 
     try {
       console.log(
-        `[PushNotification] Fetching Expo push token for projectId: ${projectId}`
+        `[PushNotification] Fetching Expo push token for projectId: ${projectId}`,
       );
       const pushTokenResponse = await Notifications.getExpoPushTokenAsync({
         projectId,
@@ -80,7 +80,7 @@ const registerForPushNotificationsAsync = async (
       } catch (err) {
         console.error(
           "[PushNotification] Error registering device with backend:",
-          err
+          err,
         );
       }
 
@@ -91,7 +91,7 @@ const registerForPushNotificationsAsync = async (
     }
   } else {
     console.warn(
-      "[PushNotification] Must use physical device for push notifications"
+      "[PushNotification] Must use physical device for push notifications",
     );
   }
 };
@@ -105,18 +105,20 @@ const unregisterPushNotifications = async () => {
 
     if (Platform.OS === "ios") {
       console.warn(
-        "[PushNotification] iOS does not support programmatic permission revocation."
+        "[PushNotification] iOS does not support programmatic permission revocation.",
       );
       return false;
     } else {
       console.log(
-        "[PushNotification] Disabling notifications handler on Android..."
+        "[PushNotification] Disabling notifications handler on Android...",
       );
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
           shouldShowAlert: false,
           shouldPlaySound: false,
           shouldSetBadge: false,
+          shouldShowBanner: false,
+          shouldShowList: false,
         }),
       });
       return true;
