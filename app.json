@@ -18,9 +18,7 @@
       "backgroundColor": "#22409a",
       "barStyle": "light-content"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "plugins": [
       "expo-av",
       "expo-router",
@@ -44,7 +42,8 @@
             "targetSdkVersion": 35,
             "buildToolsVersion": "35.0.0",
             "allowBackup": true,
-            "supportsTablet": true
+            "supportsTablet": true,
+            "usesCleartextTraffic": true
           }
         }
       ],
@@ -59,7 +58,6 @@
       "versionCode": 39,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
-      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/app/adaptive-icon.png",
         "backgroundColor": "#ffffff"
