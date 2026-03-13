@@ -461,7 +461,7 @@ const ServiceActionButtons = ({
                 isPrimary={true}
                 title={t("edit")}
                 onPress={() => {
-                  router.push("/(tabs)/second");
+                  router.push("/screens/addService");
                   setAddService(service);
                 }}
                 style={styles.footerBtn}

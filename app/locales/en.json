@@ -519,6 +519,7 @@
   "positionYourFaceInTheOvalAbove": "Position your face in the oval above",
   "profilePictureIsRequired": "Profile picture is required",
   "saveProfilePicture": "Save Profile Picture",
+  "skipAndContinue": "Skip and Continue",
   "pleaseFillAllFields": "Please fill all fields",
   "addNewSkills": "Add new skill",
   "searchAndSelectSkills": "Search and select skill",
@@ -1527,5 +1528,9 @@
   "exploreServices": "Explore Available Services",
 
   "uploadImages": "Upload Work Photos",
-  "addNewWork": "Add new work"
+  "addNewWork": "Add new work",
+
+  "profilePictureOptional": "Profile photo is optional. You can skip this step.",
+  "openCamera": "Open Camera",
+  "selfieHelpsWork": "People trust profiles with photos more, and they get work faster."
 }

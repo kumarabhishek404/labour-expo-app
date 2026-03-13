@@ -41,36 +41,43 @@ const SelfieScreen = ({
     skipProcessing: true,
   };
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Camera.requestCameraPermissionsAsync();
+  //     setHasPermission(status === "granted");
+  //   })();
+  // }, []);
 
   const takeSelfie = async () => {
-    if (cameraRef.current) {
-      try {
+    try {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+
+      if (status !== "granted") {
+        TOAST.error(t("cameraPermissionRequired"));
+        return;
+      }
+
+      setHasPermission(true);
+
+      if (cameraRef.current) {
         setLoading(true);
+
         const photo = await cameraRef.current.takePictureAsync();
 
         const manipulatedPhoto = await ImageManipulator.manipulateAsync(
           photo.uri,
-          [{ flip: ImageManipulator.FlipType.Horizontal }], // Flip the image horizontally
-          { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+          [{ flip: ImageManipulator.FlipType.Horizontal }],
+          { compress: 1, format: ImageManipulator.SaveFormat.PNG },
         );
 
         setLoading(false);
-        console.log("manipulatedPhoto--123", manipulatedPhoto);
         setProfilePicture(manipulatedPhoto?.uri);
-      } catch (err) {
-        console.log("error while capturing image ", err);
-        setLoading(false);
-        setProfilePicture("");
-        TOAST?.error(t("failedToCaptureImageRetryAgain"));
       }
-    } else {
+    } catch (err) {
+      console.log("error while capturing image ", err);
       setLoading(false);
+      setProfilePicture("");
+      TOAST.error(t("failedToCaptureImageRetryAgain"));
     }
   };
 
@@ -78,15 +85,15 @@ const SelfieScreen = ({
     setProfilePicture("");
   };
 
-  if (hasPermission === null) {
-    return (
-      <View style={styles.container}>
-        <CustomHeading fontWeight="normal">
-          {t("requestingCameraPermission")}
-        </CustomHeading>
-      </View>
-    );
-  }
+  // if (hasPermission === null) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <CustomHeading fontWeight="normal">
+  //         {t("requestingCameraPermission")}
+  //       </CustomHeading>
+  //     </View>
+  //   );
+  // }
 
   if (hasPermission === false) {
     return (
@@ -131,20 +138,32 @@ const SelfieScreen = ({
             <View
               style={[
                 styles.cameraBorderContainer,
-                errors?.[name] && {borderColor: Colors?.error},
+                errors?.[name] && { borderColor: Colors?.error },
               ]}
             >
-              <CameraView
-                ref={cameraRef}
-                style={styles.camera}
-                facing={facing}
-                autofocus="off"
-                enableTorch={true}
-                flash="on"
-                mirror={false}
-                mode="picture"
-                ratio="16:9"
-              />
+              {!hasPermission ? (
+                <TouchableOpacity
+                  style={styles.captureButton}
+                  onPress={takeSelfie}
+                >
+                  <CustomHeading color={Colors.white}>
+                    {t("openCamera")}
+                  </CustomHeading>
+                </TouchableOpacity>
+              ) : (
+                <CameraView
+                  ref={cameraRef}
+                  style={styles.camera}
+                  facing={facing}
+                  autofocus="off"
+                  enableTorch={true}
+                  flash="on"
+                  mirror={false}
+                  mode="picture"
+                  ratio="16:9"
+                />
+              )}
+
               {loading && (
                 <ActivityIndicator
                   style={styles.loading}
@@ -164,12 +183,23 @@ const SelfieScreen = ({
               />
             </View>
           ) : (
-            <TouchableOpacity style={styles.captureButton} onPress={takeSelfie}>
-              <CustomHeading color={Colors?.white}>{t("press")}</CustomHeading>
-            </TouchableOpacity>
+            <>
+              {hasPermission && (
+                <TouchableOpacity
+                  style={styles.captureButton}
+                  onPress={takeSelfie}
+                >
+                  <CustomHeading color={Colors?.white}>
+                    {t("press")}
+                  </CustomHeading>
+                </TouchableOpacity>
+              )}
+            </>
           )}
           <View style={styles.instructionContainer}>
-            <CustomText>{t("positionYourFaceInTheOvalAbove")}</CustomText>
+            {hasPermission && (
+              <CustomText>{t("positionYourFaceInTheOvalAbove")}</CustomText>
+            )}
             {errors?.[name] && <ErrorText>{errors?.[name]?.message}</ErrorText>}
           </View>
         </>
@@ -208,8 +238,9 @@ const styles = StyleSheet.create({
   },
   captureButton: {
     marginTop: 0,
-    width: 70,
-    height: 70,
+    padding: 10,
+    width: 80,
+    height: 80,
     backgroundColor: "#000",
     borderRadius: 40,
     justifyContent: "center",

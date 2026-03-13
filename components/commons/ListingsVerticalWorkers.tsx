@@ -8,15 +8,12 @@ import {
 } from "react-native";
 import React, { useMemo } from "react";
 import Colors from "@/constants/Colors";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { Link, router, useGlobalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
-import CustomText from "./CustomText";
-import { t } from "@/utils/translationHelper";
 import ShowDistance from "./ShowDistance";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
@@ -50,44 +47,37 @@ const ListingsVerticalWorkers = ({
           <View style={styles.item}>
             <Image
               source={
-                item?.profilePicture
-                  ? { uri: item?.profilePicture }
-                  : coverImage
+                item?.profilePicture ? { uri: item.profilePicture } : coverImage
               }
-              style={styles.image}
+              style={styles.avatar}
             />
-            {item && item?.isBookmarked && (
-              <View style={styles.liked}>
-                <Ionicons name="heart" size={16} color={Colors.white} />
-              </View>
-            )}
 
-            <View style={styles.itemInfo}>
-              <View>
-                <CustomHeading textAlign="left">{item?.name}</CustomHeading>
-                <SkillSelector
-                  canAddSkills={false}
-                  isShowLabel={false}
-                  style={styles?.skillsContainer}
-                  tagStyle={styles?.skillTag}
-                  tagTextStyle={styles?.skillTagText}
-                  userSkills={item?.skills}
-                  availableSkills={availableInterest}
-                  count={2}
+            <View style={styles.cardContent}>
+              <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+
+              <ShowAddress address={item?.address} numberOfLines={1} />
+
+              <SkillSelector
+                canAddSkills={false}
+                isShowLabel={false}
+                style={styles.skillsContainer}
+                tagStyle={styles.skillTag}
+                tagTextStyle={styles.skillTagText}
+                userSkills={item?.skills}
+                availableSkills={availableInterest}
+                count={3}
+              />
+
+              <View style={styles.bottomRow}>
+                <RatingAndReviews
+                  rating={item?.rating?.average}
+                  reviews={item?.rating?.count}
                 />
-              </View>
-              <View>
-                <ShowAddress address={item?.address} numberOfLines={1} />
-                <View style={styles.ratingPriceContainer}>
-                  <RatingAndReviews
-                    rating={item?.rating?.average}
-                    reviews={item?.rating?.count}
-                  />
-                  <ShowDistance
-                    loggedInUserLocation={userDetails?.location}
-                    targetLocation={item?.location}
-                  />
-                </View>
+
+                <ShowDistance
+                  loggedInUserLocation={userDetails?.location}
+                  targetLocation={item?.location}
+                />
               </View>
             </View>
           </View>
@@ -141,21 +131,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  item: {
-    backgroundColor: Colors.white,
-    // padding: 10,
-    borderRadius: 8,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    position: "relative",
-    marginBottom: 20,
-  },
   image: {
     width: 100,
     minHeight: 100,
     maxHeight: 230,
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
+  },
+  placeholderImage: {
+    backgroundColor: "#f2f2f2",
   },
   liked: {
     position: "absolute",
@@ -172,19 +156,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  skillsContainer: {
-    marginTop: 5,
-  },
-  skillTag: {
-    backgroundColor: "#e0e0e0",
-    borderRadius: 5,
-    marginVertical: 0,
-  },
-  skillTagText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: Colors.tertiery,
-  },
   ratingPriceContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -198,5 +169,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 20,
     paddingBottom: 10,
+  },
+
+  item: {
+    flexDirection: "row",
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    alignItems: "flex-start",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+
+  avatar: {
+    width: 60,
+    height: 100,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+
+  cardContent: {
+    flex: 1,
+  },
+
+  skillsContainer: {
+    marginTop: 6,
+    flexDirection: "row",
+  },
+
+  skillTag: {
+    backgroundColor: "#F1F1F1",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginRight: 6,
+  },
+
+  skillTagText: {
+    fontSize: 11,
+    color: Colors.tertiery,
+  },
+
+  bottomRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
   },
 });

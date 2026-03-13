@@ -406,16 +406,16 @@ const AddServiceScreen = () => {
           />
         );
 
-      case 7:
-        return (
-          <UploadWorkImagesStep
-            defaultImages={images}
-            onBack={() => setStep(6)}
-            onSubmitFinal={onSubmit}
-          />
-        );
+      // case 7:
+      //   return (
+      //     <UploadWorkImagesStep
+      //       defaultImages={images}
+      //       onBack={() => setStep(6)}
+      //       onSubmitFinal={onSubmit}
+      //     />
+      //   );
 
-      case 8:
+      case 7:
         return (
           <FinalScreen
             setStep={setStep}

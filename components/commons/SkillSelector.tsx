@@ -37,6 +37,8 @@ const SkillSelector = ({
   handleRemoveSkill,
   count,
 }: SkillSelectorProps) => {
+
+
   const setDrawerState: any = useSetAtom(Atoms?.BottomDrawerAtom);
   const [isAddSkill, setIsAddSkill] = useState(false);
   const [selectedSkillToRemove, setSelectedSkillToRemove] = useState<
@@ -45,7 +47,7 @@ const SkillSelector = ({
 
   const [filteredSkills, setFilteredSkills] = useState<any[]>([]);
   const [selectedUserSkills, setSelectedUserSkills] = useState<any[]>([]);
-
+  
   useEffect(() => {
     const filteredSkills = availableSkills?.filter(
       (availableSkill: any) =>

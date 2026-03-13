@@ -92,7 +92,7 @@ export default function Layout() {
     const fetchUnreadNotifications = async () => {
       try {
         const token = await getToken();
-        if (!token || !userDetails?._id) return;
+        if (!token || !userDetails?._id || !userDetails?.isAuth) return;
         const data = await NOTIFICATION.fetchUnreadNotificationsCount();
         setNotificationCount(data?.unreadCount || 0);
       } catch (error: any) {
