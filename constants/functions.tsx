@@ -491,8 +491,19 @@ export const translateWorkerTypes = (workerTypes: any[]) => {
 
 export const getLatLongFromAddress = async (address: string) => {
   try {
+    // ✅ Ask permission
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      console.log("Permission denied");
+      return null;
+    }
+
+    // ✅ Geocode
     const result = await Location.geocodeAsync(address);
 
+    console.log("result---", result);
+    
     if (result.length > 0) {
       return {
         latitude: result[0].latitude,
