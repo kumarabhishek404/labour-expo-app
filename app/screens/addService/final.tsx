@@ -251,7 +251,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
             </CustomText>
           </View>
 
-          {/* {images && images?.length > 0 && (
+          {images && images?.length > 0 && (
             <View style={[styles.row, { flexDirection: "column", gap: 5 }]}>
               <CustomHeading color={Colors?.inputLabel} fontWeight="500">
                 {t("workImages")}
@@ -276,8 +276,7 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
                 </View>
               </View>
             </View>
-          )} */}
-          {/* </View> */}
+          )}
         </View>
 
         <View style={styles?.buttonContainer}>

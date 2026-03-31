@@ -1,33 +1,67 @@
-import React from "react";
-import CustomText from "./CustomText";
+import React, { useEffect, useMemo, useState } from "react";
 import { t } from "@/utils/translationHelper";
-import { calculateDistance } from "@/constants/functions";
+import {
+  calculateDistance,
+  getLatLongFromAddress,
+} from "@/constants/functions";
 import CustomHeading from "./CustomHeading";
-import { Text, View } from "react-native";
 
-interface ShowDistanceProps {
-  loggedInUserLocation: object;
-  targetLocation: object;
-  align?: string
-}
-
-const ShowDistance: React.FC<ShowDistanceProps> = ({
+const ShowDistance = ({
+  address,
   loggedInUserLocation,
   targetLocation,
-  align
-}: any) => {  
-  
+  align,
+}: any) => {
+  const [fallbackCoords, setFallbackCoords] = useState<any>(null);
+
+  // ✅ Normalize logged-in user coords
+  const userCoords = useMemo(() => {
+    if (loggedInUserLocation?.coordinates) {
+      const [longitude, latitude] = loggedInUserLocation.coordinates;
+      return { latitude, longitude };
+    }
+    return null;
+  }, [loggedInUserLocation]);
+
+  // ✅ Normalize target coords
+  const targetCoords = useMemo(() => {
+    if (targetLocation?.coordinates) {
+      const [longitude, latitude] = targetLocation.coordinates;
+      return { latitude, longitude };
+    }
+    return null;
+  }, [targetLocation]);
+
+  // ✅ Fallback: get coords from address
+  useEffect(() => {
+    const fetchCoords = async () => {
+      // Only trigger if target location missing
+      if (!targetCoords && address) {
+        const coords = await getLatLongFromAddress(address);
+        if (coords) {
+          setFallbackCoords(coords);
+        }
+      }
+    };
+
+    fetchCoords();
+  }, [address, targetCoords]);
+
+  // ✅ Final coordinates selection
+  const finalTargetCoords = targetCoords || fallbackCoords;
+
+  // ✅ Calculate distance
+  const distance = useMemo(() => {
+    if (!userCoords || !finalTargetCoords) return null;
+
+    const dist = calculateDistance(userCoords, finalTargetCoords);
+    return isNaN(dist) ? null : dist;
+  }, [userCoords, finalTargetCoords]);
+
   return (
-    <Text>
-      {loggedInUserLocation &&
-        loggedInUserLocation?.latitude &&
-        targetLocation &&
-        !isNaN(calculateDistance(loggedInUserLocation, targetLocation)) && (
-          <CustomHeading textAlign={align ?? "center"}>
-            {calculateDistance(loggedInUserLocation, targetLocation)} {t("kms")} {t('distance')}
-          </CustomHeading>
-        )}
-    </Text>
+    <CustomHeading textAlign={align ?? "center"}>
+      {distance || 0} {t("kms")} {t("distance")}
+    </CustomHeading>
   );
 };
 

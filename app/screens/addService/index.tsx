@@ -2,12 +2,10 @@ import EMPLOYER from "@/app/api/employer";
 import Atoms from "@/app/AtomStore";
 import TOAST from "@/app/hooks/toast";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
-import CustomHeading from "@/components/commons/CustomHeading";
-import IconButtonGroup from "@/components/commons/IconGroupButtons";
 import Loader from "@/components/commons/Loaders/Loader";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router, Stack, useFocusEffect, useNavigation } from "expo-router";
 import { useAtom } from "jotai";
 import moment from "moment";
@@ -24,19 +22,18 @@ import bookedWorkers from "../../../assets/bookedWorkers.png";
 import myServices from "../../../assets/myServices.png";
 import GradientWrapper from "../../../components/commons/GradientWrapper";
 import FinalScreen from "./final";
-import FirstScreen from "./first";
-import SecondScreen from "./second";
-import ThirdScreen from "./third";
 import SelectWorkCategoryStep from "./SelectWorkCategory";
 import SelectWorkSubCategoryStep from "./SelectWorkSubCategory";
 import AddRequirementsStep from "./SelectWorkerSalary";
 import SelectFacilitiesStep from "./SelectFacilities";
 import SelectLocationAndDateStep from "./SelectLocation&Date";
 import SelectDurationAndDescriptionStep from "./SetDuration&Description";
-import UploadWorkImagesStep from "./UploadImagesStep";
 import FormProgressBar from "@/components/commons/FormProgress";
+import UploadWorkImagesStep from "./UploadImagesStep";
+import { getLatLongFromAddress } from "@/constants/functions";
 
 const AddServiceScreen = () => {
+  const queryClient = useQueryClient();
   const { refreshUser } = REFRESH_USER.useRefreshUser();
   const [addService, setAddService] = useAtom(Atoms?.AddServiceAtom);
   const [addServiceStep, setAddServiceStep] = useAtom(
@@ -53,6 +50,14 @@ const AddServiceScreen = () => {
     d.setDate(d.getDate() + 1);
     return d;
   };
+
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const pollingRef = useRef<any>(null);
+
+  console.log("address----", address);
+
+  console.log("location----", location);
 
   const [startDate, setStartDate] = useState(
     addService?.startDate
@@ -77,13 +82,22 @@ const AddServiceScreen = () => {
     mutationKey: [addService?._id ? "editService" : "addService"],
     mutationFn: () =>
       addService?._id ? handleEditSubmit(addService?._id) : handleSubmit(),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      const serviceId = data?.data?._id || data?._id;
+
+      // ✅ Start polling BEFORE reset
+      if (serviceId) {
+        startPolling(serviceId);
+      }
+
       refreshUser();
+
       TOAST?.success(
         addService?._id
           ? t("serviceUpdatedSuccessfully")
           : t("servicePostedSuccessfully"),
       );
+
       setAddService({});
       setType("");
       setSubType("");
@@ -92,21 +106,11 @@ const AddServiceScreen = () => {
       setLocation("");
       setStartDate(getTomorrow());
       setDuration(0);
-      setRequirements(
-        addService?.requirements || [
-          {
-            name: "",
-            count: 0,
-            payPerDay: 0,
-            food: false,
-            living: false,
-            esi_pf: false,
-          },
-        ],
-      );
+      setRequirements([]);
       setImages([]);
       setStep(1);
       setAddServiceStep(1);
+
       router?.push({
         pathname: "/(tabs)/third",
         params: {
@@ -242,11 +246,13 @@ const AddServiceScreen = () => {
       });
     });
 
+    const finalLocation = await ensureLocation(location, address);
+
     formData.append("type", type);
     formData.append("subType", subType);
     formData.append("description", description);
     formData.append("address", address);
-    formData.append("location", JSON.stringify(location || {}));
+    formData.append("geoLocation", JSON.stringify(finalLocation));
     formData.append("startDate", moment(startDate).format("YYYY-MM-DD"));
     formData.append("duration", duration);
     formData.append("requirements", JSON.stringify(requirements));
@@ -323,6 +329,84 @@ const AddServiceScreen = () => {
     } else {
       if (images && images?.length > 0) setImages(images);
       setStep(8);
+    }
+  };
+
+  const getUploadStatus = async (serviceId: string) => {
+    try {
+      const res: any = await EMPLOYER.getServiceUploadStatus(serviceId);
+      return res;
+    } catch (err) {
+      console.log("Status API error:", err);
+    }
+  };
+
+  const startPolling = (serviceId: string) => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+    }
+
+    pollingRef.current = setInterval(async () => {
+      try {
+        const res = await getUploadStatus(serviceId);
+
+        const status = res?.status;
+        const progress = res?.progress;
+
+        setUploadStatus(status);
+        setUploadProgress(progress || 0);
+
+        // ✅ When upload completes
+        if (progress === 100 || status === "COMPLETED") {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+
+          // 🔥 Silent refresh (NO loader)
+          queryClient.invalidateQueries({
+            queryKey: ["myWorkRequests"],
+            refetchType: "inactive", // prevents aggressive refetch
+          });
+
+          // OR (even smoother)
+          queryClient.refetchQueries({
+            queryKey: ["myWorkRequests"],
+            type: "inactive", // no UI flicker
+          });
+        }
+
+        if (status === "FAILED") {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+      } catch (err) {
+        console.log("Polling error:", err);
+      }
+    }, 2000);
+  };
+
+  const ensureLocation = async (location: any, address: string) => {
+    try {
+      // ✅ Case 1: Already has coordinates
+      if (location?.coordinates?.length === 2) {
+        return location;
+      }
+
+      // ❌ No address → can't proceed
+      if (!address) return null;
+
+      // ✅ Fetch from address
+      const coords = await getLatLongFromAddress(address);
+
+      if (!coords) return null;
+
+      // ✅ Convert to GeoJSON (IMPORTANT)
+      return {
+        type: "Point",
+        coordinates: [coords.longitude, coords.latitude],
+      };
+    } catch (err) {
+      console.log("ensureLocation error:", err);
+      return null;
     }
   };
 
@@ -406,16 +490,16 @@ const AddServiceScreen = () => {
           />
         );
 
-      // case 7:
-      //   return (
-      //     <UploadWorkImagesStep
-      //       defaultImages={images}
-      //       onBack={() => setStep(6)}
-      //       onSubmitFinal={onSubmit}
-      //     />
-      //   );
-
       case 7:
+        return (
+          <UploadWorkImagesStep
+            defaultImages={images}
+            onBack={() => setStep(6)}
+            onSubmitFinal={onSubmit}
+          />
+        );
+
+      case 8:
         return (
           <FinalScreen
             setStep={setStep}

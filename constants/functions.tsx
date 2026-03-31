@@ -83,7 +83,7 @@ export const calculateDistance = (
   cordinates2: {
     latitude: number;
     longitude: number;
-  }
+  },
 ) => {
   const R = 6371; // Radius of the Earth in kilometers
 
@@ -115,11 +115,6 @@ export const fetchCurrentLocation = async () => {
   try {
     // Check if location services are enabled
     await Location.hasServicesEnabledAsync();
-    // // Prompt user to enable GPS if it's off
-    // if (!isLocationServicesEnabled) {
-    //   TOAST?.error("Please enable GPS to get your location.");
-    //   return { location: {}, address: "" }; // Return early with empty location if GPS is off
-    // }
 
     // Request permission to access location
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -154,7 +149,7 @@ export const fetchCurrentLocation = async () => {
     };
   } catch (err) {
     TOAST?.error(
-      `Error while fetching current location ${JSON?.stringify(err)}`
+      `Error while fetching current location ${JSON?.stringify(err)}`,
     );
     console.log("Error while fetching location:", err);
 
@@ -172,7 +167,7 @@ export const handleQueryFunction = async (
   type: any,
   pageParam: number,
   category: any,
-  searchCategory: any
+  searchCategory: any,
 ) => {
   console.log("searchCategory--", searchCategory);
 
@@ -217,7 +212,7 @@ export const toLowerCase = (text: string) => {
 export const filterSubCategories = (workTypeValue: string) => {
   // Find the object matching the provided value
   const selectedWorkType = WORKTYPES.find(
-    (workType) => workType.value === workTypeValue
+    (workType) => workType.value === workTypeValue,
   );
 
   // Return the subTypes if the object is found, otherwise return an empty array
@@ -226,14 +221,14 @@ export const filterSubCategories = (workTypeValue: string) => {
 
 export const filterWorkerTypes = (
   workTypeValue: string,
-  subTypeValue: string
+  subTypeValue: string,
 ) => {
   // Find the work type matching the given workTypeValue
   const workType = WORKTYPES.find((type) => type.value === workTypeValue);
 
   // Find the subType matching the given subTypeValue
   const subType = workType?.subTypes.find(
-    (type) => type.value === subTypeValue
+    (type) => type.value === subTypeValue,
   );
 
   const workers = subType?.workerTypes?.map((worker: any) => {
@@ -302,7 +297,7 @@ export const logoutUser = async (setUserDetails: any, router: any) => {
 export const generateServiceSummary = (
   service: any,
   lang: string = "hi",
-  userLocation: { latitude: number; longitude: number }
+  userLocation: { latitude: number; longitude: number },
 ) => {
   const {
     type,
@@ -313,7 +308,7 @@ export const generateServiceSummary = (
     requirements = [],
     appliedUsers,
     address,
-    location, // Assuming service location has latitude & longitude
+    location,
   } = service;
 
   // Convert the start date to a readable format
@@ -327,11 +322,11 @@ export const generateServiceSummary = (
   const formattedDate = dateValue
     ? new Date(dateValue).toLocaleDateString(
         lang === "hi" ? "hi-IN" : "en-IN",
-        options
+        options,
       )
     : lang === "hi"
-    ? "अमान्य तिथि"
-    : "Invalid Date";
+      ? "अमान्य तिथि"
+      : "Invalid Date";
 
   // Facilities translations
   const facilityMap: any = {
@@ -349,7 +344,7 @@ export const generateServiceSummary = (
   console.log("enabledFacilities---0", enabledFacilities);
   // Count only applied users with status "PENDING"
   const appliedUsersCount = (appliedUsers || []).filter(
-    (user: any) => user.status === "PENDING"
+    (user: any) => user.status === "PENDING",
   ).length;
 
   // Calculate distance from user location to service location
@@ -364,9 +359,9 @@ export const generateServiceSummary = (
         lang === "hi"
           ? `${req.count} ${getDynamicWorkerType(
               req.name,
-              req?.count
+              req?.count,
             )} चाहिए, रोज़ की मजदूरी ₹${req.payPerDay} होगी`
-          : `Need ${req.count} ${t(req.name)}, daily wage ₹${req.payPerDay}`
+          : `Need ${req.count} ${t(req.name)}, daily wage ₹${req.payPerDay}`,
       )
       .join(". ");
 
@@ -384,7 +379,7 @@ export const generateServiceSummary = (
     return `Work for ${t(subType)} is available ${
       distance ? `at ${distance} km` : `at ${address}`
     }. It is under ${t(
-      type
+      type,
     )} category. Work starts on ${formattedDate} and will last for ${duration} days. ${
       enabledFacilities &&
       `Employer will provide ${enabledFacilities} facilities.`
@@ -395,15 +390,15 @@ export const generateServiceSummary = (
     return `${t(subType)} की नौकरी उपलब्ध है ${
       distance ? `, दूरी ${distance} किमी` : ` ${address} में`
     }। यह ${t(
-      type
+      type,
     )} श्रेणी के अंतर्गत आता है। काम ${formattedDate} से शुरू होगा और ${duration} दिन तक चलेगा।${
       enabledFacilities ? ` मालिक ${enabledFacilities} की सुविधा देगा।` : ""
     } ${requirementDetails} ${
       appliedUsersCount === 0
         ? "अभी तक किसी ने आवेदन नहीं किया है।"
         : appliedUsersCount === 1
-        ? "अभी तक 1 व्यक्ति ने आवेदन किया है।"
-        : `अभी तक ${appliedUsersCount} लोगों ने आवेदन किया है।`
+          ? "अभी तक 1 व्यक्ति ने आवेदन किया है।"
+          : `अभी तक ${appliedUsersCount} लोगों ने आवेदन किया है।`
     }`;
   }
 };
@@ -414,7 +409,7 @@ let currentSetSpeakingState: ((state: boolean) => void) | null = null;
 export const speakText = (
   text: string,
   language: string = "hi",
-  setSpeakingState: (state: boolean) => void
+  setSpeakingState: (state: boolean) => void,
 ) => {
   if (text.trim()) {
     Speech.stop(); // Stop any ongoing speech before starting new speech
@@ -459,7 +454,7 @@ export const speakText = (
           Speech.stop();
           setSpeakingState(false);
         }
-      }
+      },
     );
 
     // Cleanup listener when function completes
@@ -492,4 +487,72 @@ export const translateWorkerTypes = (workerTypes: any[]) => {
     label: getDynamicWorkerType(item.label, 1),
     value: item.value,
   }));
+};
+
+export const getLatLongFromAddress = async (address: string) => {
+  try {
+    // ✅ Ask permission
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      console.log("Permission denied");
+      return null;
+    }
+
+    // ✅ Geocode
+    const result = await Location.geocodeAsync(address);
+
+    console.log("result---", result);
+    
+    if (result.length > 0) {
+      return {
+        latitude: result[0].latitude,
+        longitude: result[0].longitude,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.log("Geocode error:", error);
+    return null;
+  }
+};
+
+export const getDistanceFromLocation = async (
+  loc1: any,
+  loc2: any,
+  address?: string,
+) => {
+  try {
+    // ✅ Extract coordinates helper
+    const getCoordsFromLocation = (location: any) => {
+      if (location?.coordinates) {
+        const [longitude, latitude] = location.coordinates;
+        return { latitude, longitude };
+      }
+      return null;
+    };
+
+    // ✅ loc1: try coordinates → fallback to address
+    let coords1 = getCoordsFromLocation(loc1);
+
+    console.log("coords1---", coords1);
+
+    if (!coords1 && address) {
+      coords1 = await getLatLongFromAddress(address);
+    }
+
+    console.log("coords1-2---", coords1);
+
+    // ✅ loc2: only coordinates (strict)
+    const coords2 = getCoordsFromLocation(loc2);
+
+    if (!coords1 || !coords2) return null;
+
+    const dist = calculateDistance(coords1, coords2);
+    return isNaN(dist) ? null : dist;
+  } catch (error) {
+    console.log("Distance calc error:", error);
+    return null;
+  }
 };

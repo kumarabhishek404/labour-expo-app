@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
@@ -29,97 +29,113 @@ const ListingsVerticalWorkers = ({
 }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
-  const RenderItem = React.memo(({ item }: any) => {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: "/screens/users/[id]",
-              params: {
-                id: item?._id,
-                role: type,
-                title: "workerDetails",
-              },
-            })
-          }
-        >
-          <View style={styles.item}>
-            <Image
-              source={
-                item?.profilePicture ? { uri: item.profilePicture } : coverImage
-              }
-              style={styles.avatar}
-            />
+  const onEndReachedCalledDuringMomentum = useRef(false);
 
-            <View style={styles.cardContent}>
-              <CustomHeading textAlign="left">{item?.name}</CustomHeading>
-
-              <ShowAddress address={item?.address} numberOfLines={1} />
-
-              <SkillSelector
-                canAddSkills={false}
-                isShowLabel={false}
-                style={styles.skillsContainer}
-                tagStyle={styles.skillTag}
-                tagTextStyle={styles.skillTagText}
-                userSkills={item?.skills}
-                availableSkills={availableInterest}
-                count={3}
+  const RenderItem = React.memo(
+    ({ item, type, userDetails, availableInterest }: any) => {
+      return (
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/screens/users/[id]",
+                params: {
+                  id: item?._id,
+                  role: type,
+                  title: "workerDetails",
+                },
+              })
+            }
+          >
+            <View style={styles.item}>
+              <Image
+                source={
+                  item?.profilePicture
+                    ? { uri: item.profilePicture }
+                    : coverImage
+                }
+                style={styles.avatar}
               />
 
-              <View style={styles.bottomRow}>
-                <RatingAndReviews
-                  rating={item?.rating?.average}
-                  reviews={item?.rating?.count}
+              <View style={styles.cardContent}>
+                <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+
+                <ShowAddress address={item?.address} numberOfLines={1} />
+
+                <SkillSelector
+                  canAddSkills={false}
+                  isShowLabel={false}
+                  style={styles.skillsContainer}
+                  tagStyle={styles.skillTag}
+                  tagTextStyle={styles.skillTagText}
+                  userSkills={item?.skills}
+                  availableSkills={availableInterest}
+                  count={3}
                 />
 
-                <ShowDistance
-                  loggedInUserLocation={userDetails?.location}
-                  targetLocation={item?.location}
-                />
+                <View style={styles.bottomRow}>
+                  <RatingAndReviews
+                    rating={item?.rating?.average}
+                    reviews={item?.rating?.count}
+                  />
+
+                  <ShowDistance
+                    address={item?.address}
+                    loggedInUserLocation={userDetails?.geoLocation}
+                    targetLocation={item?.geoLocation}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  });
+          </TouchableOpacity>
+        </View>
+      );
+    },
+  );
 
   RenderItem.displayName = "RenderItem";
-  const renderItem = ({ item }: any) => <RenderItem item={item} />;
+  const renderItem = ({ item }: any) => (
+    <RenderItem
+      item={item}
+      type={type}
+      userDetails={userDetails}
+      availableInterest={availableInterest}
+    />
+  );
 
-  const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum.current) {
+      loadMore();
+      onEndReachedCalledDuringMomentum.current = true;
+    }
+  };
+
+  const handleMomentum = () => {
+    onEndReachedCalledDuringMomentum.current = false;
+  };
 
   return (
     <View>
       <FlatList
-        data={listings ?? []}
+        data={listings}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
-        onEndReached={debouncedLoadMore}
-        onEndReachedThreshold={0.2}
-        ListFooterComponent={() =>
+        onEndReached={handleEndReached}
+        onMomentumScrollBegin={handleMomentum}
+        ListFooterComponent={
           isFetchingNextPage ? (
-            <ActivityIndicator
-              size="large"
-              color={Colors?.primary}
-              style={styles.loaderStyle}
-            />
+            <ActivityIndicator size="large" color={Colors?.primary} />
           ) : null
         }
-        getItemLayout={(data, index) => ({
-          length: 100,
-          offset: 100 * index,
-          index,
-        })}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={3}
-        removeClippedSubviews={true}
-        contentContainerStyle={{ paddingBottom: 160, marginBottom: 100 }}
-        refreshControl={refreshControl}
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={5}
+        removeClippedSubviews={false}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 120,
+        }}
+        refreshControl={refreshControl}
       />
     </View>
   );
