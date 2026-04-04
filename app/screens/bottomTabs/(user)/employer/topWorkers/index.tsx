@@ -11,6 +11,7 @@ import WorkersLoadingPlaceholder from "@/components/commons/LoadingPlaceholders/
 import CustomText from "@/components/commons/CustomText";
 import Colors from "@/constants/Colors";
 import { t } from "@/utils/translationHelper";
+import { WORKERTYPES } from "@/constants";
 
 const AllTopWorkers = () => {
   const [filteredData, setFilteredData]: any = useState([]);
@@ -119,6 +120,7 @@ const AllTopWorkers = () => {
       {Array.isArray(memoizedData) && memoizedData.length > 0 ? (
         <ListingsVerticalWorkers
           style={styles.listContainer}
+          availableInterest={WORKERTYPES}
           listings={memoizedData}
           loadMore={loadMore}
           type={"worker"}

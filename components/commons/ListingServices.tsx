@@ -2,11 +2,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
 import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
-import {
-  AntDesign,
-  Fontisto,
-  Ionicons,
-} from "@expo/vector-icons";
+import { AntDesign, Fontisto, Ionicons } from "@expo/vector-icons";
 import { Link, router, useNavigation } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
 import {
@@ -50,7 +46,7 @@ const ListingsServices = ({ item }: any) => {
   const selectedWorkers =
     item?.selectedUsers?.filter(
       (user: any) =>
-        user?.status === "SELECTED" || user?.status === "SERVICE_COMPLETED"
+        user?.status === "SELECTED" || user?.status === "SERVICE_COMPLETED",
     )?.length || 0;
 
   const isSelected = item?.selectedUsers?.some(
@@ -60,15 +56,16 @@ const ListingsServices = ({ item }: any) => {
       (Array.isArray(selectedUser?.workers) &&
         selectedUser?.workers.some(
           (worker: any) =>
-            worker?.worker === userDetails?._id && worker?.status === "SELECTED"
-        ))
+            worker?.worker === userDetails?._id &&
+            worker?.status === "SELECTED",
+        )),
   );
 
   const handleSpeakAboutSerivceDetails = () => {
     const textToSpeak = generateServiceSummary(
       item,
       locale?.language,
-      userDetails?.location
+      userDetails?.location,
     );
     speakText(textToSpeak, locale?.language, setIsSpeaking);
   };
@@ -175,11 +172,7 @@ const ListingsServices = ({ item }: any) => {
                       })
                     }
                   >
-                    <AntDesign
-                      name="select"
-                      size={20}
-                      color={Colors.primary}
-                    />
+                    <AntDesign name="select" size={20} color={Colors.primary} />
                   </TouchableOpacity>
                 </View>
               )}
@@ -265,8 +258,9 @@ const ListingsServices = ({ item }: any) => {
               <View style={styles?.actionContainer}>
                 <ShowDuration duration={item?.duration} alignment="left" />
                 <ShowDistance
-                  loggedInUserLocation={userDetails?.location}
-                  targetLocation={item?.location}
+                  address={item?.address}
+                  loggedInUserLocation={userDetails?.geoLocation}
+                  targetLocation={item?.geoLocation}
                 />
               </View>
             </View>

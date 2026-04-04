@@ -41,8 +41,12 @@ const EmployerSearchScreen = () => {
       </View>
 
       {/* ⭐ IMPORTANT: No ScrollView here */}
-      <GradientWrapper height={Dimensions.get("window").height - 230}>
-        <AllTopWorkers />
+      <GradientWrapper>
+        <View style={styles.container}>
+          <View style={{ flex: 1 }}>
+            <AllTopWorkers />
+          </View>
+        </View>
       </GradientWrapper>
     </View>
   );
@@ -54,5 +58,10 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.primary,
     paddingBottom: 10,
+  },
+  container: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    minHeight: "100%",
   },
 });

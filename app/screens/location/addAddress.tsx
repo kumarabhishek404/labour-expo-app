@@ -22,7 +22,10 @@ import { useForm } from "react-hook-form";
 import { t } from "@/utils/translationHelper";
 import { STATES } from "@/constants";
 import SERVICE from "@/app/api/services";
-import { fetchCurrentLocation } from "@/constants/functions";
+import {
+  fetchCurrentLocation,
+  getLatLongFromAddress,
+} from "@/constants/functions";
 import REFRESH_USER from "@/app/hooks/useRefreshUser";
 import ButtonComp from "@/components/inputs/Button";
 import { Checkbox } from "react-native-paper";
@@ -110,6 +113,17 @@ const AddAddressDrawer = ({
     },
   });
 
+  const buildGeoLocation = async (address: string) => {
+    const coords = await getLatLongFromAddress(address);
+
+    if (!coords) return null;
+
+    return {
+      type: "Point",
+      coordinates: [coords.longitude, coords.latitude],
+    };
+  };
+
   useEffect(() => {
     if (visible) {
       Keyboard.dismiss();
@@ -141,8 +155,6 @@ const AddAddressDrawer = ({
       setValue("district", "");
       setValue("subDistrict", "");
       setValue("village", "");
-      // setValue("pinCode", "");
-      // setValue("additionalDetails", "");
       setPinCode("");
       setAdditionalDetails("");
     }
@@ -193,76 +205,65 @@ const AddAddressDrawer = ({
   }, [selectedSubDistrict, allStateVillages]);
 
   const onAddAddress = async (data: any) => {
-    // const location = {
-    //   longitude: data?.location?.coordinates[0],
-    //   latitude: data?.location?.coordinates[1],
-    // };
-
-    const address =
+    let finalAddress =
       selectedTab === "savedAddresses"
         ? selectedAddress
         : isEditing
           ? `${additionalDetails} ${data.village}, ${data.subDistrict}, ${data.district}, ${data.state}, ${pinCode}`
           : locationAddress;
 
-    const isAddressAlreadySaved = userDetails?.savedAddresses?.some(
-      (savedAddress: string) =>
-        JSON.stringify(savedAddress) === JSON.stringify(address),
-    );
+    // 🔥 STEP 1: Get fresh geoLocation
+    const geoLocation = await buildGeoLocation(finalAddress);
 
-    const finalSavedAddress = isAddressAlreadySaved
-      ? userDetails?.savedAddresses
-      : [...(userDetails?.savedAddresses ?? []), address];
+    if (!geoLocation) {
+      TOAST?.error("Unable to fetch location from address");
+      return;
+    }
 
-    setSelectedAddress(address);
-
-    // ⭐ Always update local jotai state (existing behaviour)
+    // 🔥 STEP 2: Update local state
     setUserDetails({
       ...userDetails,
       ...(isMainAddress
         ? {
-            address,
-            savedAddresses: finalSavedAddress,
-            location: data?.location,
+            address: finalAddress,
+            savedAddresses: userDetails?.savedAddresses || [],
+            geoLocation: geoLocation, // ✅ always correct
           }
         : {
-            savedAddresses: finalSavedAddress,
-            location: data?.location,
+            savedAddresses: userDetails?.savedAddresses || [],
+            geoLocation: geoLocation,
           }),
     });
 
     // ================================
-    // ⭐⭐ REGISTRATION MODE START ⭐⭐
+    // ⭐ Secondary Mode (Return to parent)
     // ================================
-    // ⭐ if secondary address return immediately to parent
     if (type === "secondary") {
-      setAddress({ address });
-      // Send address back to parent instead of calling API
-      setLocation(data?.location);
-      setSavedAddress(finalSavedAddress);
+      setAddress({ address: finalAddress });
+      setLocation(geoLocation); // ✅ FIXED
+      setSavedAddress(userDetails?.savedAddresses || []);
 
       onClose();
       reset();
       setIsEditing(false);
       setLocationAddress("");
-
       return;
     }
-    // ================================
-    // ⭐⭐ NORMAL MODE (EXISTING API) ⭐⭐
-    // ================================
 
-    if (isMainAddress)
-      mutationUpdateProfileInfo.mutate(
-        isAddressAlreadySaved
-          ? { address, location: data?.location }
-          : { address, savedAddresses: address, location: data?.location },
-      );
-    else if (!isAddressAlreadySaved)
+    // ================================
+    // ⭐ API CALL
+    // ================================
+    if (isMainAddress) {
       mutationUpdateProfileInfo.mutate({
-        savedAddresses: address,
-        location: data?.location,
+        address: finalAddress,
+        geoLocation, // ✅ SEND THIS
       });
+    } else {
+      mutationUpdateProfileInfo.mutate({
+        savedAddresses: finalAddress,
+        geoLocation,
+      });
+    }
   };
 
   const handleSelectAddress = (address: string) => {

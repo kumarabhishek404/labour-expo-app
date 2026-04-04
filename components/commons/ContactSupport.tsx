@@ -26,12 +26,12 @@ export default function ContactSupport() {
       </CustomText>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.callBtn} onPress={openDialer}>
+        {/* <TouchableOpacity style={styles.callBtn} onPress={openDialer}>
           <Feather name="phone-call" size={22} color="#fff" />
           <CustomText color="#fff" fontWeight="700" baseFont={16}>
             {t("callUs")}
           </CustomText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.whatsappBtn} onPress={openWhatsApp}>
           <FontAwesome name="whatsapp" size={26} color="#fff" />

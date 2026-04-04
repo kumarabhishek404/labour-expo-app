@@ -1167,6 +1167,7 @@
   "welder": { "singular": "वेल्डर", "plural": "वेल्डर" },
   "pipeWelder": { "singular": "पाइप वेल्डर", "plural": "पाइप वेल्डर" },
   "ducting": { "singular": "डक्टिंग मजदूर", "plural": "डक्टिंग मजदूर" },
+  "beldaarConstruction": { "singular": "बेलदार", "plural": "बेलदारों" },
   "storeKeeper": { "singular": "स्टोर कीपर", "plural": "स्टोर कीपर" },
   "supervisor": { "singular": "सुपरवाइजर", "plural": "सुपरवाइजर" },
   "foreman": { "singular": "फोरमैन", "plural": "फोरमैन" },
@@ -1487,21 +1488,21 @@
   "createNewService": "नई सेवा बनाएं",
 
   "employerBookingHeaderGuide": "अपने बनाए गए सर्विसेस और बुक किए गए वर्कर्स को यहां ट्रैक करें।",
-  "employerTip": "आपकी सर्विसेस और रिक्वेस्ट्स को समय पर प्रबंधित करें।",
+  "employerTip": "आपकी सर्विसेस और अनुरोध को समय पर प्रबंधित करें।",
 
-  "mediatorActivityTitle": "मेरी गतिविधियाँ (मीडिएटर)",
-  "mediatorWorkHeaderGuide": "टीम जॉइनिंग रिक्वेस्ट्स और आपने आवेदन की गई सर्विसेस को ट्रैक करें।",
-  "tabTeamJoiningRequestsTitle": "टीम जॉइनिंग रिक्वेस्ट्स",
+  "mediatorActivityTitle": "मेरी गतिविधियाँ (ठेकेदार)",
+  "mediatorWorkHeaderGuide": "टीम जॉइनिंग अनुरोध और आपने आवेदन की गई सर्विसेस को ट्रैक करें।",
+  "tabTeamJoiningRequestsTitle": "टीम जॉइनिंग अनुरोध",
   "tabTeamJoiningRequestsSubtitle": "वर्कर्स द्वारा टीम में शामिल होने के अनुरोध",
   "tabAppliedServiceMediatorTitle": "आवेदन की गई सर्विसेस",
-  "tabAppliedServiceMediatorSubtitle": "आपने मीडिएटर के रूप में जिन सर्विसेस में आवेदन किया",
-  "noTeamJoiningRequestsTitle": "कोई टीम जॉइनिंग रिक्वेस्ट्स नहीं",
+  "tabAppliedServiceMediatorSubtitle": "आपने ठेकेदार के रूप में जिन सर्विसेस में आवेदन किया",
+  "noTeamJoiningRequestsTitle": "कोई टीम जॉइनिंग अनुरोध नहीं",
   "noTeamJoiningRequestsSubtitle": "अभी तक किसी ने आपकी टीम में शामिल होने के लिए अनुरोध नहीं भेजा है।",
   "noAppliedServicesMediatorTitle": "कोई आवेदन नहीं",
   "noAppliedServicesMediatorSubtitle": "आपने अभी तक किसी सर्विस के लिए आवेदन नहीं किया है।",
   "mediatorStepCompleteProfile": "अपनी प्रोफ़ाइल पूरी करें",
   "mediatorStepInviteTeam": "टीम मेंबर आमंत्रित करें",
-  "mediatorStepTrackRequests": "रिक्वेस्ट्स ट्रैक करें",
+  "mediatorStepTrackRequests": "अनुरोध ट्रैक करें",
   "mediatorStepFindService": "मीडिएट करने के लिए सर्विस खोजें",
   "mediatorStepApplyService": "सर्विस के लिए आवेदन करें",
   "mediatorStepTrackService": "सर्विस स्टेटस ट्रैक करें",
@@ -1514,5 +1515,10 @@
   "exploreServices": "उपलब्ध सेवाओं का अन्वेषण करें",
 
   "uploadImages": "काम की तस्वीरें अपलोड करें",
-  "addNewWork": "नया काम जोड़ें"
+  "addNewWork": "नया काम जोड़ें",
+
+  "skipAndContinue": "छोड़ें और आगे बढ़ें",
+  "profilePictureOptional": "फोटो लगाना जरूरी नहीं है। चाहें तो इस चरण को छोड़ सकते हैं।",
+  "openCamera": "कैमरा चालू करें",
+  "selfieHelpsWork": "फोटो वाले प्रोफ़ाइल पर लोग ज़्यादा भरोसा करते हैं और काम जल्दी मिलता है।"
 }

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Apna Rojgar",
     "slug": "labour-app",
-    "version": "1.2.2",
+    "version": "1.2.5",
     "orientation": "default",
     "scheme": "myapp",
     "jsEngine": "hermes",
@@ -42,7 +42,8 @@
             "targetSdkVersion": 35,
             "buildToolsVersion": "35.0.0",
             "allowBackup": true,
-            "supportsTablet": true
+            "supportsTablet": true,
+            "usesCleartextTraffic": true
           }
         }
       ],
@@ -54,7 +55,7 @@
       "bundleIdentifier": "com.kumarabhishek404.labourapp"
     },
     "android": {
-      "versionCode": 37,
+      "versionCode": 40,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
@@ -67,8 +68,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],

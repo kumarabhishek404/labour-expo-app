@@ -1,5 +1,5 @@
 import Colors from "@/constants/Colors";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import {
   FontAwesome,
@@ -12,6 +12,7 @@ import Button from "../inputs/Button";
 import {
   calculateDistance,
   dateDifference,
+  getDistanceFromLocation,
   handleCall,
 } from "@/constants/functions";
 // import { openGoogleMaps } from "@/app/hooks/map";
@@ -31,6 +32,23 @@ const destination = {
 const Highlights = ({ service }: any) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
+  const [distance, setDistance] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchDistance = async () => {
+      const dist = await getDistanceFromLocation(
+        service?.geoLocation,
+        userDetails?.geoLocation,
+        service?.address,
+      );
+      setDistance(dist);
+    };
+
+    fetchDistance();
+  }, [service, userDetails]);
+
+  console.log("distance---", distance, service?.address);
+
   return (
     <View style={styles?.container}>
       <View style={styles.highlightWrapper}>
@@ -45,7 +63,7 @@ const Highlights = ({ service }: any) => {
             </CustomHeading>
           </View>
         </View>
-        {service?.location && service?.location?.latitude ? (
+        {service?.address ? (
           <View
             style={{
               flexDirection: "column",
@@ -62,12 +80,12 @@ const Highlights = ({ service }: any) => {
               </View>
               <View style={{ width: "45%" }}>
                 <CustomText textAlign="left">{t("distance")}</CustomText>
-                <CustomHeading textAlign="left">
-                  {`${calculateDistance(
-                    service?.location,
-                    userDetails?.location,
-                  )} ${t("kms")}`}
-                </CustomHeading>
+
+                {distance !== null && !isNaN(distance) && (
+                  <CustomHeading textAlign="left">
+                    {`${distance} ${t("kms")}`}
+                  </CustomHeading>
+                )}
               </View>
             </View>
             {/* <Button

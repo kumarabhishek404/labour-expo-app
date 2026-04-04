@@ -1,7 +1,7 @@
 {
   "name": "labour-app",
   "main": "expo-router/entry",
-  "version": "1.2.2",
+  "version": "1.2.5",
   "engines": {
     "node": ">=20.19.4"
   },

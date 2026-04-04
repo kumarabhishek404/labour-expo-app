@@ -277,7 +277,6 @@ const FinalScreen: React.FC<FinalScreenProps> = ({
               </View>
             </View>
           )}
-          {/* </View> */}
         </View>
 
         <View style={styles?.buttonContainer}>

@@ -191,10 +191,6 @@ const MediatorWorkRequests = () => {
         <CustomHeading baseFont={26} textAlign="center" color={Colors?.white}>
           🤝 {t("mediatorActivityTitle")}
         </CustomHeading>
-
-        <CustomText color={Colors.white} baseFont={14}>
-          {t("mediatorWorkHeaderGuide")}
-        </CustomText>
       </View>
 
       {/* 🌟 Tabs */}

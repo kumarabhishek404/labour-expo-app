@@ -18,8 +18,10 @@ import {
   savePendingProfileUpload,
   uploadPendingProfileImage,
 } from "@/utils/backgroundImageUpload";
+import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
+import CustomText from "@/components/commons/CustomText";
 
-const FifthScreen = () => {
+const UploadProfilePictureScreen = () => {
   const { userId, role, skills } = useLocalSearchParams();
   const [userDetails, setUserDetails] = useAtom(Atoms.UserAtom);
   const {
@@ -41,6 +43,18 @@ const FifthScreen = () => {
       const user = response?.data?.data;
       await saveToken(token);
       setUserDetails({ isAuth: true, ...user });
+
+      if (user?._id) {
+        try {
+          await PUSH_NOTIFICATION.registerForPushNotificationsAsync(
+            true,
+            user._id,
+          );
+        } catch (err) {
+          console.error("Push notification registration failed: ", err);
+        }
+      }
+
       router.replace("/(tabs)");
       uploadPendingProfileImage();
     },
@@ -51,29 +65,20 @@ const FifthScreen = () => {
 
   const handleProfilePictureSubmit = async (data: any) => {
     try {
-      if (!data?.profilePicture) {
-        TOAST?.error(t("pleaseSelectAProfilePicture"));
-        return;
-      }
-
-      // ----------------------------------
-      // 1️⃣ COMPRESS IMAGE FIRST
-      // ----------------------------------
-      let uri =
-        Platform.OS === "android"
-          ? data.profilePicture
-          : data.profilePicture.replace("file://", "");
-
-      // uri = await compressImage(uri);
-
-      // ----------------------------------
-      // 2️⃣ SAVE IMAGE FOR BACKGROUND UPLOAD
-      // ----------------------------------
-      await savePendingProfileUpload({
-        uri,
-        userId,
-      });
       const parsedSkills = skills ? JSON.parse(skills as string) : [];
+
+      // If user selected image
+      if (data?.profilePicture) {
+        let uri =
+          Platform.OS === "android"
+            ? data.profilePicture
+            : data.profilePicture.replace("file://", "");
+
+        await savePendingProfileUpload({
+          uri,
+          userId,
+        });
+      }
 
       mutationFinishRegistration.mutate({
         _id: userId,
@@ -93,13 +98,27 @@ const FifthScreen = () => {
       <CustomHeading baseFont={25} style={styles.heading}>
         {t("takeSelfieForRegistration")}
       </CustomHeading>
+{/* 
+      <CustomText
+        baseFont={14}
+        color={Colors.primary}
+        style={{ marginBottom: 10 }}
+      >
+        {t("profilePictureOptional")}
+      </CustomText> */}
+      <CustomText
+        baseFont={16}
+        fontWeight="600"
+        color={Colors.primary}
+        style={{ marginBottom: 15 }}
+      >
+        {t("selfieHelpsWork")}
+      </CustomText>
       <Controller
         control={control}
         name="profilePicture"
         defaultValue=""
-        rules={{
-          required: t("profilePictureIsRequired"),
-        }}
+        rules={{}}
         render={({ field: { onChange, onBlur, value } }) => (
           <SelfieScreen
             name="profilePicture"
@@ -119,14 +138,16 @@ const FifthScreen = () => {
           borderColor={Colors?.danger}
           style={{ width: "35%", paddingHorizontal: 6 }}
         />
-        {watch("profilePicture") && (
-          <Button
-            isPrimary={true}
-            title={t("saveProfilePicture")}
-            onPress={handleSubmit(handleProfilePictureSubmit)}
-            style={{ width: "60%", paddingHorizontal: 8 }}
-          />
-        )}
+        <Button
+          isPrimary={true}
+          title={
+            watch("profilePicture")
+              ? t("saveProfilePicture")
+              : t("skipAndContinue")
+          }
+          onPress={handleSubmit(handleProfilePictureSubmit)}
+          style={{ width: "60%", paddingHorizontal: 8 }}
+        />
       </View>
     </View>
   );
@@ -158,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   heading: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   label: {
     marginVertical: 10,
@@ -217,4 +238,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FifthScreen;
+export default UploadProfilePictureScreen;

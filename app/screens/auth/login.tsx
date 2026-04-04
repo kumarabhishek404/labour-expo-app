@@ -133,14 +133,14 @@ export default function Login() {
         return;
       }
 
-      if (!user.profilePicture) {
-        setUserDetails(user);
-        router.push({
-          pathname: "/screens/auth/register/fifth",
-          params: { userId: user._id },
-        });
-        return;
-      }
+      // if (!user.profilePicture) {
+      //   setUserDetails(user);
+      //   router.push({
+      //     pathname: "/screens/auth/register/fifth",
+      //     params: { userId: user._id },
+      //   });
+      //   return;
+      // }
 
       // 3️⃣ Navigate immediately 🚀
       setUserDetails({ isAuth: true, ...user });

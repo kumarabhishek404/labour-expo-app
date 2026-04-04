@@ -59,8 +59,6 @@ const UpdateUserSkillsScreen = () => {
       console.error("Error while adding user details: ", error);
     },
   });
-
-  console.log("roleValue----", roleValue);
   
   const handleUpdate = async () => {
     if (roleValue !== "EMPLOYER" && !skillsValue.length) {

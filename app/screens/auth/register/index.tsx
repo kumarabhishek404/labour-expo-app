@@ -9,16 +9,15 @@ import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack } from "expo-router";
 import Loader from "@/components/commons/Loaders/Loader";
-import FirstScreen from "./first";
-// import ThirdScreen from "./third";
 import FourthScreen from "./second";
-import FifthScreen from "./fourth";
 import USER from "@/app/api/user";
 import { useMutation } from "@tanstack/react-query";
 import CustomHeading from "@/components/commons/CustomHeading";
 import TOAST from "@/app/hooks/toast";
 import { t } from "@/utils/translationHelper";
 import AUTH from "@/app/api/auth";
+import UpdateUserSkillsScreen from "./fourth";
+import UploadProfilePictureScreen from "./fifth";
 
 const SignupScreen = () => {
   const [step, setStep] = useState(1);
@@ -60,16 +59,13 @@ const SignupScreen = () => {
   const renderFormComponents = () => {
     switch (step) {
       case 1:
-        return <FirstScreen />;
-
-      // case 2:
-      //   return <ThirdScreen />;
+        return <UploadProfilePictureScreen />;
 
       case 2:
         return <FourthScreen />;
 
       case 3:
-        return <FifthScreen />;
+        return <UpdateUserSkillsScreen />;
 
       default:
         break;
