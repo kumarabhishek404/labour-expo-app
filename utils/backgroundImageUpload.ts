@@ -8,7 +8,6 @@ export const savePendingProfileUpload = async (payload: any) => {
 };
 
 export const uploadPendingProfileImage = async () => {
-  console.log("Start Uploading in background - ");
   const data = await AsyncStorage.getItem(STORAGE_KEY);
   if (!data) return;
 
@@ -33,11 +32,3 @@ export const uploadPendingProfileImage = async () => {
     console.log("❌ Background upload failed. Will retry later.");
   }
 };
-
-// export const initBackgroundUploadListener = () => {
-//   NetInfo.addEventListener((state) => {
-//     if (state.isConnected) {
-//       uploadPendingProfileImage();
-//     }
-//   });
-// };

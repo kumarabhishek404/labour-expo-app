@@ -7,21 +7,33 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
-import { StatusBar } from "react-native";
+import { ActivityIndicator, StatusBar, StyleSheet, View } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import APP_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { ToastProvider } from "./hooks/toast";
 import { useAppUpdateGuard } from "./hooks/useAppUpdateGuard";
 import ForceUpdateScreen from "@/components/commons/ForceUpdateSection";
+import { useDeepLinkHandler } from "@/utils/useDeepLinkHandler";
 
 const queryClient = new QueryClient();
 
 const AppNavigator = () => {
+  const isLoading = useDeepLinkHandler();
+
   const { forceUpdate, message, appUrl } = useAppUpdateGuard();
 
   if (forceUpdate) {
     return <ForceUpdateScreen message={message} appUrl={appUrl} />;
+  }
+
+  if (isLoading) {
+    // Show a loader instead of splash/unmatched route
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
   }
 
   return (
@@ -66,3 +78,11 @@ const AppNavigator = () => {
 };
 
 export default AppNavigator;
+
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

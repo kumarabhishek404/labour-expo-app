@@ -47,8 +47,6 @@ const Highlights = ({ service }: any) => {
     fetchDistance();
   }, [service, userDetails]);
 
-  console.log("distance---", distance, service?.address);
-
   return (
     <View style={styles?.container}>
       <View style={styles.highlightWrapper}>

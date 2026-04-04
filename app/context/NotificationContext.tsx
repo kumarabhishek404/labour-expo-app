@@ -10,6 +10,7 @@ import * as Notifications from "expo-notifications";
 import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
+import * as Linking from "expo-linking";
 
 interface NotificationContextType {
   expoPushToken: string | null;
@@ -73,9 +74,25 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
         console.log(
           "🔔 Notification Response:",
           JSON.stringify(response, null, 2),
-          JSON.stringify(response.notification.request.content.data, null, 2),
         );
-        // Handle the notification response here
+
+        const data = response?.notification?.request?.content?.data;
+
+        console.log("📦 Notification Data:", data);
+
+        // ✅ Case 1: Direct deep link
+        if (data?.url && typeof data?.url === "string") {
+          Linking.openURL(data.url);
+          return;
+        }
+
+        // ✅ Case 2: Manual fallback (if no url)
+        if (data?.type === "JOB" && data?.id) {
+          Linking.openURL(`apnarojgar://job/${data.id}`);
+          return;
+        }
+
+        console.log("⚠️ No valid navigation data in notification");
       });
 
     // Cleanup listeners on unmount

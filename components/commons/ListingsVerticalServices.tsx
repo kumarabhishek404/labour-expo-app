@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import React, { useMemo } from "react";
+import React, { useMemo, type ReactElement } from "react";
 import debounce from "lodash/debounce";
 import Colors from "@/constants/Colors";
 import ListingsServices from "./ListingServices";
@@ -9,6 +9,7 @@ type Props = {
   isFetchingNextPage: boolean;
   loadMore: () => void;
   refreshControl: any;
+  ListHeaderComponent?: ReactElement | null;
 };
 
 const RenderItem = React.memo(({ item }: any) => {
@@ -16,11 +17,15 @@ const RenderItem = React.memo(({ item }: any) => {
 });
 RenderItem.displayName = "RenderItem";
 
+/** Space below last item — tab bar / scroll comfort; loader sits above this. */
+const LIST_BOTTOM_INSET = 120;
+
 const ListingsVerticalServices = ({
   listings,
   isFetchingNextPage,
   loadMore,
   refreshControl,
+  ListHeaderComponent,
 }: Props) => {
   const debouncedLoadMore = useMemo(() => debounce(loadMore, 300), [loadMore]);
   React.useEffect(() => {
@@ -29,29 +34,32 @@ const ListingsVerticalServices = ({
     };
   }, [debouncedLoadMore]);
   return (
-    <View>
+    <View style={styles.wrapper}>
       <FlatList
+        style={styles.flatList}
         data={listings}
         renderItem={({ item }) => <RenderItem item={item} />}
         keyExtractor={(item) => item._id}
+        ListHeaderComponent={ListHeaderComponent ?? undefined}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         onEndReached={debouncedLoadMore}
         onEndReachedThreshold={0.4}
         ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator
-              size="large"
-              color={Colors.primary}
-              style={styles.loaderStyle}
-            />
-          ) : null
+          <View style={styles.listFooter}>
+            {isFetchingNextPage ? (
+              <View style={styles.paginationLoader}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+              </View>
+            ) : null}
+            <View style={styles.listBottomInset} />
+          </View>
         }
-        contentContainerStyle={{ paddingBottom: 200 }}
-        // 🚀 PERFORMANCE MAGIC
+        contentContainerStyle={styles.listContent}
         initialNumToRender={4}
         maxToRenderPerBatch={4}
-        windowSize={5}
+        windowSize={7}
         updateCellsBatchingPeriod={50}
-        removeClippedSubviews={true}
+        removeClippedSubviews={false}
         refreshControl={refreshControl}
         showsVerticalScrollIndicator={false}
       />
@@ -62,9 +70,31 @@ const ListingsVerticalServices = ({
 export default ListingsVerticalServices;
 
 const styles = StyleSheet.create({
-  loaderStyle: {
+  wrapper: {
+    flex: 1,
+    minHeight: 0,
+  },
+  flatList: {
+    flex: 1,
+  },
+  separator: {
+    height: 12,
+  },
+  listContent: {
+    flexGrow: 1,
+    paddingBottom: 8,
+  },
+  listFooter: {
+    width: "100%",
+  },
+  paginationLoader: {
+    paddingTop: 16,
+    paddingBottom: 12,
     alignItems: "center",
-    paddingLeft: 20,
-    paddingBottom: 10,
+    justifyContent: "center",
+  },
+  listBottomInset: {
+    width: "100%",
+    height: LIST_BOTTOM_INSET,
   },
 });

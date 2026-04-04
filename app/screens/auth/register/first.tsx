@@ -206,8 +206,6 @@ const RegisterScreen: React.FC = () => {
     mutationFn: async (payload: { mobile: string; otp: string }) =>
       AUTH.verifyOTP(payload),
     onSuccess: ({ Status }) => {
-      console.log("Status-----", Status);
-
       if (Status === "Success") {
         TOAST.success(t("otpVerified"));
         // Reset step to initial state
@@ -219,7 +217,6 @@ const RegisterScreen: React.FC = () => {
           mobile: watch("mobile"),
           locale: locale,
         };
-        console.log("payload-----", payload);
         mutationRegister.mutate(payload);
         // Reset OTP input
         setOtp("");

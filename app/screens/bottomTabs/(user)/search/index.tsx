@@ -94,7 +94,6 @@ const Search = () => {
 
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
-      console.log("Load more is called");
       fetchNextPage();
     }
   };
@@ -116,7 +115,7 @@ const Search = () => {
   );
 
   return (
-    <View style={{ paddingTop: 10, backgroundColor: Colors?.primary }}>
+    <View style={{ paddingTop: 6, backgroundColor: Colors?.primary }}>
       {/* <TabSwitcher
           tabs={TABS}
           actvieTab={selectedTab}

@@ -10,6 +10,7 @@ import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import WorkersLoadingPlaceholder from "@/components/commons/LoadingPlaceholders/ListingVerticalWorkerPlaceholder";
 import CustomText from "@/components/commons/CustomText";
 import Colors from "@/constants/Colors";
+import { WORKERTYPES } from "@/constants";
 import { t } from "@/utils/translationHelper";
 import { WORKERTYPES } from "@/constants";
 

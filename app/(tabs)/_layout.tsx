@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
+import { Linking } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import {
@@ -70,6 +71,22 @@ export default function Layout() {
   useEffect(() => {
     setRole(userDetails?.role || "");
   }, [userDetails]);
+
+  useEffect(() => {
+    const getUrlAsync = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) console.log("Opened via URL:", initialUrl);
+    };
+
+    getUrlAsync();
+
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      console.log("Received URL:", url);
+      // parse the URL and navigate
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (!isReady) return;
@@ -143,8 +160,6 @@ export default function Layout() {
   }, [pathname]);
 
   useEffect(() => {
-    console.log("userDetails---", userDetails);
-
     if (userDetails?._id && userDetails?.isAuth) refreshUser();
     uploadPendingProfileImage();
   }, [userDetails?._id]);

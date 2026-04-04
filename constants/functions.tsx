@@ -501,8 +501,6 @@ export const getLatLongFromAddress = async (address: string) => {
 
     // ✅ Geocode
     const result = await Location.geocodeAsync(address);
-
-    console.log("result---", result);
     
     if (result.length > 0) {
       return {

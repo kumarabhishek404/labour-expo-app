@@ -1355,7 +1355,10 @@
 
   "allServicesSubHeading": "Find trusted employers near you and book services instantly 🚀",
   "workersListSubHeading": "Find trusted workers near you and hire instantly 👷‍♂️",
+  "workersListCountBadge": "{{count}} workers",
   "refresh": "Refresh",
+  "serviceListPullHint": "Pull down to refresh the list",
+  "serviceListCountBadge": "{{count}} open",
 
   "fetchLocation": "Get My Location",
   "locationNotFound": "Location not found",

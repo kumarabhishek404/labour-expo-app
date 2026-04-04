@@ -1343,7 +1343,10 @@
 
   "allServicesSubHeading": "सेवाएं देखें और पास के काम के लिए अभी आवेदन करें। 🚀",
   "workersListSubHeading": "अपने आस-पास भरोसेमंद मजदूर ढूंढें और तुरंत काम पर रखें 👷‍♂️",
+  "workersListCountBadge": "{{count}} मजदूर",
   "refresh": "फिर से लोड करें",
+  "serviceListPullHint": "सूची ताज़ा करने के लिए नीचे खींचें",
+  "serviceListCountBadge": "{{count}} खुले",
 
   "fetchLocation": "मेरी लोकेशन लें",
   "locationNotFound": "लोकेशन नहीं मिल पाई",

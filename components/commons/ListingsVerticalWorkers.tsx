@@ -5,12 +5,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 import React, { useMemo, useRef } from "react";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
-import { debounce } from "lodash";
 import RatingAndReviews from "./RatingAndReviews";
 import SkillSelector from "./SkillSelector";
 import CustomHeading from "./CustomHeading";
@@ -19,6 +20,23 @@ import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import ShowAddress from "./ShowAddress";
 
+/** Space below last item — tab bar / scroll comfort; loader sits above this. */
+const LIST_BOTTOM_INSET = 110;
+
+type ListingsVerticalWorkersProps = {
+  availableInterest: any;
+  listings: any[];
+  loadMore: () => void;
+  isFetchingNextPage: boolean;
+  refreshControl?: any;
+  type: string;
+  ListHeaderComponent?: ReactElement | null;
+  /** Optional wrapper style (e.g. flexGrow) for embedded screens */
+  style?: StyleProp<ViewStyle>;
+  /** Passed through from older screens; unused */
+  category?: string;
+};
+
 const ListingsVerticalWorkers = ({
   availableInterest,
   listings,
@@ -26,7 +44,9 @@ const ListingsVerticalWorkers = ({
   isFetchingNextPage,
   refreshControl,
   type,
-}: any) => {
+  ListHeaderComponent,
+  style,
+}: ListingsVerticalWorkersProps) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const onEndReachedCalledDuringMomentum = useRef(false);
@@ -115,7 +135,7 @@ const ListingsVerticalWorkers = ({
   };
 
   return (
-    <View>
+    <View style={[styles.listRoot, style]}>
       <FlatList
         data={listings}
         renderItem={renderItem}
@@ -144,6 +164,10 @@ const ListingsVerticalWorkers = ({
 export default ListingsVerticalWorkers;
 
 const styles = StyleSheet.create({
+  listRoot: {
+    flex: 1,
+    minHeight: 0,
+  },
   container: {
     flex: 1,
   },
@@ -159,32 +183,61 @@ const styles = StyleSheet.create({
   },
   liked: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: 4,
+    right: 4,
     backgroundColor: Colors.primary,
-    padding: 5,
-    borderRadius: 20,
+    padding: 4,
+    borderRadius: 12,
   },
-  itemInfo: {
+  item: {
+    flexDirection: "row",
+    backgroundColor: Colors.white,
+    borderRadius: 14,
+    padding: 11,
+    marginBottom: 10,
+    alignItems: "flex-start",
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.16)",
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  avatar: {
+    width: 68,
+    height: 86,
+    borderRadius: 12,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.18)",
+    backgroundColor: Colors.secondaryBackground,
+  },
+  cardContent: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    flexDirection: "column",
-    justifyContent: "space-between",
+    minWidth: 0,
   },
   ratingPriceContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginTop: 8,
+    marginTop: 6,
   },
-  priceContainer: {
-    alignItems: "flex-end",
+  listContent: {
+    flexGrow: 1,
+    paddingBottom: 8,
   },
-  loaderStyle: {
+  listFooter: {
+    width: "100%",
+  },
+  paginationLoader: {
+    paddingTop: 8,
+    paddingBottom: 6,
     alignItems: "center",
-    paddingLeft: 20,
-    paddingBottom: 10,
+    justifyContent: "center",
+  },
+  listBottomInset: {
+    width: "100%",
+    height: LIST_BOTTOM_INSET,
   },
 
   item: {

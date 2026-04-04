@@ -63,7 +63,7 @@ const ServiceDetails = () => {
   const { id, showApplicationDetails } = useLocalSearchParams();
   const [service, setService]: any = useState({});
   const router = useRouter();
-  const scrollRef = React.useRef<Animated.ScrollView>(null);
+  const scrollRef = React.useRef<typeof Animated.ScrollView | null>(null);
   const [isServiceLiked, setIsServiceLiked] = useState(
     service?.likedBy?.find((id: any) => id === userDetails?._id),
   );
@@ -94,6 +94,8 @@ const ServiceDetails = () => {
     ) || false,
   );
 
+  console.log("id----", id);
+  
   const [isMediatorOrSingleWorker, setIsMediatorOrSingleWorker] = useState(
     service?.selectedUsers?.find(
       (user: any) =>

@@ -123,7 +123,7 @@ const Users = () => {
               appliedFilters?.distance ||
               appliedFilters?.rating > 0 ||
               appliedFilters?.skills?.length > 0) && (
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 6 }}>
                 <AppliedFilters
                   appliedFilters={appliedFilters}
                   setAppliedFilters={setAppliedFilters}
@@ -131,7 +131,7 @@ const Users = () => {
                 />
               </View>
             )}
-          <View style={{ marginVertical: 10 }}>
+          <View style={{ marginVertical: 6 }}>
             <PaginationString
               type="workers"
               isLoading={isLoading || isRefetching}
@@ -167,13 +167,12 @@ const Users = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors?.background,
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+    backgroundColor: "#FAFBFF",
+    paddingHorizontal: 8,
+    paddingBottom: 6,
   },
   listContainer: {
     flexGrow: 1,
-    marginBottom: 100
   },
 });
 
