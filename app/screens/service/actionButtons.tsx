@@ -32,6 +32,8 @@ import { handleCall } from "@/constants/functions";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { getDynamicWorkerType } from "@/utils/i18n";
 import APP_CONTEXT from "@/app/context/locale";
+import { trackEvent } from "@/utils/analytics";
+import { AnalyticsEvents } from "@/utils/analyticsEvents";
 
 interface ServiceActionButtonsProps {
   service: any;
@@ -156,6 +158,9 @@ const ServiceActionButtons = ({
     mutationKey: ["applyService", { id }],
     mutationFn: (payload: any) => WORKER?.applyService(payload),
     onSuccess: async (response) => {
+      trackEvent(AnalyticsEvents.SERVICE_APPLY_SUCCESS, {
+        serviceId: String(id),
+      });
       setIsWorkerSelectModal(false);
       setSelectedWorkersIds([]);
       setIsSelectSkillModal(false);
@@ -175,6 +180,9 @@ const ServiceActionButtons = ({
     mutationKey: ["unapplyService", { id }],
     mutationFn: () => WORKER?.unApplyService({ serviceId: id }),
     onSuccess: async (response) => {
+      trackEvent(AnalyticsEvents.SERVICE_UNAPPLY_SUCCESS, {
+        serviceId: String(id),
+      });
       setIsWorkerSelectModal(false);
       setSelectedWorkersIds([]);
       refetch();

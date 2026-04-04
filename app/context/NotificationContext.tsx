@@ -11,6 +11,7 @@ import PUSH_NOTIFICATION from "@/app/hooks/usePushNotification";
 import { useAtomValue, useSetAtom } from "jotai";
 import Atoms from "@/app/AtomStore";
 import * as Linking from "expo-linking";
+import { getServiceDetailsDeepLink } from "@/utils/serviceDeepLink";
 
 interface NotificationContextType {
   expoPushToken: string | null;
@@ -88,7 +89,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
         // ✅ Case 2: Manual fallback (if no url)
         if (data?.type === "JOB" && data?.id) {
-          Linking.openURL(`apnarojgar://job/${data.id}`);
+          Linking.openURL(getServiceDetailsDeepLink(String(data.id)));
           return;
         }
 

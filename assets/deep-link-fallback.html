@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>अपना रोज़गार</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1.5rem; text-align: center; line-height: 1.5; }
+    a { color: #22409a; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>अपना रोज़गार</h1>
+  <p>ऐप खोलने की कोशिश हो रही है…</p>
+  <p><a id="play" href="https://play.google.com/store/apps/details?id=com.kumarabhishek404.labourapp">प्ले स्टोर से ऐप इंस्टॉल करें</a></p>
+  <p style="font-size: 0.9rem; color: #555;">ऐप इंस्टॉल के बाद इसी पेज का लिंक दोबारा खोलें।</p>
+  <script>
+    (function () {
+      var PLAY = "https://play.google.com/store/apps/details?id=com.kumarabhishek404.labourapp";
+      var path = location.pathname || "";
+      var m = path.match(/\/job\/([^/?#]+)/);
+      var id = m ? m[1] : new URLSearchParams(location.search).get("id");
+      var appHttps = id ? "https://apnarojgar.com/job/" + decodeURIComponent(id) : "";
+      var intent =
+        id &&
+        "intent://apnarojgar.com/job/" +
+          id +
+          "#Intent;scheme=https;package=com.kumarabhishek404.labourapp;S.browser_fallback_url=" +
+          encodeURIComponent(PLAY) +
+          ";end";
+      document.getElementById("play").href = PLAY;
+      if (intent) {
+        try {
+          window.location = intent;
+        } catch (e) {}
+      }
+      if (appHttps) {
+        setTimeout(function () {
+          window.location = appHttps;
+        }, 400);
+      }
+      setTimeout(function () {
+        if (document.hasFocus && document.visibilityState === "visible") {
+          /* User still in browser — offer Play Store */
+        }
+      }, 2500);
+    })();
+  </script>
+</body>
+</html>

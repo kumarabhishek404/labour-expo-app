@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import CustomHeading from "./CustomHeading";
 import CustomText from "./CustomText";
 import { t } from "@/utils/translationHelper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomeAnimatedHeading from "./CustomeAnimatedHeading";
 import { getDynamicWorkerType } from "@/utils/i18n";
 
@@ -52,50 +52,53 @@ const Requirements = ({ type, requirements }: RequirementsProps) => {
       ) : (
         <View style={styles.requirmentContainer}>
           <CustomeAnimatedHeading />
+          <CustomText
+            textAlign="left"
+            baseFont={13}
+            color={Colors.secondary}
+            style={styles.requirementsHint}
+          >
+            {t("requirementsSectionHint")}
+          </CustomText>
           {requirements?.map((requirement: any, index: number) => {
             return (
               <View style={styles.card} key={index}>
                 <View style={styles.header}>
-                  <CustomHeading style={{ textTransform: "capitalize" }}>
-                    {getDynamicWorkerType(
-                      requirement?.name,
-                      requirement?.count
-                    )}
-                  </CustomHeading>
-                  <CustomText
-                    baseFont={17}
-                    color={Colors?.primary}
-                    fontWeight="bold"
-                  >
-                    ₹ {requirement?.payPerDay} {t("perDay")}
-                  </CustomText>
+                  <View style={styles.headerTitle}>
+                    <MaterialCommunityIcons
+                      name="account-hard-hat"
+                      size={22}
+                      color={Colors.primary}
+                    />
+                    <CustomHeading
+                      style={{ textTransform: "capitalize", flex: 1 }}
+                      textAlign="left"
+                    >
+                      {getDynamicWorkerType(
+                        requirement?.name,
+                        requirement?.count
+                      )}
+                    </CustomHeading>
+                  </View>
+                  <View style={styles.payPill}>
+                    <CustomText baseFont={12} fontWeight="700" color={Colors.primary}>
+                      ₹{requirement?.payPerDay}
+                    </CustomText>
+                    <CustomText baseFont={11} color={Colors.subHeading}>
+                      {t("perDay")}
+                    </CustomText>
+                  </View>
                 </View>
 
-                <View style={styles.details}>
-                  <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
-                      {t("count")}
-                    </CustomText>
-                    <CustomText fontWeight="800" textAlign="left">
-                      {requirement?.count}
-                    </CustomText>
-                  </View>
-                  <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
-                      {t("living")}
-                    </CustomText>
-                    <CustomText fontWeight="800" textAlign="left">
-                      {requirement?.shelterProvider ? t("yes") : t("no")}
-                    </CustomText>
-                  </View>
-                  <View style={styles?.detailBox}>
-                    <CustomText fontWeight="700" color={Colors?.tertieryButton}>
-                      {t("esi_pf")}
-                    </CustomText>
-                    <CustomText fontWeight="800" textAlign="left">
-                      {requirement?.esi_pf ? t("yes") : t("no")}
-                    </CustomText>
-                  </View>
+                <View style={styles.countRow}>
+                  <Ionicons
+                    name="people"
+                    size={18}
+                    color={Colors.tertieryButton}
+                  />
+                  <CustomText fontWeight="800" textAlign="left" baseFont={15}>
+                    {t("count")}: {requirement?.count}
+                  </CustomText>
                 </View>
               </View>
             );
@@ -115,26 +118,55 @@ const styles = StyleSheet.create({
   },
   requirmentContainer: {
     borderRadius: 8,
-    paddingTop: 20,
+    paddingTop: 12,
+  },
+  requirementsHint: {
+    marginBottom: 14,
+    lineHeight: 18,
   },
   card: {
     backgroundColor: Colors?.white,
-    padding: 15,
-    marginBottom: 6,
-    borderRadius: 8,
+    padding: 14,
+    marginBottom: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.1)",
+    shadowColor: "#1e3a8a",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 8,
   },
-  details: {
+  headerTitle: {
+    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-    marginTop: 8,
+    alignItems: "center",
+    gap: 8,
+    minWidth: 0,
   },
-  detailBox: {
-    flexDirection: "column",
+  payPill: {
+    backgroundColor: Colors.fourth,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    alignItems: "flex-end",
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.12)",
+  },
+  countRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(34, 64, 154, 0.12)",
   },
   tag: {
     justifyContent: "flex-start",

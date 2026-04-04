@@ -4,7 +4,6 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -27,6 +26,7 @@ import Atoms from "@/app/AtomStore";
 import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
+import ServiceFacilitiesSection from "@/components/commons/ServiceFacilitiesSection";
 import ImageSlider from "@/components/commons/ImageSlider";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
@@ -49,6 +49,11 @@ import ApplicantSummary from "./applicantsSummary";
 import BookingActionButtons from "../bookings/actionButtons";
 import ServicePlaceholder from "@/components/commons/LoadingPlaceholders/ServiceDetailsPlaceholder";
 import { getDynamicWorkerType } from "@/utils/i18n";
+import { shareServiceDetails } from "@/utils/shareService";
+import { getServiceJobId } from "@/utils/serviceJobId";
+import { trackEvent } from "@/utils/analytics";
+import { AnalyticsEvents } from "@/utils/analyticsEvents";
+import TOAST from "@/app/hooks/toast";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -95,6 +100,8 @@ const ServiceDetails = () => {
   );
 
   console.log("id----", id);
+  console.log("service----", service);
+
   
   const [isMediatorOrSingleWorker, setIsMediatorOrSingleWorker] = useState(
     service?.selectedUsers?.find(
@@ -165,6 +172,15 @@ const ServiceDetails = () => {
       }
       refetch();
     }, [refetch]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const sid = Array.isArray(id) ? id[0] : id;
+      if (sid) {
+        trackEvent(AnalyticsEvents.SERVICE_VIEW, { serviceId: String(sid) });
+      }
+    }, [id]),
   );
 
   const {
@@ -370,6 +386,13 @@ const ServiceDetails = () => {
     setIsSpeaking(false);
   };
 
+  const handleShareService = async () => {
+    const { ok } = await shareServiceDetails(service, { t });
+    if (!ok) {
+      TOAST?.error(t("shareFailed"));
+    }
+  };
+
   const handleShowApplications = () => {
     setDrawerState((prevState: any) => ({
       ...prevState,
@@ -400,6 +423,7 @@ const ServiceDetails = () => {
     <>
       <Stack.Screen
         options={{
+          headerShown: true,
           header: () => (
             <CustomHeader
               title={
@@ -424,6 +448,26 @@ const ServiceDetails = () => {
               contentContainerStyle={{ paddingBottom: 150 }}
             >
               <ImageSlider images={service?.images} />
+              {getServiceJobId(service) ? (
+                <View style={styles.jobIdBanner}>
+                  <CustomText
+                    baseFont={12}
+                    fontWeight="600"
+                    color={Colors.subHeading}
+                    style={{ marginBottom: 4 }}
+                  >
+                    {t("jobIdReference")}
+                  </CustomText>
+                  <CustomText
+                    selectable
+                    baseFont={14}
+                    fontWeight="600"
+                    color={Colors.black}
+                  >
+                    {getServiceJobId(service)}
+                  </CustomText>
+                </View>
+              ) : null}
               {(service?.employer === userDetails?._id || isAdmin) &&
                 service?.bookingType === "byService" && (
                   <ApplicantSummary
@@ -700,7 +744,14 @@ const ServiceDetails = () => {
                         <ButtonComp
                           isPrimary={true}
                           title={t("callEmployer")}
-                          onPress={() => handleCall(service?.employer?.mobile)}
+                          onPress={() =>
+                            handleCall(service?.employer?.mobile, {
+                              source: "service_detail_header",
+                              serviceId: String(
+                                Array.isArray(id) ? id[0] : id ?? "",
+                              ),
+                            })
+                          }
                           icon={
                             <FontAwesome5
                               name="phone-alt"
@@ -750,13 +801,36 @@ const ServiceDetails = () => {
                   )}
 
                 <View style={styles.headingWrapper}>
-                  <CustomHeading
-                    textAlign="left"
-                    baseFont={20}
-                    color={Colors?.black}
-                  >
-                    {t("serviceDetails")}
-                  </CustomHeading>
+                  <View style={styles.headingTitleRow}>
+                    <CustomHeading
+                      textAlign="left"
+                      baseFont={20}
+                      color={Colors?.black}
+                      style={styles.headingTitle}
+                    >
+                      {t("serviceDetails")}
+                    </CustomHeading>
+                    <TouchableOpacity
+                      onPress={handleShareService}
+                      style={styles.shareButton}
+                      accessibilityRole="button"
+                      accessibilityLabel={t("shareService")}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons
+                        name="share-social"
+                        size={20}
+                        color={Colors.primary}
+                      />
+                      <CustomText
+                        fontWeight="800"
+                        baseFont={13}
+                        color={Colors.primary}
+                      >
+                        {t("shareService")}
+                      </CustomText>
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     onPress={
                       isSpeaking
@@ -788,54 +862,77 @@ const ServiceDetails = () => {
                 )}
 
                 {service?.appliedSkill && service?.appliedSkill?.skill && (
-                  <View
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      gap: 10,
-                    }}
-                  >
+                  <View style={styles.directSkillCard}>
                     <CustomHeading
-                      baseFont={20}
+                      baseFont={13}
                       textAlign="left"
-                      style={{
-                        flex: 1,
-                      }}
+                      color={Colors.subHeading}
+                      style={{ marginBottom: 6 }}
                     >
-                      {getDynamicWorkerType(service?.appliedSkill?.skill, 1)}
+                      {t("skillAndPay")}
                     </CustomHeading>
-
-                    <CustomHeading
-                      baseFont={20}
-                      textAlign="right"
-                      color={Colors?.tertieryButton}
-                      style={{ width: "35%" }}
-                    >
-                      {service?.appliedSkill?.pricePerDay} {t("perDay")}
-                    </CustomHeading>
+                    <View style={styles.directSkillRow}>
+                      <CustomHeading
+                        baseFont={18}
+                        textAlign="left"
+                        style={styles.directSkillName}
+                      >
+                        {getDynamicWorkerType(service?.appliedSkill?.skill, 1)}
+                      </CustomHeading>
+                      <View style={styles.directPayPill}>
+                        <CustomHeading
+                          baseFont={18}
+                          color={Colors?.tertieryButton}
+                        >
+                          ₹{service?.appliedSkill?.pricePerDay}
+                        </CustomHeading>
+                        <CustomText baseFont={12} color={Colors.subHeading}>
+                          {t("perDay")}
+                        </CustomText>
+                      </View>
+                    </View>
                   </View>
                 )}
-                <View style={styles.listingLocationWrapper}>
-                  <ShowAddress address={service?.address} />
+
+                <View style={styles.atAGlanceCard}>
+                  <View style={styles.sectionTitleRow}>
+                    <Ionicons
+                      name="location-outline"
+                      size={20}
+                      color={Colors.primary}
+                    />
+                    <CustomHeading textAlign="left" baseFont={16} color={Colors.black}>
+                      {t("locationAndSchedule")}
+                    </CustomHeading>
+                  </View>
+                  <View style={styles.listingLocationWrapper}>
+                    <ShowAddress address={service?.address} />
+                  </View>
+                  <View style={styles.listingLocationWrapper}>
+                    <DateDisplay date={service?.startDate} type="startDate" />
+                  </View>
+                  <Highlights compact service={service} />
                 </View>
 
-                <View style={styles.listingLocationWrapper}>
-                  <DateDisplay date={service?.startDate} type="startDate" />
-                </View>
-
-                <Highlights service={service} />
+                <ServiceFacilitiesSection facilities={service?.facilities} />
 
                 {service?.description && (
-                  <View style={{ marginVertical: 10 }}>
-                    <CustomHeading
-                      textAlign="left"
-                      baseFont={18}
-                      color={Colors?.inputLabel}
-                    >
-                      {t("description")}
-                    </CustomHeading>
-                    <CustomText textAlign="left" baseFont={16}>
+                  <View style={styles.descriptionCard}>
+                    <View style={styles.sectionTitleRow}>
+                      <Ionicons
+                        name="document-text-outline"
+                        size={20}
+                        color={Colors.primary}
+                      />
+                      <CustomHeading
+                        textAlign="left"
+                        baseFont={16}
+                        color={Colors.black}
+                      >
+                        {t("description")}
+                      </CustomHeading>
+                    </View>
+                    <CustomText textAlign="left" baseFont={16} style={styles.descriptionBody}>
                       {service?.description}
                     </CustomText>
                   </View>
@@ -934,6 +1031,60 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+  },
+  atAGlanceCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.1)",
+    marginBottom: 4,
+  },
+  directSkillCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.12)",
+  },
+  directSkillRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+  },
+  directSkillName: {
+    flex: 1,
+    minWidth: 0,
+  },
+  directPayPill: {
+    alignItems: "flex-end",
+    backgroundColor: Colors.fourth,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.1)",
+  },
+  descriptionCard: {
+    marginTop: 16,
+    backgroundColor: Colors.white,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.1)",
+  },
+  descriptionBody: {
+    lineHeight: 24,
+    marginTop: 4,
+  },
   selectedWrapper: {
     padding: 10,
     marginBottom: 10,
@@ -957,11 +1108,31 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headingWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 5,
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: 10,
     marginBottom: 10,
+  },
+  headingTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  headingTitle: {
+    flex: 1,
+    minWidth: 0,
+  },
+  shareButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: "rgba(34, 64, 154, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.2)",
   },
   listingLocationWrapper: {
     flexDirection: "row",
@@ -1126,6 +1297,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
+  },
+  jobIdBanner: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: Colors.secondaryBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.gray,
   },
   highlightBox: {
     flexDirection: "row",

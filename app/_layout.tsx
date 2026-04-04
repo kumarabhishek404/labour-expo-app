@@ -7,33 +7,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
-import { ActivityIndicator, StatusBar, StyleSheet, View } from "react-native";
+import { StatusBar } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import APP_CONTEXT from "./context/locale";
 import NOTIFICATION_CONTEXT from "./context/NotificationContext";
 import { ToastProvider } from "./hooks/toast";
 import { useAppUpdateGuard } from "./hooks/useAppUpdateGuard";
 import ForceUpdateScreen from "@/components/commons/ForceUpdateSection";
-import { useDeepLinkHandler } from "@/utils/useDeepLinkHandler";
+import AnalyticsSession from "@/components/commons/AnalyticsSession";
 
 const queryClient = new QueryClient();
 
 const AppNavigator = () => {
-  const isLoading = useDeepLinkHandler();
-
   const { forceUpdate, message, appUrl } = useAppUpdateGuard();
 
   if (forceUpdate) {
     return <ForceUpdateScreen message={message} appUrl={appUrl} />;
-  }
-
-  if (isLoading) {
-    // Show a loader instead of splash/unmatched route
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
   }
 
   return (
@@ -44,26 +33,24 @@ const AppNavigator = () => {
             <APP_CONTEXT.AppProvider>
               <PaperProvider>
                 <ToastProvider>
-                  {/* 👇 Handle status bar overlay safely */}
+                  <AnalyticsSession />
                   <StatusBar
                     barStyle="light-content"
                     translucent={true}
                     backgroundColor="transparent"
                   />
 
-                  {/* 👇 Safe area to protect top (notch) and bottom (gesture bar) */}
                   <SafeAreaView
                     style={{ flex: 1, backgroundColor: Colors.primary }}
-                    edges={["top", "bottom"]} // ✅ Ensures both top & bottom padding
+                    edges={["top", "bottom"]}
                   >
-                    <Stack>
-                      <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                      />
-                    </Stack>
+                    {/**
+                     * Single Stack registers **all** file routes (`(tabs)`, `job`, `screens`, …).
+                     * Do not list only `(tabs)` — that hid `/screens/*` and `/job/*` from the navigator,
+                     * so deep links could never open service details.
+                     */}
+                    <Stack screenOptions={{ headerShown: false }} />
 
-                    {/* Keep drawers outside navigation */}
                     <GlobalBottomDrawer />
                     <GlobalSideDrawer />
                   </SafeAreaView>
@@ -78,11 +65,3 @@ const AppNavigator = () => {
 };
 
 export default AppNavigator;
-
-const styles = StyleSheet.create({
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

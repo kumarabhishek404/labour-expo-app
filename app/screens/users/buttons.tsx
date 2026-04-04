@@ -15,6 +15,8 @@ import EMPLOYER from "@/app/api/employer";
 import TOAST from "@/app/hooks/toast";
 import { useForm } from "react-hook-form";
 import APP_CONTEXT from "@/app/context/locale";
+import { trackEvent } from "@/utils/analytics";
+import { AnalyticsEvents } from "@/utils/analyticsEvents";
 
 const { width } = Dimensions.get("window");
 
@@ -85,6 +87,9 @@ const ButtonContainer = ({
     mutationKey: ["addBookingRequest"],
     mutationFn: (payload: any) => EMPLOYER?.addBookingRequest(payload),
     onSuccess: (response) => {
+      trackEvent(AnalyticsEvents.WORKER_BOOKING_REQUEST_SUCCESS, {
+        workerUserId: String(Array.isArray(id) ? id[0] : id ?? ""),
+      });
       setDrawerState({
         visible: false,
       }); // Close the drawer after success

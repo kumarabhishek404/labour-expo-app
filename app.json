@@ -3,8 +3,9 @@
     "name": "Apna Rojgar",
     "slug": "labour-app",
     "version": "1.2.5",
+    "platforms": ["android", "ios"],
     "orientation": "default",
-    "scheme": "myapp",
+    "scheme": "apnarojgar",
     "jsEngine": "hermes",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/app/adaptive-icon.png",
@@ -52,9 +53,14 @@
     "ios": {
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.kumarabhishek404.labourapp"
+      "bundleIdentifier": "com.kumarabhishek404.labourapp",
+      "associatedDomains": ["applinks:apnarojgar.com"]
     },
     "android": {
+      "androidNavigationBar": {
+        "backgroundColor": "#22409a",
+        "barStyle": "light"
+      },
       "versionCode": 40,
       "package": "com.kumarabhishek404.labourapp",
       "googleServicesFile": "./google-services.json",
@@ -77,11 +83,19 @@
           "action": "VIEW",
           "data": [
             {
-              "scheme": "https",
-              "host": "instagram.com"
-            },
+              "scheme": "apnarojgar"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
             {
-              "scheme": "instagram"
+              "scheme": "https",
+              "host": "apnarojgar.com",
+              "pathPrefix": "/"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
@@ -93,7 +107,7 @@
     },
     "extra": {
       "router": {
-        "origin": false
+        "origin": "https://apnarojgar.com"
       },
       "eas": {
         "projectId": "38023a03-3848-401a-bc2c-04efd071ef83"

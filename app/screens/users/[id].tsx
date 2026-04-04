@@ -29,7 +29,10 @@ import ProfilePicture from "@/components/commons/ProfilePicture";
 import WorkHistory from "@/components/commons/WorkHistory";
 import TeamDetails from "../team/teamDetails";
 import UserProfilePlaceholder from "@/components/commons/LoadingPlaceholders/UserDetailsPlaceholder";
+import UserRoleTag from "@/components/commons/UserRoleTag";
 import Atoms from "@/app/AtomStore";
+import { trackEvent } from "@/utils/analytics";
+import { AnalyticsEvents } from "@/utils/analyticsEvents";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
@@ -43,20 +46,20 @@ const User = () => {
   const scrollRef = React.useRef<Animated.ScrollView>(null);
   const [isUserBooked, setIsUserBooked] = useState(user?.bookedBy || false);
   const [isUserLiked, setIsUserLiked] = useState(
-    user?.likedBy?.includes(userDetails?._id)
+    user?.likedBy?.includes(userDetails?._id),
   );
   const [isUserRequestedToJoinTeam, setIsUserRequestedToJoinTeam] = useState(
-    user?.teamJoiningRequestBy?.includes(userDetails?._id)
+    user?.teamJoiningRequestBy?.includes(userDetails?._id),
   );
   const [isInYourTeam, setIsInYourTeam] = useState(
-    user?.employedBy?._id === userDetails?._id
+    user?.employedBy?._id === userDetails?._id,
   );
   const [isWorkerBookingRequested, setIsWorkerBookingRequested] = useState(
-    user?.bookingRequestBy?.includes(userDetails?._id)
+    user?.bookingRequestBy?.includes(userDetails?._id),
   );
   const [isWorkerBooked, setIsWorkerBooked] = useState(
     user?.bookedBy?.find((item: any) => item?.employer === userDetails?._id) ||
-      false
+      false,
   );
   const reviewsSectionRef = useRef<View>(null);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
@@ -83,30 +86,41 @@ const User = () => {
         return;
       }
       refetch();
-    }, [refetch])
+    }, [refetch]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const uid = Array.isArray(id) ? id[0] : id;
+      if (uid) {
+        trackEvent(AnalyticsEvents.PROFILE_VIEW, {
+          viewedUserId: String(uid),
+        });
+      }
+    }, [id]),
   );
 
   useEffect(() => {
     setIsUserLiked(user?.likedBy?.includes(userDetails?._id));
     setIsUserBooked(user?.bookedBy?.includes(userDetails?._id));
     setIsUserRequestedToJoinTeam(
-      user?.teamJoiningRequestBy?.includes(userDetails?._id)
+      user?.teamJoiningRequestBy?.includes(userDetails?._id),
     );
     setIsInYourTeam(user?.employedBy?._id === userDetails?._id);
     setIsWorkerBookingRequested(
-      user?.bookingRequestBy?.includes(userDetails?._id)
+      user?.bookingRequestBy?.includes(userDetails?._id),
     );
     setIsWorkerBooked(
       user?.bookedBy?.find(
-        (item: any) => item?.employer === userDetails?._id
-      ) || false
+        (item: any) => item?.employer === userDetails?._id,
+      ) || false,
     );
   }, [user]);
 
   useFocusEffect(
     React.useCallback(() => {
       setUser(response?.data);
-    }, [response])
+    }, [response]),
   );
 
   const scrollToReviews = () => {
@@ -135,6 +149,7 @@ const User = () => {
     <>
       <Stack.Screen
         options={{
+          headerShown: true,
           header: () => (
             <CustomHeader
               title={Array.isArray(title) ? title[0] : title}
@@ -163,9 +178,16 @@ const User = () => {
                 uri={user?.profilePicture}
                 style={styles.workerImage}
               />
-              <CustomHeading textAlign="left" baseFont={20}>
-                {user?.name}
-              </CustomHeading>
+              <View style={styles.nameBlock}>
+                <View style={styles.nameRowProfile}>
+                  <CustomHeading textAlign="left" baseFont={20}>
+                    {user?.name}
+                  </CustomHeading>
+                  <View style={styles.roleTagLine}>
+                    <UserRoleTag user={user} variant="compact" />
+                  </View>
+                </View>
+              </View>
 
               <View style={styles.listingLocationWrapper}>
                 <FontAwesome5
@@ -299,6 +321,23 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 22,
     top: -130,
+  },
+  nameBlock: {
+    paddingRight: 155,
+  },
+  nameRowProfile: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    gap: 0,
+  },
+  profileTagSlot: {
+    flexShrink: 0,
+    marginTop: 2,
+  },
+  roleTagLine: {
+    alignSelf: "flex-end",
+    marginLeft: 10,
   },
   listingLocationWrapper: {
     flexDirection: "row",

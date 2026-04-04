@@ -6,6 +6,8 @@ import EMPLOYER from "@/app/api/employer";
 import { t } from "@/utils/translationHelper";
 import { WORKTYPES } from ".";
 import { Linking } from "react-native";
+import { trackEvent } from "@/utils/analytics";
+import { AnalyticsEvents, type AnalyticsCallMeta } from "@/utils/analyticsEvents";
 import { AppState } from "react-native";
 
 export const dateDifference = (date1: Date, date2: Date): string => {
@@ -249,7 +251,16 @@ export const convertToLabelValueArray = (stringArray: string[]) => {
   }));
 };
 
-export const handleCall = (mobile: string) => {
+export const handleCall = (mobile: string, meta?: AnalyticsCallMeta) => {
+  if (mobile) {
+    const props: Record<string, unknown> = {};
+    if (meta) {
+      for (const [k, v] of Object.entries(meta)) {
+        if (v != null && String(v).trim() !== "") props[k] = v;
+      }
+    }
+    trackEvent(AnalyticsEvents.CALL_TAP, props);
+  }
   Linking.openURL(`tel:${mobile}`);
 };
 
@@ -489,17 +500,11 @@ export const translateWorkerTypes = (workerTypes: any[]) => {
   }));
 };
 
+/** Forward geocoding does not need GPS / foreground location permission. */
 export const getLatLongFromAddress = async (address: string) => {
   try {
-    // ✅ Ask permission
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (!address?.trim()) return null;
 
-    if (status !== "granted") {
-      console.log("Permission denied");
-      return null;
-    }
-
-    // ✅ Geocode
     const result = await Location.geocodeAsync(address);
     
     if (result.length > 0) {
@@ -522,30 +527,27 @@ export const getDistanceFromLocation = async (
   address?: string,
 ) => {
   try {
-    // ✅ Extract coordinates helper
     const getCoordsFromLocation = (location: any) => {
-      if (location?.coordinates) {
+      if (location?.coordinates?.length >= 2) {
         const [longitude, latitude] = location.coordinates;
-        return { latitude, longitude };
+        const lat = Number(latitude);
+        const lng = Number(longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        return { latitude: lat, longitude: lng };
       }
       return null;
     };
 
-    // ✅ loc1: try coordinates → fallback to address
+    // Need the viewer's position first — no point geocoding the service otherwise.
+    const coords2 = getCoordsFromLocation(loc2);
+    if (!coords2) return null;
+
     let coords1 = getCoordsFromLocation(loc1);
-
-    console.log("coords1---", coords1);
-
-    if (!coords1 && address) {
+    if (!coords1 && address?.trim()) {
       coords1 = await getLatLongFromAddress(address);
     }
 
-    console.log("coords1-2---", coords1);
-
-    // ✅ loc2: only coordinates (strict)
-    const coords2 = getCoordsFromLocation(loc2);
-
-    if (!coords1 || !coords2) return null;
+    if (!coords1) return null;
 
     const dist = calculateDistance(coords1, coords2);
     return isNaN(dist) ? null : dist;

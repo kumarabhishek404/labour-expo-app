@@ -18,7 +18,7 @@ const RenderItem = React.memo(({ item }: any) => {
 RenderItem.displayName = "RenderItem";
 
 /** Space below last item — tab bar / scroll comfort; loader sits above this. */
-const LIST_BOTTOM_INSET = 120;
+const LIST_BOTTOM_INSET = 250;
 
 const ListingsVerticalServices = ({
   listings,

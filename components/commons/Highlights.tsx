@@ -1,20 +1,9 @@
 import Colors from "@/constants/Colors";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import {
-  FontAwesome,
-  FontAwesome5,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { View, StyleSheet } from "react-native";
+import { FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../inputs/Button";
-import {
-  calculateDistance,
-  dateDifference,
-  getDistanceFromLocation,
-  handleCall,
-} from "@/constants/functions";
+import { getDistanceFromLocation, handleCall } from "@/constants/functions";
 // import { openGoogleMaps } from "@/app/hooks/map";
 import CustomText from "./CustomText";
 import CustomHeading from "./CustomHeading";
@@ -22,14 +11,7 @@ import { t } from "@/utils/translationHelper";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 
-const destination = {
-  latitude: 40.758896,
-  longitude: -73.98513,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
-
-const Highlights = ({ service }: any) => {
+const Highlights = ({ service, compact }: { service: any; compact?: boolean }) => {
   const userDetails = useAtomValue(Atoms?.UserAtom);
 
   const [distance, setDistance] = useState<any>(null);
@@ -38,7 +20,7 @@ const Highlights = ({ service }: any) => {
     const fetchDistance = async () => {
       const dist = await getDistanceFromLocation(
         service?.geoLocation,
-        userDetails?.geoLocation,
+        userDetails?.geoLocation ?? userDetails?.location,
         service?.address,
       );
       setDistance(dist);
@@ -48,7 +30,9 @@ const Highlights = ({ service }: any) => {
   }, [service, userDetails]);
 
   return (
-    <View style={styles?.container}>
+    <View
+      style={[styles?.container, compact && styles.containerCompact]}
+    >
       <View style={styles.highlightWrapper}>
         <View style={styles?.highlightBox}>
           <View style={styles.highlightIcon}>
@@ -120,7 +104,7 @@ const Highlights = ({ service }: any) => {
         )}
       </View>
 
-      {userDetails?._id !== service?.employer && service?.employer?.mobile && (
+      {service?.employer?.mobile ? (
         <View style={[styles?.highlightBox, { width: "100%", marginTop: 20 }]}>
           <View style={styles.highlightIcon}>
             <Ionicons name="call" size={18} color={Colors.tertieryButton} />
@@ -130,110 +114,43 @@ const Highlights = ({ service }: any) => {
               flex: 1,
               flexDirection: "row",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <View>
+            <View style={{ flex: 1, paddingRight: 8 }}>
               <CustomText textAlign="left">{t("mobileNumber")}</CustomText>
               <CustomHeading textAlign="left">
                 {service?.employer?.mobile}
               </CustomHeading>
             </View>
-            <Button
-              isPrimary={true}
-              title={t("callEmployer")}
-              onPress={() => handleCall(service?.employer?.mobile)}
-              style={{
-                paddingVertical: 6,
-                paddingHorizontal: 10,
-              }}
-              icon={
-                <FontAwesome5
-                  name="phone-alt"
-                  size={16}
-                  color={Colors.white}
-                  style={{ marginRight: 10 }}
-                />
-              }
-            />
+            {userDetails?._id !== service?.employer && (
+              <Button
+                isPrimary={true}
+                title={t("callEmployer")}
+                onPress={() =>
+                  handleCall(service?.employer?.mobile, {
+                    source: "service_highlights",
+                    serviceId: String(service?._id ?? ""),
+                  })
+                }
+                style={{
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                }}
+                icon={
+                  <FontAwesome5
+                    name="phone-alt"
+                    size={16}
+                    color={Colors.white}
+                    style={{ marginRight: 10 }}
+                  />
+                }
+              />
+            )}
           </View>
         </View>
-      )}
+      ) : null}
 
-      <View style={styles?.facilitiesHeading}>
-        <CustomHeading textAlign="left" baseFont={20} color={Colors?.black}>
-          {t("facilitiesProvidedByEmployer")}
-        </CustomHeading>
-        <MaterialCommunityIcons
-          name="hand-pointing-down"
-          size={18}
-          color={Colors.black}
-        />
-      </View>
-
-      <View style={styles?.facilitiesContainer}>
-        <View style={styles.highlightWrapper}>
-          <View style={styles?.highlightBox}>
-            <View style={styles.highlightIcon}>
-              <MaterialCommunityIcons
-                name="food-apple"
-                size={20}
-                color={Colors.tertieryButton}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <CustomText textAlign="left">{t("food")}</CustomText>
-              <CustomHeading textAlign="left">
-                {service?.facilities?.food ? t("yes") : t("no")}
-              </CustomHeading>
-            </View>
-          </View>
-
-          <View style={styles?.highlightBox}>
-            <View style={styles.highlightIcon}>
-              <Ionicons name="home" size={20} color={Colors.tertieryButton} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <CustomText textAlign="left">{t("living")}</CustomText>
-              <CustomHeading textAlign="left">
-                {service?.facilities?.living ? t("yes") : t("no")}
-              </CustomHeading>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.highlightWrapper}>
-          <View style={styles?.highlightBox}>
-            <View style={styles.highlightIcon}>
-              <FontAwesome5
-                name="shuttle-van"
-                size={16}
-                color={Colors.tertieryButton}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <CustomText textAlign="left">{t("travelling")}</CustomText>
-              <CustomHeading textAlign="left">
-                {service?.facilities?.travelling ? t("yes") : t("no")}
-              </CustomHeading>
-            </View>
-          </View>
-          <View style={styles?.highlightBox}>
-            <View style={styles.highlightIcon}>
-              <FontAwesome5
-                name="coins"
-                size={18}
-                color={Colors.tertieryButton}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <CustomText textAlign="left">{t("esi_pf")}</CustomText>
-              <CustomHeading textAlign="left">
-                {service?.facilities?.esi_pf ? t("yes") : t("no")}
-              </CustomHeading>
-            </View>
-          </View>
-        </View>
-      </View>
     </View>
   );
 };
@@ -241,6 +158,9 @@ const Highlights = ({ service }: any) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
+  },
+  containerCompact: {
+    marginTop: 4,
   },
   highlightWrapper: {
     flexDirection: "row",
@@ -275,22 +195,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginRight: 10,
     textAlign: "left",
-  },
-  facilitiesContainer: {
-    borderWidth: 0.5,
-    borderColor: Colors?.disabled,
-    backgroundColor: Colors?.fourth,
-    borderRadius: 8,
-    gap: 10,
-    padding: 10,
-    elevation: 1,
-  },
-  facilitiesHeading: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    marginTop: 20,
-    gap: 5,
   },
 });
 

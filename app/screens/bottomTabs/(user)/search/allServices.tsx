@@ -1,10 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, RefreshControl, Dimensions } from "react-native";
 import EmptyDataPlaceholder from "@/components/commons/EmptyDataPlaceholder";
 import ListingsVerticalServices from "@/components/commons/ListingsVerticalServices";
 import { router } from "expo-router";
@@ -15,6 +10,7 @@ import { t } from "@/utils/translationHelper";
 import ListingsServicesPlaceholder from "@/components/commons/LoadingPlaceholders/ListingServicePlaceholder";
 import AnimatedGradientWrapper from "@/components/commons/AnimatedGradientWrapper";
 import APP_CONTEXT from "@/app/context/locale";
+import GradientWrapper from "@/components/commons/GradientWrapper";
 
 const AllServices = ({
   isLoading,
@@ -28,34 +24,6 @@ const AllServices = ({
 }: any) => {
   const [isAddFilters, setIsAddFilters] = useState(false);
   const { role } = APP_CONTEXT.useApp();
-
-  const loadedCount = Array.isArray(memoizedData) ? memoizedData.length : 0;
-  const countForBadge =
-    typeof totalData === "number" && totalData > 0 ? totalData : loadedCount;
-
-  const listHeader = useMemo(
-    () => (
-      <View style={styles.listHeader}>
-        <CustomText
-          baseFont={13}
-          fontWeight="800"
-          color={Colors.primary}
-          style={styles.countBadge}
-        >
-          {t("serviceListCountBadge", { count: countForBadge })}
-        </CustomText>
-        <CustomText
-          baseFont={12}
-          color={Colors.subHeading}
-          style={styles.pullHint}
-          numberOfLines={2}
-        >
-          {t("serviceListPullHint")}
-        </CustomText>
-      </View>
-    ),
-    [countForBadge],
-  );
 
   const onSearchService = (data: any) => {
     setIsAddFilters(false);
@@ -77,7 +45,7 @@ const AllServices = ({
   };
 
   return (
-    <AnimatedGradientWrapper height={Dimensions.get("window").height - 180}>
+    <GradientWrapper>
       {isLoading ? (
         <ListingsServicesPlaceholder />
       ) : (
@@ -99,7 +67,11 @@ const AllServices = ({
                   {t("allServices")}
                 </CustomText>
               )}
-              <CustomText baseFont={14} color={Colors?.white} style={styles.subHeading}>
+              <CustomText
+                baseFont={14}
+                color={Colors?.white}
+                style={styles.subHeading}
+              >
                 {t("allServicesSubHeading")}
               </CustomText>
             </View>
@@ -111,7 +83,6 @@ const AllServices = ({
                     listings={memoizedData || []}
                     loadMore={loadMore}
                     isFetchingNextPage={isFetchingNextPage}
-                    ListHeaderComponent={listHeader}
                     refreshControl={
                       <RefreshControl
                         refreshing={!isRefetching && refreshing}
@@ -140,7 +111,7 @@ const AllServices = ({
         setFilterVisible={setIsAddFilters}
         onApply={onSearchService}
       />
-    </AnimatedGradientWrapper>
+    </GradientWrapper>
   );
 };
 
@@ -164,35 +135,15 @@ const styles = StyleSheet.create({
     opacity: 0.98,
     lineHeight: 20,
   },
-  listHeader: {
-    paddingBottom: 12,
-    paddingTop: 4,
-    paddingHorizontal: 2,
-    gap: 6,
-  },
   countBadge: {
     lineHeight: 18,
   },
   pullHint: {
     lineHeight: 18,
   },
-  /** Light panel behind the list (matches service-list spec / workers pattern). */
   contentCard: {
     flex: 1,
-    backgroundColor: "#FAFBFF",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(34, 64, 154, 0.08)",
-    paddingTop: 6,
-    paddingHorizontal: 8,
-    paddingBottom: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
   },
-  /** Lets FlatList take remaining height so footer + bottom inset scroll correctly. */
   listFill: {
     flex: 1,
     minHeight: 0,

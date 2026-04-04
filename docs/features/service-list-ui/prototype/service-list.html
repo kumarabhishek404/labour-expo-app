@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Service list — UI prototype (labour-expo-app)</title>
+    <style>
+      :root {
+        --primary: #22409a;
+        --primary-soft: rgba(34, 64, 154, 0.22);
+        --surface: #eaf0ff;
+        --text: #2c2c2c;
+        --sub: #5a5a5a;
+        --white: #ffffff;
+        --danger: #dc3545;
+        --radius-panel: 18px;
+        --radius-card: 16px;
+        --shadow-card: 0 6px 14px rgba(34, 64, 154, 0.14);
+        --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Devanagari",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--font);
+        background: #1a1a2e;
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        gap: 12px;
+      }
+
+      .toolbar {
+        width: 100%;
+        max-width: 390px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .toolbar h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #eee;
+      }
+
+      .states {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .states button {
+        font: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .states button[aria-pressed="true"] {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .phone {
+        width: 100%;
+        max-width: 390px;
+        min-height: 640px;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+        border: 3px solid rgba(255, 255, 255, 0.12);
+        background: var(--white);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header-gradient {
+        padding: 20px 18px 16px;
+        background: linear-gradient(165deg, var(--primary) 0%, #3d5ab8 55%, #5a73c4 100%);
+        color: var(--white);
+      }
+
+      .header-gradient h2 {
+        margin: 0 0 6px;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .header-gradient p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.35;
+        opacity: 0.98;
+      }
+
+      .panel {
+        flex: 1;
+        background: var(--surface);
+        margin: 0 12px 12px;
+        margin-top: -8px;
+        border-radius: var(--radius-panel);
+        padding: 12px 12px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .list-header {
+        padding-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .count-badge {
+        align-self: flex-start;
+        background: var(--white);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--primary);
+        border: 1px solid var(--primary-soft);
+      }
+
+      .pull-hint {
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--sub);
+      }
+
+      .list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .card-accent {
+        height: 4px;
+        background: var(--primary);
+      }
+
+      .card-body {
+        padding: 14px;
+        cursor: pointer;
+      }
+
+      .card-body:active {
+        opacity: 0.92;
+      }
+
+      .addr-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .addr-main {
+        flex: 1;
+        min-width: 0;
+        font-weight: 600;
+      }
+      .addr-time {
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      .hero {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 4px;
+        border: 1px solid rgba(34, 64, 154, 0.12);
+        background: linear-gradient(145deg, #c7d2fe 0%, #a5b4fc 50%, #818cf8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 52px;
+      }
+
+      .direct-on-hero {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: var(--white);
+      }
+
+      .title-block {
+        margin-top: 12px;
+      }
+
+      .title-block h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text);
+        text-transform: capitalize;
+      }
+
+      .req-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .req-chip {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: var(--primary);
+        color: var(--white);
+        line-height: 1.3;
+      }
+
+      .req-chip small {
+        display: block;
+        font-weight: 600;
+        opacity: 0.95;
+        font-size: 11px;
+        margin-top: 2px;
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill {
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 999px;
+      }
+
+      .pill-primary {
+        background: var(--primary);
+        color: var(--white);
+      }
+
+      .pill-soft {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        color: var(--primary);
+        border: 1px solid rgba(34, 64, 154, 0.16);
+      }
+
+      .info {
+        margin-top: 10px;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text);
+      }
+
+      .info .muted {
+        color: var(--sub);
+        font-size: 12px;
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 10px;
+        padding: 0 14px 14px;
+        align-items: stretch;
+      }
+
+      .btn {
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        border: none;
+        border-radius: 14px;
+        min-height: 48px;
+        padding: 0 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .btn-listen {
+        flex: 1;
+        background: var(--primary);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(34, 64, 154, 0.22);
+      }
+
+      .btn-details {
+        flex: 0 0 auto;
+        background: rgba(34, 64, 154, 0.08);
+        color: var(--primary);
+        border: 1px solid rgba(34, 64, 154, 0.18);
+        padding: 0 12px;
+        min-width: 120px;
+      }
+
+      /* Loading state */
+      .skeleton-panel .sk {
+        height: 14px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #dfe8ff 0%, #eef2ff 50%, #dfe8ff 100%);
+        background-size: 200% 100%;
+        animation: sh 1.2s ease-in-out infinite;
+      }
+
+      @keyframes sh {
+        0% {
+          background-position: 100% 0;
+        }
+        100% {
+          background-position: -100% 0;
+        }
+      }
+
+      .sk-card {
+        background: var(--white);
+        border-radius: var(--radius-card);
+        padding: 14px;
+        border: 1px solid var(--primary-soft);
+        display: flex;
+        gap: 12px;
+      }
+
+      .sk-hero {
+        width: 100%;
+        height: 180px;
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .sk-lines {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 8px;
+        width: 100%;
+      }
+
+      .sk-card-col {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      /* Empty state */
+      .empty {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 32px 20px;
+        gap: 16px;
+      }
+
+      .empty-icon {
+        font-size: 56px;
+        line-height: 1;
+      }
+
+      .empty h3 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text);
+      }
+
+      .empty p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--sub);
+        max-width: 260px;
+        line-height: 1.45;
+      }
+
+      .btn-refresh {
+        background: var(--primary);
+        color: var(--white);
+        padding: 12px 24px;
+        border-radius: 14px;
+        font-weight: 800;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(34, 64, 154, 0.25);
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .note {
+        max-width: 390px;
+        font-size: 11px;
+        color: #aaa;
+        text-align: center;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <h1>Service list — clickable prototype</h1>
+      <div class="states" role="tablist" aria-label="Screen state">
+        <button type="button" id="btn-default" aria-pressed="true">Default</button>
+        <button type="button" id="btn-loading" aria-pressed="false">Loading</button>
+        <button type="button" id="btn-empty" aria-pressed="false">Empty</button>
+      </div>
+    </div>
+
+    <div class="phone" id="phone">
+      <div class="header-gradient">
+        <h2>All Services</h2>
+        <p>Find trusted employers near you and book services instantly 🚀</p>
+      </div>
+
+      <div class="panel" id="state-default">
+        <div class="list-header">
+          <div class="count-badge">12 open</div>
+          <div class="pull-hint">Pull down to refresh the list</div>
+        </div>
+        <div class="list">
+          <article class="card">
+            <div class="card-accent"></div>
+            <div class="card-body" role="button" tabindex="0" title="Opens service details (prototype)">
+              <div class="hero" aria-hidden="true">
+                🛠️
+                <span class="direct-on-hero">Direct booking</span>
+              </div>
+              <div class="title-block">
+                <h3>Electrical work</h3>
+              </div>
+              <div class="req-chips">
+                <span class="req-chip">2 Electrician <small>₹ 600 / day</small></span>
+                <span class="req-chip">1 Helper <small>₹ 400 / day</small></span>
+              </div>
+              <div class="info">
+                <div class="addr-row">
+                  <span class="addr-main">Village Road, Block A — Near Panchayat, District X</span>
+                  <span class="addr-time">2h ago</span>
+                </div>
+                <div class="muted">Starts · 12 Apr 2026</div>
+                <div class="muted">Duration · 3 days · ~4 km away</div>
+                <div class="muted">Facilities · Lunch, water</div>
+              </div>
+            </div>
+            <div class="cta-row">
+              <button type="button" class="btn btn-listen" title="Listen (TTS in app)">
+                🔊 Listen about service
+              </button>
+              <button type="button" class="btn btn-details" title="View details">
+                View details →
+              </button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-accent"></div>
+            <div class="card-body" role="button" tabindex="0">
+              <div class="hero" aria-hidden="true">🌾</div>
+              <div class="title-block">
+                <h3>Farm labour</h3>
+                <div class="pills">
+                  <span class="pill pill-soft">Applied in service</span>
+                </div>
+              </div>
+              <div class="req-chips">
+                <span class="req-chip">4 Workers <small>₹ 500 / day</small></span>
+              </div>
+              <div class="info">
+                <div class="addr-row">
+                  <span class="addr-main">Near market, District centre — Block 3, main road side</span>
+                  <span class="addr-time">1 day ago</span>
+                </div>
+                <div class="muted">Starts · 15 Apr 2026</div>
+                <div class="muted">Duration · 5 days · ~8 km away</div>
+              </div>
+            </div>
+            <div class="cta-row">
+              <button type="button" class="btn btn-listen">🔊 Listen about service</button>
+              <button type="button" class="btn btn-details">View details →</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel skeleton-panel" id="state-loading" hidden>
+        <div class="list-header">
+          <div class="sk" style="width: 140px; height: 36px; border-radius: 999px"></div>
+          <div class="sk" style="width: 100%; max-width: 320px"></div>
+        </div>
+        <div class="list">
+          <div class="sk-card sk-card-col">
+            <div class="sk sk-hero"></div>
+            <div class="sk-lines">
+              <div class="sk" style="width: 70%"></div>
+              <div class="sk" style="width: 55%"></div>
+              <div class="sk" style="width: 90%"></div>
+              <div class="sk" style="width: 80%"></div>
+            </div>
+          </div>
+          <div class="sk-card sk-card-col">
+            <div class="sk sk-hero"></div>
+            <div class="sk-lines">
+              <div class="sk" style="width: 65%"></div>
+              <div class="sk" style="width: 50%"></div>
+              <div class="sk" style="width: 88%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="state-empty" hidden>
+        <div class="empty">
+          <div class="empty-icon" aria-hidden="true">📋</div>
+          <h3>No services</h3>
+          <p>Pull to refresh or tap below to try again.</p>
+          <button type="button" class="btn-refresh">Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">
+      Copy uses <strong>one language at a time</strong> (matches app locale). Layout: large photo, title,
+      requirements, address + <strong>time on the right</strong> (classic row), date/duration/distance/facilities,
+      then <strong>Listen</strong> + <strong>View details</strong>. Theme: <code>constants/Colors.ts</code>.
+    </p>
+
+    <script>
+      (function () {
+        var states = [
+          { id: "btn-default", panel: "state-default" },
+          { id: "btn-loading", panel: "state-loading" },
+          { id: "btn-empty", panel: "state-empty" },
+        ];
+
+        function show(panelId) {
+          states.forEach(function (s) {
+            var btn = document.getElementById(s.id);
+            var el = document.getElementById(s.panel);
+            var on = s.panel === panelId;
+            btn.setAttribute("aria-pressed", on ? "true" : "false");
+            el.hidden = !on;
+          });
+        }
+
+        states.forEach(function (s) {
+          document.getElementById(s.id).addEventListener("click", function () {
+            show(s.panel);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

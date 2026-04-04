@@ -14,6 +14,7 @@ import moment from "moment";
 import Requirements from "@/components/commons/Requirements";
 import EmployerCard from "@/components/commons/EmployerCard";
 import Highlights from "@/components/commons/Highlights";
+import ServiceFacilitiesSection from "@/components/commons/ServiceFacilitiesSection";
 import ImageSlider from "@/components/commons/ImageSlider";
 import CustomHeading from "@/components/commons/CustomHeading";
 import CustomText from "@/components/commons/CustomText";
@@ -308,6 +309,8 @@ const BookingDetails = () => {
               </View>
 
               <Highlights service={booking} />
+
+              <ServiceFacilitiesSection facilities={booking?.facilities} />
 
               {booking?.description && (
                 <View style={{ marginVertical: 20 }}>

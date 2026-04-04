@@ -177,7 +177,12 @@ const UserInfoComponent = ({ user, style }: UserInfoComponentProps) => {
               alignItems: "flex-end",
               paddingRight: 10,
             }}
-            onPress={() => handleCall(user?.mobile)}
+            onPress={() =>
+              handleCall(user?.mobile, {
+                source: "user_profile_card",
+                viewedUserId: String(user?._id ?? ""),
+              })
+            }
           >
             {userDetails?._id !== user?._id && (
               <CustomText color={Colors?.link} fontWeight="600" baseFont={18}>

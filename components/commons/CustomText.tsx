@@ -15,6 +15,7 @@ interface CustomTextProps {
   lineHeight?: number;
   numberOfLines?: number; // Added prop
   style?: any;
+  selectable?: boolean;
   restProps?: any;
 }
 
@@ -28,6 +29,7 @@ const CustomText = ({
   padding = 0,
   lineHeight,
   numberOfLines, // Extracted from props
+  selectable,
   style,
   ...restProps
 }: CustomTextProps) => {
@@ -49,6 +51,7 @@ const CustomText = ({
       ]}
       numberOfLines={numberOfLines} // ✅ Applied numberOfLines
       ellipsizeMode="tail" // ✅ Ensures truncated text has "..."
+      selectable={selectable}
       {...restProps}
     >
       {children}

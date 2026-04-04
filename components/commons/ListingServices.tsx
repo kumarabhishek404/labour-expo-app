@@ -2,7 +2,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
 import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
-import { AntDesign, Fontisto, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5, Fontisto, Ionicons } from "@expo/vector-icons";
 import { Link, router, useNavigation } from "expo-router";
 import { getServiceListHeroIcon } from "@/utils/serviceListHeroIcon";
 import {
@@ -21,6 +21,7 @@ import ShowAddress from "./ShowAddress";
 import ShowDistance from "./ShowDistance";
 import ShowDuration from "./ShowDuration";
 import ShowFacilities from "./ShowFacilities";
+import { getServiceJobId } from "@/utils/serviceJobId";
 
 const ListingsServices = ({ item }: any) => {
   const navigation = useNavigation();
@@ -132,6 +133,19 @@ const ListingsServices = ({ item }: any) => {
                   )}
                 </View>
               )}
+              {getServiceJobId(item) ? (
+                <View style={styles.jobIdBadgeOnHero} pointerEvents="none">
+                  <CustomText
+                    color={Colors.white}
+                    fontWeight="800"
+                    baseFont={11}
+                    textAlign="left"
+                    numberOfLines={1}
+                  >
+                    {getServiceJobId(item)}
+                  </CustomText>
+                </View>
+              ) : null}
               {item?.bookingType === "direct" && (
                 <View style={styles.directTagOnHero}>
                   <CustomText
@@ -270,7 +284,9 @@ const ListingsServices = ({ item }: any) => {
                 <ShowDuration duration={item?.duration} alignment="left" />
                 <ShowDistance
                   address={item?.address}
-                  loggedInUserLocation={userDetails?.geoLocation}
+                  loggedInUserLocation={
+                    userDetails?.geoLocation ?? userDetails?.location
+                  }
                   targetLocation={item?.geoLocation}
                 />
               </View>
@@ -384,6 +400,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.secondaryBackground,
+  },
+  jobIdBadgeOnHero: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    zIndex: 3,
+    maxWidth: "78%",
+    backgroundColor: "rgba(34, 64, 154, 0.92)",
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 6,
   },
   directTagOnHero: {
     position: "absolute",

@@ -1,11 +1,12 @@
 import {
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   View,
   BackHandler,
   useWindowDimensions,
   Platform,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Linking } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
@@ -43,13 +44,19 @@ type IconLibrary =
   | "FontAwesome5";
 
 export default function Layout() {
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  /** Bottom inset only; tiny fallback when inset is 0 (no double “extra” padding). */
+  const tabBarBottomPad =
+    insets.bottom > 0 ? insets.bottom : Platform.OS === "android" ? 4 : 2;
+  /** Inner content height — compact like classic tab bars; still fits 2-line labels. */
+  const TAB_BAR_CONTENT = 64;
+  const tabBarTopPad = 6;
+  const tabBarHeight = tabBarTopPad + TAB_BAR_CONTENT + tabBarBottomPad;
 
-  // Base scaling factor (change if needed)
-  const scale = width / 375; // 375 is iPhone X width
-  const tabHeight = Math.max(60 * scale, 60); // Prevents being too small
-  const iconSize = Math.min(28 * scale, 34);
-  const textSize = Math.min(24 * scale, 14);
+  const scale = Math.min(width / 375, 1.12);
+  const iconSize = Math.round(Math.max(22, Math.min(25, 23.5 * scale)));
+  const textSize = Math.max(10, Math.min(11, Math.round(10.5 * scale)));
 
   const [notificationCount, setNotificationCount]: any = useAtom(
     Atoms.notificationCount,
@@ -193,29 +200,62 @@ export default function Layout() {
     const Icon = iconMap[iconLibrary];
     const iconNameLiteral = iconName as any;
 
+    const {
+      style: tabBarItemStyle,
+      children: _tabChildren,
+      onPress,
+      ...pressableRest
+    } = props;
+
+    const rowInnerH = TAB_BAR_CONTENT + tabBarBottomPad;
+
+    const labelLineHeight = Math.round(textSize * 1.32);
+
     return (
-      <TouchableOpacity
-        style={[
+      <Pressable
+        {...pressableRest}
+        accessibilityRole="button"
+        onPress={onPress ?? (() => router.push(path as any))}
+        android_ripple={{ color: "rgba(34, 64, 154, 0.14)", foreground: true }}
+        style={({ pressed }) => [
+          tabBarItemStyle,
           styles.tabButton,
+          { minHeight: rowInnerH },
           itemStyles,
-          isSelected && styles.activeTabButton,
+          pressed && Platform.OS === "ios" && styles.tabPressedIos,
         ]}
-        onPress={() => router.push(path as any)}
-        activeOpacity={0.8}
       >
-        <Icon
-          name={iconNameLiteral}
-          size={iconSize}
-          color={isSelected ? "#fff" : "#888"}
-        />
-        <CustomText
-          color={isSelected ? "#fff" : "#888"}
-          fontWeight="600"
-          baseFont={textSize}
-        >
-          {t(title)}
-        </CustomText>
-      </TouchableOpacity>
+        <View style={[styles.tabColumn, { paddingBottom: tabBarBottomPad }]}>
+          <View
+            style={[
+              styles.tabPill,
+              isSelected && styles.tabPillActive,
+            ]}
+          >
+            <Icon
+              name={iconNameLiteral}
+              size={isSelected ? iconSize + 1 : iconSize}
+              color={isSelected ? "#FFFFFF" : "#64748B"}
+            />
+            <CustomText
+              color={isSelected ? "#FFFFFF" : "#64748B"}
+              fontWeight={isSelected ? "700" : "600"}
+              baseFont={textSize}
+              textAlign="center"
+              numberOfLines={2}
+              style={[
+                styles.tabLabel,
+                {
+                  lineHeight: labelLineHeight,
+                  maxWidth: "100%",
+                },
+              ]}
+            >
+              {t(title)}
+            </CustomText>
+          </View>
+        </View>
+      </Pressable>
     );
   };
 
@@ -234,27 +274,18 @@ export default function Layout() {
           <Tabs
             screenOptions={{
               headerShown: false,
-              tabBarStyle: [styles.tabBar],
+              tabBarStyle: [
+                styles.tabBar,
+                {
+                  height: tabBarHeight,
+                  paddingBottom: 0,
+                  paddingTop: tabBarTopPad,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                },
+              ],
             }}
           >
-            {/* <Tabs.Screen
-              name="fourth"
-              options={{
-                tabBarButton: (props: any) => (
-                  <TabButton
-                    props={props}
-                    path="/(tabs)/fourth"
-                    title={isAdmin ? "users" : "allRequests"}
-                    iconName={
-                      isAdmin ? "people-sharp" : "hand-front-right-outline"
-                    }
-                    iconLibrary={
-                      isAdmin ? "Ionicons" : "MaterialCommunityIcons"
-                    }
-                  />
-                ),
-              }}
-            /> */}
 
             <Tabs.Screen
               name="index"
@@ -350,20 +381,57 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: Colors.white,
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 5 },
-    paddingBottom: Platform.OS === "ios" ? 20 : 0,
+    alignItems: "stretch",
+    backgroundColor: "#F4F6FC",
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(34, 64, 154, 0.08)",
+    elevation: 16,
+    shadowColor: "#1e3a8a",
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -4 },
   },
   tabButton: {
-    height: 75,
+    flex: 1,
+    alignSelf: "stretch",
+    paddingVertical: 0,
+    paddingHorizontal: 4,
+  },
+  tabPressedIos: {
+    opacity: 0.92,
+  },
+  tabColumn: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  /** Inactive: light surface; active: filled pill (modern app–style tab). */
+  tabPill: {
+    width: "100%",
+    maxWidth: "100%",
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    borderRadius: 14,
+    gap: 2,
+    minHeight: 52,
   },
-  activeTabButton: {
+  tabPillActive: {
     backgroundColor: Colors.primary,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  tabLabel: {
+    marginTop: 0,
+    paddingHorizontal: 2,
+    width: "100%",
+    flexShrink: 1,
   },
 });

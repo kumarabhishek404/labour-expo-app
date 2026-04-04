@@ -8,7 +8,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import React, { useMemo, useRef } from "react";
+import React, { useRef, type ReactElement } from "react";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import coverImage from "../../assets/images/placeholder-cover.jpg";
@@ -19,9 +19,10 @@ import ShowDistance from "./ShowDistance";
 import { useAtomValue } from "jotai";
 import Atoms from "@/app/AtomStore";
 import ShowAddress from "./ShowAddress";
+import UserRoleTag from "./UserRoleTag";
 
 /** Space below last item — tab bar / scroll comfort; loader sits above this. */
-const LIST_BOTTOM_INSET = 110;
+const LIST_BOTTOM_INSET = 250;
 
 type ListingsVerticalWorkersProps = {
   availableInterest: any;
@@ -54,8 +55,9 @@ const ListingsVerticalWorkers = ({
   const RenderItem = React.memo(
     ({ item, type, userDetails, availableInterest }: any) => {
       return (
-        <View style={styles.container}>
+        <View style={styles.rowWrap}>
           <TouchableOpacity
+            activeOpacity={0.9}
             onPress={() =>
               router.push({
                 pathname: "/screens/users/[id]",
@@ -66,6 +68,7 @@ const ListingsVerticalWorkers = ({
                 },
               })
             }
+            style={styles.cardTouchable}
           >
             <View style={styles.item}>
               <Image
@@ -78,7 +81,12 @@ const ListingsVerticalWorkers = ({
               />
 
               <View style={styles.cardContent}>
+                <View style={styles.nameRow}>
                 <CustomHeading textAlign="left">{item?.name}</CustomHeading>
+                  <View style={styles.roleTagLine}>
+                    <UserRoleTag user={item} variant="compact" />
+                  </View>
+                </View>
 
                 <ShowAddress address={item?.address} numberOfLines={1} />
 
@@ -101,7 +109,9 @@ const ListingsVerticalWorkers = ({
 
                   <ShowDistance
                     address={item?.address}
-                    loggedInUserLocation={userDetails?.geoLocation}
+                    loggedInUserLocation={
+                      userDetails?.geoLocation ?? userDetails?.location
+                    }
                     targetLocation={item?.geoLocation}
                   />
                 </View>
@@ -137,24 +147,30 @@ const ListingsVerticalWorkers = ({
   return (
     <View style={[styles.listRoot, style]}>
       <FlatList
+        style={styles.flatList}
         data={listings}
         renderItem={renderItem}
         keyExtractor={(item) => item?._id?.toString()}
+        ListHeaderComponent={ListHeaderComponent ?? undefined}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         onEndReached={handleEndReached}
         onMomentumScrollBegin={handleMomentum}
         ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator size="large" color={Colors?.primary} />
-          ) : null
+          <View style={styles.listFooter}>
+            {isFetchingNextPage ? (
+              <View style={styles.paginationLoader}>
+                <ActivityIndicator size="large" color={Colors?.primary} />
+              </View>
+            ) : null}
+            <View style={styles.listBottomInset} />
+          </View>
         }
         initialNumToRender={6}
         maxToRenderPerBatch={6}
         windowSize={5}
         removeClippedSubviews={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 120,
-        }}
+        contentContainerStyle={styles.listContent}
         refreshControl={refreshControl}
       />
     </View>
@@ -168,33 +184,20 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 0,
   },
-  container: {
+  flatList: {
     flex: 1,
   },
-  image: {
-    width: 100,
-    minHeight: 100,
-    maxHeight: 230,
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+  rowWrap: {
+    flex: 1,
   },
-  placeholderImage: {
-    backgroundColor: "#f2f2f2",
-  },
-  liked: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    backgroundColor: Colors.primary,
-    padding: 4,
-    borderRadius: 12,
+  cardTouchable: {
+    borderRadius: 14,
   },
   item: {
     flexDirection: "row",
     backgroundColor: Colors.white,
     borderRadius: 14,
     padding: 11,
-    marginBottom: 10,
     alignItems: "flex-start",
     borderWidth: 1,
     borderColor: "rgba(34, 64, 154, 0.16)",
@@ -217,10 +220,42 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  ratingPriceContainer: {
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  roleTagLine: {
+    alignSelf: "flex-start",
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  skillsContainer: {
+    marginTop: 4,
+    flexDirection: "row",
+  },
+  skillTag: {
+    backgroundColor: Colors.secondaryBackground,
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 6,
+    borderWidth: 1,
+    borderColor: "rgba(34, 64, 154, 0.16)",
+  },
+  skillTagText: {
+    fontSize: 11,
+    color: Colors.primary,
+    fontWeight: "700",
+  },
+  bottomRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 6,
+  },
+  separator: {
+    height: 10,
   },
   listContent: {
     flexGrow: 1,
@@ -238,54 +273,5 @@ const styles = StyleSheet.create({
   listBottomInset: {
     width: "100%",
     height: LIST_BOTTOM_INSET,
-  },
-
-  item: {
-    flexDirection: "row",
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    alignItems: "flex-start",
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-
-  avatar: {
-    width: 60,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-
-  cardContent: {
-    flex: 1,
-  },
-
-  skillsContainer: {
-    marginTop: 6,
-    flexDirection: "row",
-  },
-
-  skillTag: {
-    backgroundColor: "#F1F1F1",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    marginRight: 6,
-  },
-
-  skillTagText: {
-    fontSize: 11,
-    color: Colors.tertiery,
-  },
-
-  bottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
   },
 });

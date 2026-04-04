@@ -138,7 +138,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 10,
     backgroundColor: Colors?.primary,
-    zIndex: -1,
+    zIndex: 10,
+    elevation: 4,
   },
   headerTitleWrapper: {},
   backButton: {

@@ -13,7 +13,7 @@ const DURATION = [
   { label: "less_15_days", value: 15 },
   { label: "less_one_month", value: 30 },
   { label: "more_one_month", value: 100 },
-  { label: "more_six_months", value: 365 },
+  { label: "more_six_months", value: 200 },
 ];
 
 const Duration = ({ duration, setDuration, errors, name }: any) => {

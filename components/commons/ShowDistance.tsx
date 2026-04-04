@@ -16,36 +16,46 @@ const ShowDistance = ({
 
   // ✅ Normalize logged-in user coords
   const userCoords = useMemo(() => {
-    if (loggedInUserLocation?.coordinates) {
+    if (loggedInUserLocation?.coordinates?.length >= 2) {
       const [longitude, latitude] = loggedInUserLocation.coordinates;
-      return { latitude, longitude };
+      const lat = Number(latitude);
+      const lng = Number(longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return { latitude: lat, longitude: lng };
     }
     return null;
   }, [loggedInUserLocation]);
 
-  // ✅ Normalize target coords
   const targetCoords = useMemo(() => {
-    if (targetLocation?.coordinates) {
+    if (targetLocation?.coordinates?.length >= 2) {
       const [longitude, latitude] = targetLocation.coordinates;
-      return { latitude, longitude };
+      const lat = Number(latitude);
+      const lng = Number(longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return { latitude: lat, longitude: lng };
     }
     return null;
   }, [targetLocation]);
 
-  // ✅ Fallback: get coords from address
+  // Geocode service address only when we already have user coords (no permission prompt).
   useEffect(() => {
     const fetchCoords = async () => {
-      // Only trigger if target location missing
-      if (!targetCoords && address) {
-        const coords = await getLatLongFromAddress(address);
-        if (coords) {
-          setFallbackCoords(coords);
-        }
+      if (!userCoords) {
+        setFallbackCoords(null);
+        return;
       }
+      if (targetCoords) {
+        setFallbackCoords(null);
+        return;
+      }
+      if (!address?.trim()) return;
+
+      const coords = await getLatLongFromAddress(address);
+      setFallbackCoords(coords ?? null);
     };
 
     fetchCoords();
-  }, [address, targetCoords]);
+  }, [address, targetCoords, userCoords]);
 
   // ✅ Final coordinates selection
   const finalTargetCoords = targetCoords || fallbackCoords;
@@ -58,9 +68,13 @@ const ShowDistance = ({
     return isNaN(dist) ? null : dist;
   }, [userCoords, finalTargetCoords]);
 
+  if (distance == null) {
+    return null;
+  }
+
   return (
     <CustomHeading textAlign={align ?? "center"}>
-      {distance || 0} {t("kms")} {t("distance")}
+      {distance} {t("kms")} {t("distance")}
     </CustomHeading>
   );
 };

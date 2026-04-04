@@ -2,6 +2,7 @@ import EventEmitter from "eventemitter3";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 import { getToken } from "@/utils/authStorage";
+import { getClientDeviceHeaders } from "@/utils/clientDeviceInfo";
 import { router } from "expo-router";
 
 const eventEmitter = new EventEmitter();
@@ -31,6 +32,12 @@ const getHeaders = async (retries = 3, delay = 500) => {
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
+});
+
+api.interceptors.request.use((config) => {
+  const deviceHeaders = getClientDeviceHeaders();
+  Object.assign(config.headers, deviceHeaders);
+  return config;
 });
 
 const logout = async () => {
